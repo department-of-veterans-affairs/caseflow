@@ -207,8 +207,8 @@ class VACOLS::Case < VACOLS::Record
 
   def self.pa_full_grants(outcoded_after:)
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-        .where(WHERE_PAPERLESS_PA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-        .order("BFDDEC ASC")
+                .where(WHERE_PAPERLESS_PA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+                .order("BFDDEC ASC")
   end
 
   # rubocop:disable Metrics/MethodLength

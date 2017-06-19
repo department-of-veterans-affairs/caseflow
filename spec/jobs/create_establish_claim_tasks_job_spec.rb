@@ -5,6 +5,7 @@ describe CreateEstablishClaimTasksJob do
     Timecop.freeze(Time.zone.local(2015, 2, 1, 12, 8, 0))
 
     FeatureToggle.enable!(:dispatch_full_grants)
+    FeatureToggle.enable!(:dispatch_full_grants_with_pa)
     FeatureToggle.enable!(:dispatch_partial_grants_remands)
   end
 
@@ -14,31 +15,39 @@ describe CreateEstablishClaimTasksJob do
     Generators::Appeal.build(vacols_record: { template: :full_grant_decided, decision_date: 1.day.ago })
   end
 
+  let!(:pa_full_grant) do
+    Generators::Appeal.build(vacols_record: { template: :full_grant_decided, decision_date: 1.day.ago })
+  end
+
   context ".perform" do
     before do
       allow(AppealRepository).to receive(:remands_ready_for_claims_establishment).and_return([remand])
       allow(AppealRepository).to receive(:amc_full_grants).and_return([full_grant])
+      allow(AppealRepository).to receive(:pa_full_grants).and_return([pa_full_grant])
     end
 
     it "finds or creates tasks" do
       expect(EstablishClaim.count).to eq(0)
       CreateEstablishClaimTasksJob.perform_now
-      expect(EstablishClaim.count).to eq(2)
+      expect(EstablishClaim.count).to eq(3)
       # making sure that the establish claim metadata is poulated as well
-      expect(ClaimEstablishment.count).to eq(2)
+      expect(ClaimEstablishment.count).to eq(3)
 
       # on re-run, the same 2 appeals should be found
       # so no new tasks are created
       CreateEstablishClaimTasksJob.perform_now
-      expect(EstablishClaim.count).to eq(2)
-      expect(ClaimEstablishment.count).to eq(2)
+      expect(EstablishClaim.count).to eq(3)
+      expect(ClaimEstablishment.count).to eq(3)
+
+      # confirm that for private attorney full grants, the special issues is set to true
+      expect(pa_full_grant.private_attorney_or_agent).to eq(true)
     end
 
     it "skips partial grants if they are disabled" do
       FeatureToggle.disable!(:dispatch_partial_grants_remands)
       expect(EstablishClaim.count).to eq(0)
       CreateEstablishClaimTasksJob.perform_now
-      expect(EstablishClaim.count).to eq(1)
+      expect(EstablishClaim.count).to eq(2)
     end
   end
 
