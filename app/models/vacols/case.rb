@@ -153,7 +153,7 @@ class VACOLS::Case < VACOLS::Record
     -- Only include VBMS cases.
   ".freeze
 
-  WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE = %{
+  WHERE_PAPERLESS_FULLGRANT_AFTER_DATE = %{
     BFMPRO = 'HIS'
 
     and TIOCTIME >= to_date(?, 'YYYY-MM-DD HH24:MI')
@@ -161,9 +161,6 @@ class VACOLS::Case < VACOLS::Record
 
     and TIVBMS = 'Y'
     -- Only include VBMS cases.
-
-    and BFSO <> 'T'
-    -- Exclude cases with a private attorney.
 
     and ISSUE_CNT_ALLOWED > 0
     -- Check that there is at least one non-new-material allowed issue
@@ -181,9 +178,16 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.amc_full_grants(outcoded_after:)
-    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-                .where(WHERE_PAPERLESS_NONPA_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-                .order("BFDDEC ASC")
+    if FeatureToggle.enabled?(:dispatch_full_grants_with_pa)
+      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
+                  .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+                  .order("BFDDEC ASC")
+    else
+      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
+                  .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+                  .where(%(BFSO <> 'T'))
+                  .order("BFDDEC ASC")
+    end
   end
 
   # rubocop:disable Metrics/MethodLength
