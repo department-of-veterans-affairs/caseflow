@@ -92,7 +92,7 @@ describe('PdfViewer', () => {
           y: 200
         });
       });
-    });    
+    });
     describe('constraining movement', () => {
       it('up at the top of the page', () => {
         expect(
@@ -115,7 +115,7 @@ describe('PdfViewer', () => {
           y: 0
         });
       });
-      
+
       it('left at the left hand side of the page', () => {
         expect(
           getNextAnnotationIconPageCoords(
@@ -137,7 +137,7 @@ describe('PdfViewer', () => {
           y: 100
         });
       });
-      
+
       it('right at the right hand side of the page', () => {
         expect(
           getNextAnnotationIconPageCoords(
@@ -159,7 +159,7 @@ describe('PdfViewer', () => {
           y: 300
         });
       });
-      
+
       it('down at the bottom of the page', () => {
         expect(
           getNextAnnotationIconPageCoords(

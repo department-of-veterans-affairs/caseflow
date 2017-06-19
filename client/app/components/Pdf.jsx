@@ -597,6 +597,7 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
   }
 
+  // eslint-disable-next-line max-statements
   componentDidUpdate(prevProps) {
     this.renderInViewPages();
     this.prerenderPages();
