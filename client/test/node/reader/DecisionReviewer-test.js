@@ -306,14 +306,16 @@ describe('DecisionReviewer', () => {
 
     context('when searched by', () => {
       it('date displays properly', () => {
+        const receivedAt = formatDateStr(documents[1].received_at);
+
         wrapper.find('input').simulate('change',
-          { target: { value: documents[1].received_at } });
+          { target: { value: receivedAt } });
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
         // Header and one filtered row.
         expect(textArray).to.have.length(2);
-        expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
+        expect(textArray[1]).to.include(receivedAt);
 
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
