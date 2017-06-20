@@ -177,7 +177,7 @@ describe EstablishClaim do
 
     context "when VBMS throws an error" do
       before do
-        allow(Appeal.repository).to receive(:establish_claim!).and_raise(vbms_error)
+        allow(VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
 
         # Save objects to test DB rollback stuff
         establish_claim.save!

@@ -504,7 +504,7 @@ RSpec.feature "Save Certification" do
       end
 
       scenario "Error cerifying appeal" do
-        allow(Appeal.repository).to receive(:upload_document_to_vbms).and_raise(vbms_error)
+        allow(VBMSService).to receive(:upload_document_to_vbms).and_raise(vbms_error)
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do

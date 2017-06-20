@@ -17,7 +17,7 @@ class VBMSCaseflowLogger
   end
 end
 
-class VBMSService
+class Fakes::VBMSService
   class << self
     attr_accessor :document_records
     attr_accessor :end_product_claim_id

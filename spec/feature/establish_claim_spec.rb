@@ -8,7 +8,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     BGSService.end_product_data = []
 
-    allow(Fakes::AppealRepository).to receive(:establish_claim!).and_call_original
+    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
@@ -341,7 +341,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     scenario "Error establishing claim" do
       # Duplicate EP error
-      allow(Appeal.repository).to receive(:establish_claim!).and_raise(ep_already_exists_error)
+      allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
       task.assign!(:assigned, current_user)
       visit "/dispatch/establish-claim/#{task.id}"
@@ -356,7 +356,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find_field("endProductModifier")[:value]).to eq("071")
 
       # Missing SSN error
-      allow(Appeal.repository).to receive(:establish_claim!).and_raise(missing_ssn_error)
+      allow(VBMSService).to receive(:establish_claim!).and_raise(missing_ssn_error)
 
       click_on "Create End Product"
       expect(page).to_not have_content("Success!")
@@ -559,7 +559,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".cf-progress-bar-activated", text: "2. Route Claim")
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
 
-        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -649,7 +649,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.appeal.reload.rice_compliance).to be_truthy
         expect(task.reload.completion_status).to eq("routed_to_ro")
 
-        expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -727,7 +727,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           expect(page).to have_content("Success!")
 
-          expect(Fakes::AppealRepository).to have_received(:establish_claim!).with(
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
               benefit_type_code: "1",
               payee_code: "00",
