@@ -18,9 +18,11 @@ class VBMSCaseflowLogger
 end
 
 class VBMSService
-  attr_accessor :document_records
-  attr_accessor :end_product_claim_id
-  attr_accessor :uploaded_form8, :uploaded_form8_appeal
+  class << self
+    attr_accessor :document_records
+    attr_accessor :end_product_claim_id
+    attr_accessor :uploaded_form8, :uploaded_form8_appeal
+  end
 
   def self.fetch_document_file(document)
     path =
