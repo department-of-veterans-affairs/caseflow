@@ -368,11 +368,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= vbms.fetch_documents_for(self)
-  end
-
-  def vbms
-    VBMSService
+    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
   end
 
   class << self
