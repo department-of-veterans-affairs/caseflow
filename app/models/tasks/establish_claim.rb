@@ -175,7 +175,7 @@ class EstablishClaim < Task
   end
 
   def establish_claim_in_vbms(end_product)
-    Appeal.repository.establish_claim!(
+    VBMSService.new.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: appeal.veteran.to_vbms_hash
     )

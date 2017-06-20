@@ -368,7 +368,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.repository.fetch_documents_for(self)
+    @fetched_documents ||= vbms.fetch_documents_for(self)
+  end
+
+  def vbms
+    @vbms ||= VBMSService.new
   end
 
   class << self
@@ -398,6 +402,10 @@ class Appeal < ActiveRecord::Base
 
     def bgs
       BGSService.new
+    end
+
+    def vbms
+      VBMSService.new
     end
 
     def repository

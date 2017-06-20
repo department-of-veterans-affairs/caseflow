@@ -60,6 +60,22 @@ class VBMSService
     document
   end
 
+  def initialize_upload(appeal, uploadable_document)
+    content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
+    filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+    request = VBMS::Requests::InitializeUpload.new(
+      content_hash: content_hash,
+      filename: filename,
+      file_number: appeal.sanitized_vbms_id,
+      va_receive_date: uploadable_document.upload_date,
+      doc_type: uploadable_document.document_type_id,
+      source: "VACOLS",
+      subject: uploadable_document.document_type,
+      new_mail: true
+    )
+    send_and_log_request(appeal.vbms_id, request)
+  end
+
   def upload_document_deprecated(appeal, uploadable_document)
     request = VBMS::Requests::UploadDocumentWithAssociations.new(
       appeal.sanitized_vbms_id,
@@ -86,22 +102,6 @@ class VBMSService
 
   def self.clean_document(location)
     File.delete(location)
-  end
-
-  def initialize_upload(appeal, uploadable_document)
-    content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
-    filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
-    request = VBMS::Requests::InitializeUpload.new(
-      content_hash: content_hash,
-      filename: filename,
-      file_number: appeal.sanitized_vbms_id,
-      va_receive_date: uploadable_document.upload_date,
-      doc_type: uploadable_document.document_type_id,
-      source: "VACOLS",
-      subject: uploadable_document.document_type,
-      new_mail: true
-    )
-    send_and_log_request(appeal.vbms_id, request)
   end
 
   def establish_claim!(veteran_hash:, claim_hash:)
