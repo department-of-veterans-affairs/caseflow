@@ -5,6 +5,8 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron , ChervonDown} from '../components/RenderFunctions';
+
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
@@ -30,6 +32,7 @@ class CommentIndicator extends React.PureComponent {
           onClick={this.toggleComments}>
           {annotationsCount}
           <i className={iconClassNames}/>
+          <ChervonDown />
         </Button>
       }
     </span>;
