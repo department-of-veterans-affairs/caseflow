@@ -66,9 +66,9 @@ export class PdfUI extends React.Component {
         />
         of {this.state.numPages}
       </span>;
-    } else {
-      return <em>Loading document...</em>;
     }
+
+    return <em>Loading document...</em>;
   }
 
   getPdfFooter = () => {
