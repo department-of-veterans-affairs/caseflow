@@ -12,10 +12,6 @@ class Reader::AppealController < Reader::ApplicationController
     end
   end
 
-  def logo_name
-    "Reader"
-  end
-
   def appeals
     appeals = current_user.current_case_assignments
 
@@ -28,9 +24,5 @@ class Reader::AppealController < Reader::ApplicationController
     appeals.map do |appeal|
       appeal.to_hash(viewed: opened_appeals_hash[appeal.id])
     end
-  end
-
-  def logo_path
-    reader_appeal_index_path
   end
 end

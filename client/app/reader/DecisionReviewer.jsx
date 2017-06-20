@@ -26,7 +26,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
-    this.rootRoute.displayName = 'RootRoute';
+    this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
@@ -145,11 +145,9 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = () => {
-    return <CaseSelect />;
-  }
+  routedCaseSelect = () => <CaseSelect />
 
-  rootRoute = (props) => {
+  documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
     return <LoadingScreen vacolsId={vacolsId}>
@@ -165,7 +163,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
-        <Route path="/:vacolsId/documents" render={this.rootRoute} />
+        <Route path="/:vacolsId/documents" render={this.documentsRoute} />
         <Route exact path="/" render={this.routedCaseSelect} />
       </div>
     </Router>;

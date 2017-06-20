@@ -121,9 +121,11 @@ RSpec.feature "Reader" do
 
         click_on "New", match: :first
 
+        expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")
 
         click_on "Caseflow Reader"
+        expect(page).to have_current_path("/reader/appeal")
 
         click_on "Continue"
 

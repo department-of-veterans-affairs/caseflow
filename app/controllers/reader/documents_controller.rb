@@ -1,4 +1,4 @@
-class Reader::DocumentsController < Reader::AppealController
+class Reader::DocumentsController < Reader::ApplicationController
   before_action :verify_access, :verify_reader_feature_enabled, :set_application
 
   def index
@@ -8,11 +8,7 @@ class Reader::DocumentsController < Reader::AppealController
         AppealView.find_or_create_by(
           appeal_id: appeal.id,
           user_id: current_user.id).tap do |t|
-          if !t.first_viewed_at
-            t.update!(first_viewed_at: Time.zone.now, last_viewed_at: Time.zone.now)
-          else
-            t.update!(last_viewed_at: Time.zone.now)
-          end
+          t.update!(last_viewed_at: Time.zone.now)
         end
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {

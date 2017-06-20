@@ -903,7 +903,7 @@ describe Appeal do
     end
   end
 
-  context ".create_appeal_without_lazy_load" do
+  context ".initialize_appeal_without_lazy_load" do
     let(:date) { Time.zone.today }
     let(:saved_appeal) do
       Generators::Appeal.build(
@@ -911,8 +911,8 @@ describe Appeal do
       )
     end
     let(:appeal) do
-      Appeal.create_appeal_without_lazy_load(vacols_id: saved_appeal.vacols_id,
-                                             signed_date: date)
+      Appeal.initialize_appeal_without_lazy_load(vacols_id: saved_appeal.vacols_id,
+                                                 signed_date: date)
     end
 
     it "creates an appeals object with attributes" do

@@ -342,7 +342,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def to_hash(viewed: nil)
-    appeal.serializable_hash(
+    serializable_hash(
       methods: [:veteran_full_name]
     ).tap do |hash|
       hash[:viewed] = viewed
@@ -436,10 +436,9 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
-    def create_appeal_without_lazy_load(hash)
+    def initialize_appeal_without_lazy_load(hash)
       appeal = find_or_initialize_by(vacols_id: hash[:vacols_id])
-      appeal.turn_off_lazy_loading
-      appeal.assign_attributes(hash)
+      appeal.turn_off_lazy_loading(initial_values: hash)
       appeal
     end
 
