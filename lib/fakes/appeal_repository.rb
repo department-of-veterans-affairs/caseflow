@@ -206,12 +206,12 @@ class Fakes::AppealRepository
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
-  def self.seed!
+  def self.seed!(app_name: nil)
     return if Rails.env.test?
 
-    seed_certification_data!
-    seed_establish_claim_data!
-    seed_reader_data!
+    seed_certification_data! if app_name == "Certification"
+    seed_establish_claim_data! if app_name == "Dispatch"
+    seed_reader_data! if app_name == "Reader"
   end
 
   def self.certification_documents
