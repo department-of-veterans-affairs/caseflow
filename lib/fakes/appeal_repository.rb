@@ -20,11 +20,10 @@ end
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
-    attr_accessor :document_records, :issue_records
-    attr_accessor :end_product_claim_id
+    attr_accessor :issue_records
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
-    attr_accessor :certified_appeal, :uploaded_form8, :uploaded_form8_appeal
+    attr_accessor :certified_appeal
 
     def records
       @records ||= {}
@@ -77,15 +76,6 @@ class Fakes::AppealRepository
     VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
-  def self.establish_claim!(claim_hash:, veteran_hash:)
-    Rails.logger.info("Submitting claim to VBMS...")
-    Rails.logger.info("Veteran data:\n #{veteran_hash}")
-    Rails.logger.info("Claim data:\n #{claim_hash}")
-
-    # return fake end product
-    OpenStruct.new(claim_id: @end_product_claim_id || Generators::Appeal.generate_external_id)
-  end
-
   def self.update_vacols_after_dispatch!(appeal:, vacols_note:)
     self.vacols_dispatch_update = { appeal: appeal, vacols_note: vacols_note }
   end
@@ -93,15 +83,6 @@ class Fakes::AppealRepository
   def self.update_location_after_dispatch!(appeal:)
     return if appeal.full_grant?
     self.location_updated_for = appeal
-  end
-
-  def self.upload_document_to_vbms(appeal, form8)
-    @uploaded_form8 = form8
-    @uploaded_form8_appeal = appeal
-  end
-
-  def self.clean_document(_location)
-    # noop
   end
 
   def self.raise_vbms_error_if_necessary(record)
@@ -162,29 +143,6 @@ class Fakes::AppealRepository
         appeal.assign_from_vacols(r)
       end
     end
-  end
-
-  def self.fetch_documents_for(appeal)
-    (document_records || {})[appeal.vbms_id] || @documents || []
-  end
-
-  def self.fetch_document_file(document)
-    path =
-      case document.vbms_document_id.to_i
-      when 1
-        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-      when 2
-        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
-      when 3
-        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
-      when 4
-        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
-      else
-        file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
-        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
-        file
-      end
-    IO.binread(path)
   end
 
   def self.remands_ready_for_claims_establishment
