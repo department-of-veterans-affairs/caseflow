@@ -107,7 +107,7 @@ describe EstablishClaim do
 
       context "if the task's appeal errors out on decision content load" do
         before do
-          expect(Appeal.repository).to receive(:fetch_document_file).and_raise("VBMS 500")
+          expect(VBMSService).to receive(:fetch_document_file).and_raise("VBMS 500")
           establish_claim.save!
         end
 
@@ -119,7 +119,7 @@ describe EstablishClaim do
 
       context "if the task caches decision content successfully" do
         before do
-          expect(Appeal.repository).to receive(:fetch_document_file) { "yay content!" }
+          expect(VBMSService).to receive(:fetch_document_file) { "yay content!" }
         end
 
         it "prepares task and caches decision document content" do
