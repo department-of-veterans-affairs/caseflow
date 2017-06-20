@@ -54,14 +54,17 @@ const doesQueryMatchDateTokens = (docDateTokens, searchQueryTokens) => {
   return hasMatched;
 };
 
-export const doDatesMatch = (date, query) => {
+const getDateTokens = (date) => {
   let docDateTokens = date.split(DASH);
 
+  return [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
+};
+
+export const doDatesMatch = (date, query) => {
   // move year to the end of the array to match
   // MM-DD-YYYY format
-  docDateTokens = [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
   const searchQueryTokens = parseQueryToTokens(query);
-
+  const docDateTokens = getDateTokens(date);
   // removing falsy values from the array
   const cleanedQueryTokens = _.compact(searchQueryTokens);
   let hasMatched = false;

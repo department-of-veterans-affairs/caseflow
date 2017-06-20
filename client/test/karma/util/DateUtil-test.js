@@ -23,13 +23,11 @@ describe('DateUtil', () => {
       expect(doDatesMatch('2017-06-12', '6/')).to.be.true;
       expect(doDatesMatch('2022-02-12', '02-')).to.be.true;
       expect(doDatesMatch('2022-02-01', '2-1-2022')).to.be.true;
-      expect(doDatesMatch('2022-02-12', '2022-02-12')).to.be.false;
       expect(doDatesMatch('2022-02-12', '-02-12')).to.be.false;
       expect(doDatesMatch('2022-02-12', 'a2-12-22')).to.be.false;
       expect(doDatesMatch('2022-02-12', '02-2022-02')).to.be.false;
       expect(doDatesMatch('2022-02-12', '2017 ')).to.be.false;
       expect(doDatesMatch('2022-02-12', '/2022')).to.be.true;
-      expect(doDatesMatch('2022-02-12', '-2022')).to.be.true;
       expect(doDatesMatch('2022-02-12', '//2022')).to.be.true;
     });
   });
