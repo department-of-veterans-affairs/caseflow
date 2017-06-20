@@ -98,6 +98,7 @@ class UnconnectedSignAndCertify extends React.Component {
     } else if (this.isFieldErrored('certifyingOfficialNameLength')) {
       return ERRORS.fieldLength;
     }
+
     return null;
   }
 
@@ -107,6 +108,7 @@ class UnconnectedSignAndCertify extends React.Component {
     } else if (this.isFieldErrored('certifyingOfficialTitleOtherLength')) {
       return ERRORS.fieldLength;
     }
+
     return null;
   }
 
