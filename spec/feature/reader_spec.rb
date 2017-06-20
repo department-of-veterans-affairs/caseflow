@@ -662,6 +662,24 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Form 9")
     end
 
+    scenario "When user is searching for reciept dates" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      search_query = "06/19/2017"
+      fill_in "searchBar", with: search_query
+      expect(page.all('#documents-table-body tr').count).to eq(1)
+      expect(page).to have_content("NOD")
+      find("#button-clear-search").click
+      expect(page.all('#documents-table-body tr').count).to eq(documents.size)
+
+      fill_in "searchBar", with: "/13"
+      expect(page.all('#documents-table-body tr').count).to eq(1)
+      expect(page).to have_content("BVA Decision")
+      find("#button-clear-search").click
+
+      fill_in "searchBar", with: "/2017 "
+      expect(page.all('#documents-table-body tr').count).to eq(documents.size)
+    end
+
     scenario "When user search term is not found" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       search_query = "does not exist in annotations"

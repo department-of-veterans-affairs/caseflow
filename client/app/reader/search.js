@@ -25,7 +25,7 @@ const tagContainsString = (searchQuery, doc) =>
   , false);
 
 export const searchString = (searchQuery, state) => (doc) => {  
-  return !searchQuery || searchQuery.split(' ').each((searchWord) => {
+  return !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
       doDatesMatch(doc.receivedAt, searchQuery.trim()) ||
       typeContainsString(searchWord, doc) ||
