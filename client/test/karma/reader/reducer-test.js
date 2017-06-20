@@ -8,6 +8,48 @@ describe('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
 
+  describe(Constants.RECEIVE_DOCUMENTS, () => {
+    it('updates documents object when received', () => {
+      const date = new Date();
+      const documents = [{
+        id: 0,
+        tags: [],
+        receivedAt: date,
+        received_at: date,
+        listComments: false
+      }];
+      const vacolsId = 1;
+      const state = reduceActions([
+        {
+          type: Constants.RECEIVE_DOCUMENTS,
+          payload: {
+            documents,
+            vacolsId
+          }
+        }
+      ]);
+
+      expect(state.documents[documents[0].id]).to.deep.equal(documents[0]);
+      expect(state.loadedAppealId).to.deep.equal(vacolsId);
+    })
+
+    it('updates documents object when null is passed', () => {
+      const date = new Date();
+      const documents = null;
+      const state = reduceActions([
+        {
+          type: Constants.RECEIVE_DOCUMENTS,
+          payload: {
+            documents
+          }
+        }
+      ]);
+
+      expect(state.documents).to.deep.equal({});
+      expect(state.loadedAppealId).to.be.falsey;
+    })
+  })
+
   describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
     const state = reduceActions([{ type: Constants.REQUEST_INITIAL_DATA_FAILURE }]);
 
