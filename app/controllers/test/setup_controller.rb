@@ -1,6 +1,5 @@
 class Test::SetupController < ApplicationController
   before_action :require_non_prod, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
-  before_action :set_application
 
   def index
     @certification_appeal = "UNCERTIFY_ME"
@@ -66,10 +65,6 @@ class Test::SetupController < ApplicationController
       flash[:error] = "Failed to toggle #{feature}!"
     end
     redirect_to action: "index"
-  end
-
-  def set_application
-    RequestStore.store[:application] = "internal"
   end
 
   private
