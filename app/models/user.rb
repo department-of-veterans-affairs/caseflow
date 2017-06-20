@@ -99,16 +99,33 @@ class User < ActiveRecord::Base
     tasks.to_complete.find_by(type: task_type)
   end
 
-  def current_case_assignments
-    self.class.case_assignment_repository.load_from_vacols(vacols_id)
-  end
-
   def to_hash
     serializable_hash
   end
 
   def station_offices
     VACOLS::RegionalOffice::STATIONS[station_id]
+  end
+
+  def current_case_assignments_with_views
+    appeals = current_case_assignments
+    opened_appeals = viewed_appeals(appeals.map(&:id))
+
+    appeals.map do |appeal|
+      appeal.to_hash(viewed: opened_appeals[appeal.id])
+    end
+  end
+
+  private
+
+  def current_case_assignments
+    self.class.case_assignment_repository.load_from_vacols(vacols_id)
+  end
+
+  def viewed_appeals(appeal_ids)
+    appeal_views.where(appeal_id: appeal_ids).each_with_object({}) do |appeal_view, object|
+      object[appeal_view.appeal_id] = true
+    end
   end
 
   class << self

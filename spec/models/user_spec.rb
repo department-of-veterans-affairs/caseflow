@@ -190,6 +190,40 @@ describe User do
     end
   end
 
+  context "#current_case_assignments_with_views" do
+    subject { user.current_case_assignments_with_views[0] }
+
+    let(:appeal) { Generators::Appeal.create }
+
+    before do
+      Fakes::CaseAssignmentRepository.appeal_records = [appeal]
+    end
+
+    context "has hash without view" do
+      it do
+        is_expected.to include(
+          "vbms_id" => appeal.vbms_id,
+          "vacols_id" => appeal.vacols_id,
+          "veteran_full_name" => appeal.veteran_full_name,
+          viewed: nil)
+      end
+    end
+
+    context "has hash with view" do
+      before do
+        AppealView.create(user_id: user.id, appeal_id: appeal.id)
+      end
+
+      it do
+        is_expected.to include(
+          "vbms_id" => appeal.vbms_id,
+          "vacols_id" => appeal.vacols_id,
+          "veteran_full_name" => appeal.veteran_full_name,
+          viewed: true)
+      end
+    end
+  end
+
   context ".from_session" do
     subject { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
     context "gets a user object from a session" do

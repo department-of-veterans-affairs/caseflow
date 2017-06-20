@@ -61,11 +61,24 @@ describe AssociatedVacolsModel do
   end
 
   context "#turn_off_lazy_loading" do
-    before { model.turn_off_lazy_loading }
+    let(:foo_value) { "George" }
+    before { model.turn_off_lazy_loading(initial_values: { foo: foo_value }) }
 
     it "will not load data when check_and_load_vacols_data is called" do
       expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(0).times
       expect(model.check_and_load_vacols_data!).to be_truthy
+    end
+
+    it "will raise an error when a getter is called for a non-initialized variable" do
+      expect { model.bar }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOff)
+    end
+
+    it "will raise an error when a setter is called for a non-initialized variable" do
+      expect { model.bar = 5 }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOff)
+    end
+
+    it "will return set initial value when a getter is called for an initialized variable" do
+      expect(model.foo).to eq(foo_value)
     end
   end
 

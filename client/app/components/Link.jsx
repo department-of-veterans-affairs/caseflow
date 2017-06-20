@@ -39,6 +39,6 @@ export default class Link extends React.Component {
 
 Link.propTypes = {
   to: PropTypes.string,
-  button: PropTypes.bool,
+  button: PropTypes.string,
   children: PropTypes.node
 };
