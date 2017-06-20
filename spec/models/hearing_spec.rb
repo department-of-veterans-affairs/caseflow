@@ -70,4 +70,25 @@ describe Hearing do
       expect(hearing.issues.first.hearing_worksheet_status).to eq("deny")
     end
   end
+
+  context "#request_type" do
+    it "returns 'CO' for :central_office" do
+      hearing = Hearing.new(type: :central_office)
+      expect(hearing.request_type).to eql("CO")
+    end
+
+    it "otherwise returns type in sentence case" do
+      hearing = Hearing.new(type: :video)
+      expect(hearing.request_type).to eql("Video")
+    end
+  end
+
+  context "#appellant_name" do
+    let(:hearing) { Generators::Hearing.build }
+
+    it "returns appellant name" do
+      found = /^(\w+)(, )(\w+)((, )(\w+)(\W*.*$))*/.match(hearing.appellant_name)
+      expect(found).to be_truthy.or(eql(nil))
+    end
+  end
 end

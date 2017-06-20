@@ -34,5 +34,8 @@ node_modules
 .env
 client/.agignore
 
+# Ignore rspec results
+spec/support/form8-TEST.pdf
+
 # Generated js bundles
 /app/assets/webpack/*

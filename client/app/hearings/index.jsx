@@ -7,6 +7,7 @@ import thunk from 'redux-thunk';
 
 import ConfigUtil from '../util/ConfigUtil';
 import Dockets from './Dockets';
+import Docket from './Docket';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 
 const configureStore = (data) => {
@@ -45,9 +46,11 @@ const Hearings = ({ hearings }) => {
     <div>
       <BrowserRouter>
         <div>
-        <Route path="/hearings/dockets"
-          component={() => (<Dockets veteran_law_judge={hearings.veteran_law_judge} />)}/>
-      </div>
+          <Route exact path="/hearings/dockets"
+            component={() => (<Dockets veteran_law_judge={hearings.veteran_law_judge} />)}/>
+          <Route exact path="/hearings/dockets/:date"
+            component={() => (<Docket veteran_law_judge={hearings.veteran_law_judge} />)}/>
+        </div>
       </BrowserRouter>
     </div>
   </Provider>;

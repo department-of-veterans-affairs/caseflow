@@ -28,7 +28,7 @@ export default class TextareaField extends React.Component {
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <textarea
+      <div><textarea
         name={name}
         id={id || name}
         onChange={this.onChange}
@@ -36,7 +36,7 @@ export default class TextareaField extends React.Component {
         type={type}
         value={value}
         maxLength={maxlength}
-      />
+      /></div>
       {(characterLimitCount !== maxlength && maxlength) &&
         <p><i>{characterLimitCount} characters left</i></p>
       }
