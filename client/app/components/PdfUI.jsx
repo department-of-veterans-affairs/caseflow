@@ -146,17 +146,6 @@ export class PdfUI extends React.Component {
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
             </span>
-            {this.props.hidePdfSidebar &&
-              <span className="cf-pdf-open-menu">
-                <Button
-                  name="open menu"
-                  classNames={['cf-pdf-button']}
-                  onClick={this.props.handleTogglePdfSidebar}>
-                  <strong>
-                    Open menu
-                  </strong>
-                </Button>
-              </span>}
             </span>
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-right">
@@ -188,6 +177,17 @@ export class PdfUI extends React.Component {
             ariaLabel="download pdf">
             <DownloadIcon />
           </Button>
+          {this.props.hidePdfSidebar &&
+            <span className="cf-pdf-open-menu">
+              <Button
+                name="open menu"
+                classNames={['cf-pdf-button']}
+                onClick={this.props.handleTogglePdfSidebar}>
+                <strong>
+                  Open menu
+                </strong>
+              </Button>
+            </span>}
         </span>
       </div>
       <div>
