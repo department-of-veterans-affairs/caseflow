@@ -24,7 +24,6 @@ const MONTH_INDEX = 1;
 const DAY_INDEX = 2;
 const DASH = '-';
 const SLASH = '/';
-const SIZE_ONE = 1;
 
 const parseQueryToTokens = (query) => {
   // date format passed in needs be in YYYY-MM-DD
@@ -71,7 +70,7 @@ export const doDatesMatch = (date, query) => {
 
   // if the query is one word
   // check if the string contains the word.
-  if (cleanedQueryTokens.length === SIZE_ONE) {
+  if (cleanedQueryTokens.length === 1) {
     hasMatched = _.includes(date, cleanedQueryTokens[0]);
   } else {
     hasMatched = doesQueryMatchDateTokens(docDateTokens, searchQueryTokens);
