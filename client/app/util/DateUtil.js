@@ -24,6 +24,8 @@ const MONTH_INDEX = 1;
 const DAY_INDEX = 2;
 const DASH = '-';
 const SLASH = '/';
+const SIZE_ONE = 1;
+const EMPTY_STRING = '';
 
 export const doDatesMatch = (date, query) => {
 
@@ -41,13 +43,21 @@ export const doDatesMatch = (date, query) => {
     searchQueryTokens = query.toLowerCase().split(SLASH);
   }
 
-  let hasMatched = true;
+  const cleanedSearchQueryTokens = searchQueryTokens.filter((token) => token !== EMPTY_STRING);
+  let hasMatched = false;
 
-  searchQueryTokens.forEach((queryToken, index) => {
-    if (!_.includes(updatedDocDateTokens[index], queryToken)) {
-      hasMatched = false;
-    }
-  });
+  // if the query is one word
+  // check if the string contains the word.
+  if (cleanedSearchQueryTokens.length === SIZE_ONE) {
+    hasMatched = _.includes(date, cleanedSearchQueryTokens[0]);
+  } else {
+    hasMatched = true;
+    searchQueryTokens.forEach((queryToken, index) => {
+      if (!_.includes(updatedDocDateTokens[index], queryToken)) {
+        hasMatched = false;
+      }
+    });
+  }
 
   return hasMatched;
 };
