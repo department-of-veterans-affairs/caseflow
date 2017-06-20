@@ -187,7 +187,7 @@ class DocumentsTable extends React.Component {
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
-        return <b>{content}</b>;
+        return <strong>{content}</strong>;
       }
 
       return content;
