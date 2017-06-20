@@ -920,7 +920,7 @@ describe Appeal do
     end
 
     it "appeal does not lazy load vacols data" do
-      expect(appeal.veteran_first_name).to be_nil
+      expect{ appeal.veteran_first_name }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOffError)
     end
   end
 end
