@@ -150,6 +150,7 @@
 
 .Select-input > input {
   width: 100%;
+  max-width: 270px;
   background: none transparent;
   border: 0 none;
   box-shadow: none;
@@ -283,6 +284,8 @@
   box-sizing: border-box;
   max-height: 200px;
   min-height: 180px;
+  max-width: 100%;
+  word-break: break-all;
   position: absolute;
   top: 100%;
   width: 100%;
@@ -361,6 +364,8 @@
 }
 
 .Select--multi .Select-value-label {
+  max-width: 240px;
+  word-break: break-all;
   border-bottom-right-radius: 2px;
   border-top-right-radius: 2px;
   cursor: default;
