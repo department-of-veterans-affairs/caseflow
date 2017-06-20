@@ -18,7 +18,7 @@ end
 # :nocov:
 
 class VBMSService
-  def fetch_document_file(document)
+  def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
     vbms_id = document.vbms_document_id
@@ -31,7 +31,7 @@ class VBMSService
     result && result.content
   end
 
-  def fetch_documents_for(appeal)
+  def self.fetch_documents_for(appeal)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
@@ -49,7 +49,7 @@ class VBMSService
     end
   end
 
-  def upload_document_to_vbms(appeal, form8)
+  def self.upload_document_to_vbms(appeal, form8)
     @vbms_client ||= init_vbms_client
     document = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
                  response = initialize_upload(appeal, form8)
@@ -60,7 +60,7 @@ class VBMSService
     document
   end
 
-  def initialize_upload(appeal, uploadable_document)
+  def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
     filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
@@ -76,7 +76,7 @@ class VBMSService
     send_and_log_request(appeal.vbms_id, request)
   end
 
-  def upload_document_deprecated(appeal, uploadable_document)
+  def self.upload_document_deprecated(appeal, uploadable_document)
     request = VBMS::Requests::UploadDocumentWithAssociations.new(
       appeal.sanitized_vbms_id,
       uploadable_document.upload_date,
@@ -92,7 +92,7 @@ class VBMSService
     send_and_log_request(appeal.vbms_id, request)
   end
 
-  def upload_document(vbms_id, upload_token, filepath)
+  def self.upload_document(vbms_id, upload_token, filepath)
     request = VBMS::Requests::UploadDocument.new(
       upload_token: upload_token,
       filepath: filepath
@@ -104,7 +104,7 @@ class VBMSService
     File.delete(location)
   end
 
-  def establish_claim!(veteran_hash:, claim_hash:)
+  def self.establish_claim!(veteran_hash:, claim_hash:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(veteran_hash, claim_hash)
@@ -112,14 +112,14 @@ class VBMSService
     send_and_log_request(veteran_hash[:file_number], request)
   end
 
-  def init_vbms_client
+  def self.init_vbms_client
     VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"]
     )
   end
 
-  def send_and_log_request(vbms_id, request)
+  def self.send_and_log_request(vbms_id, request)
     name = request.class.name.split("::").last
     MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
                           service: :vbms,

@@ -22,7 +22,7 @@ class VBMSService
   attr_accessor :end_product_claim_id
   attr_accessor :uploaded_form8, :uploaded_form8_appeal
 
-  def fetch_document_file(document)
+  def self.fetch_document_file(document)
     path =
       case document.vbms_document_id.to_i
       when 1
@@ -41,21 +41,20 @@ class VBMSService
     IO.binread(path)
   end
 
-  def fetch_documents_for(appeal)
+  def self.fetch_documents_for(appeal)
     (document_records || {})[appeal.vbms_id] || @documents || []
   end
-  attr_accessor :uploaded_form8, :uploaded_form8_appeal
 
-  def upload_document_to_vbms(appeal, form8)
+  def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
   end
 
-  def clean_document(_location)
+  def self.clean_document(_location)
     # noop
   end
 
-  def establish_claim!(claim_hash:, veteran_hash:)
+  def self.establish_claim!(claim_hash:, veteran_hash:)
     Rails.logger.info("Submitting claim to VBMS...")
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")

@@ -372,7 +372,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def vbms
-    @vbms ||= VBMSService.new
+    VBMSService
   end
 
   class << self
@@ -405,7 +405,7 @@ class Appeal < ActiveRecord::Base
     end
 
     def vbms
-      VBMSService.new
+      VBMSService
     end
 
     def repository
@@ -420,8 +420,8 @@ class Appeal < ActiveRecord::Base
       fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
-      repository.upload_document_to_vbms(appeal, form8)
-      repository.clean_document(form8.pdf_location)
+      vbms.upload_document_to_vbms(appeal, form8)
+      vbms.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?

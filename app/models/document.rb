@@ -78,7 +78,7 @@ class Document < ActiveRecord::Base
   # Log where we get the file from for now for easy verification
   # of S3 integration.
   def fetch_and_cache_document_from_vbms
-    @content = vbms_service.fetch_document_file(self)
+    @content = vbms.fetch_document_file(self)
     S3Service.store_file(file_name, @content)
     Rails.logger.info("File #{vbms_document_id} fetched from VBMS")
     @content
@@ -173,7 +173,7 @@ class Document < ActiveRecord::Base
     document.merge_into(self)
   end
 
-  def vbms_service
-    @vbms_service ||= VBMSService.new
+  def vbms
+    VBMSService
   end
 end
