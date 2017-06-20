@@ -64,29 +64,77 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
+class Column extends React.PureComponent {
+  // componentWillReceiveProps() {
+  //   // console.log(this.props.getCellValue(nextProps.rowObject, nextProps.rowId, nextProps.column) ===
+  //   // this.props.getCellValue(this.props.rowObject, this.props.rowId, this.props.column));
+  //   console.log("IN COLUMN");
+  // }
+  // shouldComponentUpdate() {
+  //   console.log("SHOULD");
+  //   return true;
+  // }
+  render() {
+    const { column, rowObject, footer, rowId } = this.props;
+    console.log("HERE");
+    //console.log(getCellValue(rowObject, rowId, column));
+    return <td
+      className={cellClasses(column)}
+      colSpan={getCellSpan(rowObject, column)}>
+      {footer ?
+        column.footer :
+        getCellValue(rowObject, rowId, column)}
+    </td>;
+  }
+}
+
 class Row extends React.PureComponent {
+  componentWillReceiveProps(nextProps) {
+    // console.log("IN ROW");
+    // console.log(getColumns(nextProps.rowObject));
+    // console.log(getColumns(this.props.rowObject));
+    // console.log(_.isEqual(nextProps.rowObject, this.props.rowObject));
+  }
+  shouldComponentUpdate(nextProps) {
+    // console.log(getColumns(nextProps));
+    // console.log(getColumns(this.props));
+    // console.log(this.props);
+
+    return true;
+  }
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
 
     return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
       {getColumns(props).map((column, columnNumber) =>
-        <td
+        <Column
           key={columnNumber}
-          className={cellClasses(column)}
-          colSpan={getCellSpan(props.rowObject, column)}>
-          {props.footer ?
-            column.footer :
-            getCellValue(props.rowObject, props.rowId, column)}
-        </td>
+          columnNumber={columnNumber}
+          column={column}
+          rowObject={props.rowObject}
+          rowId={props.rowId}
+          footer={props.footer}
+        />
       )}
     </tr>;
   }
 }
 
 class BodyRows extends React.PureComponent {
+  // shouldComponentUpdate(nextProps) {
+  //     //console.log("SHOULD");
+  //     console.log(getColumns(nextProps));
+  //     console.log(getColumns(this.props));
+  //     console.log(_.isEqual(nextProps, this.props));
+
+  //     return true;
+  //   }
+
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
+
+    console.log(getColumns(this.props));
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id}>
       {rowObjects.map((object, rowNumber) => {
@@ -117,6 +165,13 @@ class FooterRow extends React.PureComponent {
 
 export default class Table extends React.PureComponent {
   defaultRowClassNames = () => ''
+
+  componentWillReceiveProps(nextProps) {
+    console.log("IN ROW");
+    console.log(getColumns(nextProps));
+    console.log(getColumns(this.props));
+    console.log(_.isEqual(getColumns(nextProps).valueFunction, getColumns(this.props).valueFunction));
+  }
 
   render() {
     let {

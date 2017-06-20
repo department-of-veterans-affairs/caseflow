@@ -12,6 +12,7 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
+import Highlighter from 'react-highlight-words';
 
 import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
@@ -184,12 +185,18 @@ class DocumentsTable extends React.Component {
     let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
       aria-hidden="true"></i>;
 
-    let boldUnreadContent = (content, doc) => {
+    let boldUnreadContent = (doc) => {
+      const hello = <a
+        href={this.singleDocumentView}
+        onMouseUp={this.props.showPdf(doc.id)}>
+        <Highlighter textToHighlight={doc.type} searchWords={this.props.docFilterCriteria.searchQuery.split(' ')} />
+      </a>
+
       if (!doc.opened_by_current_user) {
-        return <b>{content}</b>;
+         return <div className="bold">{hello}</div>;
       }
 
-      return content;
+      return hello;
     };
 
     const clearFilters = () => {
@@ -213,6 +220,7 @@ class DocumentsTable extends React.Component {
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
     if (row && row.isComment) {
+      
       return [{
         valueFunction: (doc) => {
           const comments = this.props.annotationsPerDocument[doc.id];
@@ -224,6 +232,7 @@ class DocumentsTable extends React.Component {
               page={comment.page}
               onJumpToComment={this.props.onJumpToComment(comment)}
               uuid={comment.uuid}
+              searchQuery={this.props.docFilterCriteria.searchQuery}
               horizontalLayout={true}>
                 {comment.comment}
               </Comment>;
@@ -242,7 +251,7 @@ class DocumentsTable extends React.Component {
 
     const isTagDropdownFilterOpen =
       _.get(this.props.pdfList, ['dropdowns', 'tag']);
-
+    
     return [
       {
         cellClass: 'last-read-column',
@@ -293,12 +302,7 @@ class DocumentsTable extends React.Component {
         header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
         </div>,
-        valueFunction: (doc) => boldUnreadContent(
-          <a
-            href={this.singleDocumentView}
-            onMouseUp={this.props.showPdf(doc.id)}>
-            {doc.type}
-          </a>, doc)
+        valueFunction: (doc) => boldUnreadContent(doc)
       },
       {
         cellClass: 'tags-column',
@@ -326,7 +330,8 @@ class DocumentsTable extends React.Component {
         </div>,
         valueFunction: (doc) => {
           return <TagTableColumn
-            doc={doc}
+            searchQuery={this.props.docFilterCriteria.searchQuery}
+            tags={doc.tags}
           />;
         }
       },
@@ -403,7 +408,8 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
   ..._.pick(state, 'tagOptions'),
-  ..._.pick(state.ui, 'pdfList')
+  ..._.pick(state.ui, 'pdfList'),
+  ..._.pick(state.ui, 'docFilterCriteria')
 });
 
 export default connect(
