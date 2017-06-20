@@ -1,8 +1,10 @@
+/* eslint-disable max-lines */
 import { expect } from 'chai';
 import { reducer } from '../../../app/reader/reducer';
 import * as Constants from '../../../app/reader/constants';
 
 /* eslint-disable no-undefined */
+/* eslint-disable no-unused-expressions */
 
 describe('Reader reducer', () => {
 
@@ -31,10 +33,9 @@ describe('Reader reducer', () => {
 
       expect(state.documents[documents[0].id]).to.deep.equal(documents[0]);
       expect(state.loadedAppealId).to.deep.equal(vacolsId);
-    })
+    });
 
     it('updates documents object when null is passed', () => {
-      const date = new Date();
       const documents = null;
       const state = reduceActions([
         {
@@ -46,9 +47,9 @@ describe('Reader reducer', () => {
       ]);
 
       expect(state.documents).to.deep.equal({});
-      expect(state.loadedAppealId).to.be.falsey;
-    })
-  })
+      expect(state.loadedAppealId).to.be.undefined;
+    });
+  });
 
   describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
     const state = reduceActions([{ type: Constants.REQUEST_INITIAL_DATA_FAILURE }]);
