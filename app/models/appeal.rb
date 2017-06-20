@@ -343,9 +343,10 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil)
     serializable_hash(
-      methods: [:veteran_full_name]
+      methods: [:veteran_full_name],
+      includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
-      hash[:viewed] = viewed
+      hash["viewed"] = viewed
     end
   end
 

@@ -39,8 +39,8 @@ ActiveRecord::Schema.define(version: 20170615162530) do
   create_table "appeal_views", force: :cascade do |t|
     t.integer  "user_id",        null: false
     t.integer  "appeal_id",      null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
     t.datetime "last_viewed_at"
   end
 

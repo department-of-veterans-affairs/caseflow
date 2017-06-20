@@ -1,7 +1,7 @@
 module AssociatedVacolsModel
   extend ActiveSupport::Concern
 
-  class LazyLoadingTurnedOff < StandardError; end
+  class LazyLoadingTurnedOffError < StandardError; end
 
   module ClassMethods
     # vacols_attr_accessors will lazy load the underlying data from the VACOLS DB upon first call
@@ -14,7 +14,7 @@ module AssociatedVacolsModel
       fields.each do |field|
         define_method field do
           if !lazy_loading_enabled?
-            fail LazyLoadingTurnedOff unless @initial_values.key?(field)
+            fail LazyLoadingTurnedOffError unless @initial_values.key?(field)
             @initial_values[field]
           else
             check_and_load_vacols_data!
@@ -23,7 +23,7 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
-          fail LazyLoadingTurnedOff unless lazy_loading_enabled?
+          fail LazyLoadingTurnedOffError unless lazy_loading_enabled?
           check_and_load_vacols_data!
           instance_variable_set("@#{field}".to_sym, value)
         end

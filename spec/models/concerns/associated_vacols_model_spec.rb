@@ -70,11 +70,11 @@ describe AssociatedVacolsModel do
     end
 
     it "will raise an error when a getter is called for a non-initialized variable" do
-      expect { model.bar }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOff)
+      expect { model.bar }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOffError)
     end
 
     it "will raise an error when a setter is called for a non-initialized variable" do
-      expect { model.bar = 5 }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOff)
+      expect { model.bar = 5 }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOffError)
     end
 
     it "will return set initial value when a getter is called for an initialized variable" do

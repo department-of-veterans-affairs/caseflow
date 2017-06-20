@@ -7,8 +7,7 @@ class CreateAppealView < ActiveRecord::Migration
       t.belongs_to :user, null: false
       t.belongs_to :appeal, null: false
 
-      t.datetime   :created_at
-      t.datetime   :updated_at
+      t.timestamps null: false
       t.datetime   :last_viewed_at
     end
 

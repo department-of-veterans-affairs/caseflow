@@ -205,7 +205,7 @@ describe User do
           "vbms_id" => appeal.vbms_id,
           "vacols_id" => appeal.vacols_id,
           "veteran_full_name" => appeal.veteran_full_name,
-          viewed: nil)
+          "viewed" => nil)
       end
     end
 
@@ -219,7 +219,7 @@ describe User do
           "vbms_id" => appeal.vbms_id,
           "vacols_id" => appeal.vacols_id,
           "veteran_full_name" => appeal.veteran_full_name,
-          viewed: true)
+          "viewed" => true)
       end
     end
   end
