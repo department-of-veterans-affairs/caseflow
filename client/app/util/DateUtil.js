@@ -25,7 +25,6 @@ const DAY_INDEX = 2;
 const DASH = '-';
 const SLASH = '/';
 const SIZE_ONE = 1;
-const EMPTY_STRING = '';
 
 const parseDateToTokens = (date, query) => {
   // date format passed in needs be in YYYY-MM-DD
@@ -38,7 +37,7 @@ const parseDateToTokens = (date, query) => {
   }
 
   // returning after removing empty strings from the tokens
-  return searchQueryTokens.filter((token) => token !== EMPTY_STRING);
+  return searchQueryTokens;
 };
 
 export const doDatesMatch = (date, query) => {
@@ -48,12 +47,15 @@ export const doDatesMatch = (date, query) => {
   // MM-DD-YYYY format
   const updatedDocDateTokens = [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
   const searchQueryTokens = parseDateToTokens(date, query);
+
+  // removing falsy values from the array
+  const cleanedQueryTokens = _.compact(searchQueryTokens);
   let hasMatched = false;
 
   // if the query is one word
   // check if the string contains the word.
-  if (searchQueryTokens.length === SIZE_ONE) {
-    hasMatched = _.includes(date, searchQueryTokens[0]);
+  if (cleanedQueryTokens.length === SIZE_ONE) {
+    hasMatched = _.includes(date, cleanedQueryTokens[0]);
   } else {
     hasMatched = true;
 
