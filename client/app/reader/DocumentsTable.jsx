@@ -8,6 +8,7 @@ import { openDocumentInNewTab } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
+import Button from '../components/Button';
 import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
@@ -186,7 +187,7 @@ class DocumentsTable extends React.Component {
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
-        return <b>{content}</b>;
+        return <strong>{content}</strong>;
       }
 
       return content;
@@ -251,8 +252,7 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'categories-column',
         header: <div
-          id="categories-header"
-          className="document-list-header-categories">
+          id="categories-header">
           Categories <FilterIcon
             label="Filter by category"
             idPrefix="category"
@@ -277,12 +277,12 @@ class DocumentsTable extends React.Component {
       },
       {
         cellClass: 'receipt-date-column',
-        header: <div
+        header: <Button
           id="receipt-date-header"
-          className="document-list-header-recepit-date"
+          classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
-        </div>,
+        </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
             {formatDateStr(doc.receivedAt)}
@@ -290,9 +290,11 @@ class DocumentsTable extends React.Component {
       },
       {
         cellClass: 'doc-type-column',
-        header: <div id="type-header" onClick={() => this.props.changeSortState('type')}>
+        header: <Button id="type-header"
+        classNames={['cf-document-list-button-header']}
+        onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
-        </div>,
+        </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
             href={this.singleDocumentView}
