@@ -24,7 +24,7 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, state) => (doc) => (
+export const searchString = (searchQuery, state) => (doc) =>
   !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
       doDatesMatch(doc.receivedAt.toLowerCase(), searchQuery.trim()) ||
@@ -32,5 +32,4 @@ export const searchString = (searchQuery, state) => (doc) => (
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
-  })
-);
+  });

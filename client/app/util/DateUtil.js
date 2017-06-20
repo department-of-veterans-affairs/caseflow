@@ -27,15 +27,9 @@ const SLASH = '/';
 const SIZE_ONE = 1;
 const EMPTY_STRING = '';
 
-export const doDatesMatch = (date, query) => {
-
+const parseDateToTokens = (date, query) => {
   // date format passed in needs be in YYYY-MM-DD
   // example: 2016-06-12
-  const docDateTokens = date.split(DASH);
-
-  // move year to the end of the array to match
-  // MM-DD-YYYY format
-  const updatedDocDateTokens = [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
   let searchQueryTokens = query.toLowerCase().split(DASH);
 
   // if no dashes exist in the query
@@ -43,8 +37,17 @@ export const doDatesMatch = (date, query) => {
     searchQueryTokens = query.toLowerCase().split(SLASH);
   }
 
-  // removing empty strings from the tokens
-  searchQueryTokens = searchQueryTokens.filter((token) => token !== EMPTY_STRING);
+  // returning after removing empty strings from the tokens
+  return searchQueryTokens.filter((token) => token !== EMPTY_STRING);
+};
+
+export const doDatesMatch = (date, query) => {
+  const docDateTokens = date.split(DASH);
+
+  // move year to the end of the array to match
+  // MM-DD-YYYY format
+  const updatedDocDateTokens = [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
+  const searchQueryTokens = parseDateToTokens(date, query);
   let hasMatched = false;
 
   // if the query is one word
@@ -53,6 +56,9 @@ export const doDatesMatch = (date, query) => {
     hasMatched = _.includes(date, searchQueryTokens[0]);
   } else {
     hasMatched = true;
+
+    // going through the query tokens and seeing if they equal and
+    // match up with the date format
     searchQueryTokens.forEach((queryToken, index) => {
       if (!_.includes(updatedDocDateTokens[index], queryToken)) {
         hasMatched = false;
