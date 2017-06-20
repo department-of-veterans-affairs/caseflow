@@ -341,6 +341,14 @@ class Appeal < ActiveRecord::Base
     events.last.try(:date)
   end
 
+  def to_hash(viewed: nil)
+    appeal.serializable_hash(
+      methods: [:veteran_full_name]
+    ).tap do |hash|
+      hash[:viewed] = viewed
+    end
+  end
+
   private
 
   def matched_document(type, vacols_datetime)

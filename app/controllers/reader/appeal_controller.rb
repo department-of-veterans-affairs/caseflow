@@ -1,7 +1,7 @@
-class Reader::AppealController < ApplicationController
+class Reader::AppealController < Reader::ApplicationController
   def index
     respond_to do |format|
-      format.html { return render(:index) }
+      format.html { render(:index) }
       format.json do
         MetricsService.record "Get assignments for #{current_user.vacols_id}" do
           render json: {
@@ -26,11 +26,7 @@ class Reader::AppealController < ApplicationController
     end
 
     appeals.map do |appeal|
-      appeal.serializable_hash(
-        methods: [:veteran_full_name]
-      ).tap do |hash|
-        hash[:viewed] = opened_appeals_hash[appeal.id]
-      end
+      appeal.to_hash(viewed: opened_appeals_hash[appeal.id])
     end
   end
 
