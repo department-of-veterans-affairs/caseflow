@@ -35,8 +35,7 @@ const ERRORS = {
   certifyingOfficialName: 'Please enter the name of the certifying official (usually your name).',
   certifyingOfficialTitle: 'Please enter the title of the certifying official.',
   certificationDate: "Please enter today's date.",
-  certifyingOfficialNameLength: 'Maximum length of certifying official\'s name reached.',
-  certifyingOfficialTitleOtherLength: 'Maximum length of certifying official\'s title reached.'
+  fieldLength: 'Please enter less than 40 characters in the field below.'
 };
 
 class UnconnectedSignAndCertify extends React.Component {
@@ -97,7 +96,7 @@ class UnconnectedSignAndCertify extends React.Component {
     if (this.isFieldErrored('certifyingOfficialName')) {
       return ERRORS.certifyingOfficialName;
     } else if (this.isFieldErrored('certifyingOfficialNameLength')) {
-      return ERRORS.certifyingOfficialNameLength;
+      return ERRORS.fieldLength;
     }
     return null;
   }
@@ -106,7 +105,7 @@ class UnconnectedSignAndCertify extends React.Component {
     if (this.isFieldErrored('certifyingOfficialTitleOther')) {
       return ERRORS.certifyingOfficialTitle;
     } else if (this.isFieldErrored('certifyingOfficialTitleOtherLength')) {
-      return ERRORS.certifyingOfficialTitleOtherLength;
+      return ERRORS.fieldLength;
     }
     return null;
   }
