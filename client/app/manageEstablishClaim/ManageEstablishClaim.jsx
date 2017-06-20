@@ -97,7 +97,7 @@ class ManageEstablishClaim extends React.Component {
         <h2>BVA Reports</h2>
         <p>
           <a href="/dispatch/missing-decision" target="_blank">
-            View Claims Missing Decisions <i className="fa fa-external-link" aria-hidden="true"></i>
+            View Claims Missing Decisions in VBMS <i className="fa fa-external-link" aria-hidden="true"></i>
           </a>
         </p>
       </div>
