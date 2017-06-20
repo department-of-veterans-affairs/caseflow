@@ -178,64 +178,74 @@ export class Pdf extends React.PureComponent {
           textDivs: []
         });
 
-        // After rendering everything, we check to see if
-        // the PDF we just rendered is the same as the PDF
-        // in the current state. It is possible that the
-        // user switched between PDFs quickly and this
-        // condition is no longer true, in which case we
-        // should render this page again with the new file. We
-        // also check if the canvas rendered on still exists.
-        // If the pages are changed quickly it's possible to
-        // render on a canvas that has since been changed which
-        // means we need to render it again.
-        if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
-
-
-          // If it is the same, then we mark this page as rendered
-          this.setIsRendered(index, {
-            pdfDocument,
-            scale,
-            ..._.pick(viewport, ['width', 'height'])
-          });
-
-          // Since we don't know a page's size until we render it, we either use the
-          // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
-          // or the dimensions of the first page we successfully render. This allows
-          // us to accurately represent the size of pages we haven't rendered yet.
-          if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
-            this.defaultWidth = viewport.width;
-            this.defaultHeight = viewport.height;
-          }
-
-          // Whenever we finish rendering a page, we assume that this was the last page
-          // to render within the current document. We then try to prerender pages for documents in the
-          // prefetchFiles list. The prerenderPages call validates this assumption by
-          // checking if any other pages of the current document are being rendered,
-          // and will not proceed if they are since we want the current document's pages
-          // to take precedence over prerendering other documents' pages.
-          this.renderInViewPages();
-          this.prerenderPages();
-
-          // this.props.file may not be a value in this.prerenderedPdfs. If it is not
-          // already present, then we want to create it.
-          _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
+        this.postRender().then(() => {
           resolve();
-        } else {
-          // If it is not, then we try to render it again.
-          this.isRendering[index] = false;
-          this.renderPage(index).then(() => {
-            resolve();
-          }).
-          catch(() => {
-            this.isRendering[index] = false;
-            reject();
-          });
-        }
+        }).
+        catch(() => {
+          reject();
+        });        
       }).
       catch(() => {
         this.isRendering[index] = false;
         reject();
       });
+    });
+  }
+
+  postRender = () => {
+    return new Promise((resolve, reject) => {
+      // After rendering everything, we check to see if
+      // the PDF we just rendered is the same as the PDF
+      // in the current state. It is possible that the
+      // user switched between PDFs quickly and this
+      // condition is no longer true, in which case we
+      // should render this page again with the new file. We
+      // also check if the canvas rendered on still exists.
+      // If the pages are changed quickly it's possible to
+      // render on a canvas that has since been changed which
+      // means we need to render it again.
+      if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
+
+        // If it is the same, then we mark this page as rendered
+        this.setIsRendered(index, {
+          pdfDocument,
+          scale,
+          ..._.pick(viewport, ['width', 'height'])
+        });
+
+        // Since we don't know a page's size until we render it, we either use the
+        // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
+        // or the dimensions of the first page we successfully render. This allows
+        // us to accurately represent the size of pages we haven't rendered yet.
+        if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
+          this.defaultWidth = viewport.width;
+          this.defaultHeight = viewport.height;
+        }
+
+        // Whenever we finish rendering a page, we assume that this was the last page
+        // to render within the current document. We then try to prerender pages for documents in the
+        // prefetchFiles list. The prerenderPages call validates this assumption by
+        // checking if any other pages of the current document are being rendered,
+        // and will not proceed if they are since we want the current document's pages
+        // to take precedence over prerendering other documents' pages.
+        this.renderInViewPages();
+        this.prerenderPages();
+
+        // this.props.file may not be a value in this.prerenderedPdfs. If it is not
+        // already present, then we want to create it.
+        _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
+        resolve();
+      } else {
+        // If it is not, then we try to render it again.
+        this.isRendering[index] = false;
+        this.renderPage(index).then(() => {
+          resolve();
+        }).
+        catch(() => {
+          this.isRendering[index] = false;
+          reject();
+        });
+      }
     });
   }
 
