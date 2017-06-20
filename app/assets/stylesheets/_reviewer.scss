@@ -478,7 +478,7 @@ svg[aria-hidden=true],
 // switches to a text selector. But since the divs have a more specific
 // selector, it wins out.
 .cf-pdf-placing-comment {
-  outline: 10px solid $color-focus;
+  outline: 10px solid $color-primary-alt;
 
   * {
     cursor: url(asset-path('comment-cursor.svg')), auto !important;
