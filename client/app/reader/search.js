@@ -4,8 +4,7 @@ import { makeGetAnnotationsByDocumentId } from './selectors';
 import { doDatesMatch } from '../util/DateUtil';
 
 const metadataContainsString = (searchQuery, doc) => {
-  return (doc.type.toLowerCase().includes(searchQuery) ||
-  doDatesMatch(doc.receivedAt.toLowerCase(), searchQuery));
+  return (doc.type.toLowerCase().includes(searchQuery));
 };
 
 const commentContainsString = (searchQuery, state, doc) =>
@@ -25,11 +24,13 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, state) => (doc) =>
+export const searchString = (searchQuery, state) => (doc) => (
   !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
+      doDatesMatch(doc.receivedAt.toLowerCase(), searchQuery.trim()) ||
       metadataContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
-  });
+  })
+);

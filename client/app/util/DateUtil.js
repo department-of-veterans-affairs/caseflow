@@ -43,13 +43,14 @@ export const doDatesMatch = (date, query) => {
     searchQueryTokens = query.toLowerCase().split(SLASH);
   }
 
-  const cleanedSearchQueryTokens = searchQueryTokens.filter((token) => token !== EMPTY_STRING);
+  // removing empty strings from the tokens
+  searchQueryTokens = searchQueryTokens.filter((token) => token !== EMPTY_STRING);
   let hasMatched = false;
 
   // if the query is one word
   // check if the string contains the word.
-  if (cleanedSearchQueryTokens.length === SIZE_ONE) {
-    hasMatched = _.includes(date, cleanedSearchQueryTokens[0]);
+  if (searchQueryTokens.length === SIZE_ONE) {
+    hasMatched = _.includes(date, searchQueryTokens[0]);
   } else {
     hasMatched = true;
     searchQueryTokens.forEach((queryToken, index) => {
