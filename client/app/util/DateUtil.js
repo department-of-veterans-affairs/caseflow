@@ -28,7 +28,8 @@ const SLASH = '/';
 const parseQueryToTokens = (query) => {
   // date format passed in needs be in YYYY-MM-DD
   // example: 2016-06-12
-  let searchQueryTokens = query.toLowerCase().split(DASH);
+  let searchQueryTokens = query ? query.trim().toLowerCase().
+    split(DASH) : [];
 
   // if no dashes exist in the query
   if (!_.includes(query, DASH)) {
