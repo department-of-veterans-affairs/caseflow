@@ -524,7 +524,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       scenario "Establish a new claim routed to ARC" do
         # Mock the claim_id returned by VBMS's create end product
-        Fakes::AppealRepository.end_product_claim_id = "CLAIM_ID_123"
+        Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 
         visit "/dispatch/establish-claim"
         # Decision Page

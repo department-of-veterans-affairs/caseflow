@@ -1,1 +1,1 @@
-VBMSService = (!ApplicationController.dependencies_faked? ? ExternalApi::VBMSService : Fakes::BGSService)
+VBMSService = (!ApplicationController.dependencies_faked? ? ExternalApi::VBMSService : Fakes::VBMSService)
