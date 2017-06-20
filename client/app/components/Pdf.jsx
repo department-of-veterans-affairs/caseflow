@@ -178,7 +178,16 @@ export class Pdf extends React.PureComponent {
           textDivs: []
         });
 
-        this.postRender(resolve, reject, { pdfDocument, canvas, scale, index, viewport });
+        this.postRender(
+          resolve,
+          reject,
+          {
+            pdfDocument,
+            canvas,
+            scale,
+            index,
+            viewport
+          });
       }).
       catch(() => {
         this.isRendering[index] = false;
