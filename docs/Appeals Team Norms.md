@@ -18,7 +18,7 @@
 ### Engineering
 - **Goal: Have an effective Standup**
   - Practice: https://github.com/department-of-veterans-affairs/caseflow/issues/1703#issuecomment-297436941 
-  - Post updates in the #appeals channel on Slack if you can't make team standup
+  - Post updates in the #appeals-engineering channel on Slack if you can't make team standup
 - **Goal: Effective engineering collaboration and code review**
   - Practice: Read through these miscellaneous engineering norms -
  https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/misc_eng_norms.md
@@ -44,8 +44,4 @@
   - Practice: Responses to emails and slack notifications are not expected outside of working hours.  For true emergency situations, call someone's phone, which can be found in their slack profile.
 - **Goal: Allow teammates to enjoy vacation how they like when they are on vacation**
   - Practice: When you are going on vacation, establish a person for teammates to go to in your stead.
-   - Practice: Make every effort not to contact teammates when they are on vacation. 
- 
-
-
-
+  - Practice: Make every effort not to contact teammates when they are on vacation. 
