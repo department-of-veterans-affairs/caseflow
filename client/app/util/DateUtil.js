@@ -25,16 +25,17 @@ const DAY_INDEX = 2;
 const DASH = '-';
 const SLASH = '/';
 
-const parseQueryToTokens = (query) => {
+const parseQueryToTokens = (query = '') => {
   // date format passed in needs be in YYYY-MM-DD format
   // For example: 2016-06-12
-  let searchQueryTokens = query ? query.trim().toLowerCase().
-    split(DASH) : [];
+  let searchQueryTokens = query.trim().toLowerCase().
+    split(DASH);
 
   // no dashes exist in the query
   // tokenize using slashes
   if (!_.includes(query, DASH)) {
-    searchQueryTokens = query.toLowerCase().split(SLASH);
+    searchQueryTokens = query.trim().toLowerCase().
+      split(SLASH);
   }
 
   return searchQueryTokens;

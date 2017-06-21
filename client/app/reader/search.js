@@ -25,11 +25,10 @@ const tagContainsString = (searchQuery, doc) =>
   , false);
 
 export const searchString = (searchQuery, state) => (doc) => {
-  const dateMatch = doDatesMatch(doc.receivedAt, searchQuery);
 
   return !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
-      dateMatch ||
+      doDatesMatch(doc.receivedAt, searchQuery) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
