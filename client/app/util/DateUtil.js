@@ -26,12 +26,13 @@ const DASH = '-';
 const SLASH = '/';
 
 const parseQueryToTokens = (query) => {
-  // date format passed in needs be in YYYY-MM-DD
-  // example: 2016-06-12
+  // date format passed in needs be in YYYY-MM-DD format
+  // For example: 2016-06-12
   let searchQueryTokens = query ? query.trim().toLowerCase().
     split(DASH) : [];
 
-  // if no dashes exist in the query
+  // no dashes exist in the query
+  // tokenize using slashes
   if (!_.includes(query, DASH)) {
     searchQueryTokens = query.toLowerCase().split(SLASH);
   }
@@ -42,8 +43,8 @@ const parseQueryToTokens = (query) => {
 const doesQueryMatchDateTokens = (docDateTokens, searchQueryTokens) => {
   let hasMatched = true;
 
-  // going through the query tokens and seeing if they equal and
-  // match up with the date format
+  // going through the query tokens and seeing if they are equal and then
+  // match them up with the date format
   searchQueryTokens.forEach((queryToken, index) => {
     if (!_.includes(docDateTokens[index], queryToken)) {
       hasMatched = false;
@@ -56,7 +57,8 @@ const doesQueryMatchDateTokens = (docDateTokens, searchQueryTokens) => {
 const getDateTokens = (date) => {
   let docDateTokens = date.split(DASH);
 
-  // move year to the end of the array to match
+  // move the year to the end of the array
+  // to follow the MM/DD/YYYY format
   return [docDateTokens[MONTH_INDEX], docDateTokens[DAY_INDEX], docDateTokens[YEAR_INDEX]];
 };
 
@@ -68,10 +70,12 @@ export const doDatesMatch = (date, query) => {
   const cleanedQueryTokens = _.compact(searchQueryTokens);
   let hasMatched = false;
 
-  // if the query is one word
-  // check if the string contains the word.
+  // if the query is one word. i.e it doesn't contain a a dash or slash,
+  // just check if the string contains the word.
   if (cleanedQueryTokens.length === 1) {
     hasMatched = _.includes(date, cleanedQueryTokens[0]);
+
+  // otherwise do the query match to the date format
   } else {
     hasMatched = doesQueryMatchDateTokens(docDateTokens, searchQueryTokens);
   }
