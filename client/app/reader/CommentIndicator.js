@@ -5,7 +5,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron , ChervonDown} from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron , ChervonDown, ChervonUp, Arrow} from '../components/RenderFunctions';
 
 
 class CommentIndicator extends React.PureComponent {
@@ -15,10 +15,6 @@ class CommentIndicator extends React.PureComponent {
 
   render() {
     const { annotationsCount, expanded, docId } = this.props;
-    const iconClassNames = classnames('fa fa-3 document-list-comments-indicator-icon', {
-      'fa-angle-up': expanded,
-      'fa-angle-down': !expanded
-    });
     const name = `expand ${annotationsCount} comments`;
 
     return <span className="document-list-comments-indicator">
@@ -31,8 +27,8 @@ class CommentIndicator extends React.PureComponent {
           id={`expand-${docId}-comments-button`}
           onClick={this.toggleComments}>
           {annotationsCount}
-          <i className={iconClassNames}/>
-          <ChervonDown />
+          {expanded && <ChervonUp />}
+          {!expanded && <ChervonDown />}
         </Button>
       }
     </span>;

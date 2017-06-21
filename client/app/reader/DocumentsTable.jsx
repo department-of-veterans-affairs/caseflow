@@ -22,6 +22,8 @@ import {
 } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
+import { DownloadIcon, PageArrowLeft, PageArrowRight, LeftChevron , ChervonDown, ChervonUp, Arrow} from '../components/RenderFunctions';
+
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -282,6 +284,7 @@ class DocumentsTable extends React.Component {
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
+          <Arrow />
         </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
