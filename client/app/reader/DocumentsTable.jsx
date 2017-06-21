@@ -300,7 +300,7 @@ class DocumentsTable extends React.Component {
         valueFunction: (doc) => boldUnreadContent(
           <a
             href={this.singleDocumentView}
-            aria-label={doc.type + (!doc.opened_by_current_user ? " unopened" : " opened")}
+            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
             onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}
           </a>, doc)
