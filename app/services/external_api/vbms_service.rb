@@ -133,5 +133,4 @@ class VBMSService
 
     raise e
   end
-
 end
