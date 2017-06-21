@@ -20,12 +20,12 @@ ReactOnRails.configure do |config|
   # to automatically refresh your webpack assets on every test run.
   config.npm_build_test_command = "npm run build:test"
 
-  # This will set NODE_ENV=test necessary for source maps in DEMO
-  config.npm_build_production_command = "npm run build:test" if Rails.env.demo?
-
   # This configures the script to run to build the production assets by webpack. Set this to nil
   # if you don't want react_on_rails building this file for you.
   config.npm_build_production_command = "npm run build:production"
+
+  # This will set NODE_ENV=demo necessary for source maps in DEMO
+  config.npm_build_production_command = "npm run build:demo" if Rails.env.demo?
 
   ################################################################################
   # CLIENT RENDERING OPTIONS
