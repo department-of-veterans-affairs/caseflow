@@ -47,3 +47,6 @@ Style/DoubleNegation:
 
 Performance/RedundantBlockCall:
   Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
