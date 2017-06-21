@@ -1,11 +1,9 @@
 import React from 'react';
-import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import AlertBanner from '../../components/AlertBanner';
 
-export default class StyleGuideAlerts extends React.Component {
-  render() {
-    return <div>
+export default function StyleGuideAlerts() {
+  return <div>
       <StyleGuideComponentTitle
         title="Alerts"
         id="alerts"
@@ -16,6 +14,9 @@ export default class StyleGuideAlerts extends React.Component {
       We also use them as a validation message that alerts someone that they just
       did something that needs to be corrected or as confirmation that a task was
       completed successfully.</p>
+    <h3>Technical Notes</h3>
+    <p>The <i>React</i> component referenced is <code>AlertBanner.jsx</code>,
+      and is not to be confused with <code>Alert.jsx</code>.</p>
       <AlertBanner
         title="Success Status"
         type="success">
@@ -36,6 +37,5 @@ export default class StyleGuideAlerts extends React.Component {
         type="info">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
       </AlertBanner>
-    </div>
-  }
+    </div>;
 }

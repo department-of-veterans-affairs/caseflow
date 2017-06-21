@@ -18,12 +18,12 @@ export default class AlertBanner extends React.Component {
       'usa-alert-success': type === 'success'
     });
 
-    return <div className={"usa-alert cf-app-segment " + alertType} role="alert">
+    return <div className={`usa-alert cf-app-segment ${alertType}`} role="alert">
         <div className="usa-alert-body">
           <h2 className="usa-alert-heading">{title}</h2>
             <p className="usa-alert-text">{children}</p>
         </div>
-    </div>
+    </div>;
   }
 }
 
