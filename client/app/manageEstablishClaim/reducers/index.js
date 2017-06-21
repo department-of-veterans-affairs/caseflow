@@ -6,10 +6,11 @@ const parseUserQuotasFromApi = (userQuotasFromApi) => (
   userQuotasFromApi.map((userQuota, index) => ({
     id: userQuota.id,
     index,
-    userName: `${index + 1}. ${userQuota.user_name || 'Not logged in'}`,
+    userName: (userQuota.user_name || 'Not logged in'),
     taskCount: userQuota.task_count,
     isEditingTaskCount: false,
     tasksCompletedCount: userQuota.tasks_completed_count,
+    tasksCompletedCountByDecisionType: userQuota.tasks_completed_count_by_decision_type,
     tasksLeftCount: userQuota.tasks_left_count,
     isAssigned: Boolean(userQuota.user_name),
     isLocked: Boolean(userQuota['locked?'])
@@ -55,6 +56,13 @@ export const manageEstablishClaim = function(state = getManageEstablishClaimInit
         newTaskCount: state.userQuotas[action.payload.userQuotaIndex].taskCount,
         isEditingTaskCount: true
       }
+    );
+
+  case 'CANCEL_EDIT_TASK_COUNT':
+    return updateUserQuotaInState(
+      state,
+      action.payload.userQuotaIndex,
+      { isEditingTaskCount: false }
     );
 
   case Constants.CHANGE_NEW_TASK_COUNT:

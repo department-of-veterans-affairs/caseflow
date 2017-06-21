@@ -8,7 +8,15 @@ class UserQuota < ActiveRecord::Base
   after_create :update_team_quota
 
   def to_hash
-    serializable_hash(methods: [:id, :user_name, :task_count, :tasks_completed_count, :tasks_left_count, :locked?])
+    serializable_hash(methods: [
+      :id,
+      :user_name,
+      :task_count,
+      :tasks_completed_count,
+      :tasks_completed_count_by_decision_type,
+      :tasks_left_count,
+      :locked?
+    ])
   end
 
   def task_count
@@ -29,6 +37,20 @@ class UserQuota < ActiveRecord::Base
 
   def locked?
     !!locked_task_count
+  end
+
+  def tasks_completed_count_by_decision_type
+    completed_tasks_by_decision_type.each_with_object({}) do |decision, hsh|
+      hsh[decision.first] = decision.second.count
+    end
+  end
+
+  def completed_tasks_by_decision_type
+    ClaimEstablishment
+      .select(:decision_type)
+      .where(
+        task_id: Task.where(user_id: user_id).where('completed_at >= ?', date)
+      ).group_by(&:decision_type)
   end
 
   # User quotas can either be

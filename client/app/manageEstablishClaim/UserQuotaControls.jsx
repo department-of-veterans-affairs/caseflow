@@ -11,17 +11,18 @@ const UserQuotaControls = ({
   userQuota,
   handleBeginEditTaskCount,
   handleSaveTaskCount,
-  handleUnlockTaskCount
+  handleUnlockTaskCount,
+  cancelEditTaskCount
 }) => {
   if (!userQuota.isAssigned) {
     return null;
   }
 
-  return <span>
+  return <div>
     {!userQuota.isEditingTaskCount && userQuota.isLocked &&
       <Button
         name={`unlock-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding']}
+        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
         onClick={handleUnlockTaskCount}
         ariaLabel="Unlock"
       >
@@ -29,28 +30,35 @@ const UserQuotaControls = ({
       </Button>
     }
 
-    &nbsp;&nbsp;
-
     {!userQuota.isEditingTaskCount &&
       <Button
         name={`edit-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding']}
+        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
         onClick={handleBeginEditTaskCount}
       >
         Edit
       </Button>
     }
 
-    {userQuota.isEditingTaskCount &&
+    {userQuota.isEditingTaskCount && <div>
       <Button
         name={`save-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding']}
+        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
         onClick={handleSaveTaskCount}
       >
         Save
       </Button>
+
+      <Button
+        name={`cancel-quota-${userQuota.id}`}
+        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
+        onClick={cancelEditTaskCount}
+      >
+        Cancel
+      </Button>
+    </div>
     }
-  </span>;
+  </div>;
 };
 
 UserQuotaControls.propTypes = {
@@ -80,6 +88,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       payload: { userQuotaIndex: ownProps.userQuota.index }
     });
   },
+  cancelEditTaskCount: () => {
+    dispatch({
+      type: Constants.CANCEL_EDIT_TASK_COUNT,
+      payload: { userQuotaIndex: ownProps.userQuota.index }
+    });
+  },
   handleSaveTaskCount: () => {
     return ApiUtil.patch(`/dispatch/user-quotas/${ownProps.userQuota.id}`,
       { data: { locked_task_count: ownProps.userQuota.newTaskCount } }
@@ -90,8 +104,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
     }, () => {
       dispatchUserQuotaAlert(dispatch);
-    }
-    );
+    });
   },
   handleUnlockTaskCount: () => {
     return ApiUtil.patch(`/dispatch/user-quotas/${ownProps.userQuota.id}`,
@@ -103,8 +116,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
     }, () => {
       dispatchUserQuotaAlert(dispatch);
-    }
-    );
+    });
   }
 });
 
