@@ -18,17 +18,18 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
 const PAGE_MARGIN_BOTTOM = 25;
-const RENDER_WITHIN_SCROLL = 1000;
-// This is the default page width.
-const PAGE_WIDTH = 1;
-// This comes from _pdf_viewer.css and is the default height
+
+// These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
 // able to expand/contract the height of the pages as we zoom.
+const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
+const NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
 const NUM_PAGES_TO_PRERENDER = 2;
+const MAX_PAGES_TO_RENDER_AT_ONCE = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -60,15 +61,26 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isRendering = [];
-    this.prerenderedPdfs = {};
-    this.isPrerendering = false;
 
+    this.defaultWidth = PAGE_WIDTH;
+    this.defaultHeight = PAGE_HEIGHT;
+
+    this.refFunctionGetters = {};
+
+    this.setUpFakeCanvasRefFunctions();
+    this.initializePrerendering();
+    this.initializeRefs();
+  }
+
+  initializeRefs = () => {
     this.pageElements = [];
     this.fakeCanvas = [];
     this.scrollWindow = null;
+  }
 
-    this.refFunctionGetters = {};
-    this.setUpFakeCanvasRefFunctions();
+  initializePrerendering = () => {
+    this.prerenderedPdfs = {};
+    this.isPrerendering = false;
   }
 
   setIsRendered = (index, value) => {
@@ -92,6 +104,8 @@ export class Pdf extends React.PureComponent {
     if (this.isRendering[index] ||
       (_.get(this.state.isRendered[index], 'pdfDocument') === this.state.pdfDocument &&
       _.get(this.state.isRendered[index], 'scale') === this.props.scale)) {
+      this.renderInViewPages();
+
       return Promise.resolve();
     }
 
@@ -104,6 +118,7 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve, reject) => {
       if (index >= this.state.numPages || pdfDocument !== this.state.pdfDocument) {
         this.isRendering[index] = false;
+        this.renderInViewPages();
 
         return resolve();
       }
@@ -163,53 +178,77 @@ export class Pdf extends React.PureComponent {
           textDivs: []
         });
 
-        // After rendering everything, we check to see if
-        // the PDF we just rendered is the same as the PDF
-        // in the current state. It is possible that the
-        // user switched between PDFs quickly and this
-        // condition is no longer true, in which case we
-        // should render this page again with the new file. We
-        // also check if the canvas rendered on still exists.
-        // If the pages are changed quickly it's possible to
-        // render on a canvas that has since been changed which
-        // means we need to render it again.
-        if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
-          // If it is the same, then we mark this page as rendered
-          this.setIsRendered(index, {
+        this.postRender(
+          resolve,
+          reject,
+          {
             pdfDocument,
+            canvas,
             scale,
-            ..._.pick(viewport, ['width', 'height'])
+            index,
+            viewport
           });
-
-          // Whenever we finish rendering a page, we assume that this was the last page
-          // to render within the current document. We then try to prerender pages for documents in the
-          // prefetchFiles list. The prerenderPages call validates this assumption by
-          // checking if any other pages of the current document are being rendered,
-          // and will not proceed if they are since we want the current document's pages
-          // to take precedence over prerendering other documents' pages.
-          this.prerenderPages();
-
-          // this.props.file may not be a value in this.prerenderedPdfs. If it is not
-          // already present, then we want to create it.
-          _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
-          resolve();
-        } else {
-          // If it is not, then we try to render it again.
-          this.isRendering[index] = false;
-          this.renderPage(index).then(() => {
-            resolve();
-          }).
-          catch(() => {
-            this.isRendering[index] = false;
-            reject();
-          });
-        }
       }).
       catch(() => {
         this.isRendering[index] = false;
         reject();
       });
     });
+  }
+
+  postRender = (resolve, reject, { pdfDocument, canvas, scale, index, viewport }) => {
+    // After rendering everything, we check to see if
+    // the PDF we just rendered is the same as the PDF
+    // in the current state. It is possible that the
+    // user switched between PDFs quickly and this
+    // condition is no longer true, in which case we
+    // should render this page again with the new file. We
+    // also check if the canvas rendered on still exists.
+    // If the pages are changed quickly it's possible to
+    // render on a canvas that has since been changed which
+    // means we need to render it again.
+    if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
+
+      // If it is the same, then we mark this page as rendered
+      this.setIsRendered(index, {
+        pdfDocument,
+        scale,
+        ..._.pick(viewport, ['width', 'height'])
+      });
+
+      // Since we don't know a page's size until we render it, we either use the
+      // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
+      // or the dimensions of the first page we successfully render. This allows
+      // us to accurately represent the size of pages we haven't rendered yet.
+      if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
+        this.defaultWidth = viewport.width;
+        this.defaultHeight = viewport.height;
+      }
+
+      // Whenever we finish rendering a page, we assume that this was the last page
+      // to render within the current document. We then try to prerender pages for documents in the
+      // prefetchFiles list. The prerenderPages call validates this assumption by
+      // checking if any other pages of the current document are being rendered,
+      // and will not proceed if they are since we want the current document's pages
+      // to take precedence over prerendering other documents' pages.
+      this.renderInViewPages();
+      this.prerenderPages();
+
+      // this.props.file may not be a value in this.prerenderedPdfs. If it is not
+      // already present, then we want to create it.
+      _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
+      resolve();
+    } else {
+      // If it is not, then we try to render it again.
+      this.isRendering[index] = false;
+      this.renderPage(index).then(() => {
+        resolve();
+      }).
+      catch(() => {
+        this.isRendering[index] = false;
+        reject();
+      });
+    }
   }
 
   scrollEvent = () => {
@@ -238,18 +277,41 @@ export class Pdf extends React.PureComponent {
   }
 
   renderInViewPages = () => {
+    // If we're already rendering a page, delay this calculation.
+    const numberOfPagesRendering = this.isRendering.reduce((acc, rendering) => {
+      return acc + (rendering ? 1 : 0);
+    }, 0);
+
+    if (numberOfPagesRendering >= MAX_PAGES_TO_RENDER_AT_ONCE) {
+      return;
+    }
+
+    let prioritzedPage = null;
+    let minPageDistance = Number.MAX_SAFE_INTEGER;
+
     this.performFunctionOnEachPage((boundingRect, index) => {
-      // This renders each page as it comes into view. i.e. when
-      // the top of the next page is within a thousand pixels of
-      // the current view we render it. If the bottom of the page
-      // above is within a thousand pixels of the current view
-      // we also render it.
-      // TODO: Make this more robust.
-      if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
-          boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
-        this.renderPage(index, this.props.file);
+      // This renders the next "closest" page. Where closest is defined as how
+      // far the page is from the viewport.
+      if (!this.isRendering[index]) {
+        const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
+          Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
+
+        if (!this.state.isRendered[index] || this.state.isRendered[index].scale !== this.props.scale) {
+          if (distanceToCenter < minPageDistance) {
+            prioritzedPage = index;
+            minPageDistance = distanceToCenter;
+          }
+        }
       }
     });
+
+    // Have to explicitly check for null since prioritizedPage can be zero.
+    if (prioritzedPage === null) {
+      return;
+    }
+
+    this.renderPage(prioritzedPage, this.props.file);
+    this.renderInViewPages();
   }
 
   performFunctionOnEachPage = (func) => {
@@ -288,6 +350,9 @@ export class Pdf extends React.PureComponent {
           this.refFunctionGetters.pageContainer[index] = (pageContainer) =>
             _.set(this.pageElements, [index, 'pageContainer'], pageContainer);
         });
+
+        this.defaultWidth = PAGE_WIDTH;
+        this.defaultHeight = PAGE_HEIGHT;
 
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
@@ -416,11 +481,10 @@ export class Pdf extends React.PureComponent {
       this.prerenderPages();
     };
 
-    // Don't prerender if we are currently trying to render a page on the current document.
-    // We want those pages to take precedence over pages on non-visible documents.
-    // At the end of rendering pages from this document we always call prerenderPages
-    // again in case there are still pages to prerender.
-    if (_.some(this.isRendering)) {
+    // We want the first few pages of the current document to take precedence over pages
+    // on non-visible documents. At the end of rendering pages from this document we always
+    // call prerenderPages again in case there are still pages to prerender.
+    if (_.some(this.isRendering.slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
       return;
     }
 
@@ -560,8 +624,8 @@ export class Pdf extends React.PureComponent {
       };
 
       const relativeScale = this.props.scale / _.get(this.state.isRendered[pageNumber - 1], 'scale', 1);
-      const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH);
-      const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
+      const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', this.defaultWidth);
+      const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', this.defaultHeight);
 
       // Only pages that are the correct scale should be visible
       const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
@@ -574,7 +638,8 @@ export class Pdf extends React.PureComponent {
         style={ {
           marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
           width: `${relativeScale * currentWidth}px`,
-          height: `${relativeScale * currentHeight}px`
+          height: `${relativeScale * currentHeight}px`,
+          verticalAlign: 'top'
         } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
@@ -611,7 +676,7 @@ export class Pdf extends React.PureComponent {
       id="scrollWindow"
       tabIndex="0"
       className="cf-pdf-scroll-view"
-      onScroll={_.debounce(this.scrollEvent, 0)}
+      onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
       {prerenderCanvases}
         <div
