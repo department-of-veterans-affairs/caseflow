@@ -536,15 +536,15 @@ export class Pdf extends React.PureComponent {
   }
 
   mouseListener = (event) => {
-    const pageIndex = _(this.pageElements).
-      map('pageContainer').
-      indexOf(event.currentTarget);
-    const pageCoords = this.getPageCoordinatesOfMouseEvent(
-      event,
-      event.currentTarget.getBoundingClientRect()
-    );
-
     if (this.props.isPlacingAnnotation) {
+      const pageIndex = _(this.pageElements).
+        map('pageContainer').
+        indexOf(event.currentTarget);
+      const pageCoords = this.getPageCoordinatesOfMouseEvent(
+        event,
+        event.currentTarget.getBoundingClientRect()
+      );
+
       this.props.showPlaceAnnotationIcon(pageIndex, pageCoords);
     }
   }
