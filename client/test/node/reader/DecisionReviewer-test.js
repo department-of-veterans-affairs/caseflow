@@ -339,22 +339,26 @@ describe('DecisionReviewer', () => {
         wrapper.find('input').simulate('change',
           { target: { value: receivedAt } });
 
-        let textArray = wrapper.find('tbody').find('tr').map((node) => node.text());
+        let textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
 
         expect(textArray).to.have.length(1);
         expect(textArray[0]).to.include(receivedAt);
         expect(textArray[0]).to.include(documents[1].type);
 
         wrapper.find('input').simulate('change', { target: { value: '' } });
-        textArray = wrapper.find('tbody').find('tr').map((node) => node.text());
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
         expect(textArray).to.have.length(2);
 
         wrapper.find('input').simulate('change', { target: { value: '/2017' } });
-        textArray = wrapper.find('tbody').find('tr').map((node) => node.text());
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
         expect(textArray).to.have.length(2);
 
         wrapper.find('input').simulate('change', { target: { value: '03' } });
-        textArray = wrapper.find('tbody').find('tr').map((node) => node.text());
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
         expect(textArray).to.have.length(1);
         expect(textArray[0]).to.include('form 9');
       });
