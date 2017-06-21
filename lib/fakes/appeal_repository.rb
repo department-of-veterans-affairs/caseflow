@@ -334,11 +334,11 @@ class Fakes::AppealRepository
       Generators::Document.build(vbms_document_id: 3, type: "Form 9",
                                  category_medical: true, category_procedural: true),
       Generators::Document.build(
-        vbms_document_id: 4,
+        vbms_document_id: 5,
         type: "This is a very long document type let's see what it does to the UI!",
         received_at: 7.days.ago,
         category_other: true),
-      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago,
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
                                  category_medical: true, category_procedural: true, category_other: true)
     ]
   end
