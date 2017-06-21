@@ -484,7 +484,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
-      skip "When there is an existing 070 EP" do
+      context "When there is an existing 070 EP" do
         before do
           BGSService.end_product_data = [
             {
@@ -511,10 +511,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           expect(page).to have_content("Success!")
 
-          task.reload
-          expect(task.outgoing_reference_id).to eq("1")
-          expect(task.appeal.reload.mustard_gas).to be_truthy
-          expect(task.completion_status).to eq("assigned_existing_ep")
+          expect(task.reload.outgoing_reference_id).to eq("1")
+          expect(task.reload.appeal.mustard_gas).to be_truthy
+          expect(task.reload.completion_status).to eq("assigned_existing_ep")
         end
       end
     end

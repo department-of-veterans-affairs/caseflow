@@ -589,7 +589,7 @@ RSpec.feature "Save Certification" do
         expect(page).to have_content "Please enter the title of the certifying official."
         fill_in "Name of certifying official", with: "12345678901234567890123456789012345678901"
         click_button("Continue")
-        expect(page).to have_content("Maximum length of certifying official\'s name reached.")
+        expect(page).to have_content("Please enter less than 40 characters")
       end
     end
   end

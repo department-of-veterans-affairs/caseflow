@@ -164,12 +164,18 @@ class Fakes::AppealRepository
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def self.seed!(app_name: nil)
     return if Rails.env.test?
 
-    seed_certification_data! if app_name == "Certification"
-    seed_establish_claim_data! if app_name == "Dispatch"
-    seed_reader_data! if app_name == "Reader"
+    # In demo mode, on app bootup (rails console or server) the app_name will be nil and we
+    # want to load *all* of the seeds
+    # In development mode, we call these on every request, so we only want to load the ones
+    # relevant to our current app
+    seed_certification_data! if app_name.nil? || app_name == "certification"
+    seed_establish_claim_data! if app_name.nil? || app_name == "dispatch-arc"
+    seed_reader_data! if app_name.nil? || app_name == "reader"
   end
 
   def self.certification_documents
@@ -360,8 +366,6 @@ class Fakes::AppealRepository
 
   # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
-    FeatureToggle.enable!(:reader)
-
     Generators::Appeal.build(
       vacols_id: "reader_id1",
       vbms_id: "reader_id1",
