@@ -17,7 +17,7 @@ RSpec.feature "Admin" do
     )
   end
 
-  scenario "Establish Claim page" do
+  skip "Establish Claim page" do
     visit "/admin/establish-claim"
 
     # View existing tasks
