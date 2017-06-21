@@ -18,6 +18,7 @@ import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
+const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -487,10 +488,7 @@ export class Pdf extends React.PureComponent {
     this.props.startPlacingAnnotation();
 
     const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
-    const firstPageWithRoomForIconIndex = _(this.pageElements).
-      map('pageContainer').
-      findIndex((pageContainer) =>
-        pageContainer.getBoundingClientRect().bottom >= scrollWindowBoundingRect.top + ANNOTATION_ICON_SIDE_LENGTH);
+    const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
 
     const iconPageBoundingBox =
       this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
