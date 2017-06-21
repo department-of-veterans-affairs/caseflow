@@ -1,6 +1,7 @@
 language: ruby
 dist: trusty
 sudo: required
+group: edge
 rvm:
   - 2.2.4
 
