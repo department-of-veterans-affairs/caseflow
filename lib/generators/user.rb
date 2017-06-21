@@ -6,8 +6,7 @@ class Generators::User
       {
         station_id: "283",
         css_id: generate_external_id,
-        full_name: "#{generate_first_name} #{generate_last_name}",
-        vacols_id: "LROTH"
+        full_name: "#{generate_first_name} #{generate_last_name}"
       }
     end
 
