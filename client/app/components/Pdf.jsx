@@ -404,9 +404,6 @@ export class Pdf extends React.PureComponent {
             // nulled out because they refer to pages that are no longer rendered.
             if (elem) {
               _.set(this.pageElements, [index, elemKey], elem);
-              if (elemKey === 'pageContainer') {
-                elem.addEventListener('mousemove', this.mouseListener);
-              }
             } else {
               delete this.pageElements[index];
             }
@@ -839,6 +836,7 @@ export class Pdf extends React.PureComponent {
         key={`${this.props.file}-${pageNumber}`}
         onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
+        onMouseMove={this.mouseListener}
         ref={this.refFunctionGetters.pageContainer[pageNumber - 1]}>
           <div className={pageContentsVisibleClass}>
             <canvas
