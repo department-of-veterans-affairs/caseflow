@@ -55,3 +55,5 @@ notifications:
 
 services:
   - redis-server
+
+group: deprecated-2017Q2
