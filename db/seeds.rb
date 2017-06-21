@@ -107,11 +107,6 @@ class SeedDB
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
   end
 
-  def set_up_feature_toggles
-    FeatureToggle.disable!(:reader)
-    FeatureToggle.enable!(:reader, users: ["Reader"])
-  end
-
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -126,7 +121,6 @@ class SeedDB
     create_tags
     create_hearings
     create_api_key
-    set_up_feature_toggles
   end
 end
 
