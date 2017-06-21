@@ -6,6 +6,7 @@ import BaseForm from '../BaseForm';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
+import AlertBanner from '../../components/AlertBanner';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
@@ -143,13 +144,9 @@ export class EstablishClaimEmail extends BaseForm {
           <div className="cf-app-segment cf-app-segment--alt">
             <h2>Route Claim: Process Outside of Caseflow</h2>
             <div>
-              <div className="usa-alert usa-alert-warning">
-                <div className="usa-alert-body">
-                  <div>
-                    <h3 className="usa-alert-heading">{this.state.noEmailNote}</h3>
-                  </div>
-                </div>
-              </div>
+              <AlertBanner
+                title={this.state.noEmailNote}
+                type="warning" />
               <p>You selected a Special Issue Category that cannot be processed
                 in Caseflow at this time.</p>
               <p>Please process this claim manually and select Release Claim

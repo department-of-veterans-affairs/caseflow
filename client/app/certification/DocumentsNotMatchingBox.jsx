@@ -1,11 +1,12 @@
 import React from 'react';
+import AlertBanner from '../components/AlertBanner';
 
 // TODO: refactor to use shared components where necessary
 const DocumentsNotMatchingBox = () => {
-  return <div className="usa-alert usa-alert-error cf-app-segment" role="alert">
-    <div className="usa-alert-body">
-      <h3 className="usa-alert-heading">Some documents could not be found in VBMS.</h3>
-    </div>
+  return <div>
+    <AlertBanner
+      title="Some documents could not be found in VBMS."
+      type="error" />
   </div>;
 };
 

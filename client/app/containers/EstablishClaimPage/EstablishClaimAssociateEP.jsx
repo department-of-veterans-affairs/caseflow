@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
+import AlertBanner from '../../components/AlertBanner';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../../establishClaim/constants';

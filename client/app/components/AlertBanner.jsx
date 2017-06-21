@@ -8,7 +8,6 @@ export default class AlertBanner extends React.Component {
     let {
       children,
       title,
-      message,
       type
     } = this.props;
 
@@ -21,16 +20,16 @@ export default class AlertBanner extends React.Component {
 
     return <div className={"usa-alert cf-app-segment " + alertType} role="alert">
         <div className="usa-alert-body">
-          <h3 className="usa-alert-heading">{title}</h3>
-          {children ?
-            <p className="usa-alert-text">{children}</p> :
-            <p className="usa-alert-text">{message}</p>}
+          <h2 className="usa-alert-heading">{title}</h2>
+            <p className="usa-alert-text">{children}</p>
         </div>
     </div>
   }
 }
 
 AlertBanner.props = {
+  children: PropTypes.node,
   message: PropTypes.string,
-  title: PropTypes.string
+  title: PropTypes.string,
+  type: PropTypes.string.isRequired
 };
