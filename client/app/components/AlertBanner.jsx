@@ -29,7 +29,6 @@ export default class AlertBanner extends React.Component {
 
 AlertBanner.props = {
   children: PropTypes.node,
-  message: PropTypes.string,
   title: PropTypes.string,
   type: PropTypes.string.isRequired
 };
