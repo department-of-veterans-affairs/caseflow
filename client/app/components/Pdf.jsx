@@ -686,6 +686,9 @@ export class Pdf extends React.PureComponent {
     }
   }
 
+  /**
+   * The page bounds are the upper bounds of the page in the page coordinate system.
+   */
   updatePageBounds = () => {
     // The first time this method fires, it sets the page bounds to be the PAGE_WIDTH and PAGE_HEIGHT,
     // because that's what the page bounds are before rendering completes. Somehow, this does not
