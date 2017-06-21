@@ -156,11 +156,10 @@ export class AssociatePage extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         {title}
-        <div className="usa-alert usa-alert-warning">
-          <div className="usa-alert-body">
-            {alert}
-          </div>
-        </div>
+        <AlertBanner
+          type="warning">
+          {alert}
+        </AlertBanner>
         <div className="usa-grid-full">
           <Table
             columns={this.getEndProductColumns()}

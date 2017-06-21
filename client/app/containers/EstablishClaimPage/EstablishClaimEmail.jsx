@@ -65,17 +65,12 @@ export class EstablishClaimEmail extends BaseForm {
           <h1>Route Claim</h1>
             <h2>Send Email Notification</h2>
           <div>
-            <div className="usa-alert usa-alert-info">
-              <div className="usa-alert-body">
-                <div>
-                  <h3 className="usa-alert-heading">We are unable to create an
-                    EP for claims with this Special Issue</h3>
-                  <p className="usa-alert-text">
-                    Follow the instructions below to route this claim.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <AlertBanner
+              title="We are unable to create an
+                EP for claims with this Special Issue"
+              type="info">
+              Follow the instructions below to route this claim.
+            </AlertBanner>
             <p>Please send the following email message to the office
               responsible for implementing this grant.</p>
             <p><b>RO:</b> {this.props.regionalOffice}</p>
