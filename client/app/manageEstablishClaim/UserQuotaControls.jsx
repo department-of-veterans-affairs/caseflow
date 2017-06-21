@@ -22,7 +22,7 @@ const UserQuotaControls = ({
     {!userQuota.isEditingTaskCount && userQuota.isLocked &&
       <Button
         name={`unlock-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
+        classNames={['cf-btn-link cf-no-padding']}
         onClick={handleUnlockTaskCount}
         ariaLabel="Unlock"
       >
@@ -33,7 +33,7 @@ const UserQuotaControls = ({
     {!userQuota.isEditingTaskCount &&
       <Button
         name={`edit-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
+        classNames={['cf-btn-link cf-no-padding']}
         onClick={handleBeginEditTaskCount}
       >
         Edit
@@ -43,7 +43,7 @@ const UserQuotaControls = ({
     {userQuota.isEditingTaskCount && <div>
       <Button
         name={`save-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
+        classNames={['cf-btn-link cf-no-padding']}
         onClick={handleSaveTaskCount}
       >
         Save
@@ -51,7 +51,7 @@ const UserQuotaControls = ({
 
       <Button
         name={`cancel-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding cf-no-vertical-margin']}
+        classNames={['cf-btn-link cf-no-padding']}
         onClick={cancelEditTaskCount}
       >
         Cancel

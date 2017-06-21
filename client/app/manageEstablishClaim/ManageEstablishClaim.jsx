@@ -16,7 +16,7 @@ class ManageEstablishClaim extends React.Component {
 
     let decisionCount = (tasks, decisionType) => {
       return tasks[decisionType] ? tasks[decisionType] : 0;
-    }
+    };
 
     return [
       {
@@ -30,7 +30,7 @@ class ManageEstablishClaim extends React.Component {
       {
         header: 'Full Grant',
         valueFunction: (userQuota) => <span>
-          {decisionCount(userQuota.tasksCompletedCountByDecisionType, "full_grant")}
+          {decisionCount(userQuota.tasksCompletedCountByDecisionType, 'full_grant')}
         </span>,
         footer: <strong>{quotaTotals.fullGrantCount}</strong>,
         align: 'center'
@@ -38,7 +38,7 @@ class ManageEstablishClaim extends React.Component {
       {
         header: 'Partial Grant',
         valueFunction: (userQuota) => <span>
-          {decisionCount(userQuota.tasksCompletedCountByDecisionType, "partial_grant")}
+          {decisionCount(userQuota.tasksCompletedCountByDecisionType, 'partial_grant')}
         </span>,
         footer: <strong>{quotaTotals.partialGrantCount}</strong>,
         align: 'center'
@@ -46,7 +46,7 @@ class ManageEstablishClaim extends React.Component {
       {
         header: 'Remand',
         valueFunction: (userQuota) => <span>
-          {decisionCount(userQuota.tasksCompletedCountByDecisionType, "remand")}
+          {decisionCount(userQuota.tasksCompletedCountByDecisionType, 'remand')}
         </span>,
         footer: <strong>{quotaTotals.remandCount}</strong>,
         align: 'center'
