@@ -1,5 +1,6 @@
 class Test::SetupController < ApplicationController
   before_action :require_non_prod, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
+  before_action :set_application
 
   def index
     @certification_appeal = "UNCERTIFY_ME"
@@ -68,6 +69,10 @@ class Test::SetupController < ApplicationController
   end
 
   private
+
+  def set_application
+    RequestStore.store[:application] = "internal"
+  end
 
   def require_non_prod
     redirect_to "/unauthorized" unless test_user?

@@ -18,12 +18,12 @@ class Fakes::Initializer
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
     def setup!(rails_env, app_name: nil)
-      development!(app_name: app_name) if rails_env.development?
+      load_fakes_and_seed!(app_name: app_name) if rails_env.development?
     end
 
     private
 
-    def development!(app_name: nil)
+    def load_fakes_and_seed!(app_name: nil)
       load!
 
       User.authentication_service.vacols_regional_offices = {
@@ -40,7 +40,7 @@ class Fakes::Initializer
       }
 
       Fakes::AppealRepository.seed!(app_name: app_name)
-      Fakes::HearingRepository.seed! if app_name == "Hearing Prep"
+      Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
     end
   end
 end
