@@ -79,9 +79,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
-  # Index of all tasks that are unprepared
+  # Index of all tasks that are unprepared at least 1 day
   def unprepared_tasks
-    @unprepared_tasks = EstablishClaim.unprepared.oldest_first
+    @unprepared_tasks = EstablishClaim.unprepared.oldest_first.select do |task|
+      (Time.zone.now - task.created_at).to_i / 1.day > 0
+    end
   end
 
   def canceled_tasks
