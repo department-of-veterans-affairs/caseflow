@@ -1,5 +1,5 @@
 class CreateAppealView < ActiveRecord::Migration
-  # This is a new table, so the new indecies will be fine
+  # This is a new table, so the new indices will be fine
   safety_assured
   
   def change

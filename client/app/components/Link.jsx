@@ -10,7 +10,7 @@ const CLASS_NAME_MAPPING = {
 
 export default class Link extends React.Component {
   render() {
-    let {
+    const {
       to,
       button,
       children

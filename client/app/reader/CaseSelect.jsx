@@ -8,8 +8,7 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 class CaseSelect extends React.PureComponent {
-  getAssignmentColumn = () => {
-    return [
+  getAssignmentColumn = () => [
       {
         header: 'Veteran',
         valueName: 'veteran_full_name'
@@ -38,15 +37,12 @@ class CaseSelect extends React.PureComponent {
         }
       }
     ];
-  }
 
-  getKeyForRow = (index, row) => {
-    return row.vacols_id;
-  }
+  getKeyForRow = (index, row) => row.vacols_id;
 
   render() {
     if (!this.props.assignments) {
-      return <div></div>;
+      return null;
     }
 
     return <div className="usa-grid">
@@ -79,9 +75,7 @@ class CaseSelect extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
-  return _.pick(state, 'assignments');
-};
+const mapStateToProps = (state) => _.pick(state, 'assignments');
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

@@ -4,7 +4,6 @@ import { reducer } from '../../../app/reader/reducer';
 import * as Constants from '../../../app/reader/constants';
 
 /* eslint-disable no-undefined */
-/* eslint-disable no-unused-expressions */
 
 describe('Reader reducer', () => {
 
@@ -47,7 +46,7 @@ describe('Reader reducer', () => {
       ]);
 
       expect(state.documents).to.deep.equal({});
-      expect(state.loadedAppealId).to.be.undefined;
+      expect(state.loadedAppealId).to.equal(undefined);
     });
   });
 
