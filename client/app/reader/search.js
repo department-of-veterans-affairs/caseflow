@@ -3,9 +3,8 @@ import { categoryFieldNameOfCategoryName } from './utils';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { doDatesMatch } from '../util/DateUtil';
 
-const metadataContainsString = (searchQuery, doc) => {
-  return (doc.type.toLowerCase().includes(searchQuery) ||
-  doDatesMatch(doc.receivedAt.toLowerCase(), searchQuery));
+const typeContainsString = (searchQuery, doc) => {
+  return (doc.type.toLowerCase().includes(searchQuery));
 };
 
 const commentContainsString = (searchQuery, state, doc) =>
@@ -25,11 +24,14 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, state) => (doc) =>
-  !searchQuery || searchQuery.split(' ').some((searchWord) => {
+export const searchString = (searchQuery, state) => (doc) => {
+
+  return !searchQuery || searchQuery.split(' ').some((searchWord) => {
     return searchWord.length > 0 && (
-      metadataContainsString(searchWord, doc) ||
+      doDatesMatch(doc.receivedAt, searchQuery) ||
+      typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
   });
+};
