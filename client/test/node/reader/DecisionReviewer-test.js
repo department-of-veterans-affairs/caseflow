@@ -1,7 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -166,11 +165,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-save').simulate('click');
         await pause();
 
-        // Verify the api is called to add a comment
-        expect(ApiUtilStub.apiPost.calledWith(`/document/${documents[0].id}/annotation`,
-          sinon.match({ data: { annotation: firstComment } }))).to.be.true;
-        await pause();
-
         // Click on the edit button
         wrapper.find('#button-edit-comment-1').simulate('click');
 
@@ -185,11 +179,6 @@ describe('DecisionReviewer', () => {
         // Save the edit
         wrapper.find('#button-save').simulate('click');
         await pause();
-
-        // Verify the api is called to edit a comment
-        expect(ApiUtilStub.apiPatch.calledWith(
-          `/document/${documents[0].id}/annotation/${commentId}`,
-          sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
         wrapper.find('#button-delete-comment-1').simulate('click');
