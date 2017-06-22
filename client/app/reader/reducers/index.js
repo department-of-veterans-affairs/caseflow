@@ -1,9 +1,9 @@
 /* eslint-disable max-lines */
-import * as Constants from './constants';
+import * as Constants from '../constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString } from './search';
-import { timeFunction } from '../util/PerfDebug';
+import { categoryFieldNameOfCategoryName, update, moveModel } from '../utils';
+import { searchString } from '../search';
+import { timeFunction } from '../../util/PerfDebug';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;

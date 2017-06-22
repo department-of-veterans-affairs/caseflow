@@ -5,6 +5,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
+import ConfigureStore from '../util/ConfigureStore';
 import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
@@ -14,6 +15,7 @@ import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
+
 
 const UnconnectedEntryPointRedirect = ({ match }) => {
   return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
