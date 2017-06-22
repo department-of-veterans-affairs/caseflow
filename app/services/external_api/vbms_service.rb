@@ -17,7 +17,7 @@ class VBMSCaseflowLogger
 end
 # :nocov:
 
-class VBMSService
+class ExternalApi::VBMSService
   def self.fetch_document_file(document)
     @vbms_client ||= init_vbms_client
 
