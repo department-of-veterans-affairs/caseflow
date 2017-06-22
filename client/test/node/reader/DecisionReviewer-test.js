@@ -316,6 +316,17 @@ describe('DecisionReviewer', () => {
     });
 
     context('when searched by', () => {
+      it('does and logic search', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: '/2017 mytag form' } });
+
+        let textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+
+        expect(textArray).to.have.length(1);
+        expect(textArray[0]).to.include('form 9');
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 
