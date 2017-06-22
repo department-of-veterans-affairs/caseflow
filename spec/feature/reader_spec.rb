@@ -78,6 +78,8 @@ RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
     FeatureToggle.enable!(:reader)
+
+    Fakes::Initializer.load!
   end
 
   let(:vacols_record) { :remand_decided }

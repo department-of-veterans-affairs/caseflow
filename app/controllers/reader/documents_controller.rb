@@ -1,6 +1,4 @@
 class Reader::DocumentsController < Reader::ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled
-
   def index
     respond_to do |format|
       format.html { return render(:index) }
@@ -72,13 +70,5 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   def appeal_id
     params[:appeal_id]
-  end
-
-  def verify_reader_feature_enabled
-    verify_feature_enabled(:reader)
-  end
-
-  def verify_access
-    verify_authorized_roles("Reader")
   end
 end
