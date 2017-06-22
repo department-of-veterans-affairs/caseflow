@@ -472,16 +472,12 @@ svg[aria-hidden=true],
   padding-right: 5px;
 }
 
-// I HATE IMPORTANTS, but I'm not sure how to get rid of this one.
-// We need this to apply to every page and all of its sub components,
-// or else when we mouse over a div with text on the page the cursor
-// switches to a text selector. But since the divs have a more specific
-// selector, it wins out.
 .cf-pdf-placing-comment {
   outline: 10px solid $color-primary-alt;
 
+  // We will manually draw the cursor with the annotation icon.
   * {
-    cursor: url(asset-path('comment-cursor.svg')), auto !important;
+    cursor: none !important;
   }
 }
 
@@ -493,7 +489,7 @@ input[type="search"].cf-search-input-with-close {
 
 [type="button"].cf-search-close-icon {
   margin-left: -20px;
-  margin-top: 6px;
+  margin-top: 2px;
   position: absolute;
 }
 

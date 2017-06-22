@@ -76,3 +76,8 @@ export const sortAnnotations = (annotations) =>
     sortBy('page', 'y').
     compact().
     value();
+
+export const isUserEditingText = () => _.some(
+  document.querySelectorAll('input,textarea'),
+  (elem) => document.activeElement === elem
+);
