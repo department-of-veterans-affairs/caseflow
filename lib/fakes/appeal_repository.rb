@@ -1,22 +1,5 @@
 require "ostruct"
 
-class VBMSCaseflowLogger
-  def self.log(event, data)
-    case event
-    when :request
-      status = data[:response_code]
-      name = data[:request].class.name
-
-      if status != 200
-        Rails.logger.error(
-          "VBMS HTTP Error #{status} " \
-          "(#{name}) #{data[:response_body]}"
-        )
-      end
-    end
-  end
-end
-
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
@@ -73,7 +56,6 @@ class Fakes::AppealRepository
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
-    VBMSCaseflowLogger.log(:request, response_code: 500)
   end
 
   def self.update_vacols_after_dispatch!(appeal:, vacols_note:)
