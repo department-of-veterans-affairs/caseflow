@@ -2,6 +2,7 @@ import * as Constants from './constants';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { doDatesMatch } from '../util/DateUtil';
+import _ from 'lodash';
 
 const typeContainsString = (searchQuery, doc) => {
   return (doc.type.toLowerCase().includes(searchQuery));
@@ -26,12 +27,28 @@ const tagContainsString = (searchQuery, doc) =>
 
 export const searchString = (searchQuery, state) => (doc) => {
 
-  return !searchQuery || searchQuery.split(' ').some((searchWord) => {
+  let queryTokens = _.compact(searchQuery.split(' '));
+  const dateMatch = doDatesMatch(doc.receivedAt, queryTokens[0]);
+
+  // if date matched using the first element, remove the
+  // first element from the list.
+  if (dateMatch) {
+    queryTokens.shift();
+  }
+
+  const stringSearchResult = queryTokens.every((word) => {
+    const searchWord = word.trim();
+
     return searchWord.length > 0 && (
-      doDatesMatch(doc.receivedAt, searchQuery) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
   });
+
+  if (dateMatch) {
+    return (stringSearchResult && dateMatch);
+  }
+
+  return stringSearchResult;
 };
