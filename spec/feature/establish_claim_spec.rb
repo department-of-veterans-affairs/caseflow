@@ -128,9 +128,20 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       visit "/dispatch/establish-claim"
       click_on "View Claims Missing Decisions"
 
-      # should see the unprepared task
+      # should not see any tasks younger than 1 day
       page.within_window windows.last do
         expect(page).to be_titled("Claims Missing Decisions")
+        expect(page).to have_content("Total missing: 0")
+        page.driver.browser.close
+      end
+
+      unprepared_task.update!(created_at: Time.zone.now - 1.days)
+
+      visit "/dispatch/establish-claim"
+      click_on "View Claims Missing Decisions"
+
+      # should see the unprepared task
+      page.within_window windows.last do
         expect(page).to have_content("Claims Missing Decisions")
         expect(page).to have_content(unprepared_task.appeal.veteran_name)
         page.driver.browser.close
