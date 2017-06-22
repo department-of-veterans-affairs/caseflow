@@ -1,7 +1,6 @@
 import React from 'react';
 import AlertBanner from '../components/AlertBanner';
 
-// Not used yet. TODO: use it.
 const AlreadyCertified = () => {
   return <div>
     <AlertBanner

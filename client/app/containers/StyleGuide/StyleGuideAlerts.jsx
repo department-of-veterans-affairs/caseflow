@@ -15,7 +15,7 @@ export default function StyleGuideAlerts() {
       did something that needs to be corrected or as confirmation that a task was
       completed successfully.</p>
     <h3>Technical Notes</h3>
-    <p>The <i>React</i> component referenced is <code>AlertBanner.jsx</code>,
+    <p>The React component referenced is <code>AlertBanner.jsx</code>,
       and is not to be confused with <code>Alert.jsx</code>.</p>
       <AlertBanner
         title="Success Status"
