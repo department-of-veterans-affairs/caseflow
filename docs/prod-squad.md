@@ -33,6 +33,8 @@ The procedure for responding to a new alert in #appeals-devops-alerts is:
         1. DevOps lead (Alan Ning)
         1. Project tech lead (Nick Heiner)
 
+To deal with a specific error, see the [First Responder's Manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md).
+
 This procedure only needs to be done during business hours. When you start work in the morning, review errors that happened after close of business the prior day.
 
 ### Backup
