@@ -16,8 +16,6 @@ before_install:
   - node -v
   - sudo apt-get update
   - sudo apt-get install chromium-chromedriver
-  - sudo dpkg -i $PWD/chromium-chromedriver.deb
-  - sudo apt-get install -f
 
 before_script:
   - node -v
