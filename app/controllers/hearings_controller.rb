@@ -1,6 +1,6 @@
 class HearingsController < ApplicationController
   # :nocov:
-  before_action :verify_access, :set_application
+  before_action :verify_access
 
   # TODO(jd): Remove this when we have a unique hearings logo
   def logo_class
