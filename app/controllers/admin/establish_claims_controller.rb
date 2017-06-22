@@ -1,6 +1,5 @@
 class Admin::EstablishClaimsController < ApplicationController
   before_action :verify_system_admin
-  before_action :set_application
 
   def show
     @create_establish_claim = CreateEstablishClaim.new
