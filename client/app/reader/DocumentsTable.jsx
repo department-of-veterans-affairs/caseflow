@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import { openDocumentInNewTab } from '../reader/utils';
+import { singleDocumentLink } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -121,8 +121,6 @@ class DocumentsTable extends React.Component {
   setTagFilterIconPosition = () => {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
-
-  singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
 
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
@@ -299,7 +297,7 @@ class DocumentsTable extends React.Component {
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
-            href={this.singleDocumentView}
+            href={singleDocumentLink(this.props.documentPathBase, doc)}
             aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
             onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}
