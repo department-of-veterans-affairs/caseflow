@@ -44,6 +44,7 @@ describe('PdfUI', () => {
 
       it('does not render the page number when pdf has not been rendered', () => {
         expect(wrapper.text()).to.not.include('Page 1 of 1');
+        expect(wrapper.text()).to.include('Loading document');
       });
 
       it('renders the zoom buttons', () => {
