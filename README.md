@@ -142,7 +142,7 @@ for Fedora based OS.
 
  1. Setup both packages according to the Oracle documentation:
 ```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2` <-- Not sure if this is still valid. It has recently changed for MAC. See above.
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
