@@ -1,5 +1,5 @@
 class Reader::DocumentsController < ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled, :set_application
+  before_action :verify_access, :verify_reader_feature_enabled
 
   def index
     respond_to do |format|
