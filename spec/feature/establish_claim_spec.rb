@@ -135,7 +135,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         page.driver.browser.close
       end
 
-      unprepared_task.update!(created_at: Time.zone.now - 1.days)
+      unprepared_task.update!(created_at: Time.zone.now - 1.day)
 
       visit "/dispatch/establish-claim"
       click_on "View Claims Missing Decisions"
