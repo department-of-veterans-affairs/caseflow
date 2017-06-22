@@ -15,7 +15,9 @@ export default class UnpreparedTasksIndex extends React.Component {
       {
         header: 'Veteran',
         valueFunction: (task) =>
-          `${task.cached_veteran_name} (${task.vbms_id})`
+          <span>{task.cached_veteran_name}
+            <span className="vbms-id"> ({task.vbms_id})</span>
+          </span>
       },
       {
         header: 'Decision Type',
@@ -32,7 +34,12 @@ export default class UnpreparedTasksIndex extends React.Component {
     ];
 
     return <div className="cf-app-segment cf-app-segment--alt">
-      <h1>Claims Missing Decisions - {formatDate(new Date().toDateString())}</h1>
+      <div className="cf-title-meta-right">
+        <h1 className="title">Claims Missing Decisions in VBMS</h1>
+        <div className="meta">
+          Total missing: <span className="value"> {unpreparedTasks.length}</span>
+        </div>
+      </div>
 
       <div className="usa-grid-full">
         <Table

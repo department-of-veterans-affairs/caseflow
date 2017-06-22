@@ -39,11 +39,13 @@ You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
 > $ brew install chromedriver
 
-You may want to have Redis and Postgres run on startup. Let brew tell you how to do that:
+You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let brew tell you how to do that:
 
 > $ brew info redis
 
 > $ brew info postgresql
+
+> $ brew info chromedriver
 
 Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 

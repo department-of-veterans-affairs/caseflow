@@ -140,7 +140,7 @@ svg[aria-hidden=true],
   position: absolute;
   z-index: 15;
   opacity: 1;
-  padding: 15px 24px 15px 15px;
+  padding: 15px 23px 15px 15px;
 
   .category-icons-and-doc-type {
     display: flex;
@@ -190,17 +190,18 @@ svg[aria-hidden=true],
   // We want the buttons to be 40px from the outer edge of the toolbar.
   // Other margins that are involved add up to 28px, so we add an
   // additional margin to make it 40.
-  $outer-margin: 12px;
+  $left-outer-margin: 12px;
+  $right-outer-margin: 20px;
   $footer-button-width: 100px;
 
   .cf-pdf-footer-buttons-right {
     width: $footer-button-width;
-    margin-right: $outer-margin;
+    margin-right: $right-outer-margin;
   }
 
   .cf-pdf-footer-buttons-left {
     width: $footer-button-width;
-    margin-left: $outer-margin;
+    margin-left: $left-outer-margin;
   }
 
   .cf-pdf-buttons-center {
@@ -451,7 +452,7 @@ svg[aria-hidden=true],
 
 .cf-pdf-open-menu {
   flex: 0 0 auto;
-  margin-left: 5px;
+  margin: 0 17px;
 }
 
 .cf-pdf-doc-type-button-container {
@@ -471,16 +472,12 @@ svg[aria-hidden=true],
   padding-right: 5px;
 }
 
-// I HATE IMPORTANTS, but I'm not sure how to get rid of this one.
-// We need this to apply to every page and all of its sub components,
-// or else when we mouse over a div with text on the page the cursor
-// switches to a text selector. But since the divs have a more specific
-// selector, it wins out.
 .cf-pdf-placing-comment {
-  outline: 10px solid $color-focus;
+  outline: 10px solid $color-primary-alt;
 
+  // We will manually draw the cursor with the annotation icon.
   * {
-    cursor: url(asset-path('comment-cursor.svg')), auto !important;
+    cursor: none !important;
   }
 }
 
@@ -492,7 +489,7 @@ input[type="search"].cf-search-input-with-close {
 
 [type="button"].cf-search-close-icon {
   margin-left: -20px;
-  margin-top: 6px;
+  margin-top: 2px;
   position: absolute;
 }
 
