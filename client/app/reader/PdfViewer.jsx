@@ -7,22 +7,80 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
-import { closeAnnotationDeleteModal, deleteAnnotation,
+import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
+import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
+import * as Constants from '../reader/constants';
+
+export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
+  const moveAmountPx = 5;
+  const movementDirection = _.includes(
+    [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
+    direction
+  ) ? -1 : 1;
+  const movementDimension = _.includes(
+    [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN],
+    direction
+  ) ? 'y' : 'x';
+
+  const {
+    pageIndex,
+    ...pageCoords
+  } = update(placingAnnotationIconPageCoords, {
+    [movementDimension]: {
+      $apply: (coord) => coord + (moveAmountPx * movementDirection)
+    }
+  });
+
+  const pageCoordsBounds = allPagesCoordsBounds[pageIndex];
+
+  // This calculation is not quite right, because we are not using the scale
+  // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where
+  // you're able to place the annotation with the keyboard looking progressively
+  // weirder as you get further from zoom level 0. I am not going to fix this issue
+  // now, because `scale` is stored in the state of `PdfUI`, and this PR is already
+  // too massive. This can be a follow-up issue.
+  return {
+    x: _.clamp(pageCoords.x, 0, pageCoordsBounds.width - Constants.ANNOTATION_ICON_SIDE_LENGTH),
+    y: _.clamp(pageCoords.y, 0, pageCoordsBounds.height - Constants.ANNOTATION_ICON_SIDE_LENGTH)
+  };
+};
 
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends React.Component {
+  // eslint-disable-next-line max-statements
   keyListener = (event) => {
-    const userIsEditingComment = _.some(
-      document.querySelectorAll('input,textarea'),
-      (elem) => document.activeElement === elem
-    );
+    if (isUserEditingText()) {
+      return;
+    }
 
-    if (userIsEditingComment) {
+    const direction = {
+      ArrowLeft: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
+      ArrowRight: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
+      ArrowUp: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
+      ArrowDown: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN
+    }[event.key];
+
+    if (this.props.isPlacingAnnotation && direction) {
+      const { pageIndex, ...origCoords } = this.props.placingAnnotationIconPageCoords;
+      const constrainedCoords = getNextAnnotationIconPageCoords(
+        direction,
+        this.props.placingAnnotationIconPageCoords,
+        this.props.pageCoordsBounds
+      );
+
+      if (!_.isEqual(origCoords, constrainedCoords)) {
+        this.props.showPlaceAnnotationIcon(pageIndex, constrainedCoords);
+      }
+
+      // If the user is placing an annotation, we do not also want
+      // to be panning around on the page view with the arrow keys.
+      event.preventDefault();
+
       return;
     }
 
@@ -78,6 +136,12 @@ export class PdfViewer extends React.Component {
   ]).map(documentPath)
 
   showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const getRenderProps = (props) => _.omit(props, 'pageCoordsBounds');
+
+    return !(_.isEqual(this.state, nextState) && _.isEqual(getRenderProps(this.props), getRenderProps(nextProps)));
+  }
 
   render() {
     const doc = this.selectedDoc();
@@ -143,11 +207,13 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
+  ..._.pick(state, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
+  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    showPlaceAnnotationIcon,
     closeAnnotationDeleteModal,
     deleteAnnotation
   }, dispatch),
