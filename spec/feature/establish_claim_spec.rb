@@ -507,7 +507,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           click_on "Route claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-          page.find("#button-Assign-to-Claim1").click
+          click_on "Assign to Claim"
 
           expect(page).to have_content("Success!")
 
