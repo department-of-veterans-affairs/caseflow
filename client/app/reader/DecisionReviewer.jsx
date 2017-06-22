@@ -150,7 +150,10 @@ export class DecisionReviewer extends React.PureComponent {
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    return <LoadingScreen vacolsId={vacolsId}>
+    return <LoadingScreen
+      appealDocuments={this.props.appealDocuments}
+      annotations={this.props.annotations}
+      vacolsId={vacolsId}>
       <div>
         <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
         <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />

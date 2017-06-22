@@ -15,28 +15,35 @@ const documentUrl = ({ id }) => `/document/${id}/pdf`;
 export class LoadingScreen extends React.Component {
 
   componentDidMount = () => {
-    ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-      const documents = returnedObject.appealDocuments;
-      const { annotations } = returnedObject;
+    // This means we received documents from the backend. This happens when someone is requesting
+    // an individual document. We don't want to load the entire case, so we avoid the API call.
+    if (this.props.appealDocuments && this.props.annotations) {
+      this.props.onReceiveDocs(this.props.appealDocuments, this.props.vacolsId);
+      this.props.onReceiveAnnotations(this.props.annotations);
+    } else {
+      ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
+        const returnedObject = JSON.parse(response.text);
+        const documents = returnedObject.appealDocuments;
+        const { annotations } = returnedObject;
 
-      this.props.onReceiveDocs(documents, this.props.vacolsId);
-      this.props.onReceiveAnnotations(annotations);
+        this.props.onReceiveDocs(documents, this.props.vacolsId);
+        this.props.onReceiveAnnotations(annotations);
 
-      const downloadDocuments = (documentUrls, index) => {
-        if (index >= documentUrls.length) {
-          return;
+        const downloadDocuments = (documentUrls, index) => {
+          if (index >= documentUrls.length) {
+            return;
+          }
+
+          ApiUtil.get(documentUrls[index], { cache: true }).then(
+            () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
+          );
+        };
+
+        for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+          downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
         }
-
-        ApiUtil.get(documentUrls[index], { cache: true }).then(
-          () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-        );
-      };
-
-      for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-        downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
-      }
-    }, this.props.onInitialDataLoadingFail);
+      }, this.props.onInitialDataLoadingFail);
+    }
   }
 
   render() {

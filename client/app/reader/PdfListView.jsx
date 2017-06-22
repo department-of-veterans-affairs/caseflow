@@ -25,6 +25,7 @@ export class PdfListView extends React.Component {
           <NoSearchResults /> :
           <DocumentsTable
             documents={this.props.documents}
+            documentPathBase={this.props.documentPathBase}
             onJumpToComment={this.props.onJumpToComment}
             sortBy={this.props.sortBy}
             docFilterCriteria={this.props.docFilterCriteria}
