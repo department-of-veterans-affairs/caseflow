@@ -153,7 +153,7 @@ RSpec.feature "Reader" do
 
     scenario "Open document in new tab" do
       # Open the URL that the first document button points to. We cannot simply
-      # click on the link since, we've overridden the mouseup event to not open
+      # click on the link since we've overridden the mouseup event to not open
       # the link, but instead to move to the document view in the SPA. Middle clicking
       # is not overridden, but I cannot figure out how to middle click in the test.
       # Instead we just visit the page specified by the link.
