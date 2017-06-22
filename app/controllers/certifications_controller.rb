@@ -1,6 +1,5 @@
 class CertificationsController < ApplicationController
   before_action :verify_access
-  before_action :set_application
 
   def new
     # NOTE: this isn't rails-restful. certification.start! saves
