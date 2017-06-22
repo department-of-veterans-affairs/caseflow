@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :check_out_of_service
   before_action :strict_transport_security
 
+  before_action :set_application
   before_action :set_timezone,
                 :setup_fakes,
                 :check_whats_new_cookie
@@ -116,7 +117,11 @@ class ApplicationController < ActionController::Base
   # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
   # - Setup the default authenticated user
   def setup_fakes
-    Fakes::Initializer.setup!(Rails.env, app_name: logo_name)
+    Fakes::Initializer.setup!(Rails.env, app_name: application)
+  end
+
+  def set_application
+    RequestStore.store[:application] = "not-set"
   end
 
   def test_user?

@@ -109,6 +109,8 @@ const getExpandAllState = (documents) => {
 
 export const initialState = {
   initialDataLoadingFail: false,
+  pageCoordsBounds: {},
+  placingAnnotationIconPageCoords: null,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -561,6 +563,12 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SET_PAGE_COORD_BOUNDS:
+    return update(state, {
+      pageCoordsBounds: {
+        $set: action.payload.coordBounds
+      }
+    });
   case Constants.PLACE_ANNOTATION:
     return update(state, {
       ui: {
@@ -584,8 +592,20 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SHOW_PLACE_ANNOTATION_ICON:
+    return update(state, {
+      placingAnnotationIconPageCoords: {
+        $set: {
+          pageIndex: action.payload.pageIndex,
+          ...action.payload.pageCoords
+        }
+      }
+    });
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
+      placingAnnotationIconPageCoords: {
+        $set: null
+      },
       ui: {
         placedButUnsavedAnnotation: { $set: null },
         pdf: {
