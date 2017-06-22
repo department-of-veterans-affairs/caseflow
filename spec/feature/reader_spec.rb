@@ -58,7 +58,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader", focus: true do
+RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
     FeatureToggle.enable!(:reader)

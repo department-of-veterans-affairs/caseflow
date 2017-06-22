@@ -1,6 +1,5 @@
 class Test::SetupController < ApplicationController
   before_action :require_non_prod, only: [:index, :uncertify_appeal, :appeal_location_date_reset, :delete_test_data]
-  before_action :set_application
 
   def index
     @certification_appeal = "UNCERTIFY_ME"

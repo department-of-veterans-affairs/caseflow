@@ -1,5 +1,5 @@
 class Reader::DocumentsController < Reader::ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled, :set_application
+  before_action :verify_access, :verify_reader_feature_enabled
 
   def index
     respond_to do |format|
@@ -80,9 +80,5 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   def verify_access
     verify_authorized_roles("Reader")
-  end
-
-  def set_application
-    RequestStore.store[:application] = "reader"
   end
 end
