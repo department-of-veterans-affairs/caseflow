@@ -600,6 +600,15 @@ export class Pdf extends React.PureComponent {
 
     if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
       this.setUpFakeCanvasRefFunctions();
+
+      const newPrerenderedPdfs = _.pick(this.prerenderedPdfs, [...nextProps.prefetchFiles, nextProps.file]);
+      const pdfsToCleanup = _.omit(this.prerenderedPdfs, [...nextProps.prefetchFiles, nextProps.file]);
+
+      _.forEach(pdfsToCleanup, (pdf) => {
+        pdf.pdfDocument.destroy();
+      });
+
+      this.prerenderedPdfs = newPrerenderedPdfs;
     }
     /* eslint-enable no-negated-condition */
   }
