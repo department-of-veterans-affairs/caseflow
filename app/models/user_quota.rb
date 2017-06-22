@@ -40,8 +40,8 @@ class UserQuota < ActiveRecord::Base
   end
 
   def tasks_completed_count_by_decision_type
-    completed_tasks_by_decision_type.each_with_object({}) do |decision, hsh|
-      hsh[decision.first] = decision.second.count
+    completed_tasks_by_decision_type.each_with_object({}) do |decision, counts_by_decision|
+      counts_by_decision[decision.first] = decision.second.count
     end
   end
 

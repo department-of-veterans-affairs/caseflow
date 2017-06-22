@@ -14,9 +14,7 @@ class ManageEstablishClaim extends React.Component {
   getUserColumns = () => {
     let quotaTotals = this.props.quotaTotals;
 
-    let decisionCount = (tasks, decisionType) => {
-      return tasks[decisionType] ? tasks[decisionType] : 0;
-    };
+    const decisionCount = (tasks, decisionType) => tasks[decisionType] || 0;
 
     return [
       {

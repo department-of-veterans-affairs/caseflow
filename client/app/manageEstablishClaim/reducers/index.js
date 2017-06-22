@@ -6,7 +6,7 @@ const parseUserQuotasFromApi = (userQuotasFromApi) => (
   userQuotasFromApi.map((userQuota, index) => ({
     id: userQuota.id,
     index,
-    userName: (userQuota.user_name || 'Not logged in'),
+    userName: userQuota.user_name || 'Not logged in',
     taskCount: userQuota.task_count,
     isEditingTaskCount: false,
     tasksCompletedCount: userQuota.tasks_completed_count,
