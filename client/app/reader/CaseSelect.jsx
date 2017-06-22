@@ -9,34 +9,34 @@ import _ from 'lodash';
 
 class CaseSelect extends React.PureComponent {
   getAssignmentColumn = () => [
-      {
-        header: 'Veteran',
-        valueName: 'veteran_full_name'
-      },
-      {
-        header: 'Veteran ID',
-        valueName: 'vbms_id'
-      },
-      {
-        header: 'View Case File',
-        valueFunction: (row) => {
-          let buttonText = 'New';
-          let buttonType = 'primary';
+    {
+      header: 'Veteran',
+      valueName: 'veteran_full_name'
+    },
+    {
+      header: 'Veteran ID',
+      valueName: 'vbms_id'
+    },
+    {
+      header: 'View Case File',
+      valueFunction: (row) => {
+        let buttonText = 'New';
+        let buttonType = 'primary';
 
-          if (row.viewed) {
-            buttonText = 'Continue';
-            buttonType = 'secondary';
-          }
+        if (row.viewed) {
+          buttonText = 'Continue';
+          buttonType = 'secondary';
+        }
 
-          return <Link
+        return <Link
             name="view doc"
             button={buttonType}
             to={`/${row.vacols_id}/documents`}>
               {buttonText}
             </Link>;
-        }
       }
-    ];
+    }
+  ];
 
   getKeyForRow = (index, row) => row.vacols_id;
 
