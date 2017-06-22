@@ -12,12 +12,15 @@ export const onInitialDataLoadingFail = () => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE
 });
 
-export const onReceiveDocs = (documents) => (
+export const onReceiveDocs = (documents, vacolsId) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
-      payload: documents
+      payload: {
+        documents,
+        vacolsId
+      }
     });
   }
 );
@@ -25,6 +28,11 @@ export const onReceiveDocs = (documents) => (
 export const onReceiveAnnotations = (annotations) => ({
   type: Constants.RECEIVE_ANNOTATIONS,
   payload: { annotations }
+});
+
+export const onReceiveAssignments = (assignments) => ({
+  type: Constants.RECEIVE_ASSIGNMENTS,
+  payload: { assignments }
 });
 
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
