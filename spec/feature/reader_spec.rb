@@ -1,11 +1,27 @@
 require "rails_helper"
 
+# Wrap this around your test to run it many times and ensure that it passes consistently.
+# Note: do not merge to master like this, or the tests will be slow! Ha.
+def ensure_stable
+  10.times do
+    yield
+  end
+end
+
 def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
 
 def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
+end
+
+def skip_because_sending_keys_to_body_does_not_work_on_travis
+  if ENV["TRAVIS"]
+    puts "Warning: skipping block because find('body').send_keys does not work on Travis"
+  else
+    yield
+  end
 end
 
 def scroll_element_to_view(element)
@@ -191,7 +207,7 @@ RSpec.feature "Reader" do
       # minutes to see if various changes would fix it.
       #
       # Please forgive me.
-      unless ENV["TRAVIS"]
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
         find("body").send_keys(:arrow_right)
         expect_doc_type_to_be "BVA Decision"
 
@@ -369,6 +385,60 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
       end
+
+      def element_position(selector)
+        page.driver.evaluate_script <<-EOS
+          function() {
+            var rect = document.querySelector('#{selector}').getBoundingClientRect();
+            return {
+              top: rect.top,
+              left: rect.left
+            };
+          }();
+        EOS
+      end
+
+      # :nocov:
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        scenario "Leave annotation with keyboard" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+          assert_selector(".commentIcon-container", count: 5)
+          find("body").send_keys [:alt, "c"]
+          expect(page).to have_css(".cf-pdf-placing-comment")
+          assert_selector(".commentIcon-container", count: 6)
+
+          def placing_annotation_icon_position
+            element_position "[data-placing-annotation-icon]"
+          end
+
+          orig_position = placing_annotation_icon_position
+
+          KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX = 5
+
+          find("body").send_keys [:up]
+          after_up_position = placing_annotation_icon_position
+          expect(after_up_position["left"]).to eq(orig_position["left"])
+          expect(after_up_position["top"]).to eq(orig_position["top"] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+
+          find("body").send_keys [:down]
+          after_down_position = placing_annotation_icon_position
+          expect(after_down_position).to eq(orig_position)
+
+          find("body").send_keys [:right]
+          after_right_position = placing_annotation_icon_position
+          expect(after_right_position["left"]).to eq(orig_position["left"] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+          expect(after_right_position["top"]).to eq(orig_position["top"])
+
+          find("body").send_keys [:left]
+          after_left_position = placing_annotation_icon_position
+
+          expect(after_left_position).to eq(orig_position)
+
+          find("body").send_keys [:alt, :enter]
+          expect(page).to_not have_css(".cf-pdf-placing-comment")
+        end
+      end
+      # :nocov:
 
       scenario "Jump to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"

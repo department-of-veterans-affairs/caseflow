@@ -217,6 +217,16 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
+export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
+  type: Constants.SHOW_PLACE_ANNOTATION_ICON,
+  payload: {
+    pageIndex,
+    pageCoords
+  }
+});
+
+export const hidePlaceAnnotationIcon = () => ({ type: Constants.HIDE_PLACE_ANNOTATION_ICON });
+
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {
@@ -224,6 +234,13 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
     x: coordinates.xPosition,
     y: coordinates.yPosition,
     documentId
+  }
+});
+
+export const setPageCoordBounds = (coordBounds) => ({
+  type: Constants.SET_PAGE_COORD_BOUNDS,
+  payload: {
+    coordBounds
   }
 });
 
