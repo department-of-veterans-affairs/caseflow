@@ -11,8 +11,7 @@ const UserQuotaControls = ({
   userQuota,
   handleBeginEditTaskCount,
   handleSaveTaskCount,
-  handleUnlockTaskCount,
-  cancelEditTaskCount
+  handleUnlockTaskCount
 }) => {
   if (!userQuota.isAssigned) {
     return null;
@@ -48,14 +47,6 @@ const UserQuotaControls = ({
       >
         Save
       </Button>
-
-      <Button
-        name={`cancel-quota-${userQuota.id}`}
-        classNames={['cf-btn-link cf-no-padding']}
-        onClick={cancelEditTaskCount}
-      >
-        Cancel
-      </Button>
     </div>
     }
   </div>;
@@ -85,12 +76,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleBeginEditTaskCount: () => {
     dispatch({
       type: Constants.BEGIN_EDIT_TASK_COUNT,
-      payload: { userQuotaIndex: ownProps.userQuota.index }
-    });
-  },
-  cancelEditTaskCount: () => {
-    dispatch({
-      type: Constants.CANCEL_EDIT_TASK_COUNT,
       payload: { userQuotaIndex: ownProps.userQuota.index }
     });
   },

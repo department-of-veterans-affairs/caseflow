@@ -120,10 +120,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       within("#table-row-1") do
         click_on "Edit"
-        click_on "Cancel"
-        expect(page).not_to have_content("Save")
-
-        click_on "Edit"
         fill_in "quota-#{june_quota.id}", with: "5"
         click_on "Save"
       end

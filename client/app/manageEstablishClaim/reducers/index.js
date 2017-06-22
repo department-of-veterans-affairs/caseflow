@@ -58,13 +58,6 @@ export const manageEstablishClaim = function(state = getManageEstablishClaimInit
       }
     );
 
-  case 'CANCEL_EDIT_TASK_COUNT':
-    return updateUserQuotaInState(
-      state,
-      action.payload.userQuotaIndex,
-      { isEditingTaskCount: false }
-    );
-
   case Constants.CHANGE_NEW_TASK_COUNT:
     return updateUserQuotaInState(
       state,
