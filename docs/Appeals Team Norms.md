@@ -23,6 +23,8 @@
   - Practice: Read through these miscellaneous engineering norms -
  https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/misc_eng_norms.md
   - Practice: Waffle column process - https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/process.md
+- **Goal: Don't ruin veterans' lives.**
+  - Practice: Every pull request that involves writing data to a system we don't control (like VACOLS) must be approved by **two** reviewers. The person sending the pull request is responsible for ensure that this happens.
 
 ### Productivity
 - **Goal: Allow for periodic uninterrupted work time / Support project speed**
