@@ -78,6 +78,8 @@ RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
     FeatureToggle.enable!(:reader)
+
+    Fakes::Initializer.load!
   end
 
   let(:vacols_record) { :remand_decided }
@@ -118,6 +120,35 @@ RSpec.feature "Reader" do
           vbms_document_id: 4
         )
       ]
+    end
+
+    context "Welcome gate page" do
+      let(:appeal2) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
+      end
+
+      before do
+        Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
+      end
+
+      scenario "Enter a case" do
+        visit "/reader/appeal"
+
+        expect(page).to have_content(appeal.veteran_last_name)
+        expect(page).to have_content(appeal.vbms_id)
+
+        click_on "New", match: :first
+
+        expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
+        expect(page).to have_content("Documents")
+
+        click_on "Caseflow Reader"
+        expect(page).to have_current_path("/reader/appeal")
+
+        click_on "Continue"
+
+        expect(page).to have_content("Documents")
+      end
     end
 
     scenario "Progress indicator" do
