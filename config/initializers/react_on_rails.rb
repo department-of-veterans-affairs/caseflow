@@ -24,7 +24,7 @@ ReactOnRails.configure do |config|
   # if you don't want react_on_rails building this file for you.
   config.npm_build_production_command = "npm run build:production"
 
-  # This will set NODE_ENV=demo necessary for source maps in DEMO
+  # This will set NODE_ENV=development necessary for source maps in DEMO
   config.npm_build_production_command = "npm run build:demo" if Rails.env.demo?
 
   ################################################################################
