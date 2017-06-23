@@ -316,6 +316,13 @@ describe('DecisionReviewer', () => {
 
         expect(textArray).to.have.length(1);
         expect(textArray[0]).to.include('form 9');
+
+        wrapper.find('input').simulate('change',
+          { target: { value: '/2017 mytag do not show' } });
+
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+        expect(textArray).to.have.length(0);
       });
 
       it('date displays properly', () => {
@@ -420,7 +427,7 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        // Header and one filtered row.
+        // Header and two filtered row.
         expect(textArray).to.have.length(3);
 
         // Should only display the second document
@@ -471,7 +478,7 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        // Header and one filtered row.
+        // Header and two filtered row.
         expect(textArray).to.have.length(3);
 
         // Should only display the second document
