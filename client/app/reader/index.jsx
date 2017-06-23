@@ -1,6 +1,5 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 import configureStore from '../util/ConfigureStore';
 import { createStore, applyMiddleware, compose } from 'redux';
