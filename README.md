@@ -39,11 +39,13 @@ You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
 > $ brew install chromedriver
 
-You may want to have Redis and Postgres run on startup. Let brew tell you how to do that:
+You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let brew tell you how to do that:
 
 > $ brew info redis
 
 > $ brew info postgresql
+
+> $ brew info chromedriver
 
 Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
@@ -121,7 +123,7 @@ First you'll need to install the libraries required to connect to the VACOLS Ora
 
 3) Setup both packages according to the Oracle documentation:
 ```
-export DYLD_LIBRARY_PATH=/opt/oracle/instantclient_11_2`
+export OCI_DIR=/opt/oracle/instantclient_12_1
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 ```
@@ -142,7 +144,7 @@ for Fedora based OS.
 
  1. Setup both packages according to the Oracle documentation:
 ```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2`
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
