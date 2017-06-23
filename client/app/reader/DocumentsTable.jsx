@@ -121,11 +121,6 @@ class DocumentsTable extends React.Component {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
-  handleDocumentLinkClick = (docId) => (event) => {
-    this.props.handleSelectCurrentPdf(docId);
-    this.props.showPdf(docId)(event);
-  }
-
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
@@ -303,7 +298,7 @@ class DocumentsTable extends React.Component {
           <a
             href={`documents/${doc.id}`}
             aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-            onMouseUp={this.handleDocumentLinkClick(doc.id)}>
+            onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}
           </a>, doc)
       },
@@ -397,7 +392,6 @@ const mapDispatchToProps = (dispatch) => ({
     setCategoryFilter,
     changeSortState
   }, dispatch),
-  handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
