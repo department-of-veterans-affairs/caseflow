@@ -3,8 +3,13 @@ import { Provider } from 'react-redux';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 import configureStore from '../util/ConfigureStore';
+import { createStore, applyMiddleware, compose } from 'redux';
+import perflogger from 'redux-perf-middleware';
+import thunk from 'redux-thunk';
 
-const store = configureStore({ reducers: readerReducer });
+// const store = configureStore({ reducers: readerReducer });
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(readerReducer, composeEnhancers(applyMiddleware(thunk, perflogger)));
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers.
