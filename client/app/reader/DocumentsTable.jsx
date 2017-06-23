@@ -397,9 +397,7 @@ const mapDispatchToProps = (dispatch) => ({
     setCategoryFilter,
     changeSortState
   }, dispatch),
-  handleSelectCurrentPdf: (docId) => {
-    dispatch(selectCurrentPdf(docId))
-  },
+  handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
