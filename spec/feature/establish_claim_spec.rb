@@ -495,7 +495,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
-      skip "When there is an existing 070 EP" do
+      context "When there is an existing 070 EP",
+           skip: "This test hangs somewhat regularly for unknown reasons" do
         before do
           BGSService.end_product_data = [
             {
