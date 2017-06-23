@@ -1,10 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import readerReducer from './reducer';
 import configureStore from '../util/ConfigureStore';
 import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
+import DecisionReviewer from './DecisionReviewer';
+import readerReducer from './reducer';
 
 // const store = configureStore({ reducers: readerReducer });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
