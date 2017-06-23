@@ -36,6 +36,16 @@ ActiveRecord::Schema.define(version: 20170619154525) do
   add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
 
+  create_table "appeal_views", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "appeal_id",      null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.datetime "last_viewed_at"
+  end
+
+  add_index "appeal_views", ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true, using: :btree
+
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                                                    null: false
     t.string  "vbms_id"
