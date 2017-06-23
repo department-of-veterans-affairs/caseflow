@@ -179,7 +179,7 @@ class DocumentsTable extends React.Component {
 
     // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
-    
+
     let sortIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
 
     let boldUnreadContent = (content, doc) => {
