@@ -15,7 +15,7 @@ class Fakes::Initializer
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
-        if File.basename($0) == "rake"
+        if running_rake_command?
           load!
         else
           load_fakes_and_seed!
@@ -50,6 +50,10 @@ class Fakes::Initializer
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
+    end
+
+    def running_rake_command?
+      File.basename($0) == "rake"
     end
   end
 end
