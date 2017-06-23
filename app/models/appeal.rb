@@ -1,6 +1,7 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   has_many :tasks
+  has_many :appeal_views
 
   class MultipleDecisionError < StandardError; end
 
@@ -27,6 +28,9 @@ class Appeal < ActiveRecord::Base
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date
+
+  # These are only set when you pull in a case from the Case Assignment Repository
+  attr_accessor :date_assigned, :date_received, :signed_date
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -343,6 +347,15 @@ class Appeal < ActiveRecord::Base
     events.last.try(:date)
   end
 
+  def to_hash(viewed: nil)
+    serializable_hash(
+      methods: [:veteran_full_name],
+      includes: [:vbms_id, :vacols_id]
+    ).tap do |hash|
+      hash["viewed"] = viewed
+    end
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -428,6 +441,12 @@ class Appeal < ActiveRecord::Base
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
 
       fail Caseflow::Error::InvalidFileNumber
+    end
+
+    def initialize_appeal_without_lazy_load(hash)
+      appeal = find_or_initialize_by(vacols_id: hash[:vacols_id])
+      appeal.turn_off_lazy_loading(initial_values: hash)
+      appeal
     end
 
     private

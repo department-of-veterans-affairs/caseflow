@@ -319,4 +319,22 @@ describe Certification do
       expect(subject.vacols_representative_name).to eq "The American Legion"
     end
   end
+
+  context "#v2" do
+    subject { Certification.v2 }
+
+    before do
+      Certification.create(v2: true)
+      Certification.create(bgs_representative_type: "Attorney")
+      Certification.create(bgs_representative_name: "Sir Alex F")
+      Certification.create(vacols_representative_type: "Attorney")
+      Certification.create(vacols_representative_name: "Jose Mou")
+      Certification.create
+    end
+
+    it "returns only v2 certifications" do
+      expect(Certification.all.count).to eq 6
+      expect(subject.count).to eq 5
+    end
+  end
 end
