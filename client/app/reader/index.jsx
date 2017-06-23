@@ -5,6 +5,7 @@ import readerReducer from './reducer';
 import configureStore from '../util/ConfigureStore';
 
 const store = configureStore({ reducers: readerReducer });
+
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers.
   // Changes made to the reducers while developing should be
