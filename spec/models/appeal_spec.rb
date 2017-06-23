@@ -514,8 +514,8 @@ describe Appeal do
     end
   end
 
-  context "#disposition_type" do
-    subject { appeal.disposition_type }
+  context "#disposition_remand_priority" do
+    subject { appeal.disposition_remand_priority }
     context "when disposition is allowed and one of the issues is remanded" do
       let(:issues) do
         [
