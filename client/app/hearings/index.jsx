@@ -17,7 +17,7 @@ const Hearings = ({ hearings }) => {
     // Note that this expects the global reducer
     // to be present at reducers/index.
     module.hot.accept('./reducers/index', () => {
-      store.replaceReducer(reducers);
+      store.replaceReducer(hearingsReducers);
     });
   }
 

@@ -37,7 +37,7 @@ const Certification = ({ certification }) => {
     // Note that this expects the global reducer for each app
     // to be present at reducers/index.
     module.hot.accept('./reducers/index', () => {
-      store.replaceReducer(reducers);
+      store.replaceReducer(certificationReducers);
     });
   }
 
