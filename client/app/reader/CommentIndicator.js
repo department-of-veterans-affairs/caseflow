@@ -3,9 +3,8 @@ import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
-import classnames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron , ChervonDown, ChervonUp, Arrow} from '../components/RenderFunctions';
+import { ChervonDown, ChervonUp } from '../components/RenderFunctions';
 
 
 class CommentIndicator extends React.PureComponent {

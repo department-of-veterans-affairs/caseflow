@@ -433,8 +433,8 @@ export class Keyboard extends React.PureComponent {
 
 export class ChervonDown extends React.PureComponent {
    // eslint-disable-next-line class-methods-use-this
-   render() {
-    return <svg width="14px" height="10px" viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  render() {
+    return <svg width="14px" height="10px" className="table-icon" viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g id="V1-Final" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Artboard-2" fillRule="nonzero" fill="#0872B9">
             <g id="svg+xml" transform="translate(1.000000, 1.000000)">
@@ -443,13 +443,26 @@ export class ChervonDown extends React.PureComponent {
         </g>
     </g>
   </svg>;
-   }
+  }
 }
 
-export class Arrow extends React.PureComponent {
+export class ChervonUp extends React.PureComponent {
   // eslint-disable-next-line class-methods-use-this
-   render () {
-    return <svg width="14px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  render () {
+    return <svg width="13px" height="10px" className="table-icon" viewBox="0 0 17 11" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Symbols" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+        <g id="chevron-up-white" fillRule="nonzero" fill="#0872B9">
+            <path d="M12.8948156,4.886695 L6.58343916,-1.38094705 C6.35101059,-1.62485579 6.06077157,-1.74675958 5.71214568,-1.74675958 C5.36351979,-1.74675958 5.07328076,-1.62472091 4.8408522,-1.38094705 L4.10515053,-0.658764044 C3.86631365,-0.421262414 3.74689521,-0.132571309 3.74689521,0.207612766 C3.74689521,0.541356005 3.86627974,0.833486719 4.10515053,1.08373514 L8.80976912,5.75327414 L4.10494709,10.4324238 C3.86617802,10.6699254 3.74675958,10.9586165 3.74675958,11.2988343 C3.74675958,11.6325439 3.86614412,11.9247757 4.10494709,12.174923 L4.84071657,12.8970048 C5.07951955,13.1345065 5.37006373,13.2532404 5.71201005,13.2532404 C6.054092,13.2532404 6.34456837,13.1345065 6.58330353,12.8970048 L12.8948156,6.62936279 C13.1337203,6.37904693 13.2532404,6.08698365 13.2532404,5.75324042 C13.2532743,5.41305634 13.1337203,5.12419663 12.8948156,4.886695 Z" id="Shape" transform="translate(8.500000, 5.753240) scale(-1, -1) rotate(90.000000) translate(-8.500000, -5.753240) "></path>
+        </g>
+    </g>
+  </svg>;
+  }
+}
+
+export class SortArrowUp extends React.PureComponent {
+  // eslint-disable-next-line class-methods-use-this
+  render () {
+    return <svg width="13px" height="10px" className="table-icon" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g id="V1-Final" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Artboard-2" fillRule="nonzero" fill="#323A45">
             <g id="svg+xml" transform="translate(2.000000, 1.000000)">
@@ -461,15 +474,20 @@ export class Arrow extends React.PureComponent {
   }
 }
 
-export class ChervonUp extends React.PureComponent {
+export class SortArrowDown extends React.PureComponent {
+  // eslint-disable-next-line class-methods-use-this
   render () {
-    return <svg width="14px" height="10px" viewBox="0 0 17 11" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <g id="Symbols" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-        <g id="chevron-up-white" fillRule="nonzero" fill="#0872B9">
-            <path d="M12.8948156,4.886695 L6.58343916,-1.38094705 C6.35101059,-1.62485579 6.06077157,-1.74675958 5.71214568,-1.74675958 C5.36351979,-1.74675958 5.07328076,-1.62472091 4.8408522,-1.38094705 L4.10515053,-0.658764044 C3.86631365,-0.421262414 3.74689521,-0.132571309 3.74689521,0.207612766 C3.74689521,0.541356005 3.86627974,0.833486719 4.10515053,1.08373514 L8.80976912,5.75327414 L4.10494709,10.4324238 C3.86617802,10.6699254 3.74675958,10.9586165 3.74675958,11.2988343 C3.74675958,11.6325439 3.86614412,11.9247757 4.10494709,12.174923 L4.84071657,12.8970048 C5.07951955,13.1345065 5.37006373,13.2532404 5.71201005,13.2532404 C6.054092,13.2532404 6.34456837,13.1345065 6.58330353,12.8970048 L12.8948156,6.62936279 C13.1337203,6.37904693 13.2532404,6.08698365 13.2532404,5.75324042 C13.2532743,5.41305634 13.1337203,5.12419663 12.8948156,4.886695 Z" id="Shape" transform="translate(8.500000, 5.753240) scale(-1, -1) rotate(90.000000) translate(-8.500000, -5.753240) "></path>
+    return <svg width="13px" height="10px" className="table-icon" viewBox="0 0 16 9" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" fill-rule="nonzero" fill="#323A45">
+            <g id="Arrow-down" transform="translate(8.500000, 5.000000) scale(1, -1) translate(-8.500000, -5.000000) translate(1.000000, 1.000000)">
+                <path d="M14.2222222,0.888888889 C14.2222222,1.12962963 14.1342593,1.33796296 13.9583333,1.51388889 L7.73611111,7.73611111 C7.56018519,7.91203704 7.35185185,8 7.11111111,8 C6.87037037,8 6.66203704,7.91203704 6.48611111,7.73611111 L0.263888889,1.51388889 C0.087962963,1.33796296 0,1.12962963 0,0.888888889 C0,0.648148148 0.087962963,0.439814815 0.263888889,0.263888889 C0.439814815,0.087962963 0.648148148,0 0.888888889,0 L13.3333333,0 C13.5740741,0 13.7824074,0.087962963 13.9583333,0.263888889 C14.1342593,0.439814815 14.2222222,0.648148148 14.2222222,0.888888889 Z" id="Shape"></path>
+            </g>
         </g>
     </g>
-  </svg>;
+   </svg>;
   }
 }
+
+
 /* eslint-enable max-len */
