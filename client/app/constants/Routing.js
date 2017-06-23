@@ -199,7 +199,7 @@ const ROUTING_INFORMATION =
     },
     codeToEmailMapper: {
       RO80: ['nancy.encarnado@va.gov'],
-      RO81: ['PMCAPPEALS.VBAPHI@va.gov', 'matthew.wright@va.gov'],
+      RO81: ['matthew.wright1@va.gov', 'andrea.gaetano@va.gov', 'PensionCenter.vbaphi@va.gov'],
       RO82: ['PMCAppeals.VBAMIW@va.gov', 'tammy.boggs@va.gov'],
       RO83: ['AppealsPMC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
       RO84: ['cowc.vbaphi@va.gov', 'Sohail.Atoum@va.gov'],
