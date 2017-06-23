@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
+import logger from 'redux-logger';
 
 import ConfigUtil from './ConfigUtil';
 
@@ -8,15 +9,13 @@ import ConfigUtil from './ConfigUtil';
  * Creates the Redux store and configures it with various tools
  * and middleware used across Caseflow apps.
  */
-export default function configureStore({ reducers, initialState, moreMiddleware }) {
+export default function configureStore({ reducers, initialState }) {
   // Redux middleware
   let middleware = [];
   if (!ConfigUtil.test()) {
-    middleware.push(thunk, perflogger);
-  }
-
-  if (moreMiddleware) {
-    middleware = middleware.concat(moreMiddleware);
+    // Note: logger must be the last middleware in chain,
+    // otherwise it will log thunk and promise, not actual actions
+    middleware.push(thunk, perflogger, logger);
   }
 
   // This configures the Redux Devtools Chrome extension.

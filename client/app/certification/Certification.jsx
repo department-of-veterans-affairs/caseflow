@@ -28,13 +28,7 @@ const EntryPointRedirect = connect(
 
 const Certification = ({ certification }) => {
   const initialState = mapDataToInitialState(certification);
-  const middleware = [logger];
-  const reducers = certificationReducers;
-  const store = configureStore({
-    reducers,
-    initialState,
-    middleware
-  });
+  const store = configureStore({ reducers: certificationReducers, initialState });
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers.
