@@ -6,7 +6,12 @@ export const documents = [
     received_at: '2017-01-02',
     category_medical: true,
     type: 'bva decision',
-    tags: []
+    tags: [
+      {
+        id: 1,
+        text: 'mytag'
+      }
+    ]
   },
   {
     id: 2,
