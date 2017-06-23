@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import { openDocumentInNewTab } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -14,7 +13,7 @@ import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
 
-import { setDocListScrollPosition, changeSortState,
+import { selectCurrentPdf, setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
@@ -122,7 +121,10 @@ class DocumentsTable extends React.Component {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
-  singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
+  handleDocumentLinkClick = (docId) => (event) => {
+    this.props.handleSelectCurrentPdf(docId);
+    this.props.showPdf(docId)(event);
+  }
 
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
@@ -185,7 +187,7 @@ class DocumentsTable extends React.Component {
     let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
       aria-hidden="true"></i>;
 
-    let boldUnreadContent = (content, doc) => {
+    const boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
         return <strong>{content}</strong>;
       }
@@ -299,9 +301,9 @@ class DocumentsTable extends React.Component {
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
-            href={this.singleDocumentView}
+            href={`documents/${doc.id}`}
             aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-            onMouseUp={this.props.showPdf(doc.id)}>
+            onMouseUp={this.handleDocumentLinkClick(doc.id)}>
             {doc.type}
           </a>, doc)
       },
@@ -395,6 +397,9 @@ const mapDispatchToProps = (dispatch) => ({
     setCategoryFilter,
     changeSortState
   }, dispatch),
+  handleSelectCurrentPdf: (docId) => {
+    dispatch(selectCurrentPdf(docId))
+  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
