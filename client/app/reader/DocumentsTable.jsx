@@ -275,6 +275,7 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'receipt-date-column',
         header: <Button
+          name="Receipt Date"
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
@@ -288,6 +289,7 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'doc-type-column',
         header: <Button id="type-header"
+        name="Document Type"
         classNames={['cf-document-list-button-header']}
         onClick={() => this.props.changeSortState('type')}>
           Document Type {sortIcon }
@@ -295,6 +297,7 @@ class DocumentsTable extends React.Component {
         valueFunction: (doc) => boldUnreadContent(
           <a
             href={this.singleDocumentView}
+            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
             onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}
           </a>, doc)
