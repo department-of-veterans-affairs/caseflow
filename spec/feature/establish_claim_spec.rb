@@ -496,7 +496,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       context "When there is an existing 070 EP",
-           skip: "This test hangs somewhat regularly for unknown reasons" do
+              skip: "This test hangs somewhat regularly for unknown reasons" do
         before do
           BGSService.end_product_data = [
             {
