@@ -1,5 +1,5 @@
 class Hearings::DocketsController < HearingsController
-  before_action :verify_access, :set_application
+  before_action :verify_access
 
   def index
     # If the user does not have a vacols_id, we cannot pull their hearings
