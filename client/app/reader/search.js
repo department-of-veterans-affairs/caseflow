@@ -26,29 +26,16 @@ const tagContainsString = (searchQuery, doc) =>
   , false);
 
 export const searchString = (searchQuery, state) => (doc) => {
-
   let queryTokens = _.compact(searchQuery.split(' '));
-  const dateMatch = doDatesMatch(doc.receivedAt, queryTokens[0]);
 
-  // if date matched using the first element, remove the
-  // first element from the list.
-  if (dateMatch) {
-    queryTokens.shift();
-  }
-
-  const stringSearchResult = queryTokens.every((word) => {
+  return queryTokens.every((word) => {
     const searchWord = word.trim();
 
     return searchWord.length > 0 && (
+      doDatesMatch(doc.receivedAt, searchWord) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
   });
-
-  if (dateMatch) {
-    return (stringSearchResult && dateMatch);
-  }
-
-  return stringSearchResult;
 };
