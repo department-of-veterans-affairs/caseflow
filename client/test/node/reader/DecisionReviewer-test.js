@@ -13,7 +13,7 @@ import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
-import readerReducer from '../../../app/reader/reducers/index';
+import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
