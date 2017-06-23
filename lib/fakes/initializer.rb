@@ -53,7 +53,7 @@ class Fakes::Initializer
     end
 
     def running_rake_command?
-      File.basename($0) == "rake"
+      File.basename($PROGRAM_NAME) == "rake"
     end
   end
 end
