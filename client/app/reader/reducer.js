@@ -108,6 +108,8 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
+  assignments: null,
+  loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
@@ -192,7 +194,7 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         documents: {
-          $set: _(action.payload).
+          $set: _(action.payload.documents).
             map((doc) => [
               doc.id, {
                 ...doc,
@@ -202,6 +204,9 @@ export const reducer = (state = initialState, action = {}) => {
             ]).
             fromPairs().
             value()
+        },
+        loadedAppealId: {
+          $set: action.payload.vacolsId
         }
       }
     ));
@@ -221,6 +226,13 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_ASSIGNMENTS:
+    return update(state,
+      {
+        assignments: {
+          $set: action.payload.assignments
+        }
+      });
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {

@@ -35,6 +35,10 @@ class Issue < ActiveRecord::Base
     disposition == :allowed
   end
 
+  def remanded?
+    disposition == :remanded
+  end
+
   # "New Material" (and "Non new material") are the exact
   # terms used internally by attorneys/judges. These mean the issue
   # was allowing/denying new material (such as medical evidence) to be used

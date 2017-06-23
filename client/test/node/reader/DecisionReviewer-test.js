@@ -17,11 +17,13 @@ import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
+const vacolsId = 'reader_id1';
+
 // This is the route history preset in react router
 // prior to tests running
 const INITIAL_ENTRIES = [
-  '/reader_id1/documents',
-  `/reader_id1/documents/${documents[0].id}`
+  `/${vacolsId}/documents`,
+  `/${vacolsId}/documents/${documents[0].id}`
 ];
 
 /* eslint-disable camelcase */
@@ -41,7 +43,7 @@ describe('DecisionReviewer', () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
       // required actions to skip past the loading screen and avoid stubing out
       // the API call to the index endpoint.
-      store.dispatch(onReceiveDocs(documents));
+      store.dispatch(onReceiveDocs(documents, vacolsId));
       store.dispatch(onReceiveAnnotations(annotations));
     };
 
@@ -305,6 +307,24 @@ describe('DecisionReviewer', () => {
     });
 
     context('when searched by', () => {
+      it('does and logic search', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: '/2017 mytag form' } });
+
+        let textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+
+        expect(textArray).to.have.length(1);
+        expect(textArray[0]).to.include('form 9');
+
+        wrapper.find('input').simulate('change',
+          { target: { value: '/2017 mytag do not show' } });
+
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+        expect(textArray).to.have.length(0);
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 
@@ -407,8 +427,8 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        // Header and one filtered row.
-        expect(textArray).to.have.length(2);
+        // Header and two filtered row.
+        expect(textArray).to.have.length(3);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
@@ -458,8 +478,8 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        // Header and one filtered row.
-        expect(textArray).to.have.length(2);
+        // Header and two filtered row.
+        expect(textArray).to.have.length(3);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);

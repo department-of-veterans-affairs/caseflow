@@ -514,6 +514,36 @@ describe Appeal do
     end
   end
 
+  context "#disposition_remand_priority" do
+    subject { appeal.disposition_remand_priority }
+    context "when disposition is allowed and one of the issues is remanded" do
+      let(:issues) do
+        [
+          Generators::Issue.build(disposition: :allowed),
+          Generators::Issue.build(disposition: :remanded)
+        ]
+      end
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      it { is_expected.to eq("Remanded") }
+    end
+
+    context "when disposition is allowed and none of the issues are remanded" do
+      let(:issues) do
+        [
+          Generators::Issue.build(disposition: :allowed),
+          Generators::Issue.build(disposition: :allowed)
+        ]
+      end
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      it { is_expected.to eq("Allowed") }
+    end
+
+    context "when disposition is not allowed" do
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
+      it { is_expected.to eq("Vacated") }
+    end
+  end
+
   context "#decision_type" do
     subject { appeal.decision_type }
     context "when it has a mix of allowed and granted issues" do
@@ -900,6 +930,27 @@ describe Appeal do
       it "raises ActiveRecord::RecordNotFound error" do
         expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
+    end
+  end
+
+  context ".initialize_appeal_without_lazy_load" do
+    let(:date) { Time.zone.today }
+    let(:saved_appeal) do
+      Generators::Appeal.build(
+        vacols_record: { veteran_first_name: "George" }
+      )
+    end
+    let(:appeal) do
+      Appeal.initialize_appeal_without_lazy_load(vacols_id: saved_appeal.vacols_id,
+                                                 signed_date: date)
+    end
+
+    it "creates an appeals object with attributes" do
+      expect(appeal.signed_date).to eq(date)
+    end
+
+    it "appeal does not lazy load vacols data" do
+      expect { appeal.veteran_first_name }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOffError)
     end
   end
 end
