@@ -92,6 +92,12 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
+  # If disposition is 'Allowed', look at the 'issues', if at least one issue where its desposition is 'Remanded',
+  # mark dispostion type as 'Remanded'
+  def disposition_type
+    disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
+  end
+
   def power_of_attorney
     @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
   end
