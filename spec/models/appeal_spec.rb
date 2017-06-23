@@ -542,7 +542,6 @@ describe Appeal do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
       it { is_expected.to eq("Vacated") }
     end
-
   end
 
   context "#decision_type" do
