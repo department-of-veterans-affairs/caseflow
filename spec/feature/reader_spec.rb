@@ -132,7 +132,7 @@ RSpec.feature "Reader" do
       end
 
       scenario "Enter a case",
-        skip: "titleize bug, fails intermittently" do
+               skip: "titleize bug, fails intermittently" do
         visit "/reader/appeal"
 
         expect(page).to have_content(appeal.veteran_last_name)
@@ -272,7 +272,7 @@ RSpec.feature "Reader" do
     end
 
     scenario "Add comment",
-      skip: "Fails intermittently" do
+             skip: "Fails intermittently" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Caseflow Reader")
 

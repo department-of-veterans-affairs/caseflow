@@ -8,7 +8,10 @@ import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 
 const Hearings = ({ hearings }) => {
   const initialState = mapDataToInitialState(hearings);
-  const store = configureStore({ reducers: hearingsReducers, initialState });
+  const store = configureStore({
+    reducers: hearingsReducers,
+    initialState
+  });
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers.

@@ -19,5 +19,6 @@ export const createEstablishClaimStore = (props) => {
     establishClaim: getEstablishClaimInitialState()
   };
 
-  return configureStore({ reducers, initialState });
+  return configureStore({ reducers,
+    initialState });
 };

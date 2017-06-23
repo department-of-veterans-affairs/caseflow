@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
-import logger from 'redux-logger';
 
 import configureStore from '../util/ConfigureStore';
 import Header from './Header';
@@ -28,7 +27,10 @@ const EntryPointRedirect = connect(
 
 const Certification = ({ certification }) => {
   const initialState = mapDataToInitialState(certification);
-  const store = configureStore({ reducers: certificationReducers, initialState });
+  const store = configureStore({
+    reducers: certificationReducers,
+    initialState
+  });
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers.
