@@ -94,7 +94,7 @@ class Appeal < ActiveRecord::Base
 
   # If disposition is 'Allowed', look at the 'issues', if at least one issue where its desposition is 'Remanded',
   # mark dispostion type as 'Remanded'
-  def disposition_type
+  def disposition_remand_priority
     disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
   end
 
