@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
 import logger from 'redux-logger';
 
-import ConfigUtil from '../util/ConfigUtil';
 import configureStore from '../util/ConfigureStore';
 import Header from './Header';
 import Success from './Success';
@@ -36,6 +35,17 @@ const Certification = ({ certification }) => {
     initialState,
     middleware
   });
+
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers.
+    // Changes made to the reducers while developing should be
+    // available instantly.
+    // Note that this expects the global reducer for each app
+    // to be present at reducers/index.
+    module.hot.accept('./reducers/index', () => {
+      store.replaceReducer(reducers);
+    });
+  }
 
   return <Provider store={store}>
     <div>

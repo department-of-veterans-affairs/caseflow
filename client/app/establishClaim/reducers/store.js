@@ -3,7 +3,6 @@ import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIss
 import establishClaimReducer, { getEstablishClaimInitialState } from './index';
 import establishClaimFormReducer,
   { getEstablishClaimFormInitialState } from './establishClaimForm';
-import ConfigUtil from '../../util/ConfigUtil';
 import configureStore from '../../util/ConfigureStore';
 
 export const createEstablishClaimStore = (props) => {

@@ -2,14 +2,15 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
+import ConfigUtil from './ConfigUtil';
+
 /**
  * Creates the Redux store and configures it with various tools
  * and middleware used across Caseflow apps.
  */
-
-const configureStore = ({ reducers, initialState = null, moreMiddleware = null }) => {
+export default function configureStore({ reducers, initialState, moreMiddleware }) {
   // Redux middleware
-  const middleware = [];
+  let middleware = [];
   if (!ConfigUtil.test()) {
     middleware.push(thunk, perflogger);
   }
@@ -27,31 +28,9 @@ const configureStore = ({ reducers, initialState = null, moreMiddleware = null }
   const enhancers  = composeEnhancers(applyMiddleware(...middleware));
 
   // Only some apps will provide initial data for the store.
-  if (initialState) {
-    const store = createStore(
-      reducers,
-      initialState,
-      enhancers
-    );
-  } else {
-    const store = createStore(
-      reducers,
-      enhancers
-    );
-  }
-
-  if (module.hot) {
-    // Enable Webpack hot module replacement for reducers.
-    // Changes made to the reducers while developing should be
-    // available instantly.
-    // Note that this expects the global reducer for each app
-    // to be present at reducers/index.
-    module.hot.accept('./reducers/index', () => {
-      store.replaceReducer(reducers);
-    });
-  }
+  const store = initialState ?
+    createStore(reducers, initialState, enhancers) :
+    createStore(reducers, enhancers);
 
   return store;
-}
-
-export configureStore;
+};
