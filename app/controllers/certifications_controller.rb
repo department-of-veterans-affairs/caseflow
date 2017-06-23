@@ -1,6 +1,5 @@
 class CertificationsController < ApplicationController
   before_action :verify_access
-  before_action :set_application
 
   def new
     # NOTE: this isn't rails-restful. certification.start! saves
@@ -9,6 +8,8 @@ class CertificationsController < ApplicationController
     @form8 = certification.form8
 
     if feature_enabled?(:certification_v2)
+      # this line was introduced for v2 stats
+      certification.v2 = true
       # only make the bgs and vacols calls if we're actually
       # starting a certification
       certification.fetch_power_of_attorney! if status == :started
