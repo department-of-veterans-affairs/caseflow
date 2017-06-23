@@ -108,7 +108,11 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
+  assignments: null,
+  loadedAppealId: null,
   initialDataLoadingFail: false,
+  pageCoordsBounds: {},
+  placingAnnotationIconPageCoords: null,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -190,7 +194,7 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         documents: {
-          $set: _(action.payload).
+          $set: _(action.payload.documents).
             map((doc) => [
               doc.id, {
                 ...doc,
@@ -200,6 +204,9 @@ export const reducer = (state = initialState, action = {}) => {
             ]).
             fromPairs().
             value()
+        },
+        loadedAppealId: {
+          $set: action.payload.vacolsId
         }
       }
     ));
@@ -219,6 +226,13 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_ASSIGNMENTS:
+    return update(state,
+      {
+        assignments: {
+          $set: action.payload.assignments
+        }
+      });
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -561,6 +575,12 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SET_PAGE_COORD_BOUNDS:
+    return update(state, {
+      pageCoordsBounds: {
+        $set: action.payload.coordBounds
+      }
+    });
   case Constants.PLACE_ANNOTATION:
     return update(state, {
       ui: {
@@ -584,8 +604,20 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SHOW_PLACE_ANNOTATION_ICON:
+    return update(state, {
+      placingAnnotationIconPageCoords: {
+        $set: {
+          pageIndex: action.payload.pageIndex,
+          ...action.payload.pageCoords
+        }
+      }
+    });
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
+      placingAnnotationIconPageCoords: {
+        $set: null
+      },
       ui: {
         placedButUnsavedAnnotation: { $set: null },
         pdf: {

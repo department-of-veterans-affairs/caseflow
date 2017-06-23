@@ -1,10 +1,13 @@
-class Reader::DocumentsController < ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled, :set_application
-
+class Reader::DocumentsController < Reader::ApplicationController
   def index
     respond_to do |format|
       format.html { return render(:index) }
       format.json do
+        AppealView.find_or_create_by(
+          appeal_id: appeal.id,
+          user_id: current_user.id).tap do |t|
+          t.update!(last_viewed_at: Time.zone.now)
+        end
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
@@ -65,27 +68,7 @@ class Reader::DocumentsController < ApplicationController
   helper_method :single_document
   # :nocov:
 
-  def logo_name
-    "Reader"
-  end
-
   def appeal_id
     params[:appeal_id]
-  end
-
-  def logo_path
-    reader_appeal_documents_path(appeal_id: appeal_id)
-  end
-
-  def verify_reader_feature_enabled
-    verify_feature_enabled(:reader)
-  end
-
-  def verify_access
-    verify_authorized_roles("Reader")
-  end
-
-  def set_application
-    RequestStore.store[:application] = "reader"
   end
 end
