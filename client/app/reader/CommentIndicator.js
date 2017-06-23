@@ -15,6 +15,7 @@ class CommentIndicator extends React.PureComponent {
   render() {
     const { annotationsCount, expanded, docId } = this.props;
     const name = `expand ${annotationsCount} comments`;
+    let commentArrowComponent = expanded ? <ChervonUp /> : <ChervonDown />;
 
     return <span className="document-list-comments-indicator">
       {annotationsCount > 0 &&
@@ -26,8 +27,7 @@ class CommentIndicator extends React.PureComponent {
           id={`expand-${docId}-comments-button`}
           onClick={this.toggleComments}>
           {annotationsCount}
-          {expanded && <ChervonUp />}
-          {!expanded && <ChervonDown />}
+          {commentArrowComponent}
         </Button>
       }
     </span>;
@@ -35,7 +35,7 @@ class CommentIndicator extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const doc = state.documents[ownProps.docId];
+const doc = state.documents[ownProps.docId];
 
   return {
     docId: doc.id,
