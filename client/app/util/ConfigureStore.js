@@ -10,6 +10,9 @@ import ConfigUtil from './ConfigUtil';
  * and middleware used across Caseflow apps.
  */
 export default function configureStore({ reducers, initialState }) {
+  if (!reducers) {
+    throw "No reducer given!"
+  }
   // Redux middleware
   let middleware = [];
   if (!ConfigUtil.test()) {
