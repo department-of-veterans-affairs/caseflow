@@ -168,6 +168,7 @@ class Fakes::AppealRepository
     (document_records || {})[appeal.vbms_id] || @documents || []
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
       case document.vbms_document_id.to_i
@@ -179,6 +180,8 @@ class Fakes::AppealRepository
         File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
       when 4
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+      when 5
+        File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
       else
         file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
         file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
@@ -186,6 +189,7 @@ class Fakes::AppealRepository
       end
     IO.binread(path)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.remands_ready_for_claims_establishment
     []
@@ -206,12 +210,18 @@ class Fakes::AppealRepository
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
-  def self.seed!
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def self.seed!(app_name: nil)
     return if Rails.env.test?
 
-    seed_certification_data!
-    seed_establish_claim_data!
-    seed_reader_data!
+    # In demo mode, on app bootup (rails console or server) the app_name will be nil and we
+    # want to load *all* of the seeds
+    # In development mode, we call these on every request, so we only want to load the ones
+    # relevant to our current app
+    seed_certification_data! if app_name.nil? || app_name == "certification"
+    seed_establish_claim_data! if app_name.nil? || app_name == "dispatch-arc"
+    seed_reader_data! if app_name.nil? || app_name == "reader"
   end
 
   def self.certification_documents
@@ -370,11 +380,11 @@ class Fakes::AppealRepository
       Generators::Document.build(vbms_document_id: 3, type: "Form 9",
                                  category_medical: true, category_procedural: true),
       Generators::Document.build(
-        vbms_document_id: 4,
+        vbms_document_id: 5,
         type: "This is a very long document type let's see what it does to the UI!",
         received_at: 7.days.ago,
         category_other: true),
-      Generators::Document.build(vbms_document_id: 5, type: "BVA Decision", received_at: 8.days.ago,
+      Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
                                  category_medical: true, category_procedural: true, category_other: true)
     ]
   end
@@ -402,8 +412,6 @@ class Fakes::AppealRepository
 
   # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
-    FeatureToggle.enable!(:reader)
-
     Generators::Appeal.build(
       vacols_id: "reader_id1",
       vbms_id: "reader_id1",

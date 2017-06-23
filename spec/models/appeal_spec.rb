@@ -147,6 +147,18 @@ describe Appeal do
         it { is_expected.to be_falsy }
       end
 
+      context "when received_at is nil" do
+        before do
+          appeal.documents += [
+            Document.new(type: "SSOC", received_at: nil, vbms_document_id: "1234"),
+            Document.new(type: "SSOC", received_at: 7.days.ago, vbms_document_id: "1235")
+          ]
+          appeal.ssoc_dates = [2.days.ago, 7.days.ago]
+        end
+
+        it { is_expected.to be_falsy }
+      end
+
       context "and ssoc dates match" do
         before do
           # vbms documents
@@ -888,6 +900,27 @@ describe Appeal do
       it "raises ActiveRecord::RecordNotFound error" do
         expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
+    end
+  end
+
+  context ".initialize_appeal_without_lazy_load" do
+    let(:date) { Time.zone.today }
+    let(:saved_appeal) do
+      Generators::Appeal.build(
+        vacols_record: { veteran_first_name: "George" }
+      )
+    end
+    let(:appeal) do
+      Appeal.initialize_appeal_without_lazy_load(vacols_id: saved_appeal.vacols_id,
+                                                 signed_date: date)
+    end
+
+    it "creates an appeals object with attributes" do
+      expect(appeal.signed_date).to eq(date)
+    end
+
+    it "appeal does not lazy load vacols data" do
+      expect { appeal.veteran_first_name }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOffError)
     end
   end
 end
