@@ -45,7 +45,7 @@ export const DocumentListHeader = (props) => {
         </span>
       </div>
     </div>
-    {filteredCategories.length &&
+    {filteredCategories.length > 0 &&
       <AlertBanner
         title="Showing limited results"
         type="info">
