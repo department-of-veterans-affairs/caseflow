@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { expect } from 'chai';
-import { reducer } from '../../../app/reader/reducer';
+import { reducer } from '../../../app/reader/reducers/index';
 import * as Constants from '../../../app/reader/constants';
 
 /* eslint-disable no-undefined */
