@@ -18,8 +18,9 @@ import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
-  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
-  SortArrowUp, SortArrowDown } from '../components/RenderFunctions';
+  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
+   } from '../components/RenderFunctions';
+import { SortArrowUp, SortArrowDown } from '../components/SortArrow';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 

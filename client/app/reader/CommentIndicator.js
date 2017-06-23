@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { ChervonDown, ChervonUp } from '../components/RenderFunctions';
+import { ChervonDown, ChervonUp } from '../components/ChervonIcon';
 
 
 class CommentIndicator extends React.PureComponent {
