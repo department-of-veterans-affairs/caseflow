@@ -1,7 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -18,11 +17,13 @@ import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
+const vacolsId = 'reader_id1';
+
 // This is the route history preset in react router
 // prior to tests running
 const INITIAL_ENTRIES = [
-  '/reader_id1/documents',
-  `/reader_id1/documents/${documents[0].id}`
+  `/${vacolsId}/documents`,
+  `/${vacolsId}/documents/${documents[0].id}`
 ];
 
 /* eslint-disable camelcase */
@@ -42,7 +43,7 @@ describe('DecisionReviewer', () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
       // required actions to skip past the loading screen and avoid stubing out
       // the API call to the index endpoint.
-      store.dispatch(onReceiveDocs(documents));
+      store.dispatch(onReceiveDocs(documents, vacolsId));
       store.dispatch(onReceiveAnnotations(annotations));
     };
 
@@ -166,11 +167,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-save').simulate('click');
         await pause();
 
-        // Verify the api is called to add a comment
-        expect(ApiUtilStub.apiPost.calledWith(`/document/${documents[0].id}/annotation`,
-          sinon.match({ data: { annotation: firstComment } }))).to.be.true;
-        await pause();
-
         // Click on the edit button
         wrapper.find('#button-edit-comment-1').simulate('click');
 
@@ -185,11 +181,6 @@ describe('DecisionReviewer', () => {
         // Save the edit
         wrapper.find('#button-save').simulate('click');
         await pause();
-
-        // Verify the api is called to edit a comment
-        expect(ApiUtilStub.apiPatch.calledWith(
-          `/document/${documents[0].id}/annotation/${commentId}`,
-          sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
         wrapper.find('#button-delete-comment-1').simulate('click');
