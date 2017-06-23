@@ -13,7 +13,7 @@ import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
 
-import { selectCurrentPdf, setDocListScrollPosition, changeSortState,
+import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
