@@ -183,7 +183,7 @@ class DocumentsTable extends React.Component {
 
     const className = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
 
-    let sortIcon = <i className = { {className} }aria-hidden="true"></i>;
+    let sortIcon = <i className = { { className } }aria-hidden="true"></i>;
 
     let boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -282,7 +282,7 @@ class DocumentsTable extends React.Component {
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
-          Receipt Date {this.props.docFilterCriteria.sort.sortBy == 'receivedAt' ? className : sortIcon }
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? className : sortIcon }
         </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
@@ -295,7 +295,7 @@ class DocumentsTable extends React.Component {
         name="Document Type"
         classNames={['cf-document-list-button-header']}
         onClick={() => this.props.changeSortState('type')}>
-          Document Type {this.props.docFilterCriteria.sort.sortBy == 'type' ? className : sortIcon }
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? className : sortIcon }
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
