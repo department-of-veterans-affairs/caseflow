@@ -11,8 +11,7 @@ import NoSearchResults from './NoSearchResults';
 export class PdfListView extends React.Component {
 
   render() {
-    const noDocuments = !_.size(this.props.documents) &&
-      _.size(this.props.docFilterCriteria.searchQuery);
+    const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
     return <div className="usa-grid">
       <div className="cf-app">

@@ -11,7 +11,16 @@ class Fakes::Initializer
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
-      load_fakes_and_seed! if rails_env.development? || rails_env.demo?
+      if rails_env.development? || rails_env.demo?
+        # If we are running a rake command like `rake db:seed` or
+        # `rake db:schema:load`, we do not want to try and seed the fakes
+        # because our schema may not be loaded yet and it will fail!
+        if running_rake_command?
+          load!
+        else
+          load_fakes_and_seed!
+        end
+      end
     end
 
     # This setup method is called on every request during development
@@ -41,6 +50,10 @@ class Fakes::Initializer
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
+    end
+
+    def running_rake_command?
+      File.basename($PROGRAM_NAME) == "rake"
     end
   end
 end

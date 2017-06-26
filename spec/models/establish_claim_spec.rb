@@ -107,7 +107,7 @@ describe EstablishClaim do
 
       context "if the task's appeal errors out on decision content load" do
         before do
-          expect(Appeal.repository).to receive(:fetch_document_file).and_raise("VBMS 500")
+          expect(VBMSService).to receive(:fetch_document_file).and_raise("VBMS 500")
           establish_claim.save!
         end
 
@@ -119,7 +119,7 @@ describe EstablishClaim do
 
       context "if the task caches decision content successfully" do
         before do
-          expect(Appeal.repository).to receive(:fetch_document_file) { "yay content!" }
+          expect(VBMSService).to receive(:fetch_document_file) { "yay content!" }
         end
 
         it "prepares task and caches decision document content" do
@@ -135,7 +135,7 @@ describe EstablishClaim do
   context "#perform!" do
     # Stub the id of the end product being created
     before do
-      Fakes::AppealRepository.end_product_claim_id = "12345"
+      Fakes::VBMSService.end_product_claim_id = "12345"
     end
 
     let(:claim_params) do
@@ -177,7 +177,7 @@ describe EstablishClaim do
 
     context "when VBMS throws an error" do
       before do
-        allow(Appeal.repository).to receive(:establish_claim!).and_raise(vbms_error)
+        allow(VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
 
         # Save objects to test DB rollback stuff
         establish_claim.save!
