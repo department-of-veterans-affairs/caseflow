@@ -1,13 +1,5 @@
 require "rails_helper"
 
-# Wrap this around your test to run it many times and ensure that it passes consistently.
-# Note: do not merge to master like this, or the tests will be slow! Ha.
-def ensure_stable
-  10.times do
-    yield
-  end
-end
-
 def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
@@ -179,13 +171,15 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
-    scenario "Next and Previous buttons move between docs" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      find("#button-next").click
-      expect(find(".cf-document-type")).to have_text("BVA Decision")
-      find("#button-previous").click
-      find("#button-previous").click
-      expect(find(".cf-document-type")).to have_text("NOD")
+    ensure_stable do
+      scenario "Next and Previous buttons move between docs", :focus => true do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+        find("#button-next").click
+        expect(find(".cf-document-type")).to have_text("BVA Decision")
+        find("#button-previous").click
+        find("#button-previous").click
+        expect(find(".cf-document-type")).to have_text("NOD")
+      end
     end
 
     scenario "Arrow keys to navigate through documents" do
