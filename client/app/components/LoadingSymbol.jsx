@@ -12,7 +12,9 @@ export default class LoadingSymbol extends React.Component {
       caption
     } = this.props;
 
-    return <span className={classNames({'cf-loading-symbol': true, 'on-pill': onPill })}>
+    /* eslint-disable max-len */
+    return <span className={classNames({ 'cf-loading-symbol': true,
+      'on-pill': onPill })}>
       <span>
         <svg className="back" height="20" id="svg3393" width="20" version="1.1" viewBox="135 208 20 20">
           <path data-back-color={backColor} id="Fill-12-7-4" style={{ mixBlendMode: 'multiply',
@@ -34,6 +36,7 @@ export default class LoadingSymbol extends React.Component {
       </span>}
     </span>;
   }
+  /* eslint-disable max-len */
 }
 
 LoadingSymbol.defaultProps = {
