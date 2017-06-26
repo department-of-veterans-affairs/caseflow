@@ -444,3 +444,20 @@ select {
 .vbms-id {
   color: $color-gray-light;
 }
+
+//candidate for commons
+.usa-accordion-button {
+  background-image: url(asset-path("minus.png"));
+  background-image: url(asset-path("minus.svg"));
+
+  &[aria-expanded=false] {
+    background-image: url(asset-path("plus.png"));
+    background-image: url(asset-path("plus.svg"));
+  }
+}
+
+.usa-accordion-bordered-outline {
+  .usa-accordion-button {
+    border: 1px solid $color-gray-light;
+  }
+}
