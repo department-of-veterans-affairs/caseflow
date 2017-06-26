@@ -1,7 +1,6 @@
 import React from 'react';
-import Banner from 'react-banner';
-// import WrenchIcon from '../components/WrenchIcon';
-import FoundIcon from '../components/FoundIcon';
+import WrenchIcon from '../components/WrenchIcon';
+// import FoundIcon from '../components/FoundIcon';
 
 /*
  * Caseflow Certification Footer.
@@ -15,12 +14,17 @@ export default class CaseflowBanner extends React.Component {
 
 
     return (
-      <Banner
-        logo={FoundIcon}
-        search={false}
-        url={ window.location.pathname }
-         />
-        )
+      <div className="usa-banner">
+        <div className="usa-grid usa-banner-inner">
+          <div className="banner-icon">
+            <WrenchIcon/>
+          </div>
+          <span className="banner-text">We've detected technical issues in our system. You can continue working,
+          though some users may experience delays.
+          </span>
+        </div>
+      </div>
+    );
   }
 }
 

@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
-import CaseflowBanner from './CaseflowBanner';
 import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
@@ -65,7 +64,6 @@ const Certification = ({ certification }) => {
     <div>
       <BrowserRouter>
         <div>
-        <CaseflowBanner/>
         <Header/>
         <CertificationProgressBar/>
         <Route path="/certifications/new/:vacols_id"
