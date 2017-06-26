@@ -1,10 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import logger from 'redux-logger';
 
-import ConfigUtil from '../util/ConfigUtil';
+import configureStore from '../util/ConfigureStore';
 import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
@@ -27,40 +25,25 @@ const EntryPointRedirect = connect(
   mapStateToProps
 )(UnconnectedEntryPointRedirect);
 
-const configureStore = (data) => {
-
-  const middleware = [];
-
-  if (!ConfigUtil.test()) {
-    middleware.push(logger);
-  }
-
-  // This is to be used with the Redux Devtools Chrome extension
-  // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
-  // eslint-disable-next-line no-underscore-dangle
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-  const initialData = mapDataToInitialState(data);
-
-  const store = createStore(
-    certificationReducers,
-    initialData,
-    composeEnhancers(applyMiddleware(...middleware))
-  );
+const Certification = ({ certification }) => {
+  const initialState = mapDataToInitialState(certification);
+  const store = configureStore({
+    reducers: certificationReducers,
+    initialState
+  });
 
   if (module.hot) {
-    // Enable Webpack hot module replacement for reducers
+    // Enable Webpack hot module replacement for reducers.
+    // Changes made to the reducers while developing should be
+    // available instantly.
+    // Note that this expects the global reducer for each app
+    // to be present at reducers/index.
     module.hot.accept('./reducers/index', () => {
       store.replaceReducer(certificationReducers);
     });
   }
 
-  return store;
-};
-
-const Certification = ({ certification }) => {
-
-  return <Provider store={configureStore(certification)}>
+  return <Provider store={store}>
     <div>
       <BrowserRouter>
         <div>
