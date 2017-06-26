@@ -447,12 +447,10 @@ select {
 
 //candidate for commons
 .usa-accordion-button {
-  background-image: url(asset-path("minus.png"));
-  background-image: url(asset-path("minus.svg"));
+  background-image: url(asset-path('minus.svg'));
 
   &[aria-expanded=false] {
-    background-image: url(asset-path("plus.png"));
-    background-image: url(asset-path("plus.svg"));
+    background-image: url(asset-path('plus.svg'));
   }
 }
 
@@ -460,4 +458,8 @@ select {
   .usa-accordion-button {
     border: 1px solid $color-gray-light;
   }
+}
+
+.usa-accordion-bordered, .usa-accordion, .usa-accordion-bordered-outline {
+  margin-bottom: 40px;
 }
