@@ -24,13 +24,6 @@ export const SHOW_VALIDATION_ERRORS = 'SHOW_VALIDATION_ERRORS';
 export const RESET_STATE = 'RESET_STATE';
 
 // types of hearings
-//
-// TODO:
-// on the backend, NO_HEARING_DESIRED
-// should result in VIDEO being written to VACOLS,
-// and HEARING_CANCELLED should result in a cancellation
-// checkbox being checked, but the original hearing type
-// should be undisturbed.
 export const hearingPreferences = {
   VIDEO: 'VIDEO',
   TRAVEL_BOARD: 'TRAVEL_BOARD',

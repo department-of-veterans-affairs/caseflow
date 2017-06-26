@@ -21,6 +21,7 @@ import StyleGuideDashboard from './StyleGuideDashboard';
 import StyleGuideTypography from './StyleGuideTypography';
 import StyleGuideFormFields from './StyleGuideFormFields';
 import StyleGuideAccordions from './StyleGuideAccordions';
+import StyleGuideAlerts from './StyleGuideAlerts';
 
 export default function StyleGuideIndex() {
 
@@ -185,9 +186,7 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Alerts"
-          id="alerts" />
+        <StyleGuideAlerts />
         <div className="cf-help-divider"></div>
         <StyleGuideLayout />
         <div className="cf-help-divider"></div>
