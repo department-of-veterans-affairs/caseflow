@@ -10,7 +10,7 @@ The backend should be tested with both unit tests and request-level tests.
 
 The backend and frontend are tested together with Capybara tests. Because Capybara is slow and it's hard to write reliable tests, it should be used as more of a smoke test than an exhaustive proof of correctness. Try one or two permutations in Capybara, and verify all the edge cases in unit tests.
 
-Before deployment, Artem's full stack integration tests will also run. 
+Before deployment, QA's full stack integration tests will also run. 
 
 ## Never Sleep
 No test should contain a `sleep` or `await pause()` where we are guessing how long a timed operation will take. This is a recipe for flakey tests. If we guess too low a time, the test will fail. If we guess too high a time, the test will be unnecessarily slow.
