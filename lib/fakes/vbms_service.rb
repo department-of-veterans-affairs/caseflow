@@ -24,6 +24,7 @@ class Fakes::VBMSService
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
       case document.vbms_document_id.to_i
@@ -44,6 +45,7 @@ class Fakes::VBMSService
       end
     IO.binread(path)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.fetch_documents_for(appeal)
     (document_records || {})[appeal.vbms_id] || @documents || []
