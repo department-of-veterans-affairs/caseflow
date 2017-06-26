@@ -53,8 +53,8 @@ RSpec.feature "Confirm Certification" do
 
     expect(Fakes::AppealRepository.certified_appeal).to_not be_nil
     expect(Fakes::AppealRepository.certified_appeal.vacols_id).to eq(appeal.vacols_id)
-    expect(Fakes::AppealRepository.uploaded_form8.vacols_id).to eq(appeal.vacols_id)
-    expect(Fakes::AppealRepository.uploaded_form8_appeal.vacols_id).to eq(appeal.vacols_id)
+    expect(Fakes::VBMSService.uploaded_form8.vacols_id).to eq(appeal.vacols_id)
+    expect(Fakes::VBMSService.uploaded_form8_appeal.vacols_id).to eq(appeal.vacols_id)
 
     expect(page).to have_content("Congratulations!")
 
