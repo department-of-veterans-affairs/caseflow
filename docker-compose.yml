@@ -1,0 +1,25 @@
+version: '3'
+services:
+  db:
+    image: postgres:9.3.14
+    environment:
+      POSTGRES_PASSWORD: 1234
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata:rw
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:3.2-alpine
+    command: redis-server
+    ports:
+      - "6379:6379"
+  web:
+    build: .
+    command: "" # ["/build/wait_for_postgres.sh", "db", "RAILS_ENV=test bundle exec rake db:create db:schema:load"]
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db, redis
+    links:
+      - db, redis

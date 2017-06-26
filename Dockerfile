@@ -5,6 +5,8 @@ RUN apt-get update -qq && apt-get install -qq -y build-essential nodejs libpq-de
 RUN wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O /opt/node-v6.10.2-linux-x64.tar.xz
 RUN tar xf /opt/node-v6.10.2-linux-x64.tar.xz -C /opt
 
+# FROM node:6.10.2
+
 ## Copy project files to newly built container
 RUN mkdir /build
 WORKDIR /build
@@ -13,6 +15,7 @@ ADD Gemfile.lock /build/Gemfile.lock
 RUN bundle install --deployment --without development staging production
 ADD . /build
 
+# From postgres
 ENV PATH="/opt/node-v6.10.2-linux-x64/bin:${PATH}"
 
 RUN cd /build/client && npm install --no-optional
