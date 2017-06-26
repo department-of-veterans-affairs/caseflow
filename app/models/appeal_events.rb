@@ -46,7 +46,13 @@ class AppealEvents
   end
 
   def ssoc_events
-    appeal.ssoc_dates.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
+    appeal.ssoc_dates.map do |ssoc_date|
+      if appeal.certification_date && ssoc_date > appeal.certification_date
+        AppealEvent.new(type: :remand_ssoc, date: ssoc_date)
+      else
+        AppealEvent.new(type: :ssoc, date: ssoc_date)
+      end
+    end
   end
 
   def decision_event
