@@ -20,6 +20,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
   end
 
+  let(:appeal_full_grant) do
+    Generators::Appeal.create(vacols_record: :full_grant_decided, documents: documents)
+  end
+
+  let(:appeal_partial_grant) do
+    Generators::Appeal.create(vacols_record: :partial_grant_decided, documents: documents)
+  end
+
   let(:documents) do
     [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
   end
@@ -35,7 +43,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # Create 4 incomplete tasks and one completed today
       4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
 
-      Generators::EstablishClaim.create(user: case_worker, aasm_state: :assigned).tap do |task|
+      Generators::EstablishClaim.create(appeal_id: appeal.id, user: case_worker, aasm_state: :assigned).tap do |task|
         task.start!
         task.complete!(status: :routed_to_arc)
       end
@@ -53,17 +61,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       click_on "Update"
       expect(find_field("the number of people").value).to have_content("2")
 
-      # This looks for the row in the table for the User 'Jane Smith' who has
-      # two tasks assigned to her, has completed one, and has one remaining.
-      expect(page).to have_content("1. Jane Smith 1 2 3")
-      expect(page).to have_content("2. Not logged in 0 2 2")
-      expect(page).to have_content("Employee Total 1 4 5")
+      # Check user quotas and totals
+      expect(page).to have_content("1. Jane Smith 0 0 1 1 3")
+      expect(page).to have_content("2. Not logged in 0 0 0 0 2")
+      expect(page).to have_content("Employee Total 0 0 1 1 5")
 
       # Two more users starting tasks should force the number of people to bump up to 3
       %w(June Jeffers).each do |name|
         Generators::EstablishClaim.create(
           user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned
+          aasm_state: :assigned,
+          appeal_id: (name == "June" ? appeal_full_grant.id : appeal_partial_grant.id)
         ).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
@@ -75,19 +83,26 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find_field("the number of people").value).to have_content("3")
 
       # Validate remanders are handled correctly
-      expect(page).to have_content("1. Jane Smith 1 2 3")
-      expect(page).to have_content("2. June Smith 1 1 2")
-      expect(page).to have_content("3. Jeffers Smith 1 1 2")
-      expect(page).to have_content("Employee Total 3 4 7")
+      expect(page).to have_content("1. Jane Smith 0 0 1 1 3")
+      expect(page).to have_content("2. June Smith 1 0 0 1 2")
+      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
+      expect(page).to have_content("Employee Total 1 1 1 3 7")
     end
 
     scenario "Edit individual user quotas" do
       4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
 
+      appeal_id = {
+        "Janet" => appeal.id,
+        "June" => appeal_full_grant.id,
+        "Jeffers" => appeal_partial_grant.id
+      }
+
       %w(Janet June Jeffers).each do |name|
         Generators::EstablishClaim.create(
           user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned
+          aasm_state: :assigned,
+          appeal_id: appeal_id[name]
         ).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
@@ -95,31 +110,30 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/establish-claim"
-
-      expect(page).to have_content("1. Janet Smith 1 2 3")
-      expect(page).to have_content("2. June Smith 1 1 2")
-      expect(page).to have_content("3. Jeffers Smith 1 1 2")
-      expect(page).to have_content("Employee Total 3 4 7")
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 3")
+      expect(page).to have_content("2. June Smith 1 0 0 1 2")
+      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
+      expect(page).to have_content("Employee Total 1 1 1 3 7")
 
       # Begin editing June's quota
       june_quota = UserQuota.where(user: User.where(full_name: "June Smith").first).first
 
       within("#table-row-1") do
         click_on "Edit"
-
         fill_in "quota-#{june_quota.id}", with: "5"
         click_on "Save"
       end
 
-      expect(page).to have_content("1. Janet Smith 1 0 1")
-      expect(page).to have_content("2. June Smith 1 4 5")
-      expect(page).to have_content("3. Jeffers Smith 1 0 1")
-      expect(page).to have_content("Employee Total 3 4 7")
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 1")
+      expect(page).to have_content("2. June Smith 1 0 0 1 5")
+      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 1")
+      expect(page).to have_content("Employee Total  1 1 1 3 7")
 
       find("#button-unlock-quota-#{june_quota.id}").click
 
-      expect(page).to have_content("1. Janet Smith 1 2 3")
-      expect(page).to have_content("2. June Smith 1 1 2")
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 3")
+      expect(page).to have_content("2. June Smith 1 0 0 1 2")
+      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
     end
 
     scenario "View unprepared tasks page" do
