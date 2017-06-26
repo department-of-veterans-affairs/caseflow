@@ -51,7 +51,7 @@ export class DecisionReviewer extends React.PureComponent {
         // For some reason calling this synchronosly prevents the new
         // tab from opening. Move it to an asynchronus call.
         setTimeout(() =>
-          this.props.handleSetLastRead(docId)
+          this.props.handleSelectCurrentPdf(docId)
         );
 
         return true;
@@ -192,8 +192,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(ReaderActions, dispatch);
-};
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators(ReaderActions, dispatch),
+  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

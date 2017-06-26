@@ -183,7 +183,7 @@ class DocumentsTable extends React.Component {
     let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
       aria-hidden="true"></i>;
 
-    let boldUnreadContent = (content, doc) => {
+    const boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
         return <strong>{content}</strong>;
       }
