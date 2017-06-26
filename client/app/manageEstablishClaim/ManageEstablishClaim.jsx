@@ -14,22 +14,45 @@ class ManageEstablishClaim extends React.Component {
   getUserColumns = () => {
     let quotaTotals = this.props.quotaTotals;
 
+    const decisionCount = (tasks, decisionType) => tasks[decisionType] || 0;
+
     return [
       {
         header: 'Employee Name',
-        valueName: 'userName',
+        valueFunction: (userQuota) => <span>
+          <span className="cf-work-assignments-user-index">{userQuota.index + 1}.</span>
+          <span className="cf-work-assignments-user">{userQuota.userName}</span>
+        </span>,
         footer: <strong>Employee Total</strong>
       },
       {
-        header: 'Cases Completed',
-        valueName: 'tasksCompletedCount',
-        footer: <strong>{quotaTotals.tasksCompletedCount}</strong>,
+        header: 'Full Grant',
+        valueFunction: (userQuota) => <span>
+          {decisionCount(userQuota.tasksCompletedCountByDecisionType, 'full_grant')}
+        </span>,
+        footer: <strong>{quotaTotals.fullGrantCount}</strong>,
         align: 'center'
       },
       {
-        header: 'Cases Remaining',
-        valueName: 'tasksLeftCount',
-        footer: <strong>{quotaTotals.tasksLeftCount}</strong>,
+        header: 'Partial Grant',
+        valueFunction: (userQuota) => <span>
+          {decisionCount(userQuota.tasksCompletedCountByDecisionType, 'partial_grant')}
+        </span>,
+        footer: <strong>{quotaTotals.partialGrantCount}</strong>,
+        align: 'center'
+      },
+      {
+        header: 'Remand',
+        valueFunction: (userQuota) => <span>
+          {decisionCount(userQuota.tasksCompletedCountByDecisionType, 'remand')}
+        </span>,
+        footer: <strong>{quotaTotals.remandCount}</strong>,
+        align: 'center'
+      },
+      {
+        header: 'Completed',
+        valueName: 'tasksCompletedCount',
+        footer: <strong>{quotaTotals.tasksCompletedCount}</strong>,
         align: 'center'
       },
       {
@@ -65,17 +88,19 @@ class ManageEstablishClaim extends React.Component {
       />}
 
       <div className="cf-app-segment cf-app-segment--alt">
-        <h1>ARC Work Assignments
-          <span className="cf-associated-header">
+        <div className="cf-title-meta-right">
+          <h1 className="title">ARC Work Assignments</h1>
+          <div className="meta">
             {quotaTotals.tasksCompletedCount} out of {quotaTotals.taskCount} cases completed today
-          </span>
-        </h1>
+          </div>
+        </div>
 
         <h2>Manage Work Assignments</h2>
 
         <EmployeeCount />
 
         <Table
+          className="cf-work-assignments"
           columns={this.getUserColumns()}
           rowObjects={userQuotas}
           rowClassNames={rowClassNames}

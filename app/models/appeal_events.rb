@@ -56,7 +56,7 @@ class AppealEvents
   end
 
   def decision_event
-    AppealEvent.new(disposition: appeal.disposition, date: appeal.decision_date)
+    AppealEvent.new(disposition: appeal.disposition_remand_priority, date: appeal.decision_date)
   end
 
   def certification_event
