@@ -115,7 +115,7 @@ describe Document do
   context "content tests" do
     context "#fetch_and_cache_document_from_vbms" do
       it "loads document content" do
-        expect(Fakes::AppealRepository).to receive(:fetch_document_file).and_return("content!")
+        expect(VBMSService).to receive(:fetch_document_file).and_return("content!")
         expect(document.fetch_and_cache_document_from_vbms).to eq("content!")
       end
     end
@@ -126,7 +126,7 @@ describe Document do
       end
 
       it "lazy fetches document content" do
-        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+        expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
         document.fetch_content
         expect(document.fetch_content).to eq("content!")
       end
@@ -138,7 +138,7 @@ describe Document do
       end
 
       it "lazy loads document content" do
-        expect(Fakes::AppealRepository).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+        expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
         document.content
         expect(document.content).to eq("content!")
       end
