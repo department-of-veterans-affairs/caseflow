@@ -55,5 +55,5 @@ Alert.propTypes = {
   children: PropTypes.node,
   message: PropTypes.node,
   title: PropTypes.string,
-  type: PropTypes.oneOf(['success', 'error', 'warning', 'info'])
+  type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired
 };

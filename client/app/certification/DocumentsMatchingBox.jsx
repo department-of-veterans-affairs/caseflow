@@ -3,7 +3,7 @@ import Alert from '../components/Alert';
 
 // TODO: refactor to use shared components if helpful
 const DocumentsMatchingBox = ({ areDatesExactlyMatching }) =>
-<Alert
+    <Alert
       title="All documents found with matching VBMS and VACOLS dates."
       type="success">
       {!areDatesExactlyMatching &&
