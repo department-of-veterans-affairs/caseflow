@@ -241,6 +241,33 @@ describe Certification do
     end
   end
 
+  context ".find_by_vacols_id" do
+    let(:vacols_id) { "1122" }
+    let!(:certification) { Certification.create(vacols_id: vacols_id) }
+
+    subject { Certification.find_by_vacols_id(vacols_id) }
+
+    context "when certification exists and it has not been cancelled before" do
+      it "loads that certification " do
+        expect(subject.id).to eq(certification.id)
+      end
+    end
+
+    context "when certification exists and it has been cancelled before" do
+      let!(:certification_cancellation) do
+        CertificationCancellation.create(
+          certification_id: certification.id,
+          cancellation_reason: "test",
+          email: "test@gmail.com"
+        )
+      end
+
+      it "does not find one" do
+        expect(subject).to eq nil
+      end
+    end
+  end
+
   context ".find_or_create_by_vacols_id" do
     let(:vacols_id) { "1122" }
     subject { Certification.find_or_create_by_vacols_id(vacols_id) }
@@ -290,6 +317,24 @@ describe Certification do
       expect(subject.bgs_representative_type).to eq "Attorney"
       expect(subject.bgs_representative_name).to eq "Clarence Darrow"
       expect(subject.vacols_representative_name).to eq "The American Legion"
+    end
+  end
+
+  context "#v2" do
+    subject { Certification.v2 }
+
+    before do
+      Certification.create(v2: true)
+      Certification.create(bgs_representative_type: "Attorney")
+      Certification.create(bgs_representative_name: "Sir Alex F")
+      Certification.create(vacols_representative_type: "Attorney")
+      Certification.create(vacols_representative_name: "Jose Mou")
+      Certification.create
+    end
+
+    it "returns only v2 certifications" do
+      expect(Certification.all.count).to eq 6
+      expect(subject.count).to eq 5
     end
   end
 end

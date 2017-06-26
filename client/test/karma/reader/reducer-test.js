@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { expect } from 'chai';
 import { reducer } from '../../../app/reader/reducer';
 import * as Constants from '../../../app/reader/constants';
@@ -7,6 +8,47 @@ import * as Constants from '../../../app/reader/constants';
 describe('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
+
+  describe(Constants.RECEIVE_DOCUMENTS, () => {
+    it('updates documents object when received', () => {
+      const date = new Date();
+      const documents = [{
+        id: 0,
+        tags: [],
+        receivedAt: date,
+        received_at: date,
+        listComments: false
+      }];
+      const vacolsId = 1;
+      const state = reduceActions([
+        {
+          type: Constants.RECEIVE_DOCUMENTS,
+          payload: {
+            documents,
+            vacolsId
+          }
+        }
+      ]);
+
+      expect(state.documents[documents[0].id]).to.deep.equal(documents[0]);
+      expect(state.loadedAppealId).to.deep.equal(vacolsId);
+    });
+
+    it('updates documents object when null is passed', () => {
+      const documents = null;
+      const state = reduceActions([
+        {
+          type: Constants.RECEIVE_DOCUMENTS,
+          payload: {
+            documents
+          }
+        }
+      ]);
+
+      expect(state.documents).to.deep.equal({});
+      expect(state.loadedAppealId).to.equal(undefined);
+    });
+  });
 
   describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
     const state = reduceActions([{ type: Constants.REQUEST_INITIAL_DATA_FAILURE }]);
@@ -285,10 +327,13 @@ describe('Reader reducer', () => {
       const state = reduceActions([
         {
           type: Constants.RECEIVE_DOCUMENTS,
-          payload: [{
-            id: docId,
-            tags: []
-          }]
+          payload: {
+            documents: [{
+              id: docId,
+              tags: []
+            }],
+            vacolsId: 1
+          }
         },
         {
           type: Constants.REQUEST_CREATE_ANNOTATION,
@@ -369,10 +414,13 @@ describe('Reader reducer', () => {
       const state = reduceActions([
         {
           type: Constants.RECEIVE_DOCUMENTS,
-          payload: [{
-            id: 0,
-            tags: []
-          }]
+          payload: {
+            documents: [{
+              id: 0,
+              tags: []
+            }],
+            vacolsId: 1
+          }
         },
         {
           type: Constants.REQUEST_NEW_TAG_CREATION,

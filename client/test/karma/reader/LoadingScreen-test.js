@@ -8,9 +8,14 @@ describe('LoadingScreen', () => {
   const getContext = () => mount(<LoadingScreen>
         <p>Show when documents are loaded</p>
     </LoadingScreen>);
+  const vacolsId = 1;
 
   it('displays children when the documents are loaded', () => {
-    const wrapper = getContext().setProps({ documentsLoaded: true });
+    const wrapper = getContext().setProps({
+      documentsLoaded: true,
+      loadedAppealId: vacolsId,
+      vacolsId
+    });
 
     expect(wrapper.text()).to.include('Show when documents are loaded');
   });

@@ -5,30 +5,81 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation } from '../reader/utils';
+import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow, placeAnnotation, requestMoveAnnotation } from '../reader/actions';
+import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
+  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
+  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
+import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+
+const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
+const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
+
+/**
+ * We do a lot of work with coordinates to render PDFs.
+ * It is important to keep the various coordinate systems straight.
+ * Here are the systems we use:
+ *
+ *    Root coordinates: The coordinate system for the entire app.
+ *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
+ *
+ *    Page coordinates: A coordinate system for a given PDF page.
+ *      (0, 0) is the top left hand corner of that PDF page.
+ *
+ * The relationship between root and page coordinates is defined by where the PDF page is within the whole app,
+ * and what the current scale factor is.
+ *
+ * All coordinates in our codebase should have `page` or `root` in the name, to make it clear which
+ * coordinate system they belong to. All converting between coordinate systems should be done with
+ * the proper helper functions.
+ */
+export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
+  x: (x - pageBoundingBox.left) / scale,
+  y: (y - pageBoundingBox.top) / scale
+});
+
+export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
+  const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
+  const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
+  const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
+  const bottomBound = Math.min(scrollWindowBoundingRect.bottom, iconPageBoundingBox.bottom);
+
+  const rootCoords = {
+    x: _.mean([leftBound, rightBound]),
+    y: _.mean([topBound, bottomBound])
+  };
+
+  const pageCoords = pageCoordsOfRootCoords(rootCoords, iconPageBoundingBox, scale);
+
+  const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
+
+  return {
+    x: pageCoords.x - annotationIconOffset,
+    y: pageCoords.y - annotationIconOffset
+  };
+};
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
 const PAGE_MARGIN_BOTTOM = 25;
-const RENDER_WITHIN_SCROLL = 1000;
-// This is the default page width.
-const PAGE_WIDTH = 1;
-// This comes from _pdf_viewer.css and is the default height
+
+// These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
 // able to expand/contract the height of the pages as we zoom.
+const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
+const NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
 const NUM_PAGES_TO_PRERENDER = 2;
+const MAX_PAGES_TO_RENDER_AT_ONCE = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
 // The component will speed up rendering by only rendering pages when
@@ -60,15 +111,26 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isRendering = [];
-    this.prerenderedPdfs = {};
-    this.isPrerendering = false;
 
+    this.defaultWidth = PAGE_WIDTH;
+    this.defaultHeight = PAGE_HEIGHT;
+
+    this.refFunctionGetters = {};
+
+    this.setUpFakeCanvasRefFunctions();
+    this.initializePrerendering();
+    this.initializeRefs();
+  }
+
+  initializeRefs = () => {
     this.pageElements = [];
     this.fakeCanvas = [];
     this.scrollWindow = null;
+  }
 
-    this.refFunctionGetters = {};
-    this.setUpFakeCanvasRefFunctions();
+  initializePrerendering = () => {
+    this.prerenderedPdfs = {};
+    this.isPrerendering = false;
   }
 
   setIsRendered = (index, value) => {
@@ -92,6 +154,8 @@ export class Pdf extends React.PureComponent {
     if (this.isRendering[index] ||
       (_.get(this.state.isRendered[index], 'pdfDocument') === this.state.pdfDocument &&
       _.get(this.state.isRendered[index], 'scale') === this.props.scale)) {
+      this.renderInViewPages();
+
       return Promise.resolve();
     }
 
@@ -104,6 +168,7 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve, reject) => {
       if (index >= this.state.numPages || pdfDocument !== this.state.pdfDocument) {
         this.isRendering[index] = false;
+        this.renderInViewPages();
 
         return resolve();
       }
@@ -163,53 +228,77 @@ export class Pdf extends React.PureComponent {
           textDivs: []
         });
 
-        // After rendering everything, we check to see if
-        // the PDF we just rendered is the same as the PDF
-        // in the current state. It is possible that the
-        // user switched between PDFs quickly and this
-        // condition is no longer true, in which case we
-        // should render this page again with the new file. We
-        // also check if the canvas rendered on still exists.
-        // If the pages are changed quickly it's possible to
-        // render on a canvas that has since been changed which
-        // means we need to render it again.
-        if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
-          // If it is the same, then we mark this page as rendered
-          this.setIsRendered(index, {
+        this.postRender(
+          resolve,
+          reject,
+          {
             pdfDocument,
+            canvas,
             scale,
-            ..._.pick(viewport, ['width', 'height'])
+            index,
+            viewport
           });
-
-          // Whenever we finish rendering a page, we assume that this was the last page
-          // to render within the current document. We then try to prerender pages for documents in the
-          // prefetchFiles list. The prerenderPages call validates this assumption by
-          // checking if any other pages of the current document are being rendered,
-          // and will not proceed if they are since we want the current document's pages
-          // to take precedence over prerendering other documents' pages.
-          this.prerenderPages();
-
-          // this.props.file may not be a value in this.prerenderedPdfs. If it is not
-          // already present, then we want to create it.
-          _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
-          resolve();
-        } else {
-          // If it is not, then we try to render it again.
-          this.isRendering[index] = false;
-          this.renderPage(index).then(() => {
-            resolve();
-          }).
-          catch(() => {
-            this.isRendering[index] = false;
-            reject();
-          });
-        }
       }).
       catch(() => {
         this.isRendering[index] = false;
         reject();
       });
     });
+  }
+
+  postRender = (resolve, reject, { pdfDocument, canvas, scale, index, viewport }) => {
+    // After rendering everything, we check to see if
+    // the PDF we just rendered is the same as the PDF
+    // in the current state. It is possible that the
+    // user switched between PDFs quickly and this
+    // condition is no longer true, in which case we
+    // should render this page again with the new file. We
+    // also check if the canvas rendered on still exists.
+    // If the pages are changed quickly it's possible to
+    // render on a canvas that has since been changed which
+    // means we need to render it again.
+    if (pdfDocument === this.state.pdfDocument && canvas === this.pageElements[index].canvas) {
+
+      // If it is the same, then we mark this page as rendered
+      this.setIsRendered(index, {
+        pdfDocument,
+        scale,
+        ..._.pick(viewport, ['width', 'height'])
+      });
+
+      // Since we don't know a page's size until we render it, we either use the
+      // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
+      // or the dimensions of the first page we successfully render. This allows
+      // us to accurately represent the size of pages we haven't rendered yet.
+      if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
+        this.defaultWidth = viewport.width;
+        this.defaultHeight = viewport.height;
+      }
+
+      // Whenever we finish rendering a page, we assume that this was the last page
+      // to render within the current document. We then try to prerender pages for documents in the
+      // prefetchFiles list. The prerenderPages call validates this assumption by
+      // checking if any other pages of the current document are being rendered,
+      // and will not proceed if they are since we want the current document's pages
+      // to take precedence over prerendering other documents' pages.
+      this.renderInViewPages();
+      this.prerenderPages();
+
+      // this.props.file may not be a value in this.prerenderedPdfs. If it is not
+      // already present, then we want to create it.
+      _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
+      resolve();
+    } else {
+      // If it is not, then we try to render it again.
+      this.isRendering[index] = false;
+      this.renderPage(index).then(() => {
+        resolve();
+      }).
+      catch(() => {
+        this.isRendering[index] = false;
+        reject();
+      });
+    }
   }
 
   scrollEvent = () => {
@@ -238,26 +327,49 @@ export class Pdf extends React.PureComponent {
   }
 
   renderInViewPages = () => {
+    // If we're already rendering a page, delay this calculation.
+    const numberOfPagesRendering = this.isRendering.reduce((acc, rendering) => {
+      return acc + (rendering ? 1 : 0);
+    }, 0);
+
+    if (numberOfPagesRendering >= MAX_PAGES_TO_RENDER_AT_ONCE) {
+      return;
+    }
+
+    let prioritzedPage = null;
+    let minPageDistance = Number.MAX_SAFE_INTEGER;
+
     this.performFunctionOnEachPage((boundingRect, index) => {
-      // This renders each page as it comes into view. i.e. when
-      // the top of the next page is within a thousand pixels of
-      // the current view we render it. If the bottom of the page
-      // above is within a thousand pixels of the current view
-      // we also render it.
-      // TODO: Make this more robust.
-      if (boundingRect.bottom > -RENDER_WITHIN_SCROLL &&
-          boundingRect.top < this.scrollWindow.clientHeight + RENDER_WITHIN_SCROLL) {
-        this.renderPage(index, this.props.file);
+      // This renders the next "closest" page. Where closest is defined as how
+      // far the page is from the viewport.
+      if (!this.isRendering[index]) {
+        const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
+          Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
+
+        if (!this.state.isRendered[index] || this.state.isRendered[index].scale !== this.props.scale) {
+          if (distanceToCenter < minPageDistance) {
+            prioritzedPage = index;
+            minPageDistance = distanceToCenter;
+          }
+        }
       }
     });
+
+    // Have to explicitly check for null since prioritizedPage can be zero.
+    if (prioritzedPage === null) {
+      return;
+    }
+
+    this.renderPage(prioritzedPage, this.props.file);
+    this.renderInViewPages();
   }
 
   performFunctionOnEachPage = (func) => {
-    this.pageElements.forEach((ele, index) => {
+    _.forEach(this.pageElements, (ele, index) => {
       if (ele.pageContainer) {
         const boundingRect = ele.pageContainer.getBoundingClientRect();
 
-        func(boundingRect, index);
+        func(boundingRect, Number(index));
       }
     });
   }
@@ -274,20 +386,36 @@ export class Pdf extends React.PureComponent {
           return resolve();
         }
 
-        this.pageElements = [];
+        this.pageElements = {};
 
         this.refFunctionGetters.canvas = [];
         this.refFunctionGetters.textLayer = [];
         this.refFunctionGetters.pageContainer = [];
 
         _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
-          this.refFunctionGetters.canvas[index] = (canvas) =>
-            _.set(this.pageElements, [index, 'canvas'], canvas);
-          this.refFunctionGetters.textLayer[index] = (textLayer) =>
-            _.set(this.pageElements, [index, 'textLayer'], textLayer);
-          this.refFunctionGetters.pageContainer[index] = (pageContainer) =>
-            _.set(this.pageElements, [index, 'pageContainer'], pageContainer);
+          const makeSetRef = (elemKey) => (elem) => {
+            // We only want to save the element if it actually exists.
+            // When the node unmounts, React will call the ref function
+            // with null. When this happens, we want to delete the
+            // entire pageElements object for this index, instead of
+            // setting it as a null value. This makes code that reads
+            // this.pageElements much simpler, because it does not need
+            // to account for the possibility that some pageElements are
+            // nulled out because they refer to pages that are no longer rendered.
+            if (elem) {
+              _.set(this.pageElements, [index, elemKey], elem);
+            } else {
+              delete this.pageElements[index];
+            }
+          };
+
+          this.refFunctionGetters.canvas[index] = makeSetRef('canvas');
+          this.refFunctionGetters.textLayer[index] = makeSetRef('textLayer');
+          this.refFunctionGetters.pageContainer[index] = makeSetRef('pageContainer');
         });
+
+        this.defaultWidth = PAGE_WIDTH;
+        this.defaultHeight = PAGE_HEIGHT;
 
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
@@ -353,15 +481,84 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
-  componentDidMount = () => {
-    PDFJS.workerSrc = this.props.pdfWorker;
-    window.addEventListener('resize', this.renderInViewPages);
+  handleAltC = () => {
+    this.props.startPlacingAnnotation();
 
-    this.setUpPdf(this.props.file);
+    const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
+    const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
+
+    const iconPageBoundingBox =
+      this.pageElements[firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
+
+    const pageCoords = getInitialAnnotationIconPageCoords(
+      iconPageBoundingBox,
+      scrollWindowBoundingRect,
+      this.props.scale
+    );
+
+    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
   }
 
-  comopnentWillUnmount = () => {
+  handleAltEnter = () => {
+    this.props.placeAnnotation(
+      pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+      {
+        xPosition: this.props.placingAnnotationIconPageCoords.x,
+        yPosition: this.props.placingAnnotationIconPageCoords.y
+      },
+      this.props.documentId
+    );
+  }
+
+  keyListener = (event) => {
+    if (isUserEditingText()) {
+      return;
+    }
+
+    if (event.altKey) {
+      if (event.code === 'KeyC') {
+        this.handleAltC();
+      }
+
+      if (event.code === 'Enter') {
+        this.handleAltEnter();
+      }
+    }
+
+    if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation();
+    }
+  }
+
+  mouseListener = (event) => {
+    if (this.props.isPlacingAnnotation) {
+      const pageIndex = _(this.pageElements).
+        map('pageContainer').
+        indexOf(event.currentTarget);
+      const pageCoords = this.getPageCoordinatesOfMouseEvent(
+        event,
+        event.currentTarget.getBoundingClientRect()
+      );
+
+      this.props.showPlaceAnnotationIcon(pageIndex, pageCoords);
+    }
+  }
+
+  componentDidMount() {
+    PDFJS.workerSrc = this.props.pdfWorker;
+    window.addEventListener('resize', this.renderInViewPages);
+    window.addEventListener('keydown', this.keyListener);
+
+    this.setUpPdf(this.props.file);
+
+    // focus the scroll window when the component initially loads.
+    this.scrollWindow.focus();
+    this.updatePageBounds();
+  }
+
+  comopnentWillUnmount() {
     window.removeEventListener('resize', this.renderInViewPages);
+    window.removeEventListener('keydown', this.keyListener);
   }
 
   setUpFakeCanvasRefFunctions = () => {
@@ -385,6 +582,9 @@ export class Pdf extends React.PureComponent {
     if (nextProps.file !== this.props.file) {
       this.scrollWindow.scrollTop = 0;
       this.setUpPdf(nextProps.file);
+
+      // focus the scroll window when the document changes.
+      this.scrollWindow.focus();
     } else if (nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
@@ -399,6 +599,14 @@ export class Pdf extends React.PureComponent {
     }
 
     if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
+      const pdfsToKeep = [...nextProps.prefetchFiles, nextProps.file];
+
+      _.forEach(_.omit(this.prerenderedPdfs, pdfsToKeep), (pdf) => {
+        pdf.pdfDocument.destroy();
+      });
+
+      this.prerenderedPdfs = _.pick(this.prerenderedPdfs, pdfsToKeep);
+
       this.setUpFakeCanvasRefFunctions();
     }
     /* eslint-enable no-negated-condition */
@@ -410,11 +618,10 @@ export class Pdf extends React.PureComponent {
       this.prerenderPages();
     };
 
-    // Don't prerender if we are currently trying to render a page on the current document.
-    // We want those pages to take precedence over pages on non-visible documents.
-    // At the end of rendering pages from this document we always call prerenderPages
-    // again in case there are still pages to prerender.
-    if (_.some(this.isRendering)) {
+    // We want the first few pages of the current document to take precedence over pages
+    // on non-visible documents. At the end of rendering pages from this document we always
+    // call prerenderPages again in case there are still pages to prerender.
+    if (_.some(this.isRendering.slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
       return;
     }
 
@@ -454,7 +661,8 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
   }
 
-  componentDidUpdate = () => {
+  // eslint-disable-next-line max-statements
+  componentDidUpdate(prevProps) {
     this.renderInViewPages();
     this.prerenderPages();
 
@@ -474,6 +682,49 @@ export class Pdf extends React.PureComponent {
     if (this.scrollLocation.page) {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
         this.pageElements[this.scrollLocation.page - 1].pageContainer.offsetTop;
+    }
+
+    const getPropsAffectingPageBounds = (props) => _.omit(props, 'placingAnnotationIconPageCoords', 'scale');
+
+    if (!_.isEqual(
+      getPropsAffectingPageBounds(this.props),
+      getPropsAffectingPageBounds(prevProps))
+    ) {
+      this.updatePageBounds();
+    }
+  }
+
+  /**
+   * The page bounds are the upper bounds of the page in the page coordinate system.
+   */
+  updatePageBounds = () => {
+    // The first time this method fires, it sets the page bounds to be the PAGE_WIDTH and PAGE_HEIGHT,
+    // because that's what the page bounds are before rendering completes. Somehow, this does not
+    // cause a problem, so I'm not going to figure out now how to make it fire with the right values.
+    // But if you are seeing issues, that could be why.
+
+    // If we knew that all pages would be the same size, then we could just look
+    // at the first page, and know that all pages were the same. That would simplify
+    // the code, but it is not an assumption we're making at this time.
+    const newPageBounds = _(this.pageElements).
+      map((pageElem, pageIndex) => {
+        const { right, bottom } = pageElem.pageContainer.getBoundingClientRect();
+        const pageCoords = pageCoordsOfRootCoords({
+          x: right,
+          y: bottom
+        }, pageElem.pageContainer.getBoundingClientRect(), this.props.scale);
+
+        return {
+          pageIndex: Number(pageIndex),
+          width: pageCoords.x,
+          height: pageCoords.y
+        };
+      }).
+      keyBy('pageIndex').
+      value();
+
+    if (_.size(newPageBounds)) {
+      this.props.setPageCoordBounds(newPageBounds);
     }
   }
 
@@ -506,9 +757,27 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
+  getPageCoordinatesOfMouseEvent(event, container) {
+    const constrainedRootCoords = {
+      x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
+      y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
+    };
+
+    return pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
+  }
+
   // eslint-disable-next-line max-statements
   render() {
-    let commentIcons = this.props.comments.reduce((acc, comment) => {
+    const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
+      this.props.comments.concat([{
+        temporaryId: 'placing-annotation-icon',
+        page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
+        isPlacingAnnotationIcon: true,
+        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
+      }]) :
+      this.props.comments;
+
+    const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
       if (_.get(this.state.isRendered[comment.page - 1], 'pdfDocument') !==
         this.state.pdfDocument) {
@@ -517,6 +786,7 @@ export class Pdf extends React.PureComponent {
       if (!acc[comment.page]) {
         acc[comment.page] = [];
       }
+
       acc[comment.page].push(
         <CommentIcon
           comment={comment}
@@ -525,7 +795,7 @@ export class Pdf extends React.PureComponent {
             y: comment.y * this.props.scale
           }}
           key={keyOfAnnotation(comment)}
-          onClick={this.props.handleSelectCommentIcon} />);
+          onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
 
       return acc;
     }, {});
@@ -543,19 +813,20 @@ export class Pdf extends React.PureComponent {
           return;
         }
 
-        let container = this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect();
-        let xPosition = (event.pageX - container.left) / this.props.scale;
-        let yPosition = (event.pageY - container.top) / this.props.scale;
+        const { x, y } = this.getPageCoordinatesOfMouseEvent(
+          event,
+          this.pageElements[pageNumber - 1].pageContainer.getBoundingClientRect()
+        );
 
         this.props.placeAnnotation(pageNumber, {
-          xPosition,
-          yPosition
+          xPosition: x,
+          yPosition: y
         }, this.props.documentId);
       };
 
       const relativeScale = this.props.scale / _.get(this.state.isRendered[pageNumber - 1], 'scale', 1);
-      const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', PAGE_WIDTH);
-      const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', PAGE_HEIGHT);
+      const currentWidth = _.get(this.state.isRendered[pageNumber - 1], 'width', this.defaultWidth);
+      const currentHeight = _.get(this.state.isRendered[pageNumber - 1], 'height', this.defaultHeight);
 
       // Only pages that are the correct scale should be visible
       const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
@@ -568,13 +839,15 @@ export class Pdf extends React.PureComponent {
         style={ {
           marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
           width: `${relativeScale * currentWidth}px`,
-          height: `${relativeScale * currentHeight}px`
+          height: `${relativeScale * currentHeight}px`,
+          verticalAlign: 'top'
         } }
         onDragOver={this.onPageDragOver}
         onDrop={this.onCommentDrop(pageNumber)}
         key={`${this.props.file}-${pageNumber}`}
         onClick={onPageClick}
         id={`pageContainer${pageNumber}`}
+        onMouseMove={this.mouseListener}
         ref={this.refFunctionGetters.pageContainer[pageNumber - 1]}>
           <div className={pageContentsVisibleClass}>
             <canvas
@@ -603,8 +876,9 @@ export class Pdf extends React.PureComponent {
 
     return <div
       id="scrollWindow"
+      tabIndex="0"
       className="cf-pdf-scroll-view"
-      onScroll={_.debounce(this.scrollEvent, 0)}
+      onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
       {prerenderCanvases}
         <div
@@ -618,6 +892,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
+  ..._.pick(state, 'placingAnnotationIconPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });
@@ -625,6 +900,11 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
+    setPageCoordBounds,
+    startPlacingAnnotation,
+    stopPlacingAnnotation,
+    showPlaceAnnotationIcon,
+    hidePlaceAnnotationIcon,
     requestMoveAnnotation
   }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),

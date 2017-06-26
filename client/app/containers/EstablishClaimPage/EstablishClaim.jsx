@@ -330,7 +330,8 @@ export default class EstablishClaim extends BaseForm {
     });
 
     // We want to trim the vacols note to 280 char. As that is
-    // a DB column constriant
+    // a DB column constraint
+
     let data = ApiUtil.convertToSnakeCase({
       vacolsNote: (vacolsNote && vacolsNote.substring(0, 280))
     });

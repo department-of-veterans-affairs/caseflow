@@ -129,8 +129,6 @@ RSpec.feature "Start Certification" do
         find("label", text: "None").click
       end
 
-      click_button("Continue")
-      expect(page).to have_content("Please select a representative type.")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Attorney").click
       end
@@ -151,8 +149,6 @@ RSpec.feature "Start Certification" do
         find("label", text: "Service organization").click
       end
       expect(page).to have_content("Service organization name")
-      click_button("Continue")
-      expect(page).to have_content("Please select an organization.")
       select "AMVETS", from: "Service organization name"
       expect(page).to have_content("Great! Caseflow will update")
       click_button("Continue")
@@ -169,11 +165,6 @@ RSpec.feature "Start Certification" do
       end
       select "Unlisted service organization", from: "Service organization name"
       expect(page).to_not have_content("Since you selected Unlisted")
-      click_button("Continue")
-      expect(page).to have_content("Please enter a service organization's name.")
-      fill_in "Enter the service organization's name:", with: "12345678901234567890123456789012345678901"
-      click_button("Continue")
-      expect(page).to have_content("Maximum length of organization name reached.")
       fill_in "Enter the service organization's name:", with: "Test"
       click_button("Continue")
       expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")

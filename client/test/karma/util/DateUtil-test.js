@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { formatDate, formatDateStr } from '../../../app/util/DateUtil';
+import { formatDate, formatDateStr, doDatesMatch } from '../../../app/util/DateUtil';
 
 describe('DateUtil', () => {
   context('.formatDate', () => {
@@ -13,4 +13,22 @@ describe('DateUtil', () => {
       expect(formatDateStr('2017-04-24')).to.eq('04/24/2017');
     });
   });
+
+  /* eslint-disable no-unused-expressions */
+  context('.doDatesMatch', () => {
+    it('checks to see a string query is part of a date', () => {
+      expect(doDatesMatch('2022-06-31', '06/31/2022')).to.be.true;
+      expect(doDatesMatch('2017-06-28', '06-28-2017')).to.be.true;
+      expect(doDatesMatch('2017-06-12', '6/12/20')).to.be.true;
+      expect(doDatesMatch('2017-06-12', '6/')).to.be.true;
+      expect(doDatesMatch('2022-02-12', '02-')).to.be.true;
+      expect(doDatesMatch('2022-02-01', '2-1-2022')).to.be.true;
+      expect(doDatesMatch('2022-02-12', '-02-12')).to.be.false;
+      expect(doDatesMatch('2022-02-12', 'a2-12-22')).to.be.false;
+      expect(doDatesMatch('2022-02-12', '02-2022-02')).to.be.false;
+      expect(doDatesMatch('2022-02-12', '2017 ')).to.be.false;
+      expect(doDatesMatch('2022-02-12', '/2022')).to.be.true;
+    });
+  });
+  /* eslint-disable no-unused-expressions */
 });
