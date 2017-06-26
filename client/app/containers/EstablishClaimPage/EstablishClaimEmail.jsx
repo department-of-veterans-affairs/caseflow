@@ -6,7 +6,7 @@ import BaseForm from '../BaseForm';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
-import AlertBanner from '../../components/AlertBanner';
+import Alert from '../../components/Alert';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
@@ -65,12 +65,12 @@ export class EstablishClaimEmail extends BaseForm {
           <h1>Route Claim</h1>
             <h2>Send Email Notification</h2>
           <div>
-            <AlertBanner
+            <Alert
               title="We are unable to create an
                 EP for claims with this Special Issue"
               type="info">
               Follow the instructions below to route this claim.
-            </AlertBanner>
+            </Alert>
             <p>Please send the following email message to the office
               responsible for implementing this grant.</p>
             <p><b>RO:</b> {this.props.regionalOffice}</p>
@@ -139,7 +139,7 @@ export class EstablishClaimEmail extends BaseForm {
           <div className="cf-app-segment cf-app-segment--alt">
             <h2>Route Claim: Process Outside of Caseflow</h2>
             <div>
-              <AlertBanner
+              <Alert
                 title={this.state.noEmailNote}
                 type="warning" />
               <p>You selected a Special Issue Category that cannot be processed

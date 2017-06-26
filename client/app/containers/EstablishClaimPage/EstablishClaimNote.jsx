@@ -4,7 +4,7 @@ import BaseForm from '../BaseForm';
 
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
-import AlertBanner from '../../components/AlertBanner';
+import Alert from '../../components/Alert';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
@@ -174,13 +174,13 @@ export class EstablishClaimNote extends BaseForm {
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Route Claim</h1><h2>{this.headerVacols()}</h2>
 
-          {this.props.showNotePageAlert && <AlertBanner
+          {this.props.showNotePageAlert && <Alert
             title="Cannot edit end product"
             type="warning">
             You cannot navigate to the previous page because the end
             product has already been created and cannot be edited.
             Please proceed with adding the note below in VBMS.
-          </AlertBanner>}
+          </Alert>}
 
           <ol className="cf-bold-ordered-list">
             {this.props.displayVacolsNote &&

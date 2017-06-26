@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
-import AlertBanner from '../AlertBanner';
+import Alert from '../Alert';
 import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, toggleExpandAll, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
@@ -46,7 +46,7 @@ export const DocumentListHeader = (props) => {
       </div>
     </div>
     {Boolean(filteredCategories.length) &&
-      <AlertBanner
+      <Alert
         title="Showing limited results"
         type="info">
         Documents are currently
@@ -55,7 +55,7 @@ export const DocumentListHeader = (props) => {
             id="clear-filters"
             onClick={props.clearAllFilters}>
           Click here to see all documents.</a>
-      </AlertBanner>}
+      </Alert>}
   </div>;
 };
 

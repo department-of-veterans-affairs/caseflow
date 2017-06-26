@@ -1,13 +1,13 @@
 import React from 'react';
-import AlertBanner from '../components/AlertBanner';
+import Alert from '../components/Alert';
 
 const AlreadyCertified = () => {
   return <div>
-    <AlertBanner
+    <Alert
       title="Appeal has already been Certified"
       type="info">
       This case has already been certified to the Board.
-    </AlertBanner>
+    </Alert>
 
     <div className="cf-app-segment cf-app-segment--alt">
       <h2>Appeal has already been Certified</h2>

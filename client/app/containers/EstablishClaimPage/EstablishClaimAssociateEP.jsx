@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import Table from '../../components/Table';
 import Button from '../../components/Button';
-import AlertBanner from '../../components/AlertBanner';
+import Alert from '../../components/Alert';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../../establishClaim/constants';
@@ -156,10 +156,10 @@ export class AssociatePage extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         {title}
-        <AlertBanner
+        <Alert
           type="warning">
           {alert}
-        </AlertBanner>
+        </Alert>
         <div className="usa-grid-full">
           <Table
             columns={this.getEndProductColumns()}
