@@ -387,7 +387,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.repository.fetch_documents_for(self)
+    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
   end
 
   class << self
@@ -419,6 +419,10 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
+    def vbms
+      VBMSService
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -431,8 +435,8 @@ class Appeal < ActiveRecord::Base
       fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
-      repository.upload_document_to_vbms(appeal, form8)
-      repository.clean_document(form8.pdf_location)
+      vbms.upload_document_to_vbms(appeal, form8)
+      vbms.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?
