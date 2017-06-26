@@ -32,6 +32,7 @@ The procedure for responding to a new alert in #appeals-devops-alerts is:
         1. The tech lead of the relevant app
         1. DevOps lead (Alan Ning)
         1. Project tech lead (Nick Heiner)
+1. If an issue was big enough to cause a major disruption, lead a [post mortem](#post-mortems) for it.
 
 To deal with a specific error, see the [First Responder's Manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md).
 
@@ -39,6 +40,14 @@ This procedure only needs to be done during business hours. When you start work 
 
 ### Backup
 If you are unavailable at any time during your prod squad rotation, whether it's because you're on vacation or out for an appointment in the afternoon, you're responsible for finding someone to replace you.
+
+### Post Mortems
+For major outages or data corruption issues, we need to dig into the root causes of why the outage happened and take steps to prevent similar problems from happening in the future.
+
+1. Create an issue in the appropriate repo, and label it "post-mortem"
+1. Describe the details and the timeline of the outage and resolution in the issue
+1. Move the issue to In Progress, announce it to the team, and call for feedback on the issue
+1. Discuss the action items after standup with the team, 
 
 ## Who is on prod squad
 All engineers with VA email addresses participate in prod squad. The VA email address gives the ability to access our production systems.
@@ -48,8 +57,14 @@ If you are on prod squad, you must have access to the following:
 1. PagerDuty
 1. CloudWatch logs
 1. Sentry
+1. AWS
+1. Production (i.e. you can log into prod as a user)
+1. SSH into production boxes
+1. [appeals-deployment repo](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs)
 
 If you don't have access to everything on this list, talk to your team lead about getting access.
+
+The Prod Squad schedule is managed inside of pager duty. See https://dsva-appeals.pagerduty.com/escalation_policies for schedule.
 
 ## Responsibility for Errors
 | App | Team | Tech Lead |
