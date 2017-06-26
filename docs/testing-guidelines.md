@@ -12,8 +12,22 @@ The backend and frontend are tested together with Capybara tests. Because Capyba
 
 Before deployment, Artem's full stack integration tests will also run. 
 
+## Never Sleep
+No test should contain a `sleep` or `await pause()` where we are guessing how long a timed operation will take. This is a recipe for flakey tests. If we guess too low a time, the test will fail. If we guess too high a time, the test will be unnecessarily slow.
+
+Instead, do a "spinning assert", where we continually check for the condition we're waiting for. For example:
+
+```js
+while (true) {
+    if (waitConditionIsMet()) {
+        break;
+    }
+}
+```
+
+Capybara tries to do this automatically if you use the API correctly.
+
 ## Capybara
-* [Never `sleep`](https://nulogy.com/who-we-are/company-blog/articles/sleep-is-for-the-weak/).
 * When a new test is added in a PR, wrap it in the `ensure_stable` helper:
     ```rb
     # Wrap this around your test to run it many times and ensure that it passes consistently.
@@ -36,9 +50,9 @@ Testing a pure function is easy, because you can just assert on the return value
 
 ```js
 it('renders e-Folder Express logo', () => {
-const wrapper = shallow(<Logo app="efolder"/>);
+    const wrapper = shallow(<Logo app="efolder"/>);
 
-expect(wrapper.find('.cf-logo-image-efolder')).to.have.length(1);
+    expect(wrapper.find('.cf-logo-image-efolder')).to.have.length(1);
 });
 ```
 
