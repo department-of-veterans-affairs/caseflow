@@ -20,11 +20,8 @@ import StyleGuideLayout from './StyleGuideLayout';
 import StyleGuideDashboard from './StyleGuideDashboard';
 import StyleGuideTypography from './StyleGuideTypography';
 import StyleGuideFormFields from './StyleGuideFormFields';
-<<<<<<< HEAD
 import StyleGuideAccordions from './StyleGuideAccordions';
-=======
 import StyleGuideAlerts from './StyleGuideAlerts';
->>>>>>> ea751125de2806b4835cb7a175e001b9e59496b4
 
 export default function StyleGuideIndex() {
 
