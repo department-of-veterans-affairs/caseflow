@@ -6,7 +6,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
   has_one :correspondent, through: :case
 
   class << self
-    def unsigned_cases_for_user(css_id)
+    def active_cases_for_user(css_id)
       id = connection.quote(css_id)
 
       select_assignments.where("staff.sdomainid = #{id} and dereceive IS NULL")
