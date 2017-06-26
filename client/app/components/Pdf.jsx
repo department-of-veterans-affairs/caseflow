@@ -739,9 +739,9 @@ export class Pdf extends React.PureComponent {
       x: (event.pageX - pageBox.left - data.iconCoordinates.x) / this.props.scale,
       y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
     };
-
     const droppedAnnotation = {
       ...this.props.allAnnotations[data.uuid],
+      page: pageNumber,
       ...coordinates
     };
 
