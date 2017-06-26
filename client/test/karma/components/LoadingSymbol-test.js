@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import LoadingSymbol from '../../../app/components/LoadingSymbol';
 
 describe('LoadingSymbol', () => {
