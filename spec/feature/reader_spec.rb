@@ -171,7 +171,7 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
-    scenario "Next and Previous buttons move between docs", :focus => true do
+    scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       find("#button-next").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
