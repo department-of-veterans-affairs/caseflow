@@ -55,6 +55,9 @@ export default class Link extends React.Component {
 
 Link.propTypes = {
   href: PropTypes.string,
+  name: PropTypes.string,
+  target: PropTypes.string,
+  ariaLabel: PropTypes.string,
   to: PropTypes.string,
   button: PropTypes.string,
   children: PropTypes.node
