@@ -1,5 +1,11 @@
 require "rails_helper"
 
+def ensure_stable
+  10.times do
+    yield
+  end
+end
+
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
@@ -509,8 +515,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
-      context "When there is an existing 070 EP",
-              skip: "This test hangs somewhat regularly for unknown reasons" do
+      context "When there is an existing 070 EP" do
         before do
           BGSService.end_product_data = [
             {
@@ -523,24 +528,21 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Assigning it to complete the claims establishment",
-                 skip: "This test keeps hanging" do
-          visit "/dispatch/establish-claim"
-          click_on "Establish next claim"
-          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+        ensure_stable do
+          scenario "Assigning it to complete the claims establishment" do
+            visit "/dispatch/establish-claim"
+            click_on "Establish next claim"
+            expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
-          # set special issue to ensure it is saved in the database
-          find_label_for("mustardGas").click
+            click_on "Route claim"
+            expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+            click_on "Assign to Claim"
 
-          click_on "Route claim"
-          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-          page.find("#button-Assign-to-Claim1").click
+            expect(page).to have_content("Success!")
 
-          expect(page).to have_content("Success!")
-
-          expect(task.reload.outgoing_reference_id).to eq("1")
-          expect(task.reload.appeal.mustard_gas).to be_truthy
-          expect(task.reload.completion_status).to eq("assigned_existing_ep")
+            expect(task.reload.outgoing_reference_id).to eq("1")
+            expect(task.reload.completion_status).to eq("assigned_existing_ep")
+          end
         end
       end
     end
