@@ -30,4 +30,38 @@ describe('Alert', () => {
       expect(wrapper.find('.usa-alert').prop('role')).to.not.eq('alert');
     });
   });
+
+  context('show correct alert type', () => {
+    it('shows info banner', () => {
+      wrapper = shallow(<Alert title="Info banner" type="info">
+        This shows an info banner.
+      </Alert>);
+
+      expect(wrapper.find('.usa-alert-info')).to.have.length(1);
+    });
+
+    it('shows warning banner', () => {
+      wrapper = shallow(<Alert title="Warning banner" type="warning">
+        This shows a warning banner.
+      </Alert>);
+
+      expect(wrapper.find('.usa-alert-warning')).to.have.length(1);
+    });
+
+    it('shows error banner', () => {
+      wrapper = shallow(<Alert title="Error banner" type="error">
+        This shows a error banner.
+      </Alert>);
+
+      expect(wrapper.find('.usa-alert-error')).to.have.length(1);
+    });
+
+    it('shows success banner', () => {
+      wrapper = shallow(<Alert title="Success banner" type="success">
+        This shows a success banner.
+      </Alert>);
+
+      expect(wrapper.find('.usa-alert-success')).to.have.length(1);
+    });
+  });
 });
