@@ -1,7 +1,7 @@
 class CaseAssignmentRepository
   # :nocov:
-  def self.load_from_vacols(user_id)
-    VACOLS::CaseAssignment.unsigned_cases_for_user(user_id).map do |assignment|
+  def self.load_from_vacols(css_id)
+    VACOLS::CaseAssignment.active_cases_for_user(css_id).map do |assignment|
       Appeal.initialize_appeal_without_lazy_load(vacols_id: assignment.vacols_id,
                                                  date_assigned: assignment.date_assigned,
                                                  date_received: assignment.date_received,

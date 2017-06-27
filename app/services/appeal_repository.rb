@@ -85,7 +85,7 @@ class AppealRepository
       form9_date: normalize_vacols_date(case_record.bfd19),
       ssoc_dates: ssoc_dates_from(case_record),
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
-      video_hearing_requested: case_record.bfdocind == "X",
+      video_hearing_requested: case_record.bfdocind == "V",
       hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
       hearing_held: !case_record.bfha.nil?,
       regional_office_key: case_record.bfregoff,
@@ -213,7 +213,7 @@ class AppealRepository
       # "Ready for hearing" checkbox
       appeal.case_record.bftbind = preference_attrs[:ready_for_hearing] ? "X" : nil
       # "Video hearing" checkbox
-      appeal.case_record.bfdocind = preference_attrs[:video_hearing] ? "X" : nil
+      appeal.case_record.bfdocind = preference_attrs[:video_hearing] ? "V" : nil
     else
       appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
     end
