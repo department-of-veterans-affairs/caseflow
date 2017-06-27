@@ -17,13 +17,10 @@ import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
-  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
-   } from '../components/RenderFunctions';
-import { SortArrowUp, SortArrowDown } from '../components/SortArrow';
-import { DoubleArrow } from '../components/DoubleArrowIcon';
+  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
+  SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -178,10 +175,8 @@ class DocumentsTable extends React.Component {
 
     // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
-
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
-
-    const sortIcon = <DoubleArrow />;
+    const notsortedIcon = <DoubleArrow />;
 
     const boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -280,7 +275,7 @@ class DocumentsTable extends React.Component {
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
-          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : sortIcon }
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notsortedIcon }
         </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
@@ -293,7 +288,7 @@ class DocumentsTable extends React.Component {
         name="Document Type"
         classNames={['cf-document-list-button-header']}
         onClick={() => this.props.changeSortState('type')}>
-          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : sortIcon }
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notsortedIcon }
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a

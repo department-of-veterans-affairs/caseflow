@@ -265,9 +265,7 @@ describe('DecisionReviewer', () => {
 
     context('when sorted by', () => {
       it('date is ordered correctly', () => {
-        expect(wrapper.find('#receipt-date-header').
-          find('svg').
-          hasClass('cf-sort-arrowup')).to.be.true;
+        expect(wrapper.find('#receipt-date-header .cf-sort-arrowup')).to.have.length(1);
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -275,9 +273,7 @@ describe('DecisionReviewer', () => {
         expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
 
         wrapper.find('#receipt-date-header').simulate('click');
-        expect(wrapper.find('#receipt-date-header').
-          find('svg').
-          hasClass('cf-sort-arrowdown ')).to.be.true;
+        expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).to.have.length(1);
 
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
@@ -286,9 +282,8 @@ describe('DecisionReviewer', () => {
 
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').
-          find('svg').
-          hasClass('cf-sort-arrowdown')).to.be.true;
+        expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
+
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -296,9 +291,7 @@ describe('DecisionReviewer', () => {
         expect(textArray[2]).to.include(documents[1].type);
 
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').
-          find('svg').
-          hasClass('cf-sort-arrowup')).to.be.true;
+        expect(wrapper.find('#type-header .cf-sort-arrowup')).to.have.length(1);
 
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(documents[1].type);
