@@ -16,6 +16,12 @@ Each TODO should have a name alongside it so the commenter can be pinged later f
 Explanatory comments are used to give added context on some item. They’re especially useful to add some business context to code that’s heavy with domain-specific concepts, as well as to add example of how more abstract methods can be used.
  
 Feel empowered to delete other people’s comments if they’ve become stale or redundant. 
+
+## Commit Messages
+Follow [these guidelines](https://chris.beams.io/posts/git-commit/) for writing a good commit message. When merging with the "squash and merge" button, rewrite the text that GitHub automatically suggests, which is just a concatenation of every commit message.
+
+* [Bad example](https://github.com/department-of-veterans-affairs/caseflow/commit/d5ab5a00cf4b0a26da3b0e531865610543da4b9d)
+* [Good example](https://github.com/department-of-veterans-affairs/caseflow/commit/eae5435ee9cf318377fcf05e654595731bdec7d9)
  
 ## PR Descriptions
 
