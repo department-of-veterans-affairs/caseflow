@@ -52,12 +52,12 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
       });
 
-      context('when showDocumentsListNavigation is true', () => {
-        it('renders the back to document list button', () => {
-          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(0);
+      context('when showClaimsFolderNavigation is true', () => {
+        it('renders the back to claims folder button', () => {
+          expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(0);
 
-          wrapper.setProps({ showDocumentsListNavigation: true });
-          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(1);
+          wrapper.setProps({ showClaimsFolderNavigation: true });
+          expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(1);
         });
       });
     });

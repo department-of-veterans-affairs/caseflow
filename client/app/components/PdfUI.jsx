@@ -131,7 +131,7 @@ export class PdfUI extends React.Component {
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
-          { this.props.showDocumentsListNavigation && <Button
+          { this.props.showClaimsFolderNavigation && <Button
             name="backToClaimsFolder"
             classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
             onClick={this.props.onShowList}>
@@ -257,7 +257,7 @@ PdfUI.propTypes = {
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,
-  showDocumentsListNavigation: PropTypes.bool.isRequired,
+  showClaimsFolderNavigation: PropTypes.bool.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   hidePdfSidebar: PropTypes.bool
 };
