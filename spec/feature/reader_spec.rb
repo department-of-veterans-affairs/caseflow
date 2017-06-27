@@ -158,7 +158,8 @@ RSpec.feature "Reader" do
       # is not overridden, but I cannot figure out how to middle click in the test.
       # Instead we just visit the page specified by the link.
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      visit find_link(documents[0].type)[:href]
+      single_link = find_link(documents[0].type)[:href]
+      visit single_link
 
       # Make sure there is document metadata, but no back button.
       expect(page).to have_content(documents[0].type)
@@ -166,13 +167,9 @@ RSpec.feature "Reader" do
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
 
-      # Open a new tab using the document button in the document view
-      new_tab = window_opened_by { click_on documents[0].type }
-      within_window new_tab do
-        # Make sure there is document metadata, but no back button.
-        expect(page).to have_content(documents[0].type)
-        expect(page).to_not have_content("Back to all documents")
-      end
+      # Make sure the document link in the document view points to the same place
+      # as the link we just tested.
+      expect(find_link(documents[0].type)[:href]).to eq(single_link)
     end
 
     scenario "Progress indicator" do

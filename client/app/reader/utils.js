@@ -15,10 +15,6 @@ export const singleDocumentLink = (basePath, doc) => {
     `&received_at=${receivedAt}&filename=${filename}`;
 };
 
-export const openDocumentInNewTab = (basePath, doc) => {
-  return window.open(singleDocumentLink(basePath, doc), '_blank');
-};
-
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
 
