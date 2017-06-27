@@ -508,35 +508,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
-
-      context "When there is an existing 070 EP" do
-        before do
-          BGSService.end_product_data = [
-            {
-              benefit_claim_id: "1",
-              claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
-              claim_type_code: "070BVAGRARC",
-              end_product_type_code: "070",
-              status_type_code: "PEND"
-            }
-          ]
-        end
-
-        scenario "Assigning it to complete the claims establishment" do
-          visit "/dispatch/establish-claim"
-          click_on "Establish next claim"
-          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
-          click_on "Route claim"
-          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-          click_on "Assign to Claim"
-
-          expect(page).to have_content("Success!")
-
-          expect(task.reload.outgoing_reference_id).to eq("1")
-          expect(task.reload.completion_status).to eq("assigned_existing_ep")
-        end
-      end
     end
 
     context "For a partial grant" do
