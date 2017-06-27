@@ -13,21 +13,66 @@ export default class StyleGuideAccordions extends React.Component {
   <p>Our accordion style was taken from the US Web Design Standards.
     Accordions are a list of headers that can be clicked to hide or reveal additional
     content.</p>
-  <Accordion className="usa-accordion-bordered">
+    <h3>Bordered</h3>
+    <Accordion className="usa-accordion-bordered">
   				{[1, 2, 3, 4, 5].map((item) => {
   					return (
   						<AccordionItem
-                title={`Item ${ item }`}
+                title={`Example title ${ item }`}
                 slug={item}
-                key={item}
-                titleClassName="usa-accordion-button"
-                expandedClassname="usa-accordion-content">
-  								{`Item ${ item } content`}
-  								{item === 3 ? <p><img src="https://cloud.githubusercontent.com/assets/38787/8015584/2883817e-0bda-11e5-9662-b7daf40e8c27.gif" /></p> : null}
+                key={item}>
+  								Millions of Americans interact with government services every day.
+                  Veterans apply for benefits. Students compare financial aid options.
+                  Small business owners seek loans. Too often, outdated tools and
+                  complex systems make these interactions cumbersome and frustrating.
+                  Enter the United States Digital Service. We partner leading
+                  technologists with dedicated public servants to improve the usability
+                  and reliability of our government's most important digital services.
+                  Visit USDS.gov to learn more.
   						</AccordionItem>
   					);
   				})}
-  			</Accordion>
+  		</Accordion>
+      <h3>Borderless</h3>
+      <Accordion className="usa-accordion">
+    				{[1, 2, 3, 4, 5].map((item) => {
+    					return (
+    						<AccordionItem
+                  title={`Example title ${ item }`}
+                  slug={item}
+                  key={item}>
+    								Millions of Americans interact with government services every day.
+                    Veterans apply for benefits. Students compare financial aid options.
+                    Small business owners seek loans. Too often, outdated tools and
+                    complex systems make these interactions cumbersome and frustrating.
+                    Enter the United States Digital Service. We partner leading
+                    technologists with dedicated public servants to improve the usability
+                    and reliability of our government's most important digital services.
+                    Visit USDS.gov to learn more.
+    						</AccordionItem>
+    					);
+    				})}
+    		</Accordion>
+        <h3>Bordered Outline</h3>
+        <Accordion className="usa-accordion-bordered-outline">
+      				{[1, 2, 3, 4, 5].map((item) => {
+      					return (
+      						<AccordionItem
+                    title={`Example title ${ item }`}
+                    slug={item}
+                    key={item}>
+      								Millions of Americans interact with government services every day.
+                      Veterans apply for benefits. Students compare financial aid options.
+                      Small business owners seek loans. Too often, outdated tools and
+                      complex systems make these interactions cumbersome and frustrating.
+                      Enter the United States Digital Service. We partner leading
+                      technologists with dedicated public servants to improve the usability
+                      and reliability of our government's most important digital services.
+                      Visit USDS.gov to learn more.
+      						</AccordionItem>
+      					);
+      				})}
+      		</Accordion>
     </div>;
   }
 }

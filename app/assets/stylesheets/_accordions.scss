@@ -7,22 +7,16 @@
 @import 'uswds/elements/buttons';
 @import 'uswds/components/accordions';
 
-//candidate for commons
-// .react-sanfona {
-//   @extend .usa-accordion, .usa-accordion-bordered, .usa-accordion-bordered-outline;
-// }
+.react-sanfona-item-title {
+  @extend .usa-accordion-button;
 
-.react-sanfona-item {
-  @extend .usa-accordion, .usa-accordion-bordered, .usa-accordion-bordered-outline;
+  [aria-expanded=true] & {
+    background-image: url(asset-path('minus.svg'));
+  }
 }
 
-.react-sanfona-item-title {
-  background-image: url(asset-path('minus.svg'));
-
-  &[aria-expanded=false] {
-    background-image: url(asset-path('plus.svg'));
-  }
-  @extend .usa-accordion-button;
+.usa-accordion-button {
+  background-image: url(asset-path('plus.svg'));
 }
 
 .react-sanfona-body {
@@ -43,6 +37,8 @@
 }
 
 //candidate for commons
-.usa-accordion-bordered, .usa-accordion, .usa-accordion-bordered-outline {
-  margin-bottom: 40px;
+.react-sanfona {
+  .usa-accordion-bordered, .usa-accordion, .usa-accordion-bordered-outline {
+    margin-bottom: 40px;
+  }
 }
