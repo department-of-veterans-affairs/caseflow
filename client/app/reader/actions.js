@@ -8,8 +8,9 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
-export const onInitialDataLoadingFail = () => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE
+export const onInitialDataLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_DATA_FAILURE,
+  payload: { value }
 });
 
 export const onReceiveDocs = (documents, vacolsId) => (
