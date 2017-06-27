@@ -15,6 +15,9 @@ const documentUrl = ({ id }) => `/document/${id}/pdf`;
 export class LoadingScreen extends React.Component {
 
   componentDidMount = () => {
+    // We clear any loading failures before trying to load.
+    this.props.onInitialDataLoadingFail(false);
+
     ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
       const returnedObject = JSON.parse(response.text);
       const documents = returnedObject.appealDocuments;
