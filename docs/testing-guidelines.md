@@ -17,12 +17,14 @@ No test should contain a `sleep` or `await pause()` where we are guessing how lo
 
 Instead, do a "spinning assert", where we continually check for the condition we're waiting for. For example:
 
-```js
-while (true) {
-    if (waitConditionIsMet()) {
-        break;
-    }
-}
+```
+looping forever:
+    if wait condition is met:
+        continue with the test
+    else if the timeout has been hit:
+        fail the test
+    otherwise:
+        keep waiting
 ```
 
 Capybara tries to do this automatically if you use the API correctly.
