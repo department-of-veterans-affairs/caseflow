@@ -646,7 +646,7 @@ export class Pdf extends React.PureComponent {
     // We want the first few pages of the current document to take precedence over pages
     // on non-visible documents. At the end of rendering pages from this document we always
     // call prerenderPages again in case there are still pages to prerender.
-    if (_.some(this.isRendering[this.props.file].slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
+    if (_.some(this.isRendering[this.props.file] && this.isRendering[this.props.file].slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
       return;
     }
 
@@ -856,7 +856,7 @@ export class Pdf extends React.PureComponent {
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
         const pageContentsVisibleClass = classNames({
-          'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD) || file !== this.props.file
+          'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
         });
 
         return <div
@@ -865,7 +865,8 @@ export class Pdf extends React.PureComponent {
             marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
             width: `${relativeScale * currentWidth}px`,
             height: `${relativeScale * currentHeight}px`,
-            verticalAlign: 'top'
+            verticalAlign: 'top',
+            display: file !== this.props.file ? 'none' : ''
           } }
           onDragOver={this.onPageDragOver}
           onDrop={this.onCommentDrop(pageIndex + 1)}
@@ -891,7 +892,6 @@ export class Pdf extends React.PureComponent {
       });
     });
 
-    debugger;
     const prerenderCanvases = this.props.prefetchFiles.map((_unused, index) => {
       return _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
         <canvas
