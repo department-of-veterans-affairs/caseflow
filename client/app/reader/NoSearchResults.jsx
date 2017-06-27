@@ -10,7 +10,7 @@ export class NoSearchResults extends PureComponent {
     return <div className="section--no-search-results">
       <StatusMessage
         title="Search results not found">
-        Sorry! We couldn't find anything for "{this.props.searchQuery}."<br />
+        Sorry! We couldn't find anything for "{this.props.searchQuery.trim()}."<br />
         Please search again or <a href="#" onClick={this.props.clearSearch}>go back to the document list.</a>
       </StatusMessage>
     </div>;
