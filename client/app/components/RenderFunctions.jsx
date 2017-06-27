@@ -513,5 +513,3 @@ export class DoubleArrow extends React.PureComponent {
 
  /* eslint-enable max-len */
 /* eslint-enable max-lines */
-
-
