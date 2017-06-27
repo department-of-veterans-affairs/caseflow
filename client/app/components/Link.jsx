@@ -42,11 +42,12 @@ export default class Link extends React.Component {
       return <RouterLink to={to} {...commonProps}>
           {children}
         </RouterLink>;
-    } else {
-      return <a href={href} {...commonProps}>
+    }
+
+    return <a href={href} {...commonProps}>
           {children}
         </a>;
-    }
+
   }
 }
 
