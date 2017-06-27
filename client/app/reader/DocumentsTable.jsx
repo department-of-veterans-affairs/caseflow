@@ -20,6 +20,7 @@ import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
    } from '../components/RenderFunctions';
 import { SortArrowUp, SortArrowDown } from '../components/SortArrow';
+import { DoubleArrow } from '../components/DoubleArrowIcon';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 
@@ -178,9 +179,9 @@ class DocumentsTable extends React.Component {
     // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
 
-    const className = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
+    const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
 
-    let sortIcon = <i className = { { className } }aria-hidden="true"></i>;
+    const sortIcon = <DoubleArrow />;
 
     const boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -279,7 +280,7 @@ class DocumentsTable extends React.Component {
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
-          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? className : sortIcon }
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : sortIcon }
         </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
@@ -292,7 +293,7 @@ class DocumentsTable extends React.Component {
         name="Document Type"
         classNames={['cf-document-list-button-header']}
         onClick={() => this.props.changeSortState('type')}>
-          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? className : sortIcon }
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : sortIcon }
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
