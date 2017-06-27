@@ -1,13 +1,5 @@
 require "rails_helper"
 
-# Wrap this around your test to run it many times and ensure that it passes consistently.
-# Note: do not merge to master like this, or the tests will be slow! Ha.
-def ensure_stable
-  10.times do
-    yield
-  end
-end
-
 def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
@@ -134,7 +126,7 @@ RSpec.feature "Reader" do
       scenario "Enter a case" do
         visit "/reader/appeal"
 
-        expect(page).to have_content(appeal.veteran_last_name)
+        expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
 
         click_on "New", match: :first
