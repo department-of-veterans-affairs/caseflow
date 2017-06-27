@@ -71,6 +71,16 @@ const CREATE_EP_ERRORS = {
             proceed to process it outside of Caseflow.
           </span>
   },
+  bgs_info_invalid: {
+    header: 'The EP for this claim must be created outside Caseflow.',
+    body: <span>
+            This veteran is missing information in BGS, so their
+            claim cannot be established in Caseflow.
+            <br/>
+            Select Cancel at the bottom of the page to release this claim and
+            proceed to process it outside of Caseflow.
+          </span>
+  },
   default: {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
