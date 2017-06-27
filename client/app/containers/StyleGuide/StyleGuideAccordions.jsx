@@ -4,7 +4,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 export default class StyleGuideAccordions extends React.Component {
   render = () => {
-    let headerNumber = [1,2,3,4,5];
+    let headerNumber = [1, 2, 3, 4, 5];
     let accordionText = <p>
       Millions of Americans interact with government services every day.
       Veterans apply for benefits. Students compare financial aid options.
@@ -14,7 +14,7 @@ export default class StyleGuideAccordions extends React.Component {
       dedicated public servants to improve the usability and reliability of
       our government's most important digital services.
       Visit USDS.gov to learn more.
-    </p>
+    </p>;
 
     return <div>
     <StyleGuideComponentTitle
@@ -28,33 +28,33 @@ export default class StyleGuideAccordions extends React.Component {
     <h3>Border</h3>
       <Collapse accordion={true} className="usa-accordion-bordered">
         {headerNumber.map((header) => {
-          return (<Panel header={"Example title " + header} headerClass="usa-accordion-button" key={header}>
+          return (<Panel header={`Example title ${header}`} headerClass="usa-accordion-button" key={header}>
             <div className="usa-accordion-content">
               {accordionText}
             </div>
-          </Panel>)
+          </Panel>);
         })}
       </Collapse>
 
     <h3>Borderless</h3>
       <Collapse accordion={true} className="usa-accordion">
         {headerNumber.map((header) => {
-          return (<Panel header={"Example title " + header} headerClass="usa-accordion-button" key={header}>
+          return (<Panel header={`Example title ${header}`} headerClass="usa-accordion-button" key={header}>
             <div className="usa-accordion-content">
               {accordionText}
             </div>
-          </Panel>)
+          </Panel>);
         })}
       </Collapse>
 
     <h3>Border with Outline</h3>
       <Collapse accordion={true} className="usa-accordion-bordered-outline">
         {headerNumber.map((header) => {
-          return (<Panel header={"Example title " + header} headerClass="usa-accordion-button" key={header}>
+          return (<Panel header={`Example title ${header}`} headerClass="usa-accordion-button" key={header}>
             <div className="usa-accordion-content">
               {accordionText}
             </div>
-          </Panel>)
+          </Panel>);
         })}
       </Collapse>
     </div>;
