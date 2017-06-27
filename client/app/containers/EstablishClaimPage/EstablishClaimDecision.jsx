@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
+import Alert from '../../components/Alert';
 import { dateFormatString } from '../../util/DateUtil';
 import StringUtil from '../../util/StringUtil';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
@@ -136,19 +137,14 @@ export class EstablishClaimDecision extends React.Component {
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Review Decision</h1>
           Review the final decision from VBMS below to determine the next step.
-          {this.hasMultipleDecisions() && <div className="usa-alert usa-alert-warning">
-            <div className="usa-alert-body">
-              <div>
-                <h3 className="usa-alert-heading">Multiple Decision Documents</h3>
-                <p className="usa-alert-text">
-                  We found more than one decision document for the dispatch date
-                  range {decisionDateStart} - {decisionDateEnd}.
-                  Please review the decisions in the tabs below and select the document
-                  that best fits the decision criteria for this case.
-                </p>
-              </div>
-            </div>
-          </div>}
+          {this.hasMultipleDecisions() && <Alert
+            title="Multiple Decision Documents"
+            type="warning">
+            We found more than one decision document for the dispatch date
+            range {decisionDateStart} - {decisionDateEnd}.
+            Please review the decisions in the tabs below and select the document
+            that best fits the decision criteria for this case.
+          </Alert>}
         </div>
         {this.hasMultipleDecisions() &&
           <div className="cf-app-segment cf-app-segment--alt">
