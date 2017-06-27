@@ -37,7 +37,7 @@ describe('PdfUI', () => {
       });
 
       it('renders the title', () => {
-        expect(wrapper.find('Button').find({ name: 'newTab' }).
+        expect(wrapper.find('Link').find({ name: 'newTab' }).
           children().
           text()).to.eq(doc.type);
       });
@@ -107,19 +107,6 @@ describe('PdfUI', () => {
           expect(wrapper.state('scale')).to.equal(currentZoom + delta);
         });
       });
-
-      context('document name', () => {
-        it('tries to open document in new tab', () => {
-          let url = `${DOCUMENT_PATH_BASE}/${doc.id}?type=${doc.type}` +
-            `&received_at=${doc.receivedAt}&filename=${doc.filename}`;
-          let open = sinon.spy(window, 'open');
-
-          wrapper.find('Button').find({ name: 'newTab' }).
-            simulate('click');
-          expect(open.withArgs(url, '_blank').calledOnce).to.be.true;
-        });
-      });
-
     });
   });
 });

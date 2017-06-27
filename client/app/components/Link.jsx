@@ -15,6 +15,7 @@ export default class Link extends React.Component {
       ariaLabel,
       to,
       target,
+      name,
       href,
       button,
       children
@@ -35,6 +36,7 @@ export default class Link extends React.Component {
       'aria-label': ariaLabel,
       target,
       type,
+      id: name,
       className: CLASS_NAME_MAPPING[button]
     };
 
