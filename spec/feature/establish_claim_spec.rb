@@ -1,11 +1,5 @@
 require "rails_helper"
 
-def ensure_stable
-  10.times do
-    yield
-  end
-end
-
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
@@ -528,21 +522,19 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        ensure_stable do
-          scenario "Assigning it to complete the claims establishment" do
-            visit "/dispatch/establish-claim"
-            click_on "Establish next claim"
-            expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+        scenario "Assigning it to complete the claims establishment" do
+          visit "/dispatch/establish-claim"
+          click_on "Establish next claim"
+          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
-            click_on "Route claim"
-            expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-            click_on "Assign to Claim"
+          click_on "Route claim"
+          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+          click_on "Assign to Claim"
 
-            expect(page).to have_content("Success!")
+          expect(page).to have_content("Success!")
 
-            expect(task.reload.outgoing_reference_id).to eq("1")
-            expect(task.reload.completion_status).to eq("assigned_existing_ep")
-          end
+          expect(task.reload.outgoing_reference_id).to eq("1")
+          expect(task.reload.completion_status).to eq("assigned_existing_ep")
         end
       end
     end
