@@ -132,11 +132,11 @@ export class PdfUI extends React.Component {
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
           { this.props.showDocumentsListNavigation && <Button
-            name="backToDocuments"
+            name="backToClaimsFolder"
             classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
             onClick={this.props.onShowList}>
             <LeftChevron />
-            &nbsp; Back to all documents
+            &nbsp; Back to claims folder
           </Button> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
