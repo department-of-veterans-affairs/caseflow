@@ -67,7 +67,10 @@ class CaseSelect extends React.PureComponent {
   }
 
   componentDidMount() {
-    ApiUtil.get('/reader/appeal').then((response) => {
+    // We append an unneeded query param to avoid caching the json object. If we get thrown
+    // to a page outside of the SPA and then hit back, we want the cached version of this
+    // page to be the HTML page, not the JSON object.
+    ApiUtil.get('/reader/appeal?json').then((response) => {
       const returnedObject = JSON.parse(response.text);
 
       this.props.onReceiveAssignments(returnedObject);

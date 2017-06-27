@@ -1,13 +1,5 @@
 require "rails_helper"
 
-# Wrap this around your test to run it many times and ensure that it passes consistently.
-# Note: do not merge to master like this, or the tests will be slow! Ha.
-def ensure_stable
-  10.times do
-    yield
-  end
-end
-
 def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end

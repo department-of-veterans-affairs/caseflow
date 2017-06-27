@@ -21,6 +21,9 @@ export class LoadingScreen extends React.Component {
       this.props.onReceiveDocs(this.props.appealDocuments, this.props.vacolsId);
       this.props.onReceiveAnnotations(this.props.annotations);
     } else {
+      // We clear any loading failures before trying to load.
+      this.props.onInitialDataLoadingFail(false);
+
       ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
