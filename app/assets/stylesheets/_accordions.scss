@@ -23,6 +23,10 @@
   @extend .usa-accordion-button;
 }
 
+.react-sanfona-item {
+  margin-bottom: 6px;
+}
+
 .react-sanfona-item-expanded {
   > .react-sanfona-item-body {
     @extend .usa-accordion-content;
@@ -38,7 +42,9 @@
 
 //candidate for commons
 .react-sanfona {
-  .usa-accordion-bordered, .usa-accordion, .usa-accordion-bordered-outline {
+  &.usa-accordion-bordered,
+  &.usa-accordion,
+  &.usa-accordion-bordered-outline {
     margin-bottom: 40px;
   }
 }
