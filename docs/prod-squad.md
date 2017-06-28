@@ -18,8 +18,9 @@ When you're on prod squad, it's expected that you will make less progress than u
 
 The procedure for responding to a new alert in #appeals-devops-alerts is:
 
-1. If the error is obviously meaningless, silence it in Sentry.
-1. Otherwise, make a ticket for the error. Label it with `prod-alert`. If a ticket already exists for the error, comment on the existing ticket with a link to the latest occurrence.
+1. Make a ticket for the error. Label it with `prod-alert`. 
+    1. If a ticket already exists for the error, comment on the existing ticket with a link to the latest occurrence.
+    1. If the error is already ticketed and obviously low-impact, temporarily silence it in Sentry.
 1. Determine the impact of the error. Is this going to hurt a veteran, or is it just noise?
     1. **You're not totally sure:** Ping the tech lead for the team responsible for the error. See the [table below](#responsibility-for-errors) to determine who to ping if you're not sure.
     1. **Obviously annoying to end users, but not corrupting data or causing a major user work stoppage:** 
@@ -36,10 +37,13 @@ The procedure for responding to a new alert in #appeals-devops-alerts is:
 
 To deal with a specific error, see the [First Responder's Manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md).
 
+### Support Tickets
+Glance at support tickets that come in. "Follow your heart", and if they seem relevant, follow the [Sentry Errors](#sentry-errors) procedure above.
+
 This procedure only needs to be done during business hours. When you start work in the morning, review errors that happened after close of business the prior day.
 
 ### Backup
-If you are unavailable at any time during your prod squad rotation, whether it's because you're on vacation or out for an appointment in the afternoon, you're responsible for finding someone to replace you.
+Two people are on prod squad at any given time. The primary person is responsible for following the [Sentry Errors](#sentry-errors) procedure. The secondary person takes over whenever the primary is not available. The primary is responsible for notifying the secondary when they are not available. This includes PTO, a midday appointment, or a no-laptops meeting.
 
 ### Post Mortems
 For major outages or data corruption issues, we need to dig into the root causes of why the outage happened and take steps to prevent similar problems from happening in the future.
@@ -59,6 +63,7 @@ If you are on prod squad, you must have access to the following:
 1. Sentry
 1. AWS
 1. Production (i.e. you can log into prod as a user)
+    * Note: we are currently in the process of getting production access. It's ok if you don't have this yet.
 1. SSH into production boxes
 1. [appeals-deployment repo](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs)
 
