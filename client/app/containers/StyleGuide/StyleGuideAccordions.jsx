@@ -2,7 +2,7 @@ import React from 'react';
 import Collapse, { Panel } from 'rc-collapse';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideAccordions extends React.Component {
+export default class StyleGuideAccordions extends React.PureComponent {
   render = () => {
     const headerPanels = [1, 2, 3, 4, 5].map((header) => {
       return (<Panel header={`Example title ${header}`} headerClass="usa-accordion-button" key={header}>
