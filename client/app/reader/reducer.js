@@ -209,13 +209,11 @@ export const reducer = (state = initialState, action = {}) => {
           $set: action.payload.vacolsId
         },
         assignments: {
-          cases: {
-            $apply: (existingAssignments) =>
-              _.map(existingAssignments, (assignment) => ({
-                ...assignment,
-                viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
-              }))
-          }
+          $apply: (existingAssignments) =>
+            _.map(existingAssignments, (assignment) => ({
+              ...assignment,
+              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
+            }))
         }
       }
     ));

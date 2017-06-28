@@ -57,7 +57,7 @@ class CaseSelect extends React.PureComponent {
           <h1>Work Assignments</h1>
           <Table
             columns={this.getAssignmentColumn}
-            rowObjects={this.props.assignments.cases}
+            rowObjects={this.props.assignments}
             summary="Work Assignments"
             getKeyForRow={this.getKeyForRow}
           />
@@ -73,7 +73,7 @@ class CaseSelect extends React.PureComponent {
     ApiUtil.get('/reader/appeal?json').then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      this.props.onReceiveAssignments(returnedObject);
+      this.props.onReceiveAssignments(returnedObject.cases);
     }, this.props.onInitialDataLoadingFail);
   }
 }
