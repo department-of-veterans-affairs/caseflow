@@ -64,44 +64,27 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
-class Column extends React.PureComponent {
-
-  render() {
-    const { column, rowObject, footer, rowId } = this.props;
-
-    return <td
-      className={cellClasses(column)}
-      colSpan={getCellSpan(rowObject, column)}>
-      {footer ?
-        column.footer :
-        getCellValue(rowObject, rowId, column)}
-    </td>;
-  }
-}
-
 class Row extends React.PureComponent {
-
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
 
     return <tr id={`table-row-${rowId}`} className={!props.footer && props.rowClassNames(props.rowObject)}>
       {getColumns(props).map((column, columnNumber) =>
-        <Column
+        <td
           key={columnNumber}
-          columnNumber={columnNumber}
-          column={column}
-          rowObject={props.rowObject}
-          rowId={props.rowId}
-          footer={props.footer}
-        />
+          className={cellClasses(column)}
+          colSpan={getCellSpan(props.rowObject, column)}>
+          {props.footer ?
+            column.footer :
+            getCellValue(props.rowObject, props.rowId, column)}
+        </td>
       )}
     </tr>;
   }
 }
 
 class BodyRows extends React.PureComponent {
-
   render() {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow } = this.props;
 
