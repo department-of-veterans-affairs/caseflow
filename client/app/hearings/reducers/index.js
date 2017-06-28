@@ -12,6 +12,14 @@ export const mapDataToInitialState = function(state = {}) {
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
+  case 'DOCKETS_LOADED':
+    return Object.assign({}, state, {
+      docketsLoaded: true
+    });
+  case 'POPULATE_DOCKETS':
+    return Object.assign({}, state, {
+      dockets: action.payload.dockets
+    });
   default: return state;
   }
 };

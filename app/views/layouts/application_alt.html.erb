@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!--
+
+  This addresses flaws with ./application.html.erb (testing it w/Hearing Prep)
+
+  -->
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
   <title>
@@ -131,19 +136,9 @@
         </div>
       </header>
       <main class="cf-alt--app-width">
-        <div>
-          <%= yield(:content) if content_for?(:content) %>
-          <%= yield %>
-        </div>
+        <%= yield(:content) if content_for?(:content) %>
+        <%= yield %>
       </main>
-      <div class="cf-alt--actions cf-alt--app-width">
-        <div class="cf-push-left">
-          <%= yield(:left_actions) if content_for?(:left_actions) %>
-        </div>
-        <div class="cf-push-right">
-          <%= yield(:right_actions) if content_for?(:right_actions) %>
-        </div>
-      </div>
     </div>
   </div>
   <footer class="cf-alt--app-footer">
