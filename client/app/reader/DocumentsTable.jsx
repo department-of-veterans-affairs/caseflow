@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import { openDocumentInNewTab } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -19,8 +18,8 @@ import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
-  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
-} from '../components/RenderFunctions';
+  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
+  SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 
@@ -185,8 +184,6 @@ class DocumentsTable extends React.Component {
     this.setFilterIconPosition('tag', this.tagFilterIcon);
   }
 
-  singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
-
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
@@ -241,12 +238,8 @@ class DocumentsTable extends React.Component {
 
     // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
-    const className = this.props.docFilterCriteria.sort.sortAscending ? 'fa-caret-up' : 'fa-caret-down';
-
-    let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
-      aria-hidden="true"></i>;
-    let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
-      aria-hidden="true"></i>;
+    const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
+    const notSortedIcon = <DoubleArrow />;
 
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
@@ -339,7 +332,7 @@ class DocumentsTable extends React.Component {
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
-          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) => <ConnectedReceiptDateColumn doc={doc} />
       },
@@ -349,7 +342,7 @@ class DocumentsTable extends React.Component {
         name="Document Type"
         classNames={['cf-document-list-button-header']}
         onClick={() => this.props.changeSortState('type')}>
-          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc} showPdf={this.props.showPdf}/>
       },
