@@ -262,7 +262,7 @@ class DocumentsTable extends React.Component {
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
     if (row && row.isComment) {
-      
+
       return [{
         valueFunction: (doc) => {
           const comments = this.props.annotationsPerDocument[doc.id];
@@ -293,7 +293,7 @@ class DocumentsTable extends React.Component {
 
     const isTagDropdownFilterOpen =
       _.get(this.props.pdfList, ['dropdowns', 'tag']);
-    
+
     return [
       {
         cellClass: 'last-read-column',

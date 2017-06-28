@@ -9,7 +9,7 @@ class TagTableColumn extends PureComponent {
 
     return <div className="document-list-issue-tags">
       {tags && tags.map((tag) => {
-        return <div className="document-list-issue-tag" 
+        return <div className="document-list-issue-tag"
             key={tag.id}>
             <Highlighter
                searchWords={_.union(searchQuery.split(' '), [searchQuery])}

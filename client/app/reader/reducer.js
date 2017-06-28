@@ -109,7 +109,10 @@ const updateFilteredDocIds = (nextState) => {
   let updatedNextState = nextState;
 
   _.each(filteredIds, (id) => {
-    const commentFound = commentContainsString(searchQuery, updatedNextState, updatedNextState.documents[id]);
+    let queryTokens = _.compact(searchQuery.split(' '));
+    const commentFound = queryTokens.some((word) => {
+      return commentContainsString(word, updatedNextState, updatedNextState.documents[id]);
+    });
 
     updatedNextState = updateListComments(id, updatedNextState, searchQuery && commentFound);
   });
