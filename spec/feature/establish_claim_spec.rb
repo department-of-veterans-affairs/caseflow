@@ -521,6 +521,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             }
           ]
         end
+        
         scenario "Assigning it to complete the claims establishment" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
