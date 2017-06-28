@@ -119,12 +119,15 @@ describe('PdfUI', () => {
           expect(open.withArgs(url, '_blank').calledOnce).to.be.true;
         });
       });
-      
+
       context('backToClaimsFolder', () => {
         it('calls the onShowList prop', () => {
           const mockOnClick = sinon.spy();
 
-          wrapper.setProps({ showClaimsFolderNavigation: true, onShowList: mockOnClick });
+          wrapper.setProps({
+            showClaimsFolderNavigation: true, 
+            onShowList: mockOnClick
+          });
           wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
 
           expect(mockOnClick.calledOnce).to.be.true;
