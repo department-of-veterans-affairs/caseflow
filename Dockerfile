@@ -1,25 +1,36 @@
 FROM ruby:2.2.4
 
-RUN apt-get update -qq && apt-get install -qq -y build-essential nodejs libpq-dev xvfb postgresql pdftk --fix-missing --no-install-recommends
+## Install all required dependencies and clean the apt cache
+RUN apt-get update -qq && apt-get install -qq -y \ 
+	build-essential \
+	git \
+	libpq-dev \
+	nodejs \
+	pdftk \
+	postgresql \
+	unzip \
+	wget \
+	xvfb \
+	--fix-missing \ 
+&& rm -rf /var/lib/apt/lists/*
 
+## Install Node 6.10.2
 RUN wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O /opt/node-v6.10.2-linux-x64.tar.xz
 RUN tar xf /opt/node-v6.10.2-linux-x64.tar.xz -C /opt
+ENV PATH=/opt/node-v6.10.2-linux-x64/bin:$PATH
 
-# FROM node:6.10.2
+RUN LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+	wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip && \
+	unzip chromedriver_linux64.zip && ln -s $PWD/chromedriver /usr/local/bin/chromedriver
 
 ## Copy project files to newly built container
 RUN mkdir /build
 WORKDIR /build
-ADD Gemfile /build/Gemfile
-ADD Gemfile.lock /build/Gemfile.lock
+COPY Gemfile /build/Gemfile
+COPY Gemfile.lock /build/Gemfile.lock
 RUN bundle install --deployment --without development staging production
-ADD . /build
-
-# From postgres
-ENV PATH="/opt/node-v6.10.2-linux-x64/bin:${PATH}"
+COPY . /build
 
 RUN cd /build/client && npm install --no-optional
 
-# TODO start postgres and setup database
-# RUN RAILS_ENV=test bundle exec rake db:create
-# RUN RAILS_ENV=test bundle exec rake db:schema:load
+ENV POSTGRES_HOST=db
