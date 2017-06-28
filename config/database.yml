@@ -9,13 +9,12 @@ default: &default
   encoding: unicode
   pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
   timeout: 5000
-  template: template0
   variables:
     statement_timeout: 30_000 # 30 seconds
 
 development:
   <<: *default
-  username: <%= ENV["POSTGRES_USERNAME"] || `whoami` %>
+  username: <%= `whoami` %>
   database: caseflow_certification_development
 
 development_vacols:
