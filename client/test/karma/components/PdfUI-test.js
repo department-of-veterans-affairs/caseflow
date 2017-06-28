@@ -125,7 +125,7 @@ describe('PdfUI', () => {
           const mockOnClick = sinon.spy();
 
           wrapper.setProps({
-            showClaimsFolderNavigation: true, 
+            showClaimsFolderNavigation: true,
             onShowList: mockOnClick
           });
           wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
