@@ -32,6 +32,7 @@ The procedure for responding to a new alert in #appeals-devops-alerts is:
         1. The tech lead of the relevant app
         1. DevOps lead (Alan Ning)
         1. Project tech lead (Nick Heiner)
+        1. Product Support Team (Raven/Sandra)
 1. If an issue was big enough to cause a major disruption, lead a [post mortem](#post-mortems) for it.
 
 To deal with a specific error, see the [First Responder's Manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md).
