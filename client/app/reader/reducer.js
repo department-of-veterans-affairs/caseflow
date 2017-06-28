@@ -108,7 +108,7 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
-  assignments: null,
+  assignments: [],
   loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
@@ -210,7 +210,7 @@ export const reducer = (state = initialState, action = {}) => {
         },
         assignments: {
           $apply: (existingAssignments) =>
-            _.map(existingAssignments, (assignment) => ({
+            existingAssignments.map((assignment) => ({
               ...assignment,
               viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
             }))
