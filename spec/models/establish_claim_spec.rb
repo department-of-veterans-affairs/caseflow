@@ -75,6 +75,14 @@ describe EstablishClaim do
     end
   end
 
+  context "#bgs_info_valid?", focus: true do
+    subject { establish_claim.bgs_info_valid? }
+
+    context "returns true when bgs info is valid" do
+      it { is_expected.to eq(true) }
+    end
+  end
+
   context "#prepare_with_decision!" do
     subject { establish_claim.prepare_with_decision! }
 
