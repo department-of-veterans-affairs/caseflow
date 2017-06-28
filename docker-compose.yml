@@ -3,7 +3,7 @@ services:
   db:
     image: postgres:9.3.14
     environment:
-      POSTGRES_PASSWORD: 
+      POSTGRES_PASSWORD: 1234
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ./pgdata:/var/lib/postgresql/data/pgdata:rw

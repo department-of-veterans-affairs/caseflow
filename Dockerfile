@@ -34,3 +34,4 @@ COPY . /build
 RUN cd /build/client && npm install --no-optional
 
 ENV POSTGRES_HOST=db
+ENV POSTGRES_PASSWORD=1234

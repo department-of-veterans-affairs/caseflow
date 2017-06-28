@@ -8,7 +8,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   host: <%=ENV["POSTGRES_HOST"] || localhost %>
-  password: <%=ENV["POSTGRES_PASSWORD"]%>
+  password: <%=ENV["POSTGRES_PASSWORD"] || "" %>
   pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
   timeout: 5000
   template: template0
@@ -17,7 +17,7 @@ default: &default
 
 development:
   <<: *default
-  username: <%= `whoami` %>
+  username: <%= ENV["POSTGRES_USERNAME"] || `whoami` %>
   database: caseflow_certification_development
 
 development_vacols:
@@ -69,7 +69,7 @@ production_vacols:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  username: <%= `whoami` %>
+  username: <%= ENV["POSTGRES_USERNAME"] || `whoami` %>
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:
