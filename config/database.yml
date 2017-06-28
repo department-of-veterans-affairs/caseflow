@@ -7,8 +7,6 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%=ENV["POSTGRES_HOST"] || localhost %>
-  password: <%=ENV["POSTGRES_PASSWORD"] || "" %>
   pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
   timeout: 5000
   template: template0
@@ -70,6 +68,13 @@ production_vacols:
 test:
   <<: *default
   username: <%= ENV["POSTGRES_USERNAME"] || `whoami` %>
+  database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
+
+test_jenkins:
+  <<: *default
+  host: <%=ENV["POSTGRES_HOST"]%>
+  username: <%= ENV["POSTGRES_USERNAME"]%>
+  password: <%=ENV["POSTGRES_PASSWORD"]%>
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:

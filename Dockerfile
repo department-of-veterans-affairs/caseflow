@@ -33,5 +33,7 @@ COPY . /build
 
 RUN cd /build/client && npm install --no-optional
 
+ENV RAILS_ENV=test_jenkins
 ENV POSTGRES_HOST=db
+ENV POSTGRES_USERNAME=psotgres
 ENV POSTGRES_PASSWORD=1234
