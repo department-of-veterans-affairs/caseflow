@@ -101,7 +101,7 @@ export class Pdf extends React.PureComponent {
     this.state = {
       numPages: null,
       pdfDocument: null,
-      isRendered: []
+      isRendered: {}
     };
 
     this.scrollLocation = {
@@ -136,9 +136,9 @@ export class Pdf extends React.PureComponent {
   setIsRendered = (file, index, value) => {
     this.isRendering[file][index] = false;
     console.log(`6: marking ${index} false`);
-    let isRendered = [...this.state.isRendered];
+    let isRendered = {...this.state.isRendered};
 
-    isRendered[index] = value;
+    isRendered[file][index] = value;
     this.setState({
       isRendered
     });
@@ -153,8 +153,8 @@ export class Pdf extends React.PureComponent {
   // likey remain complicated.
   drawPage = (file, index) => {
     if (this.isRendering[file][index] ||
-      (_.get(this.state.isRendered[index], 'pdfDocument') === this.state.pdfDocument &&
-      _.get(this.state.isRendered[index], 'scale') === this.props.scale)) {
+      (_.get(this.state.isRendered[file][index], 'pdfDocument') === this.state.pdfDocument &&
+      _.get(this.state.isRendered[file][index], 'scale') === this.props.scale)) {
       this.renderInViewPages();
 
       return Promise.resolve();
@@ -357,7 +357,7 @@ export class Pdf extends React.PureComponent {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
-        if (!this.state.isRendered[index] || this.state.isRendered[index].scale !== this.props.scale) {
+        if (!this.state.isRendered[this.props.file][index] || this.state.isRendered[this.props.file][index].scale !== this.props.scale) {
           if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
@@ -439,7 +439,10 @@ export class Pdf extends React.PureComponent {
         this.setState({
           numPages: pdfDocument.pdfInfo.numPages,
           pdfDocument,
-          isRendered: []
+          isRendered: {
+            ...this.state.isRendered,
+            [file]: []
+          }
         }, () => {
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
@@ -804,7 +807,7 @@ export class Pdf extends React.PureComponent {
 
     const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (_.get(this.state.isRendered[comment.page - 1], 'pdfDocument') !==
+      if (_.get(this.state.isRendered[this.props.file][comment.page - 1], 'pdfDocument') !==
         this.state.pdfDocument) {
         return acc;
       }
@@ -849,9 +852,9 @@ export class Pdf extends React.PureComponent {
           }, this.props.documentId);
         };
 
-        const relativeScale = this.props.scale / _.get(this.state.isRendered[pageIndex], 'scale', 1);
-        const currentWidth = _.get(this.state.isRendered[pageIndex], 'width', this.defaultWidth);
-        const currentHeight = _.get(this.state.isRendered[pageIndex], 'height', this.defaultHeight);
+        const relativeScale = this.props.scale / _.get(this.state.isRendered, [this.props.file, pageIndex, 'scale'], 1);
+        const currentWidth = _.get(this.state.isRendered[this.props.file, pageIndex, 'width'], this.defaultWidth);
+        const currentHeight = _.get(this.state.isRendered[this.props.file, pageIndex, 'height'], this.defaultHeight);
 
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
