@@ -91,7 +91,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('PdfViewer')).to.have.length(1);
 
         // Return to document list view
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         expect(wrapper.find('PdfListView')).to.have.length(1);
       }));
     });
@@ -112,7 +112,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('#button-previous')).to.have.length(0);
 
         // Verify there is still has a back to documents button
-        expect(wrapper.find('#button-backToDocuments')).to.have.length(1);
+        expect(wrapper.find('#button-backToClaimsFolder')).to.have.length(1);
       });
     });
 
@@ -226,7 +226,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         // Make sure that the 2nd row has the last
         // read indicator in the first column.
         expect(wrapper.find('#table-row-2').childAt(1).

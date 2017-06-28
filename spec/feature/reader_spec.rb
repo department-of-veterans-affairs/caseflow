@@ -147,7 +147,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
       fill_in "searchBar", with: "Form"
       click_on documents[1].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
@@ -788,7 +788,7 @@ RSpec.feature "Reader" do
       original_scroll_position = scroll_position("documents-table-body")
       click_on documents.last.type
 
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
       expect(in_viewport("read-indicator")).to be true
@@ -798,7 +798,7 @@ RSpec.feature "Reader" do
     scenario "Open the last document on the page and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
 
