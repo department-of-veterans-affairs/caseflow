@@ -522,18 +522,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        ensure_stable do
-          scenario "Assigning it to complete the claims establishment" do
-            visit "/dispatch/establish-claim"
-            click_on "Establish next claim"
-            expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
-            click_on "Route claim"
-            expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-            click_on "Assign to Claim"
-
-            expect(page).to have_content("Success!")
-          end
+        scenario "Assigning it to complete the claims establishment" do
+          visit "/dispatch/establish-claim"
+          click_on "Establish next claim"
+          click_on "Route claim"
+          expect(page).to have_content("Existing EP")
+          click_on "Assign to Claim"
+          expect(page).to have_content("Success!")
         end
       end
     end
