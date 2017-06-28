@@ -88,6 +88,68 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
 });
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
 
+class DocTypeColumn extends React.PureComponent {
+  boldUnreadContent = (content, doc) => {
+    if (!doc.opened_by_current_user) {
+      return <strong>{content}</strong>;
+    }
+
+    return content;
+  };
+
+  render() {
+    const { doc, searchQuery } = this.props;
+
+    return this.boldUnreadContent(
+      <a
+        href={`documents/${doc.id}`}
+        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
+        onMouseUp={this.props.showPdf(doc.id)}>
+        <Highlighter textToHighlight={doc.type} searchWords={_.union(searchQuery.split(' '), [searchQuery])} />
+      </a>, doc);
+  }
+}
+
+const docTypeColumnMapStateToProps = (state) => ({
+  searchQuery: state.ui.docFilterCriteria.searchQuery
+});
+const ConnectedDocTypeColumn = connect(docTypeColumnMapStateToProps)(DocTypeColumn);
+
+class TagColumn extends React.PureComponent {
+
+  render() {
+    const { tags, searchQuery } = this.props;
+
+    return <TagTableColumn
+      searchQuery={searchQuery}
+      tags={tags}
+    />;
+  }
+}
+
+const tagColumnMapStateToProps = (state) => ({
+  searchQuery: state.ui.docFilterCriteria.searchQuery
+});
+const ConnectedTagColumn = connect(tagColumnMapStateToProps)(TagColumn);
+
+
+class ReceiptDateColumn extends React.PureComponent {
+
+  render() {
+    const { doc, searchQuery } = this.props;
+
+    return <span className="document-list-receipt-date">
+      <Highlighter textToHighlight={formatDateStr(doc.receivedAt)}
+        searchWords={_.union(searchQuery.split(' '), [searchQuery])} />
+    </span>;
+  }
+}
+
+const receiptDateColumnMapStateToProps = (state) => ({
+  searchQuery: state.ui.docFilterCriteria.searchQuery
+});
+const ConnectedReceiptDateColumn = connect(receiptDateColumnMapStateToProps)(ReceiptDateColumn);
+
 class DocumentsTable extends React.Component {
   constructor() {
     super();
@@ -186,20 +248,6 @@ class DocumentsTable extends React.Component {
     let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
       aria-hidden="true"></i>;
 
-    let boldUnreadContent = (doc) => {
-      const hello = <a
-        href={this.singleDocumentView}
-        onMouseUp={this.props.showPdf(doc.id)}>
-        <Highlighter textToHighlight={doc.type} searchWords={this.props.docFilterCriteria.searchQuery.split(' ')} />
-      </a>
-
-      if (!doc.opened_by_current_user) {
-        return <strong>{content}</strong>;
-      }
-
-      return hello;
-    };
-
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
@@ -293,10 +341,7 @@ class DocumentsTable extends React.Component {
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
         </Button>,
-        valueFunction: (doc) =>
-          <span className="document-list-receipt-date">
-            {formatDateStr(doc.receivedAt)}
-          </span>
+        valueFunction: (doc) => <ConnectedReceiptDateColumn doc={doc} />
       },
       {
         cellClass: 'doc-type-column',
@@ -306,13 +351,7 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
         </Button>,
-        valueFunction: (doc) => boldUnreadContent(
-          <a
-            href={this.singleDocumentView}
-            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-            onMouseUp={this.props.showPdf(doc.id)}>
-            {doc.type}
-          </a>, doc)
+        valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc} showPdf={this.props.showPdf}/>
       },
       {
         cellClass: 'tags-column',
@@ -339,10 +378,7 @@ class DocumentsTable extends React.Component {
           }
         </div>,
         valueFunction: (doc) => {
-          return <TagTableColumn
-            searchQuery={this.props.docFilterCriteria.searchQuery}
-            tags={doc.tags}
-          />;
+          return <ConnectedTagColumn tags={doc.tags} />;
         }
       },
       {

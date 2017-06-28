@@ -41,6 +41,7 @@ export class Comment extends React.Component {
 
   render() {
     let className = 'comment-container';
+    const { searchQuery } = this.props;
 
     if (this.props.selected) {
       className = `${className} comment-container-selected`;
@@ -87,7 +88,7 @@ export class Comment extends React.Component {
           id={this.props.id}
           onClick={this.onClick}>
           <Highlighter
-            searchWords={this.props.searchQuery.split(' ')}
+            searchWords={_.union(searchQuery.split(' '), [searchQuery])}
             textToHighlight={this.props.children}
           />
         </div>
