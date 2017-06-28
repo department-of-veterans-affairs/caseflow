@@ -24,14 +24,6 @@ export class Dockets extends React.Component {
     return index;
   }
 
-  componentDidMount = () => {
-    if (this.props.loading) {
-      setTimeout(() => {
-        this.props.getDockets();
-      }, 600);
-    }
-  }
-
   render() {
 
     let docketIndex = Object.keys(this.props.dockets).sort();
@@ -106,8 +98,6 @@ export class Dockets extends React.Component {
 
 const mapStateToProps = (state) => ({
   dockets: state.dockets,
-  loading: state.loading,
-  app: state.app
 });
 
 export default connect(
@@ -116,6 +106,5 @@ export default connect(
 
 Dockets.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  dockets: PropTypes.object.isRequired,
-  loading: PropTypes.bool
+  dockets: PropTypes.object.isRequired
 };

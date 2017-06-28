@@ -66,5 +66,4 @@ DocketsContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   dockets: PropTypes.object.isRequired,
   docketsLoaded: PropTypes.bool
-  // dockets: PropTypes.arrayOf(PropTypes.object).isRequired
 };
