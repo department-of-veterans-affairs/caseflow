@@ -4,23 +4,19 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 export default class StyleGuideAccordions extends React.Component {
   render = () => {
-    const headerNumber = [1, 2, 3, 4, 5];
-
-    const accordionText = <p>
-      Millions of Americans interact with government services every day.
-      Veterans apply for benefits. Students compare financial aid options.
-      Small business owners seek loans. Too often, outdated tools and complex
-      systems make these interactions cumbersome and frustrating. Enter the
-      United States Digital Service. We partner leading technologists with
-      dedicated public servants to improve the usability and reliability of
-      our government's most important digital services.
-      Visit USDS.gov to learn more.
-    </p>;
-
-    const headerPanels = headerNumber.map((header) => {
+    const headerPanels = [1, 2, 3, 4, 5].map((header) => {
       return (<Panel header={`Example title ${header}`} headerClass="usa-accordion-button" key={header}>
         <div className="usa-accordion-content">
-          {accordionText}
+          <p>
+            Millions of Americans interact with government services every day.
+            Veterans apply for benefits. Students compare financial aid options.
+            Small business owners seek loans. Too often, outdated tools and complex
+            systems make these interactions cumbersome and frustrating. Enter the
+            United States Digital Service. We partner leading technologists with
+            dedicated public servants to improve the usability and reliability of
+            our government's most important digital services.
+            Visit USDS.gov to learn more.
+          </p>
         </div>
       </Panel>);
     });
