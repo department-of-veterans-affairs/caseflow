@@ -59,7 +59,7 @@ All engineers with VA email addresses participate in prod squad. The VA email ad
 If you are on prod squad, you must have access to the following:
 
 1. PagerDuty
-1. CloudWatch logs
+1. [CloudWatch logs](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/cheatsheet/logs.md)
 1. Sentry
 1. AWS
 1. Production (i.e. you can log into prod as a user)
