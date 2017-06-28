@@ -47,6 +47,7 @@
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "^1.6.414",
     "prop-types": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz",
+    "rc-collapse": "^1.7.6",
     "react": "^15.5.4",
     "react-addons-perf": "^15.4.2",
     "react-copy-to-clipboard": "^4.3.0",
