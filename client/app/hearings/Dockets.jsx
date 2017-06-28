@@ -97,7 +97,7 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets,
+  dockets: state.dockets
 });
 
 export default connect(

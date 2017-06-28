@@ -10,7 +10,7 @@ class Hearings::DocketsController < HearingsController
 
     respond_to do |format|
       format.html
-      format.json { render json: current_user_dockets }
+      format.json { render json: current_user_dockets.transform_values(&:to_hash) }
     end
   end
 
