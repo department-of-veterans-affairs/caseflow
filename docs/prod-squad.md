@@ -64,7 +64,7 @@ If you are on prod squad, you must have access to the following:
 1. AWS
 1. Production (i.e. you can log into prod as a user)
     * Note: we are currently in the process of getting production access. It's ok if you don't have this yet.
-1. SSH into production boxes
+1. [SSH into production boxes](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/ssh-user.md)
 1. [appeals-deployment repo](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs)
 
 If you don't have access to everything on this list, talk to your team lead about getting access.
