@@ -135,7 +135,7 @@ export class PdfViewer extends React.Component {
     this.nextDocId()
   ]).map(documentPath)
 
-  showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
+  showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
   shouldComponentUpdate(nextProps, nextState) {
     const getRenderProps = (props) => _.omit(props, 'pageCoordsBounds');
@@ -171,7 +171,7 @@ export class PdfViewer extends React.Component {
             prevDocId={this.prevDocId()}
             nextDocId={this.nextDocId()}
             showPdf={this.props.showPdf}
-            showDocumentsListNavigation={this.showDocumentsListNavigation()}
+            showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
           />
