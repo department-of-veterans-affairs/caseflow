@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { openAnnotationDeleteModal } from '../reader/actions';
-import Highlighter from 'react-highlight-words';
+import Highlight from '../components/Highlight';
 
 // A rounded rectangle with a user's comment inside.
 // Comes with edit and delete buttons
@@ -87,8 +87,8 @@ export class Comment extends React.Component {
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
-          <Highlighter
-            searchWords={_.union(searchQuery.split(' '), [searchQuery])}
+          <Highlight
+            searchQuery={searchQuery}
             textToHighlight={this.props.children}
           />
         </div>

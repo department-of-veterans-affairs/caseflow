@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Highlighter from 'react-highlight-words';
-import _ from 'lodash';
+import Highlight from '../Highlight';
 
 class TagTableColumn extends PureComponent {
   render() {
@@ -11,8 +10,8 @@ class TagTableColumn extends PureComponent {
       {tags && tags.map((tag) => {
         return <div className="document-list-issue-tag"
             key={tag.id}>
-            <Highlighter
-               searchWords={_.union([searchQuery], searchQuery.split(' '))}
+            <Highlight
+              searchQuery={searchQuery}
               textToHighlight={tag.text}
             />
           </div>;
@@ -22,7 +21,8 @@ class TagTableColumn extends PureComponent {
 }
 
 TagTableColumn.propTypes = {
-  tags: PropTypes.arrayOf(PropTypes.object)
+  tags: PropTypes.arrayOf(PropTypes.object),
+  searchQuery: PropTypes.string
 };
 
 export default TagTableColumn;

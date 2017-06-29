@@ -12,7 +12,7 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
-import Highlighter from 'react-highlight-words';
+import Highlight from '../components/Highlight';
 
 import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
@@ -104,7 +104,7 @@ class DocTypeColumn extends React.PureComponent {
         href={`documents/${doc.id}`}
         aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
         onMouseUp={this.props.showPdf(doc.id)}>
-        <Highlighter textToHighlight={doc.type} searchWords={_.union(searchQuery.split(' '), [searchQuery])} />
+        <Highlight textToHighlight={doc.type} searchQuery={searchQuery} />
       </a>, doc);
   }
 }
@@ -138,8 +138,8 @@ class ReceiptDateColumn extends React.PureComponent {
     const { doc, searchQuery } = this.props;
 
     return <span className="document-list-receipt-date">
-      <Highlighter textToHighlight={formatDateStr(doc.receivedAt)}
-        searchWords={_.union(searchQuery.split(' '), [searchQuery])} />
+      <Highlight textToHighlight={formatDateStr(doc.receivedAt)}
+        searchQuery={searchQuery} />
     </span>;
   }
 }

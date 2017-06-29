@@ -109,10 +109,10 @@ const updateFilteredDocIds = (nextState) => {
           return commentContainsString(word, nextState, doc);
         });
 
-        if (commentFound) {
-          updatedNextState = updateListComments(doc.id, updatedNextState, commentFound);
-        }
+        // update state with if comments should be shown
+        updatedNextState = updateListComments(doc.id, updatedNextState, commentFound);
 
+        // comment found or string found in other parts of annotation of the document
         return commentFound || searchString(searchQuery)(doc);
       }
     ).
