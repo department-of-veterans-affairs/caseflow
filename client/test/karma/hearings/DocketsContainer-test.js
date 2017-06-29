@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import hearingsReducers from '../../../app/hearings/reducers/index';
-import { populateDockets, docketsAreLoaded } from '../../../app/hearings/actions/Dockets';
+import { populateDockets } from '../../../app/hearings/actions/Dockets';
 import DocketsContainer from '../../../app/hearings/DocketsContainer';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
@@ -48,7 +48,6 @@ describe('DocketsContainer', () => {
 
   it('notifies user when no dockets are returned', () => {
     store.dispatch(populateDockets({}));
-    store.dispatch(docketsAreLoaded());
     expect(wrapper.text()).to.include('You have no upcoming hearings.');
   });
 
@@ -65,7 +64,6 @@ describe('DocketsContainer', () => {
         }
       }
     }));
-    store.dispatch(docketsAreLoaded());
     expect(wrapper.text()).to.include('Hearings Schedule');
   });
 });
