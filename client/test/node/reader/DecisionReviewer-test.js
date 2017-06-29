@@ -318,6 +318,26 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(0);
       });
 
+      it('does search highlighting for matched keywords', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag form' } });
+
+        const doesArrayIncludeString = (array, string) => array.some((item) => item.includes(string));
+        let textArray = wrapper.find('tbody').find('tr').
+          find('td').
+          map((node) => node.html());
+
+        expect(doesArrayIncludeString(textArray, '<mark class=" ">form</mark>')).to.be.true;
+        expect(doesArrayIncludeString(textArray, '<mark class=" ">mytag</mark>')).to.be.true;
+
+        // searching for a comment
+        wrapper.find('input').simulate('change',
+          { target: { value: 'comment' } });
+
+        // comment is already expanded and highlighted
+        expect(wrapper.html()).to.include('<mark class=" ">Comment</mark>');
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 
