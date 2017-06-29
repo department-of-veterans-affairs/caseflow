@@ -114,24 +114,6 @@ const docTypeColumnMapStateToProps = (state) => ({
 });
 const ConnectedDocTypeColumn = connect(docTypeColumnMapStateToProps)(DocTypeColumn);
 
-class TagColumn extends React.PureComponent {
-
-  render() {
-    const { tags, searchQuery } = this.props;
-
-    return <TagTableColumn
-      searchQuery={searchQuery}
-      tags={tags}
-    />;
-  }
-}
-
-const tagColumnMapStateToProps = (state) => ({
-  searchQuery: state.ui.docFilterCriteria.searchQuery
-});
-const ConnectedTagColumn = connect(tagColumnMapStateToProps)(TagColumn);
-
-
 class ReceiptDateColumn extends React.PureComponent {
 
   render() {
@@ -371,7 +353,7 @@ class DocumentsTable extends React.Component {
           }
         </div>,
         valueFunction: (doc) => {
-          return <ConnectedTagColumn tags={doc.tags} />;
+          return <TagTableColumn tags={doc.tags} />;
         }
       },
       {

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Highlight from '../Highlight';
 
@@ -20,9 +21,13 @@ class TagTableColumn extends PureComponent {
   }
 }
 
+const mapStateToProps = (state) => ({
+  searchQuery: state.ui.docFilterCriteria.searchQuery
+});
+
 TagTableColumn.propTypes = {
   tags: PropTypes.arrayOf(PropTypes.object),
   searchQuery: PropTypes.string
 };
 
-export default TagTableColumn;
+export default connect(mapStateToProps)(TagTableColumn);
