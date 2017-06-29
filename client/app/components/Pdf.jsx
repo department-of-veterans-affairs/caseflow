@@ -159,23 +159,14 @@ export class Pdf extends React.PureComponent {
 
       return Promise.resolve();
     }
-
     
     let { scale } = this.props;
+    const pdfDocument = this.prerenderedPdfs[file].pdfDocument;
 
     // Mark that we are rendering this page.
-    console.log(`0: marking ${index} true`);
     this.isRendering[file][index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index >= this.isRendering.length || !this.prerenderedPdfs[file].pdfDocument) {
-        this.isRendering[file][index] = false;
-        this.renderInViewPages();
-
-        return resolve();
-      }
-
-      const pdfDocument = this.prerenderedPdfs[file].pdfDocument;
       // Page numbers are one-indexed
       let pageNumber = index + 1;
       let canvas = this.pageElements[file][index].canvas;
@@ -592,10 +583,14 @@ export class Pdf extends React.PureComponent {
 
     if (this.isRendering[file]) {
       this.isRendering[file] = this.isRendering[file].map(() => false);
+      console.log('cleaning up file', file, this.isRendering[file]);
     }
 
     _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
+      const canvas = pageElement.canvas;
+
       pageElement.textLayer.innerHTML = '';
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     });
     this.setState({
       isRendered: {
