@@ -12,7 +12,7 @@ export default class AccordionHeader extends React.Component {
 
     return <AccordionItem title={title} key={accordionKey}>
       {children}
-    </AccordionItem>
+    </AccordionItem>;
   }
 }
 

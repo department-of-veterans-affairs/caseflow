@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Accordion } from 'react-sanfona';
-import AccordionHeader from './AccordionHeader';
 
 const CLASS_NAME_MAPPING = {
   bordered: 'usa-accordion-bordered',
@@ -18,7 +17,7 @@ export default class AccordionGroup extends React.Component {
 
     return <Accordion className={CLASS_NAME_MAPPING[style]}>
       {children}
-    </Accordion>
+    </Accordion>;
   }
 }
 
