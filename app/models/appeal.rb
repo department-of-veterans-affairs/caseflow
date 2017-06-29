@@ -144,6 +144,14 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def appellant
+    # returns appellant name in format <last>, <first> <middle_initlal>.
+    if appellant_first_name
+      name = "#{appellant_last_name}, #{appellant_first_name}"
+      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
+    end
+  end
+
   def representative_name
     representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
   end

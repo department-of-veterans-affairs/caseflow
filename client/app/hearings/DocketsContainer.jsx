@@ -10,17 +10,15 @@ export const getDockets = (dispatch) => {
   ApiUtil.get('/hearings/dockets.json', { cache: true }).
     then((response) => {
       dispatch(Actions.populateDockets(response.body));
-      dispatch(Actions.docketsAreLoaded());
-    }/* , (err) => {
-      //dispatch(handleServerError(err));
-      console.log('hearings/dockets.json ERROR', new Date());
-    }*/);
+    }, (err) => {
+      dispatch(Actions.handleServerError(err));
+    });
 };
 
 export class DocketsContainer extends React.Component {
 
   componentDidMount = () => {
-    if (!this.props.docketsLoaded) {
+    if (!this.props.dockets) {
       setTimeout(() => {
         this.props.getDockets();
       }, 600);
@@ -29,7 +27,12 @@ export class DocketsContainer extends React.Component {
 
   render() {
 
-    if (!this.props.docketsLoaded) {
+    if (this.props.serverError) {
+      return <div style={{ textAlign: 'center' }}>
+        An error occurred while retrieving your hearings.</div>;
+    }
+
+    if (!this.props.dockets) {
       return <div className="loading-dockets">
         <div>{loadingSymbolHtml('', '50%', '#68bd07')}</div>
         <div>Loading dockets, please wait...</div>
@@ -46,12 +49,10 @@ export class DocketsContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dockets: state.dockets,
-  docketsLoaded: state.docketsLoaded,
-  app: state.app
+  serverError: state.serverError
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  // TODO: pass dispatch into method and use it
   getDockets: () => {
     getDockets(dispatch);
   }
@@ -64,6 +65,6 @@ export default connect(
 
 DocketsContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  dockets: PropTypes.object.isRequired,
-  docketsLoaded: PropTypes.bool
+  dockets: PropTypes.object,
+  serverError: PropTypes.object
 };

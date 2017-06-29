@@ -25,21 +25,11 @@ class Hearing < ActiveRecord::Base
     type != :central_office ? type.to_s.capitalize : "CO"
   end
 
-  def appellant_name
-    # This returns a better format than Appeal#appellant_name's
-    # "<first_name>, <middle_initial>, <last_name>".
-
-    if appeal.appellant_first_name
-      name = "#{appeal.appellant_last_name}, #{appeal.appellant_first_name}"
-      name.concat " #{appeal.appellant_middle_initial}." if appeal.appellant_middle_initial
-    end
-  end
-
-  delegate :representative, to: :appeal
+  delegate :representative, :appellant, to: :appeal
 
   def to_hash
     serializable_hash(
-      methods: [:date, :request_type, :appellant_name, :representative, :venue, :vbms_id]
+      methods: [:date, :request_type, :appellant, :representative, :venue, :vbms_id]
     )
   end
 

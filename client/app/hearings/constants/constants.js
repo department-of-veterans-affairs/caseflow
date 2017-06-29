@@ -1,4 +1,4 @@
 // actions
 //
-export const DOCKETS_LOADED = 'DOCKETS_LOADED';
 export const POPULATE_DOCKETS = 'POPULATE_DOCKETS';
+export const HANDLE_SERVER_ERROR = 'HANDLE_SERVER_ERROR';
