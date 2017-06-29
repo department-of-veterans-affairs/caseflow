@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -91,7 +92,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('PdfViewer')).to.have.length(1);
 
         // Return to document list view
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         expect(wrapper.find('PdfListView')).to.have.length(1);
       }));
     });
@@ -112,7 +113,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('#button-previous')).to.have.length(0);
 
         // Verify there is still has a back to documents button
-        expect(wrapper.find('#button-backToDocuments')).to.have.length(1);
+        expect(wrapper.find('#button-backToClaimsFolder')).to.have.length(1);
       });
     });
 
@@ -214,17 +215,66 @@ describe('DecisionReviewer', () => {
   context('PDF list view', () => {
     beforeEach(() => setUpDocuments());
 
-    context.only('follows the link when', () => {
+    context('follows the link when', () => {
       it('document is ctrl + clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
         const event = {
           ctrlKey: true,
-          preventDefault: () => { console.log('hello world') } 
+          preventDefault
         };
 
         wrapper.find('a').findWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp', event);
         await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+
+      it('document is meta + clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          metaKey: true,
+          preventDefault
+        };
+
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+
+      it('document is middle clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          button: 1,
+          preventDefault
+        };
+
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+    });
+
+    context('does not follow the link when', () => {
+      it('document is clicked normally', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          preventDefault
+        };
+
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.calledOnce).to.eq(true);
       }));
     });
 
@@ -240,7 +290,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         // Make sure that the 2nd row has the last
         // read indicator in the first column.
         expect(wrapper.find('#table-row-2').childAt(1).

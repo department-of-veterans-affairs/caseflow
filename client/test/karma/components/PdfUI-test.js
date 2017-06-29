@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import sinon from 'sinon';
 
 import { PdfUI } from '../../../app/components/PdfUI';
 
@@ -35,10 +36,12 @@ describe('PdfUI', () => {
         expect(wrapper.find('.cf-pdf-container')).to.have.length(1);
       });
 
-      it('renders the title', () => {
+      it('renders the title as a link', () => {
         expect(wrapper.find('Link').find({ name: 'newTab' }).
           children().
           text()).to.eq(doc.type);
+        expect(wrapper.find('Link').find({ name: 'newTab' }).
+          first().props().target).to.eq('_blank');
       });
 
       it('does not render the page number when pdf has not been rendered', () => {
@@ -51,12 +54,12 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
       });
 
-      context('when showDocumentsListNavigation is true', () => {
-        it('renders the back to document list button', () => {
-          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(0);
+      context('when showClaimsFolderNavigation is true', () => {
+        it('renders the back to claims folder button', () => {
+          expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(0);
 
-          wrapper.setProps({ showDocumentsListNavigation: true });
-          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(1);
+          wrapper.setProps({ showClaimsFolderNavigation: true });
+          expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(1);
         });
       });
     });
@@ -104,6 +107,20 @@ describe('PdfUI', () => {
 
           wrapper.find({ name: 'zoomOut' }).simulate('click');
           expect(wrapper.state('scale')).to.equal(currentZoom + delta);
+        });
+      });
+
+      context('backToClaimsFolder', () => {
+        it('calls the onShowList prop', () => {
+          const mockOnClick = sinon.spy();
+
+          wrapper.setProps({
+            showClaimsFolderNavigation: true,
+            onShowList: mockOnClick
+          });
+          wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
+
+          expect(mockOnClick.calledOnce).to.be.true;
         });
       });
     });
