@@ -11,6 +11,21 @@ describe Appeal do
       ssoc_dates: ssoc_dates,
       documents: documents,
       hearing_request_type: hearing_request_type,
+      video_hearing_requested: video_hearing_requested,
+      appellant_first_name: "Joe",
+      appellant_middle_initial: "E",
+      appellant_last_name: "Tester"
+    )
+  end
+
+  let(:appeal_no_appellant) do
+    Generators::Appeal.build(
+      nod_date: nod_date,
+      soc_date: soc_date,
+      form9_date: form9_date,
+      ssoc_dates: ssoc_dates,
+      documents: documents,
+      hearing_request_type: hearing_request_type,
       video_hearing_requested: video_hearing_requested
     )
   end
@@ -875,6 +890,16 @@ describe Appeal do
 
     context "when unsupported type" do
       let(:hearing_request_type) { :confirmation_needed }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#appellant" do
+    subject { appeal.appellant }
+    it { is_expected.to eql("Tester, Joe E.") }
+
+    context "when appellant has no first name" do
+      subject { appeal_no_appellant.appellant }
       it { is_expected.to be_nil }
     end
   end
