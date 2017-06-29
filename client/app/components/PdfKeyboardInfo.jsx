@@ -3,9 +3,9 @@ import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from './RenderFunctions';
 
 export const scrollInstructions = [
   { scrollInstruction: 'Page up',
-    shortcut: <span><code>alt</code> + <ArrowUp /></span> },
+    shortcut: <span><code>shift</code> + <code>space</code></span> },
   { scrollInstruction: 'Page down',
-    shortcut: <span><code>alt</code> + <ArrowDown /></span> }
+    shortcut: <span><code>space</code></span> }
 ];
 
 export const scrollColumns = [{ header: 'Scroll',
