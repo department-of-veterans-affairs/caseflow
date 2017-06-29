@@ -9,13 +9,30 @@ class Fakes::Initializer
       User.case_assignment_repository = Fakes::CaseAssignmentRepository
     end
 
-    def setup!(rails_env)
-      development! if rails_env.development? || rails_env.demo?
+    # This method is called only 1 time during application bootup
+    def app_init!(rails_env)
+      if rails_env.development? || rails_env.demo?
+        # If we are running a rake command like `rake db:seed` or
+        # `rake db:schema:load`, we do not want to try and seed the fakes
+        # because our schema may not be loaded yet and it will fail!
+        if running_rake_command?
+          load!
+        else
+          load_fakes_and_seed!
+        end
+      end
+    end
+
+    # This setup method is called on every request during development
+    # to properly reload class attributes like the fake repositories and
+    # their seed data (which is currently cached as class attributes)
+    def setup!(rails_env, app_name: nil)
+      load_fakes_and_seed!(app_name: app_name) if rails_env.development?
     end
 
     private
 
-    def development!
+    def load_fakes_and_seed!(app_name: nil)
       load!
 
       User.authentication_service.vacols_regional_offices = {
@@ -31,8 +48,12 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
-      Fakes::AppealRepository.seed!
-      Fakes::HearingRepository.seed!
+      Fakes::AppealRepository.seed!(app_name: app_name)
+      Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
+    end
+
+    def running_rake_command?
+      File.basename($PROGRAM_NAME) == "rake"
     end
   end
 end

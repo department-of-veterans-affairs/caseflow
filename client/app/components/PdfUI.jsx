@@ -55,12 +55,28 @@ export class PdfUI extends React.Component {
 
   singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
 
-  getPdfFooter = () => {
+  getPageIndicator = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
-      const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+      return <span>
+        <PdfUIPageNumInput
+          currentPage={this.state.currentPage}
+          numPages={this.state.numPages}
+          docId={this.props.doc.id}
+          onPageChange={this.onPageChange}
+        />
+        of {this.state.numPages}
+      </span>;
+    }
 
-      return <div className="cf-pdf-footer cf-pdf-toolbar">
-          { this.props.prevDocId && <div className="cf-pdf-footer-buttons-left">
+    return <em>Loading document...</em>;
+  }
+
+  getPdfFooter = () => {
+    const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+
+    return <div className="cf-pdf-footer cf-pdf-toolbar">
+        <div className="cf-pdf-footer-buttons-left">
+          { this.props.prevDocId &&
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
@@ -68,35 +84,29 @@ export class PdfUI extends React.Component {
               ariaLabel="previous PDF">
               <PageArrowLeft /><span className="left-button-label">Previous</span>
             </Button>
-          </div> }
-        <div className="cf-pdf-buttons-center">
-          <span className="page-progress-indicator">
-            <PdfUIPageNumInput
-              currentPage={this.state.currentPage}
-              numPages={this.state.numPages}
-              docId={this.props.doc.id}
-              onPageChange={this.onPageChange}
-            />
-            of {this.state.numPages}</span>
-          |
-          <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
-            Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
-          </span>
+          }
         </div>
-
-           { this.props.nextDocId && <div className="cf-pdf-footer-buttons-right">
-            <Button
-              name="next"
-              classNames={['cf-pdf-button cf-right-side']}
-              onClick={this.props.showPdf(this.props.nextDocId)}
-              ariaLabel="next PDF">
-              <span className="right-button-label">Next</span><PageArrowRight />
-            </Button>
-          </div> }
-      </div>;
-    }
-
-    return '';
+      <div className="cf-pdf-buttons-center">
+        <span className="page-progress-indicator">
+          { this.getPageIndicator() }
+        </span>
+        |
+        <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
+          Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
+        </span>
+      </div>
+          <div className="cf-pdf-footer-buttons-right">
+            { this.props.nextDocId &&
+              <Button
+                name="next"
+                classNames={['cf-pdf-button cf-right-side']}
+                onClick={this.props.showPdf(this.props.nextDocId)}
+                ariaLabel="next PDF">
+                <span className="right-button-label">Next</span><PageArrowRight />
+              </Button>
+            }
+        </div>
+    </div>;
   }
 
   fitToScreen = () => {
@@ -121,12 +131,12 @@ export class PdfUI extends React.Component {
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
-          { this.props.showDocumentsListNavigation && <Button
-            name="backToDocuments"
+          { this.props.showClaimsFolderNavigation && <Button
+            name="backToClaimsFolder"
             classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
             onClick={this.props.onShowList}>
             <LeftChevron />
-            &nbsp; Back to all documents
+            &nbsp; Back to claims folder
           </Button> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
@@ -143,17 +153,6 @@ export class PdfUI extends React.Component {
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Button>
             </span>
-            {this.props.hidePdfSidebar &&
-              <span className="cf-pdf-open-menu">
-                <Button
-                  name="open menu"
-                  classNames={['cf-pdf-button']}
-                  onClick={this.props.handleTogglePdfSidebar}>
-                  <strong>
-                    Open menu
-                  </strong>
-                </Button>
-              </span>}
             </span>
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-right">
@@ -185,6 +184,17 @@ export class PdfUI extends React.Component {
             ariaLabel="download pdf">
             <DownloadIcon />
           </Button>
+          {this.props.hidePdfSidebar &&
+            <span className="cf-pdf-open-menu">
+              <Button
+                name="open menu"
+                classNames={['cf-pdf-button']}
+                onClick={this.props.handleTogglePdfSidebar}>
+                <strong>
+                  Open menu
+                </strong>
+              </Button>
+            </span>}
         </span>
       </div>
       <div>
@@ -200,7 +210,7 @@ export class PdfUI extends React.Component {
           resetJumpToPage={this.props.resetJumpToPage}
         />
       </div>
-      { this.getPdfFooter(this.props, this.state) }
+      { this.getPdfFooter() }
     </div>;
   }
 }
@@ -247,7 +257,7 @@ PdfUI.propTypes = {
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,
-  showDocumentsListNavigation: PropTypes.bool.isRequired,
+  showClaimsFolderNavigation: PropTypes.bool.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   hidePdfSidebar: PropTypes.bool
 };

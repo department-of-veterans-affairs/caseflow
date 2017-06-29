@@ -8,6 +8,14 @@ def scroll_to(element, value)
   page.execute_script("document.getElementById('#{element}').scrollTop=#{value}")
 end
 
+def skip_because_sending_keys_to_body_does_not_work_on_travis
+  if ENV["TRAVIS"]
+    puts "Warning: skipping block because find('body').send_keys does not work on Travis"
+  else
+    yield
+  end
+end
+
 def scroll_element_to_view(element)
   page.execute_script("document.getElementById('#{element}').scrollIntoView()")
 end
@@ -62,6 +70,8 @@ RSpec.feature "Reader" do
   before do
     FeatureToggle.disable!(:reader)
     FeatureToggle.enable!(:reader)
+
+    Fakes::Initializer.load!
   end
 
   let(:vacols_record) { :remand_decided }
@@ -84,14 +94,14 @@ RSpec.feature "Reader" do
           filename: "My BVA Decision",
           type: "BVA Decision",
           received_at: 7.days.ago,
-          vbms_document_id: 5,
+          vbms_document_id: 6,
           category_procedural: true
         ),
         Generators::Document.create(
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
-          vbms_document_id: 2,
+          vbms_document_id: 5,
           category_medical: true,
           category_other: true
         ),
@@ -104,11 +114,40 @@ RSpec.feature "Reader" do
       ]
     end
 
+    context "Welcome gate page" do
+      let(:appeal2) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
+      end
+
+      before do
+        Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
+      end
+
+      scenario "Enter a case" do
+        visit "/reader/appeal"
+
+        expect(page).to have_content(appeal.veteran_full_name)
+        expect(page).to have_content(appeal.vbms_id)
+
+        click_on "New", match: :first
+
+        expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
+        expect(page).to have_content("Documents")
+
+        click_on "Caseflow Reader"
+        expect(page).to have_current_path("/reader/appeal")
+
+        click_on "Continue"
+
+        expect(page).to have_content("Documents")
+      end
+    end
+
     scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
       fill_in "searchBar", with: "Form"
       click_on documents[1].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
@@ -162,7 +201,7 @@ RSpec.feature "Reader" do
       # minutes to see if various changes would fix it.
       #
       # Please forgive me.
-      unless ENV["TRAVIS"]
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
         find("body").send_keys(:arrow_right)
         expect_doc_type_to_be "BVA Decision"
 
@@ -341,6 +380,60 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content("how's it going")
       end
 
+      def element_position(selector)
+        page.driver.evaluate_script <<-EOS
+          function() {
+            var rect = document.querySelector('#{selector}').getBoundingClientRect();
+            return {
+              top: rect.top,
+              left: rect.left
+            };
+          }();
+        EOS
+      end
+
+      # :nocov:
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        scenario "Leave annotation with keyboard" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+          assert_selector(".commentIcon-container", count: 5)
+          find("body").send_keys [:alt, "c"]
+          expect(page).to have_css(".cf-pdf-placing-comment")
+          assert_selector(".commentIcon-container", count: 6)
+
+          def placing_annotation_icon_position
+            element_position "[data-placing-annotation-icon]"
+          end
+
+          orig_position = placing_annotation_icon_position
+
+          KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX = 5
+
+          find("body").send_keys [:up]
+          after_up_position = placing_annotation_icon_position
+          expect(after_up_position["left"]).to eq(orig_position["left"])
+          expect(after_up_position["top"]).to eq(orig_position["top"] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+
+          find("body").send_keys [:down]
+          after_down_position = placing_annotation_icon_position
+          expect(after_down_position).to eq(orig_position)
+
+          find("body").send_keys [:right]
+          after_right_position = placing_annotation_icon_position
+          expect(after_right_position["left"]).to eq(orig_position["left"] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+          expect(after_right_position["top"]).to eq(orig_position["top"])
+
+          find("body").send_keys [:left]
+          after_left_position = placing_annotation_icon_position
+
+          expect(after_left_position).to eq(orig_position)
+
+          find("body").send_keys [:alt, :enter]
+          expect(page).to_not have_css(".cf-pdf-placing-comment")
+        end
+      end
+      # :nocov:
+
       scenario "Jump to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -427,39 +520,26 @@ RSpec.feature "Reader" do
         expect(find_field("page-progress-indicator-input").value).to eq "3"
       end
 
-      scenario "Switch between pages" do
+      scenario "Switch between pages to ensure rendering" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[1].type
 
-        fill_in "page-progress-indicator-input", with: "4\n"
-        expect(in_viewport("pageContainer4")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "4"
-        fill_in "page-progress-indicator-input", with: "100e\n"
-        expect(in_viewport("pageContainer4")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "4"
+        # Expect the 23 page to only be rendered once scrolled to.
+        expect(find("#pageContainer23")).to_not have_content("Rating Decision")
+
+        fill_in "page-progress-indicator-input", with: "23\n"
+
+        expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+
+        expect(in_viewport("pageContainer23")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "23"
+
+        # Entering invalid values leaves the viewer on the same page.
+        fill_in "page-progress-indicator-input", with: "abcd\n"
+        expect(in_viewport("pageContainer23")).to be true
+        expect(find_field("page-progress-indicator-input").value).to eq "23"
       end
-    end
-
-    # This test is not really testing what we want. In fact it only works because
-    # of a race condition. Currently all pages are being loaded regardless of scroll
-    # position, because of a bug introduced with zooming. Therefore this only works
-    # if the line checking that "Banana. Banana who" doesn't exist runs before the
-    # given page renders. The scrolling is irrelevant. It's also unclear this is how
-    # we should be rendering pages. So for now, let's skip this test to avoid
-    # non-deterministic failures.
-    skip "Scrolling renders pages" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      click_on documents[0].type
-      expect(page).to have_css(".page")
-
-      # Expect only the first page to be reneder on first load
-      # But if we scroll second page should be rendered and
-      # we should be able to find text from the second page.
-      expect(page).to_not have_content("Banana. Banana who")
-      scroll_to("scrollWindow", 500)
-      expect(page).to have_content("Banana. Banana who", wait: 4)
     end
 
     # this test being skipped because it often fails during the CI process
@@ -681,7 +761,7 @@ RSpec.feature "Reader" do
       DownloadHelpers.wait_for_download
       download = DownloadHelpers.downloaded?
       expect(download).to be_truthy
-      expect(filename).to have_content("BVA Decision-5")
+      expect(filename).to have_content("BVA Decision-6")
       DownloadHelpers.clear_downloads
     end
   end
@@ -708,7 +788,7 @@ RSpec.feature "Reader" do
       original_scroll_position = scroll_position("documents-table-body")
       click_on documents.last.type
 
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
       expect(in_viewport("read-indicator")).to be true
@@ -718,7 +798,7 @@ RSpec.feature "Reader" do
     scenario "Open the last document on the page and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
 

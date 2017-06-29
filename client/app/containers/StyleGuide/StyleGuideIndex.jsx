@@ -2,8 +2,8 @@ import React from 'react';
 import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
+import StyleGuideButton from './StyleGuideButton';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
-import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
@@ -20,6 +20,7 @@ import StyleGuideLayout from './StyleGuideLayout';
 import StyleGuideDashboard from './StyleGuideDashboard';
 import StyleGuideTypography from './StyleGuideTypography';
 import StyleGuideFormFields from './StyleGuideFormFields';
+import StyleGuideAlerts from './StyleGuideAlerts';
 
 export default function StyleGuideIndex() {
 
@@ -158,10 +159,7 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideColors />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Buttons"
-          id="buttons" />
-        <StyleGuideLinkButton />
+        <StyleGuideButton />
         <div className="cf-help-divider"></div>
         <StyleGuideSearch />
         <div className="cf-help-divider"></div>
@@ -189,9 +187,7 @@ export default function StyleGuideIndex() {
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Alerts"
-          id="alerts" />
+        <StyleGuideAlerts />
         <div className="cf-help-divider"></div>
         <StyleGuideLayout />
         <div className="cf-help-divider"></div>

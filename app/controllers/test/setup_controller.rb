@@ -69,6 +69,10 @@ class Test::SetupController < ApplicationController
 
   private
 
+  def set_application
+    RequestStore.store[:application] = "internal"
+  end
+
   def require_non_prod
     redirect_to "/unauthorized" unless test_user?
   end

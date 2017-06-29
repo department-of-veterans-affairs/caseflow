@@ -1,10 +1,12 @@
 import * as Constants from './constants';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { makeGetAnnotationsByDocumentId } from './selectors';
+import { doDatesMatch } from '../util/DateUtil';
+import _ from 'lodash';
 
-const metadataContainsString = (searchQuery, doc) =>
-  doc.type.toLowerCase().includes(searchQuery) ||
-  doc.receivedAt.toLowerCase().includes(searchQuery);
+const typeContainsString = (searchQuery, doc) => {
+  return (doc.type.toLowerCase().includes(searchQuery));
+};
 
 const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
@@ -23,11 +25,17 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, state) => (doc) =>
-  !searchQuery || searchQuery.split(' ').some((searchWord) => {
+export const searchString = (searchQuery, state) => (doc) => {
+  let queryTokens = _.compact(searchQuery.split(' '));
+
+  return queryTokens.every((word) => {
+    const searchWord = word.trim();
+
     return searchWord.length > 0 && (
-      metadataContainsString(searchWord, doc) ||
+      doDatesMatch(doc.receivedAt, searchWord) ||
+      typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
   });
+};
