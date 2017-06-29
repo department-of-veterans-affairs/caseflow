@@ -100,7 +100,7 @@ export class Pdf extends React.PureComponent {
     // we know which pages are stale.
     this.state = {
       numPages: null,
-      pdfDocument: null,
+      pdfDocument: {},
       isRendered: {}
     };
 
@@ -160,7 +160,7 @@ export class Pdf extends React.PureComponent {
       return Promise.resolve();
     }
 
-    let pdfDocument = this.state.pdfDocument;
+    
     let { scale } = this.props;
 
     // Mark that we are rendering this page.
@@ -168,13 +168,14 @@ export class Pdf extends React.PureComponent {
     this.isRendering[file][index] = true;
 
     return new Promise((resolve, reject) => {
-      if (index >= this.isRendering.length || pdfDocument !== this.state.pdfDocument) {
+      if (index >= this.isRendering.length || !this.prerenderedPdfs[file].pdfDocument) {
         this.isRendering[file][index] = false;
         this.renderInViewPages();
 
         return resolve();
       }
 
+      const pdfDocument = this.prerenderedPdfs[file].pdfDocument;
       // Page numbers are one-indexed
       let pageNumber = index + 1;
       let canvas = this.pageElements[file][index].canvas;
@@ -425,7 +426,8 @@ export class Pdf extends React.PureComponent {
           isRendered: {
             ...this.state.isRendered,
             [file]: []
-          }
+          },
+          currentFile: file
         }, () => {
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
@@ -587,7 +589,11 @@ export class Pdf extends React.PureComponent {
     if (pdf.pdfDocument) {
       pdf.pdfDocument.destroy();
     }
-    // this.isRendering[file] = this.isRendering[file].map(() => false);
+
+    if (this.isRendering[file]) {
+      this.isRendering[file] = this.isRendering[file].map(() => false);
+    }
+
     _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
       pageElement.textLayer.innerHTML = '';
     });
@@ -864,6 +870,8 @@ export class Pdf extends React.PureComponent {
         const pageContentsVisibleClass = classNames({
           'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
         });
+
+        console.log('rendering', file, this.props.file);
 
         return <div
           className={pageClassNames}
