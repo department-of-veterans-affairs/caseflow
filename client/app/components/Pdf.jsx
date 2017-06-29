@@ -115,16 +115,18 @@ export class Pdf extends React.PureComponent {
     this.defaultWidth = PAGE_WIDTH;
     this.defaultHeight = PAGE_HEIGHT;
 
-    this.refFunctionGetters = {};
+    this.refFunctionGetters = {
+      canvas: {},
+      textLayer: {},
+      pageContainer: {}
+    };
 
-    this.setUpFakeCanvasRefFunctions();
     this.initializePrerendering();
     this.initializeRefs();
   }
 
   initializeRefs = () => {
     this.pageElements = {};
-    this.fakeCanvas = [];
     this.scrollWindow = null;
   }
 
@@ -153,8 +155,9 @@ export class Pdf extends React.PureComponent {
   // likey remain complicated.
   drawPage = (file, index) => {
     if (this.isRendering[file][index] ||
-      (_.get(this.state.isRendered[file][index], 'pdfDocument') === this.state.pdfDocument &&
-      _.get(this.state.isRendered[file][index], 'scale') === this.props.scale)) {
+      (_.get(this.state.isRendered, [file, index, 'pdfDocument']) === this.state.pdfDocument &&
+      _.get(this.state.isRendered, [file,index, 'scale']) === this.props.scale) &&
+      this.prerenderedPdfs[file]) {
       this.renderInViewPages();
 
       return Promise.resolve();
@@ -169,9 +172,9 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve, reject) => {
       // Page numbers are one-indexed
       let pageNumber = index + 1;
-      let canvas = this.pageElements[file][index].canvas;
-      let container = this.pageElements[file][index].textLayer;
-      let page = this.pageElements[file][index].pageContainer;
+      let canvas = _.get(this.pageElements, [file, index, 'canvas'], null);
+      let container = _.get(this.pageElements, [file, index, 'textLayer'], null);
+      let page = _.get(this.pageElements, [file, index, 'pageContainer'], null);
 
       if (!canvas || !container || !page) {
         this.isRendering[file][index] = false;
@@ -372,42 +375,6 @@ export class Pdf extends React.PureComponent {
           return resolve();
         }
 
-        this.pageElements[file] = {};
-
-        this.refFunctionGetters.canvas = {};
-        this.refFunctionGetters.textLayer = {};
-        this.refFunctionGetters.pageContainer = {};
-        if (!this.isRendering[file])
-          this.isRendering[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
-
-        _.map(this.isRendering, (array, file) => {
-          this.refFunctionGetters.canvas[file] = [];
-          this.refFunctionGetters.textLayer[file] = [];
-          this.refFunctionGetters.pageContainer[file] = [];
-
-          array.map((_page, index) => {
-            const makeSetRef = (elemKey) => (elem) => {
-              // We only want to save the element if it actually exists.
-              // When the node unmounts, React will call the ref function
-              // with null. When this happens, we want to delete the
-              // entire pageElements object for this index, instead of
-              // setting it as a null value. This makes code that reads
-              // this.pageElements much simpler, because it does not need
-              // to account for the possibility that some pageElements are
-              // nulled out because they refer to pages that are no longer rendered.
-              if (elem) {
-                _.set(this.pageElements[file], [index, elemKey], elem);
-              } else {
-                delete this.pageElements[file][index];
-              }
-            };
-
-            this.refFunctionGetters.canvas[file][index] = makeSetRef('canvas');
-            this.refFunctionGetters.textLayer[file][index] = makeSetRef('textLayer');
-            this.refFunctionGetters.pageContainer[file][index] = makeSetRef('pageContainer');
-          });
-        });
-
         this.defaultWidth = PAGE_WIDTH;
         this.defaultHeight = PAGE_HEIGHT;
 
@@ -432,8 +399,45 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  setUpPdfObjects = (file, pdfDocument) => {
+    this.pageElements[file] = {};
+
+    if (!this.isRendering[file]) {
+      this.isRendering[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
+    }
+
+    _.map(this.isRendering, (array, file) => {
+      this.refFunctionGetters.canvas[file] = [];
+      this.refFunctionGetters.textLayer[file] = [];
+      this.refFunctionGetters.pageContainer[file] = [];
+
+      array.map((_page, index) => {
+        const makeSetRef = (elemKey) => (elem) => {
+          // We only want to save the element if it actually exists.
+          // When the node unmounts, React will call the ref function
+          // with null. When this happens, we want to delete the
+          // entire pageElements object for this index, instead of
+          // setting it as a null value. This makes code that reads
+          // this.pageElements much simpler, because it does not need
+          // to account for the possibility that some pageElements are
+          // nulled out because they refer to pages that are no longer rendered.
+          if (elem) {
+            _.set(this.pageElements[file], [index, elemKey], elem);
+          } else {
+            delete this.pageElements[file][index];
+          }
+        };
+
+        this.refFunctionGetters.canvas[file][index] = makeSetRef('canvas');
+        this.refFunctionGetters.textLayer[file][index] = makeSetRef('textLayer');
+        this.refFunctionGetters.pageContainer[file][index] = makeSetRef('pageContainer');
+      });
+    });
+  }
+
   getDocument = (file) => {
     if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+      this.setUpPdfObjects(file, this.prerenderedPdfs[file].pdfDocument);
       return Promise.resolve(this.prerenderedPdfs[file].pdfDocument);
     }
 
@@ -442,12 +446,14 @@ export class Pdf extends React.PureComponent {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
         if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+          this.setUpPdfObjects(file, this.prerenderedPdfs[file].pdfDocument);
           return this.prerenderedPdfs[file].pdfDocument;
         }
         this.prerenderedPdfs[file] = {
           pdfDocument,
           rendered: []
         };
+        this.setUpPdfObjects(file, pdfDocument);
 
         return pdfDocument;
       } else {
@@ -563,19 +569,6 @@ export class Pdf extends React.PureComponent {
     window.removeEventListener('keydown', this.keyListener);
   }
 
-  setUpFakeCanvasRefFunctions = () => {
-    this.refFunctionGetters.fakeCanvas = [];
-
-    this.props.prefetchFiles.forEach((_unused, index) => {
-      _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
-        _.set(
-          this.refFunctionGetters,
-          ['fakeCanvas', index, pageIndex],
-          (ele) => _.set(this.fakeCanvas, [index, pageIndex], ele));
-      });
-    });
-  }
-
   cleanUpPdf = (pdf, file) => {
     if (pdf.pdfDocument) {
       pdf.pdfDocument.destroy();
@@ -635,8 +628,6 @@ export class Pdf extends React.PureComponent {
       _.forEach(_.omit(this.prerenderedPdfs, pdfsToKeep), this.cleanUpPdf);
 
       this.prerenderedPdfs = _.pick(this.prerenderedPdfs, pdfsToKeep);
-
-      this.setUpFakeCanvasRefFunctions();
     }
     /* eslint-enable no-negated-condition */
   }
@@ -660,26 +651,9 @@ export class Pdf extends React.PureComponent {
         if (pdfDocument) {
           _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
-              !_.get(this.prerenderedPdfs, [file, 'rendered', pageIndex]) &&
-              this.fakeCanvas[index][pageIndex] &&
+              !_.get(this.state, ['isRendered', file, pageIndex]) &&
               !this.isPrerendering) {
-              // We set this to true, so that only one page can prerender at a time. In this
-              // way we can prerender page 1 before prerendering page 2.
-              this.isPrerendering = true;
-
-              pdfDocument.getPage(pageIndex + 1).then((pdfPage) => {
-                const viewport = pdfPage.getViewport(this.props.scale);
-
-                return pdfPage.render({
-                  canvasContext: this.fakeCanvas[index][pageIndex].getContext('2d', { alpha: false }),
-                  viewport
-                });
-              }).
-              then(() => {
-                this.prerenderedPdfs[file].rendered[pageIndex] = true;
-                finishPrerender();
-              }).
-              catch(finishPrerender);
+              this.drawPage(file, pageIndex)
             }
           });
         }
@@ -901,22 +875,12 @@ export class Pdf extends React.PureComponent {
       });
     });
 
-    const prerenderCanvases = this.props.prefetchFiles.map((_unused, index) => {
-      return _.range(NUM_PAGES_TO_PRERENDER).map((pageIndex) =>
-        <canvas
-          style={{ display: 'none' }}
-          key={`${pageIndex}-${index}`}
-          ref={_.get(this.refFunctionGetters.fakeCanvas, [index, pageIndex])}/>
-      );
-    });
-
     return <div
       id="scrollWindow"
       tabIndex="0"
       className="cf-pdf-scroll-view"
       onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
-      {prerenderCanvases}
         <div
           id={this.props.file}
           className={'cf-pdf-page pdfViewer singlePageView'}>
