@@ -41,7 +41,8 @@ describe('PdfUI', () => {
           children().
           text()).to.eq(doc.type);
         expect(wrapper.find('Link').find({ name: 'newTab' }).
-          first().props().target).to.eq('_blank');
+          first().
+          props().target).to.eq('_blank');
       });
 
       it('does not render the page number when pdf has not been rendered', () => {
