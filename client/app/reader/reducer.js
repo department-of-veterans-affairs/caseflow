@@ -135,7 +135,7 @@ const updateFilteredDocIds = (nextState) => {
 };
 
 export const initialState = {
-  assignments: null,
+  assignments: [],
   loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
@@ -234,6 +234,13 @@ export const reducer = (state = initialState, action = {}) => {
         },
         loadedAppealId: {
           $set: action.payload.vacolsId
+        },
+        assignments: {
+          $apply: (existingAssignments) =>
+            existingAssignments.map((assignment) => ({
+              ...assignment,
+              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
+            }))
         }
       }
     ));
