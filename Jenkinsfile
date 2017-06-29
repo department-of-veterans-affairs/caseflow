@@ -1,62 +1,71 @@
-#!groovy
+podTemplate(label: 'caseflow-pod', containers: [
+    containerTemplate(
+        name: 'postgres', 
+        image: 'postgres:9.5',
+        ttyEnabled: true,
+        command: 'cat',
+        privileged: false,
+        alwaysPullImage: false,
+        ports: [portMapping(name: 'postgres', containerPort: 3306, hostPort: 3306)]
+    ),
+    containerTemplate(
+        name: 'redis', 
+        image: 'redis:3.2.9-alpine', 
+        ttyEnabled: true,
+        command: 'cat',
+        privileged: false,
+        alwaysPullImage: false,
+        ports: [portMapping(name: 'redis', containerPort: 3306, hostPort: 3306)]),
+    containerTemplate(
+        name: 'ubuntu', 
+        image: 'ruby:2.2.4', 
+        ttyEnabled: true, 
+        command: 'cat')
+  ]) {
+    node('caseflow-pod') {
+        stage('Start the background services') {
+            container('postgres') {}
+            container('redis') {}
+        }
 
-// This is a boilerplate script used by Jenkins to run the appeals-deployment
-// pipeline. It clones the appeals-deployment repo and execute a file called
-// common-pipeline.groovy.
+        container('ubuntu') {
+            stage('before install') {
+                sh """
+                mkdir travis-node
+                wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz
+                tar xf $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz -C $PWD/travis-node
+                export PATH=$PWD/travis-node/node-v6.10.2-linux-x64/bin:$PATH
+                node -v
+                sudo apt-get update
+                wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
+                sudo dpkg -i $PWD/chromium-chromedriver.deb
+                sudo apt-get install -f
+                """
+            }
 
-// The application name as defined in appeals-deployment aws-config.yml
-def APP_NAME = 'certification';
+            stage('before script') {
+                sh """
+                node -v
+                npm -v
+                cd ./client && npm install --no-optional
+                sudo apt-get install pdftk
+                RAILS_ENV=test bundle exec rake db:create
+                RAILS_ENV=test bundle exec rake db:schema:load
+                export PATH=$PATH:/usr/lib/chromium-browser/
+                export DISPLAY=:99.0
+                sh -e /etc/init.d/xvfb start
+                sleep 3
+                """
+            }
 
-// The application version to checkout.
-// See http://docs.ansible.com/ansible/git_module.html version field
-def APP_VERSION = 'HEAD'
-
-
-/************************ Common Pipeline boilerplate ************************/
-
-def commonPipeline;
-node('deploy') {
-
-  // withCredentials allows us to expose the secrets in Credential Binding
-  // Plugin to get the credentials from Jenkins secrets.
-  withCredentials([
-    [
-      // Token to access the appeals deployment repo.
-      $class: 'StringBinding',
-      credentialsId : 'GIT_CREDENTIAL',
-      variable: 'GIT_CREDENTIAL',
-    ]
-  ])
-  {
-    // Clean up the workspace so that we always start from scratch.
-    stage('cleanup') {
-      step([$class: 'WsCleanup'])
+            stage('script') {
+                sh"""
+                bundle exec rake spec
+                bundle exec rake ci:other
+                mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
+                - rm -rf node_modules && mv node_modules_bak node_modules
+                """
+            }
+        }
     }
-
-    // Checkout the deployment repo for the ansible script. This is needed
-    // since the deployment scripts are separated from the source code.
-    stage ('checkout-deploy-repo') {
-      sh "git clone https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
-      // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
-      if (env.APP_ENV == 'prod') {
-        APP_VERSION = sh (
-          // magical shell script that will find the latest tag for the repository
-          script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \$0}' | tail -n 1",
-          returnStdout: true
-        ).trim()
-      }
-      dir ('./appeals-deployment/ansible') {
-        sh 'git submodule init'
-        sh 'git submodule update'
-
-        // The commmon pipeline script should kick off the deployment.
-        commonPipeline = load "../jenkins/common-pipeline.groovy"
-      }
-    }
-  }
 }
-
-// Execute the common pipeline.
-// Note that this must be outside of the node block since the common pipeline
-// runs another set of stages.
-commonPipeline.deploy(APP_NAME, APP_VERSION);
