@@ -13,7 +13,7 @@ export class Dockets extends React.Component {
   }
 
   getStartTime = () => {
-    let startTime = `${moment().
+    const startTime = `${moment().
       add(_.random(0, 120), 'minutes').
       format('LT')} EST`;
 
@@ -26,9 +26,9 @@ export class Dockets extends React.Component {
 
   render() {
 
-    let docketIndex = Object.keys(this.props.dockets).sort();
+    const docketIndex = Object.keys(this.props.dockets).sort();
 
-    let columns = [
+    const columns = [
       {
         header: 'Date',
         valueName: 'date'
@@ -57,7 +57,7 @@ export class Dockets extends React.Component {
       }
     ];
 
-    let rowObjects = docketIndex.map((docketDate) => {
+    const rowObjects = docketIndex.map((docketDate) => {
 
       let docket = this.props.dockets[docketDate];
 
