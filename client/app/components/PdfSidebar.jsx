@@ -36,8 +36,7 @@ export class PdfSidebar extends React.Component {
 
     this.commentElements = {};
     this.state = {
-      modal: false,
-      modalButton: false
+      modal: false
     };
   }
 
