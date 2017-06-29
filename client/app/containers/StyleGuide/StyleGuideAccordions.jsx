@@ -1,24 +1,23 @@
 import React from 'react';
-import Collapse, { Panel } from 'rc-collapse';
+import Accordion from '../../components/Accordion';
+import AccordionHeader from '../../components/AccordionHeader';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideAccordions extends React.PureComponent {
   render = () => {
-    const headerPanels = [1, 2, 3, 4, 5].map((header) => {
-      return (<Panel header={`Example title ${header}`} headerClass="usa-accordion-button" key={header}>
-        <div className="usa-accordion-content">
-          <p>
-            Millions of Americans interact with government services every day.
-            Veterans apply for benefits. Students compare financial aid options.
-            Small business owners seek loans. Too often, outdated tools and complex
-            systems make these interactions cumbersome and frustrating. Enter the
-            United States Digital Service. We partner leading technologists with
-            dedicated public servants to improve the usability and reliability of
-            our government's most important digital services.
-            Visit USDS.gov to learn more.
-          </p>
-        </div>
-      </Panel>);
+    const sgAccordionHeaders = [1, 2, 3, 4, 5].map((header) => {
+      return (<AccordionHeader title={`Example title ${header}`} key={header}>
+        <p>
+          Millions of Americans interact with government services every day.
+          Veterans apply for benefits. Students compare financial aid options.
+          Small business owners seek loans. Too often, outdated tools and complex
+          systems make these interactions cumbersome and frustrating. Enter the
+          United States Digital Service. We partner leading technologists with
+          dedicated public servants to improve the usability and reliability of
+          our government's most important digital services.
+          Visit USDS.gov to learn more.
+        </p>
+      </AccordionHeader>);
     });
 
     return <div>
@@ -30,27 +29,21 @@ export default class StyleGuideAccordions extends React.PureComponent {
   <p>Our accordion style was taken from the US Web Design Standards.
     Accordions are a list of headers that can be clicked to hide or reveal additional
     content.</p>
-  <p><b>Technical Notes:</b> The whole accordion is placed in the <code>Collapse</code>
-    element while each accordion (header and body) is listed in the <code>Panel</code>
-    element. To obtain your desired border style, specify one of the following classnames
-    in the <code>className</code> prop of the <code>Collapse</code> element.</p>
+
     <h3>Border</h3>
-      <p>className: <code>usa-accordion-bordered</code></p>
-      <Collapse accordion={true} className="usa-accordion-bordered">
-        {headerPanels}
-      </Collapse>
+    <Accordion style="bordered">
+      {sgAccordionHeaders}
+    </Accordion>
 
     <h3>Borderless</h3>
-      <p>className: <code>usa-accordion</code></p>
-      <Collapse accordion={true} className="usa-accordion">
-        {headerPanels}
-      </Collapse>
+    <Accordion style="borderless">
+      {sgAccordionHeaders}
+    </Accordion>
 
-    <h3>Border with Outline</h3>
-      <p>className: <code>usa-accordion-bordered-outline</code></p>
-      <Collapse accordion={true} className="usa-accordion-bordered-outline">
-        {headerPanels}
-      </Collapse>
+    <h3>Bordered Outline</h3>
+    <Accordion style="outline">
+      {sgAccordionHeaders}
+    </Accordion>
     </div>;
   }
 }
