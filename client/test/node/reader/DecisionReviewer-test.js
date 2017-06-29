@@ -214,6 +214,20 @@ describe('DecisionReviewer', () => {
   context('PDF list view', () => {
     beforeEach(() => setUpDocuments());
 
+    context.only('follows the link when', () => {
+      it('document is ctrl + clicked', asyncTest(async() => {
+        const event = {
+          ctrlKey: true,
+          preventDefault: () => { console.log('hello world') } 
+        };
+
+        wrapper.find('a').findWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+      }));
+    });
+
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
         // Click on first document link
