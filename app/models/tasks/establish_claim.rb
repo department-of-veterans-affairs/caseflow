@@ -145,7 +145,7 @@ class EstablishClaim < Task
   end
 
   def bgs_info_valid?
-    appeal.veteran.ssn &&
+    !!appeal.veteran.ssn &&
       (COUNTRIES_REQUIRING_ZIP.include?(appeal.veteran.country) ? !!appeal.veteran.zip_code : true)
   end
 

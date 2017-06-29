@@ -74,8 +74,8 @@ const CREATE_EP_ERRORS = {
   bgs_info_invalid: {
     header: 'The EP for this claim must be created outside Caseflow.',
     body: <span>
-            This veteran is missing information in BGS, so their
-            claim cannot be established in Caseflow.
+            The veteran's profile in the corporate database is missing information
+            required by Caseflow.
             <br/>
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
