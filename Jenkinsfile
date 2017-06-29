@@ -1,4 +1,4 @@
-podTemplate(cloud: 'minikube', label: 'caseflow-pod', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
     containerTemplate(
         name: 'postgres', 
         image: 'postgres:9.5',
@@ -22,18 +22,12 @@ podTemplate(cloud: 'minikube', label: 'caseflow-pod', containers: [
         command: 'cat'
     )]) {
     node('caseflow-pod') {
-        stage('Start the background services') {
-            container('postgres') {}
-            container('redis') {}
-        }
-
-        container('ubuntu') {
-            stage('before install') {
+        stage('before install') {
+            container('ubuntu') {
                 sh """
-                mkdir travis-node
-                wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz
-                tar xf $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz -C $PWD/travis-node
-                export PATH=$PWD/travis-node/node-v6.10.2-linux-x64/bin:$PATH
+                wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O node-v6.10.2-linux-x64.tar.xz
+                tar xf node-v6.10.2-linux-x64.tar.xz -C $PWD
+                export PATH=$PWD/node-v6.10.2-linux-x64/bin:$PATH
                 node -v
                 sudo apt-get update
                 wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
@@ -41,8 +35,10 @@ podTemplate(cloud: 'minikube', label: 'caseflow-pod', containers: [
                 sudo apt-get install -f
                 """
             }
+        }
 
-            stage('before script') {
+        stage('before script') {
+            container('ubuntu') {
                 sh """
                 node -v
                 npm -v
@@ -56,8 +52,10 @@ podTemplate(cloud: 'minikube', label: 'caseflow-pod', containers: [
                 sleep 3
                 """
             }
+        }
 
-            stage('script') {
+        stage('script') {
+            container('ubuntu') {
                 sh"""
                 bundle exec rake spec
                 bundle exec rake ci:other
