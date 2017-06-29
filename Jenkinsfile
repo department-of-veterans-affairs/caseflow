@@ -5,8 +5,7 @@ podTemplate(label: 'caseflow-pod', containers: [
         ttyEnabled: true,
         command: 'cat',
         privileged: false,
-        alwaysPullImage: false,
-        ports: [portMapping(name: 'postgres', containerPort: 5432, hostPort: 5432)]
+        alwaysPullImage: false
     ),
     containerTemplate(
         name: 'redis', 
@@ -14,14 +13,14 @@ podTemplate(label: 'caseflow-pod', containers: [
         ttyEnabled: true,
         command: 'cat',
         privileged: false,
-        alwaysPullImage: false,
-        ports: [portMapping(name: 'redis', containerPort: 6379, hostPort: 6379)]),
+        alwaysPullImage: false
+    ),
     containerTemplate(
         name: 'ubuntu', 
         image: 'ruby:2.2.4', 
         ttyEnabled: true, 
-        command: 'cat')
-  ]) {
+        command: 'cat'
+    )]) {
     node('caseflow-pod') {
         stage('Start the background services') {
             container('postgres') {}
