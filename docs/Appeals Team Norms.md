@@ -38,6 +38,8 @@
 - **Goal: Help teammates grow professionally** 
   - Practice: Sprint team leads will give engineers feedback regularly and vice versa.
   - Practice: VA Eng Lead has monthly 1:1s with each engineer.
+- **Goal: Avoid being blocked on each other**
+  - Practice: When you're waiting for someone to do something for you, like review a PR, ping to let them know. If they don't respond for day, ping them again. Some people do not keep up with their GitHub notifications, so simply assigning a ticket or PR to someone is insufficient.
  
 ### Work/Life Balance
 - **Goal: Protect work/life balance when contacting others outside business hours**
