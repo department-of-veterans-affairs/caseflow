@@ -6,7 +6,7 @@ podTemplate(label: 'caseflow-pod', containers: [
         command: 'cat',
         privileged: false,
         alwaysPullImage: false,
-        ports: [portMapping(name: 'postgres', containerPort: 3306, hostPort: 3306)]
+        ports: [portMapping(name: 'postgres', containerPort: 5432, hostPort: 5432)]
     ),
     containerTemplate(
         name: 'redis', 
@@ -15,7 +15,7 @@ podTemplate(label: 'caseflow-pod', containers: [
         command: 'cat',
         privileged: false,
         alwaysPullImage: false,
-        ports: [portMapping(name: 'redis', containerPort: 3306, hostPort: 3306)]),
+        ports: [portMapping(name: 'redis', containerPort: 6379, hostPort: 6379)]),
     containerTemplate(
         name: 'ubuntu', 
         image: 'ruby:2.2.4', 
