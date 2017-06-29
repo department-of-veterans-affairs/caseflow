@@ -588,9 +588,9 @@ export class Pdf extends React.PureComponent {
       pdf.pdfDocument.destroy();
     }
     // this.isRendering[file] = this.isRendering[file].map(() => false);
-    // this.pageElements[file].forEach((pageElement) => {
-    //   pageElement.pageContainer.innerHTML = '';
-    // });
+    _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
+      pageElement.textLayer.innerHTML = '';
+    });
     this.setState({
       isRendered: {
         ...this.state.isRendered,
