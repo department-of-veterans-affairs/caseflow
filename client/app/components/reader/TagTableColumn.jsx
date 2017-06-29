@@ -12,7 +12,7 @@ class TagTableColumn extends PureComponent {
         return <div className="document-list-issue-tag"
             key={tag.id}>
             <Highlighter
-               searchWords={_.union(searchQuery.split(' '), [searchQuery])}
+               searchWords={_.union([searchQuery], searchQuery.split(' '))}
               textToHighlight={tag.text}
             />
           </div>;

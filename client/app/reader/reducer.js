@@ -76,7 +76,21 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
+  
+  const updateListComments = (id, state, foundComment) => {
+    return update(state, {
+      documents: {
+        [id]: {
+          listComments: {
+            $set: foundComment
+          }
+        }
+      }
+    });
+  };
+
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+  let updatedNextState = nextState;
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -88,34 +102,23 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, nextState)
+      (doc) => {
+        // doing a search through comments first
+        let queryTokens = _.compact(searchQuery.split(' '));
+        const commentFound = queryTokens.some((word) => {
+          return commentContainsString(word, nextState, doc);
+        });
+
+        if (commentFound) {
+          updatedNextState = updateListComments(doc.id, updatedNextState, commentFound);
+        }
+
+        return commentFound || searchString(searchQuery)(doc);
+      }
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
     value();
-
-  const updateListComments = (id, state, commentFound) => {
-    return update(state, {
-      documents: {
-        [id]: {
-          listComments: {
-            $set: commentFound
-          }
-        }
-      }
-    });
-  };
-
-  let updatedNextState = nextState;
-
-  _.each(filteredIds, (id) => {
-    let queryTokens = _.compact(searchQuery.split(' '));
-    const commentFound = queryTokens.some((word) => {
-      return commentContainsString(word, updatedNextState, updatedNextState.documents[id]);
-    });
-
-    updatedNextState = updateListComments(id, updatedNextState, searchQuery && commentFound);
-  });
 
   if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
