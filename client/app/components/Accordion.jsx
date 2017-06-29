@@ -8,6 +8,12 @@ const CLASS_NAME_MAPPING = {
   outline: 'usa-accordion-bordered-outline'
 };
 
+/*
+* The base CSS file for both the Accordion and the AccordionHeader components
+* originiated from vendor/assets/_rc_collapse.scss. Should there be any styling
+* issues for future accordion styles please consult that file along with _main.scss.
+*/
+
 export default class Accordion extends React.PureComponent {
   render() {
     const {
