@@ -99,7 +99,7 @@ export class Pdf extends React.PureComponent {
     // filename of the rendered PDF. This way, if PDFs are changed
     // we know which pages are stale.
     this.state = {
-      numPages: null,
+      numPages: {},
       pdfDocument: {},
       isRendered: {}
     };
@@ -155,9 +155,8 @@ export class Pdf extends React.PureComponent {
   // likey remain complicated.
   drawPage = (file, index) => {
     if (this.isRendering[file][index] ||
-      (_.get(this.state.isRendered, [file, index, 'pdfDocument']) === this.state.pdfDocument &&
-      _.get(this.state.isRendered, [file,index, 'scale']) === this.props.scale) &&
-      this.prerenderedPdfs[file]) {
+      _.get(this.state.isRendered, [file,index, 'scale']) === this.props.scale ||
+      !this.prerenderedPdfs[file]) {
       this.renderInViewPages();
 
       return Promise.resolve();
@@ -335,7 +334,7 @@ export class Pdf extends React.PureComponent {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
-        if (!this.state.isRendered[this.props.file][index] || this.state.isRendered[this.props.file][index].scale !== this.props.scale) {
+        if (!_.get(this.state, ['isRendered', this.props.file, index], false) || this.state.isRendered[this.props.file][index].scale !== this.props.scale) {
           if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
@@ -379,7 +378,10 @@ export class Pdf extends React.PureComponent {
         this.defaultHeight = PAGE_HEIGHT;
 
         this.setState({
-          numPages: pdfDocument.pdfInfo.numPages,
+          numPages: {
+            ...this.state.numPages,
+            [file]: pdfDocument.pdfInfo.numPages
+          },
           pdfDocument,
           isRendered: {
             ...this.state.isRendered,
@@ -433,11 +435,17 @@ export class Pdf extends React.PureComponent {
         this.refFunctionGetters.pageContainer[file][index] = makeSetRef('pageContainer');
       });
     });
+
+    this.setState({
+      numPages: {
+        ...this.state.numPages,
+        [file]: pdfDocument.pdfInfo.numPages
+      }
+    });
   }
 
   getDocument = (file) => {
     if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
-      this.setUpPdfObjects(file, this.prerenderedPdfs[file].pdfDocument);
       return Promise.resolve(this.prerenderedPdfs[file].pdfDocument);
     }
 
@@ -446,7 +454,6 @@ export class Pdf extends React.PureComponent {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
         if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
-          this.setUpPdfObjects(file, this.prerenderedPdfs[file].pdfDocument);
           return this.prerenderedPdfs[file].pdfDocument;
         }
         this.prerenderedPdfs[file] = {
@@ -485,7 +492,7 @@ export class Pdf extends React.PureComponent {
     this.currentPage = currentPage;
     this.props.onPageChange(
       currentPage,
-      this.state.numPages,
+      this.state.numPages[this.props.file],
       this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
@@ -653,7 +660,9 @@ export class Pdf extends React.PureComponent {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
               !_.get(this.state, ['isRendered', file, pageIndex]) &&
               !this.isPrerendering) {
-              this.drawPage(file, pageIndex)
+              this.isPrerendering = true;
+
+              this.drawPage(file, pageIndex).then(finishPrerender).catch(finishPrerender);
             }
           });
         }
@@ -812,8 +821,8 @@ export class Pdf extends React.PureComponent {
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
 
-    const pages = _.map(this.isRendering, (array, file) => {
-      return array.map((page, pageIndex) => {
+    const pages = _.map(this.state.numPages, (numPages, file) => {
+      return _.range(numPages).map((page, pageIndex) => {
         const onPageClick = (event) => {
           if (!this.props.isPlacingAnnotation) {
             return;
