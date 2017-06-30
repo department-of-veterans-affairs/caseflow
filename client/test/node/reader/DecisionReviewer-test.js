@@ -215,6 +215,11 @@ describe('DecisionReviewer', () => {
   context('PDF list view', () => {
     beforeEach(() => setUpDocuments());
 
+    // In general, we shouldn't have to write tests to make sure that links work. However,
+    // with the document type links we are calling prevent default to override what they
+    // do when you click on them. They should still open up new tabs when you press the
+    // meta-key, control, or middle click. These tests make sure we don't prevent default
+    // in these cases.
     context('follows the link when', () => {
       it('document is ctrl + clicked', asyncTest(async() => {
         const preventDefault = sinon.spy();
