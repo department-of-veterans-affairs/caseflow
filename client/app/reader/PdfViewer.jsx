@@ -13,6 +13,7 @@ import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
+import RouteComponent from '../components/RouteComponent';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
   const moveAmountPx = 5;
@@ -51,7 +52,9 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
 // PdfViewer is a smart component that renders the entire
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
-export class PdfViewer extends React.Component {
+export class PdfViewer extends RouteComponent {
+  pageTitle = "View Document | Caseflow Reader"
+
   // eslint-disable-next-line max-statements
   keyListener = (event) => {
     if (isUserEditingText()) {

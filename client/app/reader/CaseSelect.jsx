@@ -3,11 +3,14 @@ import { connect } from 'react-redux';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
 import { bindActionCreators } from 'redux';
+import RouteComponent from '../components/RouteComponent';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 
-class CaseSelect extends React.PureComponent {
+class CaseSelect extends RouteComponent {
+  pageTitle = "Assignments | Caseflow Reader"
+
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
