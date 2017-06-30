@@ -4,6 +4,7 @@
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
 class Veteran
   include ActiveModel::Model
+  include ActiveModel::Validations
 
   BGS_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
@@ -12,6 +13,15 @@ class Veteran
   ).freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
+
+  COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
+
+  validates :ssn, presence: true
+  validates :zip_code, presence: true, if: "country_requires_zip?"
+
+  def country_requires_zip?
+    COUNTRIES_REQUIRING_ZIP.include?(country)
+  end
 
   # Convert to hash used in AppealRepository.establish_claim!
   def to_vbms_hash

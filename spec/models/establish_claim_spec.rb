@@ -75,39 +75,6 @@ describe EstablishClaim do
     end
   end
 
-  context "#bgs_info_valid?" do
-    context "returns true when bgs info is valid" do
-      subject { establish_claim.bgs_info_valid? }
-
-      it { is_expected.to eq(true) }
-    end
-    context "returns false when zip code is required and nil" do
-      before do
-        establish_claim.appeal.veteran.zip_code = nil
-      end
-      subject { establish_claim.bgs_info_valid? }
-
-      it { is_expected.to eq(false) }
-    end
-    context "returns true when zip code is not required and nil" do
-      before do
-        establish_claim.appeal.veteran.zip_code = nil
-        establish_claim.appeal.veteran.country = "Not the US"
-      end
-      subject { establish_claim.bgs_info_valid? }
-
-      it { is_expected.to eq(true) }
-    end
-    context "returns false when ssn is missing" do
-      before do
-        establish_claim.appeal.veteran.ssn = nil
-      end
-      subject { establish_claim.bgs_info_valid? }
-
-      it { is_expected.to eq(false) }
-    end
-  end
-
   context "#prepare_with_decision!" do
     subject { establish_claim.prepare_with_decision! }
 

@@ -11,8 +11,6 @@ class EstablishClaim < Task
     end
   end
 
-  COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
-
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
@@ -145,8 +143,7 @@ class EstablishClaim < Task
   end
 
   def bgs_info_valid?
-    !!appeal.veteran.ssn &&
-      (COUNTRIES_REQUIRING_ZIP.include?(appeal.veteran.country) ? !!appeal.veteran.zip_code : true)
+    appeal.veteran.valid?
   end
 
   def should_invalidate?
