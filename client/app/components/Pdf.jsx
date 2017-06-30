@@ -137,9 +137,8 @@ export class Pdf extends React.PureComponent {
 
   setIsRendered = (file, index, value) => {
     this.isRendering[file][index] = false;
-    console.log(`6: marking ${index} false`);
     let isRendered = {...this.state.isRendered};
-console.log('set isRendered', isRendered);
+
     _.set(isRendered, [file, index], value);
 
     this.setState({
@@ -155,17 +154,23 @@ console.log('set isRendered', isRendered);
   // This method is the worst. It is our main interaction with PDFJS, so it will
   // likey remain complicated.
   drawPage = (file, index) => {
+    console.log('drawing file, index', file, index);
     if (this.isRendering[file][index] ||
-      _.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale ||
-      !this.prerenderedPdfs[file]) {
-      console.log('isRendered', this.isRendering, this.state.isRendered, file, index);
+      _.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale) {
+      console.log('isRendered', this.isRendering[file][index], this.state.isRendered[file][index], file, index);
+      console.log('scale: ',_.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale);
       console.log('Calling from here');
 
-      return Promise.resolve();
+      return Promise.reject();
     }
 
-    console.log('drawingPage', file, index);
-    console.log('isRendered', this.isRendering, this.state.isRendered);
+    if (!this.prerenderedPdfs[file]) {
+      console.log('prerenderedPdfs: ', this.prerenderedPdfs);
+      return Promise.reject();
+    }
+
+    // console.log('drawingPage', file, index);
+    // console.log('isRendered', this.isRendering, this.state.isRendered);
     
     let { scale } = this.props;
     const pdfDocument = this.prerenderedPdfs[file].pdfDocument;
@@ -185,7 +190,7 @@ console.log('set isRendered', isRendered);
         return reject();
       }
 
-      pdfDocument.getPage(pageNumber).then((pdfPage) => {
+      return pdfDocument.getPage(pageNumber).then((pdfPage) => {
         // The viewport is a PDFJS concept that combines the size of the
         // PDF pages with the scale go get the dimensions of the divs.
         let viewport = pdfPage.getViewport(this.props.scale);
@@ -288,7 +293,7 @@ console.log('set isRendered', isRendered);
     // already present, then we want to create it.
     _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
     resolve();
-    console.log('post rendering', this.isRendering, this.state.isRendered);
+    // console.log('post rendering', this.isRendering, this.state.isRendered);
   }
 
   scrollEvent = () => {
@@ -317,14 +322,14 @@ console.log('set isRendered', isRendered);
   }
 
   renderInViewPages = () => {
-    console.log('renderingInViewPages');
+    // console.log('renderingInViewPages');
     // If we're already rendering a page, delay this calculation.
     const numberOfPagesRendering = _.reduce(this.isRendering, (total, renderingArray) => {
       return total + renderingArray.reduce((acc, rendering) => {
         return acc + (rendering ? 1 : 0);
       }, 0);
     }, 0);
-    console.log('numberOfPagesRendering', numberOfPagesRendering);
+    // console.log('numberOfPagesRendering', numberOfPagesRendering);
     if (numberOfPagesRendering >= MAX_PAGES_TO_RENDER_AT_ONCE) {
       return;
     }
@@ -353,7 +358,10 @@ console.log('set isRendered', isRendered);
       return;
     }
 
-    this.drawPage(this.props.file, prioritzedPage).then(this.renderInViewPages).catch(this.renderInViewPages);
+    this.drawPage(this.props.file, prioritzedPage).then(() => {
+      this.renderInViewPages();
+      this.prerenderPages();
+    }).catch();
   }
 
   performFunctionOnEachPage = (func) => {
@@ -369,6 +377,7 @@ console.log('set isRendered', isRendered);
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
   setUpPdf = (file) => {
+    // console.log('setup file', file);
     this.latestFile = file;
 
     return new Promise((resolve) => {
@@ -453,11 +462,14 @@ console.log('set isRendered', isRendered);
   }
 
   getDocument = (file) => {
+    // console.log('getting document',file, this.prerenderedPdfs);
     if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
+      // console.log('returning inside here');
       return Promise.resolve(this.prerenderedPdfs[file].pdfDocument);
     }
 
     return PDFJS.getDocument(file).then((pdfDocument) => {
+      // console.log('getting document promise',[...this.props.prefetchFiles, this.props.file],file);
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
@@ -585,13 +597,14 @@ console.log('set isRendered', isRendered);
   }
 
   cleanUpPdf = (pdf, file) => {
+    // console.log('cleaning up', file)
     if (pdf.pdfDocument) {
       pdf.pdfDocument.destroy();
     }
 
     if (this.isRendering[file]) {
       this.isRendering[file] = this.isRendering[file].map(() => false);
-      console.log('cleaning up file', file, this.isRendering[file]);
+      // console.log('cleaning up file', file, this.isRendering[file]);
     }
 
     _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
@@ -614,10 +627,10 @@ console.log('set isRendered', isRendered);
     // with negative conditions.
     /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
-      console.log(this.isRendering);
-      console.log(this.state.isRendered);
-      console.log(this.state);
-      console.log(this.props);
+      // console.log(this.isRendering);
+      // console.log(this.state.isRendered);
+      // console.log(this.state);
+      // console.log(this.props);
 
       this.scrollWindow.scrollTop = 0;
       this.setUpPdf(nextProps.file);
@@ -668,9 +681,10 @@ console.log('set isRendered', isRendered);
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
               !_.get(this.state, ['isRendered', file, pageIndex]) &&
               !this.isPrerendering) {
+              console.log('prerendering', file, index, this.state.isRendered[file][pageIndex]);
               this.isPrerendering = true;
 
-              this.drawPage(file, pageIndex).then(finishPrerender).catch(finishPrerender);
+              this.drawPage(file, pageIndex).then(finishPrerender).catch(() => this.isPrerendering = false);
             }
           });
         }
@@ -687,7 +701,7 @@ console.log('set isRendered', isRendered);
   // eslint-disable-next-line max-statements
   componentDidUpdate(prevProps) {
     this.renderInViewPages();
-    // this.prerenderPages();
+    this.prerenderPages();
 
     // if jump to page number is provided
     // render the page and jump to the page
@@ -802,7 +816,7 @@ console.log('set isRendered', isRendered);
 
     const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (_.get(this.state.isRendered[this.props.file][comment.page - 1], 'pdfDocument') !==
+      if (_.get(this.state.isRendered, [this.props.file, comment.page - 1, 'pdfDocument']) !==
         this.state.pdfDocument) {
         return acc;
       }
@@ -856,8 +870,6 @@ console.log('set isRendered', isRendered);
         const pageContentsVisibleClass = classNames({
           'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
         });
-
-        console.log('rendering', file, this.props.file);
 
         return <div
           className={pageClassNames}
