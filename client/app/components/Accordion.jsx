@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Collapse, { Panel } from 'rc-collapse';
+import AccordionHeader from './AccordionHeader';
 
 const CLASS_NAME_MAPPING = {
   bordered: 'usa-accordion-bordered',
@@ -22,11 +23,13 @@ export default class Accordion extends React.PureComponent {
     } = this.props;
 
     const accordionHeaders = children.map((child) => {
-      return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
-        <div className="usa-accordion-content">
-          {child.props.children}
-        </div>
-      </Panel>;
+      if (child.type === AccordionHeader) {
+        return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
+          <div className="usa-accordion-content">
+            {child.props.children}
+          </div>
+        </Panel>;
+      }
     });
 
     return <Collapse accordion={true} className={CLASS_NAME_MAPPING[style]}>
