@@ -154,19 +154,12 @@ export class Pdf extends React.PureComponent {
   // This method is the worst. It is our main interaction with PDFJS, so it will
   // likey remain complicated.
   drawPage = (file, index) => {
-    console.log('drawing file, index', file, index);
     if (this.isRendering[file][index] ||
       _.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale) {
-      console.log('isRendered', this.isRendering[file][index], this.state.isRendered[file][index], file, index);
-      console.log('scale: ',_.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale);
-      console.log('Calling from here');
 
       return Promise.reject();
     }
 
-    // console.log('drawingPage', file, index);
-    // console.log('isRendered', this.isRendering, this.state.isRendered);
-    
     let { scale } = this.props;
     this.isRendering[file][index] = true;
     return new Promise((resolve, reject) => {
@@ -298,14 +291,13 @@ export class Pdf extends React.PureComponent {
   }
 
   renderInViewPages = () => {
-    // console.log('renderingInViewPages');
     // If we're already rendering a page, delay this calculation.
     const numberOfPagesRendering = _.reduce(this.isRendering, (total, renderingArray) => {
       return total + renderingArray.reduce((acc, rendering) => {
         return acc + (rendering ? 1 : 0);
       }, 0);
     }, 0);
-    // console.log('numberOfPagesRendering', numberOfPagesRendering);
+
     if (numberOfPagesRendering >= MAX_PAGES_TO_RENDER_AT_ONCE) {
       return;
     }
@@ -353,7 +345,6 @@ export class Pdf extends React.PureComponent {
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to render it.
   setUpPdf = (file) => {
-    // console.log('setup file', file);
     this.latestFile = file;
 
     return new Promise((resolve) => {
@@ -438,14 +429,11 @@ export class Pdf extends React.PureComponent {
   }
 
   getDocument = (file) => {
-    // console.log('getting document',file, this.prerenderedPdfs);
     if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
-      // console.log('returning inside here');
       return Promise.resolve(this.prerenderedPdfs[file].pdfDocument);
     }
 
     return PDFJS.getDocument(file).then((pdfDocument) => {
-      // console.log('getting document promise',[...this.props.prefetchFiles, this.props.file],file);
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
@@ -573,14 +561,12 @@ export class Pdf extends React.PureComponent {
   }
 
   cleanUpPdf = (pdf, file) => {
-    // console.log('cleaning up', file)
     if (pdf.pdfDocument) {
       pdf.pdfDocument.destroy();
     }
 
     if (this.isRendering[file]) {
       this.isRendering[file] = this.isRendering[file].map(() => false);
-      // console.log('cleaning up file', file, this.isRendering[file]);
     }
 
     _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
@@ -603,11 +589,6 @@ export class Pdf extends React.PureComponent {
     // with negative conditions.
     /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
-      // console.log(this.isRendering);
-      // console.log(this.state.isRendered);
-      // console.log(this.state);
-      // console.log(this.props);
-
       this.scrollWindow.scrollTop = 0;
       this.setUpPdf(nextProps.file);
 
@@ -657,7 +638,6 @@ export class Pdf extends React.PureComponent {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
               !_.get(this.state, ['isRendered', file, pageIndex]) &&
               !this.isPrerendering) {
-              console.log('prerendering', file, index, this.state.isRendered[file][pageIndex]);
               this.isPrerendering = true;
 
               this.drawPage(file, pageIndex).then(finishPrerender).catch(() => this.isPrerendering = false);
