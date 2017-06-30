@@ -51,7 +51,7 @@ export class DecisionReviewer extends React.PureComponent {
         // For some reason calling this synchronosly prevents the new
         // tab from opening. Move it to an asynchronus call.
         setTimeout(() =>
-          this.props.handleSetLastRead(docId)
+          this.props.handleSelectCurrentPdf(docId)
         );
 
         return true;
@@ -150,10 +150,7 @@ export class DecisionReviewer extends React.PureComponent {
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    return <LoadingScreen
-      appealDocuments={this.props.appealDocuments}
-      annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+    return <LoadingScreen vacolsId={vacolsId}>
       <div>
         <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
         <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
@@ -192,8 +189,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(ReaderActions, dispatch);
-};
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators(ReaderActions, dispatch),
+  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);
