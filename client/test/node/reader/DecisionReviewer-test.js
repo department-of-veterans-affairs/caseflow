@@ -147,10 +147,21 @@ describe('DecisionReviewer', () => {
         // Stub out post requests to return the commentId
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
+        // console.log(wrapper.findWhere((link) => link.text() === document[0].type));
+
+        // const links = wrapper.find('a');      
+        // wrapper.find('a').forEach((ele, index) => {
+        //   if (ele.text() === documents[0].type) {
+        //     console.log(ele);
+        //     ele.simulate('mouseUp');
+        //   }
+        // });
+
         // Click on first pdf
-        wrapper.find('a').findWhere(
-          (link) => link.text() === documents[0].type).
+        wrapper.findWhere(
+          (link) => link.text() === documents[0].type).find('a').
           simulate('mouseUp');
+          
         await pause();
 
         // Click on the add a comment button
