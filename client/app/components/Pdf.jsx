@@ -164,86 +164,85 @@ export class Pdf extends React.PureComponent {
       return Promise.reject();
     }
 
-    if (!this.prerenderedPdfs[file]) {
-      console.log('prerenderedPdfs: ', this.prerenderedPdfs);
-      return Promise.reject();
-    }
-
     // console.log('drawingPage', file, index);
     // console.log('isRendered', this.isRendering, this.state.isRendered);
     
     let { scale } = this.props;
-    const pdfDocument = this.prerenderedPdfs[file].pdfDocument;
-
-    // Mark that we are rendering this page.
     this.isRendering[file][index] = true;
-
     return new Promise((resolve, reject) => {
-      // Page numbers are one-indexed
-      let pageNumber = index + 1;
-      let canvas = _.get(this.pageElements, [file, index, 'canvas'], null);
-      let container = _.get(this.pageElements, [file, index, 'textLayer'], null);
-      let page = _.get(this.pageElements, [file, index, 'pageContainer'], null);
+      return this.getDocument(file).then((pdfDocument) => {
+        // Mark that we are rendering this page.
 
-      if (!canvas || !container || !page) {
-        this.isRendering[file][index] = false;
-        return reject();
-      }
+        // Page numbers are one-indexed
+        let pageNumber = index + 1;
+        let canvas = _.get(this.pageElements, [file, index, 'canvas'], null);
+        let container = _.get(this.pageElements, [file, index, 'textLayer'], null);
+        let page = _.get(this.pageElements, [file, index, 'pageContainer'], null);
 
-      return pdfDocument.getPage(pageNumber).then((pdfPage) => {
-        // The viewport is a PDFJS concept that combines the size of the
-        // PDF pages with the scale go get the dimensions of the divs.
-        let viewport = pdfPage.getViewport(this.props.scale);
+        if (!canvas || !container || !page) {
+          this.isRendering[file][index] = false;
+          return reject();
+        }
 
-        // We need to set the width and heights of everything based on
-        // the width and height of the viewport.
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+        return pdfDocument.getPage(pageNumber).then((pdfPage) => {
+          // The viewport is a PDFJS concept that combines the size of the
+          // PDF pages with the scale go get the dimensions of the divs.
+          let viewport = pdfPage.getViewport(this.props.scale);
 
-        this.setElementDimensions(container, viewport);
-        this.setElementDimensions(page, viewport);
-        container.innerHTML = '';
+          // We need to set the width and heights of everything based on
+          // the width and height of the viewport.
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
 
-        // Call PDFJS to actually render the page.
-        return pdfPage.render({
-          canvasContext: canvas.getContext('2d', { alpha: false }),
-          viewport
+          this.setElementDimensions(container, viewport);
+          this.setElementDimensions(page, viewport);
+          container.innerHTML = '';
+
+          // Call PDFJS to actually render the page.
+          return pdfPage.render({
+            canvasContext: canvas.getContext('2d', { alpha: false }),
+            viewport
+          }).
+          then(() => {
+            return Promise.resolve({
+              pdfPage,
+              viewport
+            });
+          });
         }).
-        then(() => {
-          return Promise.resolve({
-            pdfPage,
-            viewport
+        then(({ pdfPage, viewport }) => {
+          // Get the text from the PDF and render it.
+          return pdfPage.getTextContent().then((textContent) => {
+            return Promise.resolve({
+              textContent,
+              viewport
+            });
           });
-        });
-      }).
-      then(({ pdfPage, viewport }) => {
-        // Get the text from the PDF and render it.
-        return pdfPage.getTextContent().then((textContent) => {
-          return Promise.resolve({
+        }).
+        then(({ textContent, viewport }) => {
+          PDFJS.renderTextLayer({
             textContent,
-            viewport
-          });
-        });
-      }).
-      then(({ textContent, viewport }) => {
-        PDFJS.renderTextLayer({
-          textContent,
-          container,
-          viewport,
-          textDivs: []
-        });
-
-        this.postRender(
-          resolve,
-          reject,
-          {
-            pdfDocument,
-            canvas,
-            scale,
-            index,
+            container,
             viewport,
-            file
+            textDivs: []
           });
+
+          this.postRender(
+            resolve,
+            reject,
+            {
+              pdfDocument,
+              canvas,
+              scale,
+              index,
+              viewport,
+              file
+            });
+        }).
+        catch(() => {
+          this.isRendering[file][index] = false;
+          reject();
+        });
       }).
       catch(() => {
         this.isRendering[file][index] = false;
@@ -253,16 +252,6 @@ export class Pdf extends React.PureComponent {
   }
 
   postRender = (resolve, reject, { pdfDocument, canvas, scale, index, viewport, file }) => {
-    // After rendering everything, we check to see if
-    // the PDF we just rendered is the same as the PDF
-    // in the current state. It is possible that the
-    // user switched between PDFs quickly and this
-    // condition is no longer true, in which case we
-    // should render this page again with the new file. We
-    // also check if the canvas rendered on still exists.
-    // If the pages are changed quickly it's possible to
-    // render on a canvas that has since been changed which
-    // means we need to render it again.
 
     // If it is the same, then we mark this page as rendered
     this.setIsRendered(file, index, {
@@ -280,20 +269,7 @@ export class Pdf extends React.PureComponent {
       this.defaultHeight = viewport.height;
     }
 
-    // Whenever we finish rendering a page, we assume that this was the last page
-    // to render within the current document. We then try to prerender pages for documents in the
-    // prefetchFiles list. The prerenderPages call validates this assumption by
-    // checking if any other pages of the current document are being rendered,
-    // and will not proceed if they are since we want the current document's pages
-    // to take precedence over prerendering other documents' pages.
-    // this.renderInViewPages();
-    // this.prerenderPages();
-
-    // this.props.file may not be a value in this.prerenderedPdfs. If it is not
-    // already present, then we want to create it.
-    _.set(this.prerenderedPdfs, [this.props.file, 'rendered', index], true);
     resolve();
-    // console.log('post rendering', this.isRendering, this.state.isRendered);
   }
 
   scrollEvent = () => {
