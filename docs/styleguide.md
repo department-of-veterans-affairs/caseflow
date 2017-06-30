@@ -5,12 +5,15 @@ This is a very basic guide on how to contribute something to the style guide for
 ## How can I request that something is put in the style guide?
 In an upcoming story, make it an AC item that the UI component you'd like to add should
 be placed in the style guide.
+
 IE:
-https://github.com/department-of-veterans-affairs/caseflow/issues/617
-https://github.com/department-of-veterans-affairs/caseflow/issues/1009
-or
-https://github.com/department-of-veterans-affairs/caseflow/issues/1482
-https://github.com/department-of-veterans-affairs/caseflow/issues/2161
+_progress bar/indicator_
+* https://github.com/department-of-veterans-affairs/caseflow/issues/617
+* https://github.com/department-of-veterans-affairs/caseflow/issues/1009
+
+_accordion_
+* https://github.com/department-of-veterans-affairs/caseflow/issues/1482
+* https://github.com/department-of-veterans-affairs/caseflow/issues/2161
 
 Ideally, the same developer that picks up that story should also be the one to add it to the styleguide (see below information on that).
 
