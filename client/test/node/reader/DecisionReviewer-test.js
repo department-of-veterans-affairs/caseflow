@@ -228,7 +228,7 @@ describe('DecisionReviewer', () => {
           preventDefault
         };
 
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp', event);
         await pause();
@@ -243,7 +243,7 @@ describe('DecisionReviewer', () => {
           preventDefault
         };
 
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp', event);
         await pause();
@@ -258,7 +258,7 @@ describe('DecisionReviewer', () => {
           preventDefault
         };
 
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp', event);
         await pause();
@@ -274,7 +274,7 @@ describe('DecisionReviewer', () => {
           preventDefault
         };
 
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp', event);
         await pause();
