@@ -1,14 +1,20 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import Highlighter from 'react-highlight-words';
+import _ from 'lodash';
 
 class TagTableColumn extends PureComponent {
   render() {
-    const { doc } = this.props;
+    const { tags, searchQuery } = this.props;
 
     return <div className="document-list-issue-tags">
-      {doc.tags && doc.tags.map((tag) => {
-        return <div className="document-list-issue-tag" key={tag.id}>
-            {tag.text}
+      {tags && tags.map((tag) => {
+        return <div className="document-list-issue-tag"
+            key={tag.id}>
+            <Highlighter
+               searchWords={_.union(searchQuery.split(' '), [searchQuery])}
+              textToHighlight={tag.text}
+            />
           </div>;
       })}
     </div>;
@@ -16,7 +22,7 @@ class TagTableColumn extends PureComponent {
 }
 
 TagTableColumn.propTypes = {
-  doc: PropTypes.object.isRequired
+  tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default TagTableColumn;

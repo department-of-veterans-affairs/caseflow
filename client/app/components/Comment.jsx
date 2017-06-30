@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { openAnnotationDeleteModal } from '../reader/actions';
+import Highlighter from 'react-highlight-words';
 
 // A rounded rectangle with a user's comment inside.
 // Comes with edit and delete buttons
@@ -40,6 +41,7 @@ export class Comment extends React.Component {
 
   render() {
     let className = 'comment-container';
+    const { searchQuery } = this.props;
 
     if (this.props.selected) {
       className = `${className} comment-container-selected`;
@@ -56,7 +58,6 @@ export class Comment extends React.Component {
           Jump to section
         </Button>;
     }
-
     let commentToRender = <div>
         <div className="comment-control-button-container">
           <h4>Page {this.props.page} {jumpToSectionButton}</h4>
@@ -86,7 +87,10 @@ export class Comment extends React.Component {
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
-          {this.props.children}
+          <Highlighter
+            searchWords={_.union(searchQuery.split(' '), [searchQuery])}
+            textToHighlight={this.props.children}
+          />
         </div>
       </div>;
     }

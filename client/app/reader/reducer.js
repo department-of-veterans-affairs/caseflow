@@ -2,53 +2,8 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString } from './search';
+import { searchString, commentContainsString } from './search';
 import { timeFunction } from '../util/PerfDebug';
-
-const updateFilteredDocIds = (nextState) => {
-  const { docFilterCriteria } = nextState.ui;
-  const activeCategoryFilters = _(docFilterCriteria.category).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => categoryFieldNameOfCategoryName(key)).
-        value();
-
-  const activeTagFilters = _(docFilterCriteria.tag).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => key).
-        value();
-
-  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
-
-  const filteredIds = _(nextState.documents).
-    filter(
-      (doc) => !activeCategoryFilters.length ||
-        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
-    ).
-    filter(
-      (doc) => !activeTagFilters.length ||
-        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
-    ).
-    filter(
-      searchString(searchQuery, nextState)
-    ).
-    sortBy(docFilterCriteria.sort.sortBy).
-    map('id').
-    value();
-
-  if (docFilterCriteria.sort.sortAscending) {
-    filteredIds.reverse();
-  }
-
-  return update(nextState, {
-    ui: {
-      filteredDocIds: {
-        $set: filteredIds
-      }
-    }
-  });
-};
 
 const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
   update(
@@ -105,6 +60,75 @@ const getExpandAllState = (documents) => {
   });
 
   return Boolean(allExpanded);
+};
+
+const updateFilteredDocIds = (nextState) => {
+  const { docFilterCriteria } = nextState.ui;
+  const activeCategoryFilters = _(docFilterCriteria.category).
+        toPairs().
+        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+        map(([key]) => categoryFieldNameOfCategoryName(key)).
+        value();
+
+  const activeTagFilters = _(docFilterCriteria.tag).
+        toPairs().
+        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+        map(([key]) => key).
+        value();
+
+  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+
+  const filteredIds = _(nextState.documents).
+    filter(
+      (doc) => !activeCategoryFilters.length ||
+        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
+    ).
+    filter(
+      (doc) => !activeTagFilters.length ||
+        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
+    ).
+    filter(
+      searchString(searchQuery, nextState)
+    ).
+    sortBy(docFilterCriteria.sort.sortBy).
+    map('id').
+    value();
+
+  const updateListComments = (id, state, commentFound) => {
+    return update(state, {
+      documents: {
+        [id]: {
+          listComments: {
+            $set: commentFound
+          }
+        }
+      }
+    });
+  };
+
+  let updatedNextState = nextState;
+
+  _.each(filteredIds, (id) => {
+    let queryTokens = _.compact(searchQuery.split(' '));
+    const commentFound = queryTokens.some((word) => {
+      return commentContainsString(word, updatedNextState, updatedNextState.documents[id]);
+    });
+
+    updatedNextState = updateListComments(id, updatedNextState, searchQuery && commentFound);
+  });
+
+  if (docFilterCriteria.sort.sortAscending) {
+    filteredIds.reverse();
+  }
+
+  return update(updatedNextState, {
+    ui: {
+      filteredDocIds: {
+        $set: filteredIds
+      },
+      $merge: { expandAll: getExpandAllState(updatedNextState.documents) }
+    }
+  });
 };
 
 export const initialState = {
