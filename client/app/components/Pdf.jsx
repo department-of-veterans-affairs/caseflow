@@ -139,8 +139,9 @@ export class Pdf extends React.PureComponent {
     this.isRendering[file][index] = false;
     console.log(`6: marking ${index} false`);
     let isRendered = {...this.state.isRendered};
+console.log('set isRendered', isRendered);
+    _.set(isRendered, [file, index], value);
 
-    isRendered[file][index] = value;
     this.setState({
       isRendered
     });
@@ -155,12 +156,16 @@ export class Pdf extends React.PureComponent {
   // likey remain complicated.
   drawPage = (file, index) => {
     if (this.isRendering[file][index] ||
-      _.get(this.state.isRendered, [file,index, 'scale']) === this.props.scale ||
+      _.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale ||
       !this.prerenderedPdfs[file]) {
-      this.renderInViewPages();
+      console.log('isRendered', this.isRendering, this.state.isRendered, file, index);
+      console.log('Calling from here');
 
       return Promise.resolve();
     }
+
+    console.log('drawingPage', file, index);
+    console.log('isRendered', this.isRendering, this.state.isRendered);
     
     let { scale } = this.props;
     const pdfDocument = this.prerenderedPdfs[file].pdfDocument;
@@ -276,8 +281,8 @@ export class Pdf extends React.PureComponent {
     // checking if any other pages of the current document are being rendered,
     // and will not proceed if they are since we want the current document's pages
     // to take precedence over prerendering other documents' pages.
-    this.renderInViewPages();
-    this.prerenderPages();
+    // this.renderInViewPages();
+    // this.prerenderPages();
 
     // this.props.file may not be a value in this.prerenderedPdfs. If it is not
     // already present, then we want to create it.
@@ -348,8 +353,7 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
-    this.drawPage(this.props.file, prioritzedPage);
-    this.renderInViewPages();
+    this.drawPage(this.props.file, prioritzedPage).then(this.renderInViewPages).catch(this.renderInViewPages);
   }
 
   performFunctionOnEachPage = (func) => {
@@ -384,8 +388,8 @@ export class Pdf extends React.PureComponent {
           },
           pdfDocument,
           isRendered: {
-            ...this.state.isRendered,
-            [file]: []
+            [file]: [],
+            ...this.state.isRendered
           },
           currentFile: file
         }, () => {
@@ -440,6 +444,10 @@ export class Pdf extends React.PureComponent {
       numPages: {
         ...this.state.numPages,
         [file]: pdfDocument.pdfInfo.numPages
+      },
+      isRendered: {
+        [file]: [],
+        ...this.state.isRendered
       }
     });
   }
@@ -679,7 +687,7 @@ export class Pdf extends React.PureComponent {
   // eslint-disable-next-line max-statements
   componentDidUpdate(prevProps) {
     this.renderInViewPages();
-    this.prerenderPages();
+    // this.prerenderPages();
 
     // if jump to page number is provided
     // render the page and jump to the page
