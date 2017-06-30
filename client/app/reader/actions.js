@@ -8,16 +8,20 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
-export const onInitialDataLoadingFail = () => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE
+export const onInitialDataLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_DATA_FAILURE,
+  payload: { value }
 });
 
-export const onReceiveDocs = (documents) => (
+export const onReceiveDocs = (documents, vacolsId) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
-      payload: documents
+      payload: {
+        documents,
+        vacolsId
+      }
     });
   }
 );
@@ -25,6 +29,11 @@ export const onReceiveDocs = (documents) => (
 export const onReceiveAnnotations = (annotations) => ({
   type: Constants.RECEIVE_ANNOTATIONS,
   payload: { annotations }
+});
+
+export const onReceiveAssignments = (assignments) => ({
+  type: Constants.RECEIVE_ASSIGNMENTS,
+  payload: { assignments }
 });
 
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
@@ -209,6 +218,16 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
 export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
 
+export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
+  type: Constants.SHOW_PLACE_ANNOTATION_ICON,
+  payload: {
+    pageIndex,
+    pageCoords
+  }
+});
+
+export const hidePlaceAnnotationIcon = () => ({ type: Constants.HIDE_PLACE_ANNOTATION_ICON });
+
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {
@@ -216,6 +235,13 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
     x: coordinates.xPosition,
     y: coordinates.yPosition,
     documentId
+  }
+});
+
+export const setPageCoordBounds = (coordBounds) => ({
+  type: Constants.SET_PAGE_COORD_BOUNDS,
+  payload: {
+    coordBounds
   }
 });
 

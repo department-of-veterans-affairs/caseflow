@@ -7,6 +7,13 @@ RSpec.feature "Save Certification" do
     allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_name!).and_call_original
   end
 
+  after do
+    # Clean up generated PDF
+    expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
+    form8_location = Form8.pdf_service.output_location_for(expected_form8)
+    File.delete(form8_location) if File.exist?(form8_location)
+  end
+
   let(:nod) { Generators::Document.build(type: "NOD") }
   let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
   let(:form9) { Generators::Document.build(type: "Form 9") }
@@ -279,12 +286,6 @@ RSpec.feature "Save Certification" do
     scenario "Saving a certification saves PDF form to correct location" do
       # Don't fake the Form8PdfService for this one
       Form8.pdf_service = Form8PdfService
-
-      expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
-      form8_location = Form8PdfService.output_location_for(expected_form8)
-
-      File.delete(form8_location) if File.exist?(form8_location)
-
       visit "certifications/new/#{appeal.vacols_id}"
 
       fill_in "Full Veteran Name", with: "Micah Bobby"
@@ -308,6 +309,8 @@ RSpec.feature "Save Certification" do
 
       click_on "Preview Completed Form 8"
 
+      expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
+      form8_location = Form8.pdf_service.output_location_for(expected_form8)
       expect(File.exist?(form8_location)).to be_truthy
     end
   end
@@ -504,7 +507,7 @@ RSpec.feature "Save Certification" do
       end
 
       scenario "Error cerifying appeal" do
-        allow(Appeal.repository).to receive(:upload_document_to_vbms).and_raise(vbms_error)
+        allow(VBMSService).to receive(:upload_document_to_vbms).and_raise(vbms_error)
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
@@ -589,7 +592,7 @@ RSpec.feature "Save Certification" do
         expect(page).to have_content "Please enter the title of the certifying official."
         fill_in "Name of certifying official", with: "12345678901234567890123456789012345678901"
         click_button("Continue")
-        expect(page).to have_content("Maximum length of certifying official\'s name reached.")
+        expect(page).to have_content("Please enter less than 40 characters")
       end
     end
   end

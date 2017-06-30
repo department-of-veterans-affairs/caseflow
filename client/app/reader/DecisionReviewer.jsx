@@ -8,6 +8,7 @@ import Perf from 'react-addons-perf';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import LoadingScreen from './LoadingScreen';
+import CaseSelect from './CaseSelect';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
@@ -25,7 +26,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
-    this.rootRoute.displayName = 'RootRoute';
+    this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
   showPdf = (history, vacolsId) => (docId) => (event) => {
@@ -50,7 +51,7 @@ export class DecisionReviewer extends React.PureComponent {
         // For some reason calling this synchronosly prevents the new
         // tab from opening. Move it to an asynchronus call.
         setTimeout(() =>
-          this.props.handleSetLastRead(docId)
+          this.props.handleSelectCurrentPdf(docId)
         );
 
         return true;
@@ -144,11 +145,13 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  rootRoute = (props) => {
+  routedCaseSelect = () => <CaseSelect />
+
+  documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
     return <LoadingScreen vacolsId={vacolsId}>
-      <div className="section--document-list">
+      <div>
         <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
         <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
       </div>
@@ -159,7 +162,10 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <Route path="/:vacolsId/documents" render={this.rootRoute} />
+      <div className="section--document-list">
+        <Route path="/:vacolsId/documents" render={this.documentsRoute} />
+        <Route exact path="/" render={this.routedCaseSelect} />
+      </div>
     </Router>;
   }
 }
@@ -183,8 +189,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(ReaderActions, dispatch);
-};
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators(ReaderActions, dispatch),
+  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

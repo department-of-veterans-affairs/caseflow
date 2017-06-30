@@ -75,8 +75,7 @@ class SeedDB
     @users.push(User.create(css_id: "Reader", station_id: "405", full_name: "VBMS Station ID maps to multiple VACOLS IDs"))
     @users.push(User.create(css_id: "Invalid Role", station_id: "283", full_name: "Cave Johnson"))
     @users.push(User.create(css_id: "Establish Claim", station_id: "283", full_name: "Jane Smith"))
-    @users.push(User.create(css_id: "Establish Claim", station_id: "284", full_name: "Bob Contoso"))
-    @users.push(User.create(css_id: "Establish Claim", station_id: "285", full_name: "Carole Johnson"))
+    @users.push(User.create(css_id: "Establish Claim", station_id: "405", full_name: "Carole Johnson"))
     @users.push(User.create(css_id: "Manage Claim Establishment", station_id: "283", full_name: "John Doe"))
     @users.push(User.create(css_id: "Certify Appeal", station_id: "283", full_name: "John Smith"))
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
@@ -112,6 +111,11 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
   end
 
+   def set_up_feature_toggles
+     FeatureToggle.disable!(:reader)
+     FeatureToggle.enable!(:reader, users: ["Reader"])
+   end
+
   def seed
     clean_db
     create_default_users
@@ -122,6 +126,7 @@ class SeedDB
     create_tags
     create_hearings
     create_api_key
+    set_up_feature_toggles
   end
 end
 

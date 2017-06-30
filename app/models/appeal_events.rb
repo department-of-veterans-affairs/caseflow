@@ -46,11 +46,20 @@ class AppealEvents
   end
 
   def ssoc_events
-    appeal.ssoc_dates.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
+    appeal.ssoc_dates.map do |ssoc_date|
+      # If the SSOC was released after the appeal was certified,
+      # mark it as a post-remand ssoc so consumers of the API
+      # can easily tell which SSOCs happened at which step of the process.
+      if appeal.certification_date && ssoc_date > appeal.certification_date
+        AppealEvent.new(type: :remand_ssoc, date: ssoc_date)
+      else
+        AppealEvent.new(type: :ssoc, date: ssoc_date)
+      end
+    end
   end
 
   def decision_event
-    AppealEvent.new(disposition: appeal.disposition, date: appeal.decision_date)
+    AppealEvent.new(disposition: appeal.disposition_remand_priority, date: appeal.decision_date)
   end
 
   def certification_event

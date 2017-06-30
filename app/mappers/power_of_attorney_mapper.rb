@@ -8,8 +8,6 @@ module PowerOfAttorneyMapper
   end
 
   def get_poa_from_bgs_poa(bgs_rep = {})
-    # TODO: what do we do if we encounter a rep type we don't know?
-
     return {} unless bgs_rep[:power_of_attorney]
 
     bgs_type = bgs_rep[:power_of_attorney][:org_type_nm]
@@ -28,7 +26,7 @@ module PowerOfAttorneyMapper
 
   def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
     case
-    when vacols_code.blank?
+    when vacols_code.blank? || get_short_name(vacols_code).blank?
       # If VACOLS doesn't have a rep code in its dropdown,
       # it still may have a representative name in the REP table
       # so let's grab that if we can, since we want to show all

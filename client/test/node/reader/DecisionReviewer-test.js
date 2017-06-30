@@ -1,7 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -18,11 +17,13 @@ import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
+const vacolsId = 'reader_id1';
+
 // This is the route history preset in react router
 // prior to tests running
 const INITIAL_ENTRIES = [
-  '/reader_id1/documents',
-  `/reader_id1/documents/${documents[0].id}`
+  `/${vacolsId}/documents`,
+  `/${vacolsId}/documents/${documents[0].id}`
 ];
 
 /* eslint-disable camelcase */
@@ -42,7 +43,7 @@ describe('DecisionReviewer', () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
       // required actions to skip past the loading screen and avoid stubing out
       // the API call to the index endpoint.
-      store.dispatch(onReceiveDocs(documents));
+      store.dispatch(onReceiveDocs(documents, vacolsId));
       store.dispatch(onReceiveAnnotations(annotations));
     };
 
@@ -90,7 +91,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('PdfViewer')).to.have.length(1);
 
         // Return to document list view
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         expect(wrapper.find('PdfListView')).to.have.length(1);
       }));
     });
@@ -111,7 +112,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('#button-previous')).to.have.length(0);
 
         // Verify there is still has a back to documents button
-        expect(wrapper.find('#button-backToDocuments')).to.have.length(1);
+        expect(wrapper.find('#button-backToClaimsFolder')).to.have.length(1);
       });
     });
 
@@ -166,11 +167,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-save').simulate('click');
         await pause();
 
-        // Verify the api is called to add a comment
-        expect(ApiUtilStub.apiPost.calledWith(`/document/${documents[0].id}/annotation`,
-          sinon.match({ data: { annotation: firstComment } }))).to.be.true;
-        await pause();
-
         // Click on the edit button
         wrapper.find('#button-edit-comment-1').simulate('click');
 
@@ -185,11 +181,6 @@ describe('DecisionReviewer', () => {
         // Save the edit
         wrapper.find('#button-save').simulate('click');
         await pause();
-
-        // Verify the api is called to edit a comment
-        expect(ApiUtilStub.apiPatch.calledWith(
-          `/document/${documents[0].id}/annotation/${commentId}`,
-          sinon.match({ data: { annotation: secondComment } }))).to.be.true;
 
         // Click on the delete button
         wrapper.find('#button-delete-comment-1').simulate('click');
@@ -235,7 +226,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         // Make sure that the 2nd row has the last
         // read indicator in the first column.
         expect(wrapper.find('#table-row-2').childAt(1).
@@ -274,9 +265,7 @@ describe('DecisionReviewer', () => {
 
     context('when sorted by', () => {
       it('date is ordered correctly', () => {
-        expect(wrapper.find('#receipt-date-header').
-          find('i').
-          hasClass('fa-caret-up')).to.be.true;
+        expect(wrapper.find('#receipt-date-header .cf-sort-arrowup')).to.have.length(1);
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -284,9 +273,7 @@ describe('DecisionReviewer', () => {
         expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
 
         wrapper.find('#receipt-date-header').simulate('click');
-        expect(wrapper.find('#receipt-date-header').
-          find('i').
-          hasClass('fa-caret-down')).to.be.true;
+        expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).to.have.length(1);
 
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
@@ -295,9 +282,8 @@ describe('DecisionReviewer', () => {
 
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').
-          find('i').
-          hasClass('fa-caret-down')).to.be.true;
+        expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
+
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -305,9 +291,7 @@ describe('DecisionReviewer', () => {
         expect(textArray[2]).to.include(documents[1].type);
 
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').
-          find('i').
-          hasClass('fa-caret-up')).to.be.true;
+        expect(wrapper.find('#type-header .cf-sort-arrowup')).to.have.length(1);
 
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(documents[1].type);
@@ -316,6 +300,24 @@ describe('DecisionReviewer', () => {
     });
 
     context('when searched by', () => {
+      it('does and logic search', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: '/2017 mytag form' } });
+
+        let textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+
+        expect(textArray).to.have.length(1);
+        expect(textArray[0]).to.include('form 9');
+
+        wrapper.find('input').simulate('change',
+          { target: { value: '/2017 mytag do not show' } });
+
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+        expect(textArray).to.have.length(0);
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 
@@ -331,6 +333,36 @@ describe('DecisionReviewer', () => {
         wrapper.find('input').simulate('change', { target: { value: '' } });
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray).to.have.length(3);
+      });
+
+      it('receipt date search works properly', () => {
+        const receivedAt = formatDateStr(documents[1].received_at, null, 'MM/DD/YYYY');
+
+        wrapper.find('input').simulate('change',
+          { target: { value: receivedAt } });
+
+        let textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+
+        expect(textArray).to.have.length(1);
+        expect(textArray[0]).to.include(receivedAt);
+        expect(textArray[0]).to.include(documents[1].type);
+
+        wrapper.find('input').simulate('change', { target: { value: '' } });
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+        expect(textArray).to.have.length(2);
+
+        wrapper.find('input').simulate('change', { target: { value: '/2017' } });
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+        expect(textArray).to.have.length(2);
+
+        wrapper.find('input').simulate('change', { target: { value: '03' } });
+        textArray = wrapper.find('tbody').find('tr').
+          map((node) => node.text());
+        expect(textArray).to.have.length(1);
+        expect(textArray[0]).to.include('form 9');
       });
 
       it('type displays properly', () => {
@@ -388,8 +420,8 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        // Header and one filtered row.
-        expect(textArray).to.have.length(2);
+        // Header and two filtered row.
+        expect(textArray).to.have.length(3);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
@@ -439,8 +471,8 @@ describe('DecisionReviewer', () => {
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
-        // Header and one filtered row.
-        expect(textArray).to.have.length(2);
+        // Header and two filtered row.
+        expect(textArray).to.have.length(3);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
