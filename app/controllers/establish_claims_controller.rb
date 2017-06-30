@@ -1,6 +1,7 @@
 class EstablishClaimsController < TasksController
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform, :update_appeal]
+  before_action :verify_bgs_info_valid, only: [:perform]
   before_action :verify_manager_access, only: [:unprepared_tasks, :update_employee_count, :canceled_tasks]
 
   def index
@@ -78,9 +79,11 @@ class EstablishClaimsController < TasksController
     render json: {}
   end
 
-  # Index of all tasks that are unprepared
+  # Index of all tasks that are unprepared at least 1 day
   def unprepared_tasks
-    @unprepared_tasks = EstablishClaim.unprepared.oldest_first
+    @unprepared_tasks = EstablishClaim.unprepared.oldest_first.select do |task|
+      (Time.zone.now - task.created_at).to_i / 1.day > 0
+    end
   end
 
   def canceled_tasks
@@ -88,6 +91,11 @@ class EstablishClaimsController < TasksController
   end
 
   private
+
+  def verify_bgs_info_valid
+    return true if task.bgs_info_valid?
+    render json: { error_code: "bgs_info_invalid" }, status: 422
+  end
 
   def to_complete_count
     tasks.to_complete.count

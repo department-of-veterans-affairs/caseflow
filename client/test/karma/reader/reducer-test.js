@@ -32,6 +32,40 @@ describe('Reader reducer', () => {
 
       expect(state.documents[documents[0].id]).to.deep.equal(documents[0]);
       expect(state.loadedAppealId).to.deep.equal(vacolsId);
+      expect(state.assignments).to.deep.equal([]);
+    });
+
+    it('updates that assignment is viewed when documents are received', () => {
+      const vacolsId = 1;
+      const date = new Date();
+      const assignments = [{
+        viewed: false,
+        vacols_id: vacolsId
+      }];
+      const documents = [{
+        id: 0,
+        tags: [],
+        receivedAt: date,
+        received_at: date,
+        listComments: false
+      }];
+      const state = reduceActions([
+        {
+          type: Constants.RECEIVE_ASSIGNMENTS,
+          payload: {
+            assignments
+          }
+        },
+        {
+          type: Constants.RECEIVE_DOCUMENTS,
+          payload: {
+            documents,
+            vacolsId
+          }
+        }
+      ]);
+
+      expect(state.assignments[0].viewed).to.deep.equal(true);
     });
 
     it('updates documents object when null is passed', () => {
@@ -51,7 +85,12 @@ describe('Reader reducer', () => {
   });
 
   describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
-    const state = reduceActions([{ type: Constants.REQUEST_INITIAL_DATA_FAILURE }]);
+    const state = reduceActions([{
+      type: Constants.REQUEST_INITIAL_DATA_FAILURE,
+      payload: {
+        value: true
+      }
+    }]);
 
     expect(state.initialDataLoadingFail).to.equal(true);
   });

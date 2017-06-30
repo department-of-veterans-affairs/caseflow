@@ -108,7 +108,7 @@ const getExpandAllState = (documents) => {
 };
 
 export const initialState = {
-  assignments: null,
+  assignments: [],
   loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
@@ -186,7 +186,7 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.REQUEST_INITIAL_DATA_FAILURE:
     return update(state, {
       initialDataLoadingFail: {
-        $set: true
+        $set: action.payload.value
       }
     });
   case Constants.RECEIVE_DOCUMENTS:
@@ -207,6 +207,13 @@ export const reducer = (state = initialState, action = {}) => {
         },
         loadedAppealId: {
           $set: action.payload.vacolsId
+        },
+        assignments: {
+          $apply: (existingAssignments) =>
+            existingAssignments.map((assignment) => ({
+              ...assignment,
+              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
+            }))
         }
       }
     ));

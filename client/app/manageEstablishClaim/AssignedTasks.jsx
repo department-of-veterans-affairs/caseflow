@@ -15,7 +15,6 @@ const AssignedTasks = ({
     {userQuota.isEditingTaskCount &&
       <NumberField
         label={false}
-        validationError={false}
         name={`quota-${userQuota.id}`}
         id={`quota-${userQuota.id}`}
         className={['cf-inline-field']}

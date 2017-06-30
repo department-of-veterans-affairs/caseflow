@@ -21,7 +21,7 @@ describe('getManageEstablishClaimInitialState', () => {
   });
 
   it('updates quotas and employeeCount', () => {
-    expect(state.userQuotas[0].userName).to.equal('1. Not logged in');
+    expect(state.userQuotas[0].userName).to.equal('Not logged in');
     expect(state.userQuotas[0].taskCount).to.equal(5);
     expect(state.userQuotas[0].tasksCompletedCount).to.equal(0);
     expect(state.userQuotas[0].tasksLeftCount).to.equal(5);
@@ -99,6 +99,11 @@ describe('manageEstablishClaimReducer', () => {
             user_name: 'Draymond Green',
             task_count: 7,
             tasks_completed_count: 3,
+            tasks_completed_count_by_decision_type: {
+              full_grant: 1,
+              partial_grant: 2,
+              remand_grant: 3
+            },
             tasks_left_count: 4,
             'locked?': true
           },
@@ -107,6 +112,7 @@ describe('manageEstablishClaimReducer', () => {
             user_name: null,
             task_count: 7,
             tasks_completed_count: 0,
+            tasks_completed_count_by_decision_type: {},
             tasks_left_count: 7
           }
         ] }
@@ -117,9 +123,14 @@ describe('manageEstablishClaimReducer', () => {
       expect(state.userQuotas[0]).to.deep.equal({
         id: 'DRAY',
         index: 0,
-        userName: '1. Draymond Green',
+        userName: 'Draymond Green',
         taskCount: 7,
         tasksCompletedCount: 3,
+        tasksCompletedCountByDecisionType: {
+          full_grant: 1,
+          partial_grant: 2,
+          remand_grant: 3
+        },
         isEditingTaskCount: false,
         tasksLeftCount: 4,
         isAssigned: true,
@@ -129,10 +140,11 @@ describe('manageEstablishClaimReducer', () => {
       expect(state.userQuotas[1]).to.deep.equal({
         id: null,
         index: 1,
-        userName: '2. Not logged in',
+        userName: 'Not logged in',
         taskCount: 7,
         isEditingTaskCount: false,
         tasksCompletedCount: 0,
+        tasksCompletedCountByDecisionType: {},
         tasksLeftCount: 7,
         isAssigned: false,
         isLocked: false
