@@ -137,7 +137,7 @@ export class Pdf extends React.PureComponent {
 
   setisDrawn = (file, index, value) => {
     this.isDrawing[file][index] = false;
-    let isDrawn = {...this.state.isDrawn};
+    let isDrawn = { ...this.state.isDrawn };
 
     _.set(isDrawn, [file, index], value);
 
@@ -175,6 +175,7 @@ export class Pdf extends React.PureComponent {
 
         if (!canvas || !container || !page) {
           this.isDrawing[file][index] = false;
+
           return reject();
         }
 
@@ -310,7 +311,8 @@ export class Pdf extends React.PureComponent {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
-        if (!_.get(this.state, ['isDrawn', this.props.file, index], false) || this.state.isDrawn[this.props.file][index].scale !== this.props.scale) {
+        if (!_.get(this.state, ['isDrawn', this.props.file, index], false) ||
+          this.state.isDrawn[this.props.file][index].scale !== this.props.scale) {
           if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
@@ -327,7 +329,8 @@ export class Pdf extends React.PureComponent {
     this.drawPage(this.props.file, prioritzedPage).then(() => {
       this.drawInViewPages();
       this.preDrawPages();
-    }).catch();
+    }).
+    catch();
   }
 
   performFunctionOnEachPage = (func) => {
@@ -386,32 +389,30 @@ export class Pdf extends React.PureComponent {
       this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
     }
 
-    _.map(this.isDrawing, (array, file) => {
-      this.refFunctionGetters.canvas[file] = [];
-      this.refFunctionGetters.textLayer[file] = [];
-      this.refFunctionGetters.pageContainer[file] = [];
+    this.refFunctionGetters.canvas[file] = [];
+    this.refFunctionGetters.textLayer[file] = [];
+    this.refFunctionGetters.pageContainer[file] = [];
 
-      array.map((_page, index) => {
-        const makeSetRef = (elemKey) => (elem) => {
-          // We only want to save the element if it actually exists.
-          // When the node unmounts, React will call the ref function
-          // with null. When this happens, we want to delete the
-          // entire pageElements object for this index, instead of
-          // setting it as a null value. This makes code that reads
-          // this.pageElements much simpler, because it does not need
-          // to account for the possibility that some pageElements are
-          // nulled out because they refer to pages that are no longer rendered.
-          if (elem) {
-            _.set(this.pageElements[file], [index, elemKey], elem);
-          } else {
-            delete this.pageElements[file][index];
-          }
-        };
+    _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
+      const makeSetRef = (elemKey) => (elem) => {
+        // We only want to save the element if it actually exists.
+        // When the node unmounts, React will call the ref function
+        // with null. When this happens, we want to delete the
+        // entire pageElements object for this index, instead of
+        // setting it as a null value. This makes code that reads
+        // this.pageElements much simpler, because it does not need
+        // to account for the possibility that some pageElements are
+        // nulled out because they refer to pages that are no longer rendered.
+        if (elem) {
+          _.set(this.pageElements[file], [index, elemKey], elem);
+        } else {
+          delete this.pageElements[file][index];
+        }
+      };
 
-        this.refFunctionGetters.canvas[file][index] = makeSetRef('canvas');
-        this.refFunctionGetters.textLayer[file][index] = makeSetRef('textLayer');
-        this.refFunctionGetters.pageContainer[file][index] = makeSetRef('pageContainer');
-      });
+      this.refFunctionGetters.canvas[file][index] = makeSetRef('canvas');
+      this.refFunctionGetters.textLayer[file][index] = makeSetRef('textLayer');
+      this.refFunctionGetters.pageContainer[file][index] = makeSetRef('pageContainer');
     });
 
     this.setState({
@@ -445,9 +446,9 @@ export class Pdf extends React.PureComponent {
         this.setUpPdfObjects(file, pdfDocument);
 
         return pdfDocument;
-      } else {
-        return null;
       }
+
+      return null;
     });
   }
 
@@ -469,7 +470,8 @@ export class Pdf extends React.PureComponent {
   }
 
   onPageChange = (currentPage) => {
-    const unscaledHeight = (_.get(this.pageElements, [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight'] / this.props.scale));
+    const unscaledHeight = (_.get(this.pageElements,
+      [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight'] / this.props.scale));
 
     this.currentPage = currentPage;
     this.props.onPageChange(
@@ -571,7 +573,7 @@ export class Pdf extends React.PureComponent {
       const canvas = pageElement.canvas;
 
       pageElement.textLayer.innerHTML = '';
-      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     });
     this.setState({
       isDrawn: {
@@ -629,7 +631,7 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
-    this.props.prefetchFiles.forEach((file, index) => {
+    this.props.prefetchFiles.forEach((file) => {
       this.getDocument(file).then((pdfDocument) => {
         if (pdfDocument) {
           _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
@@ -638,7 +640,8 @@ export class Pdf extends React.PureComponent {
               !this.isPrerendering) {
               this.isPrerendering = true;
 
-              this.drawPage(file, pageIndex).then(finishPrerender).catch(() => this.isPrerendering = false);
+              this.drawPage(file, pageIndex).then(finishPrerender).
+                catch(() => this.isPrerendering = false);
             }
           });
         }
@@ -816,8 +819,8 @@ export class Pdf extends React.PureComponent {
         };
 
         const relativeScale = this.props.scale / _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'], 1);
-        const currentWidth = _.get(this.state.isDrawn[this.props.file, pageIndex, 'width'], this.defaultWidth);
-        const currentHeight = _.get(this.state.isDrawn[this.props.file, pageIndex, 'height'], this.defaultHeight);
+        const currentWidth = _.get(this.state.isDrawn, [this.props.file, pageIndex, 'width'], this.defaultWidth);
+        const currentHeight = _.get(this.state.isDrawn, [this.props.file, pageIndex, 'height'], this.defaultHeight);
 
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
@@ -832,7 +835,7 @@ export class Pdf extends React.PureComponent {
             width: `${relativeScale * currentWidth}px`,
             height: `${relativeScale * currentHeight}px`,
             verticalAlign: 'top',
-            display: file !== this.props.file ? 'none' : ''
+            display: file === this.props.file ? '' : 'none'
           } }
           onDragOver={this.onPageDragOver}
           onDrop={this.onCommentDrop(pageIndex + 1)}
