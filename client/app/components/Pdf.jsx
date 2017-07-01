@@ -88,20 +88,20 @@ export class Pdf extends React.PureComponent {
   constructor(props) {
     super(props);
     // We use two variables to maintain the state of rendering.
-    // isRendering below is outside of the state variable.
-    // isRendering[pageNumber] is true when a page is currently
+    // isDrawing below is outside of the state variable.
+    // isDrawing[pageNumber] is true when a page is currently
     // being rendered by PDFJS. It is set to false when rendering
     // is either successful or aborts.
-    // isRendered is in the state variable, since an update to
-    // isRendered should trigger a render update since we need to
+    // isDrawn is in the state variable, since an update to
+    // isDrawn should trigger a render update since we need to
     // draw comments after a page is rendered. Once a page is
-    // successfully rendered we set isRendered[pageNumber] to be the
+    // successfully rendered we set isDrawn[pageNumber] to be the
     // filename of the rendered PDF. This way, if PDFs are changed
     // we know which pages are stale.
     this.state = {
       numPages: {},
       pdfDocument: {},
-      isRendered: {}
+      isDrawn: {}
     };
 
     this.scrollLocation = {
@@ -110,7 +110,7 @@ export class Pdf extends React.PureComponent {
     };
 
     this.currentPage = 0;
-    this.isRendering = {};
+    this.isDrawing = {};
 
     this.defaultWidth = PAGE_WIDTH;
     this.defaultHeight = PAGE_HEIGHT;
@@ -135,14 +135,14 @@ export class Pdf extends React.PureComponent {
     this.isPrerendering = false;
   }
 
-  setIsRendered = (file, index, value) => {
-    this.isRendering[file][index] = false;
-    let isRendered = {...this.state.isRendered};
+  setisDrawn = (file, index, value) => {
+    this.isDrawing[file][index] = false;
+    let isDrawn = {...this.state.isDrawn};
 
-    _.set(isRendered, [file, index], value);
+    _.set(isDrawn, [file, index], value);
 
     this.setState({
-      isRendered
+      isDrawn
     });
   }
 
@@ -154,33 +154,34 @@ export class Pdf extends React.PureComponent {
   // This method is the worst. It is our main interaction with PDFJS, so it will
   // likey remain complicated.
   drawPage = (file, index) => {
-    if (this.isRendering[file][index] ||
-      _.get(this.state.isRendered, [file, index, 'scale']) === this.props.scale) {
+    if (this.isDrawing[file][index] ||
+      _.get(this.state.isDrawn, [file, index, 'scale']) === this.props.scale) {
 
       return Promise.reject();
     }
 
-    let { scale } = this.props;
-    this.isRendering[file][index] = true;
+    const { scale } = this.props;
+
+    // Mark that we are rendering this page.
+    this.isDrawing[file][index] = true;
+
     return new Promise((resolve, reject) => {
       return this.getDocument(file).then((pdfDocument) => {
-        // Mark that we are rendering this page.
-
         // Page numbers are one-indexed
-        let pageNumber = index + 1;
-        let canvas = _.get(this.pageElements, [file, index, 'canvas'], null);
-        let container = _.get(this.pageElements, [file, index, 'textLayer'], null);
-        let page = _.get(this.pageElements, [file, index, 'pageContainer'], null);
+        const pageNumber = index + 1;
+        const canvas = _.get(this.pageElements, [file, index, 'canvas'], null);
+        const container = _.get(this.pageElements, [file, index, 'textLayer'], null);
+        const page = _.get(this.pageElements, [file, index, 'pageContainer'], null);
 
         if (!canvas || !container || !page) {
-          this.isRendering[file][index] = false;
+          this.isDrawing[file][index] = false;
           return reject();
         }
 
         return pdfDocument.getPage(pageNumber).then((pdfPage) => {
           // The viewport is a PDFJS concept that combines the size of the
           // PDF pages with the scale go get the dimensions of the divs.
-          let viewport = pdfPage.getViewport(this.props.scale);
+          const viewport = pdfPage.getViewport(this.props.scale);
 
           // We need to set the width and heights of everything based on
           // the width and height of the viewport.
@@ -225,7 +226,6 @@ export class Pdf extends React.PureComponent {
             reject,
             {
               pdfDocument,
-              canvas,
               scale,
               index,
               viewport,
@@ -233,21 +233,19 @@ export class Pdf extends React.PureComponent {
             });
         }).
         catch(() => {
-          this.isRendering[file][index] = false;
+          this.isDrawing[file][index] = false;
           reject();
         });
       }).
       catch(() => {
-        this.isRendering[file][index] = false;
+        this.isDrawing[file][index] = false;
         reject();
       });
     });
   }
 
-  postRender = (resolve, reject, { pdfDocument, canvas, scale, index, viewport, file }) => {
-
-    // If it is the same, then we mark this page as rendered
-    this.setIsRendered(file, index, {
+  postRender = (resolve, reject, { pdfDocument, scale, index, viewport, file }) => {
+    this.setisDrawn(file, index, {
       pdfDocument,
       scale,
       ..._.pick(viewport, ['width', 'height'])
@@ -287,12 +285,12 @@ export class Pdf extends React.PureComponent {
     if (this.props.jumpToPageNumber) {
       this.props.resetJumpToPage();
     }
-    this.renderInViewPages();
+    this.drawInViewPages();
   }
 
-  renderInViewPages = () => {
+  drawInViewPages = () => {
     // If we're already rendering a page, delay this calculation.
-    const numberOfPagesRendering = _.reduce(this.isRendering, (total, renderingArray) => {
+    const numberOfPagesRendering = _.reduce(this.isDrawing, (total, renderingArray) => {
       return total + renderingArray.reduce((acc, rendering) => {
         return acc + (rendering ? 1 : 0);
       }, 0);
@@ -308,11 +306,11 @@ export class Pdf extends React.PureComponent {
     this.performFunctionOnEachPage((boundingRect, index) => {
       // This renders the next "closest" page. Where closest is defined as how
       // far the page is from the viewport.
-      if (!this.isRendering[this.props.file][index]) {
+      if (!this.isDrawing[this.props.file][index]) {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
-        if (!_.get(this.state, ['isRendered', this.props.file, index], false) || this.state.isRendered[this.props.file][index].scale !== this.props.scale) {
+        if (!_.get(this.state, ['isDrawn', this.props.file, index], false) || this.state.isDrawn[this.props.file][index].scale !== this.props.scale) {
           if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
@@ -327,8 +325,8 @@ export class Pdf extends React.PureComponent {
     }
 
     this.drawPage(this.props.file, prioritzedPage).then(() => {
-      this.renderInViewPages();
-      this.prerenderPages();
+      this.drawInViewPages();
+      this.preDrawPages();
     }).catch();
   }
 
@@ -363,9 +361,9 @@ export class Pdf extends React.PureComponent {
             [file]: pdfDocument.pdfInfo.numPages
           },
           pdfDocument,
-          isRendered: {
+          isDrawn: {
             [file]: [],
-            ...this.state.isRendered
+            ...this.state.isDrawn
           },
           currentFile: file
         }, () => {
@@ -384,11 +382,11 @@ export class Pdf extends React.PureComponent {
   setUpPdfObjects = (file, pdfDocument) => {
     this.pageElements[file] = {};
 
-    if (!this.isRendering[file]) {
-      this.isRendering[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
+    if (!this.isDrawing[file]) {
+      this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
     }
 
-    _.map(this.isRendering, (array, file) => {
+    _.map(this.isDrawing, (array, file) => {
       this.refFunctionGetters.canvas[file] = [];
       this.refFunctionGetters.textLayer[file] = [];
       this.refFunctionGetters.pageContainer[file] = [];
@@ -421,9 +419,9 @@ export class Pdf extends React.PureComponent {
         ...this.state.numPages,
         [file]: pdfDocument.pdfInfo.numPages
       },
-      isRendered: {
+      isDrawn: {
         [file]: [],
-        ...this.state.isRendered
+        ...this.state.isDrawn
       }
     });
   }
@@ -545,7 +543,7 @@ export class Pdf extends React.PureComponent {
 
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
-    window.addEventListener('resize', this.renderInViewPages);
+    window.addEventListener('resize', this.drawInViewPages);
     window.addEventListener('keydown', this.keyListener);
 
     this.setUpPdf(this.props.file);
@@ -556,7 +554,7 @@ export class Pdf extends React.PureComponent {
   }
 
   comopnentWillUnmount() {
-    window.removeEventListener('resize', this.renderInViewPages);
+    window.removeEventListener('resize', this.drawInViewPages);
     window.removeEventListener('keydown', this.keyListener);
   }
 
@@ -565,8 +563,8 @@ export class Pdf extends React.PureComponent {
       pdf.pdfDocument.destroy();
     }
 
-    if (this.isRendering[file]) {
-      this.isRendering[file] = this.isRendering[file].map(() => false);
+    if (this.isDrawing[file]) {
+      this.isDrawing[file] = this.isDrawing[file].map(() => false);
     }
 
     _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
@@ -576,9 +574,9 @@ export class Pdf extends React.PureComponent {
       canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
     });
     this.setState({
-      isRendered: {
-        ...this.state.isRendered,
-        [file]: _.get(this.state.isRendered, ['file'], []).map(() => null)
+      isDrawn: {
+        ...this.state.isDrawn,
+        [file]: _.get(this.state.isDrawn, ['file'], []).map(() => null)
       }
     });
   }
@@ -617,17 +615,17 @@ export class Pdf extends React.PureComponent {
     /* eslint-enable no-negated-condition */
   }
 
-  prerenderPages = () => {
+  preDrawPages = () => {
     const finishPrerender = () => {
       this.isPrerendering = false;
-      this.prerenderPages();
+      this.preDrawPages();
     };
 
     // We want the first few pages of the current document to take precedence over pages
     // on non-visible documents. At the end of rendering pages from this document we always
-    // call prerenderPages again in case there are still pages to prerender.
-    if (this.isRendering[this.props.file] &&
-      _.some(this.isRendering[this.props.file].slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
+    // call preDrawPages again in case there are still pages to prerender.
+    if (this.isDrawing[this.props.file] &&
+      _.some(this.isDrawing[this.props.file].slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
       return;
     }
 
@@ -636,7 +634,7 @@ export class Pdf extends React.PureComponent {
         if (pdfDocument) {
           _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
-              !_.get(this.state, ['isRendered', file, pageIndex]) &&
+              !_.get(this.state, ['isDrawn', file, pageIndex]) &&
               !this.isPrerendering) {
               this.isPrerendering = true;
 
@@ -656,8 +654,8 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   componentDidUpdate(prevProps) {
-    this.renderInViewPages();
-    this.prerenderPages();
+    this.drawInViewPages();
+    this.preDrawPages();
 
     // if jump to page number is provided
     // render the page and jump to the page
@@ -772,7 +770,7 @@ export class Pdf extends React.PureComponent {
 
     const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been rendered
-      if (_.get(this.state.isRendered, [this.props.file, comment.page - 1, 'pdfDocument']) !==
+      if (_.get(this.state.isDrawn, [this.props.file, comment.page - 1, 'pdfDocument']) !==
         this.state.pdfDocument) {
         return acc;
       }
@@ -817,9 +815,9 @@ export class Pdf extends React.PureComponent {
           }, this.props.documentId);
         };
 
-        const relativeScale = this.props.scale / _.get(this.state.isRendered, [this.props.file, pageIndex, 'scale'], 1);
-        const currentWidth = _.get(this.state.isRendered[this.props.file, pageIndex, 'width'], this.defaultWidth);
-        const currentHeight = _.get(this.state.isRendered[this.props.file, pageIndex, 'height'], this.defaultHeight);
+        const relativeScale = this.props.scale / _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'], 1);
+        const currentWidth = _.get(this.state.isDrawn[this.props.file, pageIndex, 'width'], this.defaultWidth);
+        const currentHeight = _.get(this.state.isDrawn[this.props.file, pageIndex, 'height'], this.defaultHeight);
 
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
