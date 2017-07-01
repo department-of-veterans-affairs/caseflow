@@ -5,14 +5,14 @@ export const update = newContext();
 
 update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
 
-export const openDocumentInNewTab = (basePath, doc) => {
+export const singleDocumentLink = (basePath, doc) => {
   let id = doc.id;
   let filename = doc.filename;
   let type = doc.type;
   let receivedAt = doc.receivedAt;
 
-  return window.open(`${basePath}/${id}?type=${type}` +
-    `&received_at=${receivedAt}&filename=${filename}`, '_blank');
+  return `${basePath}/${id}?type=${type}` +
+    `&received_at=${receivedAt}&filename=${filename}`;
 };
 
 export const categoryFieldNameOfCategoryName =
