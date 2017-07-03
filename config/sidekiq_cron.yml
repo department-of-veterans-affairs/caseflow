@@ -27,3 +27,10 @@ heartbeat_tasks_job:
   class: "HeartbeatTasksJob"
   queue: default
   active_job: true
+
+# Retrieve all documents for active Reader users every night at midnight
+retrieve_appeals_documents_for_reader:
+  cron: "1 0 * * * America/New_York"
+  class: "RetrieveReaderAppealsDocumentsJob"
+  queue: default
+  active_job: true
