@@ -18,7 +18,7 @@ class CaseSelect extends React.PureComponent {
       valueName: 'vbms_id'
     },
     {
-      header: 'View Case File',
+      header: 'View Claims Folder',
       valueFunction: (row) => {
         let buttonText = 'New';
         let buttonType = 'primary';
@@ -50,15 +50,13 @@ class CaseSelect extends React.PureComponent {
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Welcome to Reader!</h1>
           <p className="cf-lead-paragraph">
-            Reader allows attorneys and judges to review
-            and annotate Veteran claims folders.
-            Learn more about Reader on our <a href="/reader/help">Help page</a>.
+            Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
-          <h1>Work Assignments</h1>
+          <h1>Cases Checked In</h1>
           <Table
             columns={this.getAssignmentColumn}
             rowObjects={this.props.assignments}
-            summary="Work Assignments"
+            summary="Cases Checked In"
             getKeyForRow={this.getKeyForRow}
           />
         </div>
