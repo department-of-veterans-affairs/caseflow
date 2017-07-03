@@ -894,12 +894,12 @@ describe Appeal do
     end
   end
 
-  context "#appellant" do
-    subject { appeal.appellant }
+  context "#appellant_last_first_mi", focus: true do
+    subject { appeal.appellant_last_first_mi }
     it { is_expected.to eql("Tester, Joe E.") }
 
     context "when appellant has no first name" do
-      subject { appeal_no_appellant.appellant }
+      subject { appeal_no_appellant.appellant_last_first_mi }
       it { is_expected.to be_nil }
     end
   end
