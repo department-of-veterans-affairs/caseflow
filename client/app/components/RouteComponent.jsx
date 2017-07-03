@@ -1,6 +1,7 @@
 import React from 'react';
 
-// Base class for 
+// Base class for a component that is acts as the endpoint
+// for a react route.
 class RouteComponent extends React.PureComponent {
   componentWillMount() {
     if(!this.pageTitle) {
