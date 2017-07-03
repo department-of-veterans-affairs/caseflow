@@ -450,6 +450,29 @@ select {
   color: $color-gray-light;
 }
 
+//candidate for commons
+.usa-accordion-button {
+  background-image: url(asset-path('minus.svg'));
+
+  &[aria-expanded=false] {
+    background-image: url(asset-path('plus.svg'));
+  }
+}
+
+//candidate for commons
+.usa-accordion-bordered-outline {
+  .usa-accordion-button {
+    border: 1px solid $color-gray-light;
+  }
+}
+
+//candidate for commons
+.usa-accordion-bordered,
+.usa-accordion,
+.usa-accordion-bordered-outline {
+  margin-bottom: 40px;
+}
+
 // candidate for commons
 .usa-alert-heading {
   font-family: 'Source Sans Pro';
