@@ -5,45 +5,7 @@ import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
 import { searchString, commentContainsString } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
-const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
-  update(
-    state,
-    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
-  );
-
-const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
-const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
-
-const updateLastReadDoc = (state, docId) =>
-  update(
-    state,
-    {
-      ui: {
-        pdfList: {
-          lastReadDocId: {
-            $set: docId
-          }
-        }
-      }
-    }
-  );
-
-const openAnnotationDeleteModalFor = (state, annotationId) =>
-  update(state, {
-    ui: {
-      deleteAnnotationModalIsOpenFor: {
-        $set: annotationId
-      }
-    }
-  });
-
 const SHOW_EXPAND_ALL = false;
-
-const initialShowErrorMessageState = {
-  tag: false,
-  category: false,
-  annotation: false
-};
 
 /**
  * This function takes all the documents and check the status of the
@@ -131,6 +93,44 @@ const updateFilteredDocIds = (nextState) => {
       $merge: { expandAll: getExpandAllState(updatedNextState.documents) }
     }
   });
+};
+
+const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
+  update(
+    state,
+    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
+  );
+
+const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
+const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
+
+const updateLastReadDoc = (state, docId) =>
+  update(
+    state,
+    {
+      ui: {
+        pdfList: {
+          lastReadDocId: {
+            $set: docId
+          }
+        }
+      }
+    }
+  );
+
+const openAnnotationDeleteModalFor = (state, annotationId) =>
+  update(state, {
+    ui: {
+      deleteAnnotationModalIsOpenFor: {
+        $set: annotationId
+      }
+    }
+  });
+
+const initialShowErrorMessageState = {
+  tag: false,
+  category: false,
+  annotation: false
 };
 
 export const initialState = {
