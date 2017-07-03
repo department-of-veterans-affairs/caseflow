@@ -12,9 +12,9 @@ class TagTableColumn extends PureComponent {
         return <div className="document-list-issue-tag"
             key={tag.id}>
             <Highlight
-              searchQuery={searchQuery}
-              textToHighlight={tag.text}
-            />
+              searchQuery={searchQuery}>
+              {tag.text}
+            </Highlight>
           </div>;
       })}
     </div>;

@@ -105,7 +105,9 @@ class DocTypeColumn extends React.PureComponent {
         href={singleDocumentLink(this.props.documentPathBase, doc)}
         aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
         onMouseUp={this.props.showPdf(doc.id)}>
-        <Highlight textToHighlight={doc.type} searchQuery={searchQuery} />
+        <Highlight searchQuery={searchQuery}>
+          {doc.type}
+        </Highlight>
       </a>, doc);
   }
 }
@@ -121,8 +123,9 @@ class ReceiptDateColumn extends React.PureComponent {
     const { doc, searchQuery } = this.props;
 
     return <span className="document-list-receipt-date">
-      <Highlight textToHighlight={formatDateStr(doc.receivedAt)}
-        searchQuery={searchQuery} />
+      <Highlight searchQuery={searchQuery}>
+        {formatDateStr(doc.receivedAt)}
+      </Highlight>
     </span>;
   }
 }
