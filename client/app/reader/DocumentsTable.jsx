@@ -98,42 +98,23 @@ class DocTypeColumn extends React.PureComponent {
   };
 
   render() {
-    const { doc, searchQuery } = this.props;
+    const { doc } = this.props;
 
     return this.boldUnreadContent(
       <a
         href={singleDocumentLink(this.props.documentPathBase, doc)}
         aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
         onMouseUp={this.props.showPdf(doc.id)}>
-        <Highlight searchQuery={searchQuery}>
+        <Highlight>
           {doc.type}
         </Highlight>
       </a>, doc);
   }
 }
 
-const docTypeColumnMapStateToProps = (state) => ({
-  searchQuery: state.ui.docFilterCriteria.searchQuery
-});
-const ConnectedDocTypeColumn = connect(docTypeColumnMapStateToProps)(DocTypeColumn);
-
-class ReceiptDateColumn extends React.PureComponent {
-
-  render() {
-    const { doc, searchQuery } = this.props;
-
-    return <span className="document-list-receipt-date">
-      <Highlight searchQuery={searchQuery}>
-        {formatDateStr(doc.receivedAt)}
-      </Highlight>
-    </span>;
-  }
-}
-
-const receiptDateColumnMapStateToProps = (state) => ({
-  searchQuery: state.ui.docFilterCriteria.searchQuery
-});
-const ConnectedReceiptDateColumn = connect(receiptDateColumnMapStateToProps)(ReceiptDateColumn);
+DocTypeColumn.propTypes = {
+  doc: PropTypes.object
+};
 
 class DocumentsTable extends React.Component {
   constructor() {
@@ -320,7 +301,11 @@ class DocumentsTable extends React.Component {
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => <ConnectedReceiptDateColumn doc={doc} />
+        valueFunction: (doc) => <span className="document-list-receipt-date">
+          <Highlight>
+            {formatDateStr(doc.receivedAt)}
+          </Highlight>
+        </span>
       },
       {
         cellClass: 'doc-type-column',
@@ -330,7 +315,7 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc} showPdf={this.props.showPdf}/>
+        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf}/>
       },
       {
         cellClass: 'tags-column',

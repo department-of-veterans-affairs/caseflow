@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Highlighter from 'react-highlight-words';
 import _ from 'lodash';
 
 class Highlight extends PureComponent {
   render() {
-    const { searchQuery, textToHighlight } = this.props;
+    const { searchQuery } = this.props;
 
     return <div aria-label="search result">
       <Highlighter
@@ -21,4 +22,10 @@ Highlight.propTypes = {
   textToHighlight: PropTypes.string.isRequired
 };
 
-export default Highlight;
+const mapStateToProps = (state) => ({
+  searchQuery: state.ui.docFilterCriteria.searchQuery
+});
+
+export default connect(
+  mapStateToProps
+)(Highlight);
