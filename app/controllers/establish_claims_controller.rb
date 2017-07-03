@@ -176,4 +176,9 @@ class EstablishClaimsController < TasksController
   def cancel_feedback
     params.require(:feedback)
   end
+
+  def total_cases_completed
+    user_quota ? user_quota.tasks_completed_count : 0
+  end
+  helper_method :total_cases_completed
 end
