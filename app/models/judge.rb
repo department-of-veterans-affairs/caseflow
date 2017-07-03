@@ -5,18 +5,18 @@ class Judge
   end
 
   def upcoming_dockets
-    @upcoming_dockets ||= upcoming_hearings_grouped_by_date.map do |_date, hearings|
+    @upcoming_dockets ||= upcoming_hearings_grouped_by_date.transform_values do |hearings|
       HearingDocket.from_hearings(hearings)
-    end.sort_by(&:date)
+    end
   end
 
   private
 
   def upcoming_hearings_grouped_by_date
-    upcoming_hearings.group_by { |h| h.date.to_i }
+    upcoming_hearings.group_by { |h| h.date.strftime("%F") }
   end
 
   def upcoming_hearings
-    Hearing.repository.upcoming_hearings_for_judge(user.vacols_id)
+    Hearing.repository.upcoming_hearings_for_judge(user.vacols_id).sort_by(&:date)
   end
 end
