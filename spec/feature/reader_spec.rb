@@ -143,6 +143,27 @@ RSpec.feature "Reader" do
       end
     end
 
+    scenario "Open document in new tab" do
+      # Open the URL that the first document button points to. We cannot simply
+      # click on the link since we've overridden the mouseup event to not open
+      # the link, but instead to move to the document view in the SPA. Middle clicking
+      # is not overridden, but I cannot figure out how to middle click in the test.
+      # Instead we just visit the page specified by the link.
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      single_link = find_link(documents[0].type)[:href]
+      visit single_link
+
+      # Make sure there is document metadata, but no back button.
+      expect(page).to have_content(documents[0].type)
+      expect(page).to_not have_content("Back to all documents")
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      # Make sure the document link in the document view points to the same place
+      # as the link we just tested.
+      expect(find_link(documents[0].type)[:href]).to eq(single_link)
+    end
+
     scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
