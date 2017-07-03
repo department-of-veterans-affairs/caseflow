@@ -4,12 +4,12 @@ import React from 'react';
 // for a react route.
 class RouteComponent extends React.PureComponent {
   componentWillMount() {
-    if(!this.pageTitle) {
-      throw("RouteComponent must implement `pageTitle`")
+    if (!this.pageTitle) {
+      throw new Error('RouteComponent must implement `pageTitle`');
     }
 
     document.title = this.pageTitle;
-    analyticsPageView(window.location.pathname);
+    window.analyticsPageView(window.location.pathname);
   }
 }
 

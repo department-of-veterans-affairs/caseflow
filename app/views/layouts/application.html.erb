@@ -76,9 +76,7 @@
       })(window,document,'script', '<%= Rails.configuration.google_analytics_host %>','ga');
 
       // Allow both caseflow domains to send analytics data
-      ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto', {'allowLinker': true});
-      ga('require', 'linker');
-      ga('linker:autoLink', ['<%= ga_alternate_domain %>'] );
+      ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto');
 
       window.analyticsPageView = function(page) {
         ga('send', 'pageview', page);

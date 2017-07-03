@@ -53,7 +53,7 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
 // PDF view of the Reader SPA. It displays the PDF with UI
 // as well as the sidebar for comments and document information.
 export class PdfViewer extends RouteComponent {
-  pageTitle = "View Document | Caseflow Reader"
+  pageTitle = 'Document Viewer | Caseflow Reader'
 
   // eslint-disable-next-line max-statements
   keyListener = (event) => {

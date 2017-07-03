@@ -9,7 +9,7 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 class CaseSelect extends RouteComponent {
-  pageTitle = "Assignments | Caseflow Reader"
+  pageTitle = 'Assignments | Caseflow Reader'
 
   getAssignmentColumn = () => [
     {
