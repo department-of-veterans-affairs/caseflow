@@ -367,8 +367,7 @@ export class Pdf extends React.PureComponent {
           isDrawn: {
             [file]: [],
             ...this.state.isDrawn
-          },
-          currentFile: file
+          }
         }, () => {
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
@@ -452,6 +451,18 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  scrollToPageLocation = (pageIndex, yPosition = 0) => {
+    const boundingBox = this.scrollWindow.getBoundingClientRect();
+    const height = (boundingBox.bottom - boundingBox.top);
+    const halfHeight = height / 2;
+
+    if (this.pageElements[this.props.file]) {
+      this.scrollWindow.scrollTop =
+        this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect().top +
+        yPosition + this.scrollWindow.scrollTop - halfHeight;
+    }
+  }
+
   onJumpToComment = (comment) => {
     if (comment) {
       const pageNumber = comment.page;
@@ -465,6 +476,10 @@ export class Pdf extends React.PureComponent {
         this.scrollWindow.scrollTop =
           this.pageElements[this.props.file][pageNumber - 1].pageContainer.getBoundingClientRect().top +
           yPosition + this.scrollWindow.scrollTop - halfHeight;
+      }).catch((error) => {
+        console.log(this);
+        console.log(this.props.file);
+        console.log(pageNumber - 1);
       });
     }
   }
@@ -667,9 +682,8 @@ export class Pdf extends React.PureComponent {
       this.onPageChange(this.props.jumpToPageNumber);
     }
     if (this.props.scrollToComment) {
-      if (this.props.documentId === this.props.scrollToComment.documentId &&
-        this.state.pdfDocument && this.props.pdfsReadyToShow[this.props.documentId]) {
-        this.onJumpToComment(this.props.scrollToComment);
+      if (this.props.documentId === this.props.scrollToComment.documentId) {
+        this.scrollToPageLocation(this.props.scrollToComment.page, this.props.scrollToComment.yPosition);
       }
     }
 
