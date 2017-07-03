@@ -13,7 +13,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon } from '../reader/actions';
+  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
+  onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
@@ -283,6 +284,10 @@ export class Pdf extends React.PureComponent {
       }
     });
 
+    if (this.props.scrollToComment) {
+      this.props.onScrollToComment(null);
+    }
+
     if (this.props.jumpToPageNumber) {
       this.props.resetJumpToPage();
     }
@@ -452,36 +457,19 @@ export class Pdf extends React.PureComponent {
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
-    const boundingBox = this.scrollWindow.getBoundingClientRect();
-    const height = (boundingBox.bottom - boundingBox.top);
-    const halfHeight = height / 2;
-
     if (this.pageElements[this.props.file]) {
+      const boundingBox = this.scrollWindow.getBoundingClientRect();
+      const height = (boundingBox.bottom - boundingBox.top);
+      const halfHeight = height / 2;
+
       this.scrollWindow.scrollTop =
         this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect().top +
         yPosition + this.scrollWindow.scrollTop - halfHeight;
+
+      return true;
     }
-  }
 
-  onJumpToComment = (comment) => {
-    if (comment) {
-      const pageNumber = comment.page;
-      const yPosition = comment.y;
-
-      this.drawPage(this.props.file, pageNumber - 1).then(() => {
-        const boundingBox = this.scrollWindow.getBoundingClientRect();
-        const height = (boundingBox.bottom - boundingBox.top);
-        const halfHeight = height / 2;
-
-        this.scrollWindow.scrollTop =
-          this.pageElements[this.props.file][pageNumber - 1].pageContainer.getBoundingClientRect().top +
-          yPosition + this.scrollWindow.scrollTop - halfHeight;
-      }).catch((error) => {
-        console.log(this);
-        console.log(this.props.file);
-        console.log(pageNumber - 1);
-      });
-    }
+    return false;
   }
 
   onPageChange = (currentPage) => {
@@ -683,7 +671,7 @@ export class Pdf extends React.PureComponent {
     }
     if (this.props.scrollToComment) {
       if (this.props.documentId === this.props.scrollToComment.documentId) {
-        this.scrollToPageLocation(this.props.scrollToComment.page, this.props.scrollToComment.yPosition);
+        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page), this.props.scrollToComment.y);
       }
     }
 
@@ -843,7 +831,7 @@ export class Pdf extends React.PureComponent {
         });
 
         return <div
-          className={pageClassNames}
+          className={this.props.file === file && pageClassNames}
           style={ {
             marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
             width: `${relativeScale * currentWidth}px`,
@@ -855,7 +843,7 @@ export class Pdf extends React.PureComponent {
           onDrop={this.onCommentDrop(pageIndex + 1)}
           key={`${file}-${pageIndex + 1}`}
           onClick={onPageClick}
-          id={`pageContainer${pageIndex + 1}`}
+          id={this.props.file === file && `pageContainer${pageIndex + 1}`}
           onMouseMove={this.mouseListener}
           ref={this.refFunctionGetters.pageContainer[file][pageIndex]}>
             <div className={pageContentsVisibleClass}>
@@ -864,7 +852,7 @@ export class Pdf extends React.PureComponent {
                 ref={this.refFunctionGetters.canvas[file][pageIndex]}
                 className="canvasWrapper" />
               <div className="cf-pdf-annotationLayer">
-                {commentIcons[pageIndex + 1]}
+                {this.props.file === file && commentIcons[pageIndex + 1]}
               </div>
               <div
                 id={`textLayer${pageIndex + 1}`}
@@ -905,7 +893,8 @@ const mapDispatchToProps = (dispatch) => ({
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
     hidePlaceAnnotationIcon,
-    requestMoveAnnotation
+    requestMoveAnnotation,
+    onScrollToComment
   }, dispatch),
   setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
   handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
