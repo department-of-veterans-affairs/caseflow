@@ -315,7 +315,8 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf}/>
+        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf} 
+          documentPathBase={this.props.documentPathBase}/>
       },
       {
         cellClass: 'tags-column',
