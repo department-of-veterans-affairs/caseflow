@@ -1,4 +1,4 @@
-class RetrieveReaderAppealsDocumentsJob < ActiveJob::Base
+class RetrieveAppealsDocumentsForReaderJob < ActiveJob::Base
   queue_as :default
 
   def perform
