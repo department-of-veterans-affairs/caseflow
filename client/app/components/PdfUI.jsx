@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Button from '../components/Button';
+import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
@@ -12,7 +13,7 @@ import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { openDocumentInNewTab } from '../reader/utils';
+import { singleDocumentLink } from '../reader/utils';
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -52,8 +53,6 @@ export class PdfUI extends React.Component {
 
   openDownloadLink = () =>
     window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
-
-  singleDocumentView = () => openDocumentInNewTab(this.props.documentPathBase, this.props.doc)
 
   getPageIndicator = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
@@ -145,13 +144,14 @@ export class PdfUI extends React.Component {
               <DocumentCategoryIcons doc={this.props.doc} />
             </span>
             <span className="cf-pdf-doc-type-button-container">
-              <Button
+              <Link
                 name="newTab"
-                classNames={['cf-pdf-button cf-pdf-doc-type-button']}
                 ariaLabel="open document in new tab"
-                onClick={this.singleDocumentView}>
+                target="_blank"
+                button="matte"
+                href={singleDocumentLink(this.props.documentPathBase, this.props.doc)}>
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
-              </Button>
+              </Link>
             </span>
             </span>
         </span>
