@@ -144,7 +144,7 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def appellant
+  def appellant_last_first_mi
     # returns appellant name in format <last>, <first> <middle_initial>.
     if appellant_first_name
       name = "#{appellant_last_name}, #{appellant_first_name}"

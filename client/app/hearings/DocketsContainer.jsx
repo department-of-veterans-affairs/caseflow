@@ -17,11 +17,9 @@ export const getDockets = (dispatch) => {
 
 export class DocketsContainer extends React.Component {
 
-  componentDidMount = () => {
+  componentDidMount() {
     if (!this.props.dockets) {
-      setTimeout(() => {
-        this.props.getDockets();
-      }, 600);
+      this.props.getDockets();
     }
   }
 

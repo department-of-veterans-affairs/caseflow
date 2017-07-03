@@ -25,11 +25,17 @@ class Hearing < ActiveRecord::Base
     type != :central_office ? type.to_s.capitalize : "CO"
   end
 
-  delegate :representative_name, :appellant, to: :appeal
+  delegate :representative_name, :appellant_last_first_mi, to: :appeal
 
   def to_hash
     serializable_hash(
-      methods: [:date, :request_type, :appellant, :representative_name, :venue, :vbms_id]
+      methods: [
+        :date,
+        :request_type,
+        :appellant_last_first_mi,
+        :representative_name,
+        :venue, :vbms_id
+      ]
     )
   end
 

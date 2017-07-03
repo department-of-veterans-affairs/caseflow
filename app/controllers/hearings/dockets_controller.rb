@@ -14,6 +14,10 @@ class Hearings::DocketsController < HearingsController
     end
   end
 
+  def show
+    redirect_to hearings_dockets_path
+  end
+
   private
 
   def current_user_dockets

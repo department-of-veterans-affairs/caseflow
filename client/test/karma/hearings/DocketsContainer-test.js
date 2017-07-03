@@ -2,11 +2,11 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import { spy } from 'sinon';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import ApiUtilStub from '../../helpers/ApiUtilStub';
-import { asyncTest, pause } from '../../helpers/AsyncTests';
+import ApiUtil from '../../../app/util/ApiUtil';
 import hearingsReducers from '../../../app/hearings/reducers/index';
 import { populateDockets } from '../../../app/hearings/actions/Dockets';
 import DocketsContainer from '../../../app/hearings/DocketsContainer';
@@ -19,9 +19,9 @@ const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thu
 describe('DocketsContainer', () => {
   let wrapper;
 
-  beforeEach(() => {
-    ApiUtilStub.beforeEach();
+  spy(ApiUtil, 'get');
 
+  beforeEach(() => {
     wrapper = mount(
       <Provider store={store}>
         <MemoryRouter initialEntries={['/']}>
@@ -34,17 +34,14 @@ describe('DocketsContainer', () => {
 
   afterEach(() => {
     wrapper = null;
-    ApiUtilStub.afterEach();
   });
 
-  it('shows loading symbol while loading dockets', asyncTest(async() => {
-    expect(wrapper.text()).to.include('Loading dockets, please wait...');
-
-    await pause(700);
-
-    // Verify the api is called to retrieve dockets
-    expect(ApiUtilStub.apiGet.calledWith('/hearings/dockets.json')).to.be.true;
-  }));
+  it('retrieves dockets', () => {
+    setTimeout(() => {
+      expect(ApiUtil.get.calledOnce).to.be.true;
+      ApiUtil.get.restore();
+    });
+  });
 
   it('notifies user when no dockets are returned', () => {
     store.dispatch(populateDockets({}));
