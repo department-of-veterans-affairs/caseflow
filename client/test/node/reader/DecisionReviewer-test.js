@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -213,6 +214,74 @@ describe('DecisionReviewer', () => {
 
   context('PDF list view', () => {
     beforeEach(() => setUpDocuments());
+
+    // In general, we shouldn't have to write tests to make sure that links work. However,
+    // with the document type links we are calling prevent default to override what they
+    // do when you click on them. They should still open up new tabs when you press the
+    // meta-key, control, or middle click. These tests make sure we don't prevent default
+    // in these cases.
+    context('follows the link when', () => {
+      it('document is ctrl + clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          ctrlKey: true,
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+
+      it('document is meta + clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          metaKey: true,
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+
+      it('document is middle clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          button: 1,
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+    });
+
+    context('does not follow the link when', () => {
+      it('document is clicked normally', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.calledOnce).to.eq(true);
+      }));
+    });
 
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
