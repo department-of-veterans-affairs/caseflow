@@ -113,7 +113,8 @@ class DocTypeColumn extends React.PureComponent {
 }
 
 DocTypeColumn.propTypes = {
-  doc: PropTypes.object
+  doc: PropTypes.object,
+  documentPathBase: PropTypes.string
 };
 
 class DocumentsTable extends React.Component {
