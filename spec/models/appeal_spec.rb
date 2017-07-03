@@ -894,7 +894,7 @@ describe Appeal do
     end
   end
 
-  context "#appellant_last_first_mi", focus: true do
+  context "#appellant_last_first_mi" do
     subject { appeal.appellant_last_first_mi }
     it { is_expected.to eql("Tester, Joe E.") }
 
