@@ -4,13 +4,21 @@ describe HearingDocket do
     Time.zone = "America/Chicago"
   end
 
+  let!(:appeal) do
+    Generators::Appeal.create(vbms_id: "333222333S")
+  end
+
+  let!(:hearing) do
+    Generators::Hearing.create(appeal: appeal)
+  end
+
   let(:docket) do
     HearingDocket.new(
       date: 7.days.from_now,
       type: :video,
-      venue: VACOLS::RegionalOffice::SATELLITE_OFFICES.values.first,
+      regional_office_name: hearing.regional_office_name,
       hearings: [
-        Generators::Hearing.build
+        hearing
       ]
     )
   end
@@ -23,7 +31,7 @@ describe HearingDocket do
       expect(subject[:date]).to eq(docket.date)
       expect(subject[:hearings_hash].length).to eq(1)
       expect(subject[:type]).to eq(:video)
-      expect(subject[:venue][:city]).to eq("San Antonio")
+      expect(subject[:regional_office_name]).to eq(hearing.regional_office_name)
     end
   end
 
