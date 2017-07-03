@@ -7,8 +7,7 @@ class HearingDocket
 
   def to_hash
     serializable_hash(
-      include: [:hearings],
-      methods: [:venue]
+      methods: [:venue, :hearings_hash]
     )
   end
 
@@ -17,6 +16,10 @@ class HearingDocket
       date: date,
       type: type
     }
+  end
+
+  def hearings_hash
+    hearings.map(&:to_hash)
   end
 
   class << self

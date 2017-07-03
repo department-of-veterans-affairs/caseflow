@@ -21,7 +21,7 @@ describe HearingDocket do
     it "returns a hash" do
       expect(subject.class).to eq(Hash)
       expect(subject[:date]).to eq(docket.date)
-      expect(subject[:hearings].length).to eq(1)
+      expect(subject[:hearings_hash].length).to eq(1)
       expect(subject[:type]).to eq(:video)
       expect(subject[:venue][:city]).to eq("San Antonio")
     end
