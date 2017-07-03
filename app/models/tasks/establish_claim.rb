@@ -142,6 +142,10 @@ class EstablishClaim < Task
     end
   end
 
+  def bgs_info_valid?
+    appeal.veteran.valid?
+  end
+
   def should_invalidate?
     !appeal.vacols_record_exists? ||
       !appeal.decision_date ||
