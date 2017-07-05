@@ -455,21 +455,23 @@ RSpec.feature "Reader" do
       end
       # :nocov:
 
-      scenario "Jump to section for a comment" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      ensure_stable do
+        scenario "Jump to section for a comment", focus: true do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        annotation = documents[1].annotations[0]
+          annotation = documents[1].annotations[0]
 
-        click_button("expand-#{documents[1].id}-comments-button")
-        click_button("jumpToComment#{annotation.id}")
+          click_button("expand-#{documents[1].id}-comments-button")
+          click_button("jumpToComment#{annotation.id}")
 
-        # Wait for PDFJS to render the pages
-        expect(page).to have_css(".page")
-        comment_icon_id = "commentIcon-container-#{annotation.id}"
+          # Wait for PDFJS to render the pages
+          expect(page).to have_css(".page")
+          comment_icon_id = "commentIcon-container-#{annotation.id}"
 
-        # wait for comment annotations to load
-        all(".commentIcon-container", wait: 3, count: 1)
-        expect { in_viewport(comment_icon_id) }.to become_truthy
+          # wait for comment annotations to load
+          all(".commentIcon-container", wait: 3, count: 1)
+          expect { in_viewport(comment_icon_id) }.to become_truthy
+        end
       end
 
       scenario "Scroll to comment" do
