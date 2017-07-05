@@ -18,7 +18,9 @@ const CLASS_NAME_MAPPING = {
 export default class Accordion extends React.PureComponent {
   render() {
     const {
+      accordion,
       children,
+      defaultActiveKey,
       style
     } = this.props;
 
@@ -32,13 +34,18 @@ export default class Accordion extends React.PureComponent {
       }
     });
 
-    return <Collapse accordion={true} className={CLASS_NAME_MAPPING[style]}>
+    /* If accordion=true, there can be no more than one active panel at a time.
+    Source: https://github.com/react-component/collapse */
+
+    return <Collapse accordion={accordion} className={CLASS_NAME_MAPPING[style]}
+      defaultActiveKey={defaultActiveKey}>
       {accordionHeaders}
     </Collapse>;
   }
 }
 
 Accordion.propTypes = {
+  accordion: PropTypes.bool,
   children: PropTypes.node,
   style: PropTypes.string.isRequired
 };

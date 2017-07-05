@@ -31,17 +31,17 @@ export default class StyleGuideAccordions extends React.PureComponent {
     content.</p>
 
     <h3>Border</h3>
-    <Accordion style="bordered">
+    <Accordion style="bordered" accordion={true}>
       {sgAccordionHeaders}
     </Accordion>
 
     <h3>Borderless</h3>
-    <Accordion style="borderless">
+    <Accordion style="borderless" accordion={true}>
       {sgAccordionHeaders}
     </Accordion>
 
     <h3>Bordered Outline</h3>
-    <Accordion style="outline">
+    <Accordion style="outline" accordion={true}>
       {sgAccordionHeaders}
     </Accordion>
     </div>;
