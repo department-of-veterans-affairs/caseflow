@@ -25,16 +25,26 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery) => (doc) => {
+export const searchString = (searchQuery, state) => (doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
+  let wordFound = false;
+  let commentFoundAggregate = false;
 
-  return queryTokens.every((word) => {
+  wordFound = queryTokens.every((word) => {
     const searchWord = word.trim();
-
+    const commentFound = commentContainsString(word, state, doc);
+    commentFoundAggregate = commentFoundAggregate || commentFound;
+    
     return searchWord.length > 0 && (
       doDatesMatch(doc.receivedAt, searchWord) ||
+      commentFound ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       tagContainsString(searchWord, doc));
   });
+
+  return {
+    wordFound,
+    commentFound: commentFoundAggregate
+  };
 };

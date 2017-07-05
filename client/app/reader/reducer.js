@@ -64,17 +64,17 @@ const updateFilteredDocIds = (nextState) => {
     ).
     filter(
       (doc) => {
-        // doing a search through comments first
-        let queryTokens = _.compact(searchQuery.split(' '));
-        const commentFound = queryTokens.some((word) => {
-          return commentContainsString(word, nextState, doc);
-        });
-
         // update state with if comments should be shown
-        updatedNextState = updateListComments(doc.id, updatedNextState, commentFound);
+        // searchString returns an object that contains wordFound and commentFound
+        // This is done to re-use the comment found result to update the state to expand the
+        // comment section and to actually search the comment.
+        const searchResult = searchString(searchQuery, nextState)(doc);
 
-        // comment found or string found in other parts of annotation of the document
-        return commentFound || searchString(searchQuery)(doc);
+        // commentFound is used to update the state of expand comment
+        updatedNextState = updateListComments(doc.id, updatedNextState, searchResult.commentFound);
+
+        // if the search term is found in the document's annotations
+        return searchResult.wordFound;
       }
     ).
     sortBy(docFilterCriteria.sort.sortBy).
