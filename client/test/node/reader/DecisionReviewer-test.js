@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -69,7 +70,7 @@ describe('DecisionReviewer', () => {
 
   context('Loading Spinner', () => {
     it('renders', () => {
-      expect(wrapper.text()).to.include('Loading document list');
+      expect(wrapper.text()).to.include('Loading claims folder');
     });
   });
 
@@ -91,7 +92,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('PdfViewer')).to.have.length(1);
 
         // Return to document list view
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         expect(wrapper.find('PdfListView')).to.have.length(1);
       }));
     });
@@ -112,7 +113,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.find('#button-previous')).to.have.length(0);
 
         // Verify there is still has a back to documents button
-        expect(wrapper.find('#button-backToDocuments')).to.have.length(1);
+        expect(wrapper.find('#button-backToClaimsFolder')).to.have.length(1);
       });
     });
 
@@ -214,6 +215,74 @@ describe('DecisionReviewer', () => {
   context('PDF list view', () => {
     beforeEach(() => setUpDocuments());
 
+    // In general, we shouldn't have to write tests to make sure that links work. However,
+    // with the document type links we are calling prevent default to override what they
+    // do when you click on them. They should still open up new tabs when you press the
+    // meta-key, control, or middle click. These tests make sure we don't prevent default
+    // in these cases.
+    context('follows the link when', () => {
+      it('document is ctrl + clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          ctrlKey: true,
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+
+      it('document is meta + clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          metaKey: true,
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+
+      it('document is middle clicked', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          button: 1,
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.notCalled).to.eq(true);
+      }));
+    });
+
+    context('does not follow the link when', () => {
+      it('document is clicked normally', asyncTest(async() => {
+        const preventDefault = sinon.spy();
+        const event = {
+          preventDefault
+        };
+
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('mouseUp', event);
+        await pause();
+
+        expect(preventDefault.calledOnce).to.eq(true);
+      }));
+    });
+
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
         // Click on first document link
@@ -226,7 +295,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-previous').simulate('click');
         await pause();
 
-        wrapper.find('#button-backToDocuments').simulate('click');
+        wrapper.find('#button-backToClaimsFolder').simulate('click');
         // Make sure that the 2nd row has the last
         // read indicator in the first column.
         expect(wrapper.find('#table-row-2').childAt(1).
@@ -265,9 +334,7 @@ describe('DecisionReviewer', () => {
 
     context('when sorted by', () => {
       it('date is ordered correctly', () => {
-        expect(wrapper.find('#receipt-date-header').
-          find('i').
-          hasClass('fa-caret-up')).to.be.true;
+        expect(wrapper.find('#receipt-date-header .cf-sort-arrowup')).to.have.length(1);
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -275,9 +342,7 @@ describe('DecisionReviewer', () => {
         expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
 
         wrapper.find('#receipt-date-header').simulate('click');
-        expect(wrapper.find('#receipt-date-header').
-          find('i').
-          hasClass('fa-caret-down')).to.be.true;
+        expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).to.have.length(1);
 
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(formatDateStr(documents[0].received_at));
@@ -286,9 +351,8 @@ describe('DecisionReviewer', () => {
 
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').
-          find('i').
-          hasClass('fa-caret-down')).to.be.true;
+        expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
+
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
@@ -296,9 +360,7 @@ describe('DecisionReviewer', () => {
         expect(textArray[2]).to.include(documents[1].type);
 
         wrapper.find('#type-header').simulate('click');
-        expect(wrapper.find('#type-header').
-          find('i').
-          hasClass('fa-caret-up')).to.be.true;
+        expect(wrapper.find('#type-header .cf-sort-arrowup')).to.have.length(1);
 
         textArray = wrapper.find('tr').map((node) => node.text());
         expect(textArray[1]).to.include(documents[1].type);

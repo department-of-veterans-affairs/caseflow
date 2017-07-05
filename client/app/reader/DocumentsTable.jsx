@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
+import { singleDocumentLink } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -17,8 +18,8 @@ import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
-  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle
-} from '../components/RenderFunctions';
+  SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
+  SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
 
@@ -175,12 +176,8 @@ class DocumentsTable extends React.Component {
 
     // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
-    const className = this.props.docFilterCriteria.sort.sortAscending ? 'fa-caret-up' : 'fa-caret-down';
-
-    let sortIcon = <i className={`fa fa-1 ${className} table-icon`}
-      aria-hidden="true"></i>;
-    let notsortedIcon = <i className="fa fa-1 fa-arrows-v table-icon"
-      aria-hidden="true"></i>;
+    const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
+    const notSortedIcon = <DoubleArrow />;
 
     const boldUnreadContent = (content, doc) => {
       if (!doc.opened_by_current_user) {
@@ -279,7 +276,7 @@ class DocumentsTable extends React.Component {
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
           onClick={() => this.props.changeSortState('receivedAt')}>
-          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortIcon : notsortedIcon}
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) =>
           <span className="document-list-receipt-date">
@@ -292,11 +289,11 @@ class DocumentsTable extends React.Component {
         name="Document Type"
         classNames={['cf-document-list-button-header']}
         onClick={() => this.props.changeSortState('type')}>
-          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortIcon : notsortedIcon}
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
           <a
-            href={`documents/${doc.id}`}
+            href={singleDocumentLink(this.props.documentPathBase, doc)}
             aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
             onMouseUp={this.props.showPdf(doc.id)}>
             {doc.type}

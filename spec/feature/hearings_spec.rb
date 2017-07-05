@@ -33,7 +33,7 @@ RSpec.feature "Hearings" do
     scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
-      expect(page).to have_content("Hearings Schedule")
+      expect(page).to have_content("Hearing Schedule")
 
       # Verify user
       expect(page).to have_content("VLJ: Lauren Roth")

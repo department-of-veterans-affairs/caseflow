@@ -144,6 +144,14 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def appellant_last_first_mi
+    # returns appellant name in format <last>, <first> <middle_initial>.
+    if appellant_first_name
+      name = "#{appellant_last_name}, #{appellant_first_name}"
+      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
+    end
+  end
+
   def representative_name
     representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
   end
@@ -387,7 +395,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.repository.fetch_documents_for(self)
+    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
   end
 
   class << self
@@ -419,6 +427,10 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
+    def vbms
+      VBMSService
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -431,8 +443,8 @@ class Appeal < ActiveRecord::Base
       fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
-      repository.upload_document_to_vbms(appeal, form8)
-      repository.clean_document(form8.pdf_location)
+      vbms.upload_document_to_vbms(appeal, form8)
+      vbms.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?

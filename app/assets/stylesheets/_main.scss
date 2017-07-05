@@ -220,8 +220,13 @@ select {
 // Candidate for commons
 .cf-btn-link {
 
-  .cf-no-padding {
+  .cf-no-padding,
+  &.cf-no-padding {
     padding: 0;
+  }
+
+  &.cf-no-margin {
+    margin: 0;
   }
 
   &:hover {
@@ -425,11 +430,11 @@ select {
   }
 
   .title {
-    width: 70%;
+    width: 60%;
   }
 
   .meta {
-    width: 30%;
+    width: 40%;
     text-align: right;
     font-size: 1.118em;
 
@@ -444,3 +449,73 @@ select {
 .vbms-id {
   color: $color-gray-light;
 }
+
+//candidate for commons
+.usa-accordion-button {
+  background-image: url(asset-path('minus.svg'));
+
+  &[aria-expanded=false] {
+    background-image: url(asset-path('plus.svg'));
+  }
+}
+
+//candidate for commons
+.usa-accordion-bordered-outline {
+  .usa-accordion-button {
+    border: 1px solid $color-gray-light;
+  }
+}
+
+//candidate for commons
+.usa-accordion-bordered,
+.usa-accordion,
+.usa-accordion-bordered-outline {
+  margin-bottom: 40px;
+}
+
+// candidate for commons
+.usa-alert-heading {
+  font-family: 'Source Sans Pro';
+}
+
+.cf-work-assignments {
+  td {
+    &:first-child {
+      > span {
+        display: block;
+        overflow: auto;
+      }
+    }
+
+    .cf-form-int-input {
+      width: 3.2em;
+      margin: 0 auto;
+    }
+  }
+
+  .cf-no-padding {
+    padding: 0 3px;
+    vertical-align: middle;
+  }
+}
+
+.cf-work-assignments-user-index {
+  display: block;
+  float: left;
+  width: 1.5em;
+}
+
+.cf-work-assignments-user {
+  display: block;
+  padding-left: 1.6em;
+  white-space: nowrap;
+}
+
+.cf-form-textinput,
+.cf-form-textarea,
+.cf-form-dropdown {
+  label {
+    margin-bottom: 8px;
+  }
+}
+

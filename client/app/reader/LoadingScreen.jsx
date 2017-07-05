@@ -15,28 +15,38 @@ const documentUrl = ({ id }) => `/document/${id}/pdf`;
 export class LoadingScreen extends React.Component {
 
   componentDidMount = () => {
-    ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-      const documents = returnedObject.appealDocuments;
-      const { annotations } = returnedObject;
+    // This means we received documents from the backend. This happens when someone is requesting
+    // an individual document. We don't want to load the entire case, so we avoid the API call.
+    if (this.props.appealDocuments && this.props.annotations) {
+      this.props.onReceiveDocs(this.props.appealDocuments, this.props.vacolsId);
+      this.props.onReceiveAnnotations(this.props.annotations);
+    } else {
+      // We clear any loading failures before trying to load.
+      this.props.onInitialDataLoadingFail(false);
 
-      this.props.onReceiveDocs(documents, this.props.vacolsId);
-      this.props.onReceiveAnnotations(annotations);
+      ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
+        const returnedObject = JSON.parse(response.text);
+        const documents = returnedObject.appealDocuments;
+        const { annotations } = returnedObject;
 
-      const downloadDocuments = (documentUrls, index) => {
-        if (index >= documentUrls.length) {
-          return;
+        this.props.onReceiveDocs(documents, this.props.vacolsId);
+        this.props.onReceiveAnnotations(annotations);
+
+        const downloadDocuments = (documentUrls, index) => {
+          if (index >= documentUrls.length) {
+            return;
+          }
+
+          ApiUtil.get(documentUrls[index], { cache: true }).then(
+            () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
+          );
+        };
+
+        for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+          downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
         }
-
-        ApiUtil.get(documentUrls[index], { cache: true }).then(
-          () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-        );
-      };
-
-      for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-        downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
-      }
-    }, this.props.onInitialDataLoadingFail);
+      }, this.props.onInitialDataLoadingFail);
+    }
   }
 
   render() {
@@ -56,7 +66,7 @@ export class LoadingScreen extends React.Component {
               id="loading-symbol"
               className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
               {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
-              <p>Loading document list in Reader...</p>
+              <p>Loading claims folder in Reader...</p>
             </div>
           }
         </div>
