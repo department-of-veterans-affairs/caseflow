@@ -76,10 +76,10 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
-const NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING = 5;
+const NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
-const NUM_PAGES_TO_PRERENDER = 2;
+const NUM_PAGES_TO_PREDRAW = 2;
 const MAX_PAGES_TO_RENDER_AT_ONCE = 2;
 
 // The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
@@ -630,14 +630,14 @@ export class Pdf extends React.PureComponent {
     // on non-visible documents. At the end of rendering pages from this document we always
     // call preDrawPages again in case there are still pages to prerender.
     if (this.isDrawing[this.props.file] &&
-      _.some(this.isDrawing[this.props.file].slice(0, NUM_PAGES_TO_RENDER_BEFORE_PRERENDERING))) {
+      _.some(this.isDrawing[this.props.file].slice(0, NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING))) {
       return;
     }
 
     this.props.prefetchFiles.forEach((file) => {
       this.getDocument(file).then((pdfDocument) => {
         if (pdfDocument) {
-          _.range(NUM_PAGES_TO_PRERENDER).forEach((pageIndex) => {
+          _.range(NUM_PAGES_TO_PREDRAW).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
               !_.get(this.state, ['isDrawn', file, pageIndex]) &&
               !this.isPrerendering) {
