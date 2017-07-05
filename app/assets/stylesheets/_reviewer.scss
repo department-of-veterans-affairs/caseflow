@@ -504,7 +504,7 @@ input[type="search"].cf-search-input-with-close {
 .cf-keyboard-shortcuts {
   bottom: 0;
   position: relative;
-  margin-left: 40px;
+  text-align: center;
   height: 50px;
 
   .cf-btn-link {
@@ -515,7 +515,7 @@ input[type="search"].cf-search-input-with-close {
 
   svg {
     vertical-align: bottom;
-    margin-right: 4px;
+    margin-right: 12px;
   }
 }
 
