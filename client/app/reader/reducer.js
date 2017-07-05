@@ -65,7 +65,7 @@ const updateFilteredDocIds = (nextState) => {
     filter(
       (doc) => {
         // update state with if comments should be shown
-        // searchString returns an object that contains wordFound and commentFound
+        // searchString returns an object that contains wordFound and commentFound.
         // This is done to re-use the comment found result to update the state to expand the
         // comment section and to actually search the comment.
         const searchResult = searchString(searchQuery, nextState)(doc);
