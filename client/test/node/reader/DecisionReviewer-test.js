@@ -392,12 +392,11 @@ describe('DecisionReviewer', () => {
           { target: { value: 'mytag form' } });
 
         const doesArrayIncludeString = (array, string) => array.some((item) => item.includes(string));
-        let textArray = wrapper.find('tbody').find('tr').
-          find('td').
+        let textArray = wrapper.find('mark').
           map((node) => node.html());
 
-        expect(doesArrayIncludeString(textArray, '<mark class=" ">form</mark>')).to.be.true;
-        expect(doesArrayIncludeString(textArray, '<mark class=" ">mytag</mark>')).to.be.true;
+        expect(doesArrayIncludeString(textArray, 'form')).to.be.true;
+        expect(doesArrayIncludeString(textArray, 'mytag')).to.be.true;
 
         // searching for a comment
         wrapper.find('input').simulate('change',
