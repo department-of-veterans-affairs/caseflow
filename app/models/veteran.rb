@@ -16,7 +16,7 @@ class Veteran
 
   COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
 
-  validates :ssn, presence: true
+  validates :ssn, :first_name, :last_name, :city, :state, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: "country_requires_zip?"
 
   def country_requires_zip?
