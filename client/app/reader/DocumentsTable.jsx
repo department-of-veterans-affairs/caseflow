@@ -99,7 +99,6 @@ class DocTypeColumn extends React.PureComponent {
   };
 
   onClick = (id) => () => {
-    console.log('here');
     setTimeout(() => this.props.selectCurrentPdf(id), 0);
   }
 
