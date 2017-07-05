@@ -87,8 +87,7 @@ export class Comment extends React.Component {
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
-          <Highlight
-            searchQuery={searchQuery}>
+          <Highlight>
             {this.props.children}
           </Highlight>
         </div>
