@@ -358,7 +358,8 @@ RSpec.feature "Save Certification" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
 
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           find("label", text: "Yes").click
         end
 
@@ -369,7 +370,8 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
 
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           expect(find_field("Yes", visible: false)).to be_checked
         end
 
@@ -379,7 +381,8 @@ RSpec.feature "Save Certification" do
 
         # path 1 - select 'yes' first question
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           expect(find_field("Yes", visible: false)).to be_checked
         end
         within_fieldset("What did the appellant request in the document you found?") do
@@ -387,7 +390,8 @@ RSpec.feature "Save Certification" do
         end
 
         # path 2 - select 'no' first question and select informal form 9
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           find("label", text: "No").click
         end
         within_fieldset("Caseflow found the document below, labeled as a Form 9") do
@@ -400,7 +404,8 @@ RSpec.feature "Save Certification" do
         click_button("Continue")
 
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           expect(find_field("No", visible: false)).to be_checked
         end
 
@@ -425,7 +430,8 @@ RSpec.feature "Save Certification" do
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_hearing")
 
         # path 1 - select 'yes' first question
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           find("label", text: "Yes").click
         end
 
@@ -454,7 +460,8 @@ RSpec.feature "Save Certification" do
 
         # path 2 - select 'no' first question and select informal form 9
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           find("label", text: "No").click
         end
         within_fieldset("Caseflow found the document below, labeled as a Form 9") do
@@ -568,12 +575,14 @@ RSpec.feature "Save Certification" do
         visit "certifications/#{appeal.vacols_id}/confirm_hearing"
         click_button("Continue")
         expect(page).to have_content "Please select yes or no."
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           find("label", text: "Yes").click
         end
         click_button("Continue")
         expect(page).to have_content "Please select a hearing preference."
-        within_fieldset("Was a hearing cancellation or request added after 01/30/2017") do
+        within_fieldset("Has the appellant requested a change to their " \
+                        "hearing preference since submitting the Form 9") do
           find("label", text: "No").click
         end
         click_button("Continue")
