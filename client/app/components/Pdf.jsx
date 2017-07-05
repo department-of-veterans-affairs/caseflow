@@ -22,12 +22,12 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
 /**
- * We do a lot of work with coordinates to render PDFs.
+ * We do a lot of work with coordinates to draw PDFs.
  * It is important to keep the various coordinate systems straight.
  * Here are the systems we use:
  *
  *    Root coordinates: The coordinate system for the entire app.
- *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
+ *      (0, 0) is the top left hand corner of the entire HTML document that the browser has drawn.
  *
  *    Page coordinates: A coordinate system for a given PDF page.
  *      (0, 0) is the top left hand corner of that PDF page.
@@ -80,24 +80,24 @@ const NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
 const NUM_PAGES_TO_PREDRAW = 2;
-const MAX_PAGES_TO_RENDER_AT_ONCE = 2;
+const MAX_PAGES_TO_DRAW_AT_ONCE = 2;
 
-// The Pdf component encapsulates PDFJS to enable easy rendering of PDFs.
-// The component will speed up rendering by only rendering pages when
+// The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
+// The component will speed up drawing by only drawing pages when
 // they become visible.
 export class Pdf extends React.PureComponent {
   constructor(props) {
     super(props);
-    // We use two variables to maintain the state of rendering.
+    // We use two variables to maintain the state of drawing.
     // isDrawing below is outside of the state variable.
     // isDrawing[pageNumber] is true when a page is currently
-    // being rendered by PDFJS. It is set to false when rendering
+    // being drawn by PDFJS. It is set to false when drawing
     // is either successful or aborts.
     // isDrawn is in the state variable, since an update to
     // isDrawn should trigger a render update since we need to
-    // draw comments after a page is rendered. Once a page is
-    // successfully rendered we set isDrawn[pageNumber] to be the
-    // filename of the rendered PDF. This way, if PDFs are changed
+    // draw comments after a page is drawn. Once a page is
+    // successfully drawn we set isDrawn[pageNumber] to be the
+    // filename of the drawn PDF. This way, if PDFs are changed
     // we know which pages are stale.
     this.state = {
       numPages: {},
@@ -122,7 +122,7 @@ export class Pdf extends React.PureComponent {
       pageContainer: {}
     };
 
-    this.initializePrerendering();
+    this.initializePredrawing();
     this.initializeRefs();
   }
 
@@ -131,9 +131,9 @@ export class Pdf extends React.PureComponent {
     this.scrollWindow = null;
   }
 
-  initializePrerendering = () => {
-    this.prerenderedPdfs = {};
-    this.isPrerendering = false;
+  initializePredrawing = () => {
+    this.predrawnPdfs = {};
+    this.isPrerdrawing = false;
   }
 
   setisDrawn = (file, index, value) => {
@@ -163,7 +163,7 @@ export class Pdf extends React.PureComponent {
 
     const { scale } = this.props;
 
-    // Mark that we are rendering this page.
+    // Mark that we are drawing this page.
     this.isDrawing[file][index] = true;
 
     return new Promise((resolve, reject) => {
@@ -194,7 +194,7 @@ export class Pdf extends React.PureComponent {
           this.setElementDimensions(page, viewport);
           container.innerHTML = '';
 
-          // Call PDFJS to actually render the page.
+          // Call PDFJS to actually draw the page.
           return pdfPage.render({
             canvasContext: canvas.getContext('2d', { alpha: false }),
             viewport
@@ -207,7 +207,7 @@ export class Pdf extends React.PureComponent {
           });
         }).
         then(({ pdfPage, viewport }) => {
-          // Get the text from the PDF and render it.
+          // Get the text from the PDF and write it.
           return pdfPage.getTextContent().then((textContent) => {
             return Promise.resolve({
               textContent,
@@ -223,7 +223,7 @@ export class Pdf extends React.PureComponent {
             textDivs: []
           });
 
-          this.postRender(
+          this.postDraw(
             resolve,
             reject,
             {
@@ -246,17 +246,17 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  postRender = (resolve, reject, { pdfDocument, scale, index, viewport, file }) => {
+  postDraw = (resolve, reject, { pdfDocument, scale, index, viewport, file }) => {
     this.setisDrawn(file, index, {
       pdfDocument,
       scale,
       ..._.pick(viewport, ['width', 'height'])
     });
 
-    // Since we don't know a page's size until we render it, we either use the
+    // Since we don't know a page's size until we draw it, we either use the
     // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
-    // or the dimensions of the first page we successfully render. This allows
-    // us to accurately represent the size of pages we haven't rendered yet.
+    // or the dimensions of the first page we successfully draw. This allows
+    // us to accurately represent the size of pages we haven't drawn yet.
     if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
       this.defaultWidth = viewport.width;
       this.defaultHeight = viewport.height;
@@ -295,14 +295,14 @@ export class Pdf extends React.PureComponent {
   }
 
   drawInViewPages = () => {
-    // If we're already rendering a page, delay this calculation.
-    const numberOfPagesRendering = _.reduce(this.isDrawing, (total, renderingArray) => {
-      return total + renderingArray.reduce((acc, rendering) => {
-        return acc + (rendering ? 1 : 0);
+    // If we're already drawn a page, delay this calculation.
+    const numberOfPagesDrawing = _.reduce(this.isDrawing, (total, drawingArray) => {
+      return total + drawingArray.reduce((acc, drawing) => {
+        return acc + (drawing ? 1 : 0);
       }, 0);
     }, 0);
 
-    if (numberOfPagesRendering >= MAX_PAGES_TO_RENDER_AT_ONCE) {
+    if (numberOfPagesDrawing >= MAX_PAGES_TO_DRAW_AT_ONCE) {
       return;
     }
 
@@ -310,7 +310,7 @@ export class Pdf extends React.PureComponent {
     let minPageDistance = Number.MAX_SAFE_INTEGER;
 
     this.performFunctionOnEachPage((boundingRect, index) => {
-      // This renders the next "closest" page. Where closest is defined as how
+      // This draws the next "closest" page. Where closest is defined as how
       // far the page is from the viewport.
       if (!this.isDrawing[this.props.file][index]) {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
@@ -349,7 +349,7 @@ export class Pdf extends React.PureComponent {
   }
 
   // This method sets up the PDF. It sends a web request for the file
-  // and when it receives it, starts to render it.
+  // and when it receives it, starts to draw it.
   setUpPdf = (file) => {
     this.latestFile = file;
 
@@ -432,20 +432,19 @@ export class Pdf extends React.PureComponent {
   }
 
   getDocument = (file) => {
-    if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
-      return Promise.resolve(this.prerenderedPdfs[file].pdfDocument);
+    if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+      return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
     }
 
     return PDFJS.getDocument(file).then((pdfDocument) => {
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
-        if (_.get(this.prerenderedPdfs, [file, 'pdfDocument'])) {
-          return this.prerenderedPdfs[file].pdfDocument;
+        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+          return this.predrawnPdfs[file].pdfDocument;
         }
-        this.prerenderedPdfs[file] = {
-          pdfDocument,
-          rendered: []
+        this.predrawnPdfs[file] = {
+          pdfDocument
         };
         this.setUpPdfObjects(file, pdfDocument);
 
@@ -613,22 +612,22 @@ export class Pdf extends React.PureComponent {
     if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
       const pdfsToKeep = [...nextProps.prefetchFiles, nextProps.file];
 
-      _.forEach(_.omit(this.prerenderedPdfs, pdfsToKeep), this.cleanUpPdf);
+      _.forEach(_.omit(this.predrawnPdfs, pdfsToKeep), this.cleanUpPdf);
 
-      this.prerenderedPdfs = _.pick(this.prerenderedPdfs, pdfsToKeep);
+      this.predrawnPdfs = _.pick(this.predrawnPdfs, pdfsToKeep);
     }
     /* eslint-enable no-negated-condition */
   }
 
   preDrawPages = () => {
-    const finishPrerender = () => {
-      this.isPrerendering = false;
+    const finishPredraw = () => {
+      this.isPrerdrawing = false;
       this.preDrawPages();
     };
 
     // We want the first few pages of the current document to take precedence over pages
-    // on non-visible documents. At the end of rendering pages from this document we always
-    // call preDrawPages again in case there are still pages to prerender.
+    // on non-visible documents. At the end of drawing pages from this document we always
+    // call preDrawPages again in case there are still pages to predraw.
     if (this.isDrawing[this.props.file] &&
       _.some(this.isDrawing[this.props.file].slice(0, NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING))) {
       return;
@@ -640,11 +639,11 @@ export class Pdf extends React.PureComponent {
           _.range(NUM_PAGES_TO_PREDRAW).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
               !_.get(this.state, ['isDrawn', file, pageIndex]) &&
-              !this.isPrerendering) {
-              this.isPrerendering = true;
+              !this.isPrerdrawing) {
+              this.isPrerdrawing = true;
 
-              this.drawPage(file, pageIndex).then(finishPrerender).
-                catch(() => this.isPrerendering = false);
+              this.drawPage(file, pageIndex).then(finishPredraw).
+                catch(() => this.isPrerdrawing = false);
             }
           });
         }
@@ -664,7 +663,7 @@ export class Pdf extends React.PureComponent {
     this.preDrawPages();
 
     // if jump to page number is provided
-    // render the page and jump to the page
+    // draw the page and jump to the page
     if (this.props.jumpToPageNumber) {
       this.scrollToPage(this.props.jumpToPageNumber);
       this.onPageChange(this.props.jumpToPageNumber);
@@ -695,7 +694,7 @@ export class Pdf extends React.PureComponent {
    */
   updatePageBounds = () => {
     // The first time this method fires, it sets the page bounds to be the PAGE_WIDTH and PAGE_HEIGHT,
-    // because that's what the page bounds are before rendering completes. Somehow, this does not
+    // because that's what the page bounds are before drawing completes. Somehow, this does not
     // cause a problem, so I'm not going to figure out now how to make it fire with the right values.
     // But if you are seeing issues, that could be why.
 
@@ -774,7 +773,7 @@ export class Pdf extends React.PureComponent {
       this.props.comments;
 
     const commentIcons = annotations.reduce((acc, comment) => {
-      // Only show comments on a page if it's been rendered
+      // Only show comments on a page if it's been drawn
       if (_.get(this.state.isDrawn, [this.props.file, comment.page - 1, 'pdfDocument']) !==
         this.state.pdfDocument) {
         return acc;
