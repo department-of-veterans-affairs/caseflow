@@ -113,6 +113,7 @@ group :development, :test do
   gem 'bundler-audit'
 
   # Testing tools
+  gem 'faker'
   gem 'rspec'
   gem 'rspec-rails'
   #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
