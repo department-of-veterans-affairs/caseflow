@@ -70,7 +70,7 @@ describe('DecisionReviewer', () => {
 
   context('Loading Spinner', () => {
     it('renders', () => {
-      expect(wrapper.text()).to.include('Loading document list');
+      expect(wrapper.text()).to.include('Loading claims folder');
     });
   });
 
