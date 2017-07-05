@@ -226,12 +226,11 @@ class UnconnectedConfirmHearing extends React.Component {
         to={'/certifications/error'}/>;
     }
 
-    const hearingCheckText = <span>Check the appellant's eFolder for a hearing
-    cancellation or request added after <strong>{form9Date}</strong>, the date the Form 9
-    (or statement in lieu of Form 9) was uploaded.</span>;
+    const hearingCheckText = <span>Check the eFolder for the appellant’s most
+    recent hearing preference.</span>;
 
-    const hearingChangeQuestion = <span>Was a hearing cancellation or request
-     added after <strong>{form9Date}</strong>?</span>;
+    const hearingChangeQuestion = <span>Has the appellant requested a change
+    to their hearing preference since submitting the Form 9?</span>;
 
     const shouldDisplayHearingChangeFound =
       hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
