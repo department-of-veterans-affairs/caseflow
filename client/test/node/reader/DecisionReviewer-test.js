@@ -393,7 +393,7 @@ describe('DecisionReviewer', () => {
 
         const doesArrayIncludeString = (array, string) => array.some((item) => item.includes(string));
         let textArray = wrapper.find('mark').
-          map((node) => node.html());
+          map((node) => node.text());
 
         expect(doesArrayIncludeString(textArray, 'form')).to.be.true;
         expect(doesArrayIncludeString(textArray, 'mytag')).to.be.true;
