@@ -74,6 +74,11 @@ describe RetrieveAppealsDocumentsForReaderJob do
         .and_return([expected_document_2]).once
       expect(VBMSService).to receive(:fetch_document_file).with(expected_document_2).and_return(doc2_expected_content)
         .once
+
+      # Fail test if Mock is called for non-reader user
+      expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+      expect(VBMSService).not_to receive(:fetch_documents_for).with(appeal_with_document_for_non_reader)
+      expect(VBMSService).not_to receive(:fetch_document_file).with(unexpected_document)
     end
 
     it "retrieves the appeal documents for reader users" do
