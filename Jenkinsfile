@@ -24,13 +24,13 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
     node('caseflow-pod') {
 
         stage('Clone repository') {
-            ubuntu.inside {
+            container('ubuntu') {
                 checkout scm
             }
         }
 
         stage('Test Setup') {
-            ubuntu.inside {
+            container('ubuntu') {
                 sh """
                 echo $PATH
                 apt-get update
@@ -50,7 +50,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         }
 
         stage('script') {
-            ubuntu.inside {
+            container('ubuntu') {
                 sh"""
                 bundle exec rake spec
                 bundle exec rake ci:other
