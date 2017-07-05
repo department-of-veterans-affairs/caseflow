@@ -1,14 +1,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import Highlight from '../Highlight';
 
 class TagTableColumn extends PureComponent {
   render() {
-    const { doc } = this.props;
+    const { tags } = this.props;
 
     return <div className="document-list-issue-tags">
-      {doc.tags && doc.tags.map((tag) => {
-        return <div className="document-list-issue-tag" key={tag.id}>
-            {tag.text}
+      {tags && tags.map((tag) => {
+        return <div className="document-list-issue-tag"
+            key={tag.id}>
+            <Highlight>
+              {tag.text}
+            </Highlight>
           </div>;
       })}
     </div>;
@@ -16,7 +20,7 @@ class TagTableColumn extends PureComponent {
 }
 
 TagTableColumn.propTypes = {
-  doc: PropTypes.object.isRequired
+  tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default TagTableColumn;

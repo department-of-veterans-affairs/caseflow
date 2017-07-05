@@ -14,6 +14,7 @@ import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
+import Highlight from '../components/Highlight';
 
 import { setDocListScrollPosition, changeSortState,
   setTagFilter, setCategoryFilter, selectCurrentPdf } from './actions';
@@ -87,6 +88,35 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
   shouldShow: state.ui.pdfList.lastReadDocId === ownProps.docId
 });
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+
+class DocTypeColumn extends React.PureComponent {
+  boldUnreadContent = (content, doc) => {
+    if (!doc.opened_by_current_user) {
+      return <strong>{content}</strong>;
+    }
+
+    return content;
+  };
+
+  render() {
+    const { doc } = this.props;
+
+    return this.boldUnreadContent(
+      <Link
+        onClick={this.onClick(doc.id)}
+        to={singleDocumentLink(this.props.documentPathBase, doc)}
+        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
+        <Highlight>
+          {doc.type}
+        </Highlight>
+      </Link>, doc);
+  }
+}
+
+DocTypeColumn.propTypes = {
+  doc: PropTypes.object,
+  documentPathBase: PropTypes.string
+};
 
 class DocumentsTable extends React.Component {
   constructor() {
@@ -184,14 +214,6 @@ class DocumentsTable extends React.Component {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
 
-    const boldUnreadContent = (content, doc) => {
-      if (!doc.opened_by_current_user) {
-        return <strong>{content}</strong>;
-      }
-
-      return content;
-    };
-
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
@@ -213,6 +235,7 @@ class DocumentsTable extends React.Component {
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
     if (row && row.isComment) {
+
       return [{
         valueFunction: (doc) => {
           const comments = this.props.annotationsPerDocument[doc.id];
@@ -283,10 +306,11 @@ class DocumentsTable extends React.Component {
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) =>
-          <span className="document-list-receipt-date">
+        valueFunction: (doc) => <span className="document-list-receipt-date">
+          <Highlight>
             {formatDateStr(doc.receivedAt)}
-          </span>
+          </Highlight>
+        </span>
       },
       {
         cellClass: 'doc-type-column',
@@ -296,13 +320,8 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => boldUnreadContent(
-          <Link
-            onClick={this.onClick(doc.id)}
-            to={singleDocumentLink(this.props.documentPathBase, doc)}
-            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
-            {doc.type}
-          </Link>, doc)
+        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf}
+          documentPathBase={this.props.documentPathBase}/>
       },
       {
         cellClass: 'tags-column',
@@ -329,9 +348,7 @@ class DocumentsTable extends React.Component {
           }
         </div>,
         valueFunction: (doc) => {
-          return <TagTableColumn
-            doc={doc}
-          />;
+          return <TagTableColumn tags={doc.tags} />;
         }
       },
       {
@@ -408,7 +425,8 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
   ..._.pick(state, 'tagOptions'),
-  ..._.pick(state.ui, 'pdfList')
+  ..._.pick(state.ui, 'pdfList'),
+  ..._.pick(state.ui, 'docFilterCriteria')
 });
 
 export default connect(
