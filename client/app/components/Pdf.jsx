@@ -111,7 +111,6 @@ export class Pdf extends React.PureComponent {
     };
 
     this.currentPage = 0;
-    this.positionOnPage = 0;
     this.isDrawing = {};
 
     this.defaultWidth = PAGE_WIDTH;
@@ -185,7 +184,8 @@ export class Pdf extends React.PureComponent {
           // The viewport is a PDFJS concept that combines the size of the
           // PDF pages with the scale go get the dimensions of the divs.
           const viewport = pdfPage.getViewport(this.props.scale);
-          const positionOnPage = - this.pageElements[this.props.file][this.currentPage - 1].pageContainer.getBoundingClientRect().top;
+          const positionOnPage = -this.pageElements[this.props.file][this.currentPage - 1].pageContainer.
+            getBoundingClientRect().top;
 
           // We need to set the width and heights of everything based on
           // the width and height of the viewport.
@@ -196,7 +196,12 @@ export class Pdf extends React.PureComponent {
           this.setElementDimensions(page, viewport);
           container.innerHTML = '';
 
-          this.scrollWindow.scrollTop = this.pageElements[this.props.file][this.currentPage - 1].pageContainer.getBoundingClientRect().top + positionOnPage + this.scrollWindow.scrollTop;
+          // In updating the sizes of the page divs, we may have pushed the page the user
+          // is looking at up or down. If we have moved that page, we want to undo that movement.
+          // We do this by determining where on the current page you were scrolled to before we
+          // updated the dimensions. Then we make sure the user is still scrolled to that spot.
+          this.scrollWindow.scrollTop = this.pageElements[this.props.file][this.currentPage - 1].pageContainer.
+            getBoundingClientRect().top + positionOnPage + this.scrollWindow.scrollTop;
 
           // Call PDFJS to actually draw the page.
           return pdfPage.render({
