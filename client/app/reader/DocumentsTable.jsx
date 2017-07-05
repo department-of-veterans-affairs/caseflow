@@ -98,7 +98,12 @@ class DocTypeColumn extends React.PureComponent {
     return content;
   };
 
-  render() {
+  onClick = (id) => () => {
+    console.log('here');
+    setTimeout(() => this.props.selectCurrentPdf(id), 0);
+  }
+
+  render = () => {
     const { doc } = this.props;
 
     return this.boldUnreadContent(
@@ -113,10 +118,21 @@ class DocTypeColumn extends React.PureComponent {
   }
 }
 
+const mapDocTypeDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    selectCurrentPdf
+  }, dispatch)
+});
+
 DocTypeColumn.propTypes = {
   doc: PropTypes.object,
   documentPathBase: PropTypes.string
 };
+
+const ConnectedDocTypeColumn = connect(
+  null, mapDocTypeDispatchToProps
+)(DocTypeColumn);
+
 
 class DocumentsTable extends React.Component {
   constructor() {
@@ -159,10 +175,6 @@ class DocumentsTable extends React.Component {
   getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
   toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('category')
   toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
-
-  onClick = (id) => () => {
-    this.props.selectCurrentPdf(id);
-  }
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -320,7 +332,7 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf}
+        valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc}
           documentPathBase={this.props.documentPathBase}/>
       },
       {
@@ -409,8 +421,7 @@ const mapDispatchToProps = (dispatch) => ({
     setDocListScrollPosition,
     setTagFilter,
     setCategoryFilter,
-    changeSortState,
-    selectCurrentPdf
+    changeSortState
   }, dispatch),
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
