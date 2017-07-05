@@ -131,7 +131,6 @@ class DocumentsTable extends React.Component {
   toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
 
   onClick = (id) => (event) => {
-    debugger;
     setTimeout(() => this.props.selectCurrentPdf(id), 0);
   }
 
