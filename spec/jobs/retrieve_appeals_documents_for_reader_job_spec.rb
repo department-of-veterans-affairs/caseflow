@@ -25,15 +25,15 @@ describe RetrieveAppealsDocumentsForReaderJob do
 
     let!(:appeal_with_document) do
       Generators::Appeal.create(
-          vbms_id: expected_document_1.vbms_document_id,
-          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+        vbms_id: expected_document_1.vbms_document_id,
+        vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
       )
     end
 
     let!(:another_appeal_with_document) do
       Generators::Appeal.create(
-          vbms_id: expected_document_2.vbms_document_id,
-          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+        vbms_id: expected_document_2.vbms_document_id,
+        vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
       )
     end
 
@@ -43,8 +43,8 @@ describe RetrieveAppealsDocumentsForReaderJob do
 
     let!(:appeal_with_document_for_non_reader) do
       Generators::Appeal.create(
-          vbms_id: unexpected_document.vbms_document_id,
-          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+        vbms_id: unexpected_document.vbms_document_id,
+        vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
       )
     end
 
@@ -61,19 +61,19 @@ describe RetrieveAppealsDocumentsForReaderJob do
 
       # Expect calls to service for all users with Reader roles
       expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
-                                                     .and_return([appeal_with_document]).once
+        .and_return([appeal_with_document]).once
       expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_with_multiple_roles.css_id)
-                                                     .and_return([another_appeal_with_document]).once
+        .and_return([another_appeal_with_document]).once
 
       # Expect calls to VBMS service to retrieve content from VBMS
       expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_document).and_return([expected_document_1])
-                                 .once
+        .once
       expect(VBMSService).to receive(:fetch_document_file).with(expected_document_1).and_return(doc1_expected_content)
-                                 .once
+        .once
       expect(VBMSService).to receive(:fetch_documents_for).with(another_appeal_with_document)
-                                 .and_return([expected_document_2]).once
+        .and_return([expected_document_2]).once
       expect(VBMSService).to receive(:fetch_document_file).with(expected_document_2).and_return(doc2_expected_content)
-                                 .once
+        .once
     end
 
     it "retrieves the appeal documents for reader users" do
