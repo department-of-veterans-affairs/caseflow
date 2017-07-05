@@ -14,7 +14,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         command: 'cat',
         privileged: false,
         alwaysPullImage: false
-    )] {
+    )]) {
     node('caseflow-pod') {
         def app
 
