@@ -9,7 +9,7 @@ class RetrieveAppealsDocumentsForReaderJob < ActiveJob::Base
       user.current_case_assignments.each do |appeal|
         appeal.fetch_documents!(save: true).each do |document|
           Rails.logger.debug "Fetching #{document.file_name} from VBMS"
-          document.fetch_and_cache_document_from_vbms
+          document.fetch_content
         end
       end
 
