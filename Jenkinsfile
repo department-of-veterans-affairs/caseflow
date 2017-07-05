@@ -37,6 +37,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
                 apt-get install -y chromedriver pdftk xvfb
                 cd ./client && npm install --no-optional
                 cd ..
+                RAILS_ENV=test bundle install
                 RAILS_ENV=test bundle exec rake db:create
                 RAILS_ENV=test bundle exec rake db:schema:load
                 export PATH=$PATH:/usr/lib/chromium-browser/
