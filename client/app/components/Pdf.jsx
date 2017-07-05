@@ -22,12 +22,12 @@ const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
 /**
- * We do a lot of work with coordinates to draw PDFs.
+ * We do a lot of work with coordinates to render PDFs.
  * It is important to keep the various coordinate systems straight.
  * Here are the systems we use:
  *
  *    Root coordinates: The coordinate system for the entire app.
- *      (0, 0) is the top left hand corner of the entire HTML document that the browser has drawn.
+ *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
  *
  *    Page coordinates: A coordinate system for a given PDF page.
  *      (0, 0) is the top left hand corner of that PDF page.
