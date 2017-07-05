@@ -161,7 +161,7 @@ $tag-backgrond-color: #d6d7d9;
       @include hover;
 
       button {
-        padding: $dropdown-interior-padding;
+        padding: 0;
         padding-bottom: 0;
         margin-top: 14px;
         margin-left: 14px;
@@ -192,9 +192,9 @@ $tag-backgrond-color: #d6d7d9;
         margin-right: .5em;
 
         .cf-form-checkboxes {
-          margin-top: 14px;
+          padding-top: 14px;
           margin-bottom: 0;
-          margin-left: 14px;
+          padding-left: 14px;
         }
       }
     }
@@ -206,14 +206,15 @@ $tag-backgrond-color: #d6d7d9;
 
       li {
         margin-bottom: 0;
-        
+        padding-top: 14px;
+        padding-left: 14px;
+
         @include hover;
 
         .cf-form-checkboxes {
-          margin-top: 14px;
+          margin-top: 0;
           margin-bottom: 0;
-          margin-left: 14px;
-        
+
           label {
             padding: $dropdown-interior-padding;
             margin-bottom: 0;
@@ -232,9 +233,6 @@ $tag-backgrond-color: #d6d7d9;
 
       li:last-child .cf-form-checkboxes {
         margin-bottom: 0;
-        margin-top: 14px;
-
-
 
         .cf-category-selector {
           margin-bottom: 0;
