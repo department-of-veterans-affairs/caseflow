@@ -33,6 +33,7 @@ export const searchString = (searchQuery, state) => (doc) => {
   wordFound = queryTokens.every((word) => {
     const searchWord = word.trim();
     const commentFound = commentContainsString(word, state, doc);
+
     // aggregating commentFound with all the words being searched
     // if a word is found in any of the comments, this will be true
     commentFoundAggregate = commentFoundAggregate || commentFound;
