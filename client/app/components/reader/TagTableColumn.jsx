@@ -20,8 +20,7 @@ class TagTableColumn extends PureComponent {
 }
 
 TagTableColumn.propTypes = {
-  tags: PropTypes.arrayOf(PropTypes.object),
-  searchQuery: PropTypes.string
+  tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default TagTableColumn;
