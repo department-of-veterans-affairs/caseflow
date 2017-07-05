@@ -122,7 +122,7 @@ export class DecisionReviewer extends React.PureComponent {
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
         isCommentLabelSelected={this.state.isCommentLabelSelected}
-        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         {...props}
       />;
@@ -139,7 +139,7 @@ export class DecisionReviewer extends React.PureComponent {
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        documentPathBase={`/${vacolsId}/documents`}
         {...props}
       />
     ;

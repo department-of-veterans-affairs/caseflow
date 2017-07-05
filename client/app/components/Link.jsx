@@ -16,6 +16,7 @@ export default class Link extends React.Component {
       to,
       target,
       name,
+      onClick,
       href,
       button,
       children
@@ -37,7 +38,8 @@ export default class Link extends React.Component {
       target,
       type,
       id: name,
-      className: CLASS_NAME_MAPPING[button]
+      className: CLASS_NAME_MAPPING[button],
+      onClick
     };
 
     if (to) {
@@ -60,5 +62,6 @@ Link.propTypes = {
   ariaLabel: PropTypes.string,
   to: PropTypes.string,
   button: PropTypes.string,
+  onClick: PropTypes.func,
   children: PropTypes.node
 };

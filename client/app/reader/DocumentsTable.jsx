@@ -13,9 +13,10 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
+import Link from '../components/Link';
 
 import { setDocListScrollPosition, changeSortState,
-  setTagFilter, setCategoryFilter } from './actions';
+  setTagFilter, setCategoryFilter, selectCurrentPdf } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
@@ -128,6 +129,11 @@ class DocumentsTable extends React.Component {
   getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
   toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('category')
   toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
+
+  onClick = (id) => (event) => {
+    debugger;
+    setTimeout(() => this.props.selectCurrentPdf(id), 0);
+  }
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -292,12 +298,12 @@ class DocumentsTable extends React.Component {
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) => boldUnreadContent(
-          <a
-            href={singleDocumentLink(this.props.documentPathBase, doc)}
-            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-            onMouseUp={this.props.showPdf(doc.id)}>
+          <Link
+            onClick={this.onClick(doc.id)}
+            to={singleDocumentLink(this.props.documentPathBase, doc)}
+            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
             {doc.type}
-          </a>, doc)
+          </Link>, doc)
       },
       {
         cellClass: 'tags-column',
@@ -387,7 +393,8 @@ const mapDispatchToProps = (dispatch) => ({
     setDocListScrollPosition,
     setTagFilter,
     setCategoryFilter,
-    changeSortState
+    changeSortState,
+    selectCurrentPdf
   }, dispatch),
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({

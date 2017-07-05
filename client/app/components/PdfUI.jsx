@@ -149,7 +149,7 @@ export class PdfUI extends React.Component {
                 ariaLabel="open document in new tab"
                 target="_blank"
                 button="matte"
-                href={singleDocumentLink(this.props.documentPathBase, this.props.doc)}>
+                href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
                 <span title={this.props.doc.type}>{this.props.doc.type}</span>
               </Link>
             </span>
