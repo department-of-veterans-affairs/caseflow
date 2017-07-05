@@ -1,4 +1,5 @@
 require "rails_helper"
+require "byebug"
 
 User.authentication_service = Fakes::AuthenticationService
 
@@ -186,6 +187,30 @@ describe User do
       it "sets regional_office in the session" do
         is_expected.to be_truthy
         expect(user.regional_office).to eq("RO21")
+      end
+    end
+  end
+
+  context "#current_case_assignments" do
+    subject { user.current_case_assignments }
+
+    let(:appeal) { Generators::Appeal.create }
+
+    before do
+      User.case_assignment_repository = Fakes::CaseAssignmentRepository
+    end
+
+    context "returns empty array when no cases are assigned" do
+      it do
+        Fakes::CaseAssignmentRepository.appeal_records = []
+        is_expected.to be_empty
+      end
+    end
+
+    context "returns appeal assigned to user" do
+      it do
+        Fakes::CaseAssignmentRepository.appeal_records = [appeal]
+        is_expected.to match_array([appeal])
       end
     end
   end
