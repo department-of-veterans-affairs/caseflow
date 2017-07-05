@@ -41,7 +41,6 @@ export class Comment extends React.Component {
 
   render() {
     let className = 'comment-container';
-    const { searchQuery } = this.props;
 
     if (this.props.selected) {
       className = `${className} comment-container-selected`;
