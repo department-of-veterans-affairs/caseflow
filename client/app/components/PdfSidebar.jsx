@@ -145,6 +145,7 @@ export class PdfSidebar extends React.Component {
           <Button
             name="hide menu"
             classNames={['cf-pdf-button']}
+            id="hide-menu-header"
             onClick={this.props.handleTogglePdfSidebar}>
             <strong>
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
@@ -153,7 +154,7 @@ export class PdfSidebar extends React.Component {
         </div>
         <Accordion style="outline" accordion={false}
           defaultActiveKey={["Document Information", "Categories", "Issue Tags", "Comments"]}
-          className="cf-sidebar-accordion">
+          classNames={["cf-sidebar-accordion"]}>
           <AccordionHeader title="Document Information" key={1}>
             <p className="cf-pdf-meta-title cf-pdf-cutoff">
               <b>Document Type: </b>
