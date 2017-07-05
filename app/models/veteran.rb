@@ -25,7 +25,7 @@ class Veteran
   end
 
   def country_requires_state?
-    country === 'USA'
+    country == "USA"
   end
 
   # Convert to hash used in AppealRepository.establish_claim!
