@@ -200,7 +200,6 @@ class UnconnectedConfirmHearing extends React.Component {
     let { hearingDocumentIsInVbms,
       onHearingDocumentChange,
       form9Type,
-      form9Date,
       onTypeOfForm9Change,
       hearingPreference,
       onHearingPreferenceChange,
@@ -390,7 +389,6 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
-  form9Date: state.form9.vacolsDate,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
   erroredFields: state.erroredFields,
@@ -416,7 +414,6 @@ ConfirmHearing.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   form9Type: PropTypes.string,
-  form9Date: PropTypes.string,
   onTypeOfForm9Change: PropTypes.func,
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,
