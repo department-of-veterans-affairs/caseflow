@@ -20,7 +20,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
          ttyEnabled: true,
          command: 'cat'
-     )])
+    )]){
     node('caseflow-pod') {
 
         stage('Clone repository') {
