@@ -84,7 +84,7 @@ describe('DecisionReviewer', () => {
 
       it('the PDF view when a PDF is clicked', asyncTest(async () => {
         // Click on first document link
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
         await pause();
@@ -104,7 +104,7 @@ describe('DecisionReviewer', () => {
           { target: { value: documents[1].type } });
 
         // Enter the pdf view
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
@@ -148,10 +148,10 @@ describe('DecisionReviewer', () => {
         // Stub out post requests to return the commentId
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
-        // Click on first pdf
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
+
         await pause();
 
         // Click on the add a comment button
@@ -203,7 +203,7 @@ describe('DecisionReviewer', () => {
       }));
 
       it('comment has page number', asyncTest(async() => {
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[1].type).
           simulate('mouseUp');
 
@@ -286,7 +286,7 @@ describe('DecisionReviewer', () => {
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
         // Click on first document link
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp');
         await pause();
@@ -307,7 +307,7 @@ describe('DecisionReviewer', () => {
           ctrlKey: true
         };
 
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
           simulate('mouseUp', event);
         await pause();
@@ -387,6 +387,25 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(0);
       });
 
+      it('does search highlighting for matched keywords', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag form' } });
+
+        const doesArrayIncludeString = (array, string) => array.some((item) => item.includes(string));
+        let textArray = wrapper.find('mark').
+          map((node) => node.text());
+
+        expect(doesArrayIncludeString(textArray, 'form')).to.be.true;
+        expect(doesArrayIncludeString(textArray, 'mytag')).to.be.true;
+
+        // searching for a comment
+        wrapper.find('input').simulate('change',
+          { target: { value: 'comment' } });
+
+        // comment is already expanded and highlighted
+        expect(wrapper.html()).to.include('<mark class=" ">Comment</mark>');
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 
@@ -456,7 +475,7 @@ describe('DecisionReviewer', () => {
         let textArray = wrapper.find('tr').map((node) => node.text());
 
         // Header and one filtered row.
-        expect(textArray).to.have.length(2);
+        expect(textArray).to.have.length(3);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);
