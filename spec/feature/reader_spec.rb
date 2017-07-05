@@ -631,8 +631,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Open and close keyboard shortcuts modal",
-             skip: "Another ticket is in place to fix keyboard events" do
+    scenario "Open and close keyboard shortcuts modal" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
