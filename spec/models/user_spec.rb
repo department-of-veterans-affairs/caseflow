@@ -1,5 +1,4 @@
 require "rails_helper"
-require "byebug"
 
 User.authentication_service = Fakes::AuthenticationService
 
