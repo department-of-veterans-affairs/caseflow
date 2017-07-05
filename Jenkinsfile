@@ -14,25 +14,23 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         command: 'cat',
         privileged: false,
         alwaysPullImage: false
-    )]) {
+    ),
+     containerTemplate(
+         name: 'ubuntu',
+         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
+         ttyEnabled: true,
+         command: 'cat'
+     )])
     node('caseflow-pod') {
-        def app
 
         stage('Clone repository') {
-            /* Let's make sure we have the repository cloned to our workspace */
-
-            checkout scm
-        }
-
-        stage('Build image') {
-            /* This builds the actual image; synonymous to
-             * docker build on the command line */
-
-            app = docker.build("getintodevops/hellonode")
+            ubuntu.inside {
+                checkout scm
+            }
         }
 
         stage('Test Setup') {
-            app.inside {
+            ubuntu.inside {
                 sh """
                 echo $PATH
                 apt-get update
@@ -52,7 +50,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         }
 
         stage('script') {
-            app.inside {
+            ubuntu.inside {
                 sh"""
                 bundle exec rake spec
                 bundle exec rake ci:other
