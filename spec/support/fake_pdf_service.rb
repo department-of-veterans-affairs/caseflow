@@ -4,7 +4,7 @@ class FakePdfService
   end
 
   def self.output_location_for(_form8)
-    File.join(Rails.root, "spec", "support", "form8-TEST.pdf")
+    File.join(Rails.root, "tmp", "pdfs", "form8-TEST.pdf")
   end
 
   class << self
