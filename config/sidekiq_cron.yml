@@ -27,3 +27,10 @@ heartbeat_tasks_job:
   class: "HeartbeatTasksJob"
   queue: default
   active_job: true
+
+# Checks dependecies from Monitor (BGS, VACOLS, VBMS, VBMS.FindDocumentSeriesReference)
+dependencies_check_job:
+  cron: "* * * * * America/New_York"
+  class: "DependenciesCheckJob"
+  queue: default
+  active_job: true

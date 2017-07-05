@@ -88,6 +88,7 @@ Rails.application.routes.draw do
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
+  get "dependencies-check", to: "dependencies_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
 
