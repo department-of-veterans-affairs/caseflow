@@ -30,7 +30,7 @@ heartbeat_tasks_job:
 
 # Checks dependecies every 30 seconds(BGS, VACOLS, VBMS, VBMS.FindDocumentSeriesReference)
 dependencies_check_job:
-  cron: "* * * * * America/New_York"
+  cron: "*/30 * * * * * America/New_York"
   class: "DependenciesCheckJob"
   queue: default
   active_job: true
