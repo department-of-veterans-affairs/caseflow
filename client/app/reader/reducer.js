@@ -52,6 +52,7 @@ const updateFilteredDocIds = (nextState) => {
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
   let updatedNextState = nextState;
+  let docFoundComments = [];
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -64,14 +65,15 @@ const updateFilteredDocIds = (nextState) => {
     ).
     filter(
       (doc) => {
-        // update state with if comments should be shown
         // searchString returns an object that contains wordFound and commentFound.
         // This is done to re-use the comment found result to update the state to expand the
         // comment section and to actually search the comment.
         const searchResult = searchString(searchQuery, nextState)(doc);
 
-        // commentFound is used to update the state of expand comment
-        updatedNextState = updateListComments(doc.id, updatedNextState, searchResult.commentFound);
+        docFoundComments.push({
+          docId: doc.id,
+          commentFound: searchResult.commentFound
+        });
 
         // if the search term is found in the document's annotations
         return searchResult.wordFound;
@@ -80,6 +82,11 @@ const updateFilteredDocIds = (nextState) => {
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
     value();
+
+    // updating the state of all annotations for expand comments
+    _.forEach(docFoundComments, (docFoundComment) => {
+      updatedNextState = updateListComments(docFoundComment.docId, updatedNextState, docFoundComment.commentFound);
+    });
 
   if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
