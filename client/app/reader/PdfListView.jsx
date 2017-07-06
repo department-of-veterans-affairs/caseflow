@@ -8,7 +8,7 @@ import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
 
-export class PdfListView extends React.PureComponent {
+export class PdfListView extends React.Component {
   render() {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
