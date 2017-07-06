@@ -4,14 +4,11 @@ import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import _ from 'lodash';
 import DocumentsTable from './DocumentsTable';
-import RouteComponent from '../components/RouteComponent';
 
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
 
-export class PdfListView extends RouteComponent {
-  pageTitle = 'Claims Folder | Caseflow Reader'
-
+export class PdfListView extends React.PureComponent {
   render() {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
