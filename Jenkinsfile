@@ -23,7 +23,9 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Clone repository') {
             container('ubuntu') {
+                sh """
                 nc -vz localhost 5432
+                """
                 checkout scm
             }
         }
