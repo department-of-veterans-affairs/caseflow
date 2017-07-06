@@ -325,5 +325,11 @@ RSpec.feature "Start Certification" do
       expect(find("#page-title")).to have_content "Already Certified"
       expect(page).to have_content "Appeal has already been Certified"
     end
+
+    scenario "There is dependencies outage" do
+      Rails.cache.write(:dependencies_outage, "BGS")
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).to have_content "We've detected technical issues in our system"
+    end
   end
 end

@@ -14,7 +14,7 @@ export default class PerformanceDegradationBanner extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showBanner: true
+      showBanner: false
     };
   }
 
@@ -24,7 +24,7 @@ export default class PerformanceDegradationBanner extends React.Component {
       let outage = JSON.parse(data.text).dependencies_outage;
 
       this.setState({
-        showBanner: outage
+        showBanner: Boolean(outage)
       });
     }, () => {
       this.setState({
@@ -33,10 +33,18 @@ export default class PerformanceDegradationBanner extends React.Component {
     });
   }
 
-  render() {
+  componentDidMount() {
+    // initial check
+    this.checkDependencies();
+  }
 
+  componentDidUpdate() {
+    // subsequent checks
     setTimeout(() =>
      this.checkDependencies(), Constants.POLLING_INTERVAL);
+  }
+
+  render() {
 
     return <div>
       { this.state.showBanner &&
