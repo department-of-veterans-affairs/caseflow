@@ -66,6 +66,12 @@ production_vacols:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
+  username: <%= `whoami` %>
+  database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
+
+test_jenkins:
+  <<: *default
+  host: localhost
   username: postgres
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
