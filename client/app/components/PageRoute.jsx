@@ -8,7 +8,7 @@ class PageRoute extends React.Component {
   static contextTypes = {
     router: PropTypes.shape({
       route: PropTypes.shape({
-        location: PropTypes.object.isRequired,
+        location: PropTypes.object.isRequired
       })
     })
   }
@@ -32,31 +32,28 @@ class PageRoute extends React.Component {
     const currentLocation = this.context.router.route.location;
     const nextLocation = nextContext.router.route.location;
 
-    this.locationChanging = currentLocation != nextLocation
+    this.locationChanging = currentLocation !== nextLocation;
   }
 
-  renderWithCallback() {
+  renderWithCallback = (params) => {
     const { title, render } = this.props;
-    const locationChanging = this.locationChanging;
 
-    return (params) => {
-      if(locationChanging) {
-        document.title = title;
+    if (this.locationChanging) {
+      document.title = title;
 
-        if (window.analyticsPageView) {
-          window.analyticsPageView(window.location.pathname);
-        }
+      if (window.analyticsPageView) {
+        window.analyticsPageView(window.location.pathname);
       }
+    }
 
-      return render(params);
-    };
+    return render(params);
   }
 
   render() {
     // eslint-disable-next-line no-unused-vars
     let { title, render, ...routeProps } = this.props;
 
-    return <Route { ...routeProps } render={ this.renderWithCallback() } />;
+    return <Route { ...routeProps } render={ this.renderWithCallback } />;
   }
 }
 
