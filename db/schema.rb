@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170602182637) do
+ActiveRecord::Schema.define(version: 20170619154525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,16 @@ ActiveRecord::Schema.define(version: 20170602182637) do
 
   add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
+
+  create_table "appeal_views", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "appeal_id",      null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.datetime "last_viewed_at"
+  end
+
+  add_index "appeal_views", ["appeal_id", "user_id"], name: "index_appeal_views_on_appeal_id_and_user_id", unique: true, using: :btree
 
   create_table "appeals", force: :cascade do |t|
     t.string  "vacols_id",                                                                    null: false
@@ -117,6 +127,7 @@ ActiveRecord::Schema.define(version: 20170602182637) do
     t.string   "bgs_rep_country"
     t.string   "bgs_rep_state"
     t.string   "bgs_rep_zip"
+    t.boolean  "v2"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
@@ -178,7 +189,6 @@ ActiveRecord::Schema.define(version: 20170602182637) do
     t.string   "agent_accredited"
     t.string   "form_646_of_record"
     t.string   "form_646_not_of_record_explanation"
-    t.string   "hearing_preference"
     t.string   "hearing_requested"
     t.string   "hearing_held"
     t.string   "hearing_transcript_on_file"
@@ -186,8 +196,6 @@ ActiveRecord::Schema.define(version: 20170602182637) do
     t.string   "contested_claims_procedures_applicable"
     t.string   "contested_claims_requirements_followed"
     t.date     "soc_date"
-    t.date     "nod_date"
-    t.date     "form9_date"
     t.string   "ssoc_required"
     t.text     "record_other_explanation"
     t.text     "remarks"
@@ -226,6 +234,9 @@ ActiveRecord::Schema.define(version: 20170602182637) do
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.string   "certifying_official_title_specify_other"
+    t.string   "hearing_preference"
+    t.date     "nod_date"
+    t.date     "form9_date"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree

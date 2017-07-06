@@ -1,3 +1,4 @@
+# coding: utf-8
 require "rails_helper"
 
 RSpec.feature "Start Certification" do
@@ -152,7 +153,7 @@ RSpec.feature "Start Certification" do
       select "AMVETS", from: "Service organization name"
       expect(page).to have_content("Great! Caseflow will update")
       click_button("Continue")
-      expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+      expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
       page.go_back
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
         find("label", text: "No").click
@@ -167,7 +168,7 @@ RSpec.feature "Start Certification" do
       expect(page).to_not have_content("Since you selected Unlisted")
       fill_in "Enter the service organization's name:", with: "Test"
       click_button("Continue")
-      expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+      expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
 
       # go back to the case details page
       page.go_back
@@ -184,14 +185,14 @@ RSpec.feature "Start Certification" do
       expect(find_field("Enter the service organization's name:").value).to eq("Test")
       click_button("Continue")
 
-      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
-        .to_formatted_s(:short_date)}?") do
+      within_fieldset("Has the appellant requested a change to their " \
+                      "hearing preference since submitting the Form 9?") do
         find("label", text: "Yes").click
       end
       expect(page).to have_content("What did the appellant request in the document you found")
 
-      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
-        .to_formatted_s(:short_date)}?") do
+      within_fieldset("Has the appellant requested a change to their " \
+                      "hearing preference since submitting the Form 9?") do
         find("label", text: "No").click
       end
       within_fieldset("Caseflow found the document below, labeled as a Form 9") do

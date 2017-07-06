@@ -2,8 +2,27 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString } from './search';
+import { searchString, commentContainsString } from './search';
 import { timeFunction } from '../util/PerfDebug';
+
+const SHOW_EXPAND_ALL = false;
+
+/**
+ * This function takes all the documents and check the status of the
+ * list comments in the document to see if Show All or Collapse All should be
+ * shown based on the state.
+ */
+const getExpandAllState = (documents) => {
+  let allExpanded = !SHOW_EXPAND_ALL;
+
+  _.forOwn(documents, (doc) => {
+    if (!doc.listComments) {
+      allExpanded = SHOW_EXPAND_ALL;
+    }
+  });
+
+  return Boolean(allExpanded);
+};
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -19,7 +38,20 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
+  const updateListComments = (id, state, foundComment) => {
+    return update(state, {
+      documents: {
+        [id]: {
+          listComments: {
+            $set: foundComment
+          }
+        }
+      }
+    });
+  };
+
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+  let updatedNextState = nextState;
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -31,7 +63,19 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, nextState)
+      (doc) => {
+        // doing a search through comments first
+        let queryTokens = _.compact(searchQuery.split(' '));
+        const commentFound = queryTokens.some((word) => {
+          return commentContainsString(word, nextState, doc);
+        });
+
+        // update state with if comments should be shown
+        updatedNextState = updateListComments(doc.id, updatedNextState, commentFound);
+
+        // comment found or string found in other parts of annotation of the document
+        return commentFound || searchString(searchQuery)(doc);
+      }
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -41,11 +85,12 @@ const updateFilteredDocIds = (nextState) => {
     filteredIds.reverse();
   }
 
-  return update(nextState, {
+  return update(updatedNextState, {
     ui: {
       filteredDocIds: {
         $set: filteredIds
-      }
+      },
+      $merge: { expandAll: getExpandAllState(updatedNextState.documents) }
     }
   });
 };
@@ -82,33 +127,18 @@ const openAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
-const SHOW_EXPAND_ALL = false;
-
 const initialShowErrorMessageState = {
   tag: false,
   category: false,
   annotation: false
 };
 
-/**
- * This function takes all the documents and check the status of the
- * list comments in the document to see if Show All or Collapse All should be
- * shown based on the state.
- */
-const getExpandAllState = (documents) => {
-  let allExpanded = !SHOW_EXPAND_ALL;
-
-  _.forOwn(documents, (doc) => {
-    if (!doc.listComments) {
-      allExpanded = SHOW_EXPAND_ALL;
-    }
-  });
-
-  return Boolean(allExpanded);
-};
-
 export const initialState = {
+  assignments: [],
+  loadedAppealId: null,
   initialDataLoadingFail: false,
+  pageCoordsBounds: {},
+  placingAnnotationIconPageCoords: null,
   ui: {
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -182,7 +212,7 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.REQUEST_INITIAL_DATA_FAILURE:
     return update(state, {
       initialDataLoadingFail: {
-        $set: true
+        $set: action.payload.value
       }
     });
   case Constants.RECEIVE_DOCUMENTS:
@@ -190,7 +220,7 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         documents: {
-          $set: _(action.payload).
+          $set: _(action.payload.documents).
             map((doc) => [
               doc.id, {
                 ...doc,
@@ -200,6 +230,16 @@ export const reducer = (state = initialState, action = {}) => {
             ]).
             fromPairs().
             value()
+        },
+        loadedAppealId: {
+          $set: action.payload.vacolsId
+        },
+        assignments: {
+          $apply: (existingAssignments) =>
+            existingAssignments.map((assignment) => ({
+              ...assignment,
+              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
+            }))
         }
       }
     ));
@@ -219,6 +259,13 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_ASSIGNMENTS:
+    return update(state,
+      {
+        assignments: {
+          $set: action.payload.assignments
+        }
+      });
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -561,6 +608,12 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SET_PAGE_COORD_BOUNDS:
+    return update(state, {
+      pageCoordsBounds: {
+        $set: action.payload.coordBounds
+      }
+    });
   case Constants.PLACE_ANNOTATION:
     return update(state, {
       ui: {
@@ -584,8 +637,20 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SHOW_PLACE_ANNOTATION_ICON:
+    return update(state, {
+      placingAnnotationIconPageCoords: {
+        $set: {
+          pageIndex: action.payload.pageIndex,
+          ...action.payload.pageCoords
+        }
+      }
+    });
   case Constants.STOP_PLACING_ANNOTATION:
     return update(state, {
+      placingAnnotationIconPageCoords: {
+        $set: null
+      },
       ui: {
         placedButUnsavedAnnotation: { $set: null },
         pdf: {

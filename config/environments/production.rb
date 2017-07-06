@@ -84,4 +84,9 @@ Rails.application.configure do
 
   # Used for performace degradation banner
   ENV["MONITOR_URL"] = "http://monitor.cf.ds.va.gov/sample"
+
+  config.google_analytics_domains = [
+    "appeals#{ENV["COOKIE_DOMAIN"]}",
+    "certification#{ENV["COOKIE_DOMAIN"]}"
+  ]
 end

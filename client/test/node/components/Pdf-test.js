@@ -36,6 +36,7 @@ describe('Pdf', () => {
         file="test.pdf"
         id={pdfId}
         setPdfReadyToShow={_.noop}
+        setPageCoordBounds={_.noop}
         pdfWorker="noworker"
         scale={1}
         onPageChange={onPageChange}
@@ -88,8 +89,6 @@ describe('Pdf', () => {
       });
     });
   });
-
-  /* eslint-enable max-statements */
 });
 
 /* eslint-enable no-unused-expressions */

@@ -1,6 +1,7 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   has_many :tasks
+  has_many :appeal_views
 
   class MultipleDecisionError < StandardError; end
 
@@ -27,6 +28,9 @@ class Appeal < ActiveRecord::Base
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date
+
+  # These are only set when you pull in a case from the Case Assignment Repository
+  attr_accessor :date_assigned, :date_received, :signed_date
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -92,6 +96,12 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
+  # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
+  # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
+  def disposition_remand_priority
+    disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
+  end
+
   def power_of_attorney
     @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
   end
@@ -131,6 +141,14 @@ class Appeal < ActiveRecord::Base
   def appellant_name
     if appellant_first_name
       [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
+    end
+  end
+
+  def appellant_last_first_mi
+    # returns appellant name in format <last>, <first> <middle_initial>.
+    if appellant_first_name
+      name = "#{appellant_last_name}, #{appellant_first_name}"
+      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
     end
   end
 
@@ -337,6 +355,15 @@ class Appeal < ActiveRecord::Base
     events.last.try(:date)
   end
 
+  def to_hash(viewed: nil)
+    serializable_hash(
+      methods: [:veteran_full_name],
+      includes: [:vbms_id, :vacols_id]
+    ).tap do |hash|
+      hash["viewed"] = viewed
+    end
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -368,7 +395,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.repository.fetch_documents_for(self)
+    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
   end
 
   class << self
@@ -400,6 +427,10 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
+    def vbms
+      VBMSService
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -412,8 +443,8 @@ class Appeal < ActiveRecord::Base
       fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
-      repository.upload_document_to_vbms(appeal, form8)
-      repository.clean_document(form8.pdf_location)
+      vbms.upload_document_to_vbms(appeal, form8)
+      vbms.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?
@@ -422,6 +453,12 @@ class Appeal < ActiveRecord::Base
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
 
       fail Caseflow::Error::InvalidFileNumber
+    end
+
+    def initialize_appeal_without_lazy_load(hash)
+      appeal = find_or_initialize_by(vacols_id: hash[:vacols_id])
+      appeal.turn_off_lazy_loading(initial_values: hash)
+      appeal
     end
 
     private

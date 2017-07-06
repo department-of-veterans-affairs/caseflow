@@ -19,6 +19,7 @@ body {
     border-bottom: 1px solid $color-gray-lighter;
     background: $color-white;
     line-height: 4em;
+    margin-bottom: 1.765em;
 
     > div {
       &::after {
@@ -41,6 +42,12 @@ body {
       background-position: center left;
     }
   }
+
+  .cf-app-segment,
+  .cf-app-segment--alt {
+    margin: 0;
+    border: none;
+  }
 }
 
 .cf-alt--content-inside {
@@ -58,9 +65,7 @@ body {
   }
 
   main {
-    margin-top: 1.765em;
-
-    > div {
+    .content {
       background: $color-white;
       border: 1px solid $color-gray-lighter;
     }
@@ -148,6 +153,7 @@ body {
   }
 }
 
+.cf-hearings,
 .cf-hearings-schedule {
   padding: 1.765em;
 
@@ -166,4 +172,18 @@ body {
       text-transform: none;
     }
   }
+
+  .cf-title-meta-right {
+    .cf-push-right {
+      text-align: right;
+      padding: .75em 0;
+    }
+  }
+}
+
+.loading-dockets {
+  width: 50%;
+  height: 35vh;
+  margin: 0 auto;
+  text-align: center;
 }

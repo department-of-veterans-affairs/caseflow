@@ -17,7 +17,7 @@ const UserQuotaControls = ({
     return null;
   }
 
-  return <span>
+  return <div>
     {!userQuota.isEditingTaskCount && userQuota.isLocked &&
       <Button
         name={`unlock-quota-${userQuota.id}`}
@@ -29,8 +29,6 @@ const UserQuotaControls = ({
       </Button>
     }
 
-    &nbsp;&nbsp;
-
     {!userQuota.isEditingTaskCount &&
       <Button
         name={`edit-quota-${userQuota.id}`}
@@ -41,7 +39,7 @@ const UserQuotaControls = ({
       </Button>
     }
 
-    {userQuota.isEditingTaskCount &&
+    {userQuota.isEditingTaskCount && <div>
       <Button
         name={`save-quota-${userQuota.id}`}
         classNames={['cf-btn-link cf-no-padding']}
@@ -49,8 +47,9 @@ const UserQuotaControls = ({
       >
         Save
       </Button>
+    </div>
     }
-  </span>;
+  </div>;
 };
 
 UserQuotaControls.propTypes = {
@@ -90,8 +89,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
     }, () => {
       dispatchUserQuotaAlert(dispatch);
-    }
-    );
+    });
   },
   handleUnlockTaskCount: () => {
     return ApiUtil.patch(`/dispatch/user-quotas/${ownProps.userQuota.id}`,
@@ -103,8 +101,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
     }, () => {
       dispatchUserQuotaAlert(dispatch);
-    }
-    );
+    });
   }
 });
 
