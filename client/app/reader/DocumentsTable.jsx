@@ -17,7 +17,7 @@ import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
 import { setDocListScrollPosition, changeSortState,
-  setTagFilter, setCategoryFilter, selectCurrentPdf } from './actions';
+  setTagFilter, setCategoryFilter, selectCurrentPdfLocally } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
@@ -99,7 +99,7 @@ class DocTypeColumn extends React.PureComponent {
   };
 
   onClick = (id) => () => {
-    setTimeout(() => this.props.selectCurrentPdf(id), 0);
+    setTimeout(() => this.props.selectCurrentPdfLocally(id), 0);
   }
 
   render = () => {
@@ -107,6 +107,7 @@ class DocTypeColumn extends React.PureComponent {
 
     return this.boldUnreadContent(
       <Link
+        onMouseUp={this.onClick(doc.id)}
         onClick={this.onClick(doc.id)}
         to={singleDocumentLink(this.props.documentPathBase, doc)}
         aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
@@ -119,7 +120,7 @@ class DocTypeColumn extends React.PureComponent {
 
 const mapDocTypeDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    selectCurrentPdf
+    selectCurrentPdfLocally
   }, dispatch)
 });
 
