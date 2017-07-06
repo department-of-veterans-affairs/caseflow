@@ -8,7 +8,7 @@ class PageRoute extends React.Component {
     super(props);
 
     if (!props.title) {
-      throw new Error('AppRoute must implement `pageTitle`');
+      throw new Error('PageRoute must implement `pageTitle`');
     }
 
     if (!props.render) {
