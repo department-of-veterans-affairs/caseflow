@@ -72,8 +72,7 @@ test:
 test_jenkins:
   <<: *default
   host: localhost
-  username: <%= ENV["POSTGRES_USERNAME"]%>
-  password: <%=ENV["POSTGRES_PASSWORD"]%>
+  username: postgres
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:
