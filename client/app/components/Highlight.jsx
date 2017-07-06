@@ -8,12 +8,12 @@ class Highlight extends PureComponent {
   render() {
     const { searchQuery } = this.props;
 
-    return <div aria-label="search result">
+    return <span>
       <Highlighter
         searchWords={_.union([searchQuery], searchQuery.split(' '))}
         textToHighlight={this.props.children}
       />
-    </div>;
+    </span>;
   }
 }
 
