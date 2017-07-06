@@ -3,7 +3,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         name: 'postgres', 
         image: 'postgres:9.5',
         ttyEnabled: true,
-        command: 'cat',
         privileged: false,
         alwaysPullImage: false
         ),
@@ -11,7 +10,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         name: 'redis', 
         image: 'redis:3.2.9-alpine', 
         ttyEnabled: true,
-        command: 'cat',
         privileged: false,
         alwaysPullImage: false
     ),
