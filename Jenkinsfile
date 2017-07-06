@@ -35,9 +35,9 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
                 apt-get install -y chromedriver pdftk xvfb
                 cd ./client && npm install --no-optional
                 cd ..
-                bundle install
-                bundle exec rake db:create
-                bundle exec rake db:schema:load
+                RAILS_ENV=test bundle install
+                RAILS_ENV=test bundle exec rake db:create
+                RAILS_ENV=test bundle exec rake db:schema:load
                 export PATH=$PATH:/usr/lib/chromium-browser/
                 export DISPLAY=:99.0
                 sh -e /etc/init.d/xvfb start
@@ -49,8 +49,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('script') {
             container('ubuntu') {
                 sh"""
-                bundle exec rake spec
-                bundle exec rake ci:other
+                RAILS_ENV=test bundle exec rake spec
+                RAILS_ENV=test bundle exec rake ci:other
                 mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
                 - rm -rf node_modules && mv node_modules_bak node_modules
                 """
