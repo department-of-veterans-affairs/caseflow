@@ -1,9 +1,18 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 // Route augmented with application specific callbacks to change
 // the page title and call google analytics
 class PageRoute extends React.Component {
+  static contextTypes = {
+    router: PropTypes.shape({
+      route: PropTypes.shape({
+        location: PropTypes.object.isRequired,
+      })
+    })
+  }
+
   constructor(props) {
     super(props);
 
@@ -17,14 +26,26 @@ class PageRoute extends React.Component {
     }
   }
 
+  // Only run callback if the location is changing. See if location has changed by
+  // looking at the router here.
+  componentWillReceiveProps(nextProps, nextContext) {
+    const currentLocation = this.context.router.route.location;
+    const nextLocation = nextContext.router.route.location;
+
+    this.locationChanging = currentLocation != nextLocation
+  }
+
   renderWithCallback() {
     const { title, render } = this.props;
+    const locationChanging = this.locationChanging;
 
     return (params) => {
-      document.title = title;
+      if(locationChanging) {
+        document.title = title;
 
-      if (window.analyticsPageView) {
-        window.analyticsPageView(window.location.pathname);
+        if (window.analyticsPageView) {
+          window.analyticsPageView(window.location.pathname);
+        }
       }
 
       return render(params);
