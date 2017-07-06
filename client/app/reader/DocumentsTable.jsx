@@ -99,7 +99,9 @@ class DocTypeColumn extends React.PureComponent {
   };
 
   onClick = (id) => () => {
-    this.props.selectCurrentPdfLocally(id);
+    // Annoyingly if we make this call in the thread, it won't follow the link. Instead
+    // we use setTimeout to force it to run at a later point.
+    setTimeout(() => this.props.selectCurrentPdfLocally(id), 0);
   }
 
   render = () => {
