@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '../../components/Button';
+import ToggleButton from '../../components/ToggleButton';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideToggleButton extends React.Component {
@@ -7,21 +7,17 @@ export default class StyleGuideToggleButton extends React.Component {
     super(props);
 
     this.state = {
-       isToggleOn: true
-        
+      active: 'view_1'
+
     };
-    this.handleClick = this.handleClick.bind(this);
   }
 
-   handleClick() {
-    this.setState(prevState => ({
-      isToggleOn: !prevState.isToggleOn
-    }));
+  handleClick = (id) => {
+    this.setState({ active: id });
   }
   render() {
 
-
-  return <div>
+    return <div>
     <br/>
     <StyleGuideComponentTitle
       title="Toggle button"
@@ -30,18 +26,12 @@ export default class StyleGuideToggleButton extends React.Component {
       isSubsection={true}
     />
     <div className="usa-grid">
-    <Button
-      id="view_1"
-      name={'View 1'}
-      classNames={['button_wrapper']}>
-    </Button>
-     <Button
-        id="view_2"
-        name={'View 2'}
-        classNames={['usa-button-outline']}>
-    </Button>
-
-
+    <ToggleButton
+     labels ={[{ id: 'view_1',
+       text: 'View 1' }, { id: 'view_2',
+         text: 'View 2' }]}
+     active ={this.state.active}
+     onClick ={this.handleClick}/>
    </div>
    </div>;
   }
