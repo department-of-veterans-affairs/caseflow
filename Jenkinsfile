@@ -30,7 +30,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('ubuntu') {
                 sh """
-                pg_isready -u postgres
+                pg_isready -U postgres
+                sleep 2343423423423423423423432
                 echo $PATH
                 apt-get update
                 apt-get install -y chromedriver pdftk xvfb
