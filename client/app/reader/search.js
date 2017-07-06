@@ -37,7 +37,7 @@ export const searchString = (searchQuery, state) => (doc) => {
     // aggregating commentFound with all the words being searched
     // if a word is found in any of the comments, this will be true
     commentFoundAggregate = commentFoundAggregate || commentFound;
-    
+
     return searchWord.length > 0 && (
       doDatesMatch(doc.receivedAt, searchWord) ||
       commentFound ||
