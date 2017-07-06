@@ -25,7 +25,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
             container('ubuntu') {
                 sh """
                 apt-get update
-                apt-get install netcat
+                apt-get install -y netcat
                 nc -vz localhost 5432
                 """
                 checkout scm
