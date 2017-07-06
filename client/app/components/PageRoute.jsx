@@ -23,7 +23,7 @@ class PageRoute extends React.Component {
     return (params) => {
       document.title = title;
 
-      if(window.analyticsPageView) {
+      if (window.analyticsPageView) {
         window.analyticsPageView(window.location.pathname);
       }
 
