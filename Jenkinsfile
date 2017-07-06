@@ -23,6 +23,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Clone repository') {
             container('ubuntu') {
+                nc -vz localhost 5432
                 checkout scm
             }
         }
@@ -30,6 +31,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('ubuntu') {
                 sh """
+                nc -vz localhost 5432
                 echo $PATH
                 apt-get update
                 apt-get install -y chromedriver pdftk xvfb
