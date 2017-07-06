@@ -217,10 +217,15 @@ RSpec::Matchers.define :become_truthy do |_event_name|
   match do |block|
     begin
       Timeout.timeout(Capybara.default_max_wait_time) do
-        sleep(0.1) until block.call
+        puts 'before'
+        until block.call
+          sleep(0.1)
+          puts block.call
+        end
         true
       end
     rescue TimeoutError
+      puts 'here'
       false
     end
   end
