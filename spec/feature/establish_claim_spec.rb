@@ -145,9 +145,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       %w(Janet).each do |name|
         Generators::EstablishClaim.create(
-            user: Generators::User.create(full_name: "#{name} Smith"),
-            aasm_state: :assigned,
-            appeal_id: appeal_id[name]
+          user: Generators::User.create(full_name: "#{name} Smith"),
+          aasm_state: :assigned,
+          appeal_id: appeal_id[name]
         ).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
