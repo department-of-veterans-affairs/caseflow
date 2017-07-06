@@ -12,7 +12,7 @@ class PageRoute extends React.Component {
     }
 
     if (!props.render) {
-      throw new Error('AppRoute currently only works with `render`' +
+      throw new Error('PageRoute currently only works with `render`' +
                       '\n...feel free to add support for `component` and `children :)');
     }
   }
