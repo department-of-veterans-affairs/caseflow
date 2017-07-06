@@ -99,12 +99,16 @@ class DocTypeColumn extends React.PureComponent {
   };
 
   onClick = (id) => () => {
-    setTimeout(() => this.props.selectCurrentPdfLocally(id), 0);
+    this.props.selectCurrentPdfLocally(id);
   }
 
   render = () => {
     const { doc } = this.props;
 
+    // We add a click handler to mark a document as read even if it's opened in a new tab.
+    // This will get fired in the current tab, as the link is followed in a new tab. We
+    // also need to add a mouseUp event since middle clicking doesn't trigger an onClick.
+    // This will not work if someone right clicks and opens in a new tab.
     return this.boldUnreadContent(
       <Link
         onMouseUp={this.onClick(doc.id)}

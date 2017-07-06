@@ -29,35 +29,9 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
-  showPdf = (history, vacolsId) => (docId) => (event) => {
+  showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
       return;
-    }
-
-    if (event) {
-      // If the user is trying to open the link in a new tab/window
-      // then follow the link. Otherwise if they just clicked the link
-      // keep them contained within the SPA.
-      // ctrlKey for windows
-      // shift key for opening in new window
-      // metaKey for Macs
-      // button for middle click
-      if (event.ctrlKey ||
-          event.shiftKey ||
-          event.metaKey ||
-          (event.button &&
-          event.button === 1)) {
-
-        // For some reason calling this synchronosly prevents the new
-        // tab from opening. Move it to an asynchronus call.
-        setTimeout(() =>
-          this.props.handleSelectCurrentPdf(docId)
-        );
-
-        return true;
-      }
-
-      event.preventDefault();
     }
 
     history.push(`/${vacolsId}/documents/${docId}`);
