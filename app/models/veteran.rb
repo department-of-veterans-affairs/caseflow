@@ -16,11 +16,16 @@ class Veteran
 
   COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
 
-  validates :ssn, presence: true
+  validates :ssn, :first_name, :last_name, :city, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: "country_requires_zip?"
+  validates :state, presence: true, if: "country_requires_state?"
 
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country)
+  end
+
+  def country_requires_state?
+    country == "USA"
   end
 
   # Convert to hash used in AppealRepository.establish_claim!

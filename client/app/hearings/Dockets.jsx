@@ -42,8 +42,8 @@ export class Dockets extends React.Component {
         valueName: 'type'
       },
       {
-        header: 'Field Office',
-        valueName: 'field_office'
+        header: 'Regional Office',
+        valueName: 'regional_office'
       },
       {
         header: 'Slots',
@@ -65,7 +65,7 @@ export class Dockets extends React.Component {
         date: <Link to={`dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>{moment(docket.date).format('l')}</Link>,
         start_time: this.getStartTime(),
         type: this.getType(docket.type),
-        field_office: `${docket.venue.city}, ${docket.venue.state} RO`,
+        regional_office: docket.regional_office_name,
         slots: _.random(8, 12),
         scheduled: docket.hearings_hash.length
       };
@@ -74,14 +74,14 @@ export class Dockets extends React.Component {
     return <div>
       <div className="content cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
-          <h1>Hearings Schedule</h1>
+          <h1>Hearing Schedule</h1>
           <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
         </div>
         <Table
           className="dockets"
           columns={columns}
           rowObjects={rowObjects}
-          summary={'Hearings Prep Schedule?'}
+          summary={'Hearing Schedule?'}
           getKeyForRow={this.getKeyForRow}
         />
       </div>
