@@ -26,6 +26,10 @@ class TeamQuota < ActiveRecord::Base
     task_type.is_a?(String) ? task_type.constantize : task_type
   end
 
+  def unlocked_user_count
+    user_count - assigned_quotas.locked.count
+  end
+
   private
 
   def calculate_task_count_for(quota_index)
@@ -52,10 +56,6 @@ class TeamQuota < ActiveRecord::Base
 
   def remainder_task_count
     tasks_to_assign % unlocked_user_count
-  end
-
-  def unlocked_user_count
-    user_count - assigned_quotas.locked.count
   end
 
   # Sum up the total of manually assigned tasks, or "locked" tasks. These will be taken
