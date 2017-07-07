@@ -69,11 +69,18 @@ class UserQuota < ActiveRecord::Base
     # Guard from going above the maximum assignable tasks
     result = [max_locked_task_count, new_locked_task_count.to_i].min
 
+    result = [min_locked_task_count, result].max if min_locked_task_count
+
     [0, result].max
   end
 
   def max_locked_task_count
     team_quota.tasks_to_assign + (locked_task_count || 0)
+  end
+
+  def min_locked_task_count
+    # If there's only one or fewer users left to be calculated, the min is the same as the max
+    team_quota.unlocked_user_count <= 1 ? max_locked_task_count : nil
   end
 
   # Allow team quota to adjust values based on the new user quota
