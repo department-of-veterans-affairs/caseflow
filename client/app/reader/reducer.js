@@ -50,7 +50,7 @@ const updateFilteredDocIds = (nextState) => {
     });
   };
 
-  const updateState = (state, id, key, value) => {
+  const updateStateWithIdAndValue = (state, id, key, value) => {
     return update(state, {
       ui: {
         [key]: {
@@ -93,7 +93,7 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateState(updatedNextState, doc.id, 'searchCategoryHighlights', matchesCategories);
+      updatedNextState = updateStateWithIdAndValue(updatedNextState, doc.id, 'searchCategoryHighlights', matchesCategories);
     }
 
     // updating the state of all annotations for expanded comments
