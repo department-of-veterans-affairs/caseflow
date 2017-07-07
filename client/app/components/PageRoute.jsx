@@ -31,8 +31,8 @@ class PageRoute extends React.Component {
   // Only run callback if the location is changing. See if location has changed by
   // looking at the router here.
   componentWillReceiveProps(nextProps, nextContext) {
-    const currentLocation = this.context.router.route.location;
-    const nextLocation = nextContext.router.route.location;
+    const currentLocation = this.context.router.route.location.pathname;
+    const nextLocation = nextContext.router.route.location.pathname;
 
     this.locationChanging = currentLocation !== nextLocation;
   }
