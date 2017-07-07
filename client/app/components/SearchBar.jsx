@@ -2,12 +2,43 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
+import Analytics from '../util/AnalyticsUtil';
 import classnames from 'classnames';
 import _ from 'lodash';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
     this.props.onChange(event.target.value);
+  }
+
+  clearSearchAnalyticsCallback() {
+    if(this.searchAnalyticsTimeout) {
+      clearTimeout(this.searchAnalyticsTimeout);
+      this.searchAnalyticsTimeout = null;
+      return true;
+    }
+  }
+
+  triggerSearchAnalyticsEvent() {
+    if(!this.props.value) { return; }
+    Analytics.event('Controls', 'search', "documents")
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.value !== nextProps.value) {
+      this.clearSearchAnalyticsCallback()
+
+      this.searchAnalyticsTimeout = setTimeout(() => {
+        this.triggerSearchAnalyticsEvent();
+        this.searchAnalyticsTimeout = null;
+      }, 500);
+    }
+  }
+
+  onBlur = (event) => {
+    if(this.clearSearchAnalyticsCallback()) {
+      this.triggerSearchAnalyticsEvent();
+    }
   }
 
   render() {
@@ -45,6 +76,7 @@ export default class SearchBar extends React.Component {
         className={inputClassName}
         id={id}
         onChange={this.onChange}
+        onBlur={this.onBlur}
         type="search"
         name="search"
         value={value}/>
