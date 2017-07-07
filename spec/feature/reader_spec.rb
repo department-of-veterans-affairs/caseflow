@@ -624,7 +624,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # Expect only the first page of the pdf to be rendered
-      find("#button-hide-menu").click
+      find("#hide-menu-header").click
       expect(page).to_not have_content("Document Type")
 
       click_on "Open menu"
