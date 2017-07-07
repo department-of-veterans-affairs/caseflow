@@ -87,7 +87,7 @@ describe UserQuota do
 
     context "when setting a negative number" do
       let(:new_locked_task_count) { -1 }
-      it { is_expected.to eq(0) }
+      it { is_expected.to eq(4) }
     end
 
     context "when setting to a number higher than the teams assignable tasks" do
