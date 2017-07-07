@@ -30,8 +30,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('ubuntu') {
                 sh """
-                apt-get update
-                apt-get install -y chromedriver pdftk xvfb
                 cd ./client && npm install --no-optional
                 bundle install --without production staging
                 RAILS_ENV=test bundle exec rake db:create
