@@ -15,7 +15,9 @@ class Hearings::DocketsController < HearingsController
   end
 
   def show
-    redirect_to hearings_dockets_path
+    date = date_from(params[:id])
+    return not_found unless date && Judge.new(current_user).docket?(date)
+    render :index
   end
 
   private
