@@ -8,10 +8,18 @@ const typeContainsString = (searchQuery, doc) => {
   return (doc.type.toLowerCase().includes(searchQuery));
 };
 
-export const commentContainsString = (searchQuery, state, doc) =>
+const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
+
+export const commentContainsWords = (searchQuery, state, doc) => {
+  let queryTokens = _.compact(searchQuery.split(' '));
+
+  return queryTokens.some((word) => {
+    return commentContainsString(word, state, doc);
+  });
+};
 
 const categoryContainsString = (searchQuery, doc) =>
   Object.keys(Constants.documentCategories).reduce((acc, category) =>
@@ -27,27 +35,15 @@ const tagContainsString = (searchQuery, doc) =>
 
 export const searchString = (searchQuery, state) => (doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
-  let wordFound = false;
-  let commentFoundAggregate = false;
 
-  wordFound = queryTokens.every((word) => {
+  return queryTokens.every((word) => {
     const searchWord = word.trim();
-    const commentFound = commentContainsString(word, state, doc);
-
-    // aggregating commentFound with all the words being searched
-    // if a word is found in any of the comments, this will be true
-    commentFoundAggregate = commentFoundAggregate || commentFound;
 
     return searchWord.length > 0 && (
       doDatesMatch(doc.receivedAt, searchWord) ||
-      commentFound ||
+      commentContainsString(word, state, doc) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       tagContainsString(searchWord, doc));
   });
-
-  return {
-    wordFound,
-    commentFound: commentFoundAggregate
-  };
 };

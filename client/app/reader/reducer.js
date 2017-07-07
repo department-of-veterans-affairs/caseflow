@@ -2,7 +2,7 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString } from './search';
+import { searchString, commentContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
 const SHOW_EXPAND_ALL = false;
@@ -52,7 +52,6 @@ const updateFilteredDocIds = (nextState) => {
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
   let updatedNextState = nextState;
-  let docFoundComments = [];
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -64,28 +63,16 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      (doc) => {
-        // searchString returns an object that contains wordFound and commentFound.
-        // This is done to re-use the comment found result to update the state to expand the
-        // comment section and to actually search the comment.
-        const searchResult = searchString(searchQuery, nextState)(doc);
-
-        docFoundComments.push({
-          docId: doc.id,
-          commentFound: searchResult.commentFound
-        });
-
-        // if the search term is found in the document's annotations
-        return searchResult.wordFound;
-      }
+      searchString(searchQuery, nextState)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
     value();
 
-    // updating the state of all annotations for expand comments
-    _.forEach(docFoundComments, (docFoundComment) => {
-      updatedNextState = updateListComments(docFoundComment.docId, updatedNextState, docFoundComment.commentFound);
+    // updating the state of all annotations for expanded comments
+    _.forEach(updatedNextState.documents, (doc) => {
+      updatedNextState = updateListComments(doc.id, updatedNextState, 
+        commentContainsWords(searchQuery, updatedNextState, doc));
     });
 
   if (docFilterCriteria.sort.sortAscending) {
