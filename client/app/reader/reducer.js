@@ -50,13 +50,13 @@ const updateFilteredDocIds = (nextState) => {
     });
   };
 
-  const updateStateWithIdAndValue = (state, id, key, value) => {
+  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
     return update(state, {
       ui: {
-        [key]: {
+        searchCategoryHighlights: {
           $merge: {
-            [id]: {
-              ...value
+            [docId]: {
+              ...categoryMatches
             }
           }
         }
@@ -93,8 +93,8 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateStateWithIdAndValue(updatedNextState,
-        doc.id, 'searchCategoryHighlights', matchesCategories);
+      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
+        doc.id, matchesCategories);
     }
 
     // updating the state of all annotations for expanded comments
