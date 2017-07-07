@@ -1,4 +1,8 @@
 #!/bin/bash
+
+bundle install --deployment --without development staging production
+cd ./client && npm install --no-optional
+
 bundle exec rake db:create
 bundle exec rake db:schema:load
 

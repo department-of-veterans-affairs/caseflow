@@ -3,7 +3,7 @@
 # environment that includes all the basic tools to run any appeals applications.
 #
 ################################################################################
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 
 ################################################################################
 # Basic development packages and tools
@@ -33,15 +33,6 @@ RUN apt-get update && apt-get install -y \
 	wget \
 	xvfb \
 	zlib1g-dev
-
-################################################################################
-# Phantom JS
-################################################################################
-ENV PHANTOM_JS phantomjs-2.1.1-linux-x86_64
-RUN wget http://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-RUN tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2
-RUN mv phantomjs-2.1.1-linux-x86_64 /usr/local/share
-RUN ln -sf /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin
 
 ################################################################################
 # Ruby 2.3, copied from the Ruby Dockerhub (https://hub.docker.com/_/ruby/)
@@ -149,28 +140,13 @@ RUN echo "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 ENV HOME /home/$username
 WORKDIR /home/$username
 
-
-########
-# Setup Repo
-########
-ENV RAILS_ENV test
-ENV DISPLAY :99
-ENV REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
-ENV POSTGRES_HOST: "db"
-COPY . /home/$username/caseflow
-WORKDIR /home/$username/caseflow
-
-RUN bundle install --deployment --without development staging production
-RUN cd ./client && npm install --no-optional
-# RUN bundle exec rake db:create \
-#    && bundle exec rake db:schema:load
-
 ################################################################################
 # Permissions and Paths
 ################################################################################
-#COPY bashrc /home/$username/.bashrc
+
 RUN chown -R $username:$usergroup /home/$username/
 
 USER $username
 
 ENV TERM=xterm
+

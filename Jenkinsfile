@@ -14,8 +14,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         alwaysPullImage: false
     ),
      containerTemplate(
-         name: 'ubuntu',
-         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
+         name: 'caseflow-test-runner',
+         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
          ttyEnabled: true,
          alwaysPullImage: true,
          command: 'cat'

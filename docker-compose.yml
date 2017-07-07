@@ -4,7 +4,8 @@ services:
 
   db:
     image: postgres:9.5
-      
+    environment:
+      POSTGRES_USER: "dsva"
   redis:
     image: redis:3.2-alpine
     command: redis-server
@@ -18,7 +19,6 @@ services:
       REDIS_URL_CACHE: "redis://redis:6379/0/cache/"
       POSTGRES_HOST: "db"
     privileged: true
-    
     links:
       - "db"
       - "redis"
