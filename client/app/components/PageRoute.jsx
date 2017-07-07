@@ -24,6 +24,8 @@ class PageRoute extends React.Component {
       throw new Error('PageRoute currently only works with `render`' +
                       '\n...feel free to add support for `component` and `children :)');
     }
+
+    this.locationChanging = true;
   }
 
   // Only run callback if the location is changing. See if location has changed by
