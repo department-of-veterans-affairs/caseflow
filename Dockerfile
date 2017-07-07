@@ -118,7 +118,7 @@ RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
 ################################################################################
 # Node js
 ################################################################################
-RUN curl -sL http://deb.nodesource.com/setup_7.x | sudo -E bash -
+RUN curl -sL http://deb.nodesource.com/setup_6.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
 
