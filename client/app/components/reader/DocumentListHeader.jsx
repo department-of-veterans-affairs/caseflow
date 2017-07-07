@@ -6,6 +6,7 @@ import Alert from '../Alert';
 import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, toggleExpandAll, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
+import Analytics from '../../util/AnalyticsUtil';
 
 export const DocumentListHeader = (props) => {
   const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
@@ -80,6 +81,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(setSearch(searchQuery));
   },
   toggleExpandAll: () => {
+    Analytics.event('Controls', 'click', 'Expand all');
     dispatch(toggleExpandAll());
   }
 });
