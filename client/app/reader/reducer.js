@@ -70,10 +70,10 @@ const updateFilteredDocIds = (nextState) => {
     value();
 
     // updating the state of all annotations for expanded comments
-    _.forEach(updatedNextState.documents, (doc) => {
-      updatedNextState = updateListComments(doc.id, updatedNextState, 
+  _.forEach(updatedNextState.documents, (doc) => {
+    updatedNextState = updateListComments(doc.id, updatedNextState,
         commentContainsWords(searchQuery, updatedNextState, doc));
-    });
+  });
 
   if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
