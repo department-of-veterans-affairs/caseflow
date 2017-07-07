@@ -40,7 +40,8 @@ class DocumentCategoryIcons extends React.Component {
       {
         _.map(categories, (category) =>
           <li
-            className={docHighlights[getCategoryName(category.humanName)] ? `${listClassName} highlighted` : listClassName}
+            className={docHighlights[getCategoryName(category.humanName)] ?
+             `${listClassName} highlighted` : listClassName}
             key={category.renderOrder}
             aria-label={category.humanName}>
             {category.svg}
