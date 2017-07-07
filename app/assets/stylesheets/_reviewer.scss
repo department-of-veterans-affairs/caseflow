@@ -322,8 +322,44 @@ svg[aria-hidden=true],
   margin-top: 0;
 }
 
+.cf-sidebar-heading-comments {
+  &:first-child {
+    margin-top: 20px;
+  }
+}
+
 .cf-sidebar-accordion {
   overflow: scroll;
+  margin-bottom: 0;
+
+  .usa-accordion-content {
+    padding: 14px 30px;
+    overflow: hidden;
+
+    .cf-form-checkboxes {
+      margin-top: 6px;
+      margin-bottom: 20px;
+
+      .cf-form-checkbox {
+
+        label:last-child {
+          margin-bottom: 0;
+
+          .cf-category-selector {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .cf-document-category-picker {
+      li:last-child {
+        div {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
 }
 
 .cf-add-comment-button {
@@ -512,7 +548,6 @@ input[type="search"].cf-search-input-with-close {
   bottom: 0;
   position: relative;
   text-align: center;
-  height: 50px;
 
   .cf-btn-link {
     &:hover {

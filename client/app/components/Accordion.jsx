@@ -28,16 +28,20 @@ export default class Accordion extends React.PureComponent {
           </div>
         </Panel>;
       }
+
+      return '';
     });
 
     const accordionStyle = classnames({
-      'usa-accordion-bordered' : style == 'bordered',
-      'usa-accordion' : style == 'borderless',
-      'usa-accordion-bordered-outline' : style == 'outline'
-    })
+      'usa-accordion-bordered': style === 'bordered',
+      'usa-accordion': style === 'borderless',
+      'usa-accordion-bordered-outline': style === 'outline'
+    });
 
-    /* If accordion=true, there can be no more than one active panel at a time.
-    Source: https://github.com/react-component/collapse */
+    /* rc-collapse props:
+       accordion: If accordion=true, there can be no more than one active panel at a time.
+       defaultActiveKey: shows which accordion headers are expanded on default render
+       Source: https://github.com/react-component/collapse */
 
     return <Collapse accordion={accordion} className={classnames(classNames, accordionStyle)}
       defaultActiveKey={defaultActiveKey}>

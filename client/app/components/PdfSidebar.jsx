@@ -153,8 +153,8 @@ export class PdfSidebar extends React.Component {
           </Button>
         </div>
         <Accordion style="outline" accordion={false}
-          defaultActiveKey={["Document Information", "Categories", "Issue Tags", "Comments"]}
-          classNames={["cf-sidebar-accordion"]}>
+          defaultActiveKey={['Document Information', 'Categories', 'Issue Tags', 'Comments']}
+          classNames={['cf-sidebar-accordion']}>
           <AccordionHeader title="Document Information" key={1}>
             <p className="cf-pdf-meta-title cf-pdf-cutoff">
               <b>Document Type: </b>
@@ -193,7 +193,7 @@ export class PdfSidebar extends React.Component {
             />
           </AccordionHeader>
           <AccordionHeader title="Comments" key={4}>
-            <div className="cf-sidebar-heading">
+            <div className="cf-sidebar-heading cf-sidebar-heading-comments">
               Comments
               <span className="cf-right-side cf-add-comment-button">
                 <Button
