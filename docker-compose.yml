@@ -15,7 +15,7 @@ services:
     ports:
       - "6379:6379"
   web:
-    image: caseflow-pr-image2
+    image: caseflow-pr-image
     ports:
       - "3000:3000"
     depends_on:
