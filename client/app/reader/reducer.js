@@ -98,7 +98,7 @@ const updateFilteredDocIds = (nextState) => {
     }
 
     // updating the state of all annotations for expanded comments
-    if (commentContainsWords !== doc.listComments) {
+    if (containsWords !== doc.listComments) {
       updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
     }
   });
