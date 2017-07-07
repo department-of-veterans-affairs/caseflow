@@ -136,6 +136,47 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
     end
 
+    scenario "Editing won't work if there's only one user" do
+      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
+
+      appeal_id = {
+        "Janet" => appeal.id
+      }
+
+      %w(Janet).each do |name|
+        Generators::EstablishClaim.create(
+          user: Generators::User.create(full_name: "#{name} Smith"),
+          aasm_state: :assigned,
+          appeal_id: appeal_id[name]
+        ).tap do |task|
+          task.start!
+          task.complete!(status: :routed_to_arc)
+        end
+      end
+
+      visit "/dispatch/establish-claim"
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+
+      # Begin editing Janet's quota
+      janet_quota = UserQuota.where(user: User.where(full_name: "Janet Smith").first).first
+
+      within("#table-row-0") do
+        click_on "Edit"
+        fill_in "quota-#{janet_quota.id}", with: "7"
+        click_on "Save"
+      end
+
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+
+      within("#table-row-0") do
+        click_on "Edit"
+        fill_in "quota-#{janet_quota.id}", with: "3"
+        click_on "Save"
+      end
+
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+    end
+
     scenario "View unprepared tasks page" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
