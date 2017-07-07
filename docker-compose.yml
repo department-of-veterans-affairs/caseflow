@@ -29,9 +29,9 @@ services:
     entrypoint: /bin/bash
     environment:
       - RAILS_ENV=test
-      - DATABASE_URL="postgres://postgres:1234@db:5432/caseflow_certification"
-      - REDIS_URL_CACHE="redis://redis:6379/1/cache"
-      - REDIS_URL_SIDEKIQ="redis://redis:6379"
+      - DATABASE_URL=postgres://postgres:1234@db:5432/caseflow_certification
+      - REDIS_URL_CACHE=redis://redis:6379/1/cache
+      - REDIS_URL_SIDEKIQ=redis://redis:6379
     command: |
       -c
       "tail -f /dev/null"
