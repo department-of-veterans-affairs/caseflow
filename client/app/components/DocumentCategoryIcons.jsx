@@ -26,7 +26,7 @@ class DocumentCategoryIcons extends React.Component {
   render() {
     const { searchCategoryHighlights, doc } = this.props;
     const categories = categoriesOfDocument(doc);
-    const docHighlights = searchCategoryHighlights[doc.id] || {};
+    const docHighlights = searchCategoryHighlights ? searchCategoryHighlights[doc.id] : {};
 
     if (!_.size(categories)) {
       return null;
@@ -60,6 +60,8 @@ DocumentCategoryIcons.propTypes = {
 const mapStateToProps = (state) => ({
   searchCategoryHighlights: state.ui.searchCategoryHighlights
 });
+
+export { DocumentCategoryIcons };
 
 export default connect(
   mapStateToProps, null
