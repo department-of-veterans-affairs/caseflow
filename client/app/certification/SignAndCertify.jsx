@@ -46,6 +46,10 @@ class UnconnectedSignAndCertify extends React.Component {
     this.props.updateProgressBar();
   }
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
   getValidationErrors() {
 
     const erroredFields = [];

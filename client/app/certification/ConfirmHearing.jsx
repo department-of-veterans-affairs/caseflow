@@ -131,6 +131,10 @@ class UnconnectedConfirmHearing extends React.Component {
     this.props.resetState();
   }
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
   /* eslint-disable max-statements */
   getValidationErrors() {
     let {

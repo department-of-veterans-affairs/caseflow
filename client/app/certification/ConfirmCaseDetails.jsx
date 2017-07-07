@@ -108,8 +108,6 @@ const ERRORS = {
 };
 
 /*
- * Confirm Case Details
- *
  * This page will display information from BGS
  * about the appellant's representation for the appeal
  * and confirm it.
@@ -132,6 +130,10 @@ export class ConfirmCaseDetails extends React.Component {
 
   componentWillUnmount() {
     this.props.resetState();
+  }
+
+  componentDidMount() {
+    window.scrollTo(0, 0);
   }
 
   getValidationErrors() {
