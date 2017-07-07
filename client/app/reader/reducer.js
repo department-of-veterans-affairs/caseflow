@@ -86,6 +86,9 @@ const updateFilteredDocIds = (nextState) => {
   // looping through all the documents to update category highlights and expanding comments
   _.forEach(updatedNextState.documents, (doc) => {
     const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
+
+    // getting all the truthy values from the object
+    // {'medical': true, 'procedural': false } turns into {'medical': true}
     const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
 
     // update the state for all the search category highlights
