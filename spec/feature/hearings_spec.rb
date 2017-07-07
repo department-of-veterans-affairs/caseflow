@@ -72,6 +72,11 @@ RSpec.feature "Hearings" do
       visit "/hearings/dockets"
       expect(page).to have_content("Page not found")
     end
+
+    scenario "Shows a daily docket" do
+      visit "/hearings/dockets/2017-01-05"
+      expect(page).to have_content("Daily Docket")
+    end
   end
 end
 
