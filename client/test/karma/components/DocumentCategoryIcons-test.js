@@ -6,7 +6,7 @@ import { DocumentCategoryIcons } from '../../../app/components/DocumentCategoryI
 describe('DocumentCategoryIcons', () => {
   it('renders no icons when the doc is not in any categories', () => {
     const wrapper = mount(<DocumentCategoryIcons doc={{}} />);
-    console.log(wrapper.html());
+
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(0);
   });
 

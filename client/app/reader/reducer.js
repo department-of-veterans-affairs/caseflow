@@ -93,7 +93,8 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateStateWithIdAndValue(updatedNextState, doc.id, 'searchCategoryHighlights', matchesCategories);
+      updatedNextState = updateStateWithIdAndValue(updatedNextState,
+        doc.id, 'searchCategoryHighlights', matchesCategories);
     }
 
     // updating the state of all annotations for expanded comments
