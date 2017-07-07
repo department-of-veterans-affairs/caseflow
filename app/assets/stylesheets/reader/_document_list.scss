@@ -5,6 +5,10 @@ $gray-font-color: #6b7079;
 $tag-backgrond-color: #d6d7d9;
 
 .section--document-list {
+  mark {
+    background: $color-gold-lightest;
+  }
+
   .section--no-search-results {
     .cf-msg-screen-text {
       display: none;

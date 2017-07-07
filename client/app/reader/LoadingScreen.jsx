@@ -66,7 +66,7 @@ export class LoadingScreen extends React.Component {
               id="loading-symbol"
               className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
               {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
-              <p>Loading document list in Reader...</p>
+              <p>Loading claims folder in Reader...</p>
             </div>
           }
         </div>
