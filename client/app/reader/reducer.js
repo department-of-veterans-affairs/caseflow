@@ -2,10 +2,11 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString, commentContainsWords } from './search';
+import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
 const SHOW_EXPAND_ALL = false;
+const SEARCH_CATEGORY_HIGHLIGHTS_FIELD = 'searchCategoryHighlights';
 
 /**
  * This function takes all the documents and check the status of the
@@ -38,12 +39,26 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
-  const updateListComments = (id, state, foundComment) => {
+  const updateListComments = (state, id, foundComment) => {
     return update(state, {
       documents: {
         [id]: {
           listComments: {
             $set: foundComment
+          }
+        }
+      }
+    });
+  };
+
+  const updateState = (state, id, key, value) => {
+    return update(state, {
+      ui: {
+        [key]: {
+          $merge: {
+            [id]: {
+              ...value
+            }
           }
         }
       }
@@ -69,10 +84,20 @@ const updateFilteredDocIds = (nextState) => {
     map('id').
     value();
 
-    // updating the state of all annotations for expanded comments
+  // looping through all the documents to update category highlights and expanding comments
   _.forEach(updatedNextState.documents, (doc) => {
-    updatedNextState = updateListComments(doc.id, updatedNextState,
-        commentContainsWords(searchQuery, updatedNextState, doc));
+    const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
+    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
+
+    // update the state for all the search category highlights
+    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
+      updatedNextState = updateState(updatedNextState, doc.id, SEARCH_CATEGORY_HIGHLIGHTS_FIELD, matchesCategories);
+    }
+
+    // updating the state of all annotations for expanded comments
+    if (doc.listComments !== commentContainsWords) {
+      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+    }
   });
 
   if (docFilterCriteria.sort.sortAscending) {
@@ -134,6 +159,7 @@ export const initialState = {
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   ui: {
+    searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
     selectedAnnotationId: null,

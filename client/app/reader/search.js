@@ -27,11 +27,22 @@ const categoryContainsString = (searchQuery, doc) =>
       doc[categoryFieldNameOfCategoryName(category)])
   , false);
 
+export const categoryContainsWords = (searchQuery, doc) => {
+  let queryTokens = _.compact(searchQuery.split(' '));
+
+  return _(_.keys(Constants.documentCategories)).
+        reduce((result, category) => {
+          return _.assign({
+            [`${category}`]: queryTokens.some((word) =>
+              category.includes(word) && doc[categoryFieldNameOfCategoryName(category)])
+          }, result);
+        }, {});
+};
+
 const tagContainsString = (searchQuery, doc) =>
   Object.keys(doc.tags || {}).reduce((acc, tag) => {
     return acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery));
-  }
-  , false);
+  }, false);
 
 export const searchString = (searchQuery, state) => (doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
