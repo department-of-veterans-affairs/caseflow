@@ -117,7 +117,6 @@ const ERRORS = {
  * information in VACOLS is very often out of date, which can
  * in case delays -- attorneys can't access the appeal information
  * if they're not noted as being the appellant's representative
- *
  */
 
 export class ConfirmCaseDetails extends React.Component {
@@ -132,6 +131,7 @@ export class ConfirmCaseDetails extends React.Component {
     this.props.resetState();
   }
 
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
   componentDidMount() {
     window.scrollTo(0, 0);
   }

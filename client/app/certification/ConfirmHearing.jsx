@@ -131,6 +131,7 @@ class UnconnectedConfirmHearing extends React.Component {
     this.props.resetState();
   }
 
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
   componentDidMount() {
     window.scrollTo(0, 0);
   }

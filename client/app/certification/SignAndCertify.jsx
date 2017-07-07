@@ -46,6 +46,7 @@ class UnconnectedSignAndCertify extends React.Component {
     this.props.updateProgressBar();
   }
 
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
   componentDidMount() {
     window.scrollTo(0, 0);
   }
