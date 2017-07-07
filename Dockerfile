@@ -3,11 +3,15 @@ FROM ubuntu:14.04
 ## Install all required dependencies and clean the apt cache
 RUN apt-get update -qq && apt-get install -qq -y \ 
 	build-essential \
+	chromium-browser \
 	git \
+	libfontconfig \
+	libgconf-2-4 \
+	libnss3 \
+	libpq-dev \
 	libreadline-dev \
 	libssl-dev \
 	libsqlite3-dev \
-	libpq-dev \
 	libxml2-dev \
 	libxslt-dev \
 	libyaml-dev \
@@ -40,13 +44,6 @@ ENV PATH=/opt/node-v6.10.2-linux-x64/bin:$PATH
 RUN LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
 	wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip && \
 	unzip chromedriver_linux64.zip && ln -s $PWD/chromedriver /usr/local/bin/chromedriver
-
-## Copy project files to newly built container
-RUN mkdir /build
-WORKDIR /build
-COPY . /build
-RUN bundle install --deployment --without development staging production
-RUN cd /build/client && npm install --no-optional
 
 ENV RAILS_ENV=test
 ENV POSTGRES_HOST=localhost

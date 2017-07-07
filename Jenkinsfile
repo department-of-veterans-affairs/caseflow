@@ -31,28 +31,22 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('ubuntu') {
                 sh """
+                Xvfb :99 -screen 0 1024x768x16 &
+                export DISPLAY=:99
                 cd ./client && npm install --no-optional
                 bundle install --without production staging
                 RAILS_ENV=test bundle exec rake db:create
                 RAILS_ENV=test bundle exec rake db:schema:load
-                export PATH=$PATH:/usr/lib/chromium-browser/
-                sleep 2343423423423423423423432
-                echo $PATH
-                cd ..
-                export DISPLAY=:99.0
-                sh -e /etc/init.d/xvfb start
-                sleep 3
                 """
             }
         }
 
-        stage('script') {
+        stage('Execute Tests') {
             container('ubuntu') {
                 sh"""
+                sleep 2343423423423423423423432
                 RAILS_ENV=test bundle exec rake spec
                 RAILS_ENV=test bundle exec rake ci:other
-                mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
-                - rm -rf node_modules && mv node_modules_bak node_modules
                 """
             }
         }
