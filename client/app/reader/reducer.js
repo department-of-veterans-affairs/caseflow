@@ -6,7 +6,6 @@ import { searchString, commentContainsWords, categoryContainsWords } from './sea
 import { timeFunction } from '../util/PerfDebug';
 
 const SHOW_EXPAND_ALL = false;
-const SEARCH_CATEGORY_HIGHLIGHTS_FIELD = 'searchCategoryHighlights';
 
 /**
  * This function takes all the documents and check the status of the
@@ -91,11 +90,11 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateState(updatedNextState, doc.id, SEARCH_CATEGORY_HIGHLIGHTS_FIELD, matchesCategories);
+      updatedNextState = updateState(updatedNextState, doc.id, 'searchCategoryHighlights', matchesCategories);
     }
 
     // updating the state of all annotations for expanded comments
-    if (doc.listComments !== commentContainsWords) {
+    if (commentContainsWords !== doc.listComments) {
       updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
     }
   });
