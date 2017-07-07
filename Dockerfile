@@ -138,7 +138,7 @@ RUN usermod -a -G $usergroup $username
 RUN echo "$username:$usergroup" | chpasswd && adduser $username sudo
 RUN echo "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 ENV HOME /home/$username
-WORKDIR /home/$username
+WORKDIR /home/$username/caseflow
 
 ################################################################################
 # Permissions and Paths
