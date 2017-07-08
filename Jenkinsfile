@@ -15,7 +15,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         ttyEnabled: true,
         privileged: false,
         alwaysPullImage: false
-    ),
+    	),
      containerTemplate(
          name: 'caseflow-test-runner',
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
