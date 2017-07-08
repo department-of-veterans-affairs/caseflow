@@ -22,7 +22,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost')
         ]
         )]){
-    node('caseflow-pod') {
+    node('caseflow-pod-alan') {
 
         stage('Clone repository') {
             container('ubuntu') {
