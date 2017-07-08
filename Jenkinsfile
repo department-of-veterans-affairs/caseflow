@@ -31,9 +31,10 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('caseflow-test-runner') {
                 sh """
-		echo $PWD
-		ls -la
-                bundle exec rake db:create
+		bundle install
+		cd client && npm install --no-optional
+		cd ..
+ 		bundle exec rake db:create
 		bundle exec rake db:schema:load
                 """
             }
