@@ -112,25 +112,25 @@ RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RE
     rm /tmp/chromedriver_linux64.zip && \
     chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
     ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
-################################################################################
-# Create User $username
-################################################################################
-ARG username=dsva
-ARG usergroup=dsva
-RUN echo $username
-RUN useradd -ms /bin/bash $username
-RUN usermod -g $usergroup $username
-RUN usermod -a -G $usergroup $username
-RUN echo "$username:$usergroup" | chpasswd && adduser $username sudo
-RUN echo "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-ENV HOME /home/$username
-WORKDIR /home/$username
+# ################################################################################
+# # Create User $username
+# ################################################################################
+# ARG username=dsva
+# ARG usergroup=dsva
+# RUN echo $username
+# RUN useradd -ms /bin/bash $username
+# RUN usermod -g $usergroup $username
+# RUN usermod -a -G $usergroup $username
+# RUN echo "$username:$usergroup" | chpasswd && adduser $username sudo
+# RUN echo "$username ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+# ENV HOME /home/$username
+# WORKDIR /home/$username
 
-################################################################################
-# Permissions and Paths
-################################################################################
-#COPY bashrc /home/$username/.bashrc
-RUN chown -R $username:$usergroup /home/$username/
-USER $username
-ENV TERM=xterm
+# ################################################################################
+# # Permissions and Paths
+# ################################################################################
+# #COPY bashrc /home/$username/.bashrc
+# RUN chown -R $username:$usergroup /home/$username/
+# USER $username
+# ENV TERM=xterm
 
