@@ -1,6 +1,6 @@
 podTemplate(
     cloud:'minikube',
-    label:'caseflow-pod',
+    label:'caseflow-test-runner-artem',
     envVars: [
 	     podEnvVar(key: 'RAILS_ENV', value: 'test'),
 	     podEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),

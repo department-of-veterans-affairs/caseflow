@@ -15,6 +15,7 @@ default: &default
 development:
   <<: *default
   username: <%= `whoami` %>
+    host: <%= ENV["POSTGRES_HOST"] || 'localhost' %>
   database: caseflow_certification_development
 
 development_vacols:
