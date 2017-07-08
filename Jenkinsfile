@@ -29,8 +29,8 @@ podTemplate(
 		alwaysPullImage: true,
         	command: 'cat'
     	)
-    ])
-{
+    ]
+){
     node('caseflow-pod') {
 
         stage('Clone repository') {
