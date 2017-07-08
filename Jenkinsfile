@@ -31,7 +31,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('caseflow-test-runner') {
                 sh """
-		bundle install
+		bundle install --deployment --without production staging development
 		cd client && npm install --no-optional
 		cd ..
  		bundle exec rake db:create
