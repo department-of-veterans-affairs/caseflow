@@ -1,4 +1,4 @@
-podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
     containerTemplate(
         name: 'postgres', 
         image: 'postgres:9.5',
