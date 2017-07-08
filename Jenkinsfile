@@ -2,18 +2,20 @@ podTemplate(
     cloud:'minikube',
     label:'caseflow-pod',
     envVars: [
-    	     podEnvVar(key: 'POSTGRES_USER', value: 'root'),
 	     podEnvVar(key: 'RAILS_ENV', value: 'test'),
 	     podEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
 	     podEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/')
 	     ],
     containers: [
     	containerTemplate(
-        	name: 'db', 
+        	name: 'postgres', 
         	image: 'postgres:9.5',
         	ttyEnabled: true,
        		privileged: false,
-        	alwaysPullImage: false
+        	alwaysPullImage: false,
+		envVar: [
+			containerEnvVar(key: 'POSTGRES_USER', value: 'root')
+			]
         ),
     	containerTemplate(
 		name: 'redis', 
