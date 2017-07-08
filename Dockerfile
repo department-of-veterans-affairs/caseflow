@@ -123,7 +123,3 @@ RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RE
     rm /tmp/chromedriver_linux64.zip && \
     chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
     ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
-
-ENV TERM='xterm'
-ENV POSTGRES_HOST='localhost'
-ENV REDIS_URL_CACHE='redis://localhost:6379/0/cache/'

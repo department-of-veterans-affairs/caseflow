@@ -1,4 +1,11 @@
-podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-pod',
+			      envVars: [
+	 	  	      	       containerEnvVar(key: 'POSTGRES_USER', value: 'root'),
+				       containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
+		  		       containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/'),
+		  		       containerEnvVar(key: 'RAILS_ENV', value: 'test')
+		  		       ],
+containers: [
     containerTemplate(
         name: 'db', 
         image: 'postgres:9.5',
@@ -21,12 +28,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
          ttyEnabled: true,
          alwaysPullImage: true,
-	 envVars: [
-	 	  containerEnvVar(key: 'POSTGRES_USER', value: 'root'),
-		  containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
-		  containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/'),
-		  containerEnvVar(key: 'RAILS_ENV', value: 'test')
-		  ],
          command: 'cat'
     )]){
     node('caseflow-pod') {
