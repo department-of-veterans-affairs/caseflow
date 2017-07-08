@@ -43,7 +43,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                 sh """
                 Xvfb :99 -screen 0 1024x768x16 &
                 export DISPLAY=:99
-                cd ./client && npm install --no-optional
+                cd ./client && npm install --no-optional && cd ..
                 bundle install --without production staging
                 RAILS_ENV=test bundle exec rake db:create
                 RAILS_ENV=test bundle exec rake db:schema:load
@@ -54,7 +54,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         stage('Execute Tests') {
             container('ubuntu') {
                 sh"""
-                sleep 2343423423423423423423432
                 RAILS_ENV=test bundle exec rake spec
                 RAILS_ENV=test bundle exec rake ci:other
                 """
