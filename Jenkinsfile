@@ -26,7 +26,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 		  containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
 		  containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/'),
 		  containerEnvVar(key: 'RAILS_ENV', value: 'test')
-		  ]
+		  ],
          command: 'cat'
     )]){
     node('caseflow-pod') {
