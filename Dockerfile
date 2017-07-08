@@ -56,3 +56,4 @@ RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RE
 ENV RAILS_ENV=test
 ENV POSTGRES_HOST=localhost
 ENV POSTGRES_USER=postgres
+ENV DISPLAY=:99

@@ -21,7 +21,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
          command: 'cat'
     )]){
     node('caseflow-pod') {
-
+    
         stage('Clone repository') {
             container('ubuntu') {
                 checkout scm
@@ -31,12 +31,11 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('ubuntu') {
                 sh """
-                Xvfb :99 -screen 0 1024x768x16 &
-                export DISPLAY=:99
+                Xvfb -screen 0 1024x768x16 &
                 cd ./client && npm install --no-optional
                 bundle install --without production staging
-                RAILS_ENV=test bundle exec rake db:create
-                RAILS_ENV=test bundle exec rake db:schema:load
+                rake db:create
+                rake db:schema:load
                 """
             }
         }
@@ -44,9 +43,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Execute Tests') {
             container('ubuntu') {
                 sh"""
-                sleep 2343423423423423423423432
-                RAILS_ENV=test bundle exec rake spec
-                RAILS_ENV=test bundle exec rake ci:other
+                rake spec
+                rake ci:other
                 """
             }
         }
