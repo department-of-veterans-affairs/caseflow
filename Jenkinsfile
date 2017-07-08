@@ -1,11 +1,6 @@
 podTemplate(
     cloud:'minikube',
     label:'caseflow-pod',
-    envVars: [
-	     podEnvVar(key: 'RAILS_ENV', value: 'test'),
-	     podEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
-	     podEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/')
-	     ],
     containers: [
     	containerTemplate(
         	name: 'postgres', 
