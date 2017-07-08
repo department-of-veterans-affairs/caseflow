@@ -14,8 +14,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         alwaysPullImage: false
     ),
      containerTemplate(
-         name: 'pr-runner',
-         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-pr-image-alan',
+         name: 'ubuntu',
+         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-pr-image-alan:1',
          ttyEnabled: true,
          alwaysPullImage: true,
          command: 'cat'
@@ -23,17 +23,17 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
     node('caseflow-pod') {
 
         stage('Clone repository') {
-            container('pr-runner') {
+            container('ubuntu') {
                 checkout scm
             }
         }
 
         stage('Test Setup') {
-            container('pr-runner') {
+            container('ubuntu') {
                 sh """
                 Xvfb :99 -screen 0 1024x768x16 &
                 export DISPLAY=:99
-                cd ./client && npm install --no-optional && cd ..
+                cd ./client && npm install --no-optional
                 bundle install --without production staging
                 RAILS_ENV=test bundle exec rake db:create
                 RAILS_ENV=test bundle exec rake db:schema:load
@@ -42,8 +42,9 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         }
 
         stage('Execute Tests') {
-            container('pr-runner') {
+            container('ubuntu') {
                 sh"""
+                sleep 2343423423423423423423432
                 RAILS_ENV=test bundle exec rake spec
                 RAILS_ENV=test bundle exec rake ci:other
                 """
