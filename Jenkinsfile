@@ -1,9 +1,9 @@
 podTemplate(cloud:'minikube', label:'caseflow-pod',
 			      envVars: [
-	 	  	      	       containerEnvVar(key: 'POSTGRES_USER', value: 'root'),
-				       containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
-		  		       containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/'),
-		  		       containerEnvVar(key: 'RAILS_ENV', value: 'test')
+	 	  	      	       PodEnvVar(key: 'POSTGRES_USER', value: 'root'),
+				       PodEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
+		  		       PodEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/'),
+		  		       PodEnvVar(key: 'RAILS_ENV', value: 'test')
 		  		       ],
 containers: [
     containerTemplate(
