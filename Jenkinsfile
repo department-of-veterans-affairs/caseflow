@@ -4,7 +4,10 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         image: 'postgres:9.5',
         ttyEnabled: true,
         privileged: false,
-        alwaysPullImage: false
+        alwaysPullImage: false,
+        envVars: [
+            containerEnvVar(key: 'POSTGRES_PASSWORD', value: '1234')
+        ]        
         ),
     containerTemplate(
         name: 'redis', 
@@ -19,7 +22,12 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         ttyEnabled: true,
         alwaysPullImage: true,
         envVars: [
-            containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost')
+            containerEnvVar(
+                key: 'DATABASE_URL', 
+                value: 'postgres://postgres:1234@localhost:5432/caseflow_certification'),
+            containerEnvVar(
+                key: 'RAILS_ENV', 
+                value: 'test')
         ]
         )]){
     node('caseflow-pod-alan') {
