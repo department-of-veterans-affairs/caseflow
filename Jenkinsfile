@@ -1,28 +1,36 @@
-podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
-    containerTemplate(
-        name: 'db', 
-        image: 'postgres:9.5',
-        ttyEnabled: true,
-        privileged: false,
-        alwaysPullImage: false,
-	envVars: [
-		 containerEnvVar(key: 'POSTGRES_USER', value: 'root')
-		 ]
+podTemplate(
+    cloud:'minikube',
+    label:'caseflow-pod',
+    envVars: [
+    	     podEnvVar(key: 'POSTGRES_USER', value: 'root'),
+	     podEnvVar(keu: 'RAILS_ENV', value: 'test'),
+	     podEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
+	     podEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/')
+	     ]
+    containers: [
+    	containerTemplate(
+        	name: 'db', 
+        	image: 'postgres:9.5',
+        	ttyEnabled: true,
+       		privileged: false,
+        	alwaysPullImage: false
         ),
-    containerTemplate(
-        name: 'redis', 
-        image: 'redis:3.2.9-alpine', 
-        ttyEnabled: true,
-        privileged: false,
-        alwaysPullImage: false
+    	containerTemplate(
+		name: 'redis', 
+        	image: 'redis:3.2.9-alpine', 
+        	ttyEnabled: true,
+        	privileged: false,
+        	alwaysPullImage: false
     	),
-     containerTemplate(
-         name: 'caseflow-test-runner',
-         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
-         ttyEnabled: true,
-	 alwaysPullImage: true,
-         command: 'cat'
-    )]){
+     	containerTemplate(
+		name: 'caseflow-test-runner',
+        	image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
+        	ttyEnabled: true,
+		alwaysPullImage: true,
+        	command: 'cat'
+    	)
+    ])
+{
     node('caseflow-pod') {
 
         stage('Clone repository') {
@@ -37,8 +45,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 		bundle install --deployment --without production staging development
 		cd client && npm install --no-optional
 		cd ..
- 		RAILS_ENV=test bundle exec rake db:create
-		RAILS_ENV=test bundle exec rake db:schema:load
+		bundle exec rake db:create
+		bundle exec rake db:schema:load
                 """
             }
         }
@@ -47,11 +55,9 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
             container('caseflow-test-runner') {
                 sh """
 		Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
-		export XVFB_TEMP_PID=\$!
      	 	export DISPLAY=:99
 		bundle exec rake
 		bundle exec rake ci:other
-		kill \$XVFB_TEMP_PID
                 """
             }
         }
