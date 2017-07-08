@@ -125,4 +125,5 @@ RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RE
     ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
 
 ENV TERM='xterm'
-ENV POSTGRES_HOST='db'
+ENV POSTGRES_HOST='localhost'
+ENV REDIS_URL_CACHE='redis://localhost:6379/0/cache/'
