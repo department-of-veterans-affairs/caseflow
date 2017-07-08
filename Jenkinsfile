@@ -47,9 +47,11 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
             container('caseflow-test-runner') {
                 sh """
 		Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
+		export XVFB_TEMP_PID=$!
      	 	export DISPLAY=:99
 		bundle exec rake
 		bundle exec rake ci:other
+		kill $XVFB_TEMP_PID
                 """
             }
         }
