@@ -54,6 +54,11 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
     browser: :chrome,
+    desired_capabilities: {
+      "chromeOptions" => {
+        "args" => %w{ no-sandbox }
+      }
+    },
     prefs: {
       download: {
         prompt_for_download: false,
