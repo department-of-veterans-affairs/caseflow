@@ -68,7 +68,7 @@ production_vacols:
 test:
   <<: *default
   username: <%= `whoami` %>
-  host: <%= ENV["POSTGRES_HOST"] %>
+  host: <%= ENV["POSTGRES_HOST"] || 'localhost' %>
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:

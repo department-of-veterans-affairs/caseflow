@@ -1,11 +1,6 @@
 podTemplate(
     cloud:'minikube',
     label:'caseflow-test-runner-artem',
-    envVars: [
-	     podEnvVar(key: 'RAILS_ENV', value: 'test'),
-	     podEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
-	     podEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/')
-	     ],
     containers: [
     	containerTemplate(
         	name: 'postgres', 
@@ -13,7 +8,7 @@ podTemplate(
         	ttyEnabled: true,
        		privileged: false,
         	alwaysPullImage: false,
-		envVar: [
+		envVars: [
 			containerEnvVar(key: 'POSTGRES_USER', value: 'root')
 			]
         ),
@@ -28,6 +23,11 @@ podTemplate(
 		name: 'caseflow-test-runner',
         	image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
         	ttyEnabled: true,
+		envVars: [
+	     		 containerEnvVar(key: 'RAILS_ENV', value: 'test'),
+	    		 containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
+	     		 containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/')
+	     		 ],
 		alwaysPullImage: true,
         	command: 'cat'
     	)
