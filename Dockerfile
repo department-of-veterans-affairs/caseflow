@@ -4,6 +4,7 @@ FROM ubuntu:14.04
 RUN apt-get update -qq && apt-get install -qq -y \ 
 	build-essential \
 	chromium-browser \
+	curl \
 	git \
 	libfontconfig \
 	libgconf-2-4 \
@@ -41,9 +42,16 @@ RUN wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.1
 RUN tar xf /opt/node-v6.10.2-linux-x64.tar.xz -C /opt
 ENV PATH=/opt/node-v6.10.2-linux-x64/bin:$PATH
 
-RUN LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
-	wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip && \
-	unzip chromedriver_linux64.zip && ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+# RUN wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O chromium-chromedriver.deb \ 
+#	&& dpkg -i chromium-chromedriver.deb && apt-get install -f
+
+RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
+     mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION && \
+     curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
+     unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION && \
+     rm /tmp/chromedriver_linux64.zip && \
+     chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
+     ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
 
 ENV RAILS_ENV=test
 ENV POSTGRES_HOST=localhost
