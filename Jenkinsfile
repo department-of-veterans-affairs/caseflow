@@ -17,8 +17,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
          name: 'ubuntu',
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-pr-image-alan:2',
          ttyEnabled: true,
-         alwaysPullImage: true,
-         command: 'cat'
+         alwaysPullImage: true
+        //  command: 'cat'
     )]){
     node('caseflow-pod') {
 
