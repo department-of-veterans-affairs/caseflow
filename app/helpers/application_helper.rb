@@ -134,12 +134,6 @@ module ApplicationHelper
     ["", route[:controller], route[:action]].join("/")
   end
 
-  # Get the alternate domain name associated with the application
-  # i.e. If request is from certification.cf.ds.va.gov, it should return appeals.cf.ds.va.gov
-  def ga_alternate_domain
-    (Rails.configuration.google_analytics_domains - [request.host]).first
-  end
-
   def print_link
     link_to "Print", "#", onclick: "window.print()"
   end

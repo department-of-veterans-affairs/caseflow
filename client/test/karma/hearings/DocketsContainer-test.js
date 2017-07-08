@@ -61,6 +61,6 @@ describe('DocketsContainer', () => {
         }
       }
     }));
-    expect(wrapper.text()).to.include('Hearing Schedule');
+    expect(wrapper.text()).to.include('Upcoming Hearing Days');
   });
 });
