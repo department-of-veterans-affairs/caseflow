@@ -31,6 +31,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('caseflow-test-runner') {
                 sh """
+		echo $PWD
+		ls -la
                 bundle exec rake db:create
 		bundle exec rake db:schema:load
                 """
@@ -39,7 +41,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Execute Tests') {
             container('caseflow-test-runner') {
-                sh"""
+                sh """
 		Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
      	 	export DISPLAY=:99
 		bundle exec rspec ./spec/feature/help_spec.rb
