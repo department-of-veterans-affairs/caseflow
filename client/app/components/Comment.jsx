@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { openAnnotationDeleteModal } from '../reader/actions';
+import Highlight from '../components/Highlight';
 
 // A rounded rectangle with a user's comment inside.
 // Comes with edit and delete buttons
@@ -56,7 +57,6 @@ export class Comment extends React.Component {
           Jump to section
         </Button>;
     }
-
     let commentToRender = <div>
         <div className="comment-control-button-container">
           <h4>Page {this.props.page} {jumpToSectionButton}</h4>
@@ -86,7 +86,9 @@ export class Comment extends React.Component {
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
-          {this.props.children}
+          <Highlight>
+            {this.props.children}
+          </Highlight>
         </div>
       </div>;
     }

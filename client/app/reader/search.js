@@ -8,7 +8,7 @@ const typeContainsString = (searchQuery, doc) => {
   return (doc.type.toLowerCase().includes(searchQuery));
 };
 
-const commentContainsString = (searchQuery, state, doc) =>
+export const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
@@ -25,7 +25,7 @@ const tagContainsString = (searchQuery, doc) =>
   }
   , false);
 
-export const searchString = (searchQuery, state) => (doc) => {
+export const searchString = (searchQuery) => (doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
 
   return queryTokens.every((word) => {
@@ -35,7 +35,6 @@ export const searchString = (searchQuery, state) => (doc) => {
       doDatesMatch(doc.receivedAt, searchWord) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
-      commentContainsString(searchWord, state, doc) ||
       tagContainsString(searchWord, doc));
   });
 };
