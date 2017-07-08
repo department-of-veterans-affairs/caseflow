@@ -23,25 +23,25 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
     node('caseflow-pod') {
 
         stage('Clone repository') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
                 checkout scm
             }
         }
 
         stage('Test Setup') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
                 sh """
                 bundle exec rake db:create
 		bundle exec rake db:schema:load
-       	    	Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
-     	 	export DISPLAY=:99
                 """
             }
         }
 
         stage('Execute Tests') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
                 sh"""
+		Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
+     	 	export DISPLAY=:99
 		bundle exec rspec ./spec/feature/help_spec.rb
                 """
             }
