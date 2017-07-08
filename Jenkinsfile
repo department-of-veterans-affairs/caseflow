@@ -25,6 +25,7 @@ podTemplate(
         	ttyEnabled: true,
 		envVars: [
 	     		 containerEnvVar(key: 'RAILS_ENV', value: 'test'),
+			 containerEnvVar(key: 'POSTGRES_USER', value: 'root'),
 	    		 containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
 	     		 containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/')
 	     		 ],
@@ -43,24 +44,26 @@ podTemplate(
 
         stage('Test Setup') {
             container('caseflow-test-runner') {
-                sh """
+                sh '''
+		echo $POSTGRES_HOST
+		echo $POSTGRES_USER
 		bundle install --deployment --without production staging development
 		cd client && npm install --no-optional
 		cd ..
 		bundle exec rake db:create
 		bundle exec rake db:schema:load
-                """
+                '''
             }
         }
 
         stage('Execute Tests') {
             container('caseflow-test-runner') {
-                sh """
+                sh '''
 		Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
      	 	export DISPLAY=:99
 		bundle exec rake ci:other
 		bundle exec rake
-                """
+                '''
             }
         }
     }
