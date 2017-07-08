@@ -55,7 +55,8 @@ containers: [
                 sh """
 		Xvfb :99 -screen 0 1024x768x16 &> xvfb.log &
      	 	export DISPLAY=:99
-		bundle exec rspec ./spec/feature/help_spec.rb
+		bundle exec rake
+		bundle exec rake ci:other
                 """
             }
         }
