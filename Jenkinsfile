@@ -20,11 +20,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
          name: 'caseflow-test-runner',
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
          ttyEnabled: true,
-	 envVars: [
-		 containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
-		 containerEnvVar(key: 'REDIS_URL_CACHE', value: 'redis://localhost:6379/0/cache/'),
-		 containerEnvVar(key: 'RAILS_ENV', value: 'test')
-		 ],
 	 alwaysPullImage: true,
          command: 'cat'
     )]){
@@ -42,8 +37,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 		bundle install --deployment --without production staging development
 		cd client && npm install --no-optional
 		cd ..
- 		bundle exec rake db:create
-		bundle exec rake db:schema:load
+ 		RAILS_ENV=test bundle exec rake db:create
+		RAILS_ENV=test bundle exec rake db:schema:load
                 """
             }
         }
