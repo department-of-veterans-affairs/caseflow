@@ -4,7 +4,10 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         image: 'postgres:9.5',
         ttyEnabled: true,
         privileged: false,
-        alwaysPullImage: false
+        alwaysPullImage: false,
+	envVars: [
+		 containerEnvVar(key: 'POSTGRES_USER', value: 'root')
+	]
         ),
     containerTemplate(
         name: 'redis', 
