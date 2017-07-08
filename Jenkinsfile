@@ -14,12 +14,14 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         alwaysPullImage: false
     ),
      containerTemplate(
-         name: 'ubuntu',
-         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-pr-image-alan:2',
-         ttyEnabled: true,
-         alwaysPullImage: true
-        //  command: 'cat'
-    )]){
+        name: 'ubuntu',
+        image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-pr-image-alan:2',
+        ttyEnabled: true,
+        alwaysPullImage: true,
+        envVars: [
+            containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost')
+        ]
+        )]){
     node('caseflow-pod') {
 
         stage('Clone repository') {
