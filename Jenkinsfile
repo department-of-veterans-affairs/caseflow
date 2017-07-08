@@ -33,7 +33,7 @@ podTemplate(
     	)
     ]) {
     
-    node('caseflow-pod') {
+    node('caseflow-test-runner-artem') {
 
         stage('Clone repository') {
             container('caseflow-test-runner') {
