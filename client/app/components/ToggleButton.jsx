@@ -16,7 +16,7 @@ export default class ToggleButton extends React.Component {
     return <div className="usa-grid">
     <Button
       id={labels[0].id}
-      name = {labels[0].text}
+      name={labels[0].text}
       classNames={active === labels[0].id ?
       ['cf-primary-default button_wrapper'] : ['cf-secondary-default usa-button-outline']}
       onClick ={this.handleClick}

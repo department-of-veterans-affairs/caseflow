@@ -8,7 +8,6 @@ export default class StyleGuideToggleButton extends React.Component {
 
     this.state = {
       active: 'view_1'
-
     };
   }
 
@@ -20,7 +19,7 @@ export default class StyleGuideToggleButton extends React.Component {
     return <div>
     <br/>
     <StyleGuideComponentTitle
-      title="Toggle button"
+      title="Toggle buttons"
       id="toggle_buttons"
       link="StyleGuideToggleButton.jsx"
       isSubsection={true}
