@@ -154,7 +154,8 @@ export class PdfSidebar extends React.Component {
         </div>
         <Accordion style="outline" accordion={false}
           defaultActiveKey={['Document Information', 'Categories', 'Issue Tags', 'Comments']}
-          classNames={['cf-sidebar-accordion']}>
+          classNames={['cf-sidebar-accordion']}
+          id="cf-sidebar-accordion">
           <AccordionHeader title="Document Information" key={1}>
             <p className="cf-pdf-meta-title cf-pdf-cutoff">
               <b>Document Type: </b>
@@ -175,9 +176,6 @@ export class PdfSidebar extends React.Component {
               categoryToggleStates={categoryToggleStates} />
           </AccordionHeader>
           <AccordionHeader title="Issue Tags" key={3}>
-            <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
-              Related Issues
-            </div>
             {showErrorMessage.tag && cannotSaveAlert}
             <SearchableDropdown
               key={doc.id}
@@ -193,8 +191,6 @@ export class PdfSidebar extends React.Component {
             />
           </AccordionHeader>
           <AccordionHeader title="Comments" key={4}>
-            <div className="cf-sidebar-heading cf-sidebar-heading-comments">
-              Comments
               <span className="cf-right-side cf-add-comment-button">
                 <Button
                   name="AddComment"
@@ -202,7 +198,6 @@ export class PdfSidebar extends React.Component {
                   <span>{ plusIcon() } &nbsp; Add a comment</span>
                 </Button>
               </span>
-            </div>
             <div id="cf-comment-wrapper" className="cf-comment-wrapper"
               ref={(commentListElement) => {
                 this.commentListElement = commentListElement;
