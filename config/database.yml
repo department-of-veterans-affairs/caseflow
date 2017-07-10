@@ -68,6 +68,11 @@ test:
   <<: *default
   host: <%= ENV['POSTGRES_HOST'] %>
   username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+  # If we set the value to nil when the variable isn't present, 
+  # the k8s Jenkins environment won't connect
+  <% if ENV['POSTGRES_PASSWORD'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  <% end %>
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:

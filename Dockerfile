@@ -1,5 +1,7 @@
 FROM ubuntu:14.04
 
+WORKDIR /caseflow
+
 ## Install all required dependencies and clean the apt cache
 RUN apt-get update -qq && apt-get install -qq -y \ 
 	build-essential \
@@ -27,7 +29,7 @@ RUN apt-get update -qq && apt-get install -qq -y \
 	--fix-missing \ 
 && rm -rf /var/lib/apt/lists/*
 
-## Install RVM and Ruby 2.2.4
+## Install RBENV and Ruby 2.2.4
 RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 RUN /bin/sh -c "cd ~/.rbenv && src/configure && make -C src"
 ENV PATH=/root/.rbenv/shims:/root/.rbenv/bin:$PATH
@@ -42,12 +44,9 @@ RUN wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.1
 RUN tar xf /opt/node-v6.10.2-linux-x64.tar.xz -C /opt
 ENV PATH=/opt/node-v6.10.2-linux-x64/bin:$PATH
 
-# RUN wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O chromium-chromedriver.deb \ 
-#	&& dpkg -i chromium-chromedriver.deb && apt-get install -f
-
 RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
      mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-     curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
+     curl -sS -o /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
      unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION && \
      rm /tmp/chromedriver_linux64.zip && \
      chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
@@ -57,3 +56,7 @@ ENV RAILS_ENV=test
 ENV POSTGRES_HOST=localhost
 ENV POSTGRES_USER=postgres
 ENV DISPLAY=:99
+
+# Prefetch Gems
+ADD Gemfile* /caseflow/
+RUN cd /caseflow && bundle install --without production staging
