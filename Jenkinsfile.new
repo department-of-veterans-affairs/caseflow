@@ -39,12 +39,26 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
-        stage('Package Setup') {
+        stage('Setup') {
             container('ubuntu') {
                 sh """
                 cd /home/jenkins/workspace/caseflow
                 Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
+                """
+            }
+        }
+        stage('npm install') {
+            container('ubuntu') {
+                sh """
+                cd /home/jenkins/workspace/caseflow
                 cd ./client && npm install --no-optional
+                """
+            }
+        }
+        stage('bundle install') {
+            container('ubuntu') {
+                sh """
+                cd /home/jenkins/workspace/caseflow
                 bundle install --without production staging
                 """
             }
