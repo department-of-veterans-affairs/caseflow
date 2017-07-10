@@ -1,14 +1,14 @@
 describe PowerOfAttorneyRepository do
   context ".get_vacols_rep_code" do
-    subject { PowerOfAttorney.repository.get_vacols_rep_code(short_name) }
+    subject { PowerOfAttorney.repository.get_vacols_rep_code(name) }
 
     context "returns the VACOLS code when it exists" do
-      let(:short_name) { "American Legion" }
+      let(:name) { "AMERICAN LEGION" }
       it { is_expected.to eq("A") }
     end
 
     context "returns nil when it does not exist" do
-      let(:short_name) { "Not an entry in the array" }
+      let(:name) { "Not an entry in the array" }
       it { is_expected.to eq(nil) }
     end
   end
