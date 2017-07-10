@@ -28,7 +28,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
   )]) {
   node('caseflow-pod-alan') {
 
-    def HOME_DIR = '/home/jenkins'
+    def HOME_DIR = '/home/jenkins/workspace'
     
     stage('git clone') {
       container('ubuntu') {
