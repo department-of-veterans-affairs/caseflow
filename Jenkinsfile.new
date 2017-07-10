@@ -37,13 +37,31 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         stage('run test') {
             parallel (
                 frontend: {
-                    stage('git clone') {
+                    stage('git clone frontend') {
                         container('frontend') {
                             sh """
                             cd /home/jenkins/workspace
                             git clone https://github.com/department-of-veterans-affairs/caseflow.git frontend-caseflow
                             cd frontend-caseflow
                             git checkout dockerfile-alan
+                            """
+                        }
+                    }
+
+                    stage('npm install frontend') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/frontend-caseflow
+                            cd ./client && npm install --no-optional
+                            """
+                        }
+                    }
+
+                    stage('rake mocha') {
+                        container('ubuntu') {
+                            sh"""
+                            cd /home/jenkins/workspace/frontend-caseflow
+                            rake mocha
                             """
                         }
                     }
@@ -120,15 +138,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                             cd /home/jenkins/workspace/caseflow
                             rake ci:verify_code_coverage
                             rake konacha:run
-                            """
-                        }
-                    }
-
-                    stage('rake mocha') {
-                        container('ubuntu') {
-                            sh"""
-                            cd /home/jenkins/workspace/caseflow
-                            rake mocha
                             """
                         }
                     }
