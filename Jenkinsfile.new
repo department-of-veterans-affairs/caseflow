@@ -25,6 +25,20 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             containerEnvVar(key: 'DISPLAY', value: ':99'),
             containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
          ],
+    ),
+    containerTemplate(
+         name: 'linter',
+         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
+         ttyEnabled: true,
+         alwaysPullImage: true,
+         command: 'cat'
+    ),
+    containerTemplate(
+         name: 'frontend',
+         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
+         ttyEnabled: true,
+         alwaysPullImage: true,
+         command: 'cat'
     )]) {
     node('caseflow-pod-alan') {
         stage('git clone') {
@@ -60,7 +74,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             parallel (
                 frontend: {
                     stage('npm test') {
-                        container('ubuntu') {
+                        container('frontend') {
                             sh"""
                             cd /home/jenkins/workspace/caseflow
                             cd ./client && npm run test
@@ -71,7 +85,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
 
                 lint: {
                     stage('rake lint/security') {
-                        container('ubuntu') {
+                        container('linter') {
                             sh"""
                             cd /home/jenkins/workspace/caseflow
                             rake lint
