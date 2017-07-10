@@ -28,7 +28,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
     )]){
     node('caseflow-pod-alan') {
 
-        stage('Clone repository') {
+        stage('git clone') {
             container('ubuntu') {
                 sh """
                 cd /home/jenkins/workspace
@@ -39,7 +39,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
-        stage('Setup') {
+        stage('setup') {
             container('ubuntu') {
                 sh """
                 cd /home/jenkins/workspace/caseflow
@@ -64,7 +64,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
-        stage('DB creation') {
+        stage('db:create') {
             container('ubuntu') {
                 sh """
                 cd /home/jenkins/workspace/caseflow
@@ -83,11 +83,23 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
-        stage('rake ci:other') {
+        stage('rake coverage/lint/security') {
             container('ubuntu') {
                 sh"""
                 cd /home/jenkins/workspace/caseflow
-                rake ci:other
+                rake ci:verify_code_coverage
+                rake ci:lint
+                rake ci:securityother
+                rake ci:konacha:run
+                """
+            }
+        }
+
+        stage('rake mocha') {
+            container('ubuntu') {
+                sh"""
+                cd /home/jenkins/workspace/caseflow
+                rake ci:mocha
                 """
             }
         }
