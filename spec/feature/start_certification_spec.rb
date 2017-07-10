@@ -328,7 +328,7 @@ RSpec.feature "Start Certification" do
     end
 
     scenario "There is dependencies outage" do
-      Rails.cache.write(:dependencies_outage, "BGS")
+      allow(DependenciesCheck).to receive(:outage_present?).and_return(true)
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content "We've detected technical issues in our system"
     end

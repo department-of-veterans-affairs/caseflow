@@ -147,7 +147,6 @@ GEM
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
-    curb (0.9.3)
     d3-rails (4.9.1)
       railties (>= 3.1)
     database_cleaner (1.5.3)
@@ -449,7 +448,6 @@ DEPENDENCIES
   capybara
   caseflow!
   connect_vbms!
-  curb
   database_cleaner
   font-awesome-sass
   foreman

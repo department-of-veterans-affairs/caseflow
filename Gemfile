@@ -87,9 +87,6 @@ gem 'redis-namespace'
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
-# http client that uses libcurl(3) (as in curl command)
-gem 'curb'
-
 group :production, :staging do
   # Oracle DB
   gem 'activerecord-oracle_enhanced-adapter'

@@ -51,7 +51,6 @@
     "rc-collapse": "^1.7.6",
     "react": "^15.5.4",
     "react-addons-perf": "^15.4.2",
-    "react-banner": "^0.3.1",
     "react-copy-to-clipboard": "^4.3.0",
     "react-dom": "^15.5.4",
     "react-highlight-words": "^0.8.0",
