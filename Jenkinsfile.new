@@ -19,7 +19,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
          ttyEnabled: true,
          alwaysPullImage: true,
          command: 'cat',
-        //  resourceRequestCpu: '3',
          envVars: [
             containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
             containerEnvVar(key: 'RAILS_ENV', value: 'test'),
@@ -31,9 +30,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         stage('git clone') {
             container('ubuntu') {
                 sh """
-                cd /home/jenkins/workspace
-                git clone https://github.com/department-of-veterans-affairs/caseflow.git
-                cd caseflow
+                git clone https://github.com/department-of-veterans-affairs/caseflow.git .
                 git checkout dockerfile-alan
                 """
             }
@@ -45,7 +42,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('npm') {
                         container('ubuntu') {
                             sh """
-                            cd /home/jenkins/workspace/caseflow
                             cd ./client && npm install --no-optional
                             """
                         }
@@ -56,7 +52,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('bundle') {
                         container('ubuntu') {
                             sh """
-                            cd /home/jenkins/workspace/caseflow
                             bundle install --without production staging --path vendor/bundle
                             """
                         }
@@ -71,7 +66,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('npm test') {
                         container('ubuntu') {
                             sh"""
-                            cd /home/jenkins/workspace/caseflow
                             cd ./client && npm run test
                             """
                         }
@@ -82,7 +76,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('rake lint/security') {
                         container('ubuntu') {
                             sh"""
-                            cd /home/jenkins/workspace/caseflow
                             rake lint
                             rake security
                             """
@@ -94,7 +87,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('setup') {
                         container('ubuntu') {
                             sh """
-                            cd /home/jenkins/workspace/caseflow
                             Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
                             """
                         }
@@ -103,7 +95,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('db:create') {
                         container('ubuntu') {
                             sh """
-                            cd /home/jenkins/workspace/caseflow
                             rake db:create
                             rake db:schema:load
                             """
@@ -113,7 +104,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('rake spec') {
                         container('ubuntu') {
                             sh"""
-                            cd /home/jenkins/workspace/caseflow
                             rake spec
                             """
                         }
@@ -122,7 +112,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     stage('rake coverage') {
                         container('ubuntu') {
                             sh"""
-                            cd /home/jenkins/workspace/caseflow
                             rake ci:verify_code_coverage
                             rake konacha:run
                             """
