@@ -128,14 +128,19 @@ RSpec.feature "Reader" do
 
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
+        expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "New", match: :first
 
         expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")
 
+        # Test that the title changed. Functionality in PageRoute.jsx
+        expect(page).to have_title("Claims Folder | Caseflow Reader")
+
         click_on "Caseflow Reader"
         expect(page).to have_current_path("/reader/appeal")
+        expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "Continue"
 

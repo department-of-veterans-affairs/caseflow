@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
 import Perf from 'react-addons-perf';
 
+import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import LoadingScreen from './LoadingScreen';
@@ -129,8 +130,18 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
       <div>
-        <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
-        <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
+
+        <PageRoute
+          exact
+          title="Claims Folder | Caseflow Reader"
+          path="/:vacolsId/documents"
+          render={this.routedPdfListView}
+        />
+        <PageRoute
+          title ="Document Viewer | Caseflow Reader"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer}
+        />
       </div>
     </LoadingScreen>;
   }
@@ -140,8 +151,16 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
-        <Route path="/:vacolsId/documents" render={this.documentsRoute} />
-        <Route exact path="/" render={this.routedCaseSelect} />
+        <Route
+          path="/:vacolsId/documents"
+          render={this.documentsRoute}
+        />
+        <PageRoute
+          exact
+          title="Assignments | Caseflow Reader"
+          path="/"
+          render={this.routedCaseSelect}
+        />
       </div>
     </Router>;
   }

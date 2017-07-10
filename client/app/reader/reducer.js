@@ -2,7 +2,7 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString, commentContainsString } from './search';
+import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
 const SHOW_EXPAND_ALL = false;
@@ -38,12 +38,26 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
-  const updateListComments = (id, state, foundComment) => {
+  const updateListComments = (state, id, foundComment) => {
     return update(state, {
       documents: {
         [id]: {
           listComments: {
             $set: foundComment
+          }
+        }
+      }
+    });
+  };
+
+  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
+    return update(state, {
+      ui: {
+        searchCategoryHighlights: {
+          $merge: {
+            [docId]: {
+              ...categoryMatches
+            }
           }
         }
       }
@@ -63,23 +77,31 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      (doc) => {
-        // doing a search through comments first
-        let queryTokens = _.compact(searchQuery.split(' '));
-        const commentFound = queryTokens.some((word) => {
-          return commentContainsString(word, nextState, doc);
-        });
-
-        // update state with if comments should be shown
-        updatedNextState = updateListComments(doc.id, updatedNextState, commentFound);
-
-        // comment found or string found in other parts of annotation of the document
-        return commentFound || searchString(searchQuery)(doc);
-      }
+      searchString(searchQuery, nextState)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
     value();
+
+  // looping through all the documents to update category highlights and expanding comments
+  _.forEach(updatedNextState.documents, (doc) => {
+    const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
+
+    // getting all the truthy values from the object
+    // {'medical': true, 'procedural': false } turns into {'medical': true}
+    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
+
+    // update the state for all the search category highlights
+    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
+      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
+        doc.id, matchesCategories);
+    }
+
+    // updating the state of all annotations for expanded comments
+    if (containsWords !== doc.listComments) {
+      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+    }
+  });
 
   if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
@@ -140,6 +162,7 @@ export const initialState = {
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   ui: {
+    searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
     selectedAnnotationId: null,
