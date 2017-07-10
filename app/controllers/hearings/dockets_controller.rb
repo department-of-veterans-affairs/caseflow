@@ -15,7 +15,7 @@ class Hearings::DocketsController < HearingsController
   end
 
   def show
-    date = date_from(params[:id])
+    date = date_from_string(params[:id])
     return not_found unless date && Judge.new(current_user).docket?(date)
     render :index
   end

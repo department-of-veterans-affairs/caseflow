@@ -33,12 +33,12 @@ class HearingsController < ApplicationController
     RequestStore.store[:application] = "hearings"
   end
 
-  def date_from(param)
+  def date_from_string(date_string)
     # date should be YYYY-MM-DD
-    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ param
+    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ date_string
 
     begin
-      param.to_date
+      date_string.to_date
     rescue ArgumentError
       nil
     end

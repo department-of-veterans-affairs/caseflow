@@ -43,7 +43,7 @@ const now = () => {
     replace(/(p|a)m/, '$1.m.');
 };
 
-export class Docket extends React.Component {
+export class DailyDocket extends React.Component {
 
   componentDidMount = () => {
     // TEMP logic to show Saving.../Last saved at <time>
@@ -60,7 +60,7 @@ export class Docket extends React.Component {
 
   render() {
 
-    let hearings = this.props.dockets[this.props.date].hearings_hash;
+    let docket = this.props.docket;
 
     return <div>
       <div className="content cf-hearings">
@@ -70,8 +70,8 @@ export class Docket extends React.Component {
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
           <div className="meta">
-            <div>{moment(hearings[0].date).format('ddd l')}</div>
-            <div>Hearing Type: {hearings[0].request_type}</div>
+            <div>{moment(docket[0].date).format('ddd l')}</div>
+            <div>Hearing Type: {docket[0].request_type}</div>
           </div>
         </div>
         <table className="cf-hearings-docket">
@@ -86,7 +86,7 @@ export class Docket extends React.Component {
               </th>
             </tr>
           </thead>
-          {hearings.map((hearing, index) =>
+          {docket.map((hearing, index) =>
           <tbody key={index}>
             <tr>
               <td className="cf-hearings-docket-date">
@@ -173,8 +173,8 @@ const mapStateToProps = (state) => ({
 
 export default connect(
   mapStateToProps
-)(Docket);
+)(DailyDocket);
 
-Docket.propTypes = {
+DailyDocket.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired
 };

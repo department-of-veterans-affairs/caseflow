@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
-import Docket from './Docket';
+import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
 
 export const getDockets = (dispatch) => {
@@ -41,7 +41,10 @@ export class DailyDocketContainer extends React.Component {
       return <div>You have no upcoming hearings.</div>;
     }
 
-    return <Docket {...this.props} />;
+    return <DailyDocket
+      veteran_law_judge={this.props.veteran_law_judge}
+      docket={this.props.dockets[this.props.date].hearings_hash}
+    />;
   }
 }
 
