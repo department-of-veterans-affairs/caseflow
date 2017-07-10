@@ -31,7 +31,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
         stage('Test Setup') {
             container('ubuntu') {
                 sh """
-                Xvfb :99 -screen 0 1024x768x16 &
+                Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
                 cd ./client && npm install --no-optional
                 bundle install --without production staging
                 rake db:create
