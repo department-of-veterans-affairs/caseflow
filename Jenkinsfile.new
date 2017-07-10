@@ -24,7 +24,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Clone repository') {
             container('ubuntu') {
-                checkout scm
+                sh 'printenv'
+                checkout scm: [workspace: $WORKSPACE]
             }
         }
 
