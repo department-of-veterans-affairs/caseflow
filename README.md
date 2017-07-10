@@ -46,7 +46,7 @@ docker-compose run rake db:setup
 
 That's it! You're now up and running and can access the application from http://localhost:3000 on your web browser.
 
-If you wish to attach to the running web container and execute some shell commands, run `docker-compose exec /bin/bash`.
+If you wish to attach to the running web container and execute some shell commands, run `docker-compose exec web /bin/bash`.
 
 ### Mac OSX Setup
 Alternatively, if you don't want to use Docker, you can follow these instructions to set the application up on Mac OS X.
