@@ -29,9 +29,9 @@ export const DocumentListHeader = (props) => {
           onChange={props.setSearch}
           onClearSearch={props.clearSearch}
           onClick={props.clickSearch}
-          onSearch={props.sendSearchAnalyticsEvent}
           value={props.docFilterCriteria.searchQuery}
           size="small"
+          analyticsLabel="Reader"
         />
       </div>
       <div className="usa-width-one-third num-of-documents">
@@ -82,20 +82,15 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(clearAllFilters());
   },
   clearSearch: () => {
-    Analytics.event('Controls', 'click', 'Clear search');
     dispatch(clearSearch());
-  },
-  sendSearchAnalyticsEvent () {
-    Analytics.event('Controls', 'search', 'documents');
   },
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
   },
   toggleExpandAll: () => {
-    dispatch(toggleExpandAll());
     Analytics.event('Controls', 'click', 'Expand/Collapse all');
-  },
-  clickSearch: () => Analytics.event('Controls', 'click', 'Search button')
+    dispatch(toggleExpandAll());
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);

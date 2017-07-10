@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
+import Analytics from '../util/AnalyticsUtil';
 import _ from 'lodash';
 
 export default class SearchBar extends React.Component {
@@ -14,8 +15,8 @@ export default class SearchBar extends React.Component {
   // a search query. This is 500ms after the last character
   // typed or when focus is lost
   onSearch = () => {
-    if (this.props.value && this.props.onSearch) {
-      this.props.onSearch(this.props.value);
+    if (this.props.value && this.props.analyticsLabel) {
+      Analytics.event('Controls', 'search', this.props.analyticsLabel);
     }
   }
 
@@ -45,13 +46,30 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  onClick = () => {
+    if (this.props.analyticsLabel) {
+      Analytics.event('Controls', 'click', `${this.props.analyticsLabel} - Search button`);
+    }
+
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+  }
+
+  onClearSearch = () => {
+    if (this.props.analyticsLabel) {
+      Analytics.event('Controls', 'click', `${this.props.analyticsLabel} - Clear search`);
+    }
+
+    this.props.onClearSearch();
+  }
+
   render() {
     let {
       id,
-      onClick,
       value,
-      onClearSearch,
       loading,
+      onClearSearch,
       size,
       title
     } = this.props;
@@ -89,10 +107,10 @@ export default class SearchBar extends React.Component {
           ariaLabel="clear search"
           name="clear search"
           classNames={['cf-pdf-button cf-search-close-icon']}
-          onClick={onClearSearch}>
+          onClick={this.onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
+      <Button name={`search-${id}`} onClick={this.onClick} type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button>
     </span>;
@@ -105,8 +123,9 @@ SearchBar.propTypes = {
   size: PropTypes.string,
   onChange: PropTypes.func,
   onClick: PropTypes.func,
-  onSearch: PropTypes.func,
   onClearSearch: PropTypes.func,
   loading: PropTypes.bool,
-  value: PropTypes.string
+  value: PropTypes.string,
+  analyticsLabel: PropTypes.string
 };
+
