@@ -1,4 +1,4 @@
-podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
     containerTemplate(
         name: 'postgres', 
         image: 'postgres:9.5',
@@ -26,7 +26,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
             containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
          ],
     )]){
-    node('caseflow-pod') {
+    node('caseflow-pod-alan') {
 
         stage('Clone repository') {
             container('ubuntu') {
@@ -39,25 +39,40 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
             }
         }
 
-        stage('Test Setup') {
+        stage('Package Setup') {
             container('ubuntu') {
                 sh """
                 cd /home/jenkins/workspace/caseflow
-                ls -l
                 Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
                 cd ./client && npm install --no-optional
                 bundle install --without production staging
+                """
+            }
+        }
+
+        stage('DB creation') {
+            container('ubuntu') {
+                sh """
+                cd /home/jenkins/workspace/caseflow
                 rake db:create
                 rake db:schema:load
                 """
             }
         }
 
-        stage('Execute Tests') {
+        stage('rake spec') {
             container('ubuntu') {
                 sh"""
                 cd /home/jenkins/workspace/caseflow
                 rake spec
+                """
+            }
+        }
+
+        stage('rake ci:other') {
+            container('ubuntu') {
+                sh"""
+                cd /home/jenkins/workspace/caseflow
                 rake ci:other
                 """
             }
