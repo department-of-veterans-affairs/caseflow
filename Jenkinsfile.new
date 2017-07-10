@@ -47,7 +47,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                             """
                         }
                     }
-                }
+                },
                 backend: {
                     stage('git clone') {
                         container('ubuntu') {
