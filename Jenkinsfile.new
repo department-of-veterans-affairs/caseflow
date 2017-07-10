@@ -25,80 +25,66 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             containerEnvVar(key: 'DISPLAY', value: ':99'),
             containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
          ],
-    ),
-    containerTemplate(
-         name: 'frontend',
-         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
-         ttyEnabled: true,
-         alwaysPullImage: true,
-         command: 'cat'
-    )]) {
+    ) {
     node('caseflow-pod-alan') {
+        stage('git clone') {
+            container('ubuntu') {
+                sh """
+                cd /home/jenkins/workspace
+                git clone https://github.com/department-of-veterans-affairs/caseflow.git
+                cd caseflow
+                git checkout dockerfile-alan
+                """
+            }
+        }
+
+        stage('npm install frontend') {
+            container('ubuntu') {
+                sh """
+                cd /home/jenkins/workspace/caseflow
+                cd ./client && npm install --no-optional
+                """
+            }
+        }
+
+        stage('bundle install') {
+            container('ubuntu') {
+                sh """
+                cd /home/jenkins/workspace/caseflow
+                bundle install --without production staging
+                """
+            }
+        }
         stage('run test') {
             parallel (
                 frontend: {
-                    stage('git clone frontend') {
-                        container('frontend') {
-                            sh """
-                            cd /home/jenkins/workspace
-                            git clone https://github.com/department-of-veterans-affairs/caseflow.git frontend-caseflow
-                            cd frontend-caseflow
-                            git checkout dockerfile-alan
-                            """
-                        }
-                    }
-
-                    stage('npm install frontend') {
-                        container('frontend') {
-                            sh """
-                            cd /home/jenkins/workspace/frontend-caseflow
-                            cd ./client && npm install --no-optional
-                            """
-                        }
-                    }
-
                     stage('npm test') {
-                        container('frontend') {
+                        container('ubuntu') {
                             sh"""
-                            cd /home/jenkins/workspace/frontend-caseflow
+                            cd /home/jenkins/workspace/caseflow
                             cd ./client && npm run test
                             """
                         }
                     }
                 },
-                backend: {
-                    stage('git clone') {
+
+                lint: {
+                    stage('rake lint/security') {
                         container('ubuntu') {
-                            sh """
-                            cd /home/jenkins/workspace
-                            git clone https://github.com/department-of-veterans-affairs/caseflow.git
-                            cd caseflow
-                            git checkout dockerfile-alan
+                            sh"""
+                            cd /home/jenkins/workspace/caseflow
+                            rake lint
+                            rake security
                             """
                         }
                     }
-
+                }
+                backend: {
                     stage('setup') {
                         container('ubuntu') {
                             sh """
                             cd /home/jenkins/workspace/caseflow
                             Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
-                            """
-                        }
-                    }
-                    stage('npm install') {
-                        container('ubuntu') {
-                            sh """
-                            cd /home/jenkins/workspace/caseflow
-                            cd ./client && npm install --no-optional
-                            """
-                        }
-                    }
-                    stage('bundle install') {
-                        container('ubuntu') {
-                            sh """
-                            cd /home/jenkins/workspace/caseflow
-                            bundle install --without production staging
                             """
                         }
                     }
@@ -109,16 +95,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                             cd /home/jenkins/workspace/caseflow
                             rake db:create
                             rake db:schema:load
-                            """
-                        }
-                    }
-
-                    stage('rake lint/security') {
-                        container('ubuntu') {
-                            sh"""
-                            cd /home/jenkins/workspace/caseflow
-                            rake lint
-                            rake security
                             """
                         }
                     }
