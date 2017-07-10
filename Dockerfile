@@ -79,4 +79,4 @@ ENV CHROME_BIN=chromium-browser
 
 ## Prefetch Gems
 ADD Gemfile* /caseflow/
-RUN cd /caseflow && bundle install --without production staging
+RUN cd /caseflow && bundle install --deployment --without production staging
