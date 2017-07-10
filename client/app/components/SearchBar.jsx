@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
-import Analytics from '../util/AnalyticsUtil';
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -15,13 +14,13 @@ export default class SearchBar extends React.Component {
   // a search query. This is 500ms after the last character
   // typed or when focus is lost
   onSearch = () => {
-    if(this.props.value && this.props.onSearch) {
+    if (this.props.value && this.props.onSearch) {
       this.props.onSearch(this.props.value);
     }
   }
 
   clearSearchCallback() {
-    if(this.searchTimeout) {
+    if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
       this.searchTimeout = null;
 
@@ -30,8 +29,8 @@ export default class SearchBar extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.value !== nextProps.value) {
-      this.clearSearchCallback()
+    if (this.props.value !== nextProps.value) {
+      this.clearSearchCallback();
 
       this.searchTimeout = setTimeout(() => {
         this.onSearch();
@@ -40,8 +39,8 @@ export default class SearchBar extends React.Component {
     }
   }
 
-  onBlur = (event) => {
-    if(this.clearSearchCallback()) {
+  onBlur = () => {
+    if (this.clearSearchCallback()) {
       this.onSearch();
     }
   }

@@ -79,7 +79,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => {
     Analytics.event('Controls', 'click', 'Clear all filters');
-    dispatch(clearAllFilters())
+    dispatch(clearAllFilters());
   },
   clearSearch: () => {
     Analytics.event('Controls', 'click', 'Clear search');
