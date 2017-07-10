@@ -25,7 +25,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             containerEnvVar(key: 'DISPLAY', value: ':99'),
             containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
          ],
-    ) {
+    )] {
     node('caseflow-pod-alan') {
         stage('git clone') {
             container('ubuntu') {
@@ -79,7 +79,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                         }
                     }
                 },
-                
+
                 backend: {
                     stage('setup') {
                         container('ubuntu') {
