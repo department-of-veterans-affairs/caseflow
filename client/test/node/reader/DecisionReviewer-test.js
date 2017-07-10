@@ -406,6 +406,20 @@ describe('DecisionReviewer', () => {
         expect(wrapper.html()).to.include('<mark class=" ">Comment</mark>');
       });
 
+      it('does search highlighting for categories', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'medical' } });
+
+        // get the first category icon
+        let textArray = wrapper.find('tbody').find('tr').
+          find('.cf-document-category-icons').
+          find('li').
+          first();
+
+        expect(textArray.prop('aria-label')).to.equal('Medical');
+        expect(textArray.hasClass('highlighted')).to.be.true;
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 

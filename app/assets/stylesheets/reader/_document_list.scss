@@ -146,6 +146,7 @@ $tag-backgrond-color: #d6d7d9;
   }
 
   .cf-dropdown-filter {
+    z-index: 15;
     position: absolute;
     border: 1px solid $color-gray-lighter;
     background: $color-white;
