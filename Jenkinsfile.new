@@ -24,7 +24,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Clone repository') {
             container('ubuntu') {
-                dir('/home/jenkins') {
+                dir('/home/jenkins/workspace') {
                     sh """
                     git clone github.com/department-of-veterans-affairs/caseflow.git
                     """
@@ -34,7 +34,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Test Setup') {
             container('ubuntu') {
-                dir('/home/jenkins/caseflow') {
+                dir('/home/jenkins/workspace/caseflow') {
                     sh """
                     Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
                     cd ./client && npm install --no-optional
@@ -48,7 +48,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Execute Tests') {
             container('ubuntu') {
-                dir('/home/jenkins/caseflow') {
+                dir('/home/jenkins/workspace/caseflow') {
                     sh"""
                     rake spec
                     rake ci:other
