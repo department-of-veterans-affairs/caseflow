@@ -21,7 +21,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
          command: 'cat',
          envVars: [
             containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
-            containerEnvVar(key: 'RAILS_ENV', value: 'test')
+            containerEnvVar(key: 'RAILS_ENV', value: 'test'),
+            containerEnvVar(key: 'DISPLAY', value: ':99')
          ],
     )]){
     node('caseflow-pod') {
