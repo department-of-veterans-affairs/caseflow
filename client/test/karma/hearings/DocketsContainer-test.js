@@ -2,11 +2,10 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { spy } from 'sinon';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import ApiUtil from '../../../app/util/ApiUtil';
+import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
 import { populateDockets } from '../../../app/hearings/actions/Dockets';
 import DocketsContainer from '../../../app/hearings/DocketsContainer';
@@ -19,9 +18,9 @@ const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thu
 describe('DocketsContainer', () => {
   let wrapper;
 
-  spy(ApiUtil, 'get');
-
   beforeEach(() => {
+    ApiUtilStub.beforeEach();
+
     wrapper = mount(
       <Provider store={store}>
         <MemoryRouter initialEntries={['/']}>
@@ -32,10 +31,13 @@ describe('DocketsContainer', () => {
       </Provider>);
   });
 
+  afterEach(() => {
+    ApiUtilStub.afterEach();
+  });
+
   it('retrieves dockets', () => {
     setTimeout(() => {
-      expect(ApiUtil.get.calledOnce).to.be.true;
-      ApiUtil.get.restore();
+      expect(ApiUtilStub.apiGet.calledOnce).to.be.true;
     });
   });
 

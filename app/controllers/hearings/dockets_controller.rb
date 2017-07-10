@@ -16,14 +16,18 @@ class Hearings::DocketsController < HearingsController
 
   def show
     date = date_from_string(params[:id])
-    return not_found unless date && Judge.new(current_user).docket?(date)
+    return not_found unless date && judge.docket?(date)
     render :index
   end
 
   private
 
+  def judge
+    @judge ||= Judge.new(current_user)
+  end
+
   def current_user_dockets
-    @current_user_dockets ||= Judge.new(current_user).upcoming_dockets
+    @current_user_dockets ||= judge.upcoming_dockets
   end
   helper_method :current_user_dockets
 

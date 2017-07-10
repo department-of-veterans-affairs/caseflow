@@ -11,7 +11,7 @@ class Judge
   end
 
   def docket?(date)
-    return true if upcoming_hearings_on(date).count > 0
+    upcoming_hearings_on(date).count > 0
   end
 
   private

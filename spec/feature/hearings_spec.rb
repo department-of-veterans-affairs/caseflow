@@ -76,6 +76,8 @@ RSpec.feature "Hearings" do
     scenario "Shows a daily docket" do
       visit "/hearings/dockets/2017-01-05"
       expect(page).to have_content("Daily Docket")
+      expect(page).to have_content("Hearing Type: Video")
+      expect(page).to have_selector("tbody", 2)
     end
   end
 end
