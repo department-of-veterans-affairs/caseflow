@@ -1,124 +1,125 @@
 podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
-    containerTemplate(
-        name: 'postgres', 
-        image: 'postgres:9.5',
-        ttyEnabled: true,
-        privileged: false,
-        alwaysPullImage: false
-        ),
-    containerTemplate(
-        name: 'redis', 
-        image: 'redis:3.2.9-alpine', 
-        ttyEnabled: true,
-        privileged: false,
-        alwaysPullImage: false
+  containerTemplate(
+    name: 'postgres', 
+    image: 'postgres:9.5',
+    ttyEnabled: true,
+    privileged: false,
+    alwaysPullImage: false
     ),
-    containerTemplate(
-         name: 'ubuntu',
-         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
-         ttyEnabled: true,
-         alwaysPullImage: true,
-         command: 'cat',
-         envVars: [
-            containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
-            containerEnvVar(key: 'RAILS_ENV', value: 'test'),
-            containerEnvVar(key: 'DISPLAY', value: ':99'),
-            containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
-         ],
-    )]) {
-    node('caseflow-pod-alan') {
-        stage('git clone') {
-            container('ubuntu') {
-                sh """
-                git clone https://github.com/department-of-veterans-affairs/caseflow.git .
-                git checkout ${env.BRANCH_NAME}
-                """
-            }
-        }
-
-        stage('install') {
-            parallel(
-                npm: {
-                    stage('npm') {
-                        container('ubuntu') {
-                            sh """
-                            cd ./client && npm install --no-optional
-                            """
-                        }
-                    }
-                },
-
-                bundle: {
-                    stage('bundle') {
-                        container('ubuntu') {
-                            sh """
-                            bundle install --without production staging --path vendor/bundle
-                            """
-                        }
-                    }
-                }
-            )
-        }
-
-        stage('run test') {
-            parallel (
-                frontend: {
-                    stage('npm test') {
-                        container('ubuntu') {
-                            sh"""
-                            cd ./client && npm run test
-                            """
-                        }
-                    }
-                },
-
-                lint: {
-                    stage('rake lint/security') {
-                        container('ubuntu') {
-                            sh"""
-                            rake lint
-                            rake security
-                            """
-                        }
-                    }
-                },
-
-                backend: {
-                    stage('setup') {
-                        container('ubuntu') {
-                            sh """
-                            Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
-                            """
-                        }
-                    }
-
-                    stage('db:create') {
-                        container('ubuntu') {
-                            sh """
-                            rake db:create
-                            rake db:schema:load
-                            """
-                        }
-                    }
-
-                    stage('rake spec') {
-                        container('ubuntu') {
-                            sh"""
-                            rake spec
-                            """
-                        }
-                    }
-
-                    stage('rake coverage') {
-                        container('ubuntu') {
-                            sh"""
-                            rake ci:verify_code_coverage
-                            rake konacha:run
-                            """
-                        }
-                    }
-                }
-            )
-        }
+  containerTemplate(
+    name: 'redis', 
+    image: 'redis:3.2.9-alpine', 
+    ttyEnabled: true,
+    privileged: false,
+    alwaysPullImage: false
+  ),
+  containerTemplate(
+     name: 'ubuntu',
+     image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
+     ttyEnabled: true,
+     alwaysPullImage: true,
+     command: 'cat',
+     envVars: [
+      containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
+      containerEnvVar(key: 'RAILS_ENV', value: 'test'),
+      containerEnvVar(key: 'DISPLAY', value: ':99'),
+      containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
+     ],
+  )]) {
+  node('caseflow-pod-alan') {
+    
+    stage('git clone') {
+      container('ubuntu') {
+        sh """
+        git clone https://github.com/department-of-veterans-affairs/caseflow.git .
+        git checkout ${env.BRANCH_NAME}
+        """
+      }
     }
+
+    stage('install') {
+      parallel(
+        npm: {
+          stage('npm') {
+            container('ubuntu') {
+              sh """
+              cd ./client && npm install --no-optional
+              """
+            }
+          }
+        },
+
+        bundle: {
+          stage('bundle') {
+            container('ubuntu') {
+              sh """
+              bundle install --without production staging --path vendor/bundle
+              """
+            }
+          }
+        }
+      )
+    }
+
+    stage('run test') {
+      parallel (
+        frontend: {
+          stage('npm test') {
+            container('ubuntu') {
+              sh"""
+              cd ./client && npm run test
+              """
+            }
+          }
+        },
+
+        lint: {
+          stage('rake lint/security') {
+            container('ubuntu') {
+              sh"""
+              rake lint
+              rake security
+              """
+            }
+          }
+        },
+
+        backend: {
+          stage('setup') {
+            container('ubuntu') {
+              sh """
+              Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
+              """
+            }
+          }
+
+          stage('db:create') {
+            container('ubuntu') {
+              sh """
+              rake db:create
+              rake db:schema:load
+              """
+            }
+          }
+
+          stage('rake spec') {
+            container('ubuntu') {
+              sh"""
+              rake spec
+              """
+            }
+          }
+
+          stage('rake coverage') {
+            container('ubuntu') {
+              sh"""
+              rake ci:verify_code_coverage
+              rake konacha:run
+              """
+            }
+          }
+        }
+      )
+    }
+  }
 }
