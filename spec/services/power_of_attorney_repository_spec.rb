@@ -1,9 +1,9 @@
 describe PowerOfAttorneyRepository do
   context ".get_vacols_rep_code" do
-    subject { PowerOfAttorney.repository.get_vacols_rep_code(name) }
+    subject { PowerOfAttorney.repository.get_vacols_rep_code(short_name) }
 
     context "returns the VACOLS code when it exists" do
-      let(:name) { "AMERICAN LEGION" }
+      let(:name) { "American Legion" }
       it { is_expected.to eq("A") }
     end
 

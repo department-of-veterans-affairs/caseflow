@@ -35,8 +35,10 @@ class PowerOfAttorneyRepository
   end
 
   def self.get_vacols_rep_code(name)
-    # If we don't have a record, we set it to 'O' (Other).
-    BGS_REP_NAMES_TO_VACOLS_REP_CODES[name] || "O"
+    VACOLS::Case::REPRESENTATIVES.each do |representative|
+      return representative[0] if representative[1][:short] == name
+    end
+    return BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
   end
 
   # :nocov:
