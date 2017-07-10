@@ -88,9 +88,9 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                 sh"""
                 cd /home/jenkins/workspace/caseflow
                 rake ci:verify_code_coverage
-                rake ci:lint
-                rake ci:securityother
-                rake ci:konacha:run
+                rake lint
+                rake securityother
+                rake konacha:run
                 """
             }
         }
