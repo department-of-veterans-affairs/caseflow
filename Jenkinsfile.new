@@ -107,7 +107,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             container('ubuntu') {
                 sh"""
                 cd /home/jenkins/workspace/caseflow
-                rake ci:mocha
+                rake mocha
                 """
             }
         }
