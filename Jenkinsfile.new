@@ -28,12 +28,13 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
   )]) {
   node('caseflow-pod-alan') {
 
-    def HOME_DIR = '/home/jenkins/workspace/caseflow'
+    def WORKSPACE_DIR = '/home/jenkins/workspace'
+    def CASEFLOW_DIR = ${WORKSPACE_DIR} + '/caseflow'
     
     stage('git clone') {
       container('ubuntu') {
         sh """
-        cd "/home/jenkins/workspace"
+        cd ${WORKSPACE_DIR}
         git clone https://github.com/department-of-veterans-affairs/caseflow.git
         cd caseflow && git checkout ${env.BRANCH_NAME}
         """
@@ -46,7 +47,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('npm') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               cd ./client && npm install --no-optional
               """
             }
@@ -57,7 +58,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('bundle') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               bundle install --without production staging
               """
             }
@@ -72,7 +73,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('npm test') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               cd ./client && npm run test
               """
             }
@@ -83,7 +84,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('rake lint/security') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               rake lint
               rake security
               """
@@ -95,7 +96,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('setup') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
               """
             }
@@ -104,7 +105,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('db:create') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               rake db:create
               rake db:schema:load
               """
@@ -114,7 +115,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('rake spec') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               rake spec
               """
             }
@@ -123,7 +124,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('rake coverage') {
             container('ubuntu') {
               sh """
-              cd ${HOME_DIR}
+              cd ${CASEFLOW_DIR}
               rake ci:verify_code_coverage
               rake konacha:run
               """
