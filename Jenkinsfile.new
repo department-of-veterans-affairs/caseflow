@@ -35,7 +35,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         sh """
         cd "/home/jenkins/workspace"
         git clone https://github.com/department-of-veterans-affairs/caseflow.git
-        git checkout ${env.BRANCH_NAME}
+        cd caseflow && git checkout ${env.BRANCH_NAME}
         """
       }
     }
