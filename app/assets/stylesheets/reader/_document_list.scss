@@ -167,8 +167,7 @@ $tag-backgrond-color: #d6d7d9;
       @include hover;
 
       button {
-        padding: 0;
-        padding-bottom: 0;
+        padding: 0 0 0 2px;
       }
 
       &:hover .cf-clear-filter-button-wrapper {
@@ -183,21 +182,26 @@ $tag-backgrond-color: #d6d7d9;
       word-break: break-word;
       max-width: 218px;
 
-      .cf-category-selector {
-        display: flex;
-        align-items: flex-start;
+      li {
+        margin-bottom: 0;
+        padding: 14px;
+        @include hover;
 
-        .cf-form-checkboxes {
-          padding: 14px;
-          margin-bottom: 0;
-          margin-top: 0;
+        .cf-category-selector {
+          display: flex;
+          align-items: flex-start;
 
-          label {
+          .cf-form-checkboxes {
             margin-bottom: 0;
+            margin-top: 0;
+
+            label {
+              margin-bottom: 0;
           }
         }
       }
     }
+   }
 
     .cf-document-category-picker {
       margin-bottom: 0;
@@ -257,7 +261,6 @@ $tag-backgrond-color: #d6d7d9;
     background: inherit;
     font-weight: inherit;
     margin: 0;
-    padding: 0;
     color: inherit;
 
     &:hover {
