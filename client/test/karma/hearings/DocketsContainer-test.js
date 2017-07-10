@@ -16,7 +16,7 @@ const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thu
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
-describe.only('DocketsContainer', () => {
+describe('DocketsContainer', () => {
   let wrapper;
 
   spy(ApiUtil, 'get');
