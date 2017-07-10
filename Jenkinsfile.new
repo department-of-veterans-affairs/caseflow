@@ -13,7 +13,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         privileged: false,
         alwaysPullImage: false
     ),
-     containerTemplate(
+    containerTemplate(
          name: 'ubuntu',
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
          ttyEnabled: true,
@@ -25,91 +25,115 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             containerEnvVar(key: 'DISPLAY', value: ':99'),
             containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
          ],
-    )]){
+    ),
+    containerTemplate(
+         name: 'frontend',
+         image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
+         ttyEnabled: true,
+         alwaysPullImage: true,
+         command: 'cat'
+    )]) {
     node('caseflow-pod-alan') {
+        stage('run test') {
+            parallel (
+                frontend: {
+                    stage('git clone') {
+                        container('frontend') {
+                            sh """
+                            cd /home/jenkins/workspace
+                            git clone https://github.com/department-of-veterans-affairs/caseflow.git
+                            cd caseflow
+                            git checkout dockerfile-alan
+                            """
+                        }
+                    }
+                }
+                backend: {
+                    stage('git clone') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace
+                            git clone https://github.com/department-of-veterans-affairs/caseflow.git
+                            cd caseflow
+                            git checkout dockerfile-alan
+                            """
+                        }
+                    }
 
-        stage('git clone') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace
-                git clone https://github.com/department-of-veterans-affairs/caseflow.git
-                cd caseflow
-                git checkout dockerfile-alan
-                """
-            }
-        }
+                    stage('setup') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/caseflow
+                            Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
+                            """
+                        }
+                    }
+                    stage('npm install') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/caseflow
+                            cd ./client && npm install --no-optional
+                            """
+                        }
+                    }
+                    stage('bundle install') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/caseflow
+                            bundle install --without production staging
+                            """
+                        }
+                    }
 
-        stage('setup') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace/caseflow
-                Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
-                """
-            }
-        }
-        stage('npm install') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace/caseflow
-                cd ./client && npm install --no-optional
-                """
-            }
-        }
-        stage('bundle install') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace/caseflow
-                bundle install --without production staging
-                """
-            }
-        }
+                    stage('db:create') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/caseflow
+                            rake db:create
+                            rake db:schema:load
+                            """
+                        }
+                    }
 
-        stage('db:create') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace/caseflow
-                rake db:create
-                rake db:schema:load
-                """
-            }
-        }
+                    stage('rake lint/security') {
+                        container('ubuntu') {
+                            sh"""
+                            cd /home/jenkins/workspace/caseflow
+                            rake lint
+                            rake security
+                            """
+                        }
+                    }
 
-        stage('rake lint/security') {
-            container('ubuntu') {
-                sh"""
-                cd /home/jenkins/workspace/caseflow
-                rake lint
-                rake security
-                """
-            }
-        }
+                    stage('rake spec') {
+                        container('ubuntu') {
+                            sh"""
+                            cd /home/jenkins/workspace/caseflow
+                            rake spec
+                            """
+                        }
+                    }
 
-        stage('rake spec') {
-            container('ubuntu') {
-                sh"""
-                cd /home/jenkins/workspace/caseflow
-                rake spec
-                """
-            }
-        }
+                    stage('rake coverage') {
+                        container('ubuntu') {
+                            sh"""
+                            cd /home/jenkins/workspace/caseflow
+                            rake ci:verify_code_coverage
+                            rake konacha:run
+                            """
+                        }
+                    }
 
-        stage('rake coverage') {
-            container('ubuntu') {
-                sh"""
-                cd /home/jenkins/workspace/caseflow
-                rake ci:verify_code_coverage
-                rake konacha:run
-                """
-            }
-        }
-
-        stage('rake mocha') {
-            container('ubuntu') {
-                sh"""
-                cd /home/jenkins/workspace/caseflow
-                rake mocha
-                """
-            }
+                    stage('rake mocha') {
+                        container('ubuntu') {
+                            sh"""
+                            cd /home/jenkins/workspace/caseflow
+                            rake mocha
+                            """
+                        }
+                    }
+                }
+            )
         }
     }
 }
