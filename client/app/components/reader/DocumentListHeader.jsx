@@ -29,6 +29,7 @@ export const DocumentListHeader = (props) => {
           onChange={props.setSearch}
           onClearSearch={props.clearSearch}
           onClick={props.clickSearch}
+          onSearch={props.sendSearchAnalyticsEvent}
           value={props.docFilterCriteria.searchQuery}
           size="small"
         />
@@ -84,12 +85,15 @@ const mapDispatchToProps = (dispatch) => ({
     Analytics.event('Controls', 'click', 'Clear search');
     dispatch(clearSearch());
   },
+  sendSearchAnalyticsEvent () {
+    Analytics.event('Controls', 'search', 'documents');
+  },
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
   },
   toggleExpandAll: () => {
-    Analytics.event('Controls', 'click', 'Expand all');
     dispatch(toggleExpandAll());
+    Analytics.event('Controls', 'click', 'Expand/Collapse all');
   },
   clickSearch: () => Analytics.event('Controls', 'click', 'Search button')
 });

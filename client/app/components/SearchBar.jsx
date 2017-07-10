@@ -11,33 +11,38 @@ export default class SearchBar extends React.Component {
     this.props.onChange(event.target.value);
   }
 
-  clearSearchAnalyticsCallback() {
-    if(this.searchAnalyticsTimeout) {
-      clearTimeout(this.searchAnalyticsTimeout);
-      this.searchAnalyticsTimeout = null;
+  // A "search" event occurs when a user finishes typing
+  // a search query. This is 500ms after the last character
+  // typed or when focus is lost
+  onSearch = () => {
+    if(this.props.value && this.props.onSearch) {
+      this.props.onSearch(this.props.value);
+    }
+  }
+
+  clearSearchCallback() {
+    if(this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = null;
+
       return true;
     }
   }
 
-  triggerSearchAnalyticsEvent() {
-    if(!this.props.value) { return; }
-    Analytics.event('Controls', 'search', "documents")
-  }
-
   componentWillReceiveProps(nextProps) {
     if(this.props.value !== nextProps.value) {
-      this.clearSearchAnalyticsCallback()
+      this.clearSearchCallback()
 
-      this.searchAnalyticsTimeout = setTimeout(() => {
-        this.triggerSearchAnalyticsEvent();
-        this.searchAnalyticsTimeout = null;
+      this.searchTimeout = setTimeout(() => {
+        this.onSearch();
+        this.searchTimeout = null;
       }, 500);
     }
   }
 
   onBlur = (event) => {
-    if(this.clearSearchAnalyticsCallback()) {
-      this.triggerSearchAnalyticsEvent();
+    if(this.clearSearchCallback()) {
+      this.onSearch();
     }
   }
 
@@ -101,6 +106,7 @@ SearchBar.propTypes = {
   size: PropTypes.string,
   onChange: PropTypes.func,
   onClick: PropTypes.func,
+  onSearch: PropTypes.func,
   onClearSearch: PropTypes.func,
   loading: PropTypes.bool,
   value: PropTypes.string
