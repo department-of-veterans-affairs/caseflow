@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import Analytics from '../util/AnalyticsUtil';
 
 // Route augmented with application specific callbacks to change
 // the page title and call google analytics
@@ -42,10 +43,7 @@ class PageRoute extends React.Component {
 
     if (this.locationChanging) {
       document.title = title;
-
-      if (window.analyticsPageView) {
-        window.analyticsPageView(window.location.pathname);
-      }
+      Analytics.pageView(window.location.pathname);
     }
 
     return render(params);
