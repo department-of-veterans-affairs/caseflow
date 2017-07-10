@@ -24,32 +24,33 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
 
         stage('Clone repository') {
             container('ubuntu') {
-                checkout scm
+                sh """
+                cd /home/jenkins/workspace
+                git clone -b ${env.GIT_BRANCH} https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow
+                """
             }
         }
 
         stage('Test Setup') {
             container('ubuntu') {
-                dir('/home/jenkins/workspace/caseflow') {
-                    sh """
-                    Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
-                    cd ./client && npm install --no-optional
-                    bundle install --without production staging
-                    rake db:create
-                    rake db:schema:load
-                    """
-                }
+                sh """
+                cd /home/jenkins/workspace/caseflow
+                Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
+                cd ./client && npm install --no-optional
+                bundle install --without production staging
+                rake db:create
+                rake db:schema:load
+                """
             }
         }
 
         stage('Execute Tests') {
             container('ubuntu') {
-                dir('/home/jenkins/workspace/caseflow') {
-                    sh"""
-                    rake spec
-                    rake ci:other
-                    """
-                }
+                sh"""
+                cd /home/jenkins/workspace
+                rake spec
+                rake ci:other
+                """
             }
         }
     }
