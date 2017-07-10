@@ -119,6 +119,7 @@ svg[aria-hidden=true],
 
 .cf-comment-wrapper {
   padding: 0 30px 0 0;
+  height: 76vh;
   width: 350px;
   $comment-wrapper-vertical-margin: 15px;
   margin-top: $comment-wrapper-vertical-margin;
@@ -129,6 +130,8 @@ svg[aria-hidden=true],
     margin-bottom: $comment-wrapper-vertical-margin;
   }
 }
+
+// blah
 
 .cf-pdf-toolbar {
   background: $color-gray-dark;
