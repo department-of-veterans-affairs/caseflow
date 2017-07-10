@@ -14,7 +14,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         alwaysPullImage: false
     ),
     containerTemplate(
-         name: 'ubuntu',
+         name: 'backend',
          image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
          ttyEnabled: true,
          alwaysPullImage: true,
@@ -42,7 +42,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
     )]) {
     node('caseflow-pod-alan') {
         stage('git clone') {
-            container('ubuntu') {
+            container('backend') {
                 sh """
                 cd /home/jenkins/workspace
                 git clone https://github.com/department-of-veterans-affairs/caseflow.git
@@ -53,7 +53,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         }
 
         stage('npm install') {
-            container('ubuntu') {
+            container('backend') {
                 sh """
                 cd /home/jenkins/workspace/caseflow
                 cd ./client && npm install --no-optional
@@ -62,10 +62,10 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
         }
 
         stage('bundle install') {
-            container('ubuntu') {
+            container('backend') {
                 sh """
                 cd /home/jenkins/workspace/caseflow
-                bundle install --without production staging
+                bundle install --without production staging --path vendor/bundle
                 """
             }
         }
@@ -97,7 +97,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
 
                 backend: {
                     stage('setup') {
-                        container('ubuntu') {
+                        container('backend') {
                             sh """
                             cd /home/jenkins/workspace/caseflow
                             Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
@@ -106,7 +106,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     }
 
                     stage('db:create') {
-                        container('ubuntu') {
+                        container('backend') {
                             sh """
                             cd /home/jenkins/workspace/caseflow
                             rake db:create
@@ -116,7 +116,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     }
 
                     stage('rake spec') {
-                        container('ubuntu') {
+                        container('backend') {
                             sh"""
                             cd /home/jenkins/workspace/caseflow
                             rake spec
@@ -125,7 +125,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     }
 
                     stage('rake coverage') {
-                        container('ubuntu') {
+                        container('backend') {
                             sh"""
                             cd /home/jenkins/workspace/caseflow
                             rake ci:verify_code_coverage
