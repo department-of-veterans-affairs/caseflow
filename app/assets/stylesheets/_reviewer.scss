@@ -131,8 +131,6 @@ svg[aria-hidden=true],
   }
 }
 
-// blah
-
 .cf-pdf-toolbar {
   background: $color-gray-dark;
   width: 100%;
@@ -323,12 +321,6 @@ svg[aria-hidden=true],
 
 .cf-sidebar-heading-related-issues {
   margin-top: 0;
-}
-
-.cf-sidebar-heading-comments {
-  &:first-child {
-    margin-top: 20px;
-  }
 }
 
 .cf-sidebar-accordion {
