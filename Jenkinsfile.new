@@ -19,7 +19,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
          ttyEnabled: true,
          alwaysPullImage: true,
          command: 'cat',
-         resourceRequestCpu: '4',
          envVars: [
             containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
             containerEnvVar(key: 'RAILS_ENV', value: 'test'),
