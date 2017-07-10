@@ -39,22 +39,30 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
-        stage('npm install') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace/caseflow
-                cd ./client && npm install --no-optional
-                """
-            }
-        }
+        stage('install') {
+            parallel(
+                npm: {
+                    stage('npm') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/caseflow
+                            cd ./client && npm install --no-optional
+                            """
+                        }
+                    }
+                },
 
-        stage('bundle install') {
-            container('ubuntu') {
-                sh """
-                cd /home/jenkins/workspace/caseflow
-                bundle install --without production staging --path vendor/bundle
-                """
-            }
+                bundle: {
+                    stage('bundle') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/caseflow
+                            bundle install --without production staging --path vendor/bundle
+                            """
+                        }
+                    }
+                }
+            )
         }
 
         stage('run test') {
