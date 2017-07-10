@@ -49,7 +49,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     }
 
                     stage('npm install frontend') {
-                        container('ubuntu') {
+                        container('frontend') {
                             sh """
                             cd /home/jenkins/workspace/frontend-caseflow
                             cd ./client && npm install --no-optional
@@ -58,7 +58,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                     }
 
                     stage('npm test') {
-                        container('ubuntu') {
+                        container('frontend') {
                             sh"""
                             cd /home/jenkins/workspace/frontend-caseflow
                             cd ./client && npm run test
