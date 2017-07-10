@@ -5,7 +5,7 @@ const karmaTestPattern = 'test/karma/**/*-test.js';
 
 module.exports = function(config) {
   config.set({
-    browsers: ['Chrome'],
+    browsers: ['Chrome_without_sandbox'],
     frameworks: ['mocha'],
     reporters: ['mocha'],
     singleRun: true,
@@ -14,6 +14,14 @@ module.exports = function(config) {
       terminal: true,
       level: ''
     },
+
+    // you can define custom flags
+    customLaunchers: {
+      Chrome_without_sandbox: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    }
 
     files: [
       { pattern: karmaTestPattern }
