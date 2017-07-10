@@ -21,7 +21,7 @@ module.exports = function(config) {
         base: 'Chrome',
         flags: ['--no-sandbox']
       }
-    }
+    },
 
     files: [
       { pattern: karmaTestPattern }
