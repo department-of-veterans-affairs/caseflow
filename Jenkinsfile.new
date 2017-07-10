@@ -31,7 +31,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             container('ubuntu') {
                 sh """
                 git clone https://github.com/department-of-veterans-affairs/caseflow.git .
-                git checkout dockerfile-alan
+                git checkout ${env.BRANCH_NAME}
                 """
             }
         }
