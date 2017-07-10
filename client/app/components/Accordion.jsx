@@ -21,15 +21,11 @@ export default class Accordion extends React.PureComponent {
     } = this.props;
 
     const accordionHeaders = children.map((child) => {
-      if (child.type === AccordionHeader) {
-        return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
+      return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
           <div className="usa-accordion-content">
             {child.props.children}
           </div>
         </Panel>;
-      }
-
-      return '';
     });
 
     const accordionStyle = classnames({
@@ -52,6 +48,18 @@ export default class Accordion extends React.PureComponent {
 
 Accordion.propTypes = {
   accordion: PropTypes.bool,
-  children: PropTypes.node,
+  children (props, propName, componentName) {
+    const prop = props[propName];
+
+    let error = null;
+
+    React.Children.forEach(prop, (child) => {
+      if (child.type !== AccordionHeader) {
+        error = new Error(`\`${componentName}\` children should be of type \`AccordionHeader\`.`);
+      }
+    });
+
+    return error;
+  },
   style: PropTypes.string.isRequired
 };
