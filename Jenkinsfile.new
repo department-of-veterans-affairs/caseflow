@@ -57,6 +57,15 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
                         }
                     }
 
+                    stage('bundle install frontend') {
+                        container('ubuntu') {
+                            sh """
+                            cd /home/jenkins/workspace/frontend-caseflow
+                            bundle install --without production staging
+                            """
+                        }
+                    }
+
                     stage('rake mocha') {
                         container('ubuntu') {
                             sh"""
