@@ -45,7 +45,7 @@ describe "Appeals API v1", type: :request do
     let!(:held_hearing) do
       Generators::Hearing.create(
         appeal: resolved_appeal,
-        closed_at: 6.months.ago,
+        date: 6.months.ago,
         disposition: :held
       )
     end
