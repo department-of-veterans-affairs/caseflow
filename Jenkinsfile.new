@@ -28,13 +28,13 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
   )]) {
   node('caseflow-pod-alan') {
 
-    def HOME_DIR = '/home/jenkins/workspace'
+    def HOME_DIR = '/home/jenkins/workspace/caseflow'
     
     stage('git clone') {
       container('ubuntu') {
         sh """
-        cd ${HOME_DIR}
-        git clone https://github.com/department-of-veterans-affairs/caseflow.git .
+        cd "/home/jenkins/workspace"
+        git clone https://github.com/department-of-veterans-affairs/caseflow.git
         git checkout ${env.BRANCH_NAME}
         """
       }
