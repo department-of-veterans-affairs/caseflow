@@ -96,6 +96,12 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
+  # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
+  # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
+  def disposition_remand_priority
+    disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
+  end
+
   def power_of_attorney
     @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
   end
@@ -135,6 +141,14 @@ class Appeal < ActiveRecord::Base
   def appellant_name
     if appellant_first_name
       [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
+    end
+  end
+
+  def appellant_last_first_mi
+    # returns appellant name in format <last>, <first> <middle_initial>.
+    if appellant_first_name
+      name = "#{appellant_last_name}, #{appellant_first_name}"
+      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
     end
   end
 
@@ -381,7 +395,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.repository.fetch_documents_for(self)
+    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
   end
 
   class << self
@@ -413,6 +427,10 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
+    def vbms
+      VBMSService
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -425,8 +443,8 @@ class Appeal < ActiveRecord::Base
       fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
-      repository.upload_document_to_vbms(appeal, form8)
-      repository.clean_document(form8.pdf_location)
+      vbms.upload_document_to_vbms(appeal, form8)
+      vbms.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?

@@ -59,7 +59,7 @@ class TestDataService
     uploadable_document = TestDecisionDocument.new
     uploadable_document.upload_date = date
     log "Uploading decision for #{appeal.sanitized_vbms_id}"
-    document = AppealRepository.upload_document_to_vbms(appeal, uploadable_document)
+    document = VBMSService.upload_document_to_vbms(appeal, uploadable_document)
     log "VBMS Test Decision Document upload response: #{document}"
   end
 

@@ -67,16 +67,28 @@
 
 -->
 
-  <!-- Script for GA. Currently setup for production only. To add more environements, set google_analytics_account variable for that environment -->
-      <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script', '<%= Rails.configuration.google_analytics_host %>','ga');
+  <!-- Script for Google Analytics (GA). Currently setup for production only. -->
+  <% if Rails.env.production? && Rails.deploy_env?(:prod) %>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script', '<%= Rails.configuration.google_analytics_host %>','ga');
 
-        ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto');
-        ga('send', 'pageview', '<%= current_ga_path %>');
-      </script>
+      // Allow both caseflow domains to send analytics data
+      ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto');
+
+      window.analyticsPageView = function(page) {
+        ga('send', 'pageview', page);
+      }
+
+      window.analyticsEvent = function(category, action, label) {
+        ga('send', 'event', category, action, label)
+      }
+
+      analyticsPageView('<%= current_ga_path %>');
+    </script>
+  <% end %>
 
   <%= favicon_link_tag %>
 

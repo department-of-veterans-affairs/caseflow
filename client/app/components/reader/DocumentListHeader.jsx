@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
 import Button from '../Button';
+import Alert from '../Alert';
 import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, toggleExpandAll, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
+import Analytics from '../../util/AnalyticsUtil';
 
 export const DocumentListHeader = (props) => {
   const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
@@ -26,8 +28,10 @@ export const DocumentListHeader = (props) => {
           id="searchBar"
           onChange={props.setSearch}
           onClearSearch={props.clearSearch}
+          onClick={props.clickSearch}
           value={props.docFilterCriteria.searchQuery}
           size="small"
+          analyticsLabel="Reader"
         />
       </div>
       <div className="usa-width-one-third num-of-documents">
@@ -44,17 +48,17 @@ export const DocumentListHeader = (props) => {
         </span>
       </div>
     </div>
-    {filteredCategories.length > 0 && <div className="usa-alert usa-alert-info">
-      <div className="usa-alert-body">
-        <h3 className="usa-alert-heading">Showing limited results</h3>
-        <p className="usa-alert-text">Documents are currently
+    {Boolean(filteredCategories.length) &&
+      <Alert
+        title="Showing limited results"
+        type="info">
+        Documents are currently
           filtered by {filteredCategories}. <a
             href="#"
             id="clear-filters"
             onClick={props.clearAllFilters}>
-          Click here to see all documents.</a></p>
-      </div>
-    </div>}
+          Click here to see all documents.</a>
+      </Alert>}
   </div>;
 };
 
@@ -73,12 +77,18 @@ const mapStateToProps = (state) => ({
   docFilterCriteria: state.ui.docFilterCriteria
 });
 const mapDispatchToProps = (dispatch) => ({
-  clearAllFilters: () => dispatch(clearAllFilters()),
-  clearSearch: () => dispatch(clearSearch()),
+  clearAllFilters: () => {
+    Analytics.event('Controls', 'click', 'Clear all filters');
+    dispatch(clearAllFilters());
+  },
+  clearSearch: () => {
+    dispatch(clearSearch());
+  },
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
   },
   toggleExpandAll: () => {
+    Analytics.event('Controls', 'click', 'Expand/Collapse all');
     dispatch(toggleExpandAll());
   }
 });

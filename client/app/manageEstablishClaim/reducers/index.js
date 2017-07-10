@@ -6,10 +6,11 @@ const parseUserQuotasFromApi = (userQuotasFromApi) => (
   userQuotasFromApi.map((userQuota, index) => ({
     id: userQuota.id,
     index,
-    userName: `${index + 1}. ${userQuota.user_name || 'Not logged in'}`,
+    userName: userQuota.user_name || 'Not logged in',
     taskCount: userQuota.task_count,
     isEditingTaskCount: false,
     tasksCompletedCount: userQuota.tasks_completed_count,
+    tasksCompletedCountByDecisionType: userQuota.tasks_completed_count_by_decision_type,
     tasksLeftCount: userQuota.tasks_left_count,
     isAssigned: Boolean(userQuota.user_name),
     isLocked: Boolean(userQuota['locked?'])

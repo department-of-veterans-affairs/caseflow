@@ -68,7 +68,7 @@ Rails.application.routes.draw do
   end
 
   namespace :hearings do
-    resources :dockets, only: [:index]
+    resources :dockets, only: [:index, :show]
   end
 
   resources :hearings, only: []  do
@@ -94,6 +94,7 @@ Rails.application.routes.draw do
   get 'whats-new' => 'whats_new#show'
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
+  get 'certification_v2/stats(/:interval)', to: 'certification_v2_stats#show', as: 'certification_v2_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
   get 'stats', to: 'stats#show'
 

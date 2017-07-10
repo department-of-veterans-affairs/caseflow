@@ -127,8 +127,8 @@ class Generators::Appeal
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
 
-      Fakes::AppealRepository.document_records ||= {}
-      Fakes::AppealRepository.document_records[appeal.vbms_id] = documents
+      Fakes::VBMSService.document_records ||= {}
+      Fakes::VBMSService.document_records[appeal.vbms_id] = documents
 
       add_inaccessible_appeal(appeal) if inaccessible
 

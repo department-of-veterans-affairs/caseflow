@@ -9,10 +9,8 @@ import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
 
 export class PdfListView extends React.Component {
-
   render() {
-    const noDocuments = !_.size(this.props.documents) &&
-      _.size(this.props.docFilterCriteria.searchQuery);
+    const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
     return <div className="usa-grid">
       <div className="cf-app">
@@ -25,6 +23,7 @@ export class PdfListView extends React.Component {
           <NoSearchResults /> :
           <DocumentsTable
             documents={this.props.documents}
+            documentPathBase={this.props.documentPathBase}
             onJumpToComment={this.props.onJumpToComment}
             sortBy={this.props.sortBy}
             docFilterCriteria={this.props.docFilterCriteria}

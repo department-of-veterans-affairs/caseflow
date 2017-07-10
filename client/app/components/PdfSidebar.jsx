@@ -210,12 +210,12 @@ export class PdfSidebar extends React.Component {
             {comments}
           </div>
           <div className="cf-keyboard-shortcuts">
-            { false && <Button
+            <Button
                 id="cf-open-keyboard-modal"
-                name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+                name={<span><Keyboard />View keyboard shortcuts</span>}
                 onClick={this.toggleKeyboardModal}
                 classNames={['cf-btn-link']}
-            />}
+            />
           { this.state.modal && <div className="cf-modal-scroll">
             <Modal
                 buttons = {[

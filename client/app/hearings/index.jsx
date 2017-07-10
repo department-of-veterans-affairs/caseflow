@@ -6,7 +6,7 @@ import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
 import ConfigUtil from '../util/ConfigUtil';
-import Dockets from './Dockets';
+import DocketsContainer from './DocketsContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 
 const configureStore = (data) => {
@@ -45,9 +45,11 @@ const Hearings = ({ hearings }) => {
     <div>
       <BrowserRouter>
         <div>
-        <Route path="/hearings/dockets"
-          component={() => (<Dockets veteran_law_judge={hearings.veteran_law_judge} />)}/>
-      </div>
+          <Route exact path="/hearings/dockets"
+            component={() => (<DocketsContainer veteran_law_judge={hearings.veteran_law_judge} />)}/>
+          <Route exact path="/hearings/dockets/:date"
+            component={() => (<div>Docket</div>)}/>
+        </div>
       </BrowserRouter>
     </div>
   </Provider>;

@@ -6,6 +6,7 @@ import BaseForm from '../BaseForm';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
+import Alert from '../../components/Alert';
 import FormField from '../../util/FormField';
 import { formatDate } from '../../util/DateUtil';
 import { connect } from 'react-redux';
@@ -64,17 +65,12 @@ export class EstablishClaimEmail extends BaseForm {
           <h1>Route Claim</h1>
             <h2>Send Email Notification</h2>
           <div>
-            <div className="usa-alert usa-alert-info">
-              <div className="usa-alert-body">
-                <div>
-                  <h3 className="usa-alert-heading">We are unable to create an
-                    EP for claims with this Special Issue</h3>
-                  <p className="usa-alert-text">
-                    Follow the instructions below to route this claim.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <Alert
+              title="We are unable to create an
+                EP for claims with this Special Issue"
+              type="info">
+              Follow the instructions below to route this claim.
+            </Alert>
             <p>Please send the following email message to the office
               responsible for implementing this grant.</p>
             <p><b>RO:</b> {this.props.regionalOffice}</p>
@@ -143,13 +139,9 @@ export class EstablishClaimEmail extends BaseForm {
           <div className="cf-app-segment cf-app-segment--alt">
             <h2>Route Claim: Process Outside of Caseflow</h2>
             <div>
-              <div className="usa-alert usa-alert-warning">
-                <div className="usa-alert-body">
-                  <div>
-                    <h3 className="usa-alert-heading">{this.state.noEmailNote}</h3>
-                  </div>
-                </div>
-              </div>
+              <Alert
+                title={this.state.noEmailNote}
+                type="warning" />
               <p>You selected a Special Issue Category that cannot be processed
                 in Caseflow at this time.</p>
               <p>Please process this claim manually and select Release Claim

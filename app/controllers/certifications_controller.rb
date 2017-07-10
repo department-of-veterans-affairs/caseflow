@@ -2,12 +2,12 @@ class CertificationsController < ApplicationController
   before_action :verify_access
 
   def new
-    # NOTE: this isn't rails-restful. certification.start! saves
-    # the certification instance.
     status = certification.start!
     @form8 = certification.form8
 
     if feature_enabled?(:certification_v2)
+      # this line was introduced for v2 stats
+      certification.v2 = true
       # only make the bgs and vacols calls if we're actually
       # starting a certification
       certification.fetch_power_of_attorney! if status == :started
@@ -61,7 +61,6 @@ class CertificationsController < ApplicationController
     render json: {}
   end
 
-  # TODO: update for certification v2- should we use hidden form params?
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters

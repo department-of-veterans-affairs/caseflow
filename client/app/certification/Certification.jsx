@@ -80,8 +80,6 @@ const Certification = ({ certification }) => {
           component={Success}/>
         <Route path="/certifications/error"
           component={ErrorMessage}/>
-          {/* TODO: should we add the cancel certification link
-          and continue links here, or keep them on their own page? */}
       </div>
       </BrowserRouter>
     </div>

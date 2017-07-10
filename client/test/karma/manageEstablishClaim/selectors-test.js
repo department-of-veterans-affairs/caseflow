@@ -7,9 +7,17 @@ describe('manageEstablishClaim selectors', () => {
       let userQuotas = [
         { taskCount: 5,
           tasksCompletedCount: 3,
+          tasksCompletedCountByDecisionType: {
+            full_grant: 2,
+            partial_grant: 1
+          },
           tasksLeftCount: 2 },
         { taskCount: 2,
           tasksCompletedCount: 2,
+          tasksCompletedCountByDecisionType: {
+            full_grant: 1,
+            remand: 1
+          },
           tasksLeftCount: 0 }
       ];
       let result = getQuotaTotals({ userQuotas });

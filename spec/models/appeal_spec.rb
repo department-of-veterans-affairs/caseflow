@@ -11,6 +11,21 @@ describe Appeal do
       ssoc_dates: ssoc_dates,
       documents: documents,
       hearing_request_type: hearing_request_type,
+      video_hearing_requested: video_hearing_requested,
+      appellant_first_name: "Joe",
+      appellant_middle_initial: "E",
+      appellant_last_name: "Tester"
+    )
+  end
+
+  let(:appeal_no_appellant) do
+    Generators::Appeal.build(
+      nod_date: nod_date,
+      soc_date: soc_date,
+      form9_date: form9_date,
+      ssoc_dates: ssoc_dates,
+      documents: documents,
+      hearing_request_type: hearing_request_type,
       video_hearing_requested: video_hearing_requested
     )
   end
@@ -344,8 +359,8 @@ describe Appeal do
 
       it "uploads the correct form 8 using AppealRepository" do
         expect { subject }.to_not raise_error
-        expect(Fakes::AppealRepository.uploaded_form8.id).to eq(@form8.id)
-        expect(Fakes::AppealRepository.uploaded_form8_appeal).to eq(appeal)
+        expect(Fakes::VBMSService.uploaded_form8.id).to eq(@form8.id)
+        expect(Fakes::VBMSService.uploaded_form8_appeal).to eq(appeal)
       end
     end
 
@@ -511,6 +526,36 @@ describe Appeal do
       end
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
       it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#disposition_remand_priority" do
+    subject { appeal.disposition_remand_priority }
+    context "when disposition is allowed and one of the issues is remanded" do
+      let(:issues) do
+        [
+          Generators::Issue.build(disposition: :allowed),
+          Generators::Issue.build(disposition: :remanded)
+        ]
+      end
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      it { is_expected.to eq("Remanded") }
+    end
+
+    context "when disposition is allowed and none of the issues are remanded" do
+      let(:issues) do
+        [
+          Generators::Issue.build(disposition: :allowed),
+          Generators::Issue.build(disposition: :allowed)
+        ]
+      end
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+      it { is_expected.to eq("Allowed") }
+    end
+
+    context "when disposition is not allowed" do
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
+      it { is_expected.to eq("Vacated") }
     end
   end
 
@@ -845,6 +890,16 @@ describe Appeal do
 
     context "when unsupported type" do
       let(:hearing_request_type) { :confirmation_needed }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#appellant_last_first_mi" do
+    subject { appeal.appellant_last_first_mi }
+    it { is_expected.to eql("Tester, Joe E.") }
+
+    context "when appellant has no first name" do
+      subject { appeal_no_appellant.appellant_last_first_mi }
       it { is_expected.to be_nil }
     end
   end

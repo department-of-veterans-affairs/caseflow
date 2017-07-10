@@ -25,6 +25,7 @@ export default class Alert extends React.Component {
 
   render() {
     let {
+      children,
       message,
       title,
       type
@@ -38,8 +39,9 @@ export default class Alert extends React.Component {
 
     return <div className={className} {...this.getRole()}>
       <div className="usa-alert-body">
-        <h3 className="usa-alert-heading">{title}</h3>
-        <p className="usa-alert-text">{message}</p>
+        <h2 className="usa-alert-heading">{title}</h2>
+        { children ? <p className="usa-alert-text">{children}</p> :
+          <p className="usa-alert-text">{message}</p>}
       </div>
     </div>;
   }
@@ -50,7 +52,8 @@ Alert.defaultProps = {
 };
 
 Alert.propTypes = {
-  message: PropTypes.node.isRequired,
+  children: PropTypes.node,
+  message: PropTypes.node,
   title: PropTypes.string,
-  type: PropTypes.oneOf(['success', 'error', 'warning', 'info'])
+  type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired
 };

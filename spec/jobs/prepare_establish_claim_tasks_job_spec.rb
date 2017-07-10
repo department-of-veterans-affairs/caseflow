@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe PrepareEstablishClaimTasksJob do
   before do
-    expect(Appeal.repository).to receive(:fetch_document_file) { "the decision file" }
+    expect(VBMSService).to receive(:fetch_document_file) { "the decision file" }
   end
 
   let!(:appeal_with_decision_document) do

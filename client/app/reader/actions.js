@@ -8,8 +8,9 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
-export const onInitialDataLoadingFail = () => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE
+export const onInitialDataLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_DATA_FAILURE,
+  payload: { value }
 });
 
 export const onReceiveDocs = (documents, vacolsId) => (
@@ -330,6 +331,13 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   }
 });
 
+export const selectCurrentPdfLocally = (docId) => ({
+  type: Constants.SELECT_CURRENT_VIEWER_PDF,
+  payload: {
+    docId
+  }
+});
+
 export const selectCurrentPdf = (docId) => (dispatch) => {
   ApiUtil.patch(`/document/${docId}/mark-as-read`).
     catch((err) => {
@@ -337,12 +345,9 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
       console.log('Error marking as read', docId, err);
     });
 
-  dispatch({
-    type: Constants.SELECT_CURRENT_VIEWER_PDF,
-    payload: {
-      docId
-    }
-  });
+  dispatch(
+    selectCurrentPdfLocally(docId)
+  );
 };
 
 export const removeTagRequestFailure = (docId, tagId) => ({

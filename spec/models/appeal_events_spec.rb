@@ -99,6 +99,15 @@ describe AppealEvents do
         it { expect(subject.length).to eq(2) }
       end
 
+      context "when an ssoc date falls after certification date" do
+        subject { events.select { |event| event.type == :remand_ssoc } }
+
+        let(:ssoc_dates) { [5.days.ago, 10.days.ago] }
+        let(:certification_date) { 7.days.ago }
+
+        it { expect(subject.length).to eq(1) }
+      end
+
       context "when no ssocs" do
         it { is_expected.to be_empty }
       end

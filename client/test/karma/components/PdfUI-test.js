@@ -36,10 +36,13 @@ describe('PdfUI', () => {
         expect(wrapper.find('.cf-pdf-container')).to.have.length(1);
       });
 
-      it('renders the title', () => {
-        expect(wrapper.find('Button').find({ name: 'newTab' }).
+      it('renders the title as a link', () => {
+        expect(wrapper.find('Link').find({ name: 'newTab' }).
           children().
           text()).to.eq(doc.type);
+        expect(wrapper.find('Link').find({ name: 'newTab' }).
+          first().
+          props().target).to.eq('_blank');
       });
 
       it('does not render the page number when pdf has not been rendered', () => {
@@ -52,12 +55,12 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
       });
 
-      context('when showDocumentsListNavigation is true', () => {
-        it('renders the back to document list button', () => {
-          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(0);
+      context('when showClaimsFolderNavigation is true', () => {
+        it('renders the back to claims folder button', () => {
+          expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(0);
 
-          wrapper.setProps({ showDocumentsListNavigation: true });
-          expect(wrapper.find({ name: 'backToDocuments' })).to.have.length(1);
+          wrapper.setProps({ showClaimsFolderNavigation: true });
+          expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(1);
         });
       });
     });
@@ -108,18 +111,19 @@ describe('PdfUI', () => {
         });
       });
 
-      context('document name', () => {
-        it('tries to open document in new tab', () => {
-          let url = `${DOCUMENT_PATH_BASE}/${doc.id}?type=${doc.type}` +
-            `&received_at=${doc.receivedAt}&filename=${doc.filename}`;
-          let open = sinon.spy(window, 'open');
+      context('backToClaimsFolder', () => {
+        it('calls the onShowList prop', () => {
+          const mockOnClick = sinon.spy();
 
-          wrapper.find('Button').find({ name: 'newTab' }).
-            simulate('click');
-          expect(open.withArgs(url, '_blank').calledOnce).to.be.true;
+          wrapper.setProps({
+            showClaimsFolderNavigation: true,
+            onShowList: mockOnClick
+          });
+          wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
+
+          expect(mockOnClick.calledOnce).to.be.true;
         });
       });
-
     });
   });
 });

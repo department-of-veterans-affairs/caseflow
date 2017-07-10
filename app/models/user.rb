@@ -119,7 +119,7 @@ class User < ActiveRecord::Base
   private
 
   def current_case_assignments
-    self.class.case_assignment_repository.load_from_vacols(vacols_id)
+    self.class.case_assignment_repository.load_from_vacols(css_id)
   end
 
   def viewed_appeals(appeal_ids)

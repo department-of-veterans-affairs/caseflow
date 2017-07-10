@@ -1,6 +1,7 @@
 class EstablishClaimsController < TasksController
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform, :update_appeal]
+  before_action :verify_bgs_info_valid, only: [:perform]
   before_action :verify_manager_access, only: [:unprepared_tasks, :update_employee_count, :canceled_tasks]
 
   def index
@@ -91,6 +92,11 @@ class EstablishClaimsController < TasksController
 
   private
 
+  def verify_bgs_info_valid
+    return true if task.bgs_info_valid?
+    render json: { error_code: "bgs_info_invalid" }, status: 422
+  end
+
   def to_complete_count
     tasks.to_complete.count
   end
@@ -170,4 +176,9 @@ class EstablishClaimsController < TasksController
   def cancel_feedback
     params.require(:feedback)
   end
+
+  def total_cases_completed
+    user_quota ? user_quota.tasks_completed_count : 0
+  end
+  helper_method :total_cases_completed
 end

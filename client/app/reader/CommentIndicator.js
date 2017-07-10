@@ -3,8 +3,8 @@ import Button from '../components/Button';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
-import classnames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
+import { ChervonDown, ChervonUp } from '../components/RenderFunctions';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
@@ -13,11 +13,8 @@ class CommentIndicator extends React.PureComponent {
 
   render() {
     const { annotationsCount, expanded, docId } = this.props;
-    const iconClassNames = classnames('fa fa-3 document-list-comments-indicator-icon', {
-      'fa-angle-up': expanded,
-      'fa-angle-down': !expanded
-    });
     const name = `expand ${annotationsCount} comments`;
+    const commentArrowComponent = expanded ? <ChervonUp /> : <ChervonDown />;
 
     return <span className="document-list-comments-indicator">
       {annotationsCount > 0 &&
@@ -29,7 +26,7 @@ class CommentIndicator extends React.PureComponent {
           id={`expand-${docId}-comments-button`}
           onClick={this.toggleComments}>
           {annotationsCount}
-          <i className={iconClassNames}/>
+          {commentArrowComponent}
         </Button>
       }
     </span>;

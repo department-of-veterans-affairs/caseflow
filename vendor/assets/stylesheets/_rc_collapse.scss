@@ -1,0 +1,77 @@
+/*
+* rc-collapse
+* Repo: https://github.com/react-component/collapse
+* This css has been modified to match the accordion for caseflow.
+*/
+
+$text-color: #666;
+$borderStyle: 1px solid #d9d9d9;
+
+@mixin common(){
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+}
+@mixin right($w, $h, $color){
+  border-top: $w solid transparent;
+  border-bottom: $w solid transparent;
+  border-left: $h solid $color;
+}
+
+@mixin bottom($w, $h, $color){
+  border-left: $w solid transparent;
+  border-right: $w solid transparent;
+  border-top: $h solid $color;
+}
+
+#arrow {
+  @include common();
+  @include right(3px, 4px, #666);
+  @include bottom(3px, 4px, #666);
+}
+
+.rc-collapse {
+
+  &-anim-active {
+    transition: height .2s ease-out;
+  }
+
+  & > &-item {
+    &:first-child {
+      border-top: none;
+    }
+    margin-bottom: 6px;
+  }
+
+  & > &-item-disabled > .rc-collapse-header {
+    cursor: not-allowed;
+    color: #999;
+    background-color: #f3f3f3;
+  }
+
+  &-content {
+    overflow: hidden;
+
+    &-inactive {
+      display: none;
+    }
+  }
+
+  &-item:last-child {
+    > .rc-collapse-content {
+      border-radius: 0 0 3px 3px;
+    }
+  }
+
+  & > &-item-active {
+    > .rc-collapse-header {
+
+      .arrow {
+        #arrow > {
+          @include bottom(3px, 4px, #666);
+        }
+      }
+    }
+  }
+}

@@ -143,6 +143,15 @@ class Certification < ActiveRecord::Base
     where("completed_at IS NOT NULL")
   end
 
+  # in order to include certifications created before v2 field was introduced, we have additional 'or' conditions
+  # (i.e. bgs_representative_type not nil)
+  def self.v2
+    where(v2: true).or(where.not(bgs_representative_type: nil))
+                   .or(where.not(bgs_representative_name: nil))
+                   .or(where.not(vacols_representative_type: nil))
+                   .or(where.not(vacols_representative_name: nil))
+  end
+
   def self.was_missing_doc
     was_missing_nod.or(was_missing_soc)
                    .or(was_missing_ssoc)

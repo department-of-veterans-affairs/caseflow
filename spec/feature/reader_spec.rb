@@ -1,13 +1,5 @@
 require "rails_helper"
 
-# Wrap this around your test to run it many times and ensure that it passes consistently.
-# Note: do not merge to master like this, or the tests will be slow! Ha.
-def ensure_stable
-  10.times do
-    yield
-  end
-end
-
 def scroll_position(element)
   page.evaluate_script("document.getElementById('#{element}').scrollTop")
 end
@@ -134,16 +126,21 @@ RSpec.feature "Reader" do
       scenario "Enter a case" do
         visit "/reader/appeal"
 
-        expect(page).to have_content(appeal.veteran_last_name)
+        expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
+        expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "New", match: :first
 
         expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")
 
+        # Test that the title changed. Functionality in PageRoute.jsx
+        expect(page).to have_title("Claims Folder | Caseflow Reader")
+
         click_on "Caseflow Reader"
         expect(page).to have_current_path("/reader/appeal")
+        expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "Continue"
 
@@ -151,11 +148,32 @@ RSpec.feature "Reader" do
       end
     end
 
+    scenario "Open document in new tab" do
+      # Open the URL that the first document button points to. We cannot simply
+      # click on the link since we've overridden the mouseup event to not open
+      # the link, but instead to move to the document view in the SPA. Middle clicking
+      # is not overridden, but I cannot figure out how to middle click in the test.
+      # Instead we just visit the page specified by the link.
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      single_link = find_link(documents[0].type)[:href]
+      visit single_link
+
+      # Make sure there is document metadata, but no back button.
+      expect(page).to have_content(documents[0].type)
+      expect(page).to_not have_content("Back to all documents")
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      # Make sure the document link in the document view points to the same place
+      # as the link we just tested.
+      expect(find_link(documents[0].type)[:href]).to eq(single_link)
+    end
+
     scenario "Progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       click_on documents[0].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
       fill_in "searchBar", with: "Form"
       click_on documents[1].type
       expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
@@ -442,7 +460,8 @@ RSpec.feature "Reader" do
       end
       # :nocov:
 
-      scenario "Jump to section for a comment" do
+      scenario "Jump to section for a comment",
+               skip: "This test is currently unstable, since loading earlier pages moves the scroll position" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         annotation = documents[1].annotations[0]
@@ -456,8 +475,7 @@ RSpec.feature "Reader" do
 
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
-
-        expect(in_viewport(comment_icon_id)).to be true
+        expect { in_viewport(comment_icon_id) }.to become_truthy
       end
 
       scenario "Scroll to comment" do
@@ -618,8 +636,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Open and close keyboard shortcuts modal",
-             skip: "Another ticket is in place to fix keyboard events" do
+    scenario "Open and close keyboard shortcuts modal" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
@@ -796,7 +813,7 @@ RSpec.feature "Reader" do
       original_scroll_position = scroll_position("documents-table-body")
       click_on documents.last.type
 
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
       expect(in_viewport("read-indicator")).to be true
@@ -806,7 +823,7 @@ RSpec.feature "Reader" do
     scenario "Open the last document on the page and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
-      click_on "Back to all documents"
+      click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
 

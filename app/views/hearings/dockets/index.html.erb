@@ -1,12 +1,7 @@
-<%# react_component goes here %>
-
-<% content_for :page_title do page_title('Schedule') end %>
-
-<% content_for :right_actions do %><%= print_link %><% end %>
+<% content_for :page_title do page_title('Upcoming Hearing Days') end %>
 
 <%= react_component("Hearings", props: {
   hearings: {
-    veteran_law_judge: current_user.to_hash,
-    dockets: current_user_dockets.map(&:to_hash)
+    veteran_law_judge: current_user.to_hash
   }
 }) %>

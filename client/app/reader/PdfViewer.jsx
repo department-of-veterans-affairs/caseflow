@@ -8,7 +8,7 @@ import PdfSidebar from '../components/PdfSidebar';
 import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
+  selectCurrentPdf } from '../reader/actions';
 import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
@@ -135,7 +135,7 @@ export class PdfViewer extends React.Component {
     this.nextDocId()
   ]).map(documentPath)
 
-  showDocumentsListNavigation = () => this.props.allDocuments.length > 1;
+  showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
   shouldComponentUpdate(nextProps, nextState) {
     const getRenderProps = (props) => _.omit(props, 'pageCoordsBounds');
@@ -171,7 +171,7 @@ export class PdfViewer extends React.Component {
             prevDocId={this.prevDocId()}
             nextDocId={this.nextDocId()}
             showPdf={this.props.showPdf}
-            showDocumentsListNavigation={this.showDocumentsListNavigation()}
+            showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
           />
@@ -218,7 +218,6 @@ const mapDispatchToProps = (dispatch) => ({
     deleteAnnotation
   }, dispatch),
 
-  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment)),
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
 
@@ -234,7 +233,6 @@ PdfViewer.propTypes = {
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
   onScrollToComment: PropTypes.func,
-  handleSelectCommentIcon: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,

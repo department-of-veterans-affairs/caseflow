@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
 import Perf from 'react-addons-perf';
 
+import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import LoadingScreen from './LoadingScreen';
@@ -29,35 +30,9 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
-  showPdf = (history, vacolsId) => (docId) => (event) => {
+  showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
       return;
-    }
-
-    if (event) {
-      // If the user is trying to open the link in a new tab/window
-      // then follow the link. Otherwise if they just clicked the link
-      // keep them contained within the SPA.
-      // ctrlKey for windows
-      // shift key for opening in new window
-      // metaKey for Macs
-      // button for middle click
-      if (event.ctrlKey ||
-          event.shiftKey ||
-          event.metaKey ||
-          (event.button &&
-          event.button === 1)) {
-
-        // For some reason calling this synchronosly prevents the new
-        // tab from opening. Move it to an asynchronus call.
-        setTimeout(() =>
-          this.props.handleSetLastRead(docId)
-        );
-
-        return true;
-      }
-
-      event.preventDefault();
     }
 
     history.push(`/${vacolsId}/documents/${docId}`);
@@ -122,7 +97,7 @@ export class DecisionReviewer extends React.PureComponent {
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
         isCommentLabelSelected={this.state.isCommentLabelSelected}
-        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         {...props}
       />;
@@ -139,7 +114,7 @@ export class DecisionReviewer extends React.PureComponent {
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        documentPathBase={`/${vacolsId}/documents`}
         {...props}
       />
     ;
@@ -150,10 +125,23 @@ export class DecisionReviewer extends React.PureComponent {
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    return <LoadingScreen vacolsId={vacolsId}>
+    return <LoadingScreen
+      appealDocuments={this.props.appealDocuments}
+      annotations={this.props.annotations}
+      vacolsId={vacolsId}>
       <div>
-        <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
-        <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
+
+        <PageRoute
+          exact
+          title="Claims Folder | Caseflow Reader"
+          path="/:vacolsId/documents"
+          render={this.routedPdfListView}
+        />
+        <PageRoute
+          title ="Document Viewer | Caseflow Reader"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer}
+        />
       </div>
     </LoadingScreen>;
   }
@@ -163,8 +151,16 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
-        <Route path="/:vacolsId/documents" render={this.documentsRoute} />
-        <Route exact path="/" render={this.routedCaseSelect} />
+        <Route
+          path="/:vacolsId/documents"
+          render={this.documentsRoute}
+        />
+        <PageRoute
+          exact
+          title="Assignments | Caseflow Reader"
+          path="/"
+          render={this.routedCaseSelect}
+        />
       </div>
     </Router>;
   }
@@ -189,8 +185,9 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators(ReaderActions, dispatch);
-};
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators(ReaderActions, dispatch),
+  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

@@ -36,7 +36,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
     end
     # rubocop:enable Metrics/MethodLength
 
-    def load_from_vacols(_user_id)
+    def load_from_vacols(_css_id)
       appeal_records || default_records
     end
   end
