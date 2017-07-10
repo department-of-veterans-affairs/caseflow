@@ -53,7 +53,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
           stage('bundle') {
             container('ubuntu') {
               sh """
-              bundle install --without production staging --path vendor/bundle
+              bundle install --without production staging
               """
             }
           }
