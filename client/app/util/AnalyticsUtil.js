@@ -11,7 +11,6 @@ export default {
     }
   },
 
-
   // Log event to Google Analytics
   // For more info on what categories, actions, and labels are, see:
   // https://support.google.com/analytics/answer/1033068#Anatomy
