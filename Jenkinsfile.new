@@ -74,6 +74,16 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
+        stage('rake lint/security') {
+            container('ubuntu') {
+                sh"""
+                cd /home/jenkins/workspace/caseflow
+                rake lint
+                rake security
+                """
+            }
+        }
+
         stage('rake spec') {
             container('ubuntu') {
                 sh"""
@@ -83,13 +93,11 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
             }
         }
 
-        stage('rake coverage/lint/security') {
+        stage('rake coverage') {
             container('ubuntu') {
                 sh"""
                 cd /home/jenkins/workspace/caseflow
                 rake ci:verify_code_coverage
-                rake lint
-                rake securityother
                 rake konacha:run
                 """
             }
