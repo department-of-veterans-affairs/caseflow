@@ -35,8 +35,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
       container('caseflow-test-runner') {
         sh """
         cd ${WORKSPACE_DIR}
-        git clone https://github.com/department-of-veterans-affairs/caseflow.git
-        cd caseflow && git checkout ${env.BRANCH_NAME}
+        git clone -b ${env.BRANCH_NAME} https://github.com/department-of-veterans-affairs/caseflow.git
+        cd caseflow
         """
       }
     }
@@ -59,7 +59,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle install --without development production staging --local ./vendor/bundle
+              bundle install --without development production staging --local
 	      bundle check
               """
             }
@@ -117,7 +117,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle exec rake parallel:setup[4]
+              bundle exec rake parallel:spec[4]
               """
             }
           }
