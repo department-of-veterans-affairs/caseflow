@@ -33,7 +33,7 @@ describe AppealEvent do
     subject { appeal_event.hearing = hearing }
 
     context "when disposition is supported" do
-      let(:hearing) { Hearing.new(closed_at: 4.days.ago, disposition: :no_show) }
+      let(:hearing) { Hearing.new(date: 4.days.ago, disposition: :no_show) }
 
       it "sets type and date based off of hearing" do
         subject
@@ -44,7 +44,7 @@ describe AppealEvent do
     end
 
     context "when disposition is not supported" do
-      let(:hearing) { Hearing.new(closed_at: 4.days.ago, disposition: :postponed) }
+      let(:hearing) { Hearing.new(date: 4.days.ago, disposition: :postponed) }
 
       it "sets type to falsey" do
         subject
