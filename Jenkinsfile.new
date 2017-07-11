@@ -59,8 +59,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle install --without development production staging --local
-	      bundle check
+              bundle install --without development production staging
               """
             }
           }
