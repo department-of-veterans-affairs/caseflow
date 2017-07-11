@@ -1,4 +1,4 @@
-print(env.getEnvironment())
+print(env)
 
 podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
   containerTemplate(
