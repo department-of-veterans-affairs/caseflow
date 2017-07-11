@@ -13,6 +13,7 @@ import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
+import Analytics from '../util/AnalyticsUtil';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
   const moveAmountPx = 5;
@@ -85,9 +86,11 @@ export class PdfViewer extends React.Component {
     }
 
     if (event.key === 'ArrowLeft') {
+      Analytics.event('Document Viewer', 'key command', 'previous document');
       this.props.showPdf(this.prevDocId())();
     }
     if (event.key === 'ArrowRight') {
+      Analytics.event('Document Viewer', 'key command', 'next document');
       this.props.showPdf(this.nextDocId())();
     }
   }
