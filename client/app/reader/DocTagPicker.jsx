@@ -27,13 +27,13 @@ TagSelector.propTypes = {
 const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle }) => {
   return <ul className="cf-document-filter-picker cf-document-tag-picker">
     {tags.map((tag, index) => {
-      return <li><div className="cf-category-selector" key={index}>
+      return <li className="cf-category-selector" key={index}>
         <TagSelector
           tag={tag}
           handleTagToggle={handleTagToggle}
           tagToggleStates={tagToggleStates}
         />
-      </div></li>;
+      </li>;
     })}
   </ul>;
 };
