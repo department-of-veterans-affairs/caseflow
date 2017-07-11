@@ -1,4 +1,4 @@
-podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-${env.BRANCH_NAME}', containers: [
   containerTemplate(
     name: 'postgres', 
     image: 'postgres:9.5',
@@ -26,7 +26,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-alan', containers: [
       containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
      ],
   )]) {
-  node('caseflow-pod-alan') {
+  node('caseflow-${env.BRANCH_NAME}') {
 
     def WORKSPACE_DIR = '/home/jenkins/workspace'
     def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
