@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { jumpToPage } from './actions';
 import { isValidWholeNumber } from './utils';
 import TextField from '../components/TextField';
-import Analytics from '../util/AnalyticsUtil'
+import Analytics from '../util/AnalyticsUtil';
 
 const ENTER_KEY = 'Enter';
 const RADIX = 10;

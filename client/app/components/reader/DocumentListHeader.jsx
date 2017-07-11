@@ -31,7 +31,7 @@ export const DocumentListHeader = (props) => {
           onClick={props.clickSearch}
           value={props.docFilterCriteria.searchQuery}
           size="small"
-          analyticsLabel="Reader"
+          analyticsCategory="Claims Folder"
         />
       </div>
       <div className="usa-width-one-third num-of-documents">

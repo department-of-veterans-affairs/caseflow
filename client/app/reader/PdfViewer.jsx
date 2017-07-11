@@ -13,7 +13,7 @@ import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
-import Analytics from '../util/AnalyticsUtil'
+import Analytics from '../util/AnalyticsUtil';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
   const moveAmountPx = 5;

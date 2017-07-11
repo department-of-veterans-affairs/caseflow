@@ -14,7 +14,7 @@ import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron } 
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
-import Analytics from '../util/AnalyticsUtil'
+import Analytics from '../util/AnalyticsUtil';
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -48,7 +48,7 @@ export class PdfUI extends React.Component {
   }
 
   zoom = (delta) => () => {
-    Analytics.event('Document Viewer', (delta > 0) ? 'zoom in' : 'zoom out', '')
+    Analytics.event('Document Viewer', (delta > 0) ? 'zoom in' : 'zoom out', '');
 
     this.setState({
       scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
@@ -62,12 +62,12 @@ export class PdfUI extends React.Component {
 
   showPreviousDocument = () => {
     Analytics.event('Document Viewer', 'click', 'Previous document arrow');
-    this.props.showPdf(this.props.prevDocId)()
+    this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
     Analytics.event('Document Viewer', 'click', 'Next document arrow');
-    this.props.showPdf(this.props.nextDocId)()
+    this.props.showPdf(this.props.nextDocId)();
   }
 
   getPageIndicator = () => {
