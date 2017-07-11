@@ -40,8 +40,9 @@ require "timeout"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-download_directory = Rails.root.join("tmp/downloads")
-cache_directory = Rails.root.join("tmp/browser_cache")
+test_env_num = ENV["TEST_ENV_NUMBER"]
+download_directory = Rails.root.join("tmp/downloads_#{test_env_num}")
+cache_directory = Rails.root.join("tmp/browser_cache_#{test_env_num}")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
 if File.directory?(cache_directory)
@@ -52,8 +53,9 @@ end
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
-    port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
+    port: 51_674 + (test_env_num || 1).to_i,
     browser: :chrome,
+    args: ["no-sandbox"],
     prefs: {
       download: {
         prompt_for_download: false,

@@ -1,0 +1,137 @@
+podTemplate(cloud:'minikube', label:'caseflow-pod-${env.BRANCH_NAME}', containers: [
+  containerTemplate(
+    name: 'postgres', 
+    image: 'postgres:9.5',
+    ttyEnabled: true,
+    privileged: false,
+    alwaysPullImage: false
+    ),
+  containerTemplate(
+    name: 'redis', 
+    image: 'redis:3.2.9-alpine', 
+    ttyEnabled: true,
+    privileged: false,
+    alwaysPullImage: false
+  ),
+  containerTemplate(
+     name: 'caseflow-test-runner',
+     image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow-test-runner',
+     ttyEnabled: true,
+     alwaysPullImage: true,
+     command: 'cat',
+     envVars: [
+      containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
+      containerEnvVar(key: 'RAILS_ENV', value: 'test'),
+      containerEnvVar(key: 'DISPLAY', value: ':99'),
+      containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
+     ],
+  )]) {
+  node('caseflow-pod-artem') {
+
+    def WORKSPACE_DIR = '/home/jenkins/workspace'
+    def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
+    
+    stage('git clone') {
+      container('caseflow-test-runner') {
+        sh """
+        cd ${WORKSPACE_DIR}
+        git clone -b ${env.BRANCH_NAME} https://github.com/department-of-veterans-affairs/caseflow.git
+        cd caseflow
+        """
+      }
+    }
+
+    stage('install') {
+      parallel(
+        npm: {
+          stage('npm') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              cd ./client && npm install --no-optional
+              """
+            }
+          }
+        },
+
+        bundle: {
+          stage('bundle') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              bundle install --without development production staging
+              """
+            }
+          }
+        }
+      )
+    }
+
+    stage('run test') {
+      parallel (
+        frontend: {
+          stage('npm test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              cd ./client && npm run test
+              """
+            }
+          }
+        },
+
+        lint: {
+          stage('rake lint/security') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              rake lint
+              rake security
+              """
+            }
+          }
+        },
+
+        backend: {
+          stage('setup') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
+              """
+            }
+          }
+
+          stage('db:create') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              bundle exec rake db:create
+              bundle exec rake db:schema:load
+              """
+            }
+          }
+
+          stage('rake spec') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              bundle exec rake parallel:spec[4]
+              """
+            }
+          }
+
+          stage('rake coverage') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              bundle exec rake ci:verify_code_coverage
+              bundle exec rake konacha:run
+              """
+            }
+          }
+        }
+      )
+    }
+  }
+}
