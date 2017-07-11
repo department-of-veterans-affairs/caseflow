@@ -23,8 +23,6 @@ export const SHOW_VALIDATION_ERRORS = 'SHOW_VALIDATION_ERRORS';
 
 export const RESET_STATE = 'RESET_STATE';
 
-export const POLLING_INTERVAL = 30000;
-
 // types of hearings
 export const hearingPreferences = {
   VIDEO: 'VIDEO',

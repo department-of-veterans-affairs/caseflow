@@ -10,7 +10,7 @@ import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
 import Login from './login';
-import PerformanceDegradationBanner from './certification/PerformanceDegradationBanner';
+import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 
 const COMPONENTS = {
   BaseContainer,

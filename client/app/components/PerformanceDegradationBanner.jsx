@@ -1,7 +1,7 @@
 import React from 'react';
-import WrenchIcon from '../components/WrenchIcon';
+import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
-import * as Constants from './constants/constants';
+import * as Constants from '../constants/Constants';
 
 
 /*
