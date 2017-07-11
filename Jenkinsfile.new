@@ -59,7 +59,7 @@ podTemplate(cloud:'minikube', label:'caseflow-test-runner', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle install --without production staging --path vendor/cache
+              bundle check --path vendor/cache
               """
             }
           }
