@@ -1,6 +1,4 @@
-env.each { name, value -> println "Name: $name -> Value $value" }
-
-podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-pod-${env.BRANCH_NAME}', containers: [
   containerTemplate(
     name: 'postgres', 
     image: 'postgres:9.5',
