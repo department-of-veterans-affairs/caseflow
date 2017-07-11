@@ -59,7 +59,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle install --without development production staging
+              bundle install --without development production staging --local ./vendor/bundle
 	      bundle check
               """
             }
@@ -107,8 +107,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              rake db:create
-              rake db:schema:load
+              bundle exec rake db:create
+              bundle exec rake db:schema:load
               """
             }
           }
@@ -117,7 +117,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              rake spec
+              bundle exec rake parallel:setup[4]
               """
             }
           }
@@ -126,8 +126,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              rake ci:verify_code_coverage
-              rake konacha:run
+              bundle exec rake ci:verify_code_coverage
+              bundle exec rake konacha:run
               """
             }
           }
