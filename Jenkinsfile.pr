@@ -14,7 +14,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
     alwaysPullImage: false
   ),
   containerTemplate(
-     name: 'ubuntu',
+     name: 'caseflow-test-runner',
      image: 'kube-registry.kube-system.svc.cluster.local:31000/caseflow',
      ttyEnabled: true,
      alwaysPullImage: true,
@@ -32,7 +32,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
     def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
     
     stage('git clone') {
-      container('ubuntu') {
+      container('caseflow-test-runner') {
         sh """
         cd ${WORKSPACE_DIR}
         git clone https://github.com/department-of-veterans-affairs/caseflow.git
@@ -45,7 +45,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       parallel(
         npm: {
           stage('npm') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}/client && npm install --no-optional
               """
@@ -55,7 +55,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
 
         bundle: {
           stage('bundle') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR} && bundle install --without production staging
               """
@@ -69,7 +69,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       parallel (
         frontend: {
           stage('npm test') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}/client && npm run test
               """
@@ -79,7 +79,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
 
         lint: {
           stage('rake lint/security') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
               rake lint
@@ -91,7 +91,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
 
         backend: {
           stage('setup') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
               Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
@@ -100,7 +100,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           }
 
           stage('db:create') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
               rake db:create
@@ -110,7 +110,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           }
 
           stage('rake spec') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
               rake spec
@@ -119,7 +119,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           }
 
           stage('rake coverage') {
-            container('ubuntu') {
+            container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
               rake ci:verify_code_coverage
