@@ -806,20 +806,18 @@ RSpec.feature "Reader" do
       end
     end
 
-    skip "flakey on latest Docker image" do
-      scenario "Open a document and return to list" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    scenario "Open a document and return to list" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        scroll_to_bottom("documents-table-body")
-        original_scroll_position = scroll_position("documents-table-body")
-        click_on documents.last.type
+      scroll_to_bottom("documents-table-body")
+      original_scroll_position = scroll_position("documents-table-body")
+      click_on documents.last.type
 
-        click_on "Back to claims folder"
+      click_on "Back to claims folder"
 
-        expect(page).to have_content("#{num_documents} Documents")
-        expect(in_viewport("read-indicator")).to be true
-        expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
-      end
+      expect(page).to have_content("#{num_documents} Documents")
+      expect(in_viewport("read-indicator")).to be true
+      expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
     scenario "Open the last document on the page and return to list" do
