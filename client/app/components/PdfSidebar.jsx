@@ -51,6 +51,7 @@ export class PdfSidebar extends React.Component {
   componentDidUpdate = () => {
     if (this.props.scrollToSidebarComment) {
       const commentListBoundingBox = this.commentListElement.getBoundingClientRect();
+      document.getElementById('cf-sidebar-accordion').scrollTop = 493
 
       this.commentListElement.scrollTop = this.commentListElement.scrollTop +
         this.commentElements[
@@ -152,111 +153,112 @@ export class PdfSidebar extends React.Component {
             </strong>
           </Button>
         </div>
-        <Accordion style="outline" accordion={false}
-          defaultActiveKey={['Document Information', 'Categories', 'Issue Tags', 'Comments']}
-          classNames={['cf-sidebar-accordion']}
-          id="cf-sidebar-accordion">
-          <AccordionHeader title="Document Information" key={1}>
-            <p className="cf-pdf-meta-title cf-pdf-cutoff">
-              <b>Document Type: </b>
-              <span title={this.props.doc.type} className="cf-document-type">
-                {this.props.doc.type}
-              </span>
-            </p>
-            <p className="cf-pdf-meta-title">
-              <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
-            </p>
-          </AccordionHeader>
-          <AccordionHeader title="Categories" key={2}>
-            {showErrorMessage.category && cannotSaveAlert}
-            <DocCategoryPicker
-              handleCategoryToggle={
-                _.partial(this.props.handleCategoryToggle, this.props.doc.id)
-              }
-              categoryToggleStates={categoryToggleStates} />
-          </AccordionHeader>
-          <AccordionHeader title="Issue Tags" key={3}>
-            {showErrorMessage.tag && cannotSaveAlert}
-            <SearchableDropdown
-              key={doc.id}
-              name="tags"
-              label="Select or tag issue(s)"
-              multi={true}
-              creatable={true}
-              options={this.generateOptionsFromTags(tagOptions)}
-              placeholder=""
-              value={this.generateOptionsFromTags(doc.tags)}
-              onChange={this.onChange}
-              selfManageValueState={true}
-            />
-          </AccordionHeader>
-          <AccordionHeader title="Comments" key={4}>
-              <span className="cf-right-side cf-add-comment-button">
-                <Button
-                  name="AddComment"
-                  onClick={this.handleAddClick}>
-                  <span>{ plusIcon() } &nbsp; Add a comment</span>
-                </Button>
-              </span>
-            <div id="cf-comment-wrapper" className="cf-comment-wrapper"
-              ref={(commentListElement) => {
-                this.commentListElement = commentListElement;
-              }}>
-              {showErrorMessage.annotation && cannotSaveAlert}
-              <div className="cf-pdf-comment-list">
-                {this.props.placedButUnsavedAnnotation &&
-                  <EditComment
-                    comment={this.props.placedButUnsavedAnnotation}
-                    id="addComment"
-                    disableOnEmpty={true}
-                    onChange={this.props.updateNewAnnotationContent}
-                    onCancelCommentEdit={this.props.stopPlacingAnnotation}
-                    onSaveCommentEdit={this.props.createAnnotation} />}
-                {comments}
+        <div id="cf-sidebar-accordion">
+          <Accordion style="outline" accordion={false}
+            defaultActiveKey={['Document Information', 'Categories', 'Issue Tags', 'Comments']}
+            classNames={['cf-sidebar-accordion']}>
+            <AccordionHeader title="Document Information" key={1}>
+              <p className="cf-pdf-meta-title cf-pdf-cutoff">
+                <b>Document Type: </b>
+                <span title={this.props.doc.type} className="cf-document-type">
+                  {this.props.doc.type}
+                </span>
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
+              </p>
+            </AccordionHeader>
+            <AccordionHeader title="Categories" key={2}>
+              {showErrorMessage.category && cannotSaveAlert}
+              <DocCategoryPicker
+                handleCategoryToggle={
+                  _.partial(this.props.handleCategoryToggle, this.props.doc.id)
+                }
+                categoryToggleStates={categoryToggleStates} />
+            </AccordionHeader>
+            <AccordionHeader title="Issue Tags" key={3}>
+              {showErrorMessage.tag && cannotSaveAlert}
+              <SearchableDropdown
+                key={doc.id}
+                name="tags"
+                label="Select or tag issue(s)"
+                multi={true}
+                creatable={true}
+                options={this.generateOptionsFromTags(tagOptions)}
+                placeholder=""
+                value={this.generateOptionsFromTags(doc.tags)}
+                onChange={this.onChange}
+                selfManageValueState={true}
+              />
+            </AccordionHeader>
+            <AccordionHeader title="Comments" key={4} id="comments-header">
+                <span className="cf-right-side cf-add-comment-button">
+                  <Button
+                    name="AddComment"
+                    onClick={this.handleAddClick}>
+                    <span>{ plusIcon() } &nbsp; Add a comment</span>
+                  </Button>
+                </span>
+              <div id="cf-comment-wrapper" className="cf-comment-wrapper"
+                ref={(commentListElement) => {
+                  this.commentListElement = commentListElement;
+                }}>
+                {showErrorMessage.annotation && cannotSaveAlert}
+                <div className="cf-pdf-comment-list">
+                  {this.props.placedButUnsavedAnnotation &&
+                    <EditComment
+                      comment={this.props.placedButUnsavedAnnotation}
+                      id="addComment"
+                      disableOnEmpty={true}
+                      onChange={this.props.updateNewAnnotationContent}
+                      onCancelCommentEdit={this.props.stopPlacingAnnotation}
+                      onSaveCommentEdit={this.props.createAnnotation} />}
+                  {comments}
+                </div>
               </div>
-              <div className="cf-keyboard-shortcuts">
-                <Button
-                    id="cf-open-keyboard-modal"
-                    name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
-                    onClick={this.toggleKeyboardModal}
-                    classNames={['cf-btn-link']}
-                />
-              { this.state.modal && <div className="cf-modal-scroll">
-                <Modal
-                    buttons = {[
-                      { classNames: ['usa-button', 'usa-button-secondary'],
-                        name: 'Thanks, got it!',
-                        onClick: this.toggleKeyboardModal
-                      }
-                    ]}
-                    closeHandler={this.toggleKeyboardModal}
-                    title="Keyboard shortcuts"
-                    noDivider={true}
-                    id="cf-keyboard-modal">
-                    <div className="cf-keyboard-modal-scroll">
-                      <Table
-                        columns={scrollColumns}
-                        rowObjects={scrollInstructions}
-                        slowReRendersAreOk={true}
-                        className="cf-keyboard-modal-table"/>
-                      <Table
-                        columns={commentColumns}
-                        rowObjects={commentInstructions}
-                        slowReRendersAreOk={true}
-                        className="cf-keyboard-modal-table"/>
-                      <Table
-                        columns={documentsColumns}
-                        rowObjects={documentsInstructions}
-                        slowReRendersAreOk={true}
-                        className="cf-keyboard-modal-table"/>
-                    </div>
-                  </Modal>
+            </AccordionHeader>
+          </Accordion>
+        </div>
+        <div className="cf-keyboard-shortcuts">
+          <Button
+              id="cf-open-keyboard-modal"
+              name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+              onClick={this.toggleKeyboardModal}
+              classNames={['cf-btn-link']}
+          />
+        { this.state.modal && <div className="cf-modal-scroll">
+          <Modal
+              buttons = {[
+                { classNames: ['usa-button', 'usa-button-secondary'],
+                  name: 'Thanks, got it!',
+                  onClick: this.toggleKeyboardModal
+                }
+              ]}
+              closeHandler={this.toggleKeyboardModal}
+              title="Keyboard shortcuts"
+              noDivider={true}
+              id="cf-keyboard-modal">
+              <div className="cf-keyboard-modal-scroll">
+                <Table
+                  columns={scrollColumns}
+                  rowObjects={scrollInstructions}
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
+                <Table
+                  columns={commentColumns}
+                  rowObjects={commentInstructions}
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
+                <Table
+                  columns={documentsColumns}
+                  rowObjects={documentsInstructions}
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
               </div>
-              }
-              </div>
-            </div>
-          </AccordionHeader>
-        </Accordion>
+            </Modal>
+        </div>
+        }
+        </div>
       </div>;
   }
 }

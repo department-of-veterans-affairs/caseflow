@@ -17,11 +17,12 @@ export default class Accordion extends React.PureComponent {
       children,
       classNames,
       defaultActiveKey,
+      id,
       style
     } = this.props;
 
     const accordionHeaders = children.map((child) => {
-      return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
+      return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title} id={child.props.id}>
           <div className="usa-accordion-content">
             {child.props.children}
           </div>
@@ -40,7 +41,7 @@ export default class Accordion extends React.PureComponent {
        Source: https://github.com/react-component/collapse */
 
     return <Collapse accordion={accordion} className={classnames(classNames, accordionStyle)}
-      defaultActiveKey={defaultActiveKey}>
+      defaultActiveKey={defaultActiveKey} id={id}>
       {accordionHeaders}
     </Collapse>;
   }
@@ -61,5 +62,6 @@ Accordion.propTypes = {
 
     return error;
   },
+  id: PropTypes.string,
   style: PropTypes.string.isRequired
 };
