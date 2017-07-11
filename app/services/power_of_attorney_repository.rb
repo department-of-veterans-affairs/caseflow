@@ -38,7 +38,7 @@ class PowerOfAttorneyRepository
     VACOLS::Case::REPRESENTATIVES.each do |representative|
       return representative[0] if representative[1][:short] == name
     end
-    return BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
+    BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
   end
 
   # :nocov:
