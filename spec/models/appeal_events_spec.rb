@@ -151,7 +151,7 @@ describe AppealEvents do
         Generators::Hearing.create(disposition: :held, date: 4.days.ago, appeal: appeal)
       end
 
-      let!(:canceled_hearing) do
+      let!(:cancelled_hearing) do
         Generators::Hearing.build(disposition: :cancelled, date: 3.days.ago, appeal: appeal)
       end
 
