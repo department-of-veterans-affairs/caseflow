@@ -1,3 +1,5 @@
+print(env.getEnvironment())
+
 podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
   containerTemplate(
     name: 'postgres', 
@@ -30,7 +32,6 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
 
     def WORKSPACE_DIR = '/home/jenkins/workspace'
     def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
-    print env.getEnvironment()
     
     stage('git clone') {
       container('caseflow-test-runner') {
