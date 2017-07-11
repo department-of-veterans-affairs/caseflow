@@ -1,4 +1,4 @@
-print(env)
+env.each { name, value -> println "Name: $name -> Value $value" }
 
 podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
   containerTemplate(
