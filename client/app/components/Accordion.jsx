@@ -22,7 +22,8 @@ export default class Accordion extends React.PureComponent {
     } = this.props;
 
     const accordionHeaders = children.map((child) => {
-      return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title} id={child.props.id}>
+      return <Panel header={child.props.title} headerClass="usa-accordion-button"
+        key={child.props.title} id={child.props.id}>
           <div className="usa-accordion-content">
             {child.props.children}
           </div>
