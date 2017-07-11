@@ -32,7 +32,7 @@ podTemplate(cloud:'minikube', label:'caseflow-test-runner', containers: [
     def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
     
     stage('git clone') {
-      container('ubuntu') {
+      container('caseflow-test-runner') {
         sh """
         cd ${WORKSPACE_DIR}
         git clone https://github.com/department-of-veterans-affairs/caseflow.git
