@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
+import Analytics from '../util/AnalyticsUtil';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, categoryToggleStates } = props;
@@ -12,7 +13,13 @@ const CategorySelector = (props) => {
       <span className="cf-category-name">{category.humanName}</span>
     </div>;
 
-  const handleChange = (checked) => handleCategoryToggle(categoryName, checked);
+  const handleChange = (checked) => {
+    if (checked) {
+      Analytics.event('Claims Folder', 'select category filter', categoryName);
+    }
+
+    handleCategoryToggle(categoryName, checked);
+  };
 
   return <Checkbox name={categoryName} onChange={handleChange}
       label={label} value={toggleState} />;

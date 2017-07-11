@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { jumpToPage } from './actions';
 import { isValidWholeNumber } from './utils';
 import TextField from '../components/TextField';
+import Analytics from '../util/AnalyticsUtil'
 
 const ENTER_KEY = 'Enter';
 const RADIX = 10;
@@ -80,6 +81,7 @@ PdfUIPageNumInput.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   jumpToPage(pageNumber, docId) {
+    Analytics.event('Document Viewer', 'jump to page', `page ${pageNumber}`);
     dispatch(jumpToPage(pageNumber, docId));
   }
 });

@@ -16,7 +16,7 @@ export default class SearchBar extends React.Component {
   // typed or when focus is lost
   onSearch = () => {
     if (this.props.value && this.props.analyticsLabel) {
-      Analytics.event('Controls', 'search', this.props.analyticsLabel);
+      Analytics.event('Claims Folder', 'search', this.props.analyticsLabel);
     }
   }
 
@@ -48,7 +48,7 @@ export default class SearchBar extends React.Component {
 
   onClick = () => {
     if (this.props.analyticsLabel) {
-      Analytics.event('Controls', 'click', `${this.props.analyticsLabel} - Search button`);
+      Analytics.event('Claims Folder', 'click', `${this.props.analyticsLabel} - Search button`);
     }
 
     if (this.props.onClick) {
@@ -58,7 +58,7 @@ export default class SearchBar extends React.Component {
 
   onClearSearch = () => {
     if (this.props.analyticsLabel) {
-      Analytics.event('Controls', 'click', `${this.props.analyticsLabel} - Clear search`);
+      Analytics.event('Claims Folder', 'click', `${this.props.analyticsLabel} - Clear search`);
     }
 
     this.props.onClearSearch();
