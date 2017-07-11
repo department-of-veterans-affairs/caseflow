@@ -1,4 +1,4 @@
-podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
+podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
   containerTemplate(
     name: 'postgres', 
     image: 'postgres:9.5',
@@ -26,7 +26,7 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
       containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
      ],
   )]) {
-  node('caseflow-pod') {
+  node('caseflow-pod-artem') {
 
     def WORKSPACE_DIR = '/home/jenkins/workspace'
     def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
@@ -59,7 +59,8 @@ podTemplate(cloud:'minikube', label:'caseflow-pod', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle check --path vendor/cache
+              bundle install --local vendor/cache
+	      bundle check
               """
             }
           }
