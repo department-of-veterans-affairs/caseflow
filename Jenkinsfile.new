@@ -30,11 +30,11 @@ podTemplate(cloud:'minikube', label:'caseflow-pod-artem', containers: [
 
     def WORKSPACE_DIR = '/home/jenkins/workspace'
     def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
+    print env.getEnvironment()
     
     stage('git clone') {
       container('caseflow-test-runner') {
         sh """
-	env | sort
         cd ${WORKSPACE_DIR}
         git clone -b ${env.BRANCH_NAME} https://github.com/department-of-veterans-affairs/caseflow.git
         cd caseflow
