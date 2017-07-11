@@ -49,6 +49,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     private
 
     def select_hearings
+      # VACOLS overloads the HEARSCHED table with other types of hearings
+      # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
              "staff.stafkey as user_id",
              :hearing_disp,
@@ -58,9 +60,9 @@ class VACOLS::CaseHearing < VACOLS::Record
              :notes1,
              :folder_nr,
              :vdkey,
-             :sattyid,
-             :clsdate)
-        .joins(:staff)
+             :sattyid)
+        .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .where(hearing_type: HEARING_TYPES.keys)
     end
   end
 
