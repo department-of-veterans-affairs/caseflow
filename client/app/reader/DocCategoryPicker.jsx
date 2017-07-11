@@ -14,7 +14,7 @@ const CategorySelector = (props) => {
     </div>;
 
   const handleChange = (checked) => {
-    Analytics.event('Claims Folder', `${checked ? 'select' :  'unselect'} category filter`, categoryName);
+    Analytics.event('Claims Folder', `${checked ? 'select' : 'unselect'} category filter`, categoryName);
 
     handleCategoryToggle(categoryName, checked);
   };

@@ -12,7 +12,7 @@ const TagSelector = (props) => {
     </div>;
 
   const handleChange = (checked) => {
-    Analytics.event('Claims Folder', `${checked ? 'select' :  'unselect'} tag filter`, tag.text);
+    Analytics.event('Claims Folder', `${checked ? 'select' : 'unselect'} tag filter`, tag.text);
 
     handleTagToggle(tag.text, checked);
   };
