@@ -117,13 +117,15 @@ svg[aria-hidden=true],
   padding: 0 30px;
 }
 
+.cf-category-sidebar {
+  overflow-y: hidden;
+}
+
 .cf-comment-wrapper {
   padding: 0 30px 0 0;
-  height: 76vh;
   width: 350px;
   $comment-wrapper-vertical-margin: 15px;
   margin-top: $comment-wrapper-vertical-margin;
-  overflow-y: scroll;
 
   .usa-alert {
     margin-top: 0;
@@ -323,16 +325,12 @@ svg[aria-hidden=true],
   margin-top: 0;
 }
 
-[id='cf-sidebar-accordion'] {
-  overflow: scroll;
-}
-
 .cf-sidebar-accordion {
   margin-bottom: 0;
+  overflow: scroll;
 
   .usa-accordion-content {
     padding: 14px 30px;
-    overflow: hidden;
 
     .cf-form-checkboxes {
       margin-top: 6px;

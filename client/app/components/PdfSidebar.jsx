@@ -171,27 +171,31 @@ export class PdfSidebar extends React.Component {
               </p>
             </AccordionHeader>
             <AccordionHeader title="Categories" key={2}>
-              {showErrorMessage.category && cannotSaveAlert}
-              <DocCategoryPicker
-                handleCategoryToggle={
-                  _.partial(this.props.handleCategoryToggle, this.props.doc.id)
-                }
-                categoryToggleStates={categoryToggleStates} />
+              <div className="cf-category-sidebar">
+                {showErrorMessage.category && cannotSaveAlert}
+                <DocCategoryPicker
+                  handleCategoryToggle={
+                    _.partial(this.props.handleCategoryToggle, this.props.doc.id)
+                  }
+                  categoryToggleStates={categoryToggleStates} />
+              </div>
             </AccordionHeader>
             <AccordionHeader title="Issue tags" key={3}>
-              {showErrorMessage.tag && cannotSaveAlert}
-              <SearchableDropdown
-                key={doc.id}
-                name="tags"
-                label="Select or tag issue(s)"
-                multi={true}
-                creatable={true}
-                options={this.generateOptionsFromTags(tagOptions)}
-                placeholder=""
-                value={this.generateOptionsFromTags(doc.tags)}
-                onChange={this.onChange}
-                selfManageValueState={true}
-              />
+              <div className="cf-issue-tag-sidebar">
+                {showErrorMessage.tag && cannotSaveAlert}
+                <SearchableDropdown
+                  key={doc.id}
+                  name="tags"
+                  label="Select or tag issue(s)"
+                  multi={true}
+                  creatable={true}
+                  options={this.generateOptionsFromTags(tagOptions)}
+                  placeholder=""
+                  value={this.generateOptionsFromTags(doc.tags)}
+                  onChange={this.onChange}
+                  selfManageValueState={true}
+                />
+              </div>
             </AccordionHeader>
             <AccordionHeader title="Comments" key={4} id="comments-header">
                 <span className="cf-right-side cf-add-comment-button">
