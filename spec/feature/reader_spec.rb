@@ -455,27 +455,22 @@ RSpec.feature "Reader" do
       end
       # :nocov:
 
-      ensure_stable do
-        scenario "Jump to section for a comment", focus: true do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      scenario "Jump to section for a comment" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-          annotation = documents[1].annotations[0]
+        annotation = documents[1].annotations[0]
 
-          click_button("expand-#{documents[1].id}-comments-button")
-          click_button("jumpToComment#{annotation.id}")
+        click_button("expand-#{documents[1].id}-comments-button")
+        click_button("jumpToComment#{annotation.id}")
 
-          # Wait for PDFJS to render the pages
-          expect(page).to have_css(".page")
-          comment_icon_id = "commentIcon-container-#{annotation.id}"
+        # Wait for PDFJS to render the pages
+        expect(page).to have_css(".page")
+        comment_icon_id = "commentIcon-container-#{annotation.id}"
 
-          # wait for comment annotations to load
-          all(".commentIcon-container", wait: 3, count: 1)
-          puts page.evaluate_script("document.getElementById('#{comment_icon_id}').getBoundingClientRect().top")
-          puts page.evaluate_script("window.innerHeight")
-          puts page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
-          puts page.evaluate_script("document.getElementsByTagName('body')[0].scrollTop")
-          expect { in_viewport(comment_icon_id) }.to become_truthy
-        end
+        # wait for comment annotations to load
+        all(".commentIcon-container", wait: 3, count: 1)
+
+        expect { in_viewport(comment_icon_id) }.to become_truthy
       end
 
       scenario "Scroll to comment" do
