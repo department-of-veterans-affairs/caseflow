@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe DependenciesCheck do
+describe DependenciesReportService do
 
   context "when there is an outage" do
     before do
@@ -14,8 +14,8 @@ describe DependenciesCheck do
     end
 
     it "returns degraded services" do
-      expect(DependenciesCheck.find_degraded_dependencies).to eq (["VACOLS", "VBMS"])
-      expect(DependenciesCheck.outage_present?).to be_truthy
+      expect(DependenciesReportService.find_degraded_dependencies).to eq (["VACOLS", "VBMS"])
+      expect(DependenciesReportService.outage_present?).to be_truthy
     end
   end
 
@@ -31,8 +31,8 @@ describe DependenciesCheck do
     end
 
     it "returns no outage" do
-      expect(DependenciesCheck.find_degraded_dependencies).to be_empty
-      expect(DependenciesCheck.outage_present?).to be_falsey
+      expect(DependenciesReportService.find_degraded_dependencies).to be_empty
+      expect(DependenciesReportService.outage_present?).to be_falsey
     end
   end
 end
