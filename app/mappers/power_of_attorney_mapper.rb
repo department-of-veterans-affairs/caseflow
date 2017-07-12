@@ -58,20 +58,20 @@ module PowerOfAttorneyMapper
     if rep_type == "Service Organization" || rep_type == "ORGANIZATION"
       # If the rep name is found in either our VACOLS or BGS objects that map rep name to code,
       # return that. Otherwise, return "O", meaning "Other Service Organization."
-      return get_vacols_code_from_vacols_map(rep_name) ||
-        get_vacols_code_from_bgs_map(rep_name) ||
+      return vacols_code_from_vacols_map(rep_name) ||
+        vacols_code_from_bgs_map(rep_name) ||
         "O"
     end
 
     # Otherwise, the vacols code may be e.g. "Attorney",so look it up using the rep type.
-    return get_vacols_code_from_vacols_map(rep_type)
+    get_vacols_code_from_vacols_map(rep_type)
   end
 
-  def get_vacols_code_from_vacols_map(rep)
+  def vacols_code_from_vacols_map(rep)
     VACOLS::Case::REPRESENTATIVES.select { |_key, value| value[:short] == rep }.keys[0]
   end
 
-  def get_vacols_code_from_bgs_map(rep)
+  def vacols_code_from_bgs_map(rep)
     BGS_REP_NAMES_TO_VACOLS_REP_CODES[rep]
   end
 
