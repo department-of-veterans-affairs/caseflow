@@ -14,6 +14,7 @@ import SignAndCertify from './SignAndCertify';
 import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
+import PageRoute from '../components/PageRoute';
 
 const UnconnectedEntryPointRedirect = ({ match }) => {
   return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
@@ -68,18 +69,35 @@ const Certification = ({ certification }) => {
         <CertificationProgressBar/>
         <Route path="/certifications/new/:vacols_id"
           component={EntryPointRedirect}/>
-        <Route path="/certifications/:vacols_id/check_documents"
-          component={DocumentsCheck}/>
-        <Route path="/certifications/:vacols_id/confirm_case_details"
-          component={ConfirmCaseDetails}/>
-        <Route path="/certifications/:vacols_id/confirm_hearing"
-          component={ConfirmHearing}/>
-        <Route path="/certifications/:vacols_id/sign_and_certify"
+        <PageRoute
+          title="Check Documents | Caseflow Certification"
+          path="/certifications/:vacols_id/check_documents"
+          component={DocumentsCheck}
+        />
+        <PageRoute
+          title="Confirm Case Details | Caseflow Certification"
+          path="/certifications/:vacols_id/confirm_case_details"
+          component={ConfirmCaseDetails}
+        />
+        <PageRoute
+          title="Confirm Hearing | Caseflow Certification"
+          path="/certifications/:vacols_id/confirm_hearing"
+          component={ConfirmHearing}
+        />
+        <PageRoute
+          title="Sign and Certify | Caseflow Certification"
+          path="/certifications/:vacols_id/sign_and_certify"
           component={SignAndCertify}/>
-        <Route path="/certifications/:vacols_id/success"
-          component={Success}/>
-        <Route path="/certifications/error"
-          component={ErrorMessage}/>
+        <PageRoute
+          title="Success! | Caseflow Certification"
+          path="/certifications/:vacols_id/success"
+          component={Success}
+        />
+        <PageRoute
+          title="Error | Caseflow Certification"
+          path="/certifications/error"
+          component={ErrorMessage}
+        />
       </div>
       </BrowserRouter>
     </div>
