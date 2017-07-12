@@ -76,9 +76,9 @@ class Issue < ActiveRecord::Base
 
     def levels(hash)
       levels = []
-      levels.push("#{hash['isslev1_label']}") if hash["isslev1"]
-      levels.push("#{hash['isslev2_label']}") if hash["isslev2"]
-      levels.push("#{hash['isslev3_label']}") if hash["isslev3"]
+      levels.push((hash["isslev1_label"]).to_s) if hash["isslev1"]
+      levels.push((hash["isslev2_label"]).to_s) if hash["isslev2"]
+      levels.push((hash["isslev3_label"]).to_s) if hash["isslev3"]
       levels
     end
 
