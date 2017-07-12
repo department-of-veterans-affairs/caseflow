@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Analytics from '../util/AnalyticsUtil';
 
 class DropdownFilter extends React.PureComponent {
   constructor() {
@@ -30,11 +31,16 @@ class DropdownFilter extends React.PureComponent {
       style = { left: '-99999px' };
     }
 
+    const clearFilters = () => {
+      Analytics.event('Claims Folder', 'clear filters', name);
+      this.props.clearFilters();
+    };
+
     return <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
       this.rootElem = rootElem;
     }}>
       <div className="cf-clear-filter-row">
-        <button className="cf-text-button" onClick={this.props.clearFilters}
+        <button className="cf-text-button" onClick={clearFilters}
             disabled={!this.props.isClearEnabled}>
           <div className="cf-clear-filter-button-wrapper">
               { `Clear ${name} filter` }
