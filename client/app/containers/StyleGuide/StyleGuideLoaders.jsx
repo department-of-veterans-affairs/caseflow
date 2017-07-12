@@ -1,6 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import LoadingContainer from '../../components/LoadingContainer';
+import * as AppConstants from '../../constants/AppConstants';
 
 export default class StyleGuideLoaders extends React.Component {
 
@@ -19,7 +20,7 @@ export default class StyleGuideLoaders extends React.Component {
 
 
      <div className="cf-sg-loader">
-      <LoadingContainer >
+      <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
         <div className="cf-image-loader">
         </div>
         <p className="cf-txt-c"> Gathering information in VBMS now......</p>
