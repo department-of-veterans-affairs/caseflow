@@ -19,8 +19,8 @@ class CaseSelect extends React.PureComponent {
     },
     {
       header: 'Issues',
-      valueFunction: (appeal) => 
-        appeal.issues[0].levels.map((item, key) => <span key={key}>{item}<br/></span>)
+      valueFunction: (appeal) => appeal.issues.map((issue) =>
+        issue.levels.map((level, key) => <span key={key}>{level}<br/></span>))
     },
     {
       header: 'View claims folder',
