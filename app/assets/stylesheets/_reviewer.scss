@@ -420,6 +420,10 @@ svg[aria-hidden=true],
     float: left;
   }
 
+  .highlighted {
+    filter: drop-shadow(0 0 5px $color-primary-alt);
+  }
+
   li:not(:first-child) {
     padding-left: 10px;
   }
