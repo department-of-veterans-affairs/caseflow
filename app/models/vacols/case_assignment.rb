@@ -9,7 +9,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
     def active_cases_for_user(css_id)
       id = connection.quote(css_id.upcase)
 
-      select_assignments.where("staff.sdomainid = #{id} and dereceive IS NULL")
+      select_assignments.where("staff.sdomainid = #{id} and brieff.bfcurloc = staff.slogid")
     end
 
     def select_assignments
