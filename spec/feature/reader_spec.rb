@@ -470,6 +470,10 @@ RSpec.feature "Reader" do
 
           # wait for comment annotations to load
           all(".commentIcon-container", wait: 3, count: 1)
+          puts page.evaluate_script("document.getElementById('#{comment_icon_id}').getBoundingClientRect().top")
+          puts page.evaluate_script("window.innerHeight")
+          puts page.evaluate_script("document.getElementById('scrollWindow').scrollTop")
+          puts page.evaluate_script("document.getElementsByTagName('body')[0].scrollTop")
           expect { in_viewport(comment_icon_id) }.to become_truthy
         end
       end
