@@ -52,7 +52,7 @@ end
 
 # The CHROME_ARGS environment is set in test envrionments
 # to allow headless tests to run. It is expected to be a space separated list
-chrome_args = ENV["CHROME_ARGS"] != nil ? ENV["CHROME_ARGS"].split(' ') : nil
+chrome_args = !ENV["CHROME_ARGS"].nil? ? ENV["CHROME_ARGS"].split(" ") : nil
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
