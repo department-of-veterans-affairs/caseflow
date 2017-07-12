@@ -2,7 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Collapse, { Panel } from 'rc-collapse';
 import AccordionHeader from './AccordionHeader';
-import classnames from 'classnames';
+
+const CLASS_NAME_MAPPING = {
+  bordered: 'usa-accordion-bordered',
+  borderless: 'usa-accordion',
+  outline: 'usa-accordion-bordered-outline'
+};
 
 /*
 * The base CSS file for both the Accordion and the AccordionHeader components
@@ -15,7 +20,6 @@ export default class Accordion extends React.PureComponent {
     const {
       accordion,
       children,
-      classNames,
       defaultActiveKey,
       id,
       style
@@ -30,18 +34,12 @@ export default class Accordion extends React.PureComponent {
         </Panel>;
     });
 
-    const accordionStyle = classnames({
-      'usa-accordion-bordered': style === 'bordered',
-      'usa-accordion': style === 'borderless',
-      'usa-accordion-bordered-outline': style === 'outline'
-    });
-
     /* rc-collapse props:
        accordion: If accordion=true, there can be no more than one active panel at a time.
        defaultActiveKey: shows which accordion headers are expanded on default render
        Source: https://github.com/react-component/collapse */
 
-    return <Collapse accordion={accordion} className={classnames(classNames, accordionStyle)}
+    return <Collapse accordion={accordion} className={CLASS_NAME_MAPPING[style]}
       defaultActiveKey={defaultActiveKey} id={id}>
       {accordionHeaders}
     </Collapse>;
