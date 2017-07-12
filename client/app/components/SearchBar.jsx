@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
+import Analytics from '../util/AnalyticsUtil';
 import _ from 'lodash';
 
 export default class SearchBar extends React.Component {
@@ -10,13 +11,65 @@ export default class SearchBar extends React.Component {
     this.props.onChange(event.target.value);
   }
 
+  // A "search" event occurs when a user finishes typing
+  // a search query. This is 500ms after the last character
+  // typed or when focus is lost
+  onSearch = () => {
+    if (this.props.value && this.props.analyticsCategory) {
+      Analytics.event(this.props.analyticsCategory, 'search', '');
+    }
+  }
+
+  clearSearchCallback() {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = null;
+
+      return true;
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.value !== nextProps.value) {
+      this.clearSearchCallback();
+
+      this.searchTimeout = setTimeout(() => {
+        this.onSearch();
+        this.searchTimeout = null;
+      }, 500);
+    }
+  }
+
+  onBlur = () => {
+    if (this.clearSearchCallback()) {
+      this.onSearch();
+    }
+  }
+
+  onClick = () => {
+    if (this.props.analyticsCategory) {
+      Analytics.event(this.props.analyticsCategory, 'click', 'Search button');
+    }
+
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+  }
+
+  onClearSearch = () => {
+    if (this.props.analyticsCategory) {
+      Analytics.event(this.props.analyticsCategory, 'click', 'Clear search');
+    }
+
+    this.props.onClearSearch();
+  }
+
   render() {
     let {
       id,
-      onClick,
       value,
-      onClearSearch,
       loading,
+      onClearSearch,
       size,
       title
     } = this.props;
@@ -45,6 +98,7 @@ export default class SearchBar extends React.Component {
         className={inputClassName}
         id={id}
         onChange={this.onChange}
+        onBlur={this.onBlur}
         type="search"
         name="search"
         value={value}/>
@@ -53,10 +107,10 @@ export default class SearchBar extends React.Component {
           ariaLabel="clear search"
           name="clear search"
           classNames={['cf-pdf-button cf-search-close-icon']}
-          onClick={onClearSearch}>
+          onClick={this.onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
+      <Button name={`search-${id}`} onClick={this.onClick} type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button>
     </span>;
@@ -71,5 +125,7 @@ SearchBar.propTypes = {
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
   loading: PropTypes.bool,
-  value: PropTypes.string
+  value: PropTypes.string,
+  analyticsCategory: PropTypes.string
 };
+

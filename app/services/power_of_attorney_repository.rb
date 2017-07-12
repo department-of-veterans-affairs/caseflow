@@ -34,11 +34,11 @@ class PowerOfAttorneyRepository
     )
   end
 
-  def self.get_vacols_rep_code(short_name)
+  def self.get_vacols_rep_code(name)
     VACOLS::Case::REPRESENTATIVES.each do |representative|
-      return representative[0] if representative[1][:short] == short_name
+      return representative[0] if representative[1][:short] == name
     end
-    nil
+    BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
   end
 
   # :nocov:

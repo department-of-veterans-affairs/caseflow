@@ -14,6 +14,7 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -204,5 +205,23 @@ end
 def ensure_stable
   10.times do
     yield
+  end
+end
+
+# We generally avoid writing our own polling code, since proper Cappybara use generally
+# doesn't require it. That said, there may be some situations (such as evaluating javascript)
+# that require a spinning test. We got the following matcher from https://gist.github.com/jnicklas/4129937
+RSpec::Matchers.define :become_truthy do |_event_name|
+  supports_block_expectations
+
+  match do |block|
+    begin
+      Timeout.timeout(Capybara.default_max_wait_time) do
+        sleep(0.1) until block.call
+        true
+      end
+    rescue TimeoutError
+      false
+    end
   end
 end

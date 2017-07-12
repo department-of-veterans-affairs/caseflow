@@ -510,3 +510,12 @@ select {
   padding-left: 1.6em;
   white-space: nowrap;
 }
+
+.cf-form-textinput,
+.cf-form-textarea,
+.cf-form-dropdown {
+  label {
+    margin-bottom: 8px;
+  }
+}
+

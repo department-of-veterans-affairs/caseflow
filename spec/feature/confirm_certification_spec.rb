@@ -15,6 +15,13 @@ RSpec.feature "Confirm Certification" do
     certification.form8.save_pdf!
   end
 
+  after do
+    # Clean up generated PDF
+    expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
+    form8_location = Form8.pdf_service.output_location_for(expected_form8)
+    File.delete(form8_location) if File.exist?(form8_location)
+  end
+
   let(:nod) { Generators::Document.build(type: "NOD") }
   let(:soc) { Generators::Document.build(type: "SOC", received_at: Date.new(1987, 9, 6)) }
   let(:form9) { Generators::Document.build(type: "Form 9") }
