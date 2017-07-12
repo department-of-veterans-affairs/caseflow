@@ -4,8 +4,16 @@ const webpackConfig = require('./webpack.config.js');
 const karmaTestPattern = 'test/karma/**/*-test.js';
 
 module.exports = function(config) {
+  // CHROME_ARGS is expected to be a space separated list of arguments
+  var chrome_args = process.env.CHROME_ARGS
+  
+  if (chrome_args != undefined) {
+    chrome_args = chrome_args.split(' ')
+    console.log('Loaded Chrome arguments: ' + chrome_args)
+  }
+
   config.set({
-    browsers: ['Chrome_without_sandbox'],
+    browsers: ['Chrome_with_options'],
     frameworks: ['mocha'],
     reporters: ['mocha'],
     singleRun: true,
@@ -15,11 +23,12 @@ module.exports = function(config) {
       level: ''
     },
 
-    // you can define custom flags
     customLaunchers: {
-      Chrome_without_sandbox: {
+      Chrome_with_options: {
         base: 'Chrome',
-        flags: ['--no-sandbox']
+        // The CHROME_ARGS environment is set in test envrionments
+        // to allow headless tests to run
+        flags: chrome_args
       }
     },
 

@@ -24,6 +24,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       containerEnvVar(key: 'RAILS_ENV', value: 'test'),
       containerEnvVar(key: 'DISPLAY', value: ':99'),
       containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser')
+      containerEnvVar(key: 'CHROME_ARGS', value: '--no-sandbox')
      ],
   )]) {
   node('caseflow') {
