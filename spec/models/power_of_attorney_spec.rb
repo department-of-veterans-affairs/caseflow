@@ -24,42 +24,4 @@ describe PowerOfAttorney do
       expect(power_of_attorney.bgs_representative_address).to eq nil
     end
   end
-
-  context "#vacols_rep_code" do
-    subject { power_of_attorney.vacols_rep_code(representative_type, representative_name) }
-
-    context "when representative type is not a service organization" do
-      let(:representative_type) { "ARC" }
-      let(:representative_name) { "PARALYZED VETERANS OF AMERICA" }
-
-      it "it uses representative type to map to Vacols code" do
-        expect(subject).to eq "C"
-      end
-    end
-
-    context "when representative type is not found" do
-      let(:representative_type) { "TGDF" }
-      let(:representative_name) { "PARALYZED VETERANS OF AMERICA" }
-
-      it { is_expected.to eq(nil) }
-    end
-
-    context "when representative type is a service organization" do
-      let(:representative_type) { "Service Organization" }
-      let(:representative_name) { "PARALYZED VETERANS OF AMERICA" }
-
-      it "uses representative name to map to Vacols code" do
-        expect(subject).to eq "G"
-      end
-    end
-
-    context "when representative type is a service organization and representative name is not found" do
-      let(:representative_type) { "Service Organization" }
-      let(:representative_name) { "NOT EXISTING NAME" }
-
-      it "maps to 'Other'" do
-        expect(subject).to eq "O"
-      end
-    end
-  end
 end
