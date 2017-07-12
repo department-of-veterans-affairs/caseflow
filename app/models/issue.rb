@@ -3,7 +3,7 @@
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition,
-                :program_description
+                :program_description, :levels
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
@@ -55,6 +55,7 @@ class Issue < ActiveRecord::Base
 
   def attributes
     super.merge(
+      levels: levels,
       program: program,
       type: type,
       category: category,
@@ -73,6 +74,14 @@ class Issue < ActiveRecord::Base
       description
     end
 
+    def levels(hash)
+      levels = []
+      levels.push("#{hash['isslev1_label']}") if hash["isslev1"]
+      levels.push("#{hash['isslev2_label']}") if hash["isslev2"]
+      levels.push("#{hash['isslev3_label']}") if hash["isslev3"]
+      levels
+    end
+
     def load_from_vacols(hash)
       category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
 
@@ -80,6 +89,7 @@ class Issue < ActiveRecord::Base
                     .parameterize.underscore.to_sym
 
       new(
+        levels: levels(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         type: TYPES[hash["isscode"]],
