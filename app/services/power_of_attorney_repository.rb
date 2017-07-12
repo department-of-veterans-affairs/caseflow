@@ -34,11 +34,6 @@ class PowerOfAttorneyRepository
     )
   end
 
-  def self.get_vacols_rep_code(name)
-    VACOLS::Case::REPRESENTATIVES.select { |_key, value| value[:short] == name }.keys[0] ||
-      BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
-  end
-
   # :nocov:
   def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
     VACOLS::Representative.update_vacols_rep_type!(bfkey: case_record.bfkey, rep_type: vacols_rep_type)
