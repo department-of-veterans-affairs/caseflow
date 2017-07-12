@@ -90,6 +90,14 @@
     </script>
   <% end %>
 
+  <script>
+    // Used to track events in the header, where we don't have React to stub
+    window.tryAnalyticsEvent = function(category, action, label) {
+      if(window.analyticsEvent) { analyticsEvent(category, action, label) }
+      else { console.log("EVENT: " + category + " " + action + " " + label) }
+    }
+  </script>
+
   <%= favicon_link_tag %>
 
 </head>
@@ -107,7 +115,8 @@
 
         <% unless current_user.nil? %>
           <div class="cf-dropdown cf-nav-dropdown">
-            <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
+            <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger"
+                onclick="window.tryAnalyticsEvent('Header', 'open dropdown', '')">
               <%= current_user.display_name %>
             </a>
 

@@ -15,8 +15,8 @@ export default class SearchBar extends React.Component {
   // a search query. This is 500ms after the last character
   // typed or when focus is lost
   onSearch = () => {
-    if (this.props.value && this.props.analyticsLabel) {
-      Analytics.event('Controls', 'search', this.props.analyticsLabel);
+    if (this.props.value && this.props.analyticsCategory) {
+      Analytics.event(this.props.analyticsCategory, 'search', '');
     }
   }
 
@@ -47,8 +47,8 @@ export default class SearchBar extends React.Component {
   }
 
   onClick = () => {
-    if (this.props.analyticsLabel) {
-      Analytics.event('Controls', 'click', `${this.props.analyticsLabel} - Search button`);
+    if (this.props.analyticsCategory) {
+      Analytics.event(this.props.analyticsCategory, 'click', 'Search button');
     }
 
     if (this.props.onClick) {
@@ -57,8 +57,8 @@ export default class SearchBar extends React.Component {
   }
 
   onClearSearch = () => {
-    if (this.props.analyticsLabel) {
-      Analytics.event('Controls', 'click', `${this.props.analyticsLabel} - Clear search`);
+    if (this.props.analyticsCategory) {
+      Analytics.event(this.props.analyticsCategory, 'click', 'Clear search');
     }
 
     this.props.onClearSearch();
@@ -126,6 +126,6 @@ SearchBar.propTypes = {
   onClearSearch: PropTypes.func,
   loading: PropTypes.bool,
   value: PropTypes.string,
-  analyticsLabel: PropTypes.string
+  analyticsCategory: PropTypes.string
 };
 
