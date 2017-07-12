@@ -1,7 +1,7 @@
 import React from 'react';
 import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
-import * as Constants from '../constants/Constants';
+import * as AppConstants from '../constants/AppConstants';
 
 
 /*
@@ -41,7 +41,7 @@ export default class PerformanceDegradationBanner extends React.Component {
   componentDidUpdate() {
     // subsequent checks
     setTimeout(() =>
-     this.checkDependencies(), Constants.POLLING_INTERVAL);
+     this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
   }
 
   render() {

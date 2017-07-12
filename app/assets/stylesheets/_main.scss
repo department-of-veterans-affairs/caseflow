@@ -450,24 +450,6 @@ select {
   color: $color-gray-light;
 }
 
-.usa-banner {
-  background-color: $color-gold-lightest;
-  height: 50px;
-}
-
-.usa-banner-inner {
-  padding-top: 13px;
-}
-
-.banner-icon {
-  display:inline-block;
-  vertical-align: text-top;
-}
-
-.banner-text {
-  padding-left: 10px;
-}
-
 //candidate for commons
 .usa-accordion-button {
   background-image: url(asset-path('minus.svg'));
@@ -536,3 +518,4 @@ select {
     margin-bottom: 8px;
   }
 }
+

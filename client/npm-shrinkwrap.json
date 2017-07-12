@@ -3149,11 +3149,6 @@
       "from": "react-addons-perf@latest",
       "resolved": "https://registry.npmjs.org/react-addons-perf/-/react-addons-perf-15.4.2.tgz"
     },
-    "react-banner": {
-      "version": "0.3.1",
-      "from": "react-banner@latest",
-      "resolved": "https://registry.npmjs.org/react-banner/-/react-banner-0.3.1.tgz"
-    },
     "react-copy-to-clipboard": {
       "version": "4.3.1",
       "from": "react-copy-to-clipboard@>=4.3.0 <5.0.0",
