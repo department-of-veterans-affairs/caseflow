@@ -262,15 +262,6 @@ export class Pdf extends React.PureComponent {
       ..._.pick(viewport, ['width', 'height'])
     });
 
-    // Since we don't know a page's size until we draw it, we either use the
-    // naive constants of PAGE_WIDTH and PAGE_HEIGHT for the page dimensions
-    // or the dimensions of the first page we successfully draw. This allows
-    // us to accurately represent the size of pages we haven't drawn yet.
-    if (this.defaultWidth === PAGE_WIDTH && this.defaultHeight === PAGE_HEIGHT) {
-      this.defaultWidth = viewport.width;
-      this.defaultHeight = viewport.height;
-    }
-
     resolve();
   }
 
