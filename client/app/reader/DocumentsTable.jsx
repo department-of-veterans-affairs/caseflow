@@ -13,16 +13,18 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
+import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
 import { setDocListScrollPosition, changeSortState,
-  setTagFilter, setCategoryFilter } from './actions';
+  setTagFilter, setCategoryFilter, selectCurrentPdfLocally } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
+import Analytics from '../util/AnalyticsUtil';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -32,9 +34,14 @@ class FilterIcon extends React.PureComponent {
       handleActivate, label, getRef, selected, idPrefix
     } = this.props;
 
+    const onActivate = (event) => {
+      Analytics.event('Claims Folder', 'activate filter', idPrefix);
+      handleActivate(event);
+    };
+
     const handleKeyDown = (event) => {
       if (event.key === ' ' || event.key === 'Enter') {
-        handleActivate(event);
+        onActivate(event);
         event.preventDefault();
       }
     };
@@ -48,7 +55,7 @@ class FilterIcon extends React.PureComponent {
       className,
       tabIndex: '0',
       onKeyDown: handleKeyDown,
-      onClick: handleActivate
+      onClick: onActivate
     };
 
     if (selected) {
@@ -97,25 +104,47 @@ class DocTypeColumn extends React.PureComponent {
     return content;
   };
 
-  render() {
+  onClick = (id) => () => {
+    // Annoyingly if we make this call in the thread, it won't follow the link. Instead
+    // we use setTimeout to force it to run at a later point.
+    setTimeout(() => this.props.selectCurrentPdfLocally(id), 0);
+  }
+
+  render = () => {
     const { doc } = this.props;
 
+    // We add a click handler to mark a document as read even if it's opened in a new tab.
+    // This will get fired in the current tab, as the link is followed in a new tab. We
+    // also need to add a mouseUp event since middle clicking doesn't trigger an onClick.
+    // This will not work if someone right clicks and opens in a new tab.
     return this.boldUnreadContent(
-      <a
-        href={singleDocumentLink(this.props.documentPathBase, doc)}
-        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-        onMouseUp={this.props.showPdf(doc.id)}>
+      <Link
+        onMouseUp={this.onClick(doc.id)}
+        onClick={this.onClick(doc.id)}
+        to={singleDocumentLink(this.props.documentPathBase, doc)}
+        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
         <Highlight>
           {doc.type}
         </Highlight>
-      </a>, doc);
+      </Link>, doc);
   }
 }
+
+const mapDocTypeDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    selectCurrentPdfLocally
+  }, dispatch)
+});
 
 DocTypeColumn.propTypes = {
   doc: PropTypes.object,
   documentPathBase: PropTypes.string
 };
+
+const ConnectedDocTypeColumn = connect(
+  null, mapDocTypeDispatchToProps
+)(DocTypeColumn);
+
 
 class DocumentsTable extends React.Component {
   constructor() {
@@ -315,7 +344,7 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf}
+        valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc}
           documentPathBase={this.props.documentPathBase}/>
       },
       {
@@ -403,9 +432,12 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
     setTagFilter,
-    setCategoryFilter,
-    changeSortState
+    setCategoryFilter
   }, dispatch),
+  changeSortState(sortBy) {
+    Analytics.event('Claims Folder', 'sort by', sortBy);
+    dispatch(changeSortState(sortBy));
+  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,

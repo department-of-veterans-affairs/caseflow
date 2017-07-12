@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName } from '../reader/utils';
 import * as Constants from '../reader/constants';
+
+const SPACE_DELIMITER = ' ';
 
 const categoriesOfDocument = (document) => _(Constants.documentCategories).
     filter(
@@ -11,24 +14,34 @@ const categoriesOfDocument = (document) => _(Constants.documentCategories).
     sortBy('renderOrder').
     value();
 
-export default class DocumentCategoryIcons extends React.Component {
+class DocumentCategoryIcons extends React.Component {
   shouldComponentUpdate = (nextProps) => !_.isEqual(
     categoriesOfDocument(this.props.doc),
     categoriesOfDocument(nextProps.doc)
+  ) || !_.isEqual(
+    this.props.searchCategoryHighlights,
+    nextProps.searchCategoryHighlights
   )
 
   render() {
-    const categories = categoriesOfDocument(this.props.doc);
+    const { searchCategoryHighlights, doc } = this.props;
+    const categories = categoriesOfDocument(doc);
+    const docHighlights = searchCategoryHighlights ? searchCategoryHighlights[doc.id] : {};
 
     if (!_.size(categories)) {
       return null;
     }
+    const listClassName = 'cf-no-styling-list';
+
+    // helper function to get the name of the category
+    const getCategoryName = (humanName) => humanName.split(SPACE_DELIMITER)[0].toLowerCase();
 
     return <ul className="cf-document-category-icons" aria-label="document categories">
       {
         _.map(categories, (category) =>
           <li
-            className="cf-no-styling-list"
+            className={docHighlights[getCategoryName(category.humanName)] ?
+             `${listClassName} highlighted` : listClassName}
             key={category.renderOrder}
             aria-label={category.humanName}>
             {category.svg}
@@ -40,5 +53,16 @@ export default class DocumentCategoryIcons extends React.Component {
 }
 
 DocumentCategoryIcons.propTypes = {
-  doc: PropTypes.object.isRequired
+  doc: PropTypes.object.isRequired,
+  searchCategoryHighlights: PropTypes.object
 };
+
+const mapStateToProps = (state) => ({
+  searchCategoryHighlights: state.ui.searchCategoryHighlights
+});
+
+export { DocumentCategoryIcons };
+
+export default connect(
+  mapStateToProps, null
+)(DocumentCategoryIcons);

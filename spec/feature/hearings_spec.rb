@@ -7,7 +7,7 @@ RSpec.feature "Hearings" do
     Timecop.freeze(Time.utc(2017, 1, 1))
   end
 
-  context "Schedule" do
+  context "Upcoming Hearing Days" do
     let!(:current_user) do
       User.authenticate!(roles: ["Hearings"])
     end
@@ -33,7 +33,7 @@ RSpec.feature "Hearings" do
     scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
-      expect(page).to have_content("Hearing Schedule")
+      expect(page).to have_content("Upcoming Hearing Days")
 
       # Verify user
       expect(page).to have_content("VLJ: Lauren Roth")
