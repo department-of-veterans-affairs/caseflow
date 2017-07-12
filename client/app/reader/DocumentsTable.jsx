@@ -24,6 +24,7 @@ import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
+import Analytics from '../util/AnalyticsUtil';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -33,9 +34,14 @@ class FilterIcon extends React.PureComponent {
       handleActivate, label, getRef, selected, idPrefix
     } = this.props;
 
+    const onActivate = (event) => {
+      Analytics.event('Claims Folder', 'activate filter', idPrefix);
+      handleActivate(event);
+    };
+
     const handleKeyDown = (event) => {
       if (event.key === ' ' || event.key === 'Enter') {
-        handleActivate(event);
+        onActivate(event);
         event.preventDefault();
       }
     };
@@ -49,7 +55,7 @@ class FilterIcon extends React.PureComponent {
       className,
       tabIndex: '0',
       onKeyDown: handleKeyDown,
-      onClick: handleActivate
+      onClick: onActivate
     };
 
     if (selected) {
@@ -426,9 +432,12 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
     setTagFilter,
-    setCategoryFilter,
-    changeSortState
+    setCategoryFilter
   }, dispatch),
+  changeSortState(sortBy) {
+    Analytics.event('Claims Folder', 'sort by', sortBy);
+    dispatch(changeSortState(sortBy));
+  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,

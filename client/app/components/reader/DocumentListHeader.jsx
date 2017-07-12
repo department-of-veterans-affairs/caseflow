@@ -31,7 +31,7 @@ export const DocumentListHeader = (props) => {
           onClick={props.clickSearch}
           value={props.docFilterCriteria.searchQuery}
           size="small"
-          analyticsLabel="Reader"
+          analyticsCategory="Claims Folder"
         />
       </div>
       <div className="usa-width-one-third num-of-documents">
@@ -76,9 +76,10 @@ const mapStateToProps = (state) => ({
   numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
   docFilterCriteria: state.ui.docFilterCriteria
 });
+
 const mapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => {
-    Analytics.event('Controls', 'click', 'Clear all filters');
+    Analytics.event('Claims Folder', 'click', 'Clear all filters');
     dispatch(clearAllFilters());
   },
   clearSearch: () => {
@@ -88,7 +89,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(setSearch(searchQuery));
   },
   toggleExpandAll: () => {
-    Analytics.event('Controls', 'click', 'Expand/Collapse all');
+    Analytics.event('Claims Folder', 'click', 'Expand/Collapse all');
     dispatch(toggleExpandAll());
   }
 });
