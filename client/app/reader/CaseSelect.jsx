@@ -18,7 +18,11 @@ class CaseSelect extends React.PureComponent {
       valueName: 'vbms_id'
     },
     {
-      header: 'View Claims Folder',
+      header: 'Issues',
+      valueName: ''
+    },
+    {
+      header: 'View claims folder',
       valueFunction: (row) => {
         let buttonText = 'New';
         let buttonType = 'primary';
@@ -52,7 +56,7 @@ class CaseSelect extends React.PureComponent {
           <p className="cf-lead-paragraph">
             Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
-          <h1>Cases Checked In</h1>
+          <h2>Cases checked in</h2>
           <Table
             columns={this.getAssignmentColumn}
             rowObjects={this.props.assignments}
