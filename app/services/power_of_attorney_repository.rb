@@ -35,8 +35,8 @@ class PowerOfAttorneyRepository
   end
 
   def self.get_vacols_rep_code(name)
-    VACOLS::Case::REPRESENTATIVES.select { |key, value| value[:short] == name }.keys[0] ||
-    BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
+    VACOLS::Case::REPRESENTATIVES.select { |_key, value| value[:short] == name }.keys[0] ||
+      BGS_REP_NAMES_TO_VACOLS_REP_CODES[name]
   end
 
   # :nocov:

@@ -44,7 +44,6 @@ describe PowerOfAttorney do
       it { is_expected.to eq(nil) }
     end
 
-
     context "when representative type is a service organization" do
       let(:representative_type) { "Service Organization" }
       let(:representative_name) { "PARALYZED VETERANS OF AMERICA" }

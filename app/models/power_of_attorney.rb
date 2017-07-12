@@ -60,12 +60,12 @@ class PowerOfAttorney
 
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository
-
+    vacols_code = vacols_rep_code(representative_type, representative_name)
     repo.update_vacols_rep_type!(
       case_record: appeal.case_record,
-      vacols_rep_type: vacols_rep_code
+      vacols_rep_type: vacols_code
     )
-    if repo.rep_name_found_in_rep_table?(vacols_rep_code)
+    if repo.rep_name_found_in_rep_table?(vacols_code)
       repo.update_vacols_rep_table!(
         appeal: appeal,
         representative_name: representative_name,
@@ -78,7 +78,7 @@ class PowerOfAttorney
     # We set the representative type to the service organization name
     # If we don't find the Vacols code based on the BGS rep name, we set it to 'other'.
     if representative_type == "Service Organization" || representative_type == "ORGANIZATION"
-      return self.class.repository.get_vacols_rep_code(representative_name) || 'O'
+      return self.class.repository.get_vacols_rep_code(representative_name) || "O"
     end
     self.class.repository.get_vacols_rep_code(representative_type)
   end
