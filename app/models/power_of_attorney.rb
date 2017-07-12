@@ -54,17 +54,17 @@ class PowerOfAttorney
     bgs_representative_address
   end
 
-  def overwrite_vacols_with_bgs_value
-    # case_record.bfso
-  end
-
   def update_vacols_rep_info!(appeal:, representative_type:, representative_name:, address:)
     repo = self.class.repository
-    vacols_code = vacols_rep_code(representative_type, representative_name)
+    vacols_code = repo.get_vacols_rep_code_from_poa(representative_type, representative_name)
+
+    # Update the BRIEFF table.
     repo.update_vacols_rep_type!(
       case_record: appeal.case_record,
       vacols_rep_type: vacols_code
     )
+
+    # If the POA should be stored in the REP table, update that too.
     if repo.rep_name_found_in_rep_table?(vacols_code)
       repo.update_vacols_rep_table!(
         appeal: appeal,
@@ -72,15 +72,6 @@ class PowerOfAttorney
         address: address
       )
     end
-  end
-
-  def vacols_rep_code(representative_type, representative_name)
-    # We set the representative type to the service organization name
-    # If we don't find the Vacols code based on the BGS rep name, we set it to 'other'.
-    if representative_type == "Service Organization" || representative_type == "ORGANIZATION"
-      return self.class.repository.get_vacols_rep_code(representative_name) || "O"
-    end
-    self.class.repository.get_vacols_rep_code(representative_type)
   end
 
   private
