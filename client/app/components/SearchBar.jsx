@@ -17,6 +17,10 @@ export default class SearchBar extends React.Component {
   onSearch = () => {
     if (this.props.value && this.props.analyticsCategory) {
       Analytics.event(this.props.analyticsCategory, 'search', '');
+
+      if (this.props.recordSearch) {
+        this.props.recordSearch(this.props.value);
+      }
     }
   }
 
@@ -124,6 +128,7 @@ SearchBar.propTypes = {
   onChange: PropTypes.func,
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
+  recordSearch: PropTypes.func,
   loading: PropTypes.bool,
   value: PropTypes.string,
   analyticsCategory: PropTypes.string
