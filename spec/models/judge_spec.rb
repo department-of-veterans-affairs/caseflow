@@ -41,4 +41,24 @@ describe Judge do
       expect(hearing_ids).to_not include(hearing_another_judge.id)
     end
   end
+
+  context "#docket?" do
+    let(:user) { Generators::User.create }
+    let(:judge) { Judge.new(user) }
+    let(:date) { Time.zone.now }
+    let(:out_of_range_date) { date - 300.years }
+    let!(:hearings) do
+      [
+        Generators::Hearing.create(user: user, date: 1.hour.from_now)
+      ]
+    end
+
+    it "returns true if docket exists" do
+      expect(judge.docket?(date)).to be_truthy
+    end
+
+    it "returns false if docket does not exist" do
+      expect(judge.docket?(out_of_range_date)).to be_falsey
+    end
+  end
 end
