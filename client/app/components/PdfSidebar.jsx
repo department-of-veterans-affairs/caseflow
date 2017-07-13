@@ -154,7 +154,7 @@ export class PdfSidebar extends React.Component {
             </strong>
           </Button>
         </div>
-        <div className="cf-sidebar-accordion" ref={(commentListElement) => {
+        <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
           this.commentListElement = commentListElement;
         }}>
           <Accordion style="outline" accordion={false}

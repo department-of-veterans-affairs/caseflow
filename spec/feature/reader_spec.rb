@@ -483,7 +483,7 @@ RSpec.feature "Reader" do
 
         click_on documents[0].type
 
-        element = "cf-comment-wrapper"
+        element = "cf-sidebar-accordion"
         scroll_to(element, 0)
 
         # Wait for PDFJS to render the pages
