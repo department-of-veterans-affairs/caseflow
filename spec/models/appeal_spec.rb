@@ -904,6 +904,65 @@ describe Appeal do
     end
   end
 
+  context ".to_hash" do
+    context "when issues parameter is nil" do
+      subject { appeal.to_hash(viewed: true, issues: nil) }
+
+      let!(:appeal) do
+        Generators::Appeal.build(
+            vbms_id: "999887777S",
+            vacols_record: { soc_date: 4.days.ago }
+        )
+      end
+
+      let!(:issue_levels) do
+        ["Other", "Left knee", "Right knee"]
+      end
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "issues is null in hash" do
+        expect(subject["issues"]).to be_nil
+      end
+    end
+
+    context "when issues and viewed attributes are provided" do
+      subject { appeal.to_hash(viewed: true, issues: issues) }
+
+      let!(:appeal) do
+        Generators::Appeal.build(
+            vbms_id: "999887777S",
+            vacols_record: { soc_date: 4.days.ago },
+            issues: issues
+        )
+      end
+
+      let!(:issue_levels) do
+        ["Other", "Left knee", "Right knee"]
+      end
+
+      let!(:issues) do
+        [Generators::Issue.build(disposition: :allowed,
+                                 program: :compensation,
+                                 type: :elbow,
+                                 category: :service_connection,
+                                 levels: issue_levels
+                                )
+        ]
+      end
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "includes issues in hash" do
+        expect(subject["issues"]).to eq(issues)
+      end
+    end
+  end
+
   context ".for_api" do
     subject { Appeal.for_api(appellant_ssn: ssn) }
 
