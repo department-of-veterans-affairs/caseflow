@@ -14,6 +14,7 @@ const UnconnectedSuccess = ({
  You can now close this window and open another
   appeal in VACOLS.`;
 
+  window.scrollTo(0, 0);
 
   return <StatusMessage
     title="Success!"
