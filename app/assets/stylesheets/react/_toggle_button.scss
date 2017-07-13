@@ -1,9 +1,33 @@
-.cf-primary-default.button_wrapper {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
- }
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
 
-.cf-secondary-default.usa-button-outline {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+.cf-toggle-button {
+  margin-left: 20px;
+  margin-right: 20px;
+
+  span:not(:first-child):not(:last-child) {
+    button {
+      border-radius: 0;
+    }
+  }
+
+  span {
+    &:first-child {
+      button {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+  }
+}
+
+    &:last-child {
+      button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+  }
+ }
+}
+
+.cf-toggle-box-shadow {
+  box-shadow: 0 0 5px $color-gray-dark;
 }

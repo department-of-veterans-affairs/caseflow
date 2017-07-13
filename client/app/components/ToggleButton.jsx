@@ -10,31 +10,32 @@ export default class ToggleButton extends React.Component {
   render() {
     let {
       labels,
-      active
+      active,
+      activeButton,
+      inactiveButton
     } = this.props;
+    const primaryClassShadow = [...activeButton, 'cf-toggle-box-shadow'];
 
-    return <div className="usa-grid">
+    return <div className ="cf-toggle-button">
+    {labels.map((label) =>
+
     <Button
-      id={labels[0].id}
-      name={labels[0].text}
-      classNames={active === labels[0].id ?
-      ['cf-primary-default button_wrapper'] : ['cf-secondary-default usa-button-outline']}
+      id={label.id}
+      key = {label.id}
+      name={label.text}
+      classNames={active === label.id ?
+      primaryClassShadow : inactiveButton}
       onClick ={this.handleClick}
      />
-     <Button
-        id={labels[1].id}
-        name = {labels[1].text}
-        classNames={active === labels[1].id ?
-        ['cf-primary-default button_wrapper'] : ['cf-secondary-default usa-button-outline']}
-        onClick ={this.handleClick}
-      />
-
+   )}
    </div>;
   }
 }
 
 ToggleButton.propTypes = {
-   // labels: PropTypes.arrayOf(),
+  labels: PropTypes.arrayOf(PropTypes.object),
   onClick: PropTypes.func,
-  active: PropTypes.string
+  active: PropTypes.string,
+  activeButton: PropTypes.arrayOf(PropTypes.string),
+  inactiveButton: PropTypes.arrayOf(PropTypes.string)
 };
