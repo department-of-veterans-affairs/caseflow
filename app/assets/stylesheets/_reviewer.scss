@@ -121,6 +121,11 @@ svg[aria-hidden=true],
   overflow-y: hidden;
 }
 
+.cf-issue-tag-sidebar {
+  overflow: visible;
+  height: 255px;
+}
+
 .cf-comment-wrapper {
   padding: 0 30px 0 0;
   width: 350px;

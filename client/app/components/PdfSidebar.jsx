@@ -53,8 +53,6 @@ export class PdfSidebar extends React.Component {
     if (this.props.scrollToSidebarComment) {
       const commentListBoundingBox = this.commentListElement.getBoundingClientRect();
 
-      document.getElementById('cf-sidebar-accordion').scrollTop = 493;
-
       this.commentListElement.scrollTop = this.commentListElement.scrollTop +
         this.commentElements[
           this.props.scrollToSidebarComment.id
@@ -156,7 +154,9 @@ export class PdfSidebar extends React.Component {
             </strong>
           </Button>
         </div>
-        <div className="cf-sidebar-accordion">
+        <div className="cf-sidebar-accordion" ref={(commentListElement) => {
+          this.commentListElement = commentListElement;
+        }}>
           <Accordion style="outline" accordion={false}
             defaultActiveKey={['Document information', 'Categories', 'Issue tags', 'Comments']}>
             <AccordionHeader title="Document information" key={1}>
@@ -205,10 +205,7 @@ export class PdfSidebar extends React.Component {
                     <span>{ plusIcon() } &nbsp; Add a comment</span>
                   </Button>
                 </span>
-              <div id="cf-comment-wrapper" className="cf-comment-wrapper"
-                ref={(commentListElement) => {
-                  this.commentListElement = commentListElement;
-                }}>
+              <div id="cf-comment-wrapper" className="cf-comment-wrapper">
                 {showErrorMessage.annotation && cannotSaveAlert}
                 <div className="cf-pdf-comment-list">
                   {this.props.placedButUnsavedAnnotation &&
