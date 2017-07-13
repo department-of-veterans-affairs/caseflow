@@ -22,8 +22,8 @@ class CaseSelect extends React.PureComponent {
       valueFunction: (appeal) => {
         return (
           <ol>
-            {appeal.issues.map((issue) =>
-              issue.levels.map((level, key) => <li key={key}>{level}</li>))}
+            {appeal.issues && appeal.issues.map((issue) =>
+              issue.levels ? issue.levels.map((level, key) => <li key={key}>{level}</li>) : null)}
           </ol>
         );
       }
@@ -65,7 +65,7 @@ class CaseSelect extends React.PureComponent {
           </p>
           <h2>Cases checked in</h2>
           <Table
-            className='assignment-list'
+            className="assignment-list"
             columns={this.getAssignmentColumn}
             rowObjects={this.props.assignments}
             summary="Cases checked in"
