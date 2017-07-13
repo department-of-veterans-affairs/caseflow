@@ -15,9 +15,7 @@ class DocumentListHeader extends React.Component {
     ApiUtil.post(
       `/reader/appeal/${this.props.vacolsId}/claims_folder_searches`,
       { data: { query } }
-    ).then(() => {
-      return true; /* noop */
-    });
+    ).then(_.noop);
   }
 
   render() {
