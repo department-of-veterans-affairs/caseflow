@@ -65,6 +65,7 @@ class CaseSelect extends React.PureComponent {
           </p>
           <h2>Cases checked in</h2>
           <Table
+            className='assignment-list'
             columns={this.getAssignmentColumn}
             rowObjects={this.props.assignments}
             summary="Cases checked in"
