@@ -359,9 +359,9 @@ class Fakes::AppealRepository
       issues: [Issue.new(disposition: "Allowed",
                          levels: ["All Others", "Thigh, limitation of flexion of"],
                          description: [
-                             "15 - Service connection",
-                             "03 - All Others",
-                             "5252 - Thigh, limitation of flexion of"
+                           "15 - Service connection",
+                           "03 - All Others",
+                           "5252 - Thigh, limitation of flexion of"
                          ],
                          program_description: "02 - Compensation")],
       documents: static_reader_documents
@@ -377,10 +377,10 @@ class Fakes::AppealRepository
       issues: [Issue.new(disposition: "Remanded",
                          levels: ["Left knee", "Right knee", "Cervical strain"],
                          description: [
-                             "15 - Service connection",
-                             "13 - Left knee",
-                             "14 - Right knee",
-                             "22 - Cervical strain"
+                           "15 - Service connection",
+                           "13 - Left knee",
+                           "14 - Right knee",
+                           "22 - Cervical strain"
                          ],
                          program_description: "06 - Medical")],
       documents: random_reader_documents(1000, "reader_id2".hash)

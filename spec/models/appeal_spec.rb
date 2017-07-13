@@ -910,13 +910,9 @@ describe Appeal do
 
       let!(:appeal) do
         Generators::Appeal.build(
-            vbms_id: "999887777S",
-            vacols_record: { soc_date: 4.days.ago }
+          vbms_id: "999887777S",
+          vacols_record: { soc_date: 4.days.ago }
         )
-      end
-
-      let!(:issue_levels) do
-        ["Other", "Left knee", "Right knee"]
       end
 
       it "includes viewed boolean in hash" do
@@ -933,9 +929,9 @@ describe Appeal do
 
       let!(:appeal) do
         Generators::Appeal.build(
-            vbms_id: "999887777S",
-            vacols_record: { soc_date: 4.days.ago },
-            issues: issues
+          vbms_id: "999887777S",
+          vacols_record: { soc_date: 4.days.ago },
+          issues: issues
         )
       end
 
