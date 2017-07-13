@@ -3,7 +3,7 @@
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition,
-                :program_description, :levels
+                :program_description, :levels # Levels is an ordered array for elements for Levels 1-3
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
