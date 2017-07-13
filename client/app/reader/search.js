@@ -8,10 +8,18 @@ const typeContainsString = (searchQuery, doc) => {
   return (doc.type.toLowerCase().includes(searchQuery));
 };
 
-export const commentContainsString = (searchQuery, state, doc) =>
+const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
   , false);
+
+export const commentContainsWords = (searchQuery, state, doc) => {
+  let queryTokens = _.compact(searchQuery.split(' '));
+
+  return queryTokens.some((word) => {
+    return commentContainsString(word, state, doc);
+  });
+};
 
 const categoryContainsString = (searchQuery, doc) =>
   Object.keys(Constants.documentCategories).reduce((acc, category) =>
@@ -19,13 +27,24 @@ const categoryContainsString = (searchQuery, doc) =>
       doc[categoryFieldNameOfCategoryName(category)])
   , false);
 
+export const categoryContainsWords = (searchQuery, doc) => {
+  let queryTokens = _.compact(searchQuery.split(' '));
+
+  return _(_.keys(Constants.documentCategories)).
+        reduce((result, category) => {
+          return _.assign({
+            [`${category}`]: queryTokens.some((word) =>
+              category.includes(word) && doc[categoryFieldNameOfCategoryName(category)])
+          }, result);
+        }, {});
+};
+
 const tagContainsString = (searchQuery, doc) =>
   Object.keys(doc.tags || {}).reduce((acc, tag) => {
     return acc || (doc.tags[tag].text.toLowerCase().includes(searchQuery));
-  }
-  , false);
+  }, false);
 
-export const searchString = (searchQuery) => (doc) => {
+export const searchString = (searchQuery, state) => (doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
 
   return queryTokens.every((word) => {
@@ -33,6 +52,7 @@ export const searchString = (searchQuery) => (doc) => {
 
     return searchWord.length > 0 && (
       doDatesMatch(doc.receivedAt, searchWord) ||
+      commentContainsString(word, state, doc) ||
       typeContainsString(searchWord, doc) ||
       categoryContainsString(searchWord, doc) ||
       tagContainsString(searchWord, doc));
