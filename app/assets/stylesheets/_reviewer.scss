@@ -14,7 +14,7 @@ $bookmark-yellow: #efdf1a;
 
 @mixin focus {
   &:focus {
-    box-shadow: 0 0 3px #3e94cf, 0 0 7px #3e94cf;
+    box-shadow: 0 0 3px $color-focus, 0 0 7px $color-focus;
     outline: 0;
   }
 }
