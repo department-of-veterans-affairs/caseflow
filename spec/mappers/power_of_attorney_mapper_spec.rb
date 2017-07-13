@@ -65,4 +65,28 @@ describe PowerOfAttorneyMapper do
       end
     end
   end
+
+  describe "Maps POA to VACOLS rep code" do
+    context "#get_vacols_rep_code_from_poa" do
+      it "is nil when representative type is not found" do
+        code = poa_mapper.new.get_vacols_rep_code_from_poa("TGDF", "PARALYZED VETERANS OF AMERICA")
+        expect(code).to be nil
+      end
+
+      it "maps rep name to vacols code when rep type is a service organization" do
+        code = poa_mapper.new.get_vacols_rep_code_from_poa("Service Organization", "PARALYZED VETERANS OF AMERICA")
+        expect(code).to eq "G"
+      end
+
+      it "maps to 'Other' when rep type is a service org and rep name is not found" do
+        code = poa_mapper.new.get_vacols_rep_code_from_poa("ORGANIZATION", "NONEXISTENT NAME")
+        expect(code).to eq "O"
+      end
+
+      it "handles cases where rep type is not a service org" do
+        code = poa_mapper.new.get_vacols_rep_code_from_poa("Attorney", "Susan Ross")
+        expect(code).to eq "T"
+      end
+    end
+  end
 end
