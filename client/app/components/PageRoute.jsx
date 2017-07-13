@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import Analytics from '../util/AnalyticsUtil';
 
 // Route augmented with application specific callbacks to change
 // the page title and call google analytics
@@ -17,12 +18,12 @@ class PageRoute extends React.Component {
     super(props);
 
     if (!props.title) {
-      throw new Error('PageRoute must implement `pageTitle`');
+      throw new Error('PageRoute must implement `title`');
     }
 
-    if (!props.render) {
-      throw new Error('PageRoute currently only works with `render`' +
-                      '\n...feel free to add support for `component` and `children :)');
+    if (!props.render && !props.component) {
+      throw new Error('PageRoute currently only works with `render` and `component`' +
+                      '\n...feel free to add support for `children` :)');
     }
 
     this.locationChanging = true;
@@ -38,22 +39,19 @@ class PageRoute extends React.Component {
   }
 
   renderWithCallback = (params) => {
-    const { title, render } = this.props;
+    const { title, render, component } = this.props;
 
     if (this.locationChanging) {
       document.title = title;
-
-      if (window.analyticsPageView) {
-        window.analyticsPageView(window.location.pathname);
-      }
+      Analytics.pageView(window.location.pathname);
     }
 
-    return render(params);
+    return component ? React.createElement(component, params) : render(params);
   }
 
   render() {
     // eslint-disable-next-line no-unused-vars
-    let { title, render, ...routeProps } = this.props;
+    let { title, render, component, ...routeProps } = this.props;
 
     return <Route { ...routeProps } render={ this.renderWithCallback } />;
   }
