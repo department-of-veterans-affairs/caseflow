@@ -23,20 +23,21 @@ describe Issue do
         "issprog" => "02",
         "isscode" => "15",
         "isslev1" => "02",
-        "isslev2" => nil,
-        "isslev3" => nil,
+        "isslev2" => "03",
+        "isslev3" => "04",
         "issprog_label" => "Compensation",
         "isscode_label" => "1151 Eligibility",
         "isslev1_label" => "Other",
-        "isslev2_label" => nil,
-        "isslev3_label" => nil }
+        "isslev2_label" => "Left knee",
+        "isslev3_label" => "Right knee" }
     end
 
     it "assigns values properly" do
+      expect(subject.levels).to eq(["Other", "Left knee", "Right knee"])
       expect(subject.program).to eq(:compensation)
       expect(subject.program_description).to eq("02 - Compensation")
       expect(subject.type).to eq(:service_connection)
-      expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other"])
+      expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other", "03 - Left knee", "04 - Right knee"])
       expect(subject.disposition).to eq(:remanded)
     end
   end

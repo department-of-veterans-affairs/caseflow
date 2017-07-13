@@ -25,7 +25,7 @@ class CaseSelect extends React.PureComponent {
             {appeal.issues.map((issue) =>
               issue.levels.map((level, key) => <li key={key}>{level}</li>))}
           </ol>
-        )
+        );
       }
     },
     {
