@@ -55,7 +55,7 @@ module PowerOfAttorneyMapper
   end
 
   def get_vacols_rep_code_from_poa(rep_type, rep_name)
-    if rep_type == "Service Organization" || rep_type == "ORGANIZATION"
+    if rep_type == ("Service Organization" || "ORGANIZATION")
       # If the rep name is found in either our VACOLS or BGS objects that map rep name to code,
       # return that. Otherwise, return "O", meaning "Other Service Organization."
       return vacols_code_from_vacols_map(rep_name) ||
@@ -63,7 +63,7 @@ module PowerOfAttorneyMapper
              "O"
     end
 
-    # Otherwise, the vacols code may be e.g. "Attorney",so look it up using the rep type.
+    # Otherwise, the vacols code may be e.g. "Attorney", so look it up using the rep type.
     vacols_code_from_vacols_map(rep_type)
   end
 
