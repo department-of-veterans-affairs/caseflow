@@ -22,7 +22,14 @@ Follow [these guidelines](https://chris.beams.io/posts/git-commit/) for writing 
 
 * [Bad example](https://github.com/department-of-veterans-affairs/caseflow/commit/d5ab5a00cf4b0a26da3b0e531865610543da4b9d)
 * [Good example](https://github.com/department-of-veterans-affairs/caseflow/commit/eae5435ee9cf318377fcf05e654595731bdec7d9)
- 
+
+## Tickets
+When you are actively working on a ticket, add the [In Progress](https://github.com/department-of-veterans-affairs/caseflow/labels/In%20Progress) label. This will make it show up under your name in the [standup app](https://cold-stream-43683.herokuapp.com/sprint/standup?team=CASEFLOW). If you are not going to work on a ticket on a given day, it should not have the "In Progress" label. This helps everyone keep track of what's actually being worked on, instead of diluting the value of GitHub issues as a tool for project management. It also means that someone else on the team could potentially pick up where you left off, if they free up and you're still working on other things. And finally, it avoids falsely communicating to teammates that we're making progress on issues that we're not.
+
+Each ticket should be small enough that it can be completed in no more than 2-3 business days. If a ticket takes 4 or more days, then either there are blockers that need to be addressed, or the ticket should be split up into smaller parts. 
+
+As a corollary, each PR should be as small as possible. It should not contain anything extraneous other than what the ticket's acceptance criteria require. Ideally, PRs will be `200` lines or fewer. It is ok to send multiple PRs for a single ticket if that makes it easier to implement and review.
+
 ## PR Descriptions
 
 Add "Connects #{github issue number}" to associate your PR with the GitHub issue.
