@@ -473,7 +473,7 @@ export class Pdf extends React.PureComponent {
 
   onPageChange = (currentPage) => {
     const unscaledHeight = (_.get(this.pageElements,
-      [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight'] / this.props.scale));
+      [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight']) / this.props.scale);
 
     this.currentPage = currentPage;
     this.props.onPageChange(
