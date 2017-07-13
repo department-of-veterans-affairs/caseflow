@@ -10,5 +10,4 @@ class HealthChecksController < ApplicationController
 
     render json: body, status: status
   end
-
 end
