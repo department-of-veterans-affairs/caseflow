@@ -339,9 +339,9 @@ export const lockIcon = () =>
       </g>
   </svg>;
 
-export const DownloadIcon = (props) =>
+export const downloadIcon = () =>
   <svg width="14px" height="19px" viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <g stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill="#FFFFFF">
         <path d="M14,15.6826233 C14,15.1556346 13.5724432,14.7280778 13.0454545,14.7280778 L9.90909091,14.7280778 L6.09090909,14.7280778 L1.95454545,14.7280778 C1.42755682,14.7280778 1,15.1556346 1,15.6826233 L1,16.454385 C1,16.9813736 1.42755682,17.4089304 1.95454545,17.4089304 L6.09090909,17.4089304 L9.90909091,17.4089304 L13.0454545,17.4089304 C13.5724432,17.4089304 14,16.9813736 14,16.454385 L14,15.6826233 Z" id="Expand"></path>
         <g transform="translate(7.362992, 6.091070) rotate(134.000000) translate(-7.362992, -6.091070) translate(2.862992, 1.591070)">
@@ -349,7 +349,7 @@ export const DownloadIcon = (props) =>
         </g>
       </g>
     </g>
-  </svg>
+  </svg>;
 
 export class LeftChevron extends React.PureComponent {
   // eslint-disable-next-line class-methods-use-this
@@ -507,7 +507,7 @@ export class DoubleArrow extends React.PureComponent {
   }
 }
 
-export const ExternalLink = (props) =>
+export const externalLink = () =>
   <svg width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fillRule="nonzero" fill="#FFFFFF">
@@ -519,7 +519,7 @@ export const ExternalLink = (props) =>
     </g>
   </svg>;
 
-export const FitToScreen = (props) =>
+export const fitToScreen = () =>
   <svg width="18px" height="19px" viewBox="0 0 18 19" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g fill="#FFFFFF">
@@ -531,6 +531,6 @@ export const FitToScreen = (props) =>
         </g>
       </g>
     </g>
-  </svg>
+  </svg>;
  /* eslint-enable max-len */
 /* eslint-enable max-lines */
