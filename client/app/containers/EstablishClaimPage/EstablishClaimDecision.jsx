@@ -13,6 +13,7 @@ import LoadingContainer from '../../components/LoadingContainer';
 import { connect } from 'react-redux';
 import * as Constants from '../../establishClaim/constants';
 import moment from 'moment';
+import * as AppConstants from '../../constants/AppConstants';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {
@@ -115,7 +116,7 @@ export class EstablishClaimDecision extends React.Component {
            establish-claim buttons.
          </a>
          <div>
-           <LoadingContainer>
+           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
              <iframe
                aria-label="The PDF embedded here is not accessible. Please use the above
                  link to download the PDF and view it in a PDF reader. Then use the
