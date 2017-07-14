@@ -114,7 +114,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              rake spec spec/feature/reader_spec.rb
+              rake spec
               """
             }
           }
