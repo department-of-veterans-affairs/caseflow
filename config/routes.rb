@@ -64,6 +64,7 @@ Rails.application.routes.draw do
   namespace :reader do
     resources :appeal, only: [:index] do
       resources :documents, only: [:show, :index]
+      resources :claims_folder_searches, only: :create
     end
   end
 
