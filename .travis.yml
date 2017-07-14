@@ -15,10 +15,7 @@ before_install:
   - export PATH=$PWD/travis-node/node-v6.10.2-linux-x64/bin:$PATH
   - node -v
   - sudo apt-get update
-  # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
-  - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
-  - sudo dpkg -i $PWD/chromium-chromedriver.deb
-  - sudo apt-get install -f
+  - sudo apt-get install chromium-chromedriver
 
 before_script:
   - node -v
@@ -29,6 +26,7 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:schema:load
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
+  - "export CHROME_ARGS=--no-sandbox"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
 
