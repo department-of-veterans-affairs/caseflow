@@ -360,7 +360,8 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      issues: [Issue.new(disposition: "Allowed",
+      issues: [Issue.new(description_label: "Service connection",
+                         disposition: "Allowed",
                          levels: ["All Others", "Thigh, limitation of flexion of"],
                          description: [
                            "15 - Service connection",
@@ -378,7 +379,8 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      issues: [Issue.new(disposition: "Remanded",
+      issues: [Issue.new(description_label: "Service connection",
+                         disposition: "Remanded",
                          levels: ["Left knee", "Right knee", "Cervical strain"],
                          description: [
                            "15 - Service connection",

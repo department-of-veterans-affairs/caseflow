@@ -3,7 +3,8 @@
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition,
-                :program_description, :levels # Levels is an ordered array for elements for Levels 1-3
+                :program_description, :description_label,
+                :levels # Levels is an ordered array for elements for Levels 1-3
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
@@ -55,6 +56,7 @@ class Issue < ActiveRecord::Base
 
   def attributes
     super.merge(
+      description_label: description_label,
       levels: levels,
       program: program,
       type: type,
@@ -89,6 +91,7 @@ class Issue < ActiveRecord::Base
                     .parameterize.underscore.to_sym
 
       new(
+        description_label: (hash["isscode_label"]).to_s,
         levels: levels(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],

@@ -8,6 +8,31 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 class CaseSelect extends React.PureComponent {
+
+  renderIssuesColumnData = (appeal) => {
+    const issues = appeal.issues || [];
+
+    return (
+      <ol className="issue-list">
+        {issues.map((issue, key) => {
+          const descriptionLabel = issue.levels ? `${issue.description_label}:` : issue.description_label;
+
+          return <li key={key}>
+             {descriptionLabel}
+             {this.renderIssueLevels(issue)}
+          </li>;
+        })}
+      </ol>
+    );
+  }
+
+  renderIssueLevels = (issue) => {
+    const levels = issue.levels || [];
+
+
+    return levels.map((level) => <p className="issue-level">{level}</p>);
+  }
+
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
@@ -19,14 +44,7 @@ class CaseSelect extends React.PureComponent {
     },
     {
       header: 'Issues',
-      valueFunction: (appeal) => {
-        return (
-          <ol>
-            {appeal.issues && appeal.issues.map((issue) =>
-              issue.levels ? issue.levels.map((level, key) => <li key={key}>{level}</li>) : null)}
-          </ol>
-        );
-      }
+      valueFunction: this.renderIssuesColumnData
     },
     {
       header: 'View claims folder',

@@ -144,6 +144,7 @@ RSpec.feature "Reader" do
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
 
+        expect(page).to have_content(appeal.issues[0].description_label)
         expect(page).to have_content(appeal.issues[0].levels[0])
         expect(page).to have_content(appeal.issues[0].levels[1])
         expect(page).to have_content(appeal.issues[0].levels[2])
