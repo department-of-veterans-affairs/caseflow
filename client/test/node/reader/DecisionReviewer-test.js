@@ -1,7 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
@@ -84,9 +83,9 @@ describe('DecisionReviewer', () => {
 
       it('the PDF view when a PDF is clicked', asyncTest(async () => {
         // Click on first document link
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
+          simulate('click', { button: 0 });
         await pause();
 
         expect(wrapper.find('PdfViewer')).to.have.length(1);
@@ -104,9 +103,9 @@ describe('DecisionReviewer', () => {
           { target: { value: documents[1].type } });
 
         // Enter the pdf view
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[1].type).
-          simulate('mouseUp');
+          simulate('click', { button: 0 });
 
         // Verify the arrow navigations keys are not present
         expect(wrapper.find('#button-next')).to.have.length(0);
@@ -148,10 +147,10 @@ describe('DecisionReviewer', () => {
         // Stub out post requests to return the commentId
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
 
-        // Click on first pdf
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
+          simulate('click', { button: 0 });
+
         await pause();
 
         // Click on the add a comment button
@@ -203,9 +202,9 @@ describe('DecisionReviewer', () => {
       }));
 
       it('comment has page number', asyncTest(async() => {
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[1].type).
-          simulate('mouseUp');
+          simulate('click', { button: 0 });
 
         expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
       }));
@@ -215,80 +214,12 @@ describe('DecisionReviewer', () => {
   context('PDF list view', () => {
     beforeEach(() => setUpDocuments());
 
-    // In general, we shouldn't have to write tests to make sure that links work. However,
-    // with the document type links we are calling prevent default to override what they
-    // do when you click on them. They should still open up new tabs when you press the
-    // meta-key, control, or middle click. These tests make sure we don't prevent default
-    // in these cases.
-    context('follows the link when', () => {
-      it('document is ctrl + clicked', asyncTest(async() => {
-        const preventDefault = sinon.spy();
-        const event = {
-          ctrlKey: true,
-          preventDefault
-        };
-
-        wrapper.find('a').filterWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp', event);
-        await pause();
-
-        expect(preventDefault.notCalled).to.eq(true);
-      }));
-
-      it('document is meta + clicked', asyncTest(async() => {
-        const preventDefault = sinon.spy();
-        const event = {
-          metaKey: true,
-          preventDefault
-        };
-
-        wrapper.find('a').filterWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp', event);
-        await pause();
-
-        expect(preventDefault.notCalled).to.eq(true);
-      }));
-
-      it('document is middle clicked', asyncTest(async() => {
-        const preventDefault = sinon.spy();
-        const event = {
-          button: 1,
-          preventDefault
-        };
-
-        wrapper.find('a').filterWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp', event);
-        await pause();
-
-        expect(preventDefault.notCalled).to.eq(true);
-      }));
-    });
-
-    context('does not follow the link when', () => {
-      it('document is clicked normally', asyncTest(async() => {
-        const preventDefault = sinon.spy();
-        const event = {
-          preventDefault
-        };
-
-        wrapper.find('a').filterWhere(
-          (link) => link.text() === documents[0].type).
-          simulate('mouseUp', event);
-        await pause();
-
-        expect(preventDefault.calledOnce).to.eq(true);
-      }));
-    });
-
     context('last read indicator', () => {
       it('appears on latest read document', asyncTest(async() => {
         // Click on first document link
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
-          simulate('mouseUp');
+          simulate('click', { button: 0 });
         await pause();
 
         // Previous button moves us to the previous page
@@ -304,12 +235,13 @@ describe('DecisionReviewer', () => {
 
       it('appears on document opened in new tab', asyncTest(async() => {
         const event = {
-          ctrlKey: true
+          ctrlKey: true,
+          button: 0
         };
 
-        wrapper.find('a').findWhere(
+        wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
-          simulate('mouseUp', event);
+          simulate('click', event);
         await pause();
 
         // Make sure that the 0th row has the last
@@ -387,6 +319,39 @@ describe('DecisionReviewer', () => {
         expect(textArray).to.have.length(0);
       });
 
+      it('does search highlighting for matched keywords', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'mytag form' } });
+
+        const doesArrayIncludeString = (array, string) => array.some((item) => item.includes(string));
+        let textArray = wrapper.find('mark').
+          map((node) => node.text());
+
+        expect(doesArrayIncludeString(textArray, 'form')).to.be.true;
+        expect(doesArrayIncludeString(textArray, 'mytag')).to.be.true;
+
+        // searching for a comment
+        wrapper.find('input').simulate('change',
+          { target: { value: 'comment' } });
+
+        // comment is already expanded and highlighted
+        expect(wrapper.html()).to.include('<mark class=" ">Comment</mark>');
+      });
+
+      it('does search highlighting for categories', () => {
+        wrapper.find('input').simulate('change',
+          { target: { value: 'medical' } });
+
+        // get the first category icon
+        let textArray = wrapper.find('tbody').find('tr').
+          find('.cf-document-category-icons').
+          find('li').
+          first();
+
+        expect(textArray.prop('aria-label')).to.equal('Medical');
+        expect(textArray.hasClass('highlighted')).to.be.true;
+      });
+
       it('date displays properly', () => {
         const receivedAt = formatDateStr(documents[1].received_at);
 
@@ -456,7 +421,7 @@ describe('DecisionReviewer', () => {
         let textArray = wrapper.find('tr').map((node) => node.text());
 
         // Header and one filtered row.
-        expect(textArray).to.have.length(2);
+        expect(textArray).to.have.length(3);
 
         // Should only display the second document
         expect(textArray[1]).to.include(documents[1].type);

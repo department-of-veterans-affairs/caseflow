@@ -12,12 +12,14 @@
 /db/*.sqlite3-journal
 
 # Ignore all logfiles and tempfiles.
+.byebug_history
 /log/*
 !/log/.keep
 /tmp
 /coverage
 /reports/*
 !/reports/.keep
+pgdata
 
 # Ignore vim swap files
 *.swp

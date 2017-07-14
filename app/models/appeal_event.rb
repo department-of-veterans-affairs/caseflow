@@ -54,7 +54,7 @@ class AppealEvent
 
   def hearing=(hearing)
     self.type = EVENT_TYPE_FOR_HEARING_DISPOSITIONS.key(hearing.disposition)
-    self.date = hearing.closed_at
+    self.date = hearing.date
   end
 
   def valid?

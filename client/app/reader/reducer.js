@@ -2,8 +2,27 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString } from './search';
+import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
+
+const SHOW_EXPAND_ALL = false;
+
+/**
+ * This function takes all the documents and check the status of the
+ * list comments in the document to see if Show All or Collapse All should be
+ * shown based on the state.
+ */
+const getExpandAllState = (documents) => {
+  let allExpanded = !SHOW_EXPAND_ALL;
+
+  _.forOwn(documents, (doc) => {
+    if (!doc.listComments) {
+      allExpanded = SHOW_EXPAND_ALL;
+    }
+  });
+
+  return Boolean(allExpanded);
+};
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -19,7 +38,34 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
+  const updateListComments = (state, id, foundComment) => {
+    return update(state, {
+      documents: {
+        [id]: {
+          listComments: {
+            $set: foundComment
+          }
+        }
+      }
+    });
+  };
+
+  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
+    return update(state, {
+      ui: {
+        searchCategoryHighlights: {
+          $merge: {
+            [docId]: {
+              ...categoryMatches
+            }
+          }
+        }
+      }
+    });
+  };
+
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+  let updatedNextState = nextState;
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -37,15 +83,36 @@ const updateFilteredDocIds = (nextState) => {
     map('id').
     value();
 
+  // looping through all the documents to update category highlights and expanding comments
+  _.forEach(updatedNextState.documents, (doc) => {
+    const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
+
+    // getting all the truthy values from the object
+    // {'medical': true, 'procedural': false } turns into {'medical': true}
+    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
+
+    // update the state for all the search category highlights
+    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
+      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
+        doc.id, matchesCategories);
+    }
+
+    // updating the state of all annotations for expanded comments
+    if (containsWords !== doc.listComments) {
+      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+    }
+  });
+
   if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
   }
 
-  return update(nextState, {
+  return update(updatedNextState, {
     ui: {
       filteredDocIds: {
         $set: filteredIds
-      }
+      },
+      $merge: { expandAll: getExpandAllState(updatedNextState.documents) }
     }
   });
 };
@@ -82,29 +149,10 @@ const openAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
-const SHOW_EXPAND_ALL = false;
-
 const initialShowErrorMessageState = {
   tag: false,
   category: false,
   annotation: false
-};
-
-/**
- * This function takes all the documents and check the status of the
- * list comments in the document to see if Show All or Collapse All should be
- * shown based on the state.
- */
-const getExpandAllState = (documents) => {
-  let allExpanded = !SHOW_EXPAND_ALL;
-
-  _.forOwn(documents, (doc) => {
-    if (!doc.listComments) {
-      allExpanded = SHOW_EXPAND_ALL;
-    }
-  });
-
-  return Boolean(allExpanded);
 };
 
 export const initialState = {
@@ -114,6 +162,7 @@ export const initialState = {
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   ui: {
+    searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
     selectedAnnotationId: null,

@@ -2,7 +2,7 @@ class Hearing < ActiveRecord::Base
   belongs_to :appeal
   belongs_to :user
 
-  attr_accessor :date, :type, :venue_key, :vacols_record, :closed_at, :disposition
+  attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -14,7 +14,7 @@ class Hearing < ActiveRecord::Base
   end
 
   def closed?
-    !!closed_at
+    !!disposition
   end
 
   def scheduled_pending?
@@ -29,6 +29,7 @@ class Hearing < ActiveRecord::Base
     :representative_name, \
     :appellant_last_first_mi, \
     :regional_office_name, \
+    :vbms_id, \
     to: :appeal
 
   def to_hash
@@ -56,7 +57,6 @@ class Hearing < ActiveRecord::Base
           vacols_record: vacols_hearing,
           venue_key: vacols_hearing.hearing_venue,
           disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_hearing.hearing_disp.try(:to_sym)],
-          closed_at: AppealRepository.normalize_vacols_date(vacols_hearing.clsdate),
           date: AppealRepository.normalize_vacols_date(vacols_hearing.hearing_date),
           appeal: Appeal.find_or_create_by(vacols_id: vacols_hearing.folder_nr),
           user: User.find_by_vacols_id(vacols_hearing.user_id),

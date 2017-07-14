@@ -1,3 +1,4 @@
+# coding: utf-8
 require "rails_helper"
 
 RSpec.feature "Start Certification" do
@@ -115,11 +116,13 @@ RSpec.feature "Start Certification" do
     scenario "Starting a Certification v2 with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
+      expect(page).to have_title("Check Documents | Caseflow Certification")
       expect(page).to have_content("All documents found with matching VBMS and VACOLS dates.")
       expect(page).to have_content("SOC and SSOC dates in VBMS can be up to 4 days")
       expect(page).to have_content("SOC 09/10/1987 09/06/1987")
 
       click_button("Continue")
+      expect(page).to have_title("Confirm Case Details | Caseflow Certification")
       expect(page).to have_content("Review information about the appellant's representative from VBMS and VACOLS.")
 
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
@@ -152,7 +155,7 @@ RSpec.feature "Start Certification" do
       select "AMVETS", from: "Service organization name"
       expect(page).to have_content("Great! Caseflow will update")
       click_button("Continue")
-      expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+      expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
       page.go_back
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
         find("label", text: "No").click
@@ -167,10 +170,12 @@ RSpec.feature "Start Certification" do
       expect(page).to_not have_content("Since you selected Unlisted")
       fill_in "Enter the service organization's name:", with: "Test"
       click_button("Continue")
-      expect(page).to have_content("Check the appellant's eFolder for a hearing cancellation")
+      expect(page).to have_title("Confirm Hearing | Caseflow Certification")
+      expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
 
       # go back to the case details page
       page.go_back
+      expect(page).to have_title("Confirm Case Details | Caseflow Certification")
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
         expect(find_field("No", visible: false)).to be_checked
       end
@@ -184,14 +189,14 @@ RSpec.feature "Start Certification" do
       expect(find_field("Enter the service organization's name:").value).to eq("Test")
       click_button("Continue")
 
-      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
-        .to_formatted_s(:short_date)}?") do
+      within_fieldset("Has the appellant requested a change to their " \
+                      "hearing preference since submitting the Form 9?") do
         find("label", text: "Yes").click
       end
       expect(page).to have_content("What did the appellant request in the document you found")
 
-      within_fieldset("Was a hearing cancellation or request added after #{vacols_record[:form9_date]
-        .to_formatted_s(:short_date)}?") do
+      within_fieldset("Has the appellant requested a change to their " \
+                      "hearing preference since submitting the Form 9?") do
         find("label", text: "No").click
       end
       within_fieldset("Caseflow found the document below, labeled as a Form 9") do
