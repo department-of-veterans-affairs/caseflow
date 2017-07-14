@@ -19,6 +19,7 @@
 /coverage
 /reports/*
 !/reports/.keep
+pgdata
 
 # Ignore vim swap files
 *.swp

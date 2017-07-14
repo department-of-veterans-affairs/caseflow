@@ -2,6 +2,13 @@
 
 class AppealRepository
   # :nocov:
+  # Used by healthcheck endpoint
+  # Calling .active? triggers a query to VACOLS
+  # `select 1 from dual`
+  def self.vacols_db_connection_active?
+    VACOLS::Record.connection.active?
+  end
+
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",

@@ -10,6 +10,7 @@ import ValidatorsUtil from '../util/ValidatorsUtil';
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
+import * as AppConstants from '../constants/AppConstants';
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -307,7 +308,7 @@ class UnconnectedConfirmHearing extends React.Component {
 
             /* TODO: restore the accessibility stuff here.
               also, we should stop using rails pdf viewer */
-            <LoadingContainer>
+            <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}>
               <iframe
                 className="cf-doc-embed cf-iframe-with-loading form9-viewer"
                 title="Form8 PDF"

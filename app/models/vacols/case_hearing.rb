@@ -13,7 +13,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   HEARING_DISPOSITIONS = {
     H: :held,
-    C: :canceled,
+    C: :cancelled,
     P: :postponed,
     N: :no_show
   }.freeze
