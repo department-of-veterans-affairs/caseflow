@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { downloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  externalLink, fitToScreen } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
+  ExternalLink, FitToScreen } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
@@ -177,7 +177,7 @@ export class PdfUI extends React.Component {
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
                 <span className="cf-pdf-vertically-center">
                   <span title="Open in new tab">{this.props.doc.type}</span>
-                  <span className="cf-pdf-external-link-icon">{externalLink()}</span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
                 </span>
               </Link>
             </span>
@@ -204,14 +204,14 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.fitToScreen}
             ariaLabel="fit to screen">
-            {fitToScreen()}
+            <FitToScreen/>
           </Button>
           <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-download-icon']}
             onClick={this.openDownloadLink}
             ariaLabel="download pdf">
-            {downloadIcon()}
+            <DownloadIcon/>
           </Button>
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
