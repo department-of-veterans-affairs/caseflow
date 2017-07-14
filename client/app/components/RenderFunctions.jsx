@@ -340,6 +340,7 @@ export const lockIcon = () =>
   </svg>;
 
 export class DownloadIcon extends React.PureComponent {
+  // eslint-disable-next-line class-methods-use-this
   render() {
     return <svg width="14px" height="19px" viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -511,7 +512,7 @@ export class DoubleArrow extends React.PureComponent {
 }
 
 export class ExternalLink extends React.PureComponent {
-// eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line class-methods-use-this
   render () {
     return <svg width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -527,6 +528,7 @@ export class ExternalLink extends React.PureComponent {
 }
 
 export class FitToScreen extends React.PureComponent {
+  // eslint-disable-next-line class-methods-use-this
   render () {
     return <svg width="18px" height="19px" viewBox="0 0 18 19" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
