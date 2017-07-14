@@ -28,8 +28,7 @@ class CaseSelect extends React.PureComponent {
 
   renderIssueLevels = (issue) => {
     const levels = issue.levels || [];
-
-
+    
     return levels.map((level) => <p className="issue-level">{level}</p>);
   }
 
