@@ -817,6 +817,7 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("#{num_documents} Documents")
       expect(in_viewport("read-indicator")).to be true
+      
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
@@ -826,7 +827,7 @@ RSpec.feature "Reader" do
       click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
-
+      sleep 5
       expect(in_viewport("read-indicator")).to be true
     end
   end
