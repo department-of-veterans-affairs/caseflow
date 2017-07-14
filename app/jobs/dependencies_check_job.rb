@@ -9,11 +9,10 @@ class DependenciesCheckJob < ActiveJob::Base
         http = HTTPI.get(request, :httpclient)
         Rails.cache.write(:dependencies_report, http.raw_body)
       rescue
-        Rails.logger.error "There was a problem with HTTP request to #{ENV["MONITOR_URL"]}"
+        Rails.logger.error "There was a problem with HTTP request to #{ENV['MONITOR_URL']}"
       end
     else
       Rails.logger.error "ENV[\"MONITOR_URL\"] not set"
     end
   end
 end
-
