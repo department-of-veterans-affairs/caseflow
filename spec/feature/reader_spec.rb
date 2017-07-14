@@ -815,6 +815,7 @@ RSpec.feature "Reader" do
 
       click_on "Back to claims folder"
 
+      sleep 5
       expect(page).to have_content("#{num_documents} Documents")
       expect(in_viewport("read-indicator")).to be true
       
