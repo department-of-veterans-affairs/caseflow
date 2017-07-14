@@ -53,6 +53,10 @@ class Fakes::AppealRepository
     appeal
   end
 
+  def self.vacols_db_connection_active?
+    true
+  end
+
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
