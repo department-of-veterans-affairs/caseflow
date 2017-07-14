@@ -1,0 +1,19 @@
+$color-gold-lightest: #fff1d2;
+
+.usa-banner {
+  background-color: $color-gold-lightest;
+  height: 50px;
+}
+
+.usa-banner-inner {
+  padding-top: 13px;
+}
+
+.banner-icon {
+  display: inline-block;
+  vertical-align: text-top;
+}
+
+.banner-text {
+  padding-left: 10px;
+}
