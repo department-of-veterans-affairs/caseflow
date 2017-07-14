@@ -66,6 +66,12 @@ describe('Pdf', () => {
       });
     });
 
+    describe.only('onPageChange', () => {
+      it('calls the functions', () => {
+        wrapper.onPageChange(1);
+      });
+    });
+
     context('.componentWillReceiveProps', () => {
       let draw;
 
