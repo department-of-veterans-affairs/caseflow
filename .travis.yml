@@ -26,7 +26,6 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:schema:load
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
-  - "export CHROME_ARGS=--no-sandbox"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
 
@@ -34,6 +33,7 @@ before_script:
 # This involves adding `bundle exec rake parallel:setup[3]` in the before_script block
 # and `bundle exec rake parallel:rspec[3]` in the script block
 script:
+  - "export CHROME_ARGS=--no-sandbox"
   - bundle exec rake spec
   - bundle exec rake ci:other
   # Move our node modules, then do a production install & webpack build
