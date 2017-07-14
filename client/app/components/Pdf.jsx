@@ -102,7 +102,8 @@ export class Pdf extends React.PureComponent {
     this.state = {
       numPages: {},
       pdfDocument: {},
-      isDrawn: {}
+      isDrawn: {},
+      pageDimensions: {}
     };
 
     this.scrollLocation = {
@@ -258,8 +259,7 @@ export class Pdf extends React.PureComponent {
   postDraw = (resolve, reject, { pdfDocument, scale, index, viewport, file }) => {
     this.setisDrawn(file, index, {
       pdfDocument,
-      scale,
-      ..._.pick(viewport, ['width', 'height'])
+      scale
     });
 
     resolve();
@@ -360,8 +360,29 @@ export class Pdf extends React.PureComponent {
           return resolve();
         }
 
-        this.defaultWidth = PAGE_WIDTH;
-        this.defaultHeight = PAGE_HEIGHT;
+        let pageDimensions = [];
+        _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
+          pdfDocument.getPage(index + 1).then((pdfPage) => {
+            const viewport = pdfPage.getViewport(this.props.scale);
+
+            pageDimensions[index] = _.pick(viewport, ['width', 'height']);
+
+            if (pageDimensions.reduce((acc, a) => acc + (a ? 1 : 0), 0) === pdfDocument.pdfInfo.numPages) {
+              console.log('here', pageDimensions);
+              this.setState({ pageDimensions:
+                {
+                  ...this.state.pageDimensions,
+                  [file]: pageDimensions
+                }
+              });
+            }
+          }).catch(() => {
+            pageDimensions[index] = {
+              width: PAGE_WIDTH,
+              height: PAGE_HEIGHT
+            };
+          });
+        });
 
         this.setState({
           numPages: {
@@ -664,13 +685,15 @@ export class Pdf extends React.PureComponent {
 
     // if jump to page number is provided
     // draw the page and jump to the page
-    if (this.props.jumpToPageNumber) {
-      this.scrollToPage(this.props.jumpToPageNumber);
-      this.onPageChange(this.props.jumpToPageNumber);
-    }
-    if (this.props.scrollToComment) {
-      if (this.props.documentId === this.props.scrollToComment.documentId) {
-        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page), this.props.scrollToComment.y);
+    if (this.state.pageDimensions[this.props.file]) {
+      if (this.props.jumpToPageNumber) {
+        this.scrollToPage(this.props.jumpToPageNumber);
+        this.onPageChange(this.props.jumpToPageNumber);
+      }
+      if (this.props.scrollToComment) {
+        if (this.props.documentId === this.props.scrollToComment.documentId) {
+          this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page), this.props.scrollToComment.y);
+        }
       }
     }
 
@@ -820,8 +843,8 @@ export class Pdf extends React.PureComponent {
         };
 
         const relativeScale = this.props.scale / _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'], 1);
-        const currentWidth = _.get(this.state.isDrawn, [this.props.file, pageIndex, 'width'], this.defaultWidth);
-        const currentHeight = _.get(this.state.isDrawn, [this.props.file, pageIndex, 'height'], this.defaultHeight);
+        const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], this.defaultWidth);
+        const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], this.defaultHeight);
 
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
