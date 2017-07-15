@@ -1,5 +1,4 @@
 class Hearings::WorksheetController < HearingsController
-
   # TODO: remove this line once application_alt and application merge
   layout "application_alt"
 
@@ -15,27 +14,27 @@ class Hearings::WorksheetController < HearingsController
   end
 
   # Until the frontend makes a PUT request, code coverage is at risk, so...
-  #def update
+  # def update
   #  worksheet.update!(worksheet_params)
   #  render json: { worksheet: worksheet.to_hash }
-  #end
+  # end
 
   private
 
   # Until the frontend makes a PUT request, code coverage is at risk, so...
-  #def worksheet
+  # def worksheet
   #  @worksheet ||= hearing
-  #end
+  # end
 
   # Until the frontend makes a PUT request, code coverage is at risk, so...
-  #def worksheet_params
+  # def worksheet_params
   #  params.require(:worksheet).permit(:worksheet_witness, :worksheet_contentions, :worksheet_evidence,
   #                                    :worksheet_coments_for_attorney, :worksheet_military_service,
   #                                    issues_attributes: [
   #                                      :id, :hearing_worksheet_status,
   #                                      :hearing_worksheet_reopen, :hearing_worksheet_vha
   #                                    ])
-  #end
+  # end
 
   def hearing_worksheet(_vbms_id)
     # Appeal.where(vmbs_id: _vbms_id)??? TBD
