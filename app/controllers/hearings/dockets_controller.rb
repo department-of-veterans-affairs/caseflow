@@ -1,6 +1,7 @@
 class Hearings::DocketsController < HearingsController
   before_action :verify_access
 
+  # TODO: remove this line once application_alt and application merge
   layout "application_alt"
 
   def index
@@ -15,6 +16,7 @@ class Hearings::DocketsController < HearingsController
   end
 
   def show
+    @hearing_page_title = "Daily Docket"
     date = date_from_string(params[:id])
     return not_found unless date && judge.docket?(date)
     render :index

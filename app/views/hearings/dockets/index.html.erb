@@ -1,4 +1,6 @@
-<% content_for :page_title do page_title('Upcoming Hearing Days') end %>
+<% content_for :page_title do
+  page_title(@hearing_page_title || 'Upcoming Hearing Days')
+end %>
 
 <%= react_component("Hearings", props: {
   hearings: {

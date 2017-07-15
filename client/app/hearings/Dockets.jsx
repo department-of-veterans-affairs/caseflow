@@ -62,7 +62,9 @@ export class Dockets extends React.Component {
       let docket = this.props.dockets[docketDate];
 
       return {
-        date: <Link to={`dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>{moment(docket.date).format('l')}</Link>,
+        date: <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
+          {moment(docket.date).format('l')}
+        </Link>,
         start_time: this.getStartTime(),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
