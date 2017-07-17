@@ -34,10 +34,13 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
     
     stage('git clone') {
       container('caseflow-test-runner') {
+        dir(WORKSPACE_DIR) {
+          checkout scm
+        }
         sh """
         cd ${WORKSPACE_DIR}
-        git clone https://github.com/department-of-veterans-affairs/caseflow.git
-        cd caseflow && git checkout ${env.BRANCH_NAME}
+        pwd
+        ls -hal
         """
       }
     }
