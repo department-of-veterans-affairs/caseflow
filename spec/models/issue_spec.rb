@@ -42,6 +42,36 @@ describe Issue do
     end
   end
 
+  context ".parse_levels_from_vacols" do
+    subject { Issue.parse_levels_from_vacols(levels_hash) }
+
+    context "when all three levels are present in VACOLS" do
+      let(:levels_hash) do
+        { "isslev1" => "02",
+          "isslev2" => "0304",
+          "isslev3" => "0404",
+          "isslev1_label" => "Other",
+          "isslev2_label" => "Right elbow",
+          "isslev3_label" => "Right shoulder" }
+      end
+
+      it "returns level descriptions in order" do
+        expect(subject).to eq(["Other", "Right elbow", "Right shoulder"])
+      end
+    end
+
+    context "when there are less than three levels returned from VACOLS" do
+      let(:levels_hash) do
+        { "isslev1" => "02",
+          "isslev1_label" => "Other" }
+      end
+
+      it "returns the amount of issue levels present" do
+        expect(subject).to eq(["Other"])
+      end
+    end
+  end
+
   context "#allowed?" do
     subject { issue.allowed? }
 

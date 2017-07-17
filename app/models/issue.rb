@@ -76,11 +76,11 @@ class Issue < ActiveRecord::Base
       description
     end
 
-    def levels(hash)
+    def parse_levels_from_vacols(hash)
       levels = []
-      levels.push((hash["isslev1_label"]).to_s) if hash["isslev1"]
-      levels.push((hash["isslev2_label"]).to_s) if hash["isslev2"]
-      levels.push((hash["isslev3_label"]).to_s) if hash["isslev3"]
+      levels.push((hash["isslev1_label"]).to_s) if hash["isslev1_label"]
+      levels.push((hash["isslev2_label"]).to_s) if hash["isslev2_label"]
+      levels.push((hash["isslev3_label"]).to_s) if hash["isslev3_label"]
       levels
     end
 
@@ -92,7 +92,7 @@ class Issue < ActiveRecord::Base
 
       new(
         description_label: (hash["isscode_label"]).to_s,
-        levels: levels(hash),
+        levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         type: TYPES[hash["isscode"]],
