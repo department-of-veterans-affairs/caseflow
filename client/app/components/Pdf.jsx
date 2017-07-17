@@ -114,9 +114,6 @@ export class Pdf extends React.PureComponent {
     this.currentPage = 0;
     this.isDrawing = {};
 
-    this.defaultWidth = PAGE_WIDTH;
-    this.defaultHeight = PAGE_HEIGHT;
-
     this.refFunctionGetters = {
       canvas: {},
       textLayer: {},
@@ -363,7 +360,7 @@ export class Pdf extends React.PureComponent {
         let pageDimensions = [];
         _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
           pdfDocument.getPage(index + 1).then((pdfPage) => {
-            const viewport = pdfPage.getViewport(this.props.scale);
+            const viewport = pdfPage.getViewport(1);
 
             pageDimensions[index] = _.pick(viewport, ['width', 'height']);
 
@@ -842,22 +839,21 @@ export class Pdf extends React.PureComponent {
           }, this.props.documentId);
         };
 
-        const relativeScale = this.props.scale / _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'], 1);
-        const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], this.defaultWidth);
-        const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], this.defaultHeight);
+        const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], PAGE_WIDTH);
+        const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], PAGE_HEIGHT);
 
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
         const pageContentsVisibleClass = classNames({
-          'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
+          'cf-pdf-page-hidden': !(Math.abs(this.props.scale - _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
         });
 
         return <div
           className={this.props.file === file && pageClassNames}
           style={ {
             marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-            width: `${relativeScale * currentWidth}px`,
-            height: `${relativeScale * currentHeight}px`,
+            width: `${this.props.scale * currentWidth}px`,
+            height: `${this.props.scale * currentHeight}px`,
             verticalAlign: 'top',
             display: file === this.props.file ? '' : 'none'
           } }
