@@ -21,7 +21,7 @@ config.entry.push(
 config.output = {
   filename: 'webpack-bundle.js',
   path: path.join(__dirname, '../app/assets/webpack'),
-  publicPath: `http://localhost:${hotRailsPort}/`
+  publicPath: `http://0.0.0.0:${hotRailsPort}/`
 };
 
 config.plugins.push(

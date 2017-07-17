@@ -25,17 +25,6 @@ services:
       # Mount the 'redis-data' volume into the location redis stores it's data:
       - ./redis-data:/var/lib/redis
 
-  webpack:
-    image: caseflow
-    volumes:
-      - .:/caseflow
-    working_dir: /caseflow/client
-    command: npm run dev:hot
-    ports:
-      - "3500:3500"
-    environment:
-      - NODE_ENV=development
-
   rails:
     image: caseflow
     volumes:
@@ -44,17 +33,16 @@ services:
     # Keep the stdin open, so we can attach to our app container's process and do things such as
     # byebug, etc:
     stdin_open: true
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: foreman start -f Procfile
     ports:
       - "3000:3000"
+      - "3500:3500"
     depends_on:
       - db
       - redis
-      - webpack
     links:
       - db
       - redis
-      - webpack
     environment:
       - RAILS_ENV=development
       - POSTGRES_HOST=db

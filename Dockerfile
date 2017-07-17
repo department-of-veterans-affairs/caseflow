@@ -49,27 +49,28 @@ RUN apt-get update -qq && apt-get install -qq -y \
 	--fix-missing \
 	&& rm -rf /var/lib/apt/lists/*
 
-ARG user=caseflow
-RUN useradd --no-log-init -m -r $user && \
-    chown -R $user /caseflow && \
-    chown -R $user /opt && \
-    chown -R $user /home/$user && \
-    chown -R $user /usr/local
-USER $user
+# ARG user=caseflow
+# RUN useradd --no-log-init -m -r $user && \
+#     chown -R $user /caseflow && \
+#     chown -R $user /opt && \
+#     chown -R $user /home/$user && \
+#     chown -R $user /usr/local
+# USER $user
 
 ## Install RBENV and Ruby 2.2.4
 RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv && \
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc && \
     echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-ENV PATH=/home/$user/.rbenv/bin:/home/$user/.rbenv/shims:$PATH
-RUN cd ~/.rbenv && src/configure && make -C src
+ENV PATH=/root/.rbenv/bin:/root/.rbenv/shims:$PATH
+RUN cd /root/.rbenv && src/configure && make -C src
 
 RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-ENV PATH=/home/$user/.rbenv/plugins/ruby-build/bin:$PATH
+ENV PATH=~/.rbenv/plugins/ruby-build/bin:$PATH
 
 RUN rbenv install -v 2.2.4 && \
     rbenv global 2.2.4 && \
-    gem install bundler
+    gem install bundler && \
+    gem install foreman
 
 ## Install Node 6.10.2
 RUN wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O /opt/node-v6.10.2-linux-x64.tar.xz && \
