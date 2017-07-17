@@ -16,7 +16,7 @@ class CaseSelect extends React.PureComponent {
       <ol className="issue-list">
         {issues.map((issue) => {
           const descriptionLabel = issue.levels ? `${issue.description_label}:` : issue.description_label;
-          
+
           return <li key={issue.toString()}>
               {descriptionLabel}
              {this.renderIssueLevels(issue)}
