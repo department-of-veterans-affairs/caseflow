@@ -30,8 +30,11 @@
 - **Goal: Allow for periodic uninterrupted work time / Support project speed**
   - Practice: Build the habit for few to no meetings on the first Thursday of the sprint.
   - Practice: Team members can work from wherever they are most productive on the first Thursday of the sprint.
- 
+
 ### General communication
+- **Goal: Be productive while some team members are remote.** When you're not at BVA:
+  - Practice: Post on slack in `#status` when you're starting and stopping work for the day, as well as significant AFK periods.
+  - For more inspiration, see [The Effective Remote Developer](https://www.youtube.com/watch?v=zW7_AteiM4o)
 - **Goal: Cultivate a culture of open communication**
   - Practice: Over-communication is welcome!
   - Practice: If you have side conversations, post results on Slack or github for team transparency.
