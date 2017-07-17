@@ -372,16 +372,16 @@ class Fakes::AppealRepository
         veteran_last_name: "Smith"
       },
       issues: [Generators::Issue.build(
-                         disposition: "Remanded",
-                         levels: ["Left knee", "Right knee", "Cervical strain"],
-                         description: [
-                           "15 - Service connection",
-                           "13 - Left knee",
-                           "14 - Right knee",
-                           "22 - Cervical strain"
-                         ],
-                         program_description: "06 - Medical",
-                         vacols_id: "reader_id2")],
+        disposition: "Remanded",
+        levels: ["Left knee", "Right knee", "Cervical strain"],
+        description: [
+          "15 - Service connection",
+          "13 - Left knee",
+          "14 - Right knee",
+          "22 - Cervical strain"
+        ],
+        program_description: "06 - Medical",
+        vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
