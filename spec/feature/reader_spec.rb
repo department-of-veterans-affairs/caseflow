@@ -460,8 +460,7 @@ RSpec.feature "Reader" do
       end
       # :nocov:
 
-      scenario "Jump to section for a comment",
-               skip: "This test is currently unstable, since loading earlier pages moves the scroll position" do
+      scenario "Jump to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         annotation = documents[1].annotations[0]
@@ -475,6 +474,7 @@ RSpec.feature "Reader" do
 
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
+
         expect { in_viewport(comment_icon_id) }.to become_truthy
       end
 
@@ -765,6 +765,12 @@ RSpec.feature "Reader" do
       find(".cf-search-close-icon").click
 
       expect(page).to have_content("Form 9")
+
+      expect(ClaimsFolderSearch.last).to have_attributes(
+        user_id: current_user.id,
+        appeal_id: appeal.id,
+        query: "BVA"
+      )
     end
 
     scenario "When user search term is not found" do

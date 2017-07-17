@@ -1,6 +1,10 @@
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
 
+// This may become a common variable
+$color-hearings-saving: #777;
+$color-dropdown-shadow: rgba(0, 0, 0, 0.75);
+
 // Using 1.765em alot, should create variable if this setting sticks
 
 // FOR USE WITH APPLICATION ALT TEMPLATE AND HEARINGS
@@ -174,9 +178,158 @@ body {
   }
 
   .cf-title-meta-right {
-    .cf-push-right {
-      text-align: right;
-      padding: .75em 0;
+    line-height: 2em;
+
+    .meta {
+      font-size: inherit;
+    }
+  }
+
+  .cf-hearings-docket {
+    margin-top: 0;
+
+    // TODO: see if this can become a part of the general style
+    .Select-arrow-zone {
+      background-position: center;
+      background-size: .75em;
+    }
+
+    // TODO: see if this can become a part of the general style
+    .Select-arrow {
+      width: 1.7em;
+    }
+
+    // TODO: see if this can become a part of the general style
+    .Select-menu-outer {
+      border: 1px solid $color-gray-medium;
+      border-top: none;
+      min-height: auto;
+      box-shadow: 0 2px 4px 0 $color-dropdown-shadow;
+    }
+
+    // TODO: see if this can become a part of the general style
+    .is-searchable.is-open > .Select-control {
+      box-shadow: 0 1px 4px 0 $color-dropdown-shadow;
+      border: 1px solid $color-gray-medium;
+    }
+
+    tbody {
+      border-bottom: 1px solid $color-gray-lighter;
+    }
+
+    td {
+      vertical-align: top;
+      margin: 0;
+      border: none;
+      padding: .75em;
+    }
+
+    th {
+      vertical-align: middle;
+      background: none;
+      border: none;
+      border-bottom: 1px solid $color-gray-lighter;
+      margin: 0;
+      padding: .75em;
+
+      &:last-child {
+        padding-right: 0;
+      }
+
+      // TODO: get rule into a SaveData component
+      > span {
+        display: inline-block;
+        width: 25%;
+
+        &:last-child {
+          width: 75%;
+          text-align: right;
+        }
+      }
+
+      // TODO: get rule into a SaveData component
+      .saving {
+        font-style: italic;
+        color: $color-hearings-saving;
+      }
+    }
+
+    .cf-hearings-docket-date {
+      padding-left: 0;
+      width: 18%;
+
+      > span {
+        display: inline-block;
+        vertical-align: top;
+
+        &:first-child {
+          font-weight: bold;
+          text-align: right;
+          margin-right: .5em;
+          width: 1.5em;
+        }
+      }
+    }
+
+    .cf-hearings-docket-appellant {
+      width: 20%;
+
+      b {
+        display: block;
+        text-transform: uppercase;
+      }
+    }
+
+    .cf-hearings-docket-notes {
+      padding-top: 0;
+
+      .cf-form-textarea {
+        margin-bottom: 0;
+      }
+
+      label {
+        display: inline-block;
+        vertical-align: top;
+        text-align: right;
+        width: 15%;
+
+        + div {
+          display: inline-block;
+          vertical-align: top;
+          padding-left: .5em;
+          width: 85%;
+        }
+      }
+
+      textarea {
+        height: 4em;
+        resize: vertical;
+      }
+    }
+
+    .cf-hearings-docket-actions {
+      padding: .75em .32em 0;
+      width: 45%;
+      text-align: center;
+      background-color: $color-gray-lightest;
+
+      .cf-form-dropdown {
+        text-align: left;
+        display: inline-block;
+        width: 33%;
+        margin: 0;
+        padding: 0 .32em;
+      }
+    }
+  }
+
+  .transcriptRequired {
+    position: relative;
+
+    > div {
+      position: absolute;
+      top: 0;
+      right: .5em;
     }
   }
 }
