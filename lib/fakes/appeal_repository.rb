@@ -1,5 +1,5 @@
 require "ostruct"
-
+require "byebug"
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
@@ -360,15 +360,7 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      issues: [Issue.new(description_label: "Service connection",
-                         disposition: "Allowed",
-                         levels: ["All Others", "Thigh, limitation of flexion of"],
-                         description: [
-                           "15 - Service connection",
-                           "03 - All Others",
-                           "5252 - Thigh, limitation of flexion of"
-                         ],
-                         program_description: "02 - Compensation")],
+      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -379,7 +371,7 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      issues: [Issue.new(description_label: "Service connection",
+      issues: [Generators::Issue.build(
                          disposition: "Remanded",
                          levels: ["Left knee", "Right knee", "Cervical strain"],
                          description: [
@@ -388,7 +380,8 @@ class Fakes::AppealRepository
                            "14 - Right knee",
                            "22 - Cervical strain"
                          ],
-                         program_description: "06 - Medical")],
+                         program_description: "06 - Medical",
+                         vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
