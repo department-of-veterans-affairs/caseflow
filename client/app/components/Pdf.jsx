@@ -228,7 +228,6 @@ export class Pdf extends React.PureComponent {
               pdfDocument,
               scale,
               index,
-              viewport,
               file
             });
         }).
@@ -244,7 +243,7 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  postDraw = (resolve, reject, { pdfDocument, scale, index, viewport, file }) => {
+  postDraw = (resolve, reject, { pdfDocument, scale, index, file }) => {
     this.setisDrawn(file, index, {
       pdfDocument,
       scale
@@ -349,22 +348,24 @@ export class Pdf extends React.PureComponent {
         }
 
         let pageDimensions = [];
+
         _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
           pdfDocument.getPage(index + 1).then((pdfPage) => {
             const viewport = pdfPage.getViewport(1);
 
             pageDimensions[index] = _.pick(viewport, ['width', 'height']);
 
-            if (pageDimensions.reduce((acc, a) => acc + (a ? 1 : 0), 0) === pdfDocument.pdfInfo.numPages) {
-              console.log('here', pageDimensions);
+            if (pageDimensions.reduce((acc, page) => acc + (page ? 1 : 0), 0) ===
+              pdfDocument.pdfInfo.numPages) {
               this.setState({ pageDimensions:
-                {
-                  ...this.state.pageDimensions,
-                  [file]: pageDimensions
-                }
+              {
+                ...this.state.pageDimensions,
+                [file]: pageDimensions
+              }
               });
             }
-          }).catch(() => {
+          }).
+          catch(() => {
             pageDimensions[index] = {
               width: PAGE_WIDTH,
               height: PAGE_HEIGHT
@@ -680,7 +681,8 @@ export class Pdf extends React.PureComponent {
       }
       if (this.props.scrollToComment) {
         if (this.props.documentId === this.props.scrollToComment.documentId) {
-          this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page), this.props.scrollToComment.y);
+          this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page),
+            this.props.scrollToComment.y);
         }
       }
     }
@@ -836,7 +838,8 @@ export class Pdf extends React.PureComponent {
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
         const pageContentsVisibleClass = classNames({
-          'cf-pdf-page-hidden': !(Math.abs(this.props.scale - _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
+          'cf-pdf-page-hidden': !(Math.abs(this.props.scale -
+            _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
         });
 
         return <div
