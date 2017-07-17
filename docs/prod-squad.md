@@ -18,6 +18,7 @@ When you're on prod squad, it's expected that you will make less progress than u
 
 The procedure for responding to a new alert in #appeals-devops-alerts is:
 
+1. Leave a threaded comment in Slack on the issue in question to say that you're looking at it. When you finish the steps here, post the result on that thread. (For example, if you create a new GitHub issue, link to it.)
 1. Make a ticket for the error. Label it with `prod-alert`. 
     1. If a ticket already exists for the error, comment on the existing ticket with a link to the latest occurrence.
     1. If the error is already ticketed and obviously low-impact, temporarily silence it in Sentry.
