@@ -1,5 +1,5 @@
 require "ostruct"
-require "byebug"
+
 # frozen_string_literal: true
 class Fakes::AppealRepository
   class << self
