@@ -3,6 +3,7 @@ services:
   db:
     image: postgres:9.3.14
     environment:
+
       POSTGRES_PASSWORD: 1234
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
@@ -13,17 +14,30 @@ services:
       # Mount the 'postgres-data' volume into the location Postgres stores it's data:
       - ./pgdata:/var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"
+      - "5433:5432"
+
   redis:
     image: redis:3.2-alpine
     command: redis-server
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       # Mount the 'redis-data' volume into the location redis stores it's data:
       - ./redis-data:/var/lib/redis
-  web:
-    build: .
+
+  webpack:
+    image: caseflow
+    volumes:
+      - .:/caseflow
+    working_dir: /caseflow/client
+    command: npm run dev:hot
+    ports:
+      - "3500:3500"
+    environment:
+      - NODE_ENV=development
+
+  rails:
+    image: caseflow
     volumes:
       - .:/caseflow
     entrypoint: /bin/bash
@@ -36,10 +50,13 @@ services:
     depends_on:
       - db
       - redis
+      - webpack
     links:
       - db
       - redis
+      - webpack
     environment:
+      - RAILS_ENV=development
       - POSTGRES_HOST=db
       - POSTGRES_PASSWORD=1234
       - REDIS_URL_CACHE=redis://redis:6379/1/cache
