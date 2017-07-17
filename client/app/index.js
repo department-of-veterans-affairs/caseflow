@@ -10,13 +10,15 @@ import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
 import Login from './login';
+import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 
 const COMPONENTS = {
   BaseContainer,
   Certification,
   ManageEstablishClaim,
   Login,
-  Hearings
+  Hearings,
+  PerformanceDegradationBanner
 };
 
 // This removes HMR's stupid red error page, which "eats" the errors and

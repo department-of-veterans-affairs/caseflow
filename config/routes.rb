@@ -64,6 +64,7 @@ Rails.application.routes.draw do
   namespace :reader do
     resources :appeal, only: [:index] do
       resources :documents, only: [:show, :index]
+      resources :claims_folder_searches, only: :create
     end
   end
 
@@ -85,6 +86,7 @@ Rails.application.routes.draw do
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
+  get "dependencies-check", to: "dependencies_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
 
