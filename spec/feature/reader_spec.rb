@@ -786,6 +786,12 @@ RSpec.feature "Reader" do
       find(".cf-search-close-icon").click
 
       expect(page).to have_content("Form 9")
+
+      expect(ClaimsFolderSearch.last).to have_attributes(
+        user_id: current_user.id,
+        appeal_id: appeal.id,
+        query: "BVA"
+      )
     end
 
     scenario "When user search term is not found" do
