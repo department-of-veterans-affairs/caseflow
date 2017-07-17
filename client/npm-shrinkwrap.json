@@ -1241,7 +1241,7 @@
     },
     "deep-diff": {
       "version": "0.3.4",
-      "from": "deep-diff@0.3.4",
+      "from": "https://registry.npmjs.org/deep-diff/-/deep-diff-0.3.4.tgz",
       "resolved": "https://registry.npmjs.org/deep-diff/-/deep-diff-0.3.4.tgz"
     },
     "deep-is": {
