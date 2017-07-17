@@ -672,8 +672,8 @@ export class Pdf extends React.PureComponent {
     this.drawInViewPages();
     this.preDrawPages();
 
-    // if jump to page number is provided
-    // draw the page and jump to the page
+    // Wait until the page dimensions have been calculated, then it is
+    // safe to jump to the pages since their positioning won't change.
     if (this.state.pageDimensions[this.props.file]) {
       if (this.props.jumpToPageNumber) {
         this.scrollToPage(this.props.jumpToPageNumber);
