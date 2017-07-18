@@ -91,7 +91,9 @@
         ga('send', 'event', category, action, label)
       }
 
-      analyticsPageView('<%= current_ga_path %>');
+      <% unless @react_routed %>
+        analyticsPageView('<%= current_ga_path %>');
+      <% end %>
     </script>
   <% end %>
 
