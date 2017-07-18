@@ -1,5 +1,3 @@
-require "byebug"
-
 class VACOLS::CaseAssignment < VACOLS::Record
   self.table_name = "vacols.brieff"
 
