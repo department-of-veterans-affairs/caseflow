@@ -175,6 +175,12 @@ class ApplicationController < ActionController::Base
     redirect_to "/unauthorized" unless current_user.admin?
   end
 
+  # Set a flag to say the page has routing managed by React
+  # This suppress rails Google Analytics page view events
+  def react_routed
+    @react_routed = true
+  end
+
   def on_vbms_error
     respond_to do |format|
       format.html do
