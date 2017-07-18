@@ -46,6 +46,13 @@ describe Certification do
         expect(certification.reload.already_certified).to be_truthy
         expect(certification.form8_started_at).to be_nil
       end
+
+      it "does not update certification fields" do
+        certification.update(already_certified: true, certification_date: 2.days.ago)
+        date = certification.certification_date
+        subject
+        expect(certification.reload.certification_date).to eq date
+      end
     end
 
     context "when appeal is missing certification data" do
