@@ -3,7 +3,6 @@ services:
   db:
     image: postgres:9.3.14
     environment:
-
       POSTGRES_PASSWORD: 1234
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
@@ -36,7 +35,6 @@ services:
     command: foreman start -f Procfile.docker
     ports:
       - "3000:3000"
-      - "3500:3500"
     depends_on:
       - db
       - redis

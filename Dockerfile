@@ -1,15 +1,5 @@
 FROM ubuntu:14.04
 
-# Copy over local configs
-WORKDIR /caseflow
-COPY Gemfile Gemfile
-COPY Gemfile.lock Gemfile.lock
-
-WORKDIR /caseflow/client
-COPY client/npm-shrinkwrap.json npm-shrinkwrap.json
-COPY client/package.json package.json
-
-
 ## Install all required dependencies and clean the apt cache
 WORKDIR /caseflow
 RUN apt-get update -qq && apt-get install -qq -y \
@@ -48,14 +38,6 @@ RUN apt-get update -qq && apt-get install -qq -y \
 	zlib1g-dev \
 	--fix-missing \
 	&& rm -rf /var/lib/apt/lists/*
-
-# ARG user=caseflow
-# RUN useradd --no-log-init -m -r $user && \
-#     chown -R $user /caseflow && \
-#     chown -R $user /opt && \
-#     chown -R $user /home/$user && \
-#     chown -R $user /usr/local
-# USER $user
 
 ## Install RBENV and Ruby 2.2.4
 RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv && \
@@ -100,11 +82,9 @@ ENV CHROME_BIN=chromium-browser
 
 ## Prefetch Gems
 WORKDIR /caseflow
+COPY Gemfile Gemfile
+COPY Gemfile.lock Gemfile.lock
 RUN bundle install --without production staging
-WORKDIR /caseflow/client
-RUN npm install
-
-WORKDIR /caseflow
 
 # Entrypoint for the container
 CMD ["foreman", "start", "-f", "Procfile.docker"]

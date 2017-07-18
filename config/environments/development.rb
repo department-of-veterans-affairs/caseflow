@@ -29,8 +29,8 @@ Rails.application.configure do
 
   # Docker configurations for hot module reloading
   # Also stops web-console spam when trying to get webfonts
-  config.web_console.whitelisted_ips = ['172.18.0.0/12', '192.168.0.0/16']
-  # config.webpack_hot = true
+  # and other assets.
+  config.web_console.whitelisted_ips = ['192.168.0.0/16']
 
   # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
