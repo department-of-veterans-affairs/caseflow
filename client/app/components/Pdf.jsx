@@ -353,7 +353,7 @@ export class Pdf extends React.PureComponent {
           }
         });
       }
-    }
+    };
 
     _.range(pdfDocument.pdfInfo.numPages).forEach((pageIndex) => {
       pdfDocument.getPage(pageNumberOfPageIndex(pageIndex)).then((pdfPage) => {
@@ -368,7 +368,7 @@ export class Pdf extends React.PureComponent {
           height: PAGE_HEIGHT
         };
         setStateWithDimensions();
-      })
+      });
     });
   }
 

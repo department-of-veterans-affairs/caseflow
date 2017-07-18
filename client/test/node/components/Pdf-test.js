@@ -6,7 +6,6 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 import PdfJsStub from '../../helpers/PdfJsStub';
-import { asyncTest, pause } from '../../helpers/AsyncTests';
 
 import { documents } from '../../data/documents';
 
