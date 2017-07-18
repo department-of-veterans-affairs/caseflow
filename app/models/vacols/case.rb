@@ -263,7 +263,7 @@ class VACOLS::Case < VACOLS::Record
       aod_result = MetricsService.record "VACOLS: Case.aod #{vacols_id}" do
         conn.exec_query(query)
       end
-      is_aod = aod_result.to_a.first["AOD"]
+      is_aod = aod_result.to_hash.first["aod"]
     end
   end
 
