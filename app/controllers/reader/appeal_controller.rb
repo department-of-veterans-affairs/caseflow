@@ -14,7 +14,7 @@ class Reader::AppealController < Reader::ApplicationController
 
   def show
     vacols_id = params[:id]
-    puts params.inspect
+
     respond_to do |format|
       format.json do
         MetricsService.record "Get appeal information for #{vacols_id}" do
