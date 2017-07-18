@@ -11,6 +11,8 @@ class CertificationsController < ApplicationController
       # only make the bgs and vacols calls if we're actually
       # starting a certification
       certification.fetch_power_of_attorney! if status == :started
+
+      react_routed
       render "v2", layout: "application"
       return
     end
