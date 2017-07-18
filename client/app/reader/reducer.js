@@ -158,6 +158,7 @@ const initialShowErrorMessageState = {
 export const initialState = {
   assignments: [],
   loadedAppealId: null,
+  loadedAppeal: {},
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
@@ -289,6 +290,14 @@ export const reducer = (state = initialState, action = {}) => {
           $set: action.payload.assignments
         }
       });
+  case Constants.RECEIVE_APPEAL_DETAILS:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: action.payload.appeal
+        }
+      }
+    );
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {

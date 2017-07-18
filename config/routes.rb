@@ -62,7 +62,7 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    resources :appeal, only: [:index] do
+    resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
     end
   end

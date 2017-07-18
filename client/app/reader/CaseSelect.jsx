@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchAppealsDetails } from './actions';
+import ApiUtil from '../util/ApiUtil';
+import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';		
 import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
@@ -69,7 +70,11 @@ class CaseSelect extends React.PureComponent {
     // We append an unneeded query param to avoid caching the json object. If we get thrown
     // to a page outside of the SPA and then hit back, we want the cached version of this
     // page to be the HTML page, not the JSON object.
+    ApiUtil.get('/reader/appeal?json').then((response) => {
+      const returnedObject = JSON.parse(response.text);
 
+      this.props.onReceiveAssignments(returnedObject.cases);
+    }, this.props.onInitialDataLoadingFail);
   }
 }
 
@@ -77,7 +82,8 @@ const mapStateToProps = (state) => _.pick(state, 'assignments');
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    fetchAppealsDetails
+    onInitialDataLoadingFail,
+    onReceiveAssignments
   }, dispatch)
 );
 

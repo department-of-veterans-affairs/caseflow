@@ -82,8 +82,6 @@ export class DecisionReviewer extends React.PureComponent {
   componentDidMount = () => {
     window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
-    this.props.fetchAppealsDetails();
-
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {

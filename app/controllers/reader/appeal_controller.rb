@@ -11,4 +11,18 @@ class Reader::AppealController < Reader::ApplicationController
       end
     end
   end
+
+  def show
+    vacols_id = params[:id]
+    puts params.inspect
+    respond_to do |format|
+      format.json do
+        MetricsService.record "Get appeal information for #{vacols_id}" do
+          render json: {
+            appeal: Appeal.find_or_create_by_vacols_id(vacols_id).to_hash
+          }
+        end
+      end
+    end
+  end
 end

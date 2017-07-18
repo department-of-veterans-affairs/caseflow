@@ -422,14 +422,24 @@ export const removeTag = (doc, tagId) => (
   }
 );
 
-export const fetchAppealsDetails = () => (
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = () => ({
+  type: Constants.REQUEST_INITIAL_DATA_FAILURE
+});
+
+export const fetchAppealsDetails = (vacolsId) => (
   (dispatch) => {
-    ApiUtil.get('/reader/appeal?json').then((response) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      dispatch(onReceiveAssignments(returnedObject.cases));
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => {
-      dispatch(onInitialDataLoadingFail());
+      dispatch(onAppealDetailsLoadingFail());
     });
   }
 );

@@ -354,7 +354,45 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Court Remand",
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13",
+        issues: [
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] },
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] },
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] }
+        ]
       },
       documents: static_reader_documents
     )
@@ -364,7 +402,45 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Remand",
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13",
+        issues: [
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] },
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] },
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] }
+        ]
       },
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
@@ -374,7 +450,45 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Remand",
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13",
+        issues: [
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] },
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] },
+          { disposition: :remanded, program:
+            {
+              name: :compensation,
+              label: "Compenstation"
+            },
+            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
+              "Lumbosacral",
+              "All Others",
+              "Thigh, limitation of flexion of"
+            ] }
+        ]
       },
       documents: redacted_reader_documents
     )

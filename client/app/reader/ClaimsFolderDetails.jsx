@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as Constants from './constants';
+import _ from 'lodash';
 
 import Accordion from '../components/Accordion';
 import AccordionHeader from '../components/AccordionHeader';
@@ -36,7 +37,7 @@ class ClaimsFolderDetails extends React.PureComponent {
   render() {
     const { appeal } = this.props;
 
-    if (!appeal) {
+    if (_.isEmpty(appeal)) {
       return <p className="loading-text">Loading...</p>;
     }
 

@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
+import { fetchAppealsDetails } from './actions';
 
 import _ from 'lodash';
 import DocumentsTable from './DocumentsTable';
@@ -11,6 +13,12 @@ import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
 
 export class PdfListView extends React.Component {
+  componentDidMount() {
+    if (_.isEmpty(this.props.appeal)) {
+      this.props.fetchAppealsDetails(this.props.match.params.vacolsId);
+    }
+  }
+
   render() {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
@@ -41,12 +49,19 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state),
     ..._.pick(state.ui, 'docFilterCriteria'),
-    appeal: _.find(state.assignments, { vacols_id: props.match.params.vacolsId })
+    appeal: _.find(state.assignments, { vacols_id: props.match.params.vacolsId }) ||
+    state.loadedAppeal
   };
 };
 
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    fetchAppealsDetails
+  }, dispatch)
+);
+
 export default connect(
-  mapStateToProps, null
+  mapStateToProps, mapDispatchToProps
 )(PdfListView);
 
 PdfListView.propTypes = {
