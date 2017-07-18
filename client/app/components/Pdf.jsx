@@ -82,8 +82,6 @@ const COVER_SCROLL_HEIGHT = 120;
 const NUM_PAGES_TO_PREDRAW = 2;
 const MAX_PAGES_TO_DRAW_AT_ONCE = 2;
 
-const DEFAULT_SCALE = 1;
-
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
 // they become visible.
@@ -338,6 +336,10 @@ export class Pdf extends React.PureComponent {
   }
 
   setPageDimensions = (pdfDocument, file) => {
+    // This is the scale we calculate the page dimensions at. This way we can calculate the
+    // page sizes at any scale by multiplying by the value passed in to this.props.scale.
+    const PAGE_DIMENSION_SCALE = 1;
+
     let pageDimensions = [];
     const setStateWithDimensions = () => {
       // Since these promises will finish asynchronously, we need to check if this
@@ -357,7 +359,7 @@ export class Pdf extends React.PureComponent {
 
     _.range(pdfDocument.pdfInfo.numPages).forEach((pageIndex) => {
       pdfDocument.getPage(pageNumberOfPageIndex(pageIndex)).then((pdfPage) => {
-        const viewport = pdfPage.getViewport(DEFAULT_SCALE);
+        const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
 
         pageDimensions[pageIndex] = _.pick(viewport, ['width', 'height']);
         setStateWithDimensions();
