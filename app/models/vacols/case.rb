@@ -259,10 +259,11 @@ class VACOLS::Case < VACOLS::Record
         ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
         WHERE BRIEFF.BFKEY = #{vacols_id}
       SQL
-
-      is_aod = MetricsService.record "VACOLS: Case.aod #{vacols_id}" do
+      
+      aod_result = MetricsService.record "VACOLS: Case.aod #{vacols_id}" do
         conn.exec_query(query)
       end
+      is_aod = aod_result.to_a.first["AOD"]
     end
   end
 
