@@ -105,6 +105,6 @@ WORKDIR /caseflow/client
 RUN npm install
 
 WORKDIR /caseflow
+
 # Entrypoint for the container
-ENTRYPOINT ["bundle", "exec"]
-CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+CMD ["foreman", "start", "-f", "Procfile.docker"]
