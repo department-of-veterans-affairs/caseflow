@@ -48,7 +48,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.complete!(status: :routed_to_arc)
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       expect(page).to have_content("ARC Work Assignments")
 
       # Validate help link
@@ -109,7 +109,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         end
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       expect(page).to have_content("1. Janet Smith 0 0 1 1 3")
       expect(page).to have_content("2. June Smith 1 0 0 1 2")
       expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
@@ -154,7 +154,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         end
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
 
       # Begin editing Janet's quota
@@ -180,7 +180,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View unprepared tasks page" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       click_on "View Claims Missing Decisions"
 
       # should not see any tasks younger than 1 day
@@ -192,7 +192,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       unprepared_task.update!(created_at: Time.zone.now - 1.day)
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       click_on "View Claims Missing Decisions"
 
       # should see the unprepared task
@@ -214,7 +214,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.cancel!(reason)
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       click_on "View Canceled Tasks"
 
       # should see the canceled tasks
