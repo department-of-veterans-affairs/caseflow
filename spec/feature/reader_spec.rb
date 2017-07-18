@@ -77,8 +77,23 @@ RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
   let(:documents) { [] }
+
+  let!(:issue_levels) do
+    ["Other", "Left knee", "Right knee"]
+  end
+
+  let!(:issues) do
+    [Generators::Issue.build(disposition: :allowed,
+                             program: :compensation,
+                             type: :elbow,
+                             category: :service_connection,
+                             levels: issue_levels
+                            )
+    ]
+  end
+
   let(:appeal) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
+    Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
   end
 
   let!(:current_user) do
@@ -128,6 +143,12 @@ RSpec.feature "Reader" do
 
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
+
+        expect(page).to have_content(appeal.issues[0].description_label)
+        expect(page).to have_content(appeal.issues[0].levels[0])
+        expect(page).to have_content(appeal.issues[0].levels[1])
+        expect(page).to have_content(appeal.issues[0].levels[2])
+
         expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "New", match: :first
