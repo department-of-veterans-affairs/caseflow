@@ -53,6 +53,10 @@ class Fakes::AppealRepository
     appeal
   end
 
+  def self.vacols_db_connection_active?
+    true
+  end
+
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
@@ -356,6 +360,7 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -366,6 +371,17 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
+      issues: [Generators::Issue.build(
+        disposition: "Remanded",
+        levels: ["Left knee", "Right knee", "Cervical strain"],
+        description: [
+          "15 - Service connection",
+          "13 - Left knee",
+          "14 - Right knee",
+          "22 - Cervical strain"
+        ],
+        program_description: "06 - Medical",
+        vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(

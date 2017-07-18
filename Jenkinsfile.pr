@@ -29,16 +29,17 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
   )]) {
   node('caseflow') {
 
-    def WORKSPACE_DIR = '/home/jenkins/workspace'
-    def CASEFLOW_DIR = WORKSPACE_DIR + '/caseflow'
+    // /home/jenkins is a shared volume called workspace-volume for this k8s Pod.
+    // To keep the path short and avoid the "Chrome socket path too long" issue, we
+    // can force Jenkins to checkout code to this directory.
+    // See also: https://bugs.chromium.org/p/chromium/issues/detail?id=469065
+    def CASEFLOW_DIR = '/home/jenkins/workspace/caseflow'
     
     stage('git clone') {
       container('caseflow-test-runner') {
-        sh """
-        cd ${WORKSPACE_DIR}
-        git clone https://github.com/department-of-veterans-affairs/caseflow.git
-        cd caseflow && git checkout ${env.BRANCH_NAME}
-        """
+        dir(CASEFLOW_DIR) {
+          checkout scm
+        }
       }
     }
 
@@ -95,7 +96,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              Xvfb +extension RANDR :99 -screen 0 1024x768x16 &
+              Xvfb +extension RANDR :99 -screen 0 1600x900x16 &
               """
             }
           }
