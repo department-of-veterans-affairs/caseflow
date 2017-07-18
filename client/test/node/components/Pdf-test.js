@@ -55,17 +55,6 @@ describe('Pdf', () => {
       });
     });
 
-    context('.setUppdf', () => {
-      context('onPageChange set', () => {
-        it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
-          wrapper.instance().setUpPdf('test.pdf');
-          await pause();
-
-          expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
-        }));
-      });
-    });
-
     context('.componentWillReceiveProps', () => {
       let draw;
 

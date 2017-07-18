@@ -82,6 +82,8 @@ const COVER_SCROLL_HEIGHT = 120;
 const NUM_PAGES_TO_PREDRAW = 2;
 const MAX_PAGES_TO_DRAW_AT_ONCE = 2;
 
+const DEFAULT_SCALE = 1;
+
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
 // they become visible.
@@ -335,6 +337,41 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  setPageDimensions = (pdfDocument, file) => {
+    let pageDimensions = [];
+    const setStateWithDimensions = () => {
+      // Since these promises will finish asynchronously, we need to check if this
+      // iteration is the last. If so, then we should set the state with the page
+      // dimensions just calculated.
+      const numDimensionsFound = pageDimensions.reduce((acc, page) => acc + (page ? 1 : 0), 0);
+
+      if (numDimensionsFound === pdfDocument.pdfInfo.numPages) {
+        this.setState({
+          pageDimensions: {
+            ...this.state.pageDimensions,
+            [file]: pageDimensions
+          }
+        });
+      }
+    }
+
+    _.range(pdfDocument.pdfInfo.numPages).forEach((pageIndex) => {
+      pdfDocument.getPage(pageNumberOfPageIndex(pageIndex)).then((pdfPage) => {
+        const viewport = pdfPage.getViewport(DEFAULT_SCALE);
+
+        pageDimensions[pageIndex] = _.pick(viewport, ['width', 'height']);
+        setStateWithDimensions();
+      }).
+      catch(() => {
+        pageDimensions[pageIndex] = {
+          width: PAGE_WIDTH,
+          height: PAGE_HEIGHT
+        };
+        setStateWithDimensions();
+      })
+    });
+  }
+
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to draw it.
   setUpPdf = (file) => {
@@ -342,36 +379,13 @@ export class Pdf extends React.PureComponent {
 
     return new Promise((resolve) => {
       this.getDocument(this.latestFile).then((pdfDocument) => {
+
         // Don't continue seting up the pdf if it's already been set up.
         if (!pdfDocument || pdfDocument === this.state.pdfDocument) {
           return resolve();
         }
 
-        let pageDimensions = [];
-
-        _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
-          pdfDocument.getPage(index + 1).then((pdfPage) => {
-            const viewport = pdfPage.getViewport(1);
-
-            pageDimensions[index] = _.pick(viewport, ['width', 'height']);
-
-            if (pageDimensions.reduce((acc, page) => acc + (page ? 1 : 0), 0) ===
-              pdfDocument.pdfInfo.numPages) {
-              this.setState({ pageDimensions:
-              {
-                ...this.state.pageDimensions,
-                [file]: pageDimensions
-              }
-              });
-            }
-          }).
-          catch(() => {
-            pageDimensions[index] = {
-              width: PAGE_WIDTH,
-              height: PAGE_HEIGHT
-            };
-          });
-        });
+        this.setPageDimensions(pdfDocument, file);
 
         this.setState({
           numPages: {
@@ -680,10 +694,8 @@ export class Pdf extends React.PureComponent {
         this.onPageChange(this.props.jumpToPageNumber);
       }
       if (this.props.scrollToComment) {
-        if (this.props.documentId === this.props.scrollToComment.documentId) {
-          this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page),
-            this.props.scrollToComment.y);
-        }
+        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page),
+          this.props.scrollToComment.y);
       }
     }
 
