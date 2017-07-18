@@ -1,7 +1,7 @@
 class VACOLS::CaseAssignment < VACOLS::Record
   self.table_name = "vacols.brieff"
 
-  has_one :staff, foreign_key: :sattyid, primary_key: :deatty
+  has_one :staff, foreign_key: :slogid, primary_key: :bfcurloc
   has_one :case_decision, foreign_key: :bfkey, primary_key: :defolder
   has_one :correspondent, foreign_key: :stafkey, primary_key: :bfcorkey
 
@@ -9,7 +9,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
     def active_cases_for_user(css_id)
       id = connection.quote(css_id.upcase)
 
-      select_assignments.where("brieff.bfcurloc = staff.slogid and staff.sdomainid = #{id}")
+      select_assignments.where("staff.sdomainid = #{id}")
     end
 
     def select_assignments
