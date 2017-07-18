@@ -235,7 +235,10 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.aod(vacols_id)
-    connection.transaction do
+    conn = connection
+    vacols_id = conn.quote(vacols_id)
+
+    conn.transaction do
       query = <<-SQL
         SELECT (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
         FROM BRIEFF
