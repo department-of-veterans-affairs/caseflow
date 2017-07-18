@@ -429,7 +429,7 @@ export const fetchAppealsDetails = () => (
 
       dispatch(onReceiveAssignments(returnedObject.cases));
     }, () => {
-      // dispatch(onInitialDataLoadingFail());
+      dispatch(onInitialDataLoadingFail());
     });
   }
 );
