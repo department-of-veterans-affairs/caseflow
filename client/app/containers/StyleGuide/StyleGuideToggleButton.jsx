@@ -16,27 +16,26 @@ export default class StyleGuideToggleButton extends React.Component {
     this.setState({ active: name });
   }
   render() {
-
-    return <div>
+   return <div>
     <br/>
-    <StyleGuideComponentTitle
-      title="Toggle buttons"
-      id="toggle_buttons"
-      link="StyleGuideToggleButton.jsx"
-      isSubsection={true}
-    />
-    <ToggleButton active={this.state.active}
-      onClick={this.handleClick}>
-    <Button
-      name="view1"
-      >
-      View 1
-     </Button>
+     <StyleGuideComponentTitle
+       title="Toggle buttons"
+       id="toggle_buttons"
+       link="StyleGuideToggleButton.jsx"
+       isSubsection={true}
+     />
+     <ToggleButton active={this.state.active}
+       onClick={this.handleClick}>
       <Button
-      name="view2"
+        name="view1"
       >
-      View 2
-     </Button>
+        View 1
+      </Button>
+      <Button
+        name="view2"
+      >
+        View 2
+      </Button>
      </ToggleButton>
    </div>;
   }
