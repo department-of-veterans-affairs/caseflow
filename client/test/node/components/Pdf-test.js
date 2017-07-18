@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 import PdfJsStub from '../../helpers/PdfJsStub';
-
+import { asyncTest, pause } from '../../helpers/AsyncTests';
 import { documents } from '../../data/documents';
 
 /* eslint-disable no-unused-expressions */
@@ -51,6 +51,17 @@ describe('Pdf', () => {
       it('renders the staging div', () => {
         expect(wrapper.find('.cf-pdf-pdfjs-container')).
           to.have.length(PdfJsStub.numPages);
+      });
+    });
+
+    context('.setUppdf', () => {
+      context('onPageChange set', () => {
+        it(`calls onPageChange with 1 and ${PdfJsStub.numPages}`, asyncTest(async() => {
+          wrapper.instance().setUpPdf('test.pdf');
+          await pause();
+
+          expect(onPageChange.calledWith(1, PdfJsStub.numPages, sinon.match.number)).to.be.true;
+        }));
       });
     });
 
