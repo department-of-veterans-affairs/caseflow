@@ -2,11 +2,12 @@ class EstablishClaimsController < TasksController
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
   before_action :verify_not_complete, only: [:perform, :update_appeal]
   before_action :verify_bgs_info_valid, only: [:perform]
-  before_action :verify_manager_access, only: [:unprepared_tasks, :update_employee_count, :canceled_tasks]
-
-  def index
-    render index_template
-  end
+  before_action :verify_manager_access, only: [
+    :unprepared_tasks,
+    :update_employee_count,
+    :canceled_tasks,
+    :work_assignments
+  ]
 
   def update_appeal
     task.appeal.update!(special_issues_params)
@@ -127,10 +128,6 @@ class EstablishClaimsController < TasksController
 
   def verify_access
     manager? || verify_authorized_roles("Establish Claim")
-  end
-
-  def index_template
-    manager? ? "manager_index" : "worker_index"
   end
 
   def logo_name

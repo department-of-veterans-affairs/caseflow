@@ -54,6 +54,30 @@ describe('Pdf', () => {
       });
     });
 
+    describe('onPageChange', () => {
+      const page = 1;
+
+      context('when scale is 1', () => {
+        const scale = 1;
+
+        it('calls onPageChange with 1', () => {
+          wrapper.setProps({ scale });
+          wrapper.instance().onPageChange(page);
+          expect(onPageChange.calledWith(page, PdfJsStub.numPages, scale)).to.equal(true);
+        });
+      });
+
+      context('when scale is 2', () => {
+        const scale = 2;
+
+        it('calls onPageChange with 2', () => {
+          wrapper.setProps({ scale });
+          wrapper.instance().onPageChange(page);
+          expect(onPageChange.calledWith(page, PdfJsStub.numPages, scale)).to.equal(true);
+        });
+      });
+    });
+
     context('.componentWillReceiveProps', () => {
       let draw;
 

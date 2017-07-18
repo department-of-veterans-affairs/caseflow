@@ -28,11 +28,10 @@ Rails.application.routes.draw do
   end
 
   scope path: "/dispatch" do
-    # TODO(jd): Make this its own controller action that looks at the user's roles
-    # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     get 'canceled', to: 'establish_claims#canceled_tasks'
+    get 'work-assignments', to: 'establish_claims#work_assignments'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :user_quotas, path: "/user-quotas", only: :update
