@@ -467,7 +467,7 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
-      vbma.clean_document(form8.pdf_location)
+      vbms.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?
