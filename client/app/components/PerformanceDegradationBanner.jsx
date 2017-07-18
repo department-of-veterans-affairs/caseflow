@@ -28,7 +28,7 @@ export default class PerformanceDegradationBanner extends React.Component {
       });
     }, () => {
       this.setState({
-        showBanner: true
+        showBanner: false
       });
     });
   }

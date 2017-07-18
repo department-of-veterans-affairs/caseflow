@@ -335,6 +335,9 @@ RSpec.feature "Start Certification" do
       allow(DependenciesReportService).to receive(:outage_present?).and_return(true)
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content "We've detected technical issues in our system"
+      User.unauthenticate!
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).not_to have_content "We've detected technical issues in our system"
     end
   end
 end
