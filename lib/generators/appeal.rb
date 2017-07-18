@@ -57,6 +57,7 @@ class Generators::Appeal
           status: "Remand",
           disposition: "Remanded",
           decision_date: 7.days.ago,
+          docket_number: "13 12-225",
           issues: [
             { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
             { disposition: :denied, program: :compensation, type: :service_connection, category: :elbow }
@@ -66,6 +67,7 @@ class Generators::Appeal
           status: "Remand",
           disposition: "Allowed",
           decision_date: 7.days.ago,
+          docket_number: "13 11-263",
           issues: [
             { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
             { disposition: :allowed, program: :compensation, type: :service_connection, category: :elbow },
@@ -78,6 +80,7 @@ class Generators::Appeal
           disposition: "Allowed",
           outcoding_date: 2.days.ago,
           decision_date: 7.days.ago,
+          docket_number: "13 11-265",
           issues: [
             { disposition: :allowed, program: :compensation, type: :service_connection, category: :elbow },
             { disposition: :denied, program: :compensation, type: :service_connection, category: :shoulder }

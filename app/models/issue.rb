@@ -2,7 +2,7 @@
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
-  attr_accessor :program, :type, :category, :description, :disposition,
+  attr_accessor :program, :type, :category, :description, :disposition, :levels,
                 :program_description
 
   belongs_to :appeal
@@ -60,6 +60,7 @@ class Issue < ActiveRecord::Base
       category: category,
       description: description,
       disposition: disposition,
+      levels: levels,
       program_description: program_description
     )
   end
@@ -73,16 +74,23 @@ class Issue < ActiveRecord::Base
       description
     end
 
+    def levels(hash)
+      levels = []
+      levels.push("#{hash['isslev1_label']}") if hash["isslev1"]
+      levels.push("#{hash['isslev2_label']}") if hash["isslev2"]
+      levels.push("#{hash['isslev3_label']}") if hash["isslev3"]
+      levels
+    end
+
     def load_from_vacols(hash)
       category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
 
       disposition = (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other")
                     .parameterize.underscore.to_sym
-
       new(
         vacols_sequence_id: hash["issseq"],
-        program: PROGRAMS[hash["issprog"]],
-        type: TYPES[hash["isscode"]],
+        program: {name: PROGRAMS[hash["issprog"]], label: hash['issprog_label']},
+        type: {name: TYPES[hash["isscode"]], label: hash['isscode_label'] },
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
         description: description(hash),

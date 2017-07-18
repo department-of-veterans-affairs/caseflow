@@ -379,4 +379,8 @@ class Fakes::AppealRepository
       documents: redacted_reader_documents
     )
   end
+
+  def self.aod(vacols_id)
+    return 1
+  end
 end

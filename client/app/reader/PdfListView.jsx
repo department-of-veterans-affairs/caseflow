@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
+import ClaimsFolderDetails from './ClaimsFolderDetails';
+
 import _ from 'lodash';
 import DocumentsTable from './DocumentsTable';
 
@@ -15,6 +17,7 @@ export class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
+          <ClaimsFolderDetails appeal={this.props.appeal}/>
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -35,10 +38,12 @@ export class PdfListView extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  documents: getFilteredDocuments(state),
-  ..._.pick(state.ui, 'docFilterCriteria')
-});
+const mapStateToProps = (state, props) => {
+  return { documents: getFilteredDocuments(state),
+    ..._.pick(state.ui, 'docFilterCriteria'),
+    appeal: _.find(state.assignments, { vacols_id: props.match.params.vacolsId })
+  };
+};
 
 export default connect(
   mapStateToProps, null

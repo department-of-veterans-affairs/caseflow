@@ -24,6 +24,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+  vacols_attr_accessor :docket_number
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -62,6 +63,8 @@ class Appeal < ActiveRecord::Base
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
   # rubocop:enable Metrics/LineLength
+
+  CAVC_TYPE = "7"
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
@@ -180,7 +183,19 @@ class Appeal < ActiveRecord::Base
   end
 
   def regional_office
-    VACOLS::RegionalOffice::CITIES[regional_office_key] || {}
+    ro_info = VACOLS::RegionalOffice::CITIES[regional_office_key]
+
+    if ro_info
+      ro_info.merge(key: regional_office_key)
+    else
+      {}
+    end
+  end
+
+  def regional_office_details
+    regional_office = {}
+    regional_office[:key] = regional_office_key
+    regional_office.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
   end
 
   def regional_office_name
@@ -190,6 +205,14 @@ class Appeal < ActiveRecord::Base
   def station_key
     result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
     result && result.first
+  end
+
+  def cavc
+    type == VACOLS::Case::TYPES[CAVC_TYPE]
+  end
+
+  def aod
+    self.class.repository.aod(vacols_id) == 1
   end
 
   def nod
@@ -357,7 +380,7 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil)
     serializable_hash(
-      methods: [:veteran_full_name],
+      methods: [:veteran_full_name, :docket_number, :type, :issues, :regional_office, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
@@ -444,7 +467,7 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
-      vbms.clean_document(form8.pdf_location)
+      vbma.clean_document(form8.pdf_location)
     end
 
     # TODO: Move to AppealMapper?

@@ -422,6 +422,18 @@ export const removeTag = (doc, tagId) => (
   }
 );
 
+export const fetchAppealsDetails = () => (
+  (dispatch) => {
+    ApiUtil.get('/reader/appeal?json').then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAssignments(returnedObject.cases));
+    }, () => {
+      // dispatch(onInitialDataLoadingFail());
+    });
+  }
+);
+
 export const addNewTag = (doc, tags) => (
   (dispatch) => {
     const currentTags = doc.tags;

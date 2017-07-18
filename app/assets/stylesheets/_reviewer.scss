@@ -24,6 +24,28 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+.cf-claims-folder-details {
+
+  .claim-detail-aod {
+    color: $color-secondary;
+  }
+
+  .claim-detail-cavc {
+    color: $color-primary;
+  }
+
+  .claims-folder-issues {
+    margin-top: 20px;
+
+    ol {
+      padding-top: 3px;
+      padding-left: 1em;
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+  }
+}
+
 .cf-pdf-page-container {
   position: absolute;
   top: 50px;

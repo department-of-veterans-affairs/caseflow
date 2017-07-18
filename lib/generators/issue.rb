@@ -10,6 +10,10 @@ class Generators::Issue
           "03 - All Others",
           "5252 - Thigh, limitation of flexion of"
         ],
+        levels: [
+          "All Others",
+          "Thigh, limitation of flexion of"
+        ],
         program_description: "02 - Compensation",
         program: :compensation,
         type: :service_connection,

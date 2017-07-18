@@ -2,6 +2,13 @@
 
 class AppealRepository
   # :nocov:
+  # Used by healthcheck endpoint
+  # Calling .active? triggers a query to VACOLS
+  # `select 1 from dual`
+  def self.vacols_db_connection_active?
+    VACOLS::Record.connection.active?
+  end
+
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
@@ -233,6 +240,10 @@ class AppealRepository
     appeal.case_record.bfdcertool = nil
     appeal.case_record.bf41stat = nil
     appeal.case_record.save!
+  end
+
+  def self.aod(vacols_id)
+    VACOLS::Case.aod(vacols_id)
   end
 
   # :nocov:

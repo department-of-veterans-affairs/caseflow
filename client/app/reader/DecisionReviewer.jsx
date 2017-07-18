@@ -82,6 +82,8 @@ export class DecisionReviewer extends React.PureComponent {
   componentDidMount = () => {
     window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
+    this.props.fetchAppealsDetails();
+
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {
@@ -130,7 +132,6 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
       <div>
-
         <PageRoute
           exact
           title="Claims Folder | Caseflow Reader"
@@ -181,7 +182,8 @@ const mapStateToProps = (state) => {
   return {
     documentFilters: state.ui.pdfList.filters,
     storeDocuments: state.documents,
-    pdf: state.ui.pdf
+    pdf: state.ui.pdf,
+    assignments: state.assignments
   };
 };
 
