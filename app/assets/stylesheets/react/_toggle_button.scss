@@ -2,9 +2,6 @@
 @import 'uswds/core/variables';
 
 .cf-toggle-button {
-  margin-left: 20px;
-  margin-right: 20px;
-
   span:not(:first-child):not(:last-child) {
     button {
       border-radius: 0;
@@ -16,6 +13,7 @@
       button {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
+        margin-left: 20px;
   }
 }
 
@@ -23,11 +21,13 @@
       button {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
+        margin-right: 20px;
     }
   }
  }
 }
 
 .cf-toggle-box-shadow {
-  box-shadow: 0 0 5px $color-gray-dark;
+  $background-color: #888888;
+  box-shadow: 1px 1px 6px $background-color;
 }

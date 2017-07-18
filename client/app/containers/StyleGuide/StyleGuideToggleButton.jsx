@@ -1,6 +1,6 @@
 import React from 'react';
 import ToggleButton from '../../components/ToggleButton';
-
+import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideToggleButton extends React.Component {
@@ -8,17 +8,14 @@ export default class StyleGuideToggleButton extends React.Component {
     super(props);
 
     this.state = {
-      active: 'view_1'
+      active: 'view1'
     };
   }
 
-  handleClick = (id) => {
-    this.setState({ active: id });
+  handleClick = (name) => {
+    this.setState({ active: name });
   }
   render() {
-    const labelsArray = [{ id: 'view_1',
-      text: 'View 1' }, { id: 'view_2',
-        text: 'View 2' }];
 
     return <div>
     <br/>
@@ -28,14 +25,19 @@ export default class StyleGuideToggleButton extends React.Component {
       link="StyleGuideToggleButton.jsx"
       isSubsection={true}
     />
-    <div className="usa-grid">
-    <ToggleButton
-     labels ={labelsArray}
-      activeButton ={['button_wrapper']}
-      inactiveButton ={['usa-button-outline']}
-     active ={this.state.active}
-     onClick ={this.handleClick}/>
-   </div>
+    <ToggleButton active={this.state.active}
+      onClick={this.handleClick}>
+    <Button
+      name="view1"
+      >
+      View 1
+     </Button>
+      <Button
+      name="view2"
+      >
+      View 2
+     </Button>
+     </ToggleButton>
    </div>;
   }
 }

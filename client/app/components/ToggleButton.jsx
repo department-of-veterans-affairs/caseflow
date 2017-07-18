@@ -1,41 +1,34 @@
 import React from 'react';
-import Button from './Button';
 import PropTypes from 'prop-types';
 
 export default class ToggleButton extends React.Component {
-
-  handleClick = (event) => {
-    this.props.onClick(event.target.id);
+  handleClick = (name) => () => {
+    this.props.onClick(name);
   }
+
   render() {
-    let {
-      labels,
-      active,
-      activeButton,
-      inactiveButton
+    const {
+      children,
+       active
     } = this.props;
-    const primaryClassShadow = [...activeButton, 'cf-toggle-box-shadow'];
 
-    return <div className ="cf-toggle-button">
-    {labels.map((label) =>
+   // Traverse/Iterate the ‘children’ property, invoking a method
+   // for each child and adding the result to an array.
 
-    <Button
-      id={label.id}
-      key = {label.id}
-      name={label.text}
-      classNames={active === label.id ?
-      primaryClassShadow : inactiveButton}
-      onClick ={this.handleClick}
-     />
-   )}
-   </div>;
+    const mappedChildren = React.Children.map(children, (child) => {
+
+      return React.cloneElement(child, {
+        classNames: active === child.props.name ? ['cf-toggle-box-shadow usa-button'] : ['usa-button-outline'],
+        onClick: this.handleClick(child.props.name)
+      }
+    );
+    });
+
+    return <div className ="cf-toggle-button">{mappedChildren}</div>;
   }
 }
 
 ToggleButton.propTypes = {
-  labels: PropTypes.arrayOf(PropTypes.object),
-  onClick: PropTypes.func,
   active: PropTypes.string,
-  activeButton: PropTypes.arrayOf(PropTypes.string),
-  inactiveButton: PropTypes.arrayOf(PropTypes.string)
+  children: PropTypes.node
 };
