@@ -153,7 +153,7 @@ body {
   @if $app == 'hearings' or $app == 'reader' {
     width: 85vw;
   } @else {
-    width: 65vw;
+    width: 75vw;
   }
 }
 
