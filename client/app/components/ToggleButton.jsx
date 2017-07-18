@@ -20,8 +20,8 @@ export default class ToggleButton extends React.Component {
         classNames: active === child.props.name ? ['cf-toggle-box-shadow usa-button'] : ['usa-button-outline'],
         onClick: this.handleClick(child.props.name)
       }
-    );
-  });
+     );
+    });
 
     return <div className ="cf-toggle-button">{mappedChildren}</div>;
   }
