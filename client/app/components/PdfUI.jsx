@@ -247,7 +247,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   rotatePage: (docId) => {
     dispatch(rotatePage(docId));
-  }
+  },
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
   },

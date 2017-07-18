@@ -891,6 +891,7 @@ export const reducer = (state = initialState, action = {}) => {
           [action.payload.docId]: {
             rotation: (state.documents[action.payload.docId] + 90) % 360
           }
+        }
       });
   default:
     return state;
