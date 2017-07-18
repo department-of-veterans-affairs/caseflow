@@ -34,3 +34,17 @@ retrieve_appeals_documents_for_reader_job:
   class: "RetrieveAppealsDocumentsForReaderJob"
   queue: default
   active_job: true
+
+# Checks dependecies every 30 seconds(BGS, VACOLS, VBMS, VBMS.FindDocumentSeriesReference)
+dependencies_check_job:
+  cron: "*/30 * * * * * America/New_York"
+  class: "DependenciesCheckJob"
+  queue: default
+  active_job: true
+
+# This is created to log DependenciesReportService (and to avoid flooding the logs with each browser window request)
+dependencies_report_service_log_job:
+  cron: "*/30 * * * * * America/New_York"
+  class: "DependenciesReportServiceLogJob"
+  queue: default
+  active_job: true
