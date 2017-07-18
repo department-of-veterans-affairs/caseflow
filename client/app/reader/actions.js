@@ -404,6 +404,13 @@ export const clearSearch = () => ({
   type: Constants.CLEAR_ALL_SEARCH
 });
 
+export const rotatePage = (doc) => ({
+  type: Constants.ROTATE_DOCUMENT,
+  payload: {
+    docId: doc.id
+  }
+})
+
 export const removeTag = (doc, tagId) => (
   (dispatch) => {
     dispatch({

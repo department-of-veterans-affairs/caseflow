@@ -883,6 +883,15 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.ROTATE_DOCUMENT:
+    return update(
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            rotation: (state.documents[action.payload.docId] + 90) % 360
+          }
+      });
   default:
     return state;
   }

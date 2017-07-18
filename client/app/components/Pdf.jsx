@@ -183,7 +183,7 @@ export class Pdf extends React.PureComponent {
         return pdfDocument.getPage(pageNumber).then((pdfPage) => {
           // The viewport is a PDFJS concept that combines the size of the
           // PDF pages with the scale go get the dimensions of the divs.
-          const viewport = pdfPage.getViewport(this.props.scale);
+          const viewport = pdfPage.getViewport(this.props.scale, this.props.rotation);
           const topOfPageLocation = this.pageElements[this.props.file][this.currentPage - 1].pageContainer.
             getBoundingClientRect().top;
 
@@ -881,6 +881,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
   ..._.pick(state, 'placingAnnotationIconPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
+  rotation: state.documents[ownProps.documentId].rotation,
   allAnnotations: state.annotations
 });
 

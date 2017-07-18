@@ -8,7 +8,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, rotatePage } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron } from '../components/RenderFunctions';
 import classNames from 'classnames';
@@ -190,7 +190,7 @@ export class PdfUI extends React.Component {
           <Button
             name="fit"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={this.fitToScreen}
+            onClick={() => this.props.rotatePage(this.props.doc.id)}
             ariaLabel="fit to screen">
             <i className="fa fa-arrows-alt" aria-hidden="true"></i>
           </Button>
@@ -245,6 +245,9 @@ const mapStateToProps = (state) => ({
   ...state.ui.pdf
 });
 const mapDispatchToProps = (dispatch) => ({
+  rotatePage: (docId) => {
+    dispatch(rotatePage(docId));
+  }
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
   },
