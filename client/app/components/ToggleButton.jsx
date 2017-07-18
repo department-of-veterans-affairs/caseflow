@@ -9,7 +9,7 @@ export default class ToggleButton extends React.Component {
   render() {
     const {
       children,
-       active
+      active
     } = this.props;
 
    // Traverse/Iterate the ‘children’ property, invoking a method
@@ -23,7 +23,7 @@ export default class ToggleButton extends React.Component {
      );
     });
 
-    return <div className ="cf-toggle-button">{mappedChildren}</div>;
+    return <div className="cf-toggle-button">{mappedChildren}</div>;
   }
 }
 

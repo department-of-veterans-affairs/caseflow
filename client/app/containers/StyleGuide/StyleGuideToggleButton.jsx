@@ -16,8 +16,7 @@ export default class StyleGuideToggleButton extends React.Component {
     this.setState({ active: name });
   }
   render() {
-   return <div>
-    <br/>
+    return <div>
      <StyleGuideComponentTitle
        title="Toggle buttons"
        id="toggle_buttons"
@@ -27,17 +26,15 @@ export default class StyleGuideToggleButton extends React.Component {
      <ToggleButton active={this.state.active}
        onClick={this.handleClick}>
       <Button
-        name="view1"
-      >
-        View 1
+       name="view1">
+       View 1
       </Button>
       <Button
-        name="view2"
-      >
-        View 2
+       name="view2">
+       View 2
       </Button>
      </ToggleButton>
-   </div>;
+    </div>;
   }
 }
 
