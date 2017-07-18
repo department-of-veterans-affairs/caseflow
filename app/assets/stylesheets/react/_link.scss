@@ -27,15 +27,11 @@
   svg {
     vertical-align: bottom;
   }
-
-  &:focus {
-    box-shadow: none;
-  }
 }
 
 .link-overflow {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow-x: hidden;
-  width: 100%;
+  max-width: 100%;
 }
