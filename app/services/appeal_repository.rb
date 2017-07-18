@@ -104,7 +104,8 @@ class AppealRepository
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
-      private_attorney_or_agent: case_record.bfso == "T"
+      private_attorney_or_agent: case_record.bfso == "T",
+      docket_number: folder_record.ticknum
     )
 
     appeal
