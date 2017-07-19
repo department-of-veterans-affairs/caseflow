@@ -40,7 +40,7 @@ export default class Login extends React.PureComponent {
       label: `${regionalOffice.regionalOffice.city}, ${regionalOffice.regionalOffice.state} – ${regionalOffice.regionalOfficeCode}`
     }));
 
-    return <div className="cf-app-segment">
+    return <div className="cf-app-segment--alt">
       { this.state.logInHasFailed ?
           <StatusMessage
             title="Technical Difficulties">

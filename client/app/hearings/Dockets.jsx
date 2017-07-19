@@ -72,7 +72,7 @@ export class Dockets extends React.Component {
     });
 
     return <div>
-      <div className="content cf-hearings-schedule">
+      <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
           <h1>Upcoming Hearing Days</h1>
           <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
@@ -87,7 +87,7 @@ export class Dockets extends React.Component {
       </div>
       <div className="cf-alt--actions cf-alt--app-width">
         <div className="cf-push-right">
-          <a href="#" onClick={() => {
+          <a className="cf-btn-link" href="#" onClick={() => {
             window.print();
           }}>Print</a>
         </div>

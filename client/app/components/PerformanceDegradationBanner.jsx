@@ -53,8 +53,9 @@ export default class PerformanceDegradationBanner extends React.Component {
             <div className="banner-icon">
               <WrenchIcon/>
             </div>
-              <span className="banner-text">We've detected technical issues in our system. You can continue working,
-            though some users may experience delays.
+            <span className="banner-text">
+              We've detected technical issues in our system.
+              You can continue working, though some users may experience delays.
             </span>
           </div>
         </div>
@@ -62,4 +63,3 @@ export default class PerformanceDegradationBanner extends React.Component {
       </div>;
   }
 }
-
