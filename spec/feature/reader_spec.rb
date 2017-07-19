@@ -657,6 +657,15 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
+    scenario "Open and close accordion menu",
+             skip: "WIP test" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+
+      click_on "Document information"
+      expect(page).to_not have_content("Document Type")
+    end
+
     scenario "Open and close keyboard shortcuts modal" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
