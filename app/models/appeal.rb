@@ -378,12 +378,13 @@ class Appeal < ActiveRecord::Base
     events.last.try(:date)
   end
 
-  def to_hash(viewed: nil)
+  def to_hash(viewed: nil, issues: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :issues, :regional_office, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
+      hash["issues"] = issues
     end
   end
 

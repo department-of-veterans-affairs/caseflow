@@ -24,6 +24,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import Analytics from '../util/AnalyticsUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -81,6 +82,7 @@ export class PdfSidebar extends React.Component {
   }
 
   handleAddClick = (event) => {
+    Analytics.event('Document Viewer', 'click', 'Add comment');
     this.props.startPlacingAnnotation();
     event.stopPropagation();
   }
@@ -326,6 +328,8 @@ const mapDispatchToProps = (dispatch) => ({
     });
   },
   handleTogglePdfSidebar() {
+    Analytics.event('Document Viewer', 'click', 'Hide menu');
+
     dispatch({
       type: Constants.TOGGLE_PDF_SIDEBAR
     });

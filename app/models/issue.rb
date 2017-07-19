@@ -55,6 +55,7 @@ class Issue < ActiveRecord::Base
 
   def attributes
     super.merge(
+      levels: levels,
       program: program,
       type: type,
       category: category,
@@ -74,11 +75,11 @@ class Issue < ActiveRecord::Base
       description
     end
 
-    def levels(hash)
+    def parse_levels_from_vacols(hash)
       levels = []
-      levels.push("#{hash['isslev1_label']}") if hash["isslev1"]
-      levels.push("#{hash['isslev2_label']}") if hash["isslev2"]
-      levels.push("#{hash['isslev3_label']}") if hash["isslev3"]
+      levels.push((hash["isslev1_label"]).to_s) if hash["isslev1_label"]
+      levels.push((hash["isslev2_label"]).to_s) if hash["isslev2_label"]
+      levels.push((hash["isslev3_label"]).to_s) if hash["isslev3_label"]
       levels
     end
 
@@ -88,6 +89,7 @@ class Issue < ActiveRecord::Base
       disposition = (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other")
                     .parameterize.underscore.to_sym
       new(
+        levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: {name: PROGRAMS[hash["issprog"]], label: hash['issprog_label']},
         type: {name: TYPES[hash["isscode"]], label: hash['isscode_label'] },

@@ -157,7 +157,7 @@ $tag-backgrond-color: #d6d7d9;
     box-shadow: 5px 5px 4px -3px $color-gray-lighter;
     font-weight: normal;
     padding: 0;
-    $dropdown-interior-padding: 10px;
+    $dropdown-interior-padding: 14px;
 
     @mixin hover {
       &:hover {
@@ -167,17 +167,12 @@ $tag-backgrond-color: #d6d7d9;
     }
 
     .cf-clear-filter-row {
+      border-bottom: 1px solid $color-gray-lighter;
+      padding: 14px;
       @include hover;
 
       button {
-        padding: $dropdown-interior-padding;
-        padding-bottom: 0;
-        width: 100%;
-      }
-
-      .cf-clear-filter-button-wrapper {
-        border-bottom: 1px solid $color-gray-lighter;
-        padding-bottom: $dropdown-interior-padding;
+        padding: 0 0 0 2px;
       }
 
       &:hover .cf-clear-filter-button-wrapper {
@@ -189,22 +184,24 @@ $tag-backgrond-color: #d6d7d9;
       padding-bottom: 0;
       margin: 0;
       max-height: 325px;
-      overflow-y: scroll;
-      overflow-x: hidden;
       word-break: break-word;
       max-width: 218px;
 
-      .cf-category-selector {
-        display: flex;
-        align-items: flex-start;
-        margin: .5em;
+      li {
+        margin-bottom: 0;
+        padding: 14px;
+        @include hover;
 
         .cf-form-checkboxes {
-          margin-top: 0;
           margin-bottom: 0;
+          margin-top: 0;
+
+          label {
+            margin-bottom: 0;
+          }
         }
       }
-    }
+   }
 
     .cf-document-category-picker {
       margin-bottom: 0;
@@ -213,7 +210,7 @@ $tag-backgrond-color: #d6d7d9;
 
       li {
         margin-bottom: 0;
-
+        padding: 14px;
         @include hover;
 
         .cf-form-checkboxes {
@@ -221,18 +218,11 @@ $tag-backgrond-color: #d6d7d9;
           margin-bottom: 0;
 
           label {
-            padding: $dropdown-interior-padding;
             margin-bottom: 0;
-
-            &::before {
-              margin-top: $dropdown-interior-padding;
-              margin-left: $dropdown-interior-padding;
             }
 
-            .cf-category-selector {
-              margin-bottom: 0;
-              padding-left: $dropdown-interior-padding * 3;
-            }
+          .cf-category-selector {
+            margin-bottom: 0;
           }
         }
       }
@@ -271,7 +261,6 @@ $tag-backgrond-color: #d6d7d9;
     background: inherit;
     font-weight: inherit;
     margin: 0;
-    padding: 0;
     color: inherit;
 
     &:hover {
@@ -288,7 +277,6 @@ $tag-backgrond-color: #d6d7d9;
     .cf-category-selector {
       display: flex;
       align-items: flex-start;
-      margin-bottom: 1.5rem;
 
       .cf-category-name {
         line-height: 1;
@@ -296,7 +284,6 @@ $tag-backgrond-color: #d6d7d9;
       }
     }
   }
-
 }
 
 .document-list-header {

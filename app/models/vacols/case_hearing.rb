@@ -13,7 +13,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   HEARING_DISPOSITIONS = {
     H: :held,
-    C: :canceled,
+    C: :cancelled,
     P: :postponed,
     N: :no_show
   }.freeze
@@ -61,7 +61,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :folder_nr,
              :vdkey,
              :sattyid)
-        .joins(:staff)
+        .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where(hearing_type: HEARING_TYPES.keys)
     end
   end

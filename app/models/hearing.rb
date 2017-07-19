@@ -29,6 +29,7 @@ class Hearing < ActiveRecord::Base
     :representative_name, \
     :appellant_last_first_mi, \
     :regional_office_name, \
+    :vbms_id, \
     to: :appeal
 
   def to_hash

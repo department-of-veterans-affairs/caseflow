@@ -77,8 +77,23 @@ RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
   let(:documents) { [] }
+
+  let!(:issue_levels) do
+    ["Other", "Left knee", "Right knee"]
+  end
+
+  let!(:issues) do
+    [Generators::Issue.build(disposition: :allowed,
+                             program: :compensation,
+                             type: :elbow,
+                             category: :service_connection,
+                             levels: issue_levels
+                            )
+    ]
+  end
+
   let(:appeal) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
+    Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
   end
 
   let!(:current_user) do
@@ -128,6 +143,12 @@ RSpec.feature "Reader" do
 
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
+
+        expect(page).to have_content(appeal.issues[0].type.label)
+        expect(page).to have_content(appeal.issues[0].levels[0])
+        expect(page).to have_content(appeal.issues[0].levels[1])
+        expect(page).to have_content(appeal.issues[0].levels[2])
+
         expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "New", match: :first
@@ -460,8 +481,7 @@ RSpec.feature "Reader" do
       end
       # :nocov:
 
-      scenario "Jump to section for a comment",
-               skip: "This test is currently unstable, since loading earlier pages moves the scroll position" do
+      scenario "Jump to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         annotation = documents[1].annotations[0]
@@ -475,6 +495,7 @@ RSpec.feature "Reader" do
 
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
+
         expect { in_viewport(comment_icon_id) }.to become_truthy
       end
 
@@ -794,6 +815,12 @@ RSpec.feature "Reader" do
       find(".cf-search-close-icon").click
 
       expect(page).to have_content("Form 9")
+
+      expect(ClaimsFolderSearch.last).to have_attributes(
+        user_id: current_user.id,
+        appeal_id: appeal.id,
+        query: "BVA"
+      )
     end
 
     scenario "When user search term is not found" do
@@ -835,7 +862,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Open a document and return to list" do
+    scenario "Open a document and return to list", skip: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom("documents-table-body")

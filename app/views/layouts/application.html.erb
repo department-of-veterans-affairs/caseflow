@@ -90,85 +90,95 @@
     </script>
   <% end %>
 
+  <script>
+    // Used to track events in the header, where we don't have React to stub
+    window.tryAnalyticsEvent = function(category, action, label) {
+      if(window.analyticsEvent) { analyticsEvent(category, action, label) }
+      else { console.log("EVENT: " + category + " " + action + " " + label) }
+    }
+  </script>
+
   <%= favicon_link_tag %>
 
 </head>
-<body>
-  <% unless content_for?(:full_page_content) %>
-    <div class="content">
-  <% end %>
-  <header>
-    <nav class="cf-nav <%= content_for?(:full_page_content)? "cf-nav-full-screen": ""%>">
-      <div class="usa-grid-full">
-        <a href="<%= logo_path %>" id="cf-logo-link">
-          <h1 class="cf-logo"><%= content_tag(:span, nil, :class => "cf-logo-image #{logo_class}") %>Caseflow</h1> <span class="cf-logo-name"><%= logo_name %></span>
-        </a>
-        <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
+<body class="cf-app-<%= application %>">
+  <div class="cf-content">
+    <div class="cf-content-inside<%= ' full-page' if content_for?(:full_page_content) %>">
+      <header class="cf-app-header">
+        <div>
+          <div class="cf-app-width">
+            <div class="cf-push-left">
+              <div class="cf-push-left">
+                <h1 class="cf-logo <%= logo_class %>">
+                  <a id="cf-logo-link" href="<%= logo_path %>">
+                    Caseflow <span class="cf-logo-name"><%= logo_name %></span>
+                  </a>
+                </h1>
+                <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
+              </div>
+            </div>
+            <div class="cf-push-right">
+              <% unless current_user.nil? %>
+                <div class="cf-nav cf-dropdown">
+                  <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
+                    <%= current_user.display_name %>
+                  </a>
 
-        <% unless current_user.nil? %>
-          <div class="cf-dropdown cf-nav-dropdown">
-            <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
-              <%= current_user.display_name %>
-            </a>
+                  <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
+                    <li><a href="<%= help_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickHelp', eventLabel: 'Help', eventValue: 1});">Help</a></li>
+                    <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
+                    <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: '/whats_new', action: 'show'%>">What's New?</a></li>
 
-            <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
-              <li><a href="<%= help_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickHelp', eventLabel: 'Help', eventValue: 1});">Help</a></li>
-              <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
-              <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: '/whats_new', action: 'show'%>">What's New?</a></li>
+                    <% if ApplicationController.dependencies_faked? %>
+                      <li>
+                        <a href="<%= url_for controller: '/test/users', action: 'index'%>">Switch User</a>
+                      </li>
+                    <% end %>
 
-              <% if ApplicationController.dependencies_faked? %>
-                <li>
-                  <a href="<%= url_for controller: '/test/users', action: 'index'%>">Switch User</a>
-                </li>
+                    <% if current_user.admin? %>
+                      <li>
+                        <a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a>
+                      </li>
+                    <% end %>
+
+                    <li>
+                      <div class="dropdown-border"></div>
+                      <a href="<%= url_for controller: '/sessions', action: 'destroy'%>">Sign out</a>
+                    </li>
+                  </ul>
+                </div>
               <% end %>
-
-              <% if current_user.admin? %>
-                <li>
-                  <a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a>
-                </li>
-              <% end %>
-
-              <li>
-                <div class="dropdown-border"></div>
-                <a href="<%= url_for controller: '/sessions', action: 'destroy'%>">Sign out</a>
-              </li>
-            </ul>
+            </div>
           </div>
-        <% end %>
-      </div>
-    </nav>
-  </header>
-
-  <% if content_for?(:full_page_content) %>
-    <main class="cf-full-page-app">
-      <%= yield(:full_page_content) if content_for?(:full_page_content) %>
-      <%= yield %>
-    </main>
-  <% else %>
-    <main class="usa-grid">
-      <div class="cf-app">
+        </div>
+        <%= react_component("PerformanceDegradationBanner") %>
+      </header>
+      <% if content_for?(:full_page_content) %>
+      <main class="cf-app-width cf-full-page-app">
+        <%= yield(:full_page_content) if content_for?(:full_page_content) %>
+        <%= yield %>
+      </main>
+      <% else %>
+      <main class="cf-app-width">
         <%= yield(:content) if content_for?(:content) %>
         <%= yield %>
-      </div>
-    </main>
-
+      </main>
     </div>
-
-    <footer class="cf-txt-c usa-grid cf-app-footer">
-      <div>
-        <div class="cf-push-left">
-          <span<% if Rails.application.config.build_version %> title="<%= Rails.application.config.build_version[:date] %>"<% end %>>Built</span> with <abbr title="love">&#9825;</abbr> by the
-          <a href="https://www.usds.gov/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
-        </div>
-        <div class="cf-push-right">
-          <a target="_blank" href="<%= feedback_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">
-            Send feedback
-          </a>
-        </div>
+  </div>
+  <footer class="cf-app-footer">
+    <div class="cf-app-width">
+      <div class="cf-push-left">
+        <span<% if Rails.application.config.build_version %> title="<%= Rails.application.config.build_version[:date] %>"<% end %>>Built</span> with <abbr title="love">&#9825;</abbr> by the
+        <a href="https://www.usds.gov/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
       </div>
-    </footer>
+      <div class="cf-push-right">
+        <a target="_blank" href="<%= feedback_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">
+          Send feedback
+        </a>
+      </div>
+    </div>
+  </footer>
   <% end %>
-
 </body>
 </html>
 <% if Rails.application.config.build_version %>

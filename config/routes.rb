@@ -28,11 +28,10 @@ Rails.application.routes.draw do
   end
 
   scope path: "/dispatch" do
-    # TODO(jd): Make this its own controller action that looks at the user's roles
-    # and redirects accordingly
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     get 'canceled', to: 'establish_claims#canceled_tasks'
+    get 'work-assignments', to: 'establish_claims#work_assignments'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 
     resources :user_quotas, path: "/user-quotas", only: :update
@@ -64,15 +63,13 @@ Rails.application.routes.draw do
   namespace :reader do
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
+      resources :claims_folder_searches, only: :create
     end
   end
 
   namespace :hearings do
     resources :dockets, only: [:index, :show]
-  end
-
-  resources :hearings, only: []  do
-    resource :worksheet, only: [:update]
+    resources :worksheets, only: [:update, :show]
   end
 
   patch "certifications" => "certifications#create"
@@ -88,6 +85,7 @@ Rails.application.routes.draw do
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
+  get "dependencies-check", to: "dependencies_checks#show"
   get "login" => "sessions#new"
   get "logout" => "sessions#destroy"
 

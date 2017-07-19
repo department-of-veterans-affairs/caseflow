@@ -1,6 +1,195 @@
 // Add scss includes explicitly here.
 @import 'caseflow_main';
 
+// variables here should eventually find their way into commons
+@import 'variables';
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  color: $color-gray-dark;
+}
+
+.cf-content {
+  min-height: 100%;
+
+  header {
+    background: $color-white;
+    line-height: 4em;
+    margin-bottom: $cf-30px;
+
+    > div {
+      &:first-child {
+
+        border-bottom: 1px solid $color-gray-lighter;
+
+        &::after {
+          content: '\00a0';
+          line-height: 0;
+          display: block;
+          clear: both;
+        }
+      }
+
+      &:not(:first-child) {
+        line-height: normal;
+      }
+    }
+
+    .cf-nav {
+      padding: 0;
+      border: 0;
+    }
+
+    [class*="cf-logo-image-"] {
+      width: auto;
+      height: auto;
+      background-repeat: no-repeat;
+      background-position: center left;
+    }
+  }
+}
+
+.cf-logo-name,
+.cf-application-title {
+  color: $color-gray-medium;
+}
+
+.cf-dropdown {
+  a {
+    color: $color-gray-medium;
+
+    &:hover {
+      color: $color-gray-medium;
+    }
+  }
+
+  li {
+    a:hover {
+      color: $color-white;
+    }
+  }
+}
+
+
+
+.cf-content-inside {
+  padding-bottom: 12.353em;
+
+  &.full-page {
+    padding-bottom: 0;
+  }
+
+  .cf-logo {
+    margin: 0;
+    display: inline-block;
+    line-height: 3em;
+
+    a {
+      color: $color-gray-dark;
+      padding-left: 2.6em;
+    }
+  }
+
+  .cf-app-segment {
+    margin-bottom: $cf-30px;
+  }
+
+  .cf-app-segment--alt {
+    border: 1px solid $color-gray-lighter;
+  }
+}
+
+.cf-app-footer {
+  min-height: 5em;
+  margin-top: -5em;
+  box-sizing: border-box;
+
+  > div {
+    border-top: 1px solid $color-gray-lighter;
+    padding: $cf-30px 0;
+    height: auto;
+
+    &::after {
+      content: '\00a0';
+      line-height: 0;
+      display: block;
+      clear: both;
+    }
+  }
+}
+
+.cf-dropdown-trigger::after {
+  background-size: .75em;
+}
+
+.cf-dropdown-menu {
+  position: absoulte;
+  top: 3em;
+  width: auto;
+  min-width: 13em;
+}
+
+.cf-actions {
+  margin-top: $cf-30px;
+
+  [type="submit"] {
+    margin: 0;
+  }
+
+  &::after {
+    content: '\00a0';
+    line-height: 0;
+    display: block;
+    clear: both;
+  }
+}
+
+@mixin app-width($app) {
+  margin-left: auto;
+  margin-right: auto;
+
+  @if $app == 'hearings' or $app == 'reader' {
+    width: 85vw;
+  } @else {
+    width: 75vw;
+  }
+}
+
+.cf-app-hearings {
+  .cf-app-width {
+    @include app-width('hearings');
+  }
+}
+
+.cf-app-dispatch,
+.cf-app-dispatch-arc,
+.cf-app-not-set,
+.cf-app-internal {
+  .cf-app-width {
+    @include app-width('dispatch');
+  }
+}
+
+.cf-app-certification {
+  .cf-app-width {
+    @include app-width('cert');
+  }
+}
+
+.cf-app-efolder {
+  .cf-app-width {
+    @include app-width('efolder');
+  }
+}
+
+.cf-app-reader {
+  .cf-app-width {
+    @include app-width('reader');
+  }
+}
+
 .cf-logo-image-default {
   background-image: url(asset-path('caseflow-default-logo.svg'));
   width: 32px;
@@ -309,16 +498,6 @@ select {
 }
 
 // add to commons
-.cf-app-footer {
-  margin-top: 125px;
-
-  > div {
-    padding: 30px 0;
-    height: auto;
-   }
-}
-
-// add to commons
 .cf-font-light {
   font-weight: 300;
 }
@@ -518,4 +697,3 @@ select {
     margin-bottom: 8px;
   }
 }
-

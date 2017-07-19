@@ -5,7 +5,14 @@ User.authentication_service = Fakes::AuthenticationService
 describe User do
   let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
   let(:user) { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
-  before { Fakes::AuthenticationService.user_session = nil }
+
+  before(:all) do
+    User.case_assignment_repository = Fakes::CaseAssignmentRepository
+  end
+
+  before do
+    Fakes::AuthenticationService.user_session = nil
+  end
 
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
