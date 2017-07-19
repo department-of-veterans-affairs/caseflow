@@ -73,6 +73,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           stage('npm test') {
             container('caseflow-test-runner') {
               sh """
+              Xvfb +extension RANDR :99 -screen 0 1600x900x16 &
               cd ${CASEFLOW_DIR}/client && npm run test
               """
             }
@@ -96,7 +97,6 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              Xvfb +extension RANDR :99 -screen 0 1600x900x16 &
               """
             }
           }
