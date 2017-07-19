@@ -1,8 +1,6 @@
 class Hearings::DocketsController < HearingsController
   before_action :verify_access
 
-  layout "application_alt"
-
   def index
     # If the user does not have a vacols_id, we cannot pull their hearings
     # For now, show them the 404 page
