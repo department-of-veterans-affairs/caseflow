@@ -330,5 +330,14 @@ RSpec.feature "Start Certification" do
       expect(find("#page-title")).to have_content "Already Certified"
       expect(page).to have_content "Appeal has already been Certified"
     end
+
+    scenario "There is a dependency outage" do
+      allow(DependenciesReportService).to receive(:outage_present?).and_return(true)
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).to have_content "We've detected technical issues in our system"
+      User.unauthenticate!
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).not_to have_content "We've detected technical issues in our system"
+    end
   end
 end
