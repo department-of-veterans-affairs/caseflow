@@ -165,7 +165,8 @@ body {
 
 .cf-app-dispatch,
 .cf-app-dispatch-arc,
-.cf-app-not-set {
+.cf-app-not-set,
+.cf-app-internal {
   .cf-app-width {
     @include app-width('dispatch');
   }
