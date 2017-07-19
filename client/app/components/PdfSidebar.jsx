@@ -159,7 +159,7 @@ export class PdfSidebar extends React.Component {
         }}>
           <Accordion style="outline" accordion={false}
             defaultActiveKey={['Document information', 'Categories', 'Issue tags', 'Comments']}>
-            <AccordionHeader title="Document information" key={1}>
+            <AccordionHeader title="Document information" key="document-information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">
                 <b>Document Type: </b>
                 <span title={this.props.doc.type} className="cf-document-type">
@@ -170,7 +170,7 @@ export class PdfSidebar extends React.Component {
                 <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
               </p>
             </AccordionHeader>
-            <AccordionHeader title="Categories" key={2}>
+            <AccordionHeader title="Categories" key="categories">
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
                 <DocCategoryPicker
@@ -180,7 +180,7 @@ export class PdfSidebar extends React.Component {
                   categoryToggleStates={categoryToggleStates} />
               </div>
             </AccordionHeader>
-            <AccordionHeader title="Issue tags" key={3}>
+            <AccordionHeader title="Issue tags" key="issue-tags">
               <div className="cf-issue-tag-sidebar">
                 {showErrorMessage.tag && cannotSaveAlert}
                 <SearchableDropdown
@@ -197,7 +197,7 @@ export class PdfSidebar extends React.Component {
                 />
               </div>
             </AccordionHeader>
-            <AccordionHeader title="Comments" key={4} id="comments-header">
+            <AccordionHeader title="Comments" key="comments-header" id="comments-header">
                 <span className="cf-right-side cf-add-comment-button">
                   <Button
                     name="AddComment"
