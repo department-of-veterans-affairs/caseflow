@@ -23,11 +23,11 @@ export class DocketsContainer extends React.Component {
     }
 
       // Since the title may have changed before rendering...
-      const pageTitle = document.getElementById('page-title');
+    const pageTitle = document.getElementById('page-title');
 
-      if (pageTitle) {
-        pageTitle.innerHTML = '';
-      }
+    if (pageTitle) {
+      pageTitle.innerHTML = '';
+    }
   }
 
   render() {

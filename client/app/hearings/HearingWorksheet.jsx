@@ -166,7 +166,7 @@ export class HearingWorksheet extends React.Component {
     });
 
     return <div>
-      <div className="content cf-hearings-worksheet">
+      <div className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
