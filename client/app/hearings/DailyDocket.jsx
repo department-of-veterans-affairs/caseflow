@@ -63,7 +63,7 @@ export class DailyDocket extends React.Component {
     let docket = this.props.docket;
 
     return <div>
-      <div className="content cf-hearings">
+      <div className="cf-app-segment cf-app-segment--alt cf-hearings">
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
             <h1>Daily Docket</h1>

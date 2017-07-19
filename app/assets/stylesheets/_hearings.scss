@@ -1,169 +1,23 @@
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
 
-// This may become a common variable
+// variables here should eventually find their way into commons
+@import 'variables';
+
 $color-hearings-saving: #777;
-$color-dropdown-shadow: rgba(0, 0, 0, 0.75);
-
-// Using 1.765em alot, should create variable if this setting sticks
-
-// FOR USE WITH APPLICATION ALT TEMPLATE AND HEARINGS
-
-html,
-body {
-  margin: 0;
-  height: 100%;
-  color: $color-gray-dark;
-}
-
-.cf-alt--content {
-  min-height: 100%;
-
-  header {
-    border-bottom: 1px solid $color-gray-lighter;
-    background: $color-white;
-    line-height: 4em;
-    margin-bottom: 1.765em;
-
-    > div {
-      &::after {
-        content: '\00a0';
-        line-height: 0;
-        display: block;
-        clear: both;
-      }
-    }
-
-    .cf-nav {
-      padding: 0;
-      border: 0;
-    }
-
-    [class*="cf-logo-image-"] {
-      width: auto;
-      height: auto;
-      background-repeat: no-repeat;
-      background-position: center left;
-    }
-  }
-
-  .cf-app-segment,
-  .cf-app-segment--alt {
-    margin: 0;
-    border: none;
-  }
-}
-
-.cf-alt--content-inside {
-  padding-bottom: 12.353em;
-
-  .cf-logo {
-    margin: 0;
-    display: inline-block;
-    line-height: 3em;
-    padding-left: 48px;
-
-    a {
-      color: $color-gray-dark;
-    }
-  }
-
-  main {
-    .content {
-      background: $color-white;
-      border: 1px solid $color-gray-lighter;
-    }
-  }
-}
-
-.cf-alt--app-footer {
-  min-height: 5em;
-  margin-top: -5em;
-  box-sizing: border-box;
-
-  > div {
-    border-top: 1px solid $color-gray-lighter;
-    padding: 1.765em 0;
-
-    &::after {
-      content: '\00a0';
-      line-height: 0;
-      display: block;
-      clear: both;
-    }
-  }
-}
-
-.cf-dropdown-trigger::after {
-  background-size: .75em;
-}
-
-.cf-dropdown-menu {
-  position: absoulte;
-  top: 3em;
-  width: auto;
-  min-width: 13em;
-}
-
-.cf-alt--actions {
-  margin-top: 1.765em;
-
-  &::after {
-    content: '\00a0';
-    line-height: 0;
-    display: block;
-    clear: both;
-  }
-}
-
-@mixin app-width($app) {
-  margin-left: auto;
-  margin-right: auto;
-
-  @if $app == 'hearings' or $app == 'reader' {
-    width: 85vw;
-  } @else {
-    width: 65vw;
-  }
-}
-
-.cf-alt--app-hearings {
-  .cf-alt--app-width {
-    @include app-width('hearings');
-  }
-}
-
-.cf-alt--app-dispatch {
-  .cf-alt--app-width {
-    @include app-width('dispatch');
-  }
-}
-
-.cf-alt--app-certification {
-  .cf-alt--app-width {
-    @include app-width('cert');
-  }
-}
-
-.cf-alt--app-efolder {
-  .cf-alt--app-width {
-    @include app-width('efolder');
-  }
-}
-
-.cf-alt--app-reader {
-  .cf-alt--app-width {
-    @include app-width('reader');
-  }
-}
 
 .cf-hearings,
 .cf-hearings-schedule {
-  padding: 1.765em;
+  padding: $cf-30px;
 
   .cf-hearings-title-and-judge {
     h1 {
       margin-bottom: 0;
+    }
+
+    span {
+      position: relative;
+      left: .25em;
     }
   }
 
