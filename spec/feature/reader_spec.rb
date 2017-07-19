@@ -699,6 +699,35 @@ RSpec.feature "Reader" do
       expect(find("#other", visible: false).checked?).to be false
     end
 
+    scenario "Claim Folder Details" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      vetern_folder_title = "#{appeal.veteran_full_name}'s Claims Folder"
+      appeal_info = appeal.to_hash
+
+      expect(page).to have_content(vetern_folder_title)
+      expect(page).to have_content("Claims folder details")
+      find_by_id("claim-folder-details-accordion").click
+      regional_office = "#{appeal_info["regional_office"][:key]} - #{appeal_info["regional_office"][:city]}"
+      expect(page).to have_content(appeal_info["vbms_id"])
+      expect(page).to have_content(appeal_info["type"])
+      expect(page).to have_content(appeal_info["docket_number"])
+      expect(page).to have_content(regional_office)
+
+      # all the current issues listed in the UI
+      issue_list = all(".claims-folder-issues li")
+
+      expect(issue_list.count).to eq(appeal_info["issues"].length)
+      issue_list.each_with_index do |issue, index|
+        expect(issue.text.include?(appeal_info["issues"][index].type[:label])).to be true
+
+        # verifying the level information is being shown as part of the issue information
+        appeal_info["issues"][index].levels.each_with_index do |level, level_index|
+          expect(level.include?(appeal_info["issues"][index].levels[level_index])).to be true
+        end
+      end
+    end
+
     scenario "Tags" do
       TAG1 = "Medical".freeze
       TAG2 = "Law document".freeze
