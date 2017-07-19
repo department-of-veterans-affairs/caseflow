@@ -25,12 +25,10 @@ development:
 
 demo:
   <<: *default
-  username: <%= `whoami` %>
   database: caseflow_certification_demo
 
 staging:
   <<: *default
-  username: <%= `whoami` %>
   database: caseflow_certification_staging
 
 

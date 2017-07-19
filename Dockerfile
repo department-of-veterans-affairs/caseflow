@@ -87,4 +87,4 @@ COPY Gemfile.lock Gemfile.lock
 RUN bundle install --without production staging
 
 # Entrypoint for the container
-CMD ["foreman", "start", "-f", "Procfile.docker"]
+ENTRYPOINT ["/bin/bash"]
