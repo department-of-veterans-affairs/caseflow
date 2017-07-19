@@ -20,8 +20,7 @@ export default class StyleGuideLoaders extends React.Component {
        from. Loader should match the respective Caseflow app logo. Designers are
        responsible for letting developers know that defaulted color in the source code needs
        to be the color of the app logo.
-       See <a href="https://dsva-appeals-certification-dev-1895622301.us-gov-west-1.elb.amazonaws.com/styleguide#colors"
-       target="_blank">Caseflow Logos</a> under the Colors section.</p>
+       See <a href="#colors">Caseflow Logos</a> under the Colors section.</p>
 
      <div className="cf-sg-loader">
       <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
