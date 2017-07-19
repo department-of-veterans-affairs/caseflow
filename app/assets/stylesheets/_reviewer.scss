@@ -133,6 +133,10 @@ svg[aria-hidden=true],
 
 .cf-issue-tag-sidebar {
   overflow: visible;
+
+  .Select-menu-outer {
+    position: relative;
+  }
 }
 
 .cf-comment-wrapper {
