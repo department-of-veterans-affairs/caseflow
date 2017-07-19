@@ -10,9 +10,9 @@ describe User do
     User.case_assignment_repository = Fakes::CaseAssignmentRepository
   end
 
-  before {
+  before do
     Fakes::AuthenticationService.user_session = nil
-  }
+  end
 
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
