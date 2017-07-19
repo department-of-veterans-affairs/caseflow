@@ -25,13 +25,13 @@ services:
       - ./redis-data:/var/lib/redis
 
   rails:
-    image: caseflow
+    build: .
     volumes:
       - .:/caseflow
     # Keep the stdin open, so we can attach to our app container's process and do things such as
     # byebug, etc:
     stdin_open: true
-    command: foreman start -f Procfile.docker
+    command: foreman start -f Procfile
     ports:
       - "3000:3000"
       - "3500:3500"
