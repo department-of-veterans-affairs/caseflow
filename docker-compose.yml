@@ -35,6 +35,7 @@ services:
     command: foreman start -f Procfile.docker
     ports:
       - "3000:3000"
+      - "3500:3500"
     depends_on:
       - db
       - redis
