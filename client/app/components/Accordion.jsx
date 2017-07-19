@@ -18,11 +18,12 @@ export default class Accordion extends React.PureComponent {
   render() {
     const {
       children,
-      style
+      style,
+      id
     } = this.props;
     const arrayOfChildren = React.Children.toArray(children);
     const accordionHeaders = arrayOfChildren.map((child) => {
-      return <Panel header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
+      return <Panel id={id} header={child.props.title} headerClass="usa-accordion-button" key={child.props.title}>
         <div className="usa-accordion-content">
           {child.props.children}
         </div>

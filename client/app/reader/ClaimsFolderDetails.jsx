@@ -43,7 +43,8 @@ class ClaimsFolderDetails extends React.PureComponent {
 
     return <div className="cf-claims-folder-details">
       <h1>{appeal.veteran_full_name}'s Claims Folder</h1>
-      <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
+      <Accordion id="claim-folder-details-accordion" 
+        style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionHeader className="usa-grid" title="Claims folder details" key={1}>
           <div className="usa-width-one-fourth">
             <b>Veteran ID</b><br />
