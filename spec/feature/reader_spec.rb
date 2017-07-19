@@ -842,7 +842,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Open a document and return to list" do
+    scenario "Open a document and return to list", skip: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom("documents-table-body")
