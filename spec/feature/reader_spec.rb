@@ -657,13 +657,30 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Open and close accordion menu",
-             skip: "WIP test" do
+    scenario "Open and close accordion sidebar menu" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
-      click_on "Document information"
+      # Using xpath selectors to click on divs for each section
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[1]").click
       expect(page).to_not have_content("Document Type")
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[1]").click
+      expect(page).to have_content("Document Type")
+
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[2]").click
+      expect(page).to_not have_content("Procedural")
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[2]").click
+      expect(page).to have_content("Procedural")
+
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[3]").click
+      expect(page).to_not have_content("Select or tag issue(s)")
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[3]").click
+      expect(page).to have_content("Select or tag issue(s)")
+
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[4]").click
+      expect(page).to_not have_content("Add a comment")
+      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[4]").click
+      expect(page).to have_content("Add a comment")
     end
 
     scenario "Open and close keyboard shortcuts modal" do
