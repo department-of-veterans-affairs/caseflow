@@ -28,7 +28,6 @@ services:
     image: caseflow
     volumes:
       - .:/caseflow
-    entrypoint: /bin/bash
     # Keep the stdin open, so we can attach to our app container's process and do things such as
     # byebug, etc:
     stdin_open: true
