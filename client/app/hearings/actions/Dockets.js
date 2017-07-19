@@ -7,6 +7,13 @@ export const populateDockets = (dockets) => ({
   }
 });
 
+export const populateWorksheet = (worksheet) => ({
+  type: Constants.POPULATE_WORKSHEET,
+  payload: {
+    worksheet
+  }
+});
+
 export const handleServerError = (err) => ({
   type: Constants.HANDLE_SERVER_ERROR,
   payload: {
