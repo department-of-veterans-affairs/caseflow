@@ -2,11 +2,6 @@ class HearingsController < ApplicationController
   # :nocov:
   before_action :verify_access
 
-  # TODO(jd): Remove this when we have a unique hearings logo
-  def logo_class
-    "cf-logo-image-default"
-  end
-
   def logo_name
     "Hearing Prep"
   end
