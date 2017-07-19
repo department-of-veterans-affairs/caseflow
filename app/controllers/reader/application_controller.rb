@@ -1,5 +1,5 @@
 class Reader::ApplicationController < ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled
+  before_action :verify_access, :verify_reader_feature_enabled, :react_routed
 
   def logo_name
     "Reader"
