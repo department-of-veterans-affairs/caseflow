@@ -183,16 +183,6 @@ class Appeal < ActiveRecord::Base
   end
 
   def regional_office
-    ro_info = VACOLS::RegionalOffice::CITIES[regional_office_key]
-
-    if ro_info
-      ro_info.merge(key: regional_office_key)
-    else
-      {}
-    end
-  end
-
-  def regional_office_details
     regional_office = {}
     regional_office[:key] = regional_office_key
     regional_office.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
