@@ -1,0 +1,33 @@
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
+.cf-toggle-button {
+  span:not(:first-child):not(:last-child) {
+    button {
+      border-radius: 0;
+    }
+  }
+
+  span {
+    &:first-child {
+      button {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin-left: 20px;
+  }
+}
+
+    &:last-child {
+      button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-right: 20px;
+    }
+  }
+ }
+}
+
+.cf-toggle-box-shadow {
+  box-shadow: 1px 1px 6px $color-gray-light;
+}
+
