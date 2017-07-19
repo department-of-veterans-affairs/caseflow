@@ -67,6 +67,14 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       )
     }
 
+    stage('setup') {
+      container('caseflow-test-runner') {
+        sh """
+        Xvfb +extension RANDR :99 -screen 0 1600x900x16 &
+        """
+      }
+    }
+
     stage('run test') {
       parallel (
         frontend: {
@@ -78,7 +86,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             }
           }
         },
-
+	
         lint: {
           stage('rake lint/security') {
             container('caseflow-test-runner') {
@@ -92,15 +100,6 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         },
 
         backend: {
-          stage('setup') {
-            container('caseflow-test-runner') {
-              sh """
-              cd ${CASEFLOW_DIR}
-              Xvfb +extension RANDR :99 -screen 0 1600x900x16 &
-              """
-            }
-          }
-
           stage('db:create') {
             container('caseflow-test-runner') {
               sh """
