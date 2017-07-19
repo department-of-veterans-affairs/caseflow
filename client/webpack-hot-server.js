@@ -32,7 +32,7 @@ const devServer = new WebpackDevServer(compiler, {
   }
 });
 
-devServer.listen(hotRailsPort, 'localhost', (err) => {
+devServer.listen(hotRailsPort, '0.0.0.0', (err) => {
   /* eslint-disable no-console */
   if (err) {
     console.error(err);
