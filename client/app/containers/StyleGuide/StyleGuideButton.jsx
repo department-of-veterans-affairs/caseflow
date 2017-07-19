@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 import StyleGuideLinkButton from './StyleGuideLinkButton';
+import StyleGuideToggleButton from './StyleGuideToggleButton';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideButton extends React.Component {
@@ -114,6 +115,7 @@ export default class StyleGuideButton extends React.Component {
     </div>
     </div>
     <StyleGuideLinkButton />
+    <StyleGuideToggleButton />
     </div>;
   }
 }
