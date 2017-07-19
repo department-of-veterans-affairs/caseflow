@@ -21,6 +21,13 @@ export class DocketsContainer extends React.Component {
     if (!this.props.dockets) {
       this.props.getDockets();
     }
+
+      // Since the title may have changed before rendering...
+      const pageTitle = document.getElementById('page-title');
+
+      if (pageTitle) {
+        pageTitle.innerHTML = '';
+      }
   }
 
   render() {

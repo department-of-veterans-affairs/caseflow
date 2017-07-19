@@ -91,7 +91,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_content("Veteran ID: #{link_text}")
 
-      visit "/hearings/worksheet/#{link_text}"
+      visit "/hearings/worksheets/#{link_text}"
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_content("Veteran ID: #{link_text}")

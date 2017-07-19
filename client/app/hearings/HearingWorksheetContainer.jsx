@@ -8,7 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 
 // TODO: method should get data to populate worksheet
 export const getWorksheet = (id, dispatch) => {
-  ApiUtil.get(`/hearings/worksheet/${id}.json`, { cache: true }).
+  ApiUtil.get(`/hearings/worksheets/${id}.json`, { cache: true }).
     then((response) => {
       dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {

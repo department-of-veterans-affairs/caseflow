@@ -99,7 +99,7 @@ export class DailyDocket extends React.Component {
               </td>
               <td className="cf-hearings-docket-appellant">
                 <b>{hearing.appellant_last_first_mi}</b>
-                <Link to={`/hearings/worksheet/${hearing.vbms_id}`}>{hearing.vbms_id}</Link>
+                <Link to={`/hearings/worksheets/${hearing.vbms_id}`}>{hearing.vbms_id}</Link>
               </td>
               <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
               <td className="cf-hearings-docket-actions" rowSpan="2">

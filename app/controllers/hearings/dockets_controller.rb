@@ -1,16 +1,13 @@
 class Hearings::DocketsController < HearingsController
   before_action :verify_access
 
-  # TODO: remove this line once application_alt and application merge
-  layout "application_alt"
-
   def index
     # If the user does not have a vacols_id, we cannot pull their hearings
     # For now, show them the 404 page
     return not_found unless current_user.vacols_id
 
     respond_to do |format|
-      format.html
+      format.html { render template: "hearings/index" }
       format.json { render json: current_user_dockets.transform_values(&:to_hash) }
     end
   end
@@ -19,7 +16,7 @@ class Hearings::DocketsController < HearingsController
     @hearing_page_title = "Daily Docket"
     date = date_from_string(params[:id])
     return not_found unless date && judge.docket?(date)
-    render :index
+    render template: "hearings/index"
   end
 
   private
