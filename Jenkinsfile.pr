@@ -76,7 +76,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               Xvfb +extension RANDR :99 -screen 0 1600x900x16 &
               """
             }
-          }, 
+          }
           stage('npm test') {
             container('caseflow-test-runner') {
               sh """
