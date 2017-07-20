@@ -49,14 +49,16 @@ export default class Accordion extends React.PureComponent {
 Accordion.propTypes = {
   accordion: PropTypes.bool,
   children (props, propName, componentName) {
-    const prop = props[propName];
-
     let error = null;
 
-    React.Children.forEach(prop, (child) => {
-      if (child.type !== AccordionSection) {
+    React.Children.forEach(props.children, (child) => {
+      // It would be more satisfying to compare child.type and AccordionSection directly. However, sometimes
+      // this comparison fails. I am not sure why. It will only work if it's the same function instance, so
+      // perhaps that gets altered somewhere in React or the importer system. In practice, I think checking
+      // the display name will work pretty well.
+      if (child.type.displayName !== 'AccordionSection') {
         error = new Error(
-          `'${componentName}' children should be of type 'AccordionSection', but was '${child.type}'.`
+          `'${componentName}' children should be of type 'AccordionSection', but was '${child.type.displayName}'.`
         );
       }
     });
