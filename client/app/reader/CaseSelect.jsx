@@ -8,6 +8,30 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 class CaseSelect extends React.PureComponent {
+
+  renderIssuesColumnData = (appeal) => {
+    const issues = appeal.issues || [];
+
+    return (
+      <ol className="issue-list">
+        { issues.map((issue) => {
+          const descriptionLabel = issue.levels ? `${issue.description_label}:` : issue.description_label;
+
+          return <li key={issue.vacols_sequence_id}>
+              {descriptionLabel}
+             {this.renderIssueLevels(issue)}
+          </li>;
+        })}
+      </ol>
+    );
+  }
+
+  renderIssueLevels = (issue) => {
+    const levels = issue.levels || [];
+
+    return levels.map((level) => <p className="issue-level">{level}</p>);
+  }
+
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
@@ -18,7 +42,11 @@ class CaseSelect extends React.PureComponent {
       valueName: 'vbms_id'
     },
     {
-      header: 'View Case File',
+      header: 'Issues',
+      valueFunction: this.renderIssuesColumnData
+    },
+    {
+      header: 'View claims folder',
       valueFunction: (row) => {
         let buttonText = 'New';
         let buttonType = 'primary';
@@ -50,15 +78,14 @@ class CaseSelect extends React.PureComponent {
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Welcome to Reader!</h1>
           <p className="cf-lead-paragraph">
-            Reader allows attorneys and judges to review
-            and annotate Veteran claims folders.
-            Learn more about Reader on our <a href="/reader/help">Help page</a>.
+            Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
-          <h1>Work Assignments</h1>
+          <h2>Cases checked in</h2>
           <Table
+            className="assignment-list"
             columns={this.getAssignmentColumn}
             rowObjects={this.props.assignments}
-            summary="Work Assignments"
+            summary="Cases checked in"
             getKeyForRow={this.getKeyForRow}
           />
         </div>

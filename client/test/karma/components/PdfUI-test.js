@@ -39,7 +39,7 @@ describe('PdfUI', () => {
       it('renders the title as a link', () => {
         expect(wrapper.find('Link').find({ name: 'newTab' }).
           children().
-          text()).to.eq(doc.type);
+          text()).to.eq(`${doc.type}<ExternalLink />`);
         expect(wrapper.find('Link').find({ name: 'newTab' }).
           first().
           props().target).to.eq('_blank');

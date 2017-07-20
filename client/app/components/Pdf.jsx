@@ -102,7 +102,8 @@ export class Pdf extends React.PureComponent {
     this.state = {
       numPages: {},
       pdfDocument: {},
-      isDrawn: {}
+      isDrawn: {},
+      pageDimensions: {}
     };
 
     this.scrollLocation = {
@@ -112,9 +113,6 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isDrawing = {};
-
-    this.defaultWidth = PAGE_WIDTH;
-    this.defaultHeight = PAGE_HEIGHT;
 
     this.refFunctionGetters = {
       canvas: {},
@@ -184,8 +182,6 @@ export class Pdf extends React.PureComponent {
           // The viewport is a PDFJS concept that combines the size of the
           // PDF pages with the scale go get the dimensions of the divs.
           const viewport = pdfPage.getViewport(this.props.scale, this.props.rotation);
-          const topOfPageLocation = this.pageElements[this.props.file][this.currentPage - 1].pageContainer.
-            getBoundingClientRect().top;
 
           // We need to set the width and heights of everything based on
           // the width and height of the viewport.
@@ -195,13 +191,6 @@ export class Pdf extends React.PureComponent {
           this.setElementDimensions(container, viewport);
           this.setElementDimensions(page, viewport);
           container.innerHTML = '';
-
-          // In updating the sizes of the page divs, we may have pushed the page the user
-          // is looking at up or down. If we have moved that page, we want to undo that movement.
-          // We do this by determining where on the current page you were scrolled to before we
-          // updated the dimensions. Then we make sure the user is still scrolled to that spot.
-          this.scrollWindow.scrollTop = this.pageElements[this.props.file][this.currentPage - 1].pageContainer.
-            getBoundingClientRect().top - topOfPageLocation + this.scrollWindow.scrollTop;
 
           // Call PDFJS to actually draw the page.
           return pdfPage.render({
@@ -240,7 +229,6 @@ export class Pdf extends React.PureComponent {
               scale,
               rotation,
               index,
-              viewport,
               file
             });
         }).
@@ -261,7 +249,6 @@ export class Pdf extends React.PureComponent {
       pdfDocument,
       scale,
       rotation,
-      ..._.pick(viewport, ['width', 'height'])
     });
 
     resolve();
@@ -351,6 +338,45 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  setPageDimensions = (pdfDocument, file) => {
+    // This is the scale we calculate the page dimensions at. This way we can calculate the
+    // page sizes at any scale by multiplying by the value passed in to this.props.scale.
+    const PAGE_DIMENSION_SCALE = 1;
+
+    let pageDimensions = [];
+    const setStateWithDimensions = () => {
+      // Since these promises will finish asynchronously, we need to check if this
+      // iteration is the last. If so, then we should set the state with the page
+      // dimensions just calculated.
+      const numDimensionsFound = pageDimensions.reduce((acc, page) => acc + (page ? 1 : 0), 0);
+
+      if (numDimensionsFound === pdfDocument.pdfInfo.numPages) {
+        this.setState({
+          pageDimensions: {
+            ...this.state.pageDimensions,
+            [file]: pageDimensions
+          }
+        });
+      }
+    };
+
+    _.range(pdfDocument.pdfInfo.numPages).forEach((pageIndex) => {
+      pdfDocument.getPage(pageNumberOfPageIndex(pageIndex)).then((pdfPage) => {
+        const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
+
+        pageDimensions[pageIndex] = _.pick(viewport, ['width', 'height']);
+        setStateWithDimensions();
+      }).
+      catch(() => {
+        pageDimensions[pageIndex] = {
+          width: PAGE_WIDTH,
+          height: PAGE_HEIGHT
+        };
+        setStateWithDimensions();
+      });
+    });
+  }
+
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to draw it.
   setUpPdf = (file) => {
@@ -358,13 +384,13 @@ export class Pdf extends React.PureComponent {
 
     return new Promise((resolve) => {
       this.getDocument(this.latestFile).then((pdfDocument) => {
+
         // Don't continue seting up the pdf if it's already been set up.
         if (!pdfDocument || pdfDocument === this.state.pdfDocument) {
           return resolve();
         }
 
-        this.defaultWidth = PAGE_WIDTH;
-        this.defaultHeight = PAGE_HEIGHT;
+        this.setPageDimensions(pdfDocument, file);
 
         this.setState({
           numPages: {
@@ -476,7 +502,7 @@ export class Pdf extends React.PureComponent {
 
   onPageChange = (currentPage) => {
     const unscaledHeight = (_.get(this.pageElements,
-      [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight'] / this.props.scale));
+      [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight']) / this.props.scale);
 
     this.currentPage = currentPage;
     this.props.onPageChange(
@@ -665,15 +691,16 @@ export class Pdf extends React.PureComponent {
     this.drawInViewPages();
     this.preDrawPages();
 
-    // if jump to page number is provided
-    // draw the page and jump to the page
-    if (this.props.jumpToPageNumber) {
-      this.scrollToPage(this.props.jumpToPageNumber);
-      this.onPageChange(this.props.jumpToPageNumber);
-    }
-    if (this.props.scrollToComment) {
-      if (this.props.documentId === this.props.scrollToComment.documentId) {
-        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page), this.props.scrollToComment.y);
+    // Wait until the page dimensions have been calculated, then it is
+    // safe to jump to the pages since their positioning won't change.
+    if (this.state.pageDimensions[this.props.file]) {
+      if (this.props.jumpToPageNumber) {
+        this.scrollToPage(this.props.jumpToPageNumber);
+        this.onPageChange(this.props.jumpToPageNumber);
+      }
+      if (this.props.scrollToComment) {
+        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page),
+          this.props.scrollToComment.y);
       }
     }
 
@@ -822,22 +849,22 @@ export class Pdf extends React.PureComponent {
           }, this.props.documentId);
         };
 
-        const relativeScale = this.props.scale / _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'], 1);
-        const currentWidth = _.get(this.state.isDrawn, [this.props.file, pageIndex, 'width'], this.defaultWidth);
-        const currentHeight = _.get(this.state.isDrawn, [this.props.file, pageIndex, 'height'], this.defaultHeight);
+        const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], PAGE_WIDTH);
+        const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], PAGE_HEIGHT);
 
         // Only pages that are the correct scale should be visible
         const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
         const pageContentsVisibleClass = classNames({
-          'cf-pdf-page-hidden': !(Math.abs(relativeScale - 1) < CORRECT_SCALE_DELTA_THRESHOLD)
+          'cf-pdf-page-hidden': !(Math.abs(this.props.scale -
+            _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
         });
 
         return <div
           className={this.props.file === file && pageClassNames}
           style={ {
             marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-            width: `${relativeScale * currentWidth}px`,
-            height: `${relativeScale * currentHeight}px`,
+            width: `${this.props.scale * currentWidth}px`,
+            height: `${this.props.scale * currentHeight}px`,
             verticalAlign: 'top',
             display: file === this.props.file ? '' : 'none'
           } }

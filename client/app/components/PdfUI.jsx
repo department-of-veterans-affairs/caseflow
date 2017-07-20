@@ -10,7 +10,12 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, rotatePage } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
+<<<<<<< HEAD
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron, RotateIcon } from '../components/RenderFunctions';
+=======
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
+  ExternalLink, FitToScreen } from '../components/RenderFunctions';
+>>>>>>> 0bd8960c2109fe69ef45801008c3f54fc8daf87c
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
@@ -174,25 +179,22 @@ export class PdfUI extends React.Component {
                 button="matte"
                 onClick={ () => Analytics.event('Document Viewer', 'click', 'document type link') }
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
-                <span title={this.props.doc.type}>{this.props.doc.type}</span>
+                <span className="cf-pdf-vertically-center">
+                  <span title="Open in new tab">{this.props.doc.type}</span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
+                </span>
               </Link>
             </span>
-            </span>
+          </span>
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-right">
+          Zoom:
           <Button
             name="zoomOut"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(-ZOOM_RATE)}
             ariaLabel="zoom out">
             <i className="fa fa-minus" aria-hidden="true"></i>
-          </Button>
-          <Button
-            name="fit"
-            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={() => this.props.rotatePage(this.props.doc.id)}
-            ariaLabel="fit to screen">
-            <i className="fa fa-arrows-alt" aria-hidden="true"></i>
           </Button>
           <Button
             name="zoomIn"
@@ -202,11 +204,25 @@ export class PdfUI extends React.Component {
             <i className="fa fa-plus" aria-hidden="true"></i>
           </Button>
           <Button
-            name="download"
+            name="fit"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.fitToScreen}
+            ariaLabel="fit to screen">
+            <FitToScreen/>
+          </Button>
+          <Button
+            name="rotate"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={() => this.props.rotatePage(this.props.doc.id)}
+            ariaLabel="rotate document">
+            <RotateIcon/>
+          </Button>
+          <Button
+            name="download"
+            classNames={['cf-pdf-button cf-pdf-download-icon']}
             onClick={this.openDownloadLink}
             ariaLabel="download pdf">
-            <DownloadIcon />
+            <DownloadIcon/>
           </Button>
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
