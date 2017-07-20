@@ -1,12 +1,12 @@
 import React from 'react';
 import Accordion from '../../components/Accordion';
-import AccordionHeader from '../../components/AccordionHeader';
+import AccordionSection from '../../components/AccordionSection';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideAccordions extends React.PureComponent {
   render = () => {
-    const sgAccordionHeaders = [1, 2, 3, 4, 5].map((header) => {
-      return (<AccordionHeader title={`Example title ${header}`} key={header}>
+    const sgAccordionSections = [1, 2, 3, 4, 5].map((header) => {
+      return (<AccordionSection title={`Example title ${header}`} key={header}>
         <p>
           Millions of Americans interact with government services every day.
           Veterans apply for benefits. Students compare financial aid options.
@@ -17,7 +17,7 @@ export default class StyleGuideAccordions extends React.PureComponent {
           our government's most important digital services.
           Visit USDS.gov to learn more.
         </p>
-      </AccordionHeader>);
+      </AccordionSection>);
     });
 
     return <div>
@@ -32,17 +32,17 @@ export default class StyleGuideAccordions extends React.PureComponent {
 
     <h3>Border</h3>
     <Accordion style="bordered" accordion={true}>
-      {sgAccordionHeaders}
+      {sgAccordionSections}
     </Accordion>
 
     <h3>Borderless</h3>
     <Accordion style="borderless" accordion={true}>
-      {sgAccordionHeaders}
+      {sgAccordionSections}
     </Accordion>
 
     <h3>Bordered Outline</h3>
     <Accordion style="outline" accordion={true}>
-      {sgAccordionHeaders}
+      {sgAccordionSections}
     </Accordion>
     </div>;
   }

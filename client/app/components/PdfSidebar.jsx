@@ -11,7 +11,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
-import AccordionHeader from '../components/AccordionHeader';
+import AccordionSection from '../components/AccordionSection';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -159,7 +159,7 @@ export class PdfSidebar extends React.Component {
         }}>
           <Accordion style="outline" accordion={false}
             defaultActiveKey={['Document information', 'Categories', 'Issue tags', 'Comments']}>
-            <AccordionHeader title="Document information" key="document-information">
+            <AccordionSection title="Document information" key="document-information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">
                 <b>Document Type: </b>
                 <span title={this.props.doc.type} className="cf-document-type">
@@ -169,8 +169,8 @@ export class PdfSidebar extends React.Component {
               <p className="cf-pdf-meta-title">
                 <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
               </p>
-            </AccordionHeader>
-            <AccordionHeader title="Categories" key="categories">
+            </AccordionSection>
+            <AccordionSection title="Categories" key="categories">
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
                 <DocCategoryPicker
@@ -179,8 +179,8 @@ export class PdfSidebar extends React.Component {
                   }
                   categoryToggleStates={categoryToggleStates} />
               </div>
-            </AccordionHeader>
-            <AccordionHeader title="Issue tags" key="issue-tags">
+            </AccordionSection>
+            <AccordionSection title="Issue tags" key="issue-tags">
               <div className="cf-issue-tag-sidebar">
                 {showErrorMessage.tag && cannotSaveAlert}
                 <SearchableDropdown
@@ -196,8 +196,8 @@ export class PdfSidebar extends React.Component {
                   selfManageValueState={true}
                 />
               </div>
-            </AccordionHeader>
-            <AccordionHeader title="Comments" key="comments-header" id="comments-header">
+            </AccordionSection>
+            <AccordionSection title="Comments" key="comments-header" id="comments-header">
                 <span className="cf-right-side cf-add-comment-button">
                   <Button
                     name="AddComment"
@@ -219,7 +219,7 @@ export class PdfSidebar extends React.Component {
                   {comments}
                 </div>
               </div>
-            </AccordionHeader>
+            </AccordionSection>
           </Accordion>
         </div>
         <div className="cf-keyboard-shortcuts">

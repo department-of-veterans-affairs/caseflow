@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Collapse, { Panel } from 'rc-collapse';
-import AccordionHeader from './AccordionHeader';
+import AccordionSection from './AccordionSection';
 
 const CLASS_NAME_MAPPING = {
   bordered: 'usa-accordion-bordered',
@@ -10,7 +10,7 @@ const CLASS_NAME_MAPPING = {
 };
 
 /*
-* The base CSS file for both the Accordion and the AccordionHeader components
+* The base CSS file for both the Accordion and the AccordionSection components
 * originiated from vendor/assets/_rc_collapse.scss. Should there be any styling
 * issues for future accordion styles please consult that file along with _main.scss.
 */
@@ -25,7 +25,7 @@ export default class Accordion extends React.PureComponent {
       style
     } = this.props;
 
-    const accordionHeaders = children.map((child) => {
+    const accordionSections = children.map((child) => {
       return <Panel header={child.props.title} headerClass="usa-accordion-button"
         key={child.props.title} id={child.props.id}>
           <div className="usa-accordion-content">
@@ -41,7 +41,7 @@ export default class Accordion extends React.PureComponent {
 
     return <Collapse accordion={accordion} className={CLASS_NAME_MAPPING[style]}
       defaultActiveKey={defaultActiveKey} id={id}>
-      {accordionHeaders}
+      {accordionSections}
     </Collapse>;
   }
 }
@@ -54,9 +54,9 @@ Accordion.propTypes = {
     let error = null;
 
     React.Children.forEach(prop, (child) => {
-      if (child.type !== AccordionHeader) {
+      if (child.type !== AccordionSection) {
         error = new Error(
-          `'${componentName}' children should be of type 'AccordionHeader', but was '${child.type}'.`
+          `'${componentName}' children should be of type 'AccordionSection', but was '${child.type}'.`
         );
       }
     });
