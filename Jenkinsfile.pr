@@ -74,8 +74,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         """
       }
     }
-
-    stage('run test') {
+    stage('frontend / lint') {
       parallel (
         frontend: {
           stage('npm test') {
@@ -97,39 +96,39 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               """
             }
           }
-        },
-
-        backend: {
-          stage('db:create') {
-            container('caseflow-test-runner') {
-              sh """
-              cd ${CASEFLOW_DIR}
-              rake db:create
-              rake db:schema:load
-              """
-            }
-          }
-
-          stage('rake spec') {
-            container('caseflow-test-runner') {
-              sh """
-              cd ${CASEFLOW_DIR}
-              rake spec
-              """
-            }
-          }
-
-          stage('rake coverage') {
-            container('caseflow-test-runner') {
-              sh """
-              cd ${CASEFLOW_DIR}
-              rake ci:verify_code_coverage
-              rake konacha:run
-              """
-            }
-          }
         }
       )
+    }
+
+    stage('backend') {
+      stage('db:create') {
+        container('caseflow-test-runner') {
+          sh """
+          cd ${CASEFLOW_DIR}
+          rake db:create
+          rake db:schema:load
+          """
+        }
+      }
+
+      stage('rake spec') {
+        container('caseflow-test-runner') {
+          sh """
+          cd ${CASEFLOW_DIR}
+          rake spec
+          """
+        }
+      }
+
+      stage('rake coverage') {
+        container('caseflow-test-runner') {
+          sh """
+          cd ${CASEFLOW_DIR}
+          rake ci:verify_code_coverage
+          rake konacha:run
+          """
+        }
+      }
     }
   }
 }
