@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
-  onScrollToComment } from '../reader/actions';
+  onScrollToComment, setOpenedAccordionSections } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
@@ -524,6 +524,12 @@ export class Pdf extends React.PureComponent {
     );
 
     this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
+
+    if (!_.includes(this.props.openedAccordionSections, 'Comments')) {
+      this.props.setOpenedAccordionSections(
+        this.props.openedAccordionSections.concat(['Comments'])
+      );
+    }
   }
 
   handleAltEnter = () => {
@@ -906,13 +912,14 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconPageCoords'),
+  ..._.pick(state, 'placingAnnotationIconPageCoords', 'openedAccordionSections'),
   comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    setOpenedAccordionSections,
     placeAnnotation,
     setPageCoordBounds,
     startPlacingAnnotation,
