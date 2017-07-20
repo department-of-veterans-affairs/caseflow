@@ -79,6 +79,23 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
     end
+
+    scenario "Shows a hearing worksheet" do
+      visit "/hearings/dockets/2017-01-05"
+
+      link = find(".cf-hearings-docket-appellant", match: :first).find("a")
+      link_text = link.text
+
+      link.click
+      expect(page).to have_content("Hearing Worksheet")
+      expect(page).to have_content("Hearing Type: Video")
+      expect(page).to have_content("Veteran ID: #{link_text}")
+
+      visit "/hearings/worksheets/#{link_text}"
+      expect(page).to have_content("Hearing Worksheet")
+      expect(page).to have_content("Hearing Type: Video")
+      expect(page).to have_content("Veteran ID: #{link_text}")
+    end
   end
 end
 

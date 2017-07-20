@@ -86,7 +86,9 @@
         ga('send', 'event', category, action, label)
       }
 
-      analyticsPageView('<%= current_ga_path %>');
+      <% unless @react_routed %>
+        analyticsPageView('<%= current_ga_path %>');
+      <% end %>
     </script>
   <% end %>
 
@@ -151,7 +153,11 @@
             </div>
           </div>
         </div>
-        <%= react_component("PerformanceDegradationBanner") %>
+
+       <% if current_user && current_user.authenticated? %>
+         <%= react_component("PerformanceDegradationBanner") %>
+       <% end %>
+
       </header>
       <% if content_for?(:full_page_content) %>
       <main class="cf-app-width cf-full-page-app">
