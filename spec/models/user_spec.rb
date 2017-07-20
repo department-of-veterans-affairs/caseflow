@@ -206,18 +206,14 @@ describe User do
       User.case_assignment_repository = Fakes::CaseAssignmentRepository
     end
 
-    context "returns empty array when no cases are assigned" do
-      it do
-        Fakes::CaseAssignmentRepository.appeal_records = []
-        is_expected.to be_empty
-      end
+    it "returns empty array when no cases are assigned" do
+      Fakes::CaseAssignmentRepository.appeal_records = []
+      is_expected.to be_empty
     end
 
-    context "returns appeal assigned to user" do
-      it do
-        Fakes::CaseAssignmentRepository.appeal_records = [appeal]
-        is_expected.to match_array([appeal])
-      end
+    it "returns appeal assigned to user" do
+      Fakes::CaseAssignmentRepository.appeal_records = [appeal]
+      is_expected.to match_array([appeal])
     end
   end
 
@@ -230,14 +226,12 @@ describe User do
       Fakes::CaseAssignmentRepository.appeal_records = [appeal]
     end
 
-    context "has hash without view" do
-      it do
-        is_expected.to include(
-          "vbms_id" => appeal.vbms_id,
-          "vacols_id" => appeal.vacols_id,
-          "veteran_full_name" => appeal.veteran_full_name,
-          "viewed" => nil)
-      end
+    it "returns nil when no cases have been viewed" do
+      is_expected.to include(
+        "vbms_id" => appeal.vbms_id,
+        "vacols_id" => appeal.vacols_id,
+        "veteran_full_name" => appeal.veteran_full_name,
+        "viewed" => nil)
     end
 
     context "has hash with view" do
