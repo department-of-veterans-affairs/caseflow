@@ -19,11 +19,9 @@ class RetrieveAppealsDocumentsForReaderJob < ActiveJob::Base
           failed_count += 1
           Rails.logger.error "Failed to retrieve #{document.file_name} from VBMS:\n#{e.message}"
         end
-
-        break if docs_attempted == limit
       end
 
-      break if docs_attempted == limit
+      break if docs_attempted >= limit
     end
 
     Rails.logger.info "Successfully retrieved #{successful_count} documents for Reader cases"
@@ -31,8 +29,8 @@ class RetrieveAppealsDocumentsForReaderJob < ActiveJob::Base
   end
 
   def find_all_active_reader_appeals
-    active_appeals = Set.new
-    User.where("'Reader' = ANY(roles)").map { |user| active_appeals.merge(user.current_case_assignments) }
-    active_appeals
+    User.where("'Reader' = ANY(roles)").reduce(Set.new) do |active_appeals, user|
+      active_appeals.merge(user.current_case_assignments)
+    end
   end
 end

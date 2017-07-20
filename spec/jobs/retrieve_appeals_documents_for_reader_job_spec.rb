@@ -87,18 +87,35 @@ describe RetrieveAppealsDocumentsForReaderJob do
     end
 
     context "when a limit is provided" do
+      let!(:new_doc) do
+        Generators::Document.build(type: Faker::Shakespeare.as_you_like_it_quote, received_at: 6.days.ago)
+      end
+
+      let!(:new_doc_expected_content) do
+        Faker::Shakespeare.king_richard_iii_quote
+      end
+
       before do
-        expect_all_calls_for_user(reader_user, appeal_with_doc1, expected_doc1, doc1_expected_content)
+        # appeal_with_doc1 will have 2 docs associated with it
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1]).once
+
+        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1)
+          .and_return([expected_doc1, new_doc]).once
+
+        expect_calls_for_doc(expected_doc1, doc1_expected_content)
+        expect_calls_for_doc(new_doc, new_doc_expected_content)
 
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
           .and_return([appeal_with_doc2]).once
         dont_expect_calls_for_appeal(appeal_with_doc2, expected_doc2)
       end
 
-      it "stops when the limit is reached" do
+      it "stops if limit is reached after finishing current case" do
         RetrieveAppealsDocumentsForReaderJob.perform_now(1)
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
+        expect(S3Service.files[new_doc.vbms_document_id]).to eq(new_doc_expected_content)
         expect(S3Service.files[expected_doc2.vbms_document_id]).to be_nil
         expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
       end
@@ -137,11 +154,15 @@ describe RetrieveAppealsDocumentsForReaderJob do
   def expect_all_calls_for_user(user, appeal, doc, content)
     expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(user.css_id)
       .and_return([appeal]).once
-    expect_calls_for_doc(appeal, doc, content)
+    expect_calls_for_appeal(appeal, doc, content)
   end
 
-  def expect_calls_for_doc(appeal, doc, content)
+  def expect_calls_for_appeal(appeal, doc, content)
     expect(VBMSService).to receive(:fetch_documents_for).with(appeal).and_return([doc]).once
+    expect_calls_for_doc(doc, content)
+  end
+
+  def expect_calls_for_doc(doc, content)
     expect(S3Service).to receive(:exists?).with(doc.vbms_document_id).and_return(false).once
     expect(VBMSService).to receive(:fetch_document_file).with(doc).and_return(content).once
   end
