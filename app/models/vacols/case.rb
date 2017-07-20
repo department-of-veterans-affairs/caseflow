@@ -196,7 +196,7 @@ class VACOLS::Case < VACOLS::Record
 
     fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
 
-    conn = connection
+    conn = self.class.connection
 
     # Note: we use conn.quote here from ActiveRecord to deter SQL injection
     location = conn.quote(location)
