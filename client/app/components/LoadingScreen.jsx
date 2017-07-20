@@ -1,7 +1,6 @@
 import React from 'react';
 import { loadingSymbolHtml } from './RenderFunctions';
 
-
 const LoadingScreen = ({ spinnerColor, message }) => {
   return <div
     id="loading-symbol"
