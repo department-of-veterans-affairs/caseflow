@@ -44,20 +44,28 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       }
     }
 
-    stage('npm') {
-      container('caseflow-test-runner') {
-        sh """
-        cd ${CASEFLOW_DIR}/client && npm install --no-optional
-        """
-      }
-    }
+    stage('install') {
+      parallel(
+        npm: {
+          stage('npm') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}/client && npm install --no-optional
+              """
+            }
+          }
+        },
 
-    stage('bundle') {
-      container('caseflow-test-runner') {
-        sh """
-        cd ${CASEFLOW_DIR} && bundle install --without production staging
-        """
-      }
+        bundle: {
+          stage('bundle') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR} && bundle install --without production staging
+              """
+            }
+          }
+        }
+      )
     }
 
     stage('setup') {
@@ -67,15 +75,30 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         """
       }
     }
-
-    stage('rake lint/security') {
-      container('caseflow-test-runner') {
-        sh """
-        cd ${CASEFLOW_DIR}
-        rake lint
-        rake security
-        """
-      }
+    stage('frontend / lint') {
+      parallel (
+        frontend: {
+          stage('npm test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}/client && npm run test
+              """
+            }
+          }
+        },
+	
+        lint: {
+          stage('rake lint/security') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              rake lint
+              rake security
+              """
+            }
+          }
+        }
+      )
     }
 
     stage('backend') {
