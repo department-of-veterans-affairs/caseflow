@@ -83,6 +83,9 @@ export class PdfSidebar extends React.Component {
     }
   }
 
+  onAccordionOpenOrClose = (openedSections) =>
+    this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
+
   handleAddClick = (event) => {
     Analytics.event('Document Viewer', 'click', 'Add comment');
     this.props.startPlacingAnnotation();
@@ -158,7 +161,7 @@ export class PdfSidebar extends React.Component {
           this.commentListElement = commentListElement;
         }}>
           <Accordion style="outline"
-            onChange={this.props.setOpenedAccordionSections}
+            onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
             <AccordionSection title="Document information" key="document-information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">

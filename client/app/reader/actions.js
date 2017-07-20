@@ -2,6 +2,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
+import Analytics from '../util/AnalyticsUtil';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -449,9 +450,21 @@ export const addNewTag = (doc, tags) => (
   }
 );
 
-export const setOpenedAccordionSections = (openedAccordionSections) => ({
-  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
-  payload: {
-    openedAccordionSections
-  }
-});
+export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => {
+  const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
+  const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
+
+  addedSectionKeys.forEach(
+    (newKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
+  );
+  removedSectionKeys.forEach(
+    (oldKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
+  );
+
+  return {
+    type: Constants.SET_OPENED_ACCORDION_SECTIONS,
+    payload: {
+      openedAccordionSections
+    }
+  };
+};
