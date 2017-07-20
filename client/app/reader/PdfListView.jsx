@@ -57,7 +57,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    fetchAppealsDetails
+    fetchAppealDetails
   }, dispatch)
 );
 
