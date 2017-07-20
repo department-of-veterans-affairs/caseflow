@@ -658,7 +658,7 @@ RSpec.feature "Reader" do
     end
 
     ensure_stable do
-      scenario "Open and close accordion sidebar menu", :focus => true do
+      scenario "Open and close accordion sidebar menu", focus: true do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/"
         click_on documents[0].type
 
