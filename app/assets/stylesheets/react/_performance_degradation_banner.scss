@@ -2,16 +2,17 @@ $color-gold-lightest: #fff1d2;
 
 .usa-banner {
   background-color: $color-gold-lightest;
-  height: 50px;
+  text-align: center;
 }
 
 .usa-banner-inner {
-  padding-top: 13px;
+  padding: .5em;
 }
 
 .banner-icon {
   display: inline-block;
   vertical-align: text-top;
+  height: 25px;
 }
 
 .banner-text {

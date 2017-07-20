@@ -8,6 +8,8 @@ class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
   def start!
+    return certification_status unless can_be_updated?
+
     create_or_update_form8
 
     update_attributes!(
@@ -224,6 +226,10 @@ class Certification < ActiveRecord::Base
 
   def calculate_ssocs_required
     appeal.ssocs.any?
+  end
+
+  def can_be_updated?
+    Rails.env.development? || Rails.env.demo? || !already_certified
   end
 
   class << self

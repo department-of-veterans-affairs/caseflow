@@ -1,169 +1,24 @@
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
 
-// This may become a common variable
+// variables here should eventually find their way into commons
+@import 'variables';
+
 $color-hearings-saving: #777;
-$color-dropdown-shadow: rgba(0, 0, 0, 0.75);
-
-// Using 1.765em alot, should create variable if this setting sticks
-
-// FOR USE WITH APPLICATION ALT TEMPLATE AND HEARINGS
-
-html,
-body {
-  margin: 0;
-  height: 100%;
-  color: $color-gray-dark;
-}
-
-.cf-alt--content {
-  min-height: 100%;
-
-  header {
-    border-bottom: 1px solid $color-gray-lighter;
-    background: $color-white;
-    line-height: 4em;
-    margin-bottom: 1.765em;
-
-    > div {
-      &::after {
-        content: '\00a0';
-        line-height: 0;
-        display: block;
-        clear: both;
-      }
-    }
-
-    .cf-nav {
-      padding: 0;
-      border: 0;
-    }
-
-    [class*="cf-logo-image-"] {
-      width: auto;
-      height: auto;
-      background-repeat: no-repeat;
-      background-position: center left;
-    }
-  }
-
-  .cf-app-segment,
-  .cf-app-segment--alt {
-    margin: 0;
-    border: none;
-  }
-}
-
-.cf-alt--content-inside {
-  padding-bottom: 12.353em;
-
-  .cf-logo {
-    margin: 0;
-    display: inline-block;
-    line-height: 3em;
-    padding-left: 48px;
-
-    a {
-      color: $color-gray-dark;
-    }
-  }
-
-  main {
-    .content {
-      background: $color-white;
-      border: 1px solid $color-gray-lighter;
-    }
-  }
-}
-
-.cf-alt--app-footer {
-  min-height: 5em;
-  margin-top: -5em;
-  box-sizing: border-box;
-
-  > div {
-    border-top: 1px solid $color-gray-lighter;
-    padding: 1.765em 0;
-
-    &::after {
-      content: '\00a0';
-      line-height: 0;
-      display: block;
-      clear: both;
-    }
-  }
-}
-
-.cf-dropdown-trigger::after {
-  background-size: .75em;
-}
-
-.cf-dropdown-menu {
-  position: absoulte;
-  top: 3em;
-  width: auto;
-  min-width: 13em;
-}
-
-.cf-alt--actions {
-  margin-top: 1.765em;
-
-  &::after {
-    content: '\00a0';
-    line-height: 0;
-    display: block;
-    clear: both;
-  }
-}
-
-@mixin app-width($app) {
-  margin-left: auto;
-  margin-right: auto;
-
-  @if $app == 'hearings' or $app == 'reader' {
-    width: 85vw;
-  } @else {
-    width: 65vw;
-  }
-}
-
-.cf-alt--app-hearings {
-  .cf-alt--app-width {
-    @include app-width('hearings');
-  }
-}
-
-.cf-alt--app-dispatch {
-  .cf-alt--app-width {
-    @include app-width('dispatch');
-  }
-}
-
-.cf-alt--app-certification {
-  .cf-alt--app-width {
-    @include app-width('cert');
-  }
-}
-
-.cf-alt--app-efolder {
-  .cf-alt--app-width {
-    @include app-width('efolder');
-  }
-}
-
-.cf-alt--app-reader {
-  .cf-alt--app-width {
-    @include app-width('reader');
-  }
-}
 
 .cf-hearings,
-.cf-hearings-schedule {
-  padding: 1.765em;
+.cf-hearings-schedule,
+.cf-hearings-worksheet {
+  padding: $cf-30px;
 
   .cf-hearings-title-and-judge {
     h1 {
       margin-bottom: 0;
+    }
+
+    span {
+      position: relative;
+      left: .25em;
     }
   }
 
@@ -339,4 +194,127 @@ body {
   height: 35vh;
   margin: 0 auto;
   text-align: center;
+}
+
+.cf-hearings-worksheet {
+  [type="text"] {
+    margin: .3em 0 0;
+  }
+
+  textarea {
+    margin: 0;
+    width: 100%;
+    resize: vertical;
+  }
+
+  [type="text"],
+  textarea {
+    border: 1px solid $color-gray-medium;
+  }
+
+  table {
+    margin: .5em 0 0;
+  }
+}
+
+.cf-hearings-worksheet-data {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.765em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .saving {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .cf-push-left {
+    width: 20%;
+    margin-top: 1em;
+  }
+
+  .cf-appeal-stream-label {
+    margin-top: .5em;
+    margin-bottom: 0;
+  }
+
+  h2 {
+    border-bottom: 1px solid $color-gray-light;
+    margin-bottom: .5em;
+  }
+}
+
+.cf-hearings-worksheet-header {
+  font-weight: bold;
+  font-size: 1.05em;
+  padding-bottom: .3em;
+}
+
+.cf-hearings-worksheet-issues {
+  margin: 0;
+
+  .cf-txt-l {
+    padding-left: .4em;
+  }
+
+  tr {
+    border: none;
+
+    th {
+      padding: 0;
+    }
+  }
+
+  td {
+    vertical-align: top;
+    padding: .5em;
+
+    &:nth-of-type(5) {
+      width: 20%;
+    }
+
+    &:nth-of-type(6) {
+      width: 30%;
+    }
+
+    textarea {
+      height: 4em;
+    }
+
+    .cf-form-checkboxes {
+      display: inline-block;
+      box-sizing: border-box;
+      margin: 0;
+      padding: .3em 0;
+
+      &:nth-of-type(1),
+      &:nth-of-type(4) {
+        width: 40%;
+      }
+
+      &:nth-of-type(2),
+      &:nth-of-type(5) {
+        width: 35%;
+      }
+
+      &:nth-of-type(3),
+      &:nth-of-type(6) {
+        width: 25%;
+      }
+
+      label {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.cf-hearings-worksheet-desc-label {
+  position: absolute;
+  left: -99999px;
 }

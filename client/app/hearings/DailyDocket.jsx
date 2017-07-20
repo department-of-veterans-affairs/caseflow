@@ -60,10 +60,10 @@ export class DailyDocket extends React.Component {
 
   render() {
 
-    let docket = this.props.docket;
+    const docket = this.props.docket;
 
     return <div>
-      <div className="content cf-hearings">
+      <div className="cf-app-segment cf-app-segment--alt cf-hearings">
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
             <h1>Daily Docket</h1>
@@ -99,7 +99,7 @@ export class DailyDocket extends React.Component {
               </td>
               <td className="cf-hearings-docket-appellant">
                 <b>{hearing.appellant_last_first_mi}</b>
-                <a href="#">{hearing.vbms_id}</a>
+                <Link to={`/hearings/worksheets/${hearing.vbms_id}`}>{hearing.vbms_id}</Link>
               </td>
               <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
               <td className="cf-hearings-docket-actions" rowSpan="2">
