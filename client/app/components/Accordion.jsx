@@ -55,8 +55,9 @@ Accordion.propTypes = {
 
     React.Children.forEach(prop, (child) => {
       if (child.type !== AccordionHeader) {
-        error = new Error(`\`${componentName}\` children should be of type \`AccordionHeader\`,
-          but was \`${child.type}\`.`);
+        error = new Error(
+          `'${componentName}' children should be of type 'AccordionHeader', but was '${child.type}'.`
+        );
       }
     });
 
