@@ -8,6 +8,6 @@ const LoadingScreen = ({ spinnerColor, message }) => {
     {loadingSymbolHtml('', '300px', spinnerColor)}
     <p>{message}</p>
   </div>;
-}
+};
 
 export default LoadingScreen;
