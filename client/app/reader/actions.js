@@ -433,7 +433,7 @@ export const onAppealDetailsLoadingFail = () => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE
 });
 
-export const fetchAppealsDetails = (vacolsId) => (
+export const fetchAppealDetails = (vacolsId) => (
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
-import { fetchAppealsDetails } from './actions';
+import { fetchAppealDetails } from './actions';
 
 import _ from 'lodash';
 import DocumentsTable from './DocumentsTable';
@@ -14,8 +14,9 @@ import NoSearchResults from './NoSearchResults';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-    if (_.isEmpty(this.props.appeal)) {
-      this.props.fetchAppealsDetails(this.props.match.params.vacolsId);
+    if (_.isEmpty(this.props.appeal) || 
+      (this.props.appeal.vacols_id !== this.props.match.params.vacolsId)) {
+      this.props.fetchAppealDetails(this.props.match.params.vacolsId);
     }
   }
 
