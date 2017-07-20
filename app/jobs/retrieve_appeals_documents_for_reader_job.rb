@@ -15,7 +15,7 @@ class RetrieveAppealsDocumentsForReaderJob < ActiveJob::Base
             docs_attempted += 1
             successful_count += 1 if document.fetch_content
           end
-        rescue Aws::S3::Errors::ServiceError || VBMS::ClientError => e
+        rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
           failed_count += 1
           Rails.logger.error "Failed to retrieve #{document.file_name}:\n#{e.message}"
         end
