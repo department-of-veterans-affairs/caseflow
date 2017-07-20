@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, rotatePage } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron, RotateIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
