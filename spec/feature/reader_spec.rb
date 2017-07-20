@@ -657,29 +657,32 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Open and close accordion sidebar menu" do
+    scenario "Open and close accordion sidebar menu", :focus => true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
-      # Using xpath selectors to click on divs for each section
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[1]").click
+      def click_accordion_header(index)
+        find_all(".rc-collapse-header")[index].click
+      end
+
+      click_accordion_header(0)
       expect(page).to_not have_content("Document Type")
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[1]").click
+      click_accordion_header(0)
       expect(page).to have_content("Document Type")
 
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[2]").click
+      click_accordion_header(1)
       expect(page).to_not have_content("Procedural")
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[2]").click
+      click_accordion_header(1)
       expect(page).to have_content("Procedural")
 
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[3]").click
+      click_accordion_header(2)
       expect(page).to_not have_content("Select or tag issue(s)")
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[3]").click
+      click_accordion_header(2)
       expect(page).to have_content("Select or tag issue(s)")
 
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[4]").click
+      click_accordion_header(3)
       expect(page).to_not have_content("Add a comment")
-      find(:xpath, "(//div[@class='rc-collapse-header usa-accordion-button'])[4]").click
+      click_accordion_header(3)
       expect(page).to have_content("Add a comment")
     end
 
