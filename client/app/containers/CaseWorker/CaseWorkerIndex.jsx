@@ -40,7 +40,7 @@ export default class CaseWorkerIndex extends BaseForm {
     let {
       availableTasks,
       buttonText,
-      quota
+      userQuota
     } = this.props;
 
     let workHistoryColumns = [
@@ -63,41 +63,49 @@ export default class CaseWorkerIndex extends BaseForm {
       }
     ];
 
+    // If the user hasn't completed any tasks, their userQuota is null. In order
+    // to not accidentally disable the Establish New Claim button, we set it to -1.
+    const tasksRemaining = userQuota ? userQuota.tasks_left_count : -1;
+
+    let HeaderMessage = () => {
+      if (tasksRemaining && !availableTasks) {
+        return <div>
+          <h2>All claims in queue completed</h2>
+          <p>There are no more claims to pick up. Please come back later.</p>
+        </div>;
+      } else if (tasksRemaining && availableTasks) {
+        return <div>
+          <h2>Get Started!</h2>
+          <p>There are claims ready to get picked up for today.</p>
+        </div>;
+      }
+
+      return <span>
+          <h2>Way to go!</h2>
+          <p> You have completed all the claims assigned to you.</p> 💪💻🇺🇸<br/>
+          <h2 className ="cf-msg-screen-deck cf-success-emoji-text"/>
+        </span>;
+    };
+
     return <div className="cf-app-segment cf-app-segment--alt">
           <div className="usa-width-one-whole task-start-wrapper">
             <div className="cf-left-side">
-              { !quota && <h3>Get Started!</h3> }
+              <h1>Your Work Assignments</h1>
+              <HeaderMessage/>
               <span className="cf-button-associated-text-right">
-                { availableTasks && quota &&
-                  `${this.props.quota.task_count} claims in your queue, ${
-                this.props.quota.completed_tasks_count} claims completed`
-                }
-                { !quota && availableTasks &&
-                  'There are claims ready to get picked up for today.'
-                }
-                { !availableTasks &&
-                  'There are no more claims in your queue.'
+                { userQuota &&
+                  `${tasksRemaining} claims in your queue, ${userQuota.tasks_completed_count} claims completed`
                 }
               </span>
-              { availableTasks &&
               <Button
                 app="dispatch"
                 name={buttonText}
                 onClick={this.establishNextClaim}
                 classNames={['usa-button-primary', 'cf-push-right',
                   'cf-button-aligned-with-textfield-right']}
-                disabled={!availableTasks}
+                disabled={!availableTasks || !tasksRemaining}
                 loading={this.state.loading}
               />
-              }
-              { !availableTasks &&
-              <Button
-                  name={buttonText}
-                  classNames={['usa-button-disabled', 'cf-push-right',
-                    'cf-button-aligned-with-textfield-right']}
-                  disabled={true}
-              />
-              }
             </div>
           </div>
           <h1>Work History</h1>
