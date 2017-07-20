@@ -61,7 +61,6 @@ class Issue < ActiveRecord::Base
       category: category,
       description: description,
       disposition: disposition,
-      levels: levels,
       program_description: program_description
     )
   end
@@ -91,8 +90,8 @@ class Issue < ActiveRecord::Base
       new(
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
-        program: {name: PROGRAMS[hash["issprog"]], label: hash['issprog_label']},
-        type: {name: TYPES[hash["isscode"]], label: hash['isscode_label'] },
+        program: { name: PROGRAMS[hash["issprog"]], label: hash["issprog_label"] },
+        type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
         description: description(hash),

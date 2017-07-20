@@ -366,8 +366,9 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13",
         issues: [
-          { disposition: :remanded, program:
-            {
+          {
+            disposition: :remanded,
+            program: {
               name: :compensation,
               label: "Compenstation"
             },
@@ -375,9 +376,11 @@ class Fakes::AppealRepository
               "Lumbosacral",
               "All Others",
               "Thigh, limitation of flexion of"
-            ] },
-          { disposition: :remanded, program:
-            {
+            ]
+          },
+          {
+            disposition: :remanded,
+            program: {
               name: :compensation,
               label: "Compenstation"
             },
@@ -385,9 +388,11 @@ class Fakes::AppealRepository
               "Lumbosacral",
               "All Others",
               "Thigh, limitation of flexion of"
-            ] },
-          { disposition: :remanded, program:
-            {
+            ]
+          },
+          {
+            disposition: :remanded,
+            program: {
               name: :compensation,
               label: "Compenstation"
             },
@@ -395,7 +400,8 @@ class Fakes::AppealRepository
               "Lumbosacral",
               "All Others",
               "Thigh, limitation of flexion of"
-            ] }
+            ]
+          }
         ]
       },
       issues: [Generators::Issue.build(vacols_id: "reader_id1")],
@@ -510,7 +516,7 @@ class Fakes::AppealRepository
     )
   end
 
-  def self.aod(vacols_id)
-    return 1
+  def self.aod(_vacols_id)
+    1
   end
 end

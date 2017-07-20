@@ -64,7 +64,7 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  CAVC_TYPE = "7"
+  CAVC_TYPE = "7".freeze
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
@@ -370,7 +370,7 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :issues, :regional_office, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed

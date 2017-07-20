@@ -243,11 +243,11 @@ class VACOLS::Case < VACOLS::Record
         SELECT (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
         FROM BRIEFF
 
-        left join (
+        LEFT JOIN (
           SELECT TSKTKNM, count(*) CNT
           FROM ASSIGN
           WHERE TSKACTCD in ('B', 'B1', 'B2')
-          group by TSKTKNM
+          GROUP BY TSKTKNM
         ) AOD_DIARIES
         ON AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
         LEFT JOIN (
@@ -260,11 +260,11 @@ class VACOLS::Case < VACOLS::Record
         ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
         WHERE BRIEFF.BFKEY = #{vacols_id}
       SQL
-      
+
       aod_result = MetricsService.record "VACOLS: Case.aod #{vacols_id}" do
         conn.exec_query(query)
       end
-      is_aod = aod_result.to_hash.first["aod"]
+      aod_result.to_hash.first["aod"]
     end
   end
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';		
+import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
 import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';

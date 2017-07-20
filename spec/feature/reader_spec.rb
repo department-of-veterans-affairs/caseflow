@@ -729,7 +729,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content(vetern_folder_title)
       expect(page).to have_content("Claims folder details")
       find_by_id("claim-folder-details-accordion").click
-      regional_office = "#{appeal_info["regional_office"][:key]} - #{appeal_info["regional_office"][:city]}"
+      regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"
       expect(page).to have_content(appeal_info["vbms_id"])
       expect(page).to have_content(appeal_info["type"])
       expect(page).to have_content(appeal_info["docket_number"])

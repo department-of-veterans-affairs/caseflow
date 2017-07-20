@@ -1,3 +1,4 @@
+/* eslint max-lines: ["error", 510]*/
 import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';

@@ -13,7 +13,7 @@ class Generators::Issue
         levels: ["All Others", "Thigh, limitation of flexion of"],
         program_description: "02 - Compensation",
         program: :compensation,
-        type: {name: :service_connection, label: "Service Connection"},
+        type: { name: :service_connection, label: "Service Connection" },
         category: :knee
       }
     end

@@ -924,6 +924,29 @@ describe Appeal do
       end
     end
 
+    context "Appel includes addtional required fields" do
+      subject { appeal.to_hash(viewed: true, issues: nil) }
+
+      let!(:appeal) do
+        Generators::Appeal.build(
+          vbms_id: "999887777S",
+          docket_number: "13 11-265",
+          regional_office_key: "RO13",
+          type: "Court Remand",
+          vacols_record: {
+            soc_date: 4.days.ago
+          }
+        )
+      end
+
+      it "includes aod, cavc, regional_office and docket_number" do
+        expect(subject["aod"]).to be_truthy
+        expect(subject["cavc"]).to be_truthy
+        expect(subject["regional_office"][:key]).to eq("RO13")
+        expect(subject["docket_number"]).to eq("13 11-265")
+      end
+    end
+
     context "when issues and viewed attributes are provided" do
       subject { appeal.to_hash(viewed: true, issues: issues) }
 

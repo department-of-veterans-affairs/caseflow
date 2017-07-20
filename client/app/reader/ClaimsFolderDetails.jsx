@@ -25,7 +25,7 @@ class ClaimsFolderDetails extends React.PureComponent {
 
     if (appeal.cavc && appeal.aod) {
       obj = TYPE_INFO.both;
-    } else if(appeal.cavc) {
+    } else if (appeal.cavc) {
       obj = TYPE_INFO.cavc;
     } else if (appeal.aod) {
       obj = TYPE_INFO.aod;
@@ -43,7 +43,7 @@ class ClaimsFolderDetails extends React.PureComponent {
 
     return <div className="cf-claims-folder-details">
       <h1>{appeal.veteran_full_name}'s Claims Folder</h1>
-      <Accordion id="claim-folder-details-accordion" 
+      <Accordion id="claim-folder-details-accordion"
         style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionHeader className="usa-grid" title="Claims folder details" key={1}>
           <div className="usa-width-one-fourth">
