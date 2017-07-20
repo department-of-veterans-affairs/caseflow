@@ -404,10 +404,10 @@ export const clearSearch = () => ({
   type: Constants.CLEAR_ALL_SEARCH
 });
 
-export const rotatePage = (doc) => ({
+export const rotatePage = (docId) => ({
   type: Constants.ROTATE_DOCUMENT,
   payload: {
-    docId: doc.id
+    docId: docId
   }
 })
 

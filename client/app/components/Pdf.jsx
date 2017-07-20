@@ -156,12 +156,12 @@ export class Pdf extends React.PureComponent {
   // likey remain complicated.
   drawPage = (file, index) => {
     if (this.isDrawing[file][index] ||
-      _.get(this.state.isDrawn, [file, index, 'scale']) === this.props.scale) {
-
+      (_.get(this.state.isDrawn, [file, index, 'scale']) === this.props.scale &&
+      _.get(this.state.isDrawn, [file, index, 'rotation']) === this.props.rotation)) {
       return Promise.reject();
     }
 
-    const { scale } = this.props;
+    const { scale, rotation } = this.props;
 
     // Mark that we are drawing this page.
     this.isDrawing[file][index] = true;
@@ -238,6 +238,7 @@ export class Pdf extends React.PureComponent {
             {
               pdfDocument,
               scale,
+              rotation,
               index,
               viewport,
               file
@@ -255,10 +256,11 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  postDraw = (resolve, reject, { pdfDocument, scale, index, viewport, file }) => {
+  postDraw = (resolve, reject, { pdfDocument, scale, rotation, index, viewport, file }) => {
     this.setisDrawn(file, index, {
       pdfDocument,
       scale,
+      rotation,
       ..._.pick(viewport, ['width', 'height'])
     });
 
@@ -317,7 +319,8 @@ export class Pdf extends React.PureComponent {
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
         if (!_.get(this.state, ['isDrawn', this.props.file, index], false) ||
-          this.state.isDrawn[this.props.file][index].scale !== this.props.scale) {
+          this.state.isDrawn[this.props.file][index].scale !== this.props.scale ||
+          this.state.isDrawn[this.props.file][index].rotation !== this.props.rotation) {
           if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
@@ -907,6 +910,7 @@ export default connect(
 
 Pdf.defaultProps = {
   onPageChange: _.noop,
+  rotation: 0,
   prefetchFiles: [],
   scale: 1
 };

@@ -889,7 +889,9 @@ export const reducer = (state = initialState, action = {}) => {
       {
         documents: {
           [action.payload.docId]: {
-            rotation: (state.documents[action.payload.docId] + 90) % 360
+            $merge: {
+              rotation: (_.get(state, ['documents', action.payload.docId, 'rotation'], 0) + 90) % 360
+            }
           }
         }
       });
