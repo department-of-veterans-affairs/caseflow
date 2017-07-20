@@ -657,35 +657,33 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Document Type")
     end
 
-    ensure_stable do
-      scenario "Open and close accordion sidebar menu", focus: true do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/"
-        click_on documents[0].type
+    scenario "Open and close accordion sidebar menu" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
 
-        def click_accordion_header(index)
-          find_all(".rc-collapse-header")[index].click
-        end
-
-        click_accordion_header(0)
-        expect(page).to_not have_content("Document Type")
-        click_accordion_header(0)
-        expect(page).to have_content("Document Type")
-
-        click_accordion_header(1)
-        expect(page).to_not have_content("Procedural")
-        click_accordion_header(1)
-        expect(page).to have_content("Procedural")
-
-        click_accordion_header(2)
-        expect(page).to_not have_content("Select or tag issue(s)")
-        click_accordion_header(2)
-        expect(page).to have_content("Select or tag issue(s)")
-
-        click_accordion_header(3)
-        expect(page).to_not have_content("Add a comment")
-        click_accordion_header(3)
-        expect(page).to have_content("Add a comment")
+      def click_accordion_header(index)
+        find_all(".rc-collapse-header")[index].click
       end
+
+      click_accordion_header(0)
+      expect(page).to_not have_content("Document Type")
+      click_accordion_header(0)
+      expect(page).to have_content("Document Type")
+
+      click_accordion_header(1)
+      expect(page).to_not have_content("Procedural")
+      click_accordion_header(1)
+      expect(page).to have_content("Procedural")
+
+      click_accordion_header(2)
+      expect(page).to_not have_content("Select or tag issue(s)")
+      click_accordion_header(2)
+      expect(page).to have_content("Select or tag issue(s)")
+
+      click_accordion_header(3)
+      expect(page).to_not have_content("Add a comment")
+      click_accordion_header(3)
+      expect(page).to have_content("Add a comment")
     end
 
     scenario "Open and close keyboard shortcuts modal" do
