@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
+  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
@@ -157,8 +157,9 @@ export class PdfSidebar extends React.Component {
         <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
           this.commentListElement = commentListElement;
         }}>
-          <Accordion style="outline" accordion={false}
-            defaultActiveKey={['Document information', 'Categories', 'Issue tags', 'Comments']}>
+          <Accordion style="outline"
+            onChange={this.props.setOpenedAccordionSections}
+            activeKey={this.props.openedAccordionSections}>
             <AccordionSection title="Document information" key="document-information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">
                 <b>Document Type: </b>
@@ -293,12 +294,12 @@ const mapStateToProps = (state, ownProps) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
-    documents: state.documents,
-    tagOptions: state.tagOptions
+    ..._.pick(state, 'documents', 'tagOptions', 'openedAccordionSections')
   };
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    setOpenedAccordionSections,    
     selectAnnotation,
     startPlacingAnnotation,
     createAnnotation,

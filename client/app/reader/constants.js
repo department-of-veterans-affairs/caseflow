@@ -64,6 +64,8 @@ export const STOP_PLACING_ANNOTATION = 'STOP_PLACING_ANNOTATION';
 export const SELECT_ANNOTATION = 'SELECT_ANNOTATION';
 export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
 
+export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
+
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 

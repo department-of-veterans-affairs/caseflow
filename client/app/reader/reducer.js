@@ -161,6 +161,9 @@ export const initialState = {
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
+  openedAccordionSections: [
+    'Document information', 'Categories', 'Issue tags', 'Comments'
+  ],
   ui: {
     searchCategoryHighlights: {},
     pendingAnnotations: {},
@@ -883,6 +886,15 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.SET_OPENED_ACCORDION_SECTIONS:
+    return update(
+      state,
+      {
+        openedAccordionSections: {
+          $set: action.payload.openedAccordionSections
+        }
+      }
+    );
   default:
     return state;
   }

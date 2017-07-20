@@ -448,3 +448,10 @@ export const addNewTag = (doc, tags) => (
     }
   }
 );
+
+export const setOpenedAccordionSections = (openedAccordionSections) => ({
+  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
+  payload: {
+    openedAccordionSections
+  }
+});

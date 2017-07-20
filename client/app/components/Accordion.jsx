@@ -18,13 +18,11 @@ const CLASS_NAME_MAPPING = {
 export default class Accordion extends React.PureComponent {
   render() {
     const {
-      accordion,
+      style,
       children,
-      defaultActiveKey,
-      id,
-      style
+      ...passthroughProps
     } = this.props;
-
+    
     const accordionSections = children.map((child) => {
       return <Panel header={child.props.title} headerClass="usa-accordion-button"
         key={child.props.title} id={child.props.id}>
@@ -39,8 +37,7 @@ export default class Accordion extends React.PureComponent {
        defaultActiveKey: shows which accordion headers are expanded on default render
        Source: https://github.com/react-component/collapse */
 
-    return <Collapse accordion={accordion} className={CLASS_NAME_MAPPING[style]}
-      defaultActiveKey={defaultActiveKey} id={id}>
+    return <Collapse {...passthroughProps} className={CLASS_NAME_MAPPING[style]}>
       {accordionSections}
     </Collapse>;
   }
