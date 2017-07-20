@@ -196,7 +196,7 @@ export const mapDataToInitialState = (certification, form9PdfPath) => ({
   hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(certification.hearing_change_doc_found_in_vbms),
   hearingPreference: certification.hearing_preference,
   form9Type: certification.form9_type,
-  form9PdfPath: form9PdfPath,
+  form9PdfPath,
   certifyingOffice: certification.certifying_office,
   certifyingUsername: certification.certifying_username,
   certificationDate: certification.certification_date,
