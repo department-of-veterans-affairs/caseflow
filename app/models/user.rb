@@ -116,11 +116,11 @@ class User < ActiveRecord::Base
     end
   end
 
-  private
-
   def current_case_assignments
     self.class.case_assignment_repository.load_from_vacols(css_id)
   end
+
+  private
 
   def viewed_appeals(appeal_ids)
     appeal_views.where(appeal_id: appeal_ids).each_with_object({}) do |appeal_view, object|
