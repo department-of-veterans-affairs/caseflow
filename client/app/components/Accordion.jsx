@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Collapse, { Panel } from 'rc-collapse';
-import AccordionSection from './AccordionSection';
 
 const CLASS_NAME_MAPPING = {
   bordered: 'usa-accordion-bordered',
@@ -22,7 +21,7 @@ export default class Accordion extends React.PureComponent {
       children,
       ...passthroughProps
     } = this.props;
-    
+
     const accordionSections = children.map((child) => {
       return <Panel header={child.props.title} headerClass="usa-accordion-button"
         key={child.props.title} id={child.props.id}>

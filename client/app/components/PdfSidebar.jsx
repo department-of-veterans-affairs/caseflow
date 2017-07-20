@@ -299,7 +299,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setOpenedAccordionSections,    
+    setOpenedAccordionSections,
     selectAnnotation,
     startPlacingAnnotation,
     createAnnotation,
