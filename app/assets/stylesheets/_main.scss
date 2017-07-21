@@ -186,6 +186,7 @@ body {
 
 .cf-app-reader {
   overflow-y: hidden;
+
   .cf-app-width {
     @include app-width('reader');
   }
