@@ -337,7 +337,6 @@ describe Appeal do
     end
 
     subject { appeal.fetched_documents }
-
   end
 
   context ".find_or_create_by_vacols_id" do
