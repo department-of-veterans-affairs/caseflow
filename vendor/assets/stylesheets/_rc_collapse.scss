@@ -41,7 +41,8 @@ $borderStyle: 1px solid #d9d9d9;
     &:first-child {
       border-top: none;
     }
-    margin-bottom: 6px;
+    // Caseflow deviation from the original package:
+    // margin-bottom: 6px;
   }
 
   & > &-item-disabled > .rc-collapse-header {
