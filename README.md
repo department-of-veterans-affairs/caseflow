@@ -262,3 +262,7 @@ FeatureToggle.details_for(:apple)
 => { :regional_offices =>["RO08"] }
 ```
 
+# Support
+![BrowserStack logo](./browserstack-logo.png)
+
+Thanks to [BrowserStack](https://www.browserstack.com/) for providing free support to this open-source project.
