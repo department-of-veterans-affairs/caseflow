@@ -9,5 +9,7 @@ export default class AccordionHeader extends React.PureComponent {
 
 AccordionHeader.propTypes = {
   children: PropTypes.node,
-  title: PropTypes.string
+  title: PropTypes.string,
+  loading: PropTypes.bool,
+  id: PropTypes.string
 };

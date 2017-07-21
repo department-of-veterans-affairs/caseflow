@@ -56,6 +56,12 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+[id=claim-folder-details-accordion] {
+  .loading {
+    background-image: none;
+  }
+}
+
 .cf-pdf-page-container {
   position: absolute;
   top: 4em;
