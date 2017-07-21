@@ -67,9 +67,6 @@ export default class CaseWorkerIndex extends BaseForm {
     // to not accidentally disable the Establish New Claim button, we set it to -1.
     const tasksRemaining = userQuota ? userQuota.tasks_left_count : -1;
 
-    console.log(tasksRemaining);
-    console.log('tasks remaining yall');
-
     const HeaderMessage = () => {
       if (tasksRemaining && !availableTasks) {
         return <div>
