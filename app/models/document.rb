@@ -85,13 +85,9 @@ class Document < ActiveRecord::Base
   end
 
   def fetch_content
-    if Rails.application.config.efolder_enabled
-      fetch_document_from_efolder
-    else
-      content = S3Service.fetch_content(file_name)
-      content && Rails.logger.info("File #{vbms_document_id} fetched from S3")
-      content || fetch_and_cache_document_from_vbms
-    end
+    content = S3Service.fetch_content(file_name)
+    content && Rails.logger.info("File #{vbms_document_id} fetched from S3")
+    content || fetch_and_cache_document_from_vbms
   end
 
   def content
@@ -154,12 +150,6 @@ class Document < ActiveRecord::Base
 
   private
 
-  def fetch_document_from_efolder
-    @content = efolder.fetch_document_file(self)
-    Rails.logger.info("File #{vbms_document_id} fetched from eFolder")
-    @content
-  end
-
   def match_vbms_document_using(vbms_documents, &date_match_test)
     match = vbms_documents.detect do |doc|
       date_match_test.call(doc) && doc.type?(type)
@@ -181,10 +171,6 @@ class Document < ActiveRecord::Base
 
   def merge_with(document)
     document.merge_into(self)
-  end
-
-  def efolder
-    EFolderService
   end
 
   def vbms

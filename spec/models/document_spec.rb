@@ -1,5 +1,4 @@
 require "rails_helper"
-require "faker"
 
 describe Document do
   let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
@@ -116,51 +115,20 @@ describe Document do
   context "content tests" do
     context "#fetch_and_cache_document_from_vbms" do
       it "loads document content" do
-        expected_content = Faker::ChuckNorris.fact
-        expect(VBMSService).to receive(:fetch_document_file).and_return(expected_content)
-        expect(document.fetch_and_cache_document_from_vbms).to eq(expected_content)
+        expect(VBMSService).to receive(:fetch_document_file).and_return("content!")
+        expect(document.fetch_and_cache_document_from_vbms).to eq("content!")
       end
     end
 
     context "#fetch_content" do
-      context "when efolder_enabled is false" do
-        context "when S3 doesn't have documents" do
-          before do
-            S3Service.files = {}
-          end
-
-          it "lazy fetches document content from VBMS service" do
-            expected_content = Faker::Shakespeare.as_you_like_it_quote
-            expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return(expected_content)
-            expect(document.fetch_content).to eq(expected_content)
-          end
-        end
-
-        context "when S3 has documents" do
-          it "loads document content from VBMS service" do
-            expected_content = Faker::HarryPotter.quote
-            expect(S3Service).to receive(:fetch_content).and_return(expected_content)
-            expect(VBMSService).not_to receive(:fetch_document_file)
-            expect(document.fetch_content).to eq(expected_content)
-          end
-        end
+      before do
+        S3Service.files = {}
       end
 
-      context "when efolder_enabled is true" do
-        before do
-          Rails.application.config.efolder_enabled = true
-        end
-
-        it "loads document content from efolder service" do
-          expected_content = Faker::HarryPotter.book
-          expect(VBMSService).not_to receive(:fetch_document_file)
-          expect(EFolderService).to receive(:fetch_document_file).and_return(expected_content).once
-          expect(document.fetch_content).to eq(expected_content)
-        end
-
-        after do
-          Rails.application.config.efolder_enabled = false
-        end
+      it "lazy fetches document content" do
+        expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+        document.fetch_content
+        expect(document.fetch_content).to eq("content!")
       end
     end
 
