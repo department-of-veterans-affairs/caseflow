@@ -15,10 +15,11 @@ class ExternalApi::EfolderService
   end
 
   def self.fetch_documents_for(appeal)
-    # Makes a GET request to <efolder>/files/<vbms_id>
-    sanitized_id = appeal.sanitized_vbms_id
-    uri = URI.escape(efolder_base_url + "/files/" + sanitized_id)
-    documents = get_efolder_response(uri)
+    # Makes a GET request to <efolder>/files/<file_number>
+    uri = URI.escape(efolder_base_url + "/files")
+
+    headers = { "HTTP_FILE_NUMBER" => appeal.veteran.file_number }
+    documents = get_efolder_response(uri, headers)
 
     Rails.logger.info("# of Documents retrieved from efolder: #{documents.length}")
 
@@ -31,13 +32,21 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_url
   end
 
-  def self.get_efolder_response(url)
+  def self.efolder_token
+    Rails.application.config.efolder_token
+  end
+
+  def self.get_efolder_response(url, headers = {})
     response = []
 
     MetricsService.record("sent efolder GET request to #{url}",
                           service: :efolder,
                           id: id) do
       request = HTTPI::Request.new(url)
+
+      headers["HTTP_AUTHORIZATION"] = efolder_token
+      request.headers = headers
+
       response = request.get
     end
 
