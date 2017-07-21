@@ -905,26 +905,7 @@ describe Appeal do
   end
 
   context ".to_hash" do
-    context "when issues parameter is nil" do
-      subject { appeal.to_hash(viewed: true, issues: nil) }
-
-      let!(:appeal) do
-        Generators::Appeal.build(
-          vbms_id: "999887777S",
-          vacols_record: { soc_date: 4.days.ago }
-        )
-      end
-
-      it "includes viewed boolean in hash" do
-        expect(subject["viewed"]).to be_truthy
-      end
-
-      it "issues is null in hash" do
-        expect(subject["issues"]).to be_nil
-      end
-    end
-
-    context "Appel includes addtional required fields" do
+    context "when issues parameter is nil and contains addtional attributes" do
       subject { appeal.to_hash(viewed: true, issues: nil) }
 
       let!(:appeal) do
@@ -937,6 +918,14 @@ describe Appeal do
             soc_date: 4.days.ago
           }
         )
+      end
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "issues is null in hash" do
+        expect(subject["issues"]).to be_nil
       end
 
       it "includes aod, cavc, regional_office and docket_number" do

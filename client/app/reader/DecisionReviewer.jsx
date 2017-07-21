@@ -180,8 +180,7 @@ const mapStateToProps = (state) => {
   return {
     documentFilters: state.ui.pdfList.filters,
     storeDocuments: state.documents,
-    pdf: state.ui.pdf,
-    assignments: state.assignments
+    pdf: state.ui.pdf
   };
 };
 

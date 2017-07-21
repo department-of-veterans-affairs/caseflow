@@ -14,7 +14,7 @@ import NoSearchResults from './NoSearchResults';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-    if (_.isEmpty(this.props.appeal) || 
+    if (_.isEmpty(this.props.appeal) ||
       (this.props.appeal.vacols_id !== this.props.match.params.vacolsId)) {
       this.props.fetchAppealDetails(this.props.match.params.vacolsId);
     }
