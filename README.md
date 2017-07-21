@@ -40,9 +40,19 @@ docker-compose up -d
 You can then stop the containers by executing `docker-compose stop`. This will keep the containers on your local file system in case you want to run them again without having to build. To destroy them completely, execute `docker-compose down`.
 
 Now that the app is running, set up the database by running:
+
+First time user will need to run `create` before `setup`:
+
+```
+docker-compose run rake db:create
+``` 
+Followed by:
+
 ```
 docker-compose run rake db:setup
 ``` 
+
+
 
 That's it! You're now up and running and can access the application from http://localhost:3000 on your web browser.
 
