@@ -366,7 +366,15 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13",
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+               Generators::Issue.build(disposition: "Osteomyelitis",
+                                       levels: ["Osteomyelitis"],
+                                       description: [
+                                         "15 - Compensation",
+                                         "26 - Osteomyelitis"
+                                       ],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(

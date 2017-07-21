@@ -206,6 +206,7 @@ class UnconnectedConfirmHearing extends React.Component {
     let { hearingDocumentIsInVbms,
       onHearingDocumentChange,
       form9Type,
+      form9PdfPath,
       onTypeOfForm9Change,
       hearingPreference,
       onHearingPreferenceChange,
@@ -312,7 +313,7 @@ class UnconnectedConfirmHearing extends React.Component {
               <iframe
                 className="cf-doc-embed cf-iframe-with-loading form9-viewer"
                 title="Form8 PDF"
-                src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
+                src={form9PdfPath}>
               </iframe>
             </LoadingContainer>
           }
@@ -397,6 +398,7 @@ const mapStateToProps = (state) => ({
   form9Type: state.form9Type,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
+  form9PdfPath: state.form9PdfPath,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   updateSucceeded: state.updateSucceeded,
@@ -420,6 +422,7 @@ ConfirmHearing.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   form9Type: PropTypes.string,
+  form9PdfPath: PropTypes.string,
   onTypeOfForm9Change: PropTypes.func,
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,

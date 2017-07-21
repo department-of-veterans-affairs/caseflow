@@ -163,6 +163,9 @@ export const initialState = {
   loadedAppealFail: false,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
+  openedAccordionSections: [
+    'Document information', 'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
+  ],
   ui: {
     searchCategoryHighlights: {},
     pendingAnnotations: {},
@@ -676,6 +679,9 @@ export const reducer = (state = initialState, action = {}) => {
         pdf: {
           isPlacingAnnotation: { $set: true }
         }
+      },
+      openedAccordionSections: {
+        $apply: (sectionKeys) => _.union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
       }
     });
   case Constants.SHOW_PLACE_ANNOTATION_ICON:
@@ -901,6 +907,15 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.SET_OPENED_ACCORDION_SECTIONS:
+    return update(
+      state,
+      {
+        openedAccordionSections: {
+          $set: action.payload.openedAccordionSections
+        }
+      }
+    );
   default:
     return state;
   }

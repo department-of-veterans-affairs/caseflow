@@ -17,7 +17,7 @@ class CaseSelect extends React.PureComponent {
         {issues.map((issue) => {
           const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
 
-          return <li key={issue.toString()}>
+          return <li key={issue.vacols_sequence_id}>
               {descriptionLabel}
              {this.renderIssueLevels(issue)}
           </li>;

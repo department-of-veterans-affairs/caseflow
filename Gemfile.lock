@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 63418204dd50dbc5a4d88d55691829dbca85b5e1
-  ref: 63418204dd50dbc5a4d88d55691829dbca85b5e1
+  revision: 0051063bf7c7cb4980e3aee3397fb14844e11e8a
+  ref: 0051063bf7c7cb4980e3aee3397fb14844e11e8a
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -112,14 +112,14 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.10.7)
-      aws-sdk-resources (= 2.10.7)
-    aws-sdk-core (2.10.7)
+    aws-sdk (2.10.15)
+      aws-sdk-resources (= 2.10.15)
+    aws-sdk-core (2.10.15)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.7)
-      aws-sdk-core (= 2.10.7)
-    aws-sigv4 (1.0.0)
+    aws-sdk-resources (2.10.15)
+      aws-sdk-core (= 2.10.15)
+    aws-sigv4 (1.0.1)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bourbon (4.2.7)
@@ -147,7 +147,7 @@ GEM
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
-    d3-rails (4.9.1)
+    d3-rails (4.10.0)
       railties (>= 3.1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
@@ -157,6 +157,8 @@ GEM
     et-orbi (1.0.5)
       tzinfo
     execjs (2.7.0)
+    faker (1.7.3)
+      i18n (~> 0.5)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
@@ -449,6 +451,7 @@ DEPENDENCIES
   caseflow!
   connect_vbms!
   database_cleaner
+  faker
   font-awesome-sass
   foreman
   jbuilder (~> 2.0)
@@ -498,4 +501,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.14.6
+   1.15.1

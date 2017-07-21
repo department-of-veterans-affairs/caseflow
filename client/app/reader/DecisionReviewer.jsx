@@ -8,7 +8,7 @@ import Perf from 'react-addons-perf';
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import LoadingScreen from './LoadingScreen';
+import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
@@ -125,7 +125,7 @@ export class DecisionReviewer extends React.PureComponent {
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    return <LoadingScreen
+    return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
@@ -142,7 +142,7 @@ export class DecisionReviewer extends React.PureComponent {
           render={this.routedPdfViewer}
         />
       </div>
-    </LoadingScreen>;
+    </ReaderLoadingScreen>;
   }
 
   render() {

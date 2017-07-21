@@ -28,6 +28,7 @@ class Generators::Issue
         Fakes::AppealRepository.issue_records ||= {}
         Fakes::AppealRepository.issue_records[vacols_id] ||= []
         Fakes::AppealRepository.issue_records[vacols_id].push(issue)
+        issue.vacols_sequence_id = Fakes::AppealRepository.issue_records[vacols_id].length
       end
 
       issue

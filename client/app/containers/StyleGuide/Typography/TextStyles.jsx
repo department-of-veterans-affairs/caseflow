@@ -80,7 +80,7 @@ export default class TextStyles extends React.Component {
         rules: <span>
           <span>font-family: ‘Source Sans Pro’</span>
           <span>font-weight: 300</span>
-          <span>font-size: 22px</span>
+          <span>font-size: 19px</span>
           <span>line-height: 1.5em/33px</span>
         </span>
       },

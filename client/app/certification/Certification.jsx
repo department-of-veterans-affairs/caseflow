@@ -28,7 +28,7 @@ const EntryPointRedirect = connect(
   mapStateToProps
 )(UnconnectedEntryPointRedirect);
 
-const configureStore = (data) => {
+const configureStore = (certification, form9PdfPath) => {
 
   const middleware = [];
 
@@ -41,7 +41,7 @@ const configureStore = (data) => {
   // eslint-disable-next-line no-underscore-dangle
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-  const initialData = mapDataToInitialState(data);
+  const initialData = mapDataToInitialState(certification, form9PdfPath);
 
   const store = createStore(
     certificationReducers,
@@ -59,9 +59,9 @@ const configureStore = (data) => {
   return store;
 };
 
-const Certification = ({ certification }) => {
+const Certification = ({ certification, form9PdfPath }) => {
 
-  return <Provider store={configureStore(certification)}>
+  return <Provider store={configureStore(certification, form9PdfPath)}>
     <div>
       <BrowserRouter>
         <div>

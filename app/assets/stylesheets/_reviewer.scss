@@ -137,6 +137,10 @@ svg[aria-hidden=true],
     visibility: hidden;
   }
 
+  .usa-accordion-content {
+    background-color: $caseflow-background;
+  }
+
   .usa-alert {
     margin-top: 15px;
   }
@@ -144,7 +148,6 @@ svg[aria-hidden=true],
 
 .cf-sidebar-header {
   padding-left: 20px;
-  margin-bottom: 10px;
   height: 50px;
   background-color: $color-gray-warm-light;
   line-height: 50px;
@@ -155,12 +158,21 @@ svg[aria-hidden=true],
   padding: 0 30px;
 }
 
+.cf-category-sidebar {
+  overflow-y: hidden;
+}
+
+.cf-issue-tag-sidebar {
+  overflow: visible;
+
+  .Select-menu-outer {
+    position: relative;
+  }
+}
+
 .cf-comment-wrapper {
-  padding: 0 30px;
-  width: 380px;
   $comment-wrapper-vertical-margin: 15px;
   margin-top: $comment-wrapper-vertical-margin;
-  overflow-y: scroll;
 
   .usa-alert {
     margin-top: 0;
@@ -354,8 +366,42 @@ svg[aria-hidden=true],
   margin-top: 0;
 }
 
+.cf-sidebar-accordion {
+  margin-bottom: 0;
+  overflow: scroll;
+
+  .usa-accordion-content {
+    padding: 14px 30px;
+
+    .cf-form-checkboxes {
+      margin-top: 6px;
+      margin-bottom: 20px;
+
+      .cf-form-checkbox {
+
+        label:last-child {
+          margin-bottom: 0;
+
+          .cf-category-selector {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .cf-document-category-picker {
+      li:last-child {
+        div {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
 .cf-add-comment-button {
   margin-top: -15px;
+  margin-bottom: 10px;
 }
 
 .cf-pdf-meta-title {
@@ -562,7 +608,7 @@ input[type="search"].cf-search-input-with-close {
   bottom: 0;
   position: relative;
   text-align: center;
-  height: 50px;
+  margin: 10px 0;
 
   .cf-btn-link {
     &:hover {
