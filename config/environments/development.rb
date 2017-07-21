@@ -47,6 +47,8 @@ Rails.application.configure do
 
   # Enable to get docs from eFolder rather than VBMS
   config.efolder_enabled = false
+  config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
+  config.efolder_key = ENV["EFOLDER_API_KEY"]
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

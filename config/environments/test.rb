@@ -47,6 +47,8 @@ Rails.application.configure do
 
   # Enable to get docs from eFolder rather than VBMS
   config.efolder_enabled = false
+  config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
+  config.efolder_key = ENV["EFOLDER_API_KEY"]
 
   if ENV['TEST_ENV_NUMBER']
     assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")

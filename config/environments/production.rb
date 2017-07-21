@@ -80,6 +80,8 @@ Rails.application.configure do
 
   # Enable to get docs from eFolder rather than VBMS
   config.efolder_enabled = false
+  config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
+  config.efolder_key = ENV["EFOLDER_API_KEY"]
 
   config.google_analytics_account = "UA-74789258-4"
   config.google_analytics_host = "//www.google-analytics.com/analytics.js"
