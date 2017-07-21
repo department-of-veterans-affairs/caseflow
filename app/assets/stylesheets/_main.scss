@@ -165,7 +165,8 @@ body {
 
 .cf-app-dispatch,
 .cf-app-dispatch-arc,
-.cf-app-not-set {
+.cf-app-not-set,
+.cf-app-internal {
   .cf-app-width {
     @include app-width('dispatch');
   }
@@ -226,6 +227,13 @@ body {
 
 .cf-logo-image-feedback {
   background-image: url(asset-path('caseflow-feedback-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-hearing-prep {
+  background-image: url(asset-path('caseflow-hearing-prep-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;

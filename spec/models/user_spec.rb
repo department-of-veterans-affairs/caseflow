@@ -5,7 +5,14 @@ User.authentication_service = Fakes::AuthenticationService
 describe User do
   let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
   let(:user) { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
-  before { Fakes::AuthenticationService.user_session = nil }
+
+  before(:all) do
+    User.case_assignment_repository = Fakes::CaseAssignmentRepository
+  end
+
+  before do
+    Fakes::AuthenticationService.user_session = nil
+  end
 
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
@@ -190,6 +197,26 @@ describe User do
     end
   end
 
+  context "#current_case_assignments" do
+    subject { user.current_case_assignments }
+
+    let(:appeal) { Generators::Appeal.create }
+
+    before do
+      User.case_assignment_repository = Fakes::CaseAssignmentRepository
+    end
+
+    it "returns empty array when no cases are assigned" do
+      Fakes::CaseAssignmentRepository.appeal_records = []
+      is_expected.to be_empty
+    end
+
+    it "returns appeal assigned to user" do
+      Fakes::CaseAssignmentRepository.appeal_records = [appeal]
+      is_expected.to match_array([appeal])
+    end
+  end
+
   context "#current_case_assignments_with_views" do
     subject { user.current_case_assignments_with_views[0] }
 
@@ -199,14 +226,12 @@ describe User do
       Fakes::CaseAssignmentRepository.appeal_records = [appeal]
     end
 
-    context "has hash without view" do
-      it do
-        is_expected.to include(
-          "vbms_id" => appeal.vbms_id,
-          "vacols_id" => appeal.vacols_id,
-          "veteran_full_name" => appeal.veteran_full_name,
-          "viewed" => nil)
-      end
+    it "returns nil when no cases have been viewed" do
+      is_expected.to include(
+        "vbms_id" => appeal.vbms_id,
+        "vacols_id" => appeal.vacols_id,
+        "veteran_full_name" => appeal.veteran_full_name,
+        "viewed" => nil)
     end
 
     context "has hash with view" do

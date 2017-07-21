@@ -7,7 +7,8 @@
 $color-hearings-saving: #777;
 
 .cf-hearings,
-.cf-hearings-schedule {
+.cf-hearings-schedule,
+.cf-hearings-worksheet {
   padding: $cf-30px;
 
   .cf-hearings-title-and-judge {
@@ -193,4 +194,127 @@ $color-hearings-saving: #777;
   height: 35vh;
   margin: 0 auto;
   text-align: center;
+}
+
+.cf-hearings-worksheet {
+  [type="text"] {
+    margin: .3em 0 0;
+  }
+
+  textarea {
+    margin: 0;
+    width: 100%;
+    resize: vertical;
+  }
+
+  [type="text"],
+  textarea {
+    border: 1px solid $color-gray-medium;
+  }
+
+  table {
+    margin: .5em 0 0;
+  }
+}
+
+.cf-hearings-worksheet-data {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.765em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .saving {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .cf-push-left {
+    width: 20%;
+    margin-top: 1em;
+  }
+
+  .cf-appeal-stream-label {
+    margin-top: .5em;
+    margin-bottom: 0;
+  }
+
+  h2 {
+    border-bottom: 1px solid $color-gray-light;
+    margin-bottom: .5em;
+  }
+}
+
+.cf-hearings-worksheet-header {
+  font-weight: bold;
+  font-size: 1.05em;
+  padding-bottom: .3em;
+}
+
+.cf-hearings-worksheet-issues {
+  margin: 0;
+
+  .cf-txt-l {
+    padding-left: .4em;
+  }
+
+  tr {
+    border: none;
+
+    th {
+      padding: 0;
+    }
+  }
+
+  td {
+    vertical-align: top;
+    padding: .5em;
+
+    &:nth-of-type(5) {
+      width: 20%;
+    }
+
+    &:nth-of-type(6) {
+      width: 30%;
+    }
+
+    textarea {
+      height: 4em;
+    }
+
+    .cf-form-checkboxes {
+      display: inline-block;
+      box-sizing: border-box;
+      margin: 0;
+      padding: .3em 0;
+
+      &:nth-of-type(1),
+      &:nth-of-type(4) {
+        width: 40%;
+      }
+
+      &:nth-of-type(2),
+      &:nth-of-type(5) {
+        width: 35%;
+      }
+
+      &:nth-of-type(3),
+      &:nth-of-type(6) {
+        width: 25%;
+      }
+
+      label {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.cf-hearings-worksheet-desc-label {
+  position: absolute;
+  left: -99999px;
 }

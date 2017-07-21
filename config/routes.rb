@@ -69,10 +69,7 @@ Rails.application.routes.draw do
 
   namespace :hearings do
     resources :dockets, only: [:index, :show]
-  end
-
-  resources :hearings, only: []  do
-    resource :worksheet, only: [:update]
+    resources :worksheets, only: [:update, :show]
   end
 
   patch "certifications" => "certifications#create"
