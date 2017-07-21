@@ -9,7 +9,7 @@ class RetrieveAppealsDocumentsForReaderJob < ActiveJob::Base
     docs_attempted = 0
 
     find_all_active_reader_appeals.each do |appeal|
-      appeal.fetch_documents!(save: true).each do |document|
+      appeal.fetch_documents!(save: true, is_reader: true).each do |document|
         begin
           unless S3Service.exists?(document.file_name)
             docs_attempted += 1

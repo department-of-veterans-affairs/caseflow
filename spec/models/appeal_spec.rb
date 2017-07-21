@@ -262,9 +262,17 @@ describe Appeal do
           expect(EFolderService).not_to receive(:fetch_documents_for)
           expect(result).to eq(documents)
         end
+
+        context "when is_reader is set to true" do
+          it "loads document content from the VBMS service" do
+            expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+            expect(EFolderService).not_to receive(:fetch_documents_for)
+            expect(appeal.fetch_documents!(save: save, is_reader: true)).to eq(documents)
+          end
+        end
       end
 
-      context "when efolder_enabled is true" do
+      context "when efolder_enabled and is_reader values are true" do
         before do
           Rails.application.config.efolder_enabled = true
         end
@@ -272,7 +280,7 @@ describe Appeal do
         it "loads document content from the efolder service" do
           expect(VBMSService).not_to receive(:fetch_documents_for)
           expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
-          expect(result).to eq(documents)
+          expect(appeal.fetch_documents!(save: save, is_reader: true)).to eq(documents)
         end
 
         after do
@@ -303,7 +311,7 @@ describe Appeal do
         end
       end
 
-      context "when efolder_enabled is true" do
+      context "when efolder_enabled and is_reader values are true" do
         before do
           Rails.application.config.efolder_enabled = true
         end
@@ -311,7 +319,7 @@ describe Appeal do
         it "loads document content from the efolder service" do
           expect(VBMSService).not_to receive(:fetch_documents_for)
           expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
-          expect(result).to eq(documents)
+          expect(appeal.fetch_documents!(save: save, is_reader: true)).to eq(documents)
         end
 
         after do
