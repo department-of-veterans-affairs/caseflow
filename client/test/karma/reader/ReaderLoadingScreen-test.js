@@ -3,12 +3,12 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import _ from 'lodash';
 
-import { LoadingScreen } from '../../../app/reader/LoadingScreen';
+import { ReaderLoadingScreen } from '../../../app/reader/ReaderLoadingScreen';
 
-describe('LoadingScreen', () => {
-  const getContext = () => mount(<LoadingScreen onInitialDataLoadingFail={_.noop} >
+describe('ReaderLoadingScreen', () => {
+  const getContext = () => mount(<ReaderLoadingScreen onInitialDataLoadingFail={_.noop} >
         <p>Show when documents are loaded</p>
-    </LoadingScreen>);
+    </ReaderLoadingScreen>);
   const vacolsId = 1;
 
   it('displays children when the documents are loaded', () => {
