@@ -28,6 +28,6 @@ class Fakes::EfolderService
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.fetch_documents_for(appeal)
-    (document_records || {})[appeal.vbms_id] || @documents || []
+    (document_records || {})[appeal.vbms_id] || []
   end
 end
