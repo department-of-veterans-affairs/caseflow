@@ -84,8 +84,8 @@ class Appeal < ActiveRecord::Base
   # This method fetches documents and saves their metadata
   # in the database
   attr_writer :saved_documents
-  def saved_documents(is_reader = false)
-    @saved_documents ||= fetch_documents!(save: true, is_reader: is_reader)
+  def saved_documents
+    @saved_documents ||= fetch_documents!(save: true)
   end
 
   def events
@@ -245,17 +245,17 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def fetch_documents!(save:, is_reader: false)
-    save ? find_or_create_documents!(is_reader) : fetched_documents(is_reader)
+  def fetch_documents!(save:)
+    save ? find_or_create_documents! : fetched_documents
   end
 
-  def find_or_create_documents!(is_reader = false)
-    ids = fetched_documents(is_reader).map(&:vbms_document_id)
+  def find_or_create_documents!
+    ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
                                  .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
       accumulator[document.vbms_document_id] = document
     end
-    fetched_documents(is_reader).map do |document|
+    fetched_documents.map do |document|
       if existing_documents.key?(document.vbms_document_id)
         document.merge_into(existing_documents[document.vbms_document_id])
       else
@@ -395,8 +395,8 @@ class Appeal < ActiveRecord::Base
     @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
-  def fetched_documents(is_reader = false)
-    @fetched_documents ||= if is_reader && Rails.application.config.efolder_enabled
+  def fetched_documents
+    @fetched_documents ||= if RequestStore.store[:application] == "reader" && Rails.application.config.efolder_enabled
                              self.class.efolder.fetch_documents_for(self)
                            else
                              self.class.vbms.fetch_documents_for(self)

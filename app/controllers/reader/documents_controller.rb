@@ -33,11 +33,11 @@ class Reader::DocumentsController < Reader::ApplicationController
   helper_method :appeal
 
   def annotations
-    appeal.saved_documents(true).flat_map(&:annotations).map(&:to_hash)
+    appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
   end
 
   def documents
-    document_ids = appeal.saved_documents(true).map(&:id)
+    document_ids = appeal.saved_documents.map(&:id)
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id:  document_ids)
@@ -45,7 +45,7 @@ class Reader::DocumentsController < Reader::ApplicationController
       object[document_view.document_id] = true
     end
 
-    @documents = appeal.saved_documents(true).map do |document|
+    @documents = appeal.saved_documents.map do |document|
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = document.tags
