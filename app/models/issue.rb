@@ -90,7 +90,7 @@ class Issue < ActiveRecord::Base
       new(
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
-        program: { name: PROGRAMS[hash["issprog"]], label: hash["issprog_label"] },
+        program: PROGRAMS[hash["issprog"]],
         type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",

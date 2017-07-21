@@ -42,7 +42,7 @@ class ClaimsFolderDetails extends React.PureComponent {
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionHeader id="claim-folder-details-accordion" className="usa-grid" 
           loading={appealExists} title={appealExists ? 'Loading...' : 'Claims folder details'} key={1}>
-          {!appealExists && 
+          {!appealExists &&
           <div>
             <div className="usa-width-one-fourth">
               <b>Veteran ID</b><br />
