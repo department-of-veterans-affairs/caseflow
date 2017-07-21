@@ -4,7 +4,7 @@ import ApiUtil from '../util/ApiUtil';
 import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail } from './actions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
-import { loadingSymbolHtml } from '../components/RenderFunctions';
+import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
 import _ from 'lodash';
 
@@ -12,7 +12,7 @@ const PARALLEL_DOCUMENT_REQUESTS = 3;
 
 const documentUrl = ({ id }) => `/document/${id}/pdf`;
 
-export class LoadingScreen extends React.Component {
+export class ReaderLoadingScreen extends React.Component {
 
   componentDidMount = () => {
     // This means we received documents from the backend. This happens when someone is requesting
@@ -62,12 +62,9 @@ export class LoadingScreen extends React.Component {
               It looks like Caseflow was unable to load this case.<br />
               Please <a href="">refresh the page</a> and try again.
               </StatusMessage> :
-            <div
-              id="loading-symbol"
-              className="cf-app-segment cf-app-segment--alt cf-pdf-center-text">
-              {loadingSymbolHtml('', '300px', Constants.READER_COLOR)}
-              <p>Loading claims folder in Reader...</p>
-            </div>
+              <LoadingScreen
+                spinnerColor={Constants.READER_COLOR}
+                message="Loading claims folder in Reader..."/>
           }
         </div>
       </div>;
@@ -87,4 +84,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoadingScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ReaderLoadingScreen);
