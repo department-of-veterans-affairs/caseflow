@@ -208,7 +208,7 @@ end
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
-  10.times do
+  20.times do
     yield
   end
 end
