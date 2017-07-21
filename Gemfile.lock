@@ -157,6 +157,8 @@ GEM
     et-orbi (1.0.5)
       tzinfo
     execjs (2.7.0)
+    faker (1.7.3)
+      i18n (~> 0.5)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
@@ -449,6 +451,7 @@ DEPENDENCIES
   caseflow!
   connect_vbms!
   database_cleaner
+  faker
   font-awesome-sass
   foreman
   jbuilder (~> 2.0)
@@ -498,4 +501,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.14.6
+   1.15.1

@@ -16,6 +16,10 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return Object.assign({}, state, {
       dockets: action.payload.dockets
     });
+  case 'POPULATE_WORKSHEET':
+    return Object.assign({}, state, {
+      worksheet: action.payload.worksheet
+    });
   case 'HANDLE_SERVER_ERROR':
     return Object.assign({}, state, {
       serverError: action.payload.err

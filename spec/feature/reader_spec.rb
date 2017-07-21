@@ -504,7 +504,7 @@ RSpec.feature "Reader" do
 
         click_on documents[0].type
 
-        element = "cf-comment-wrapper"
+        element = "cf-sidebar-accordion"
         scroll_to(element, 0)
 
         # Wait for PDFJS to render the pages
@@ -650,11 +650,40 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # Expect only the first page of the pdf to be rendered
-      find("#button-hide-menu").click
+      find("#hide-menu-header").click
       expect(page).to_not have_content("Document Type")
 
       click_on "Open menu"
       expect(page).to have_content("Document Type")
+    end
+
+    scenario "Open and close accordion sidebar menu" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+
+      def click_accordion_header(index)
+        find_all(".rc-collapse-header")[index].click
+      end
+
+      click_accordion_header(0)
+      expect(page).to_not have_content("Document Type")
+      click_accordion_header(0)
+      expect(page).to have_content("Document Type")
+
+      click_accordion_header(1)
+      expect(page).to_not have_content("Procedural")
+      click_accordion_header(1)
+      expect(page).to have_content("Procedural")
+
+      click_accordion_header(2)
+      expect(page).to_not have_content("Select or tag issue(s)")
+      click_accordion_header(2)
+      expect(page).to have_content("Select or tag issue(s)")
+
+      click_accordion_header(3)
+      expect(page).to_not have_content("Add a comment")
+      click_accordion_header(3)
+      expect(page).to have_content("Add a comment")
     end
 
     scenario "Open and close keyboard shortcuts modal" do
