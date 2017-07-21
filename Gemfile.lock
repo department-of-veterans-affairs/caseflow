@@ -455,8 +455,8 @@ DEPENDENCIES
   caseflow!
   connect_vbms!
   database_cleaner
-  faker
   dotenv-rails
+  faker
   font-awesome-sass
   foreman
   jbuilder (~> 2.0)
