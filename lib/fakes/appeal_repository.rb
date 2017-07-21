@@ -38,45 +38,6 @@ class Fakes::AppealRepository
     "VA Memo"
   ].freeze
 
-  ISSUES = [
-    {
-      disposition: :remanded,
-      program: {
-        name: :compensation,
-        label: "Compenstation"
-      },
-      type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-        "Lumbosacral",
-        "All Others",
-        "Thigh, limitation of flexion of"
-      ]
-    },
-    {
-      disposition: :remanded,
-      program: {
-        name: :compensation,
-        label: "Compenstation"
-      },
-      type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
-        "Lumbosacral",
-        "All Others",
-        "Thigh, limitation of flexion of"
-      ]
-    },
-    {
-      disposition: :remanded,
-      program: {
-        name: :compensation,
-        label: "Compenstation"
-      },
-      type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-        "Lumbosacral",
-        "All Others",
-        "Thigh, limitation of flexion of"
-      ]
-    }
-  ].freeze
-
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
   RASIE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
 
@@ -404,7 +365,6 @@ class Fakes::AppealRepository
         signed_date: nil,
         docket_number: "13 11-265",
         regional_office_key: "RO13",
-        issues: ISSUES
       },
       issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: static_reader_documents
@@ -422,7 +382,6 @@ class Fakes::AppealRepository
         signed_date: nil,
         docket_number: "13 11-265",
         regional_office_key: "RO13",
-        issues: ISSUES
       },
       issues: [Generators::Issue.build(
         disposition: "Remanded",
@@ -450,8 +409,8 @@ class Fakes::AppealRepository
         signed_date: nil,
         docket_number: "13 11-265",
         regional_office_key: "RO13",
-        issues: ISSUES
       },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: redacted_reader_documents
     )
   end
