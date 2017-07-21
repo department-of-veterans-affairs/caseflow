@@ -429,8 +429,9 @@ export const onReceiveAppealDetails = (appeal) => ({
   payload: { appeal }
 });
 
-export const onAppealDetailsLoadingFail = () => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE
+export const onAppealDetailsLoadingFail = (value = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { value }
 });
 
 export const fetchAppealDetails = (vacolsId) => (

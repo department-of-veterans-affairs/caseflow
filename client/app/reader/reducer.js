@@ -160,6 +160,7 @@ export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
   initialDataLoadingFail: false,
+  loadedAppealFail: false,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   ui: {
@@ -295,6 +296,14 @@ export const reducer = (state = initialState, action = {}) => {
       {
         loadedAppeal: {
           $set: action.payload.appeal
+        }
+      }
+    );
+  case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
+    return update(
+      {
+        loadedAppealFail: {
+          $set: action.payload.value
         }
       }
     );
