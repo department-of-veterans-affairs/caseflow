@@ -18,6 +18,25 @@ class VACOLS::CaseHearing < VACOLS::Record
     N: :no_show
   }.freeze
 
+  HEARING_AODS = {
+    G: :granted,
+    Y: :filed,
+    N: :none
+  }.freeze
+
+  BOOLEAN_MAP = {
+    N: false,
+    Y: true
+  }.freeze
+
+  TABLE_NAMES = {
+    notes: "NOTES1",
+    disposition: "HEARING_DISP",
+    hold_open: "HOLDDAYS",
+    aod: "AOD",
+    transcript_requested: "TRANREQ"
+  }.freeze
+
   NOT_MASTER_RECORD = %(
     vdkey is NOT NULL
   ).freeze
@@ -46,7 +65,31 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
 
+    def update_hearing!(pkseq, hearing_info)
+      conn = connection
+
+      MetricsService.record("VACOLS: update_hearing! #{pkseq}",
+                            service: :vacols,
+                            name: "update_hearing") do
+        conn.transaction do
+          conn.execute(<<-SQL)
+            UPDATE HEARSCHED
+            SET #{hearing_values(hearing_info)}
+            WHERE HEARING_PKSEQ = #{pkseq}
+          SQL
+        end
+      end
+    end
+
     private
+
+    def hearing_values(hearing_info)
+      hearing_info.inject("") do |result, value|
+        result << TABLE_NAMES[value[0]] + " = " + connection.quote(value[1])
+        result << ", " unless value[0] == hearing_info.keys.last
+        result
+      end
+    end
 
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
@@ -60,6 +103,9 @@ class VACOLS::CaseHearing < VACOLS::Record
              :notes1,
              :folder_nr,
              :vdkey,
+             :aod,
+             :holddays,
+             :tranreq,
              :sattyid)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where(hearing_type: HEARING_TYPES.keys)
