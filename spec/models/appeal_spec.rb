@@ -255,6 +255,30 @@ describe Appeal do
       it "should return documents not saved in the database" do
         expect(result.first).to_not be_persisted
       end
+
+      context "when efolder_enabled is false" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+      end
+
+      context "when efolder_enabled is true" do
+        before do
+          Rails.application.config.efolder_enabled = true
+        end
+
+        it "loads document content from the efolder service" do
+          expect(VBMSService).not_to receive(:fetch_documents_for)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(result).to eq(documents)
+        end
+
+        after do
+          Rails.application.config.efolder_enabled = false
+        end
+      end
     end
 
     context "when save is true" do
@@ -271,12 +295,49 @@ describe Appeal do
         end
       end
 
+      context "when efolder_enabled is false" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+      end
+
+      context "when efolder_enabled is true" do
+        before do
+          Rails.application.config.efolder_enabled = true
+        end
+
+        it "loads document content from the efolder service" do
+          expect(VBMSService).not_to receive(:fetch_documents_for)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(result).to eq(documents)
+        end
+
+        after do
+          Rails.application.config.efolder_enabled = false
+        end
+      end
+
       context "when document doesn't exist in the database" do
         it "should return documents saved in the database" do
           expect(result.first).to be_persisted
         end
       end
     end
+  end
+
+  context "#fetched_documents" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
+    end
+
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents)
+    end
+
+    subject { appeal.fetched_documents }
+
   end
 
   context ".find_or_create_by_vacols_id" do
