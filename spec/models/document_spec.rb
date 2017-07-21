@@ -1,4 +1,5 @@
 require "rails_helper"
+require "faker"
 
 describe Document do
   let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
@@ -115,8 +116,9 @@ describe Document do
   context "content tests" do
     context "#fetch_and_cache_document_from_vbms" do
       it "loads document content" do
-        expect(VBMSService).to receive(:fetch_document_file).and_return("content!")
-        expect(document.fetch_and_cache_document_from_vbms).to eq("content!")
+        expected_content = Faker::ChuckNorris.fact
+        expect(VBMSService).to receive(:fetch_document_file).and_return(expected_content)
+        expect(document.fetch_and_cache_document_from_vbms).to eq(expected_content)
       end
     end
 
@@ -128,16 +130,18 @@ describe Document do
           end
 
           it "lazy fetches document content from VBMS service" do
-            expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
-            expect(document.fetch_content).to eq("content!")
+            expected_content = Faker::Shakespeare.as_you_like_it_quote
+            expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return(expected_content)
+            expect(document.fetch_content).to eq(expected_content)
           end
         end
 
         context "when S3 has documents" do
           it "loads document content from VBMS service" do
-            expect(S3Service).to receive(:fetch_content).and_return("content!")
+            expected_content = Faker::HarryPotter.quote
+            expect(S3Service).to receive(:fetch_content).and_return(expected_content)
             expect(VBMSService).not_to receive(:fetch_document_file)
-            expect(document.fetch_content).to eq("content!")
+            expect(document.fetch_content).to eq(expected_content)
           end
         end
       end
@@ -148,9 +152,10 @@ describe Document do
         end
 
         it "loads document content from efolder service" do
+          expected_content = Faker::HarryPotter.book
           expect(VBMSService).not_to receive(:fetch_document_file)
-          expect(EFolderService).to receive(:fetch_document_file).and_return("content!").once
-          expect(document.fetch_content).to eq("content!")
+          expect(EFolderService).to receive(:fetch_document_file).and_return(expected_content).once
+          expect(document.fetch_content).to eq(expected_content)
         end
 
         after do
