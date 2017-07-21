@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 
 import Accordion from '../components/Accordion';
-import AccordionHeader from '../components/AccordionHeader';
+import AccordionSection from '../components/AccordionSection';
 
 const TYPE_INFO = {
   aod: { text: 'AOD',
@@ -40,7 +40,7 @@ class ClaimsFolderDetails extends React.PureComponent {
     return <div className="cf-claims-folder-details">
       {!appealExists && <h1>{appeal.veteran_full_name}'s Claims Folder</h1>}
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
-        <AccordionHeader id="claim-folder-details-accordion" className="usa-grid" 
+        <AccordionSection id="claim-folder-details-accordion" className="usa-grid" 
           loading={appealExists} title={appealExists ? 'Loading...' : 'Claims folder details'} key={1}>
           {!appealExists &&
           <div>
@@ -71,7 +71,7 @@ class ClaimsFolderDetails extends React.PureComponent {
                 </ol>
             </div>
           </div>}
-        </AccordionHeader>
+        </AccordionSection>
       </Accordion>
     </div>;
   }
