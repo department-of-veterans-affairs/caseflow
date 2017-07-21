@@ -121,14 +121,41 @@ describe Document do
     end
 
     context "#fetch_content" do
-      before do
-        S3Service.files = {}
+      context "when efolder_enabled is false" do
+        context "when S3 doesn't have documents" do
+          before do
+            S3Service.files = {}
+          end
+
+          it "lazy fetches document content from VBMS service" do
+            expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
+            expect(document.fetch_content).to eq("content!")
+          end
+        end
+
+        context "when S3 has documents" do
+          it "loads document content from VBMS service" do
+            expect(S3Service).to receive(:fetch_content).and_return("content!")
+            expect(VBMSService).not_to receive(:fetch_document_file)
+            expect(document.fetch_content).to eq("content!")
+          end
+        end
       end
 
-      it "lazy fetches document content" do
-        expect(VBMSService).to receive(:fetch_document_file).exactly(1).times.and_return("content!")
-        document.fetch_content
-        expect(document.fetch_content).to eq("content!")
+      context "when efolder_enabled is true" do
+        before do
+          Rails.application.config.efolder_enabled = true
+        end
+
+        it "loads document content from efolder service" do
+          expect(VBMSService).not_to receive(:fetch_document_file)
+          expect(EFolderService).to receive(:fetch_document_file).and_return("content!").once
+          expect(document.fetch_content).to eq("content!")
+        end
+
+        after do
+          Rails.application.config.efolder_enabled = false
+        end
       end
     end
 

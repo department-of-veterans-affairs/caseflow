@@ -396,7 +396,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
+    @fetched_documents ||= if Rails.application.config.efolder_enabled
+                             self.class.efolder.fetch_documents_for(self)
+                           else
+                             self.class.vbms.fetch_documents_for(self)
+                           end
   end
 
   class << self
@@ -426,6 +430,10 @@ class Appeal < ActiveRecord::Base
 
     def bgs
       BGSService.new
+    end
+
+    def efolder
+      EFolderService
     end
 
     def vbms
