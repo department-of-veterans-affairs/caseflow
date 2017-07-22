@@ -41,7 +41,7 @@ const untransformCoordinates = (x, y, width, height, rotation) => {
   // } else if (rotation === 270) {
   //   return { x: width - y, y: x };
   // }
-  return transformCoordinates(x, y, width, height, (360 - rotation) % rotation);
+  return transformCoordinates(x, y, width, height, (360 - rotation) % 360);
 };
 
 /**
@@ -398,6 +398,14 @@ export class Pdf extends React.PureComponent {
         setStateWithDimensions();
       });
     });
+  }
+
+  commentCoordsFromPageCoords = (x, y, pageIndex) => {
+
+  }
+
+  pageCoordsFromCommentCoords = () => {
+    
   }
 
   // This method sets up the PDF. It sends a web request for the file
@@ -824,21 +832,21 @@ export class Pdf extends React.PureComponent {
   // eslint-disable-next-line max-statements
   render() {
     let annotations = [];
-    if (this.props.placingAnnotationIconPageCoords) {
-      const { x, y } = this.props.placingAnnotationIconPageCoords;
+    if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
       const { pageWidth, pageHeight } = this.getPageDimensions(this.props.placingAnnotationIconPageCoords.pageIndex);
-      const {finalX, finalY} = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
-      if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
-        annotations.push([{
+      const { x, y } = _.pick(this.props.placingAnnotationIconPageCoords, ['x', 'y']);
+      const coords = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+
+      annotations = this.props.comments.concat([{
             temporaryId: 'placing-annotation-icon',
             page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
             isPlacingAnnotationIcon: true,
-            x: finalX,
-            y: finalY
+            x: coords.x,
+            y: coords.y
           }]);
-      }
+    } else {
+      annotations = this.props.comments;
     }
-    annotations.push(this.props.comments);
 
     const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been drawn
@@ -885,10 +893,10 @@ export class Pdf extends React.PureComponent {
           );
 
           const { pageWidth, pageHeight } = this.getPageDimensions(pageIndex);
-          const { x2, y2 } = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+          const coords = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
           this.props.placeAnnotation(pageIndex + 1, {
-            xPosition: x2,
-            yPosition: y2
+            xPosition: coords.x,
+            yPosition: coords.y
           }, this.props.documentId);
         };
 
