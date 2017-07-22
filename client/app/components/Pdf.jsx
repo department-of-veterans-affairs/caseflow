@@ -20,6 +20,29 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
+const transformCoordinates = (x, y, width, height, rotation) => {
+  if (rotation === 0) {
+    return { x, y };
+  } else if (rotation === 90) {
+    return { x: height - y, y: x };
+  } else if (rotation === 180) {
+    return { x: width - x, y: height - y };
+  } else if (rotation === 270) {
+    return { x: y, y: width - x };
+  }
+};
+const untransformCoordinates = (x, y, width, height, rotation) => {
+  // if (rotation === 0) {
+  //   return { x, y };
+  // } else if (rotation === 90) {
+  //   return { x: y, y: height - x };
+  // } else if (rotation === 180) {
+  //   return { x: width - x, y: height - y };
+  // } else if (rotation === 270) {
+  //   return { x: width - y, y: x };
+  // }
+  return transformCoordinates(x, y, width, height, (360 - rotation) % rotation);
+};
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -791,16 +814,31 @@ export class Pdf extends React.PureComponent {
     return pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
   }
 
+  getPageDimensions = (pageIndex) => {
+    const pageWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width']);
+    const pageHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height']);
+
+    return { pageWidth, pageHeight };
+  }
+
   // eslint-disable-next-line max-statements
   render() {
-    const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
-      this.props.comments.concat([{
-        temporaryId: 'placing-annotation-icon',
-        page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
-        isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }]) :
-      this.props.comments;
+    let annotations = [];
+    if (this.props.placingAnnotationIconPageCoords) {
+      const { x, y } = this.props.placingAnnotationIconPageCoords;
+      const { pageWidth, pageHeight } = this.getPageDimensions(this.props.placingAnnotationIconPageCoords.pageIndex);
+      const {finalX, finalY} = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+      if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
+        annotations.push([{
+            temporaryId: 'placing-annotation-icon',
+            page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
+            isPlacingAnnotationIcon: true,
+            x: finalX,
+            y: finalY
+          }]);
+      }
+    }
+    annotations.push(this.props.comments);
 
     const commentIcons = annotations.reduce((acc, comment) => {
       // Only show comments on a page if it's been drawn
@@ -812,12 +850,15 @@ export class Pdf extends React.PureComponent {
         acc[comment.page] = [];
       }
 
+      const { pageWidth, pageHeight } = this.getPageDimensions(comment.page - 1);
+      const { x, y } = transformCoordinates(comment.x, comment.y, pageWidth, pageHeight, this.props.rotation);
+
       acc[comment.page].push(
         <CommentIcon
           comment={comment}
           position={{
-            x: comment.x * this.props.scale,
-            y: comment.y * this.props.scale
+            x: x * this.props.scale,
+            y: y * this.props.scale
           }}
           key={keyOfAnnotation(comment)}
           onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
@@ -843,9 +884,11 @@ export class Pdf extends React.PureComponent {
             this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect()
           );
 
+          const { pageWidth, pageHeight } = this.getPageDimensions(pageIndex);
+          const { x2, y2 } = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
           this.props.placeAnnotation(pageIndex + 1, {
-            xPosition: x,
-            yPosition: y
+            xPosition: x2,
+            yPosition: y2
           }, this.props.documentId);
         };
 
