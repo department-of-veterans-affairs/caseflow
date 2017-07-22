@@ -59,6 +59,12 @@ class Document < ActiveRecord::Base
       :other
   end
 
+  def self.from_efolder(hash)
+    new(type: type_from_vbms_type(hash["type_id"]),
+        received_at: hash["received_at"],
+        vbms_document_id: hash["vbms_document_id"])
+  end
+
   def self.from_vbms_document(vbms_document)
     new(type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
