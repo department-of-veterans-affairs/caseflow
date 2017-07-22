@@ -3,23 +3,25 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
-import DailyDocket from './DailyDocket';
+import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
 
-export const getDockets = (dispatch) => {
-  ApiUtil.get('/hearings/dockets.json', { cache: true }).
+// TODO: method should get data to populate worksheet
+export const getWorksheet = (id, dispatch) => {
+  ApiUtil.get(`/hearings/worksheets/${id}.json`, { cache: true }).
     then((response) => {
-      dispatch(Actions.populateDockets(response.body));
+      dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {
       dispatch(Actions.handleServerError(err));
     });
 };
 
-export class DailyDocketContainer extends React.Component {
+export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
-    if (!this.props.dockets) {
-      this.props.getDockets();
+    // TODO: if !worksheet call this.props.getWorksheet
+    if (!this.props.worksheet) {
+      this.props.getWorksheet(this.props.vbms_id);
     }
 
     // Since the page title does not change when react router
@@ -27,7 +29,7 @@ export class DailyDocketContainer extends React.Component {
     const pageTitle = document.getElementById('page-title');
 
     if (pageTitle) {
-      pageTitle.innerHTML = ' | Daily Docket';
+      pageTitle.innerHTML = ' | Daily Docket | Hearing Worksheet';
     }
   }
 
@@ -38,42 +40,39 @@ export class DailyDocketContainer extends React.Component {
         An error occurred while retrieving your hearings.</div>;
     }
 
-    if (!this.props.dockets) {
+    if (!this.props.worksheet) {
       return <div className="loading-dockets">
         <div>{loadingSymbolHtml('', '50%', '#68bd07')}</div>
-        <div>Loading hearings, please wait...</div>
+        <div>Loading worksheet, please wait...</div>
       </div>;
     }
 
-    if (Object.keys(this.props.dockets).length === 0) {
-      return <div>You have no upcoming hearings.</div>;
-    }
-
-    return <DailyDocket
-      veteran_law_judge={this.props.veteran_law_judge}
-      docket={this.props.dockets[this.props.date].hearings_hash}
+    return <HearingWorksheet
+      hearingType="Video"
+      worksheet={this.props.worksheet}
+      {...this.props}
     />;
   }
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets,
-  serverError: state.serverError
+  // TODO: add mappings
+  worksheet: state.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDockets: () => {
-    getDockets(dispatch);
+  getWorksheet: (id) => {
+    getWorksheet(id, dispatch);
   }
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DailyDocketContainer);
+)(HearingWorksheetContainer);
 
-DailyDocketContainer.propTypes = {
+HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  dockets: PropTypes.object,
-  serverError: PropTypes.object
+  date: PropTypes.string,
+  vbms_id: PropTypes.string
 };

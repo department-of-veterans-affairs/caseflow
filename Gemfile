@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "63418204dd50dbc5a4d88d55691829dbca85b5e1"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "689f4f0483730d90608d84d240361c156d2a6e60"
 
 gem "moment_timezone-rails"
 
@@ -113,6 +113,7 @@ group :development, :test do
   gem 'bundler-audit'
 
   # Testing tools
+  gem 'faker'
   gem 'rspec'
   gem 'rspec-rails'
   #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5

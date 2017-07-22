@@ -7,15 +7,16 @@ class Hearings::DocketsController < HearingsController
     return not_found unless current_user.vacols_id
 
     respond_to do |format|
-      format.html
+      format.html { render template: "hearings/index" }
       format.json { render json: current_user_dockets.transform_values(&:to_hash) }
     end
   end
 
   def show
+    @hearing_page_title = "Daily Docket"
     date = date_from_string(params[:id])
     return not_found unless date && judge.docket?(date)
-    render :index
+    render template: "hearings/index"
   end
 
   private
@@ -28,11 +29,6 @@ class Hearings::DocketsController < HearingsController
     @current_user_dockets ||= judge.upcoming_dockets
   end
   helper_method :current_user_dockets
-
-  # TODO(jd): Remove this when we have a unique hearings logo
-  def logo_class
-    "cf-logo-image-default"
-  end
 
   def logo_name
     "Hearing Prep"
