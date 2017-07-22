@@ -106,8 +106,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         container('caseflow-test-runner') {
           sh """
           cd ${CASEFLOW_DIR}
-          rake db:create
-          rake db:schema:load
+          rake spec:parallel:setup
           """
         }
       }
@@ -116,7 +115,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         container('caseflow-test-runner') {
           sh """
           cd ${CASEFLOW_DIR}
-          rake spec
+          rake spec:parallel
           """
         }
       }
