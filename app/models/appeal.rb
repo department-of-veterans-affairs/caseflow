@@ -397,7 +397,7 @@ class Appeal < ActiveRecord::Base
 
   def fetched_documents
     @fetched_documents ||= if RequestStore.store[:application] == "reader" && Rails.application.config.efolder_enabled
-                             self.class.efolder.fetch_documents_for(self)
+                             EFolderService.fetch_documents_for(self)
                            else
                              self.class.vbms.fetch_documents_for(self)
                            end
@@ -430,10 +430,6 @@ class Appeal < ActiveRecord::Base
 
     def bgs
       BGSService.new
-    end
-
-    def efolder
-      EFolderService
     end
 
     def vbms
