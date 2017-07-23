@@ -33,7 +33,7 @@ class ExternalApi::EfolderService
     response = []
 
     url = URI.escape(url)
-    MetricsService.record"eFolder GET request to #{url}" do
+    MetricsService.record "eFolder GET request to #{url}" do
       request = HTTPI::Request.new(url)
 
       headers["HTTP-AUTHORIZATION"] = "Token token=#{efolder_token}"
