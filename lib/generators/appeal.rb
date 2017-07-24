@@ -127,6 +127,9 @@ class Generators::Appeal
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
 
+      # I would like to clean this up so we inject values into Fakes::DocumentService and have them available
+      # to Fakes::VBMSService (since it is a subclass of DocumentService), but Ruby isn't allowing me to do that
+      # without using class variables
       doc_storage_service = Rails.application.config.efolder_enabled ? Fakes::DocumentService : Fakes::VBMSService
       doc_storage_service.document_records ||= {}
       doc_storage_service.document_records[appeal.vbms_id] = documents
