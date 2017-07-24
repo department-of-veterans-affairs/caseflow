@@ -7,10 +7,12 @@ class CertificationsController < ApplicationController
     if feature_enabled?(:certification_v2)
       status = certification.start!
       # this line was introduced for v2 stats
+      certification.v2 = true
       # only make the bgs and vacols calls if we're actually
       # starting a certification
-      certification.v2 = true
       certification.fetch_power_of_attorney! if status == :started
+
+      react_routed
       render "v2", layout: "application"
       return
     end
