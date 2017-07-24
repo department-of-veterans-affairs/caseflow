@@ -23,7 +23,7 @@ class Fakes::VBMSService
     attr_accessor :end_product_claim_id
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
   end
-
+  
   # rubocop:disable Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
