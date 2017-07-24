@@ -5,7 +5,7 @@ export default _.once(() => {
   let isMeasuringPerf = false;
 
   // eslint-disable-next-line max-statements
-  const handleStartPerfMeasurement = (event) => {
+  const handleTogglePerfMeasurement = (event) => {
     if (!(event.altKey && event.code === 'KeyP')) {
       return;
     }
@@ -28,8 +28,8 @@ export default _.once(() => {
       console.groupEnd();
     }
     /* eslint-enable no-console */
-  }
+  };
 
-  window.addEventListener('keydown', handleStartPerfMeasurement);
+  window.addEventListener('keydown', handleTogglePerfMeasurement);
 
 });
