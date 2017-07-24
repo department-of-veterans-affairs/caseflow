@@ -2,26 +2,44 @@ class CertificationsController < ApplicationController
   before_action :verify_access
 
   def new
-    status = certification.start!
     @form8 = certification.form8
 
     if feature_enabled?(:certification_v2)
+      status = certification.start!
       # this line was introduced for v2 stats
-      certification.v2 = true
       # only make the bgs and vacols calls if we're actually
       # starting a certification
+      certification.v2 = true
       certification.fetch_power_of_attorney! if status == :started
-
-      react_routed
       render "v2", layout: "application"
       return
     end
+
+    # Enable this block when front-end changes are merged
+    # if feature_enabled?(:certification_v2)
+    #   # this line was introduced for v2 stats
+    #   # only make the bgs and vacols calls if we're actually
+    #   # starting a certification
+    #   render "v2", layout: "application"
+    #   certification.v2 = true
+    #   certification.loading = true
+    #   status = certification.start!
+    #   certification.fetch_power_of_attorney! if status == :started
+    #   certification.loading = false
+    #   return
+    # end
+
+    status = certification.start!
 
     case status
     when :already_certified    then render "already_certified"
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
+  end
+
+  def certification_json
+
   end
 
   def update_certification_from_v2_form
