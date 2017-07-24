@@ -22,6 +22,7 @@ export default class Button extends React.Component {
       disabled,
       loading,
       onClick,
+      style,
       type
     } = this.props;
 
@@ -58,6 +59,7 @@ export default class Button extends React.Component {
 
     return <span>
       <button
+        style={style}
         id={id || `${type}-${name.replace(/\s/g, '-')}`}
         className={classNames.join(' ') + (loading ? ' hidden-field' : '')}
         type={type}
