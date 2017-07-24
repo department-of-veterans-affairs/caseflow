@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'certifications(/:vacols_id)/sign_and_certify' => 'certifications#new'
   get 'certifications(/:vacols_id)/success' => 'certifications#new'
 
+  get 'certifications(/:vacols_id)/json' => 'certifications#certification_json'
+
   resources :certification_cancellations, only: [:show, :create]
 
   namespace :api do

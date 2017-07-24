@@ -7,6 +7,15 @@
 class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
+  def async_start!
+    update_attributes!(
+      v2: true,
+      loading: true,
+      error: false
+    )
+    StartCertificationJob.perform_now(self)
+  end
+
   def start!
     return certification_status unless can_be_updated?
 

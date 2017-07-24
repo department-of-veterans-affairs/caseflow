@@ -19,15 +19,9 @@ class CertificationsController < ApplicationController
 
     # Enable this block when front-end changes are merged
     # if feature_enabled?(:certification_v2)
-    #   # this line was introduced for v2 stats
-    #   # only make the bgs and vacols calls if we're actually
-    #   # starting a certification
+    #   certification.async_start!
+    #   react_routed
     #   render "v2", layout: "application"
-    #   certification.v2 = true
-    #   certification.loading = true
-    #   status = certification.start!
-    #   certification.fetch_power_of_attorney! if status == :started
-    #   certification.loading = false
     #   return
     # end
 
@@ -40,8 +34,14 @@ class CertificationsController < ApplicationController
     end
   end
 
-  def certification_json
+  def json
+    render json: { error: true }  if certification.error
+    render json: { loading: true } if certification.loading
 
+    render json: {
+      certification: @certification.to_hash,
+      form9PdfPath: pdfjs.full_path(file: form9_pdf_certification_path(id: @certification.vacols_id))
+    }
   end
 
   def update_certification_from_v2_form
