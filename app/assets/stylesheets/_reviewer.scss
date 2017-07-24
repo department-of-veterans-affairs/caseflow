@@ -368,6 +368,17 @@ svg[aria-hidden=true],
   }
 }
 
+.cf-documents-comments-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .cf-show-all-label {
+    margin-right: 18px;
+    text-align: right;
+  }
+}
+
 .cf-add-comment-button {
   margin-top: -15px;
   margin-bottom: 10px;

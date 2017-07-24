@@ -49,9 +49,7 @@ class DocumentListHeader extends React.Component {
           {props.numberOfDocuments} Documents
         </div>
         <div className="usa-width-one-third">
-          <span className="cf-right-side">
-            <DocumentsCommentsButton />
-          </span>
+          <DocumentsCommentsButton />
         </div>
       </div>
       {Boolean(filteredCategories.length) &&
