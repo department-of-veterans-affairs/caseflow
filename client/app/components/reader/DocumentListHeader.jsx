@@ -4,7 +4,7 @@ import SearchBar from '../SearchBar';
 import Button from '../Button';
 import Alert from '../Alert';
 import { connect } from 'react-redux';
-import { setSearch, clearAllFilters, toggleExpandAll, clearSearch } from '../../reader/actions';
+import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
 import Analytics from '../../util/AnalyticsUtil';
 import ApiUtil from '../../util/ApiUtil';
@@ -20,8 +20,6 @@ class DocumentListHeader extends React.Component {
 
   render() {
     const props = this.props;
-
-    const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
 
     const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
       props.docFilterCriteria.category[category]
@@ -52,12 +50,7 @@ class DocumentListHeader extends React.Component {
         </div>
         <div className="usa-width-one-third">
           <span className="cf-right-side">
-            <Button
-              name={buttonText}
-              onClick={props.toggleExpandAll}
-              id="btn-default"
-              disabled={props.noDocuments}
-            />
+            
           </span>
         </div>
       </div>
@@ -78,8 +71,6 @@ class DocumentListHeader extends React.Component {
 
 DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
-  expandAll: PropTypes.bool,
-  toggleExpandAll: PropTypes.func,
   noDocuments: PropTypes.bool,
   clearAllFilters: PropTypes.func,
   numberOfDocuments: PropTypes.number.isRequired,
@@ -87,7 +78,6 @@ DocumentListHeader.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  expandAll: state.ui.expandAll,
   numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
   docFilterCriteria: state.ui.docFilterCriteria,
   vacolsId: state.loadedAppealId
@@ -103,10 +93,6 @@ const mapDispatchToProps = (dispatch) => ({
   },
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
-  },
-  toggleExpandAll: () => {
-    Analytics.event('Claims Folder', 'click', 'Expand/Collapse all');
-    dispatch(toggleExpandAll());
   }
 });
 
