@@ -391,8 +391,10 @@ class DocumentsTable extends React.Component {
     let rowObjects = this.props.documents.reduce((acc, row) => {
       acc.push(row);
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
+      const docHasComments = _.size(this.props.annotationsPerDocument[doc.id]);
+      const shouldShowComments = doc.listComments || this.props.viewingDocumentsOrComments === 'comments';
 
-      if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
+      if (docHasComments && shouldShowComments) {
         acc.push({
           ...row,
           isComment: true
@@ -450,7 +452,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state, 'tagOptions', 'viewingDocumentsOrComments'),
   ..._.pick(state.ui, 'pdfList'),
   ..._.pick(state.ui, 'docFilterCriteria')
 });
