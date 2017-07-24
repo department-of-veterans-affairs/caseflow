@@ -48,10 +48,6 @@ export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRe
   }
 });
 
-export const toggleExpandAll = () => ({
-  type: Constants.TOGGLE_EXPAND_ALL
-});
-
 export const setSearch = (searchQuery) => ({
   type: Constants.SET_SEARCH,
   payload: {
