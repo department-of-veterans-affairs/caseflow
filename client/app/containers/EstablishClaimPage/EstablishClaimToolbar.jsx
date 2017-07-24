@@ -46,6 +46,7 @@ export default class EstablishClaimToolbar extends React.Component {
           name={buttonText}
           onClick={this.establishNextClaim}
           classNames={['usa-button-primary', 'cf-push-right']}
+          disabled={totalCasesCompleted >= casesAssigned}
           loading={this.state.loading}
         />
       </div>;
