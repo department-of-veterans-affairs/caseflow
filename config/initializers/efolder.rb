@@ -1,1 +1,1 @@
-EFolderService = (!ApplicationController.dependencies_faked? ? Fakes::EfolderService : Fakes::EfolderService)
+EFolderService = (!ApplicationController.dependencies_faked? ? Fakes::DocumentService : Fakes::DocumentService)

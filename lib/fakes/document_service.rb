@@ -1,4 +1,4 @@
-class Fakes::EfolderService
+class Fakes::DocumentService
   class << self
     attr_accessor :document_records
   end

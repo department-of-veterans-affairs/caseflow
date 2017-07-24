@@ -17,38 +17,10 @@ class VBMSCaseflowLogger
   end
 end
 
-class Fakes::VBMSService
+class Fakes::VBMSService < Fakes::DocumentService
   class << self
-    attr_accessor :document_records
     attr_accessor :end_product_claim_id
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
-  end
-
-  # rubocop:disable Metrics/CyclomaticComplexity
-  def self.fetch_document_file(document)
-    path =
-      case document.vbms_document_id.to_i
-      when 1
-        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-      when 2
-        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
-      when 3
-        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
-      when 4
-        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
-      when 5
-        File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
-      else
-        file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
-        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
-        file
-      end
-    IO.binread(path)
-  end
-  # rubocop:enable Metrics/CyclomaticComplexity
-
-  def self.fetch_documents_for(appeal)
-    (document_records || {})[appeal.vbms_id] || @documents || []
   end
 
   def self.upload_document_to_vbms(appeal, form8)
