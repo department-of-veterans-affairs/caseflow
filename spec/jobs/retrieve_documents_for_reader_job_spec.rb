@@ -112,7 +112,7 @@ describe RetrieveAppealsDocumentsForReaderJob do
       end
 
       it "stops if limit is reached after finishing current case" do
-        RetrieveAppealsDocumentsForReaderJob.perform_now(1)
+        RetrieveAppealsDocumentsForReaderJob.perform_now(limit: 1)
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
         expect(S3Service.files[new_doc.vbms_document_id]).to eq(new_doc_expected_content)
