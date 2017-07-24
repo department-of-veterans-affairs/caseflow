@@ -4,14 +4,12 @@ require "prometheus/client/push"
 class PrometheusService
   # :nocov:
   class << self
-
     def vbms_request_attempt_counter
       @vbms_request_attempt_counter ||=
         find_or_register_metric(:counter,
                                 :vbms_request_attempt_counter,
                                 "A counter of attempted VBMS requests")
     end
-
 
     def vbms_request_error_counter
       @vbms_request_error_counter ||=
