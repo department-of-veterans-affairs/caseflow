@@ -470,3 +470,13 @@ export const setOpenedAccordionSections = (openedAccordionSections, prevSections
     }
   };
 };
+
+export const setViewingDocumentsOrComments = (documentsOrComments) => {
+  Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'set-viewing-documents-or-comments', documentsOrComments);
+  return {
+    type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
+    payload: {
+      documentsOrComments
+    }
+  }
+}

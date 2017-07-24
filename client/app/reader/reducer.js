@@ -159,6 +159,7 @@ export const initialState = {
   assignments: [],
   loadedAppealId: null,
   initialDataLoadingFail: false,
+  viewingDocumentsOrComments: 'documents',
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
@@ -898,6 +899,15 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
+    return update(
+      state,
+      {
+        viewingDocumentsOrComments: {
+          $set: action.payload.documentsOrComments
+        }
+      }
+    )    
   default:
     return state;
   }
