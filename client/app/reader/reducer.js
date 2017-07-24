@@ -160,7 +160,7 @@ export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
   initialDataLoadingFail: false,
-  loadedAppealFail: false,
+  didLoadAppealFail: false,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
@@ -305,7 +305,7 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
     return update(
       {
-        loadedAppealFail: {
+        didLoadAppealFail: {
           $set: action.payload.value
         }
       }
