@@ -281,7 +281,7 @@ describe Appeal do
         end
 
         it "loads document content from the efolder service" do
-          expect(VBMSService).not_to receive(:fetch_documents_for)
+          expect(Appeal).not_to receive(:vbms)
           expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
         end
@@ -321,7 +321,7 @@ describe Appeal do
         end
 
         it "loads document content from the efolder service" do
-          expect(VBMSService).not_to receive(:fetch_documents_for)
+          expect(Appeal).not_to receive(:vbms)
           expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
         end
