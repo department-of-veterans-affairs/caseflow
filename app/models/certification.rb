@@ -10,10 +10,14 @@ class Certification < ActiveRecord::Base
   def async_start!
     update_attributes!(
       v2: true,
-      loading: true,
-      error: false
+      loading_data: true,
+      loading_data_failed: false
     )
-    StartCertificationJob.perform_now(self)
+    # if Rails.env.development?
+      # StartCertificationJob.perform_now(self)
+    # else
+      StartCertificationJob.perform_later(self)
+    # end
   end
 
   def start!

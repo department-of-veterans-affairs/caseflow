@@ -4,26 +4,27 @@ class CertificationsController < ApplicationController
   def new
     @form8 = certification.form8
 
-    if feature_enabled?(:certification_v2)
-      status = certification.start!
-      # this line was introduced for v2 stats
-      certification.v2 = true
-      # only make the bgs and vacols calls if we're actually
-      # starting a certification
-      certification.fetch_power_of_attorney! if status == :started
-
-      react_routed
-      render "v2", layout: "application"
-      return
-    end
-
-    # Enable this block when front-end changes are merged
     # if feature_enabled?(:certification_v2)
-    #   certification.async_start!
+    #   status = certification.start!
+    #   # this line was introduced for v2 stats
+    #   certification.v2 = true
+    #   # only make the bgs and vacols calls if we're actually
+    #   # starting a certification
+    #   certification.fetch_power_of_attorney! if status == :started
+
     #   react_routed
     #   render "v2", layout: "application"
     #   return
     # end
+
+    # Enable this block along with the front-end changes.
+    if feature_enabled?(:certification_v2)
+      Rails.logger.info "Attempting to start job"
+      certification.async_start!
+      react_routed
+      render "v2", layout: "application"
+      return
+    end
 
     status = certification.start!
 
@@ -35,13 +36,10 @@ class CertificationsController < ApplicationController
   end
 
   def json
-    render json: { error: true }  if certification.error
-    render json: { loading: true } if certification.loading
+    return render json: { loading_data_failed: true }  if certification.loading_data_failed
+    return render json: { loading_data: true } if certification.loading_data
 
-    render json: {
-      certification: @certification.to_hash,
-      form9PdfPath: pdfjs.full_path(file: form9_pdf_certification_path(id: @certification.vacols_id))
-    }
+    render json: { certification: certification.to_hash, form9PdfPath: form9_pdfjs_path }
   end
 
   def update_certification_from_v2_form
@@ -100,6 +98,10 @@ class CertificationsController < ApplicationController
   def form9_pdf
     form9 = certification.appeal.form9
     send_file(form9.serve, type: "application/pdf", disposition: "inline")
+  end
+
+  def form9_pdfjs_path
+    pdfjs.full_path(file: form9_pdf_certification_path(id: certification.vacols_id))
   end
 
   def pdf

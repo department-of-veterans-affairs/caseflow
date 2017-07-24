@@ -4,12 +4,14 @@ require "prometheus/client/push"
 class PrometheusService
   # :nocov:
   class << self
+
     def vbms_request_attempt_counter
       @vbms_request_attempt_counter ||=
         find_or_register_metric(:counter,
                                 :vbms_request_attempt_counter,
                                 "A counter of attempted VBMS requests")
     end
+
 
     def vbms_request_error_counter
       @vbms_request_error_counter ||=
@@ -100,6 +102,20 @@ class PrometheusService
         find_or_register_metric(:counter,
                                 :background_jobs_error_counter,
                                 "counter of all sidekiq background jobs that errored")
+    end
+
+    def start_certification_job_counter
+      @start_certification_job_counter ||=
+        find_or_register_metric(:counter,
+                                :start_certification_job_counter,
+                                "A counter of StartCertificationJob attempts")
+    end
+
+    def start_certification_job_error_counter
+      @start_certification_job_error_counter ||=
+        find_or_register_metric(:counter,
+                                :start_certification_job_error_counter,
+                                "A counter of StartCertificationJob errors")
     end
 
     # This method pushes all registered metrics to the prometheus pushgateway

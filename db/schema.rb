@@ -128,8 +128,8 @@ ActiveRecord::Schema.define(version: 20170724162126) do
     t.string   "bgs_rep_state"
     t.string   "bgs_rep_zip"
     t.boolean  "v2"
-    t.boolean  "loading"
-    t.boolean  "error"
+    t.boolean  "loading_data"
+    t.boolean  "loading_data_failed"
   end
 
   add_index "certifications", ["user_id"], name: "index_certifications_on_user_id", using: :btree
