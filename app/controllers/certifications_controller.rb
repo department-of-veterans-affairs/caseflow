@@ -4,27 +4,26 @@ class CertificationsController < ApplicationController
   def new
     @form8 = certification.form8
 
-    # if feature_enabled?(:certification_v2)
-    #   status = certification.start!
-    #   # this line was introduced for v2 stats
-    #   certification.v2 = true
-    #   # only make the bgs and vacols calls if we're actually
-    #   # starting a certification
-    #   certification.fetch_power_of_attorney! if status == :started
-
-    #   react_routed
-    #   render "v2", layout: "application"
-    #   return
-    # end
-
-    # Enable this block along with the front-end changes.
     if feature_enabled?(:certification_v2)
-      Rails.logger.info "Attempting to start job"
-      certification.async_start!
+      status = certification.start!
+      # this line was introduced for v2 stats
+      certification.v2 = true
+      # only make the bgs and vacols calls if we're actually
+      # starting a certification
+      certification.fetch_power_of_attorney! if status == :started
+
       react_routed
       render "v2", layout: "application"
       return
     end
+
+    # # Enable this block along with the front-end changes.
+    # if feature_enabled?(:certification_v2)
+    #   certification.async_start!
+    #   react_routed
+    #   render "v2", layout: "application"
+    #   return
+    # end
 
     status = certification.start!
 
@@ -36,7 +35,7 @@ class CertificationsController < ApplicationController
   end
 
   def json
-    return render json: { loading_data_failed: true }  if certification.loading_data_failed
+    return render json: { loading_data_failed: true } if certification.loading_data_failed
     return render json: { loading_data: true } if certification.loading_data
 
     render json: { certification: certification.to_hash, form9PdfPath: form9_pdfjs_path }
