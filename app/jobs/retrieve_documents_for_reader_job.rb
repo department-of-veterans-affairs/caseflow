@@ -5,7 +5,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
 
   def perform(args = {})
     # Args should be set in sidekiq_cron.yml, but default the limit to 1500 if they aren't
-    limit = args[:limit] || 1500
+    limit = args["limit"] || 1500
     successful_count = 0
     failed_count = 0
     docs_attempted = 0

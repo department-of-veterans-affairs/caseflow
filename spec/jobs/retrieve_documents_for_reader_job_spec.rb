@@ -1,7 +1,7 @@
 require "rails_helper"
 require "faker"
 
-describe RetrieveAppealsDocumentsForReaderJob do
+describe RetrieveDocumentsForReaderJob do
   before(:all) do
     S3Service = Caseflow::Fakes::S3Service
     User.case_assignment_repository = Fakes::CaseAssignmentRepository
@@ -77,7 +77,7 @@ describe RetrieveAppealsDocumentsForReaderJob do
       end
 
       it "retrieves the appeal documents for all reader users" do
-        RetrieveAppealsDocumentsForReaderJob.perform_now
+        RetrieveDocumentsForReaderJob.perform_now
 
         # Validate that the decision content is cached in S3 mock
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
@@ -112,7 +112,7 @@ describe RetrieveAppealsDocumentsForReaderJob do
       end
 
       it "stops if limit is reached after finishing current case" do
-        RetrieveAppealsDocumentsForReaderJob.perform_now(limit: 1)
+        RetrieveDocumentsForReaderJob.perform_now("limit" => 1)
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
         expect(S3Service.files[new_doc.vbms_document_id]).to eq(new_doc_expected_content)
@@ -136,7 +136,7 @@ describe RetrieveAppealsDocumentsForReaderJob do
       end
 
       it "catches the exception and continues to the next document" do
-        RetrieveAppealsDocumentsForReaderJob.perform_now
+        RetrieveDocumentsForReaderJob.perform_now
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
         expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
