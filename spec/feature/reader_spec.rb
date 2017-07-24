@@ -752,10 +752,10 @@ RSpec.feature "Reader" do
     scenario "Claim Folder Details" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      vetern_folder_title = "#{appeal.veteran_full_name}'s Claims Folder"
+      veteran_folder_title = "#{appeal.veteran_full_name}'s Claims Folder"
       appeal_info = appeal.to_hash
 
-      expect(page).to have_content(vetern_folder_title)
+      expect(page).to have_content(veteran_folder_title)
       expect(page).to have_content("Claims folder details")
       find_by_id("claim-folder-details-accordion").click
       regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"

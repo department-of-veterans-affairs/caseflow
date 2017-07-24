@@ -63,7 +63,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             <div className="usa-width-one-whole claims-folder-issues">
                 <b>Issues</b><br />
                 <ol>
-                  {appeal.issues && appeal.issues.map((issue, index) =>
+                  {appeal.issues.map((issue, index) =>
                     <li key={index}><span>
                       {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
                     </span></li>

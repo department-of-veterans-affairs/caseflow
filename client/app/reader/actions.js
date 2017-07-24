@@ -431,9 +431,9 @@ export const onReceiveAppealDetails = (appeal) => ({
   payload: { appeal }
 });
 
-export const onAppealDetailsLoadingFail = (value = true) => ({
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
   type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
-  payload: { value }
+  payload: { failedToLoad }
 });
 
 export const fetchAppealDetails = (vacolsId) => (
@@ -442,9 +442,7 @@ export const fetchAppealDetails = (vacolsId) => (
       const returnedObject = JSON.parse(response.text);
 
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
-    }, () => {
-      dispatch(onAppealDetailsLoadingFail());
-    });
+    }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
 

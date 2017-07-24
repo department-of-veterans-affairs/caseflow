@@ -51,7 +51,7 @@ const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state),
     ..._.pick(state.ui, 'docFilterCriteria'),
     appeal: _.find(state.assignments, { vacols_id: props.match.params.vacolsId }) ||
-    state.loadedAppeal
+      state.loadedAppeal
   };
 };
 

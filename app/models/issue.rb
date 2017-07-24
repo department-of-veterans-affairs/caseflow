@@ -45,7 +45,7 @@ class Issue < ActiveRecord::Base
   # in the appeal
   def new_material?
     program == :compensation &&
-      type == :service_connection &&
+      type[:name] == :service_connection &&
       category == :new_material
   end
 

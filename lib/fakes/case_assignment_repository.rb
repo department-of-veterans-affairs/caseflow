@@ -21,7 +21,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -31,7 +31,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -41,7 +41,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -65,7 +65,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -75,7 +75,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -85,7 +85,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -109,7 +109,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -119,7 +119,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
@@ -129,7 +129,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
             { disposition: :remanded, program:
               {
                 name: :compensation,
-                label: "Compenstation"
+                label: "Compensation"
               },
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
