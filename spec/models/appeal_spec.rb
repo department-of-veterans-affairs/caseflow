@@ -101,6 +101,26 @@ describe Appeal do
     end
   end
 
+  context "#aod" do
+    subject { appeal.aod }
+
+    it { is_expected.to be_truthy}
+  end
+
+  context "#cavc" do
+    subject { appeal }
+
+    it { expect(subject.cavc).to be_falsey }
+
+    context "when appeal type is court remand" do
+      let(:type) { "Court Remand" }
+      it "returns true for cavc" do
+        subject.type = "Court Remand"
+        expect(subject.cavc).to be_truthy
+      end
+    end
+  end
+
   context "#ssocs" do
     subject { appeal.ssocs }
 
@@ -905,7 +925,7 @@ describe Appeal do
   end
 
   context ".to_hash" do
-    context "when issues parameter is nil and contains addtional attributes" do
+    context "when issues parameter is nil and contains additional attributes" do
       subject { appeal.to_hash(viewed: true, issues: nil) }
 
       let!(:appeal) do
