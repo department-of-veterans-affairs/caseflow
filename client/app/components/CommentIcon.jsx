@@ -11,7 +11,7 @@ export class CommentIcon extends React.Component {
   }
 
   onDragStart = (event) => {
-    let data = {
+    const dragAndDropData = {
       uuid: this.props.comment.uuid,
       iconCoordinates: {
         x: event.pageX - event.target.getBoundingClientRect().left,
@@ -21,7 +21,7 @@ export class CommentIcon extends React.Component {
 
     // The dataTransfer object is an HTML5 Drag and Drop concept. It allows us
     // to communicate directly with whatever method will receive our drop.
-    event.dataTransfer.setData('text', JSON.stringify(data));
+    event.dataTransfer.setData('text', JSON.stringify(dragAndDropData));
   }
 
   render() {
