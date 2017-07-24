@@ -104,6 +104,14 @@ class PrometheusService
                                 "counter of all sidekiq background jobs that errored")
     end
 
+    # This method pushes all registered metrics to the prometheus pushgateway
+    def push_metrics!
+      metrics = Prometheus::Client.registry
+      url = Rails.application.secrets.prometheus_push_gateway_url
+
+      Prometheus::Client::Push.new("push-gateway", nil, url).add(metrics)
+    end
+
     private
 
     def find_or_register_gauge_and_summary(name, description)
