@@ -2,10 +2,9 @@ class CertificationsController < ApplicationController
   before_action :verify_access
 
   def new
-    @form8 = certification.form8
-
     if feature_enabled?(:certification_v2)
       status = certification.start!
+      @form8 = certification.form8
       # this line was introduced for v2 stats
       certification.v2 = true
       # only make the bgs and vacols calls if we're actually
@@ -19,6 +18,7 @@ class CertificationsController < ApplicationController
 
     # # Enable this block along with the front-end changes.
     # if feature_enabled?(:certification_v2)
+    #   @form8 = certification.form8
     #   certification.async_start!
     #   react_routed
     #   render "v2", layout: "application"
@@ -26,6 +26,7 @@ class CertificationsController < ApplicationController
     # end
 
     status = certification.start!
+    @form8 = certification.form8
 
     case status
     when :already_certified    then render "already_certified"
