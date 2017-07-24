@@ -13,11 +13,12 @@ class Certification < ActiveRecord::Base
       loading_data: true,
       loading_data_failed: false
     )
-    # if Rails.env.development?
-      # StartCertificationJob.perform_now(self)
-    # else
+    # We don't run sidekiq in development mode.
+    if Rails.env.development?
+      StartCertificationJob.perform_now(self)
+    else
       StartCertificationJob.perform_later(self)
-    # end
+    end
   end
 
   def start!
