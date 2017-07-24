@@ -11,7 +11,7 @@ class ExternalApi::EfolderService
 
   def self.fetch_documents_for(appeal)
     # Makes a GET request to <efolder>/files/<file_number>
-    headers = { "HTTP-FILE-NUMBER" => appeal.veteran.file_number }
+    headers = { "FILE-NUMBER" => appeal.veteran.file_number }
     documents = get_efolder_response(efolder_base_url + "/files", headers)
 
     Rails.logger.info("# of Documents retrieved from efolder: #{documents.length}")
@@ -36,7 +36,7 @@ class ExternalApi::EfolderService
     MetricsService.record "eFolder GET request to #{url}" do
       request = HTTPI::Request.new(url)
 
-      headers["HTTP-AUTHORIZATION"] = "Token token=#{efolder_token}"
+      headers["AUTHORIZATION"] = "Token token=#{efolder_token}"
       request.headers = headers
 
       response = HTTPI.get(request)
