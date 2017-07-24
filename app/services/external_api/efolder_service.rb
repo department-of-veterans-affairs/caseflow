@@ -4,7 +4,7 @@ require "json"
 class ExternalApi::EfolderService
   def self.fetch_document_file(document)
     # Makes a GET request to <efolder>/documents/<vbms_doc_id>
-    uri = URI.escape(efolder_base_url + "/documents/" + document.vbms_document_id)
+    uri = URI.escape(efolder_base_url + "/api/v1/documents/" + document.vbms_document_id)
     result = get_efolder_response(uri)
     result && result.content
   end
