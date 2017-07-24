@@ -8,6 +8,8 @@ class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
   def async_start!
+    return certification_status unless can_be_updated?
+
     update_attributes!(
       v2: true,
       loading_data: true,
