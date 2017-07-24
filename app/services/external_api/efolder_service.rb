@@ -2,14 +2,14 @@ require "HTTPI"
 require "json"
 
 class ExternalApi::EfolderService
-  def self.fetch_document_file(document)
+  def self.fetch_document_file(user, document)
     # Makes a GET request to <efolder>/documents/<vbms_doc_id>
     uri = URI.escape(efolder_base_url + "/api/v1/documents/" + document.vbms_document_id)
     result = get_efolder_response(uri)
     result && result.content
   end
 
-  def self.fetch_documents_for(appeal)
+  def self.fetch_documents_for(user, appeal)
     # Makes a GET request to <efolder>/files/<file_number>
     headers = { "FILE-NUMBER" => appeal.veteran.file_number }
     documents = get_efolder_response(efolder_base_url + "/files", headers)
@@ -25,8 +25,8 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_url
   end
 
-  def self.efolder_token
-    Rails.application.config.efolder_token
+  def self.efolder_key
+    Rails.application.config.efolder_key
   end
 
   def self.get_efolder_response(url, headers = {})
@@ -36,7 +36,9 @@ class ExternalApi::EfolderService
     MetricsService.record "eFolder GET request to #{url}" do
       request = HTTPI::Request.new(url)
 
-      headers["AUTHORIZATION"] = "Token token=#{efolder_token}"
+      headers["AUTHORIZATION"] = "Token token=#{efolder_key}"
+      headers["CSS-ID"] = user.css_id
+      headers["STATION-ID"] = user.station_id
       request.headers = headers
 
       response = HTTPI.get(request)
