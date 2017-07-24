@@ -104,28 +104,6 @@ class PrometheusService
                                 "counter of all sidekiq background jobs that errored")
     end
 
-    def start_certification_job_counter
-      @start_certification_job_counter ||=
-        find_or_register_metric(:counter,
-                                :start_certification_job_counter,
-                                "A counter of StartCertificationJob attempts")
-    end
-
-    def start_certification_job_error_counter
-      @start_certification_job_error_counter ||=
-        find_or_register_metric(:counter,
-                                :start_certification_job_error_counter,
-                                "A counter of StartCertificationJob errors")
-    end
-
-    # This method pushes all registered metrics to the prometheus pushgateway
-    def push_metrics!
-      metrics = Prometheus::Client.registry
-      url = Rails.application.secrets.prometheus_push_gateway_url
-
-      Prometheus::Client::Push.new("push-gateway", nil, url).add(metrics)
-    end
-
     private
 
     def find_or_register_gauge_and_summary(name, description)
