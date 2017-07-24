@@ -127,9 +127,8 @@ class Generators::Appeal
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
 
-      doc_storage_service = Rails.application.config.efolder_enabled ? Fakes::EfolderService : Fakes::VBMSService
-      doc_storage_service.document_records ||= {}
-      doc_storage_service.document_records[appeal.vbms_id] = documents
+      Fakes::VBMSService.document_records ||= {}
+      Fakes::VBMSService.document_records[appeal.vbms_id] = documents
 
       add_inaccessible_appeal(appeal) if inaccessible
 
