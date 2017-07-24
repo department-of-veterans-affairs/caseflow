@@ -3,15 +3,12 @@ require "set"
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :default
 
-  # rubocop:disable MethodLength
   def perform(args = {})
     RequestStore.store[:application] = "reader"
 
     # Args should be set in sidekiq_cron.yml, but default the limit to 1500 if they aren't
     limit = args["limit"] || 1500
-    successful_count = 0
-    failed_count = 0
-    docs_attempted = 0
+    successful_count = failed_count = docs_attempted = 0
 
     find_all_active_reader_appeals.each do |appeal|
       appeal.fetch_documents!(save: true).each do |document|
@@ -32,7 +29,6 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
     Rails.logger.info "Successfully retrieved #{successful_count} documents for Reader cases"
     Rails.logger.info "#{failed_count} documents failed"
   end
-  # rubocop:enable MethodLength
 
   def find_all_active_reader_appeals
     User.where("'Reader' = ANY(roles)").reduce(Set.new) do |active_appeals, user|
