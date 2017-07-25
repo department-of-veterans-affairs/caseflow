@@ -1,5 +1,5 @@
 class JobRavenReporterMiddleware
-  def call(worker, job, queue)
+  def call(_worker, _job, _queue)
     begin
       yield
     rescue => ex
