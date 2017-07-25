@@ -314,6 +314,12 @@ class Fakes::AppealRepository
   end
 
   def self.static_reader_documents
+    super_long_title = if Rails.application.config.efolder_enabled
+                         "This is a very long document type that's loaded from eFOLDER!"
+                       else
+                         "This is a very long document type let's see what it does to the UI!"
+                       end
+
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
       Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
@@ -321,7 +327,7 @@ class Fakes::AppealRepository
                                  category_medical: true, category_procedural: true),
       Generators::Document.build(
         vbms_document_id: 5,
-        type: "This is a very long document type let's see what it does to the UI!",
+        type: super_long_title,
         received_at: 7.days.ago,
         category_other: true),
       Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
