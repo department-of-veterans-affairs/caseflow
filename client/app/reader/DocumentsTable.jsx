@@ -146,6 +146,30 @@ const ConnectedDocTypeColumn = connect(
   null, mapDocTypeDispatchToProps
 )(DocTypeColumn);
 
+export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
+  return documents.reduce((acc, row) => {
+    const doc = _.find(documents, _.pick(row, 'id'));
+    const docHasComments = _.size(annotationsPerDocument[doc.id]);
+    const isViewingAllCommentsDocs =
+      viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS;
+    const commentRow = {
+      ...row,
+      isComment: true
+    };
+
+    if (isViewingAllCommentsDocs && docHasComments) {
+      acc.push(row, commentRow);
+    }
+    if (!isViewingAllCommentsDocs) {
+      acc.push(row);
+      if (doc.listComments && docHasComments) {
+        acc.push(commentRow);
+      }
+    }
+
+    return acc;
+  }, []);
+};
 
 class DocumentsTable extends React.Component {
   constructor() {
@@ -389,28 +413,11 @@ class DocumentsTable extends React.Component {
   }
 
   render() {
-    let rowObjects = this.props.documents.reduce((acc, row) => {
-      const doc = _.find(this.props.documents, _.pick(row, 'id'));
-      const docHasComments = _.size(this.props.annotationsPerDocument[doc.id]);
-      const isViewingAllCommentsDocs =
-        this.props.viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS;
-      const commentRow = {
-        ...row,
-        isComment: true
-      };
-
-      if (isViewingAllCommentsDocs && docHasComments) {
-        acc.push(row, commentRow);
-      }
-      if (!isViewingAllCommentsDocs) {
-        acc.push(row);
-        if (doc.listComments && docHasComments) {
-          acc.push(commentRow);
-        }
-      }
-
-      return acc;
-    }, []);
+    const rowObjects = getRowObjects(
+      this.props.documents,
+      this.props.annotationsPerDocument,
+      this.props.viewingDocumentsOrComments
+    );
 
     return <div>
       <Table
