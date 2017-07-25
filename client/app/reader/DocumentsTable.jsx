@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -391,7 +392,7 @@ class DocumentsTable extends React.Component {
     let rowObjects = this.props.documents.reduce((acc, row) => {
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
       const docHasComments = _.size(this.props.annotationsPerDocument[doc.id]);
-      const isViewingAllCommentsDocs = 
+      const isViewingAllCommentsDocs =
         this.props.viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS;
       const commentRow = {
         ...row,

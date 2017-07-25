@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import ToggleButton from '../components/ToggleButton';
 import Button from '../components/Button';
@@ -9,15 +9,15 @@ import { DOCUMENTS_OR_COMMENTS_ENUM } from './constants';
 class DocumentsCommentsButton extends PureComponent {
   render() {
     return <div className="cf-documents-comments-control">
-      <span className="cf-show-all-label">Show all:</span> 
-      <ToggleButton 
-        active={this.props.viewingDocumentsOrComments} 
+      <span className="cf-show-all-label">Show all:</span>
+      <ToggleButton
+        active={this.props.viewingDocumentsOrComments}
         onClick={this.props.setViewingDocumentsOrComments}>
 
-        <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS} style={{marginLeft: 0}}>
+        <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS} style={{ marginLeft: 0 }}>
           Documents
         </Button>
-        <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} style={{marginRight: 0}}>
+        <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} style={{ marginRight: 0 }}>
           Comments
         </Button>
       </ToggleButton>

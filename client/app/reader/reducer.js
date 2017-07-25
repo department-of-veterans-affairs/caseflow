@@ -874,7 +874,7 @@ export const reducer = (state = initialState, action = {}) => {
           $set: action.payload.documentsOrComments
         }
       }
-    )    
+    );
   default:
     return state;
   }
