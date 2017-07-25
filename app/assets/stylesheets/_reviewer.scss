@@ -56,9 +56,15 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+
+.rc-collapse > .rc-collapse-item-disabled > .rc-collapse-header {
+  color: black;
+}
+
 [id=claim-folder-details-accordion] {
-  .loading {
+  .disabled {
     background-image: none;
+    font-style: italic;
   }
 }
 
