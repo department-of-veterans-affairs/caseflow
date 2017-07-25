@@ -1,4 +1,3 @@
-require "HTTPI"
 require "json"
 
 class ExternalApi::EfolderService
