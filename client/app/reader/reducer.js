@@ -156,7 +156,7 @@ const initialShowErrorMessageState = {
 };
 
 export const initialState = {
-  assignments: [],
+  assignments: null,
   loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},

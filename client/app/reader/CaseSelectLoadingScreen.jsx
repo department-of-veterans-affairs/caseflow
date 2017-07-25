@@ -13,9 +13,7 @@ export class CaseSelectLoadingScreen extends React.Component {
     // We append an unneeded query param to avoid caching the json object. If we get thrown
     // to a page outside of the SPA and then hit back, we want the cached version of this
     // page to be the HTML page, not the JSON object.
-    if (this.props.assignments) {
-      this.props.onReceiveAssignments(this.props.assignments)
-    } else {
+    if (!this.props.assignments) {
       this.props.onInitialDataLoadingFail(false);
 
       ApiUtil.get('/reader/appeal?json').then((response) => {
@@ -27,6 +25,10 @@ export class CaseSelectLoadingScreen extends React.Component {
   }
 
   render() {
+    if (this.props.assignments) {
+      return this.props.children;
+    }
+
     return <div className="usa-grid">
         <div className="cf-app">
           {this.props.initialDataLoadingFail ?
@@ -45,7 +47,8 @@ export class CaseSelectLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state, 'initialDataLoadingFail')
+  ..._.pick(state, 'initialDataLoadingFail'),
+  assignments: state.assignments
 });
 
 const mapDispatchToProps = (dispatch) => (
