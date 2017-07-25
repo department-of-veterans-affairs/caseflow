@@ -13,7 +13,7 @@ class DocumentsCommentsButton extends PureComponent {
       active={this.props.viewingDocumentsOrComments}
       onClick={this.props.setViewingDocumentsOrComments}>
 
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS} style={{ marginLeft: 0 }}>
+      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}>
         Documents
       </Button>
       <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} style={{ marginRight: 0 }}>
