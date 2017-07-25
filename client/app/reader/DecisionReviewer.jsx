@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
-import Perf from 'react-addons-perf';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -24,8 +23,6 @@ export class DecisionReviewer extends React.PureComponent {
       isCommentLabelSelected: false
     };
 
-    this.isMeasuringPerf = false;
-
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
     this.documentsRoute.displayName = 'DocumentsRoute';
@@ -43,32 +40,6 @@ export class DecisionReviewer extends React.PureComponent {
     history.push(`/${vacolsId}/documents`);
   }
 
-  // eslint-disable-next-line max-statements
-  handleStartPerfMeasurement = (event) => {
-    if (!(event.altKey && event.code === 'KeyP')) {
-      return;
-    }
-    /* eslint-disable no-console */
-
-    // eslint-disable-next-line no-negated-condition
-    if (!this.isMeasuringPerf) {
-      Perf.start();
-      console.log('Started React perf measurements');
-      this.isMeasuringPerf = true;
-    } else {
-      Perf.stop();
-      this.isMeasuringPerf = false;
-
-      const measurements = Perf.getLastMeasurements();
-
-      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
-      Perf.printInclusive(measurements);
-      Perf.printWasted(measurements);
-      console.groupEnd();
-    }
-    /* eslint-enable no-console */
-  }
-
   clearPlacingAnnotationState = () => {
     if (this.props.pdf.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation();
@@ -77,11 +48,9 @@ export class DecisionReviewer extends React.PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('click', this.clearPlacingAnnotationState);
-    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
   }
 
   componentDidMount = () => {
-    window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
   }
 
