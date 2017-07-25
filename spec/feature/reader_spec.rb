@@ -408,21 +408,23 @@ RSpec.feature "Reader" do
         ]
       end
 
-      scenario "Expand All button" do
+      scenario "Documents and Comments toggle button" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on "Expand all"
+        click_on "Comments"
         expect(page).to have_content("another comment")
         expect(page).to have_content("how's it going")
-        click_button("expand-#{documents[0].id}-comments-button")
 
-        # when a comment is closed, the button is changed to expand all
-        expect(page).to have_button("Expand all")
+        # A doc without a comment should not show up
+        expect(page).not_to have_content(documents[2].type)
 
-        click_button("expand-#{documents[0].id}-comments-button")
-
-        # when that comment is reopened, the button is changed to collapse all
-        click_on "Collapse all"
+        # Filtering the document list should work in "Comments" mode.
+        find("#categories-header svg").click
+        find(".checkbox-wrapper-procedural").click
+        expect(page).to have_content(documents[0].type)      
+        expect(page).not_to have_content(documents[1].type)      
+        
+        click_on "Documents"
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
       end
