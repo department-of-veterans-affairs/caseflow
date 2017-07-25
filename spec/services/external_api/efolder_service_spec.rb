@@ -38,8 +38,17 @@ describe ExternalApi::EfolderService do
       let(:expected_response_map) { { data: nil } }
 
       it "are recorded using MetricsService" do
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         expect(MetricsService).to receive(:record).and_return(expected_response).once
         ExternalApi::EfolderService.fetch_documents_for(user, appeal)
+      end
+    end
+
+    context "invalid url argument" do
+      it "throws ArgumentError" do
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(Faker::ChuckNorris.fact).once
+        expect(HTTPI).not_to receive(:get)
+        expect { ExternalApi::EfolderService.fetch_documents_for(user, appeal) }.to raise_error(ArgumentError)
       end
     end
 
@@ -135,41 +144,6 @@ describe ExternalApi::EfolderService do
           expect { ExternalApi::EfolderService.fetch_documents_for(user, appeal) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError)
         end
-      end
-    end
-  end
-
-  context "#fetch_document_file" do
-    let(:user) { Generators::User.build }
-    let(:document) { Generators::Document.build(efolder_id: 1) }
-    let(:expected_content) { Faker::Shakespeare.as_you_like_it }
-    let(:expected_response) { HTTPI::Response.new(200, [], expected_content) }
-
-    context "eFolder returns HTTP response" do
-      before do
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-        expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
-        expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
-      end
-
-      it "returns document content" do
-        expect(ExternalApi::EfolderService.fetch_document_file(user, document)).to eq(expected_content)
-      end
-
-      context "with error code" do
-        let(:expected_response) { HTTPI::Response.new(404, [], {}) }
-
-        it "throws Caseflow::Error::DocumentRetrievalError" do
-          expect { ExternalApi::EfolderService.fetch_document_file(user, document) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
-        end
-      end
-    end
-
-    context "metrics" do
-      it "are recorded using MetricsService" do
-        expect(MetricsService).to receive(:record).and_return(expected_response).once
-        expect(ExternalApi::EfolderService.fetch_document_file(user, document)).to eq(expected_content)
       end
     end
   end
