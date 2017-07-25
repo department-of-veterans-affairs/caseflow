@@ -284,6 +284,10 @@ $tag-backgrond-color: #d6d7d9;
 
   .search-bar-and-doc-count {
     display: flex;
+
+    .usa-search {
+      margin-right: 25px;
+    }
   }
 
   .num-of-documents {
