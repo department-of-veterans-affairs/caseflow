@@ -40,7 +40,7 @@ describe('DocumentsTable', () => {
         id: 15,
         listComments: true
       },
-      { 
+      {
         id: 20,
         listComments: true
       }
@@ -61,11 +61,11 @@ describe('DocumentsTable', () => {
         listComments: true,
         isComment: true
       },
-      { 
+      {
         id: 20,
         listComments: true
       },
-      { 
+      {
         id: 20,
         listComments: true,
         isComment: true
