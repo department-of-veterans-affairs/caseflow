@@ -5,7 +5,8 @@ export const getEstablishClaimInitialState = function() {
     cancelFeedback: '',
     isSubmittingCancelFeedback: false,
     isShowingCancelModal: false,
-    isValidating: false
+    isValidating: false,
+    loading: false
   };
 };
 
@@ -33,6 +34,11 @@ export const establishClaim = function(state = getEstablishClaimInitialState(), 
       ...state,
       isValidating: false,
       isShowingCancelModal: !state.isShowingCancelModal
+    };
+  case Constants.TRIGGER_LOADING:
+    return {
+      ...state,
+      loading: action.payload.value
     };
   case Constants.CHANGE_CANCEL_FEEDBACK:
     return {

@@ -1,5 +1,6 @@
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import { MODIFIER_OPTIONS } from '../constants';
+import ROUTING_INFORMATION from '../../constants/Routing';
 
 /*
  * This function returns a nicely formatted string for the station of jurisdiction
@@ -54,3 +55,53 @@ export const validModifiers = (endProducts) => {
 
   return modifiers.filter((modifier) => !modifierHash[modifier]);
 };
+
+const getRegionalOfficeString = (regionalOfficeKey, regionalOfficeCities) => {
+  if (!regionalOfficeKey) {
+    return null;
+  }
+
+  return `${regionalOfficeKey} - ${
+      regionalOfficeCities[regionalOfficeKey].city}, ${
+      regionalOfficeCities[regionalOfficeKey].state}`;
+}
+
+// This method returns a string version of the regional office code. So it takes "R081"
+// and returns a string "RO81 - Philadelphia Pension Center, PA"
+export const getSpecialIssuesRegionalOffice = (specialIssuesRegionalOffice, regionalOfficeKey, regionalOfficeCities) => {
+  return getRegionalOfficeString(
+    getSpecialIssuesRegionalOfficeCode(specialIssuesRegionalOffice, regionalOfficeKey),
+    regionalOfficeCities
+  );
+}
+
+export const getSpecialIssuesRegionalOfficeCode = (specialIssuesRegionalOffice, regionalOfficeKey) => {
+  if (specialIssuesRegionalOffice === 'PMC') {
+    return ROUTING_INFORMATION.PMC[regionalOfficeKey];
+  } else if (specialIssuesRegionalOffice === 'COWC') {
+    return ROUTING_INFORMATION.COWC[regionalOfficeKey];
+  } else if (specialIssuesRegionalOffice === 'education') {
+    return ROUTING_INFORMATION.EDUCATION[regionalOfficeKey];
+  } else if (!specialIssuesRegionalOffice) {
+    return null;
+  }
+
+  return specialIssuesRegionalOffice;
+}
+
+const getEmailFromConstant = (constant, regionalOfficeKey) => {
+  return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
+}
+
+
+export const getSpecialIssuesEmail = (specialIssuesEmail, regionalOfficeKey) => {
+  if (specialIssuesEmail === 'PMC') {
+    return getEmailFromConstant(ROUTING_INFORMATION.PMC, regionalOfficeKey);
+  } else if (specialIssuesEmail === 'COWC') {
+    return getEmailFromConstant(ROUTING_INFORMATION.COWC, regionalOfficeKey);
+  } else if (specialIssuesEmail === 'education') {
+    return getEmailFromConstant(ROUTING_INFORMATION.EDUCATION, regionalOfficeKey);
+  }
+
+  return this.state.specialIssuesEmail;
+}
