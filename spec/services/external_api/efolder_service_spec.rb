@@ -35,7 +35,7 @@ describe ExternalApi::EfolderService do
     let(:expected_response) { HTTPI::Response.new(200, [], expected_response_map.to_json) }
 
     context "metrics" do
-      let(:expected_response_map) { { data: nil } }
+      let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
 
       it "are recorded using MetricsService" do
         expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
@@ -60,7 +60,7 @@ describe ExternalApi::EfolderService do
       end
 
       context "with null data" do
-        let(:expected_response_map) { { data: nil } }
+        let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
 
         it "returns empty array" do
           expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
