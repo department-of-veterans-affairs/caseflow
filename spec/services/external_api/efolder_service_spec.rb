@@ -1,5 +1,5 @@
 require "rails_helper"
-require "Faker"
+require "faker"
 
 describe ExternalApi::EfolderService do
   let(:base_url) { Faker::Internet.url }
