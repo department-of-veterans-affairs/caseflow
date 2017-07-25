@@ -78,6 +78,9 @@ Rails.application.configure do
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
+  # Enable to get docs from eFolder rather than VBMS
+  config.efolder_enabled = false
+
   # TODO(jd): Get GA account for demo environment
   # config.google_analytics_account = "UA-74789258-1"
   #
