@@ -46,7 +46,7 @@ Rails.application.configure do
   config.s3_bucket_name = "caseflow-cache"
 
   # Enable to get docs from eFolder rather than VBMS
-  config.efolder_enabled = false
+  config.efolder_enabled = true
   config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
   config.efolder_key = ENV["EFOLDER_API_KEY"]
 
