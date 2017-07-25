@@ -59,7 +59,7 @@ describe ExternalApi::EfolderService do
       end
 
       context "with no documents" do
-        let(:expected_response_map) { { data: [] } }
+        let(:expected_response_map) { { data: { attributes: { documents: [] } } } }
 
         it "returns empty array" do
           expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
@@ -70,13 +70,16 @@ describe ExternalApi::EfolderService do
         let(:expected_received_at1) { Faker::Date.backward }
         let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
         let(:expected_response_map) do
-          { data: [
-            {
-              id: "1",
-              type_id: "97",
-              vbms_document_id: expected_document1.vbms_document_id,
-              received_at: expected_received_at1
-            }] }
+          { data: {
+            attributes: {
+              documents: [
+                {
+                  id: "1",
+                  type_id: "97",
+                  vbms_document_id: expected_document1.vbms_document_id,
+                  received_at: expected_received_at1
+                }]
+            } } }
         end
 
         it "returns an array with the document" do
@@ -91,19 +94,22 @@ describe ExternalApi::EfolderService do
 
       context "with multiple documents" do
         let(:expected_response_map) do
-          { data: [
-            {
-              id: "1",
-              type_id: "97",
-              vbms_document_id: expected_document1.vbms_document_id,
-              received_at: expected_received_at1
-            },
-            {
-              id: "2",
-              type_id: "73",
-              vbms_document_id: expected_document2.vbms_document_id,
-              received_at: expected_received_at2
-            }] }
+          { data: {
+            attributes: {
+              documents: [
+                {
+                  id: "1",
+                  type_id: "97",
+                  vbms_document_id: expected_document1.vbms_document_id,
+                  received_at: expected_received_at1
+                },
+                {
+                  id: "2",
+                  type_id: "73",
+                  vbms_document_id: expected_document2.vbms_document_id,
+                  received_at: expected_received_at2
+                }]
+            } } }
         end
 
         let(:expected_received_at1) { Faker::Date.backward }
