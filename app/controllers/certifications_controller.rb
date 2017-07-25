@@ -73,7 +73,6 @@ class CertificationsController < ApplicationController
     render json: {}
   end
 
-  # TODO: remove when v2 is rolled out
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
@@ -84,7 +83,6 @@ class CertificationsController < ApplicationController
     redirect_to certification_path(id: certification.form8.vacols_id)
   end
 
-  # TODO: remove when v2 is rolled out
   def show
     if feature_enabled?(:certification_v2)
       return certification_data
