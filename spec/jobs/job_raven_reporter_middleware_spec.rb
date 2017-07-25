@@ -7,12 +7,12 @@ describe JobRavenReporterMiddleware do
   end
 
   context ".call" do
-    let(:call) { 
-      @middleware.call(nil, @msg, :default) { 
-        @yield_called = true 
-        raise RuntimeError.new("tsk tsk tsk, you messed up!")
-      } 
-    }
+    let(:call) do
+      @middleware.call(nil, @msg, :default) do
+        @yield_called = true
+        fail "tsk tsk tsk, you messed up!"
+      end
+    end
 
     it "yields properly, forwards errors to Raven and re-raises the exception" do
       expect(@yield_called).to be_falsey
