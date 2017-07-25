@@ -75,7 +75,8 @@ export class EstablishClaimEmail extends BaseForm {
               responsible for implementing this grant.</p>
             <aside>
               <p><b>RO:</b> {this.props.regionalOffice}</p>
-              <p><b>RO email:</b> {this.props.regionalOfficeEmail.join('; ')}</p>
+           
+              <p><b>RO email:</b> <a href={`mailto:${this.props.regionalOfficeEmail.join('; ')}`}>{this.props.regionalOfficeEmail.join('; ')}</a></p>
             </aside>
           </div>
 
