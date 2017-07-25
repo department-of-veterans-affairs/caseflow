@@ -10,7 +10,7 @@ class ExternalApi::EfolderService
       get_efolder_response("/api/v1/documents/" + document.efolder_id.to_s, user)
     end
 
-    Rails.logger.error "Could not retrieve document from efolder for document: #{document}" if response.error?
+    Rails.logger.error "eFolder HTTP status code: #{response.code} for document: #{document}" if response.error?
     fail Caseflow::Error::DocumentRetrievalError if response.error?
 
     response.raw_body
@@ -25,7 +25,7 @@ class ExternalApi::EfolderService
       get_efolder_response("/api/v1/files", user, headers)
     end
 
-    Rails.logger.error "Could not retrieve files from efolder for appeal: #{appeal}" if response.error?
+    Rails.logger.error "eFolder HTTP status code: #{response.code} for appeal: #{appeal}. " if response.error?
     fail Caseflow::Error::DocumentRetrievalError if response.error?
 
     documents = JSON.parse(response.body)["data"] || []
@@ -51,9 +51,6 @@ class ExternalApi::EfolderService
     headers["STATION-ID"] = user.station_id.to_s
     request.headers = headers
 
-    response = HTTPI.get(request)
-    Rails.logger.error "Error sending request to eFolder: #{url}. HTTP Status Code: #{response.code}" if response.error?
-
-    response
+    HTTPI.get(request)
   end
 end
