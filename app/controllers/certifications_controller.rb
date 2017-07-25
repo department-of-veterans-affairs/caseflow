@@ -4,7 +4,6 @@ class CertificationsController < ApplicationController
   def new
     if feature_enabled?(:certification_v2)
       status = certification.start!
-      @form8 = certification.form8
       # this line was introduced for v2 stats
       certification.v2 = true
       # only make the bgs and vacols calls if we're actually
@@ -19,7 +18,6 @@ class CertificationsController < ApplicationController
     # # Enable this block along with the front-end changes
     # and disable the one above it.
     # if feature_enabled?(:certification_v2)
-    #   @form8 = certification.form8
     #   certification.async_start!
     #   react_routed
     #   render "v2", layout: "application"
@@ -34,13 +32,6 @@ class CertificationsController < ApplicationController
     when :data_missing         then render "not_ready", status: 409
     when :mismatched_documents then render "mismatched_documents"
     end
-  end
-
-  def json
-    return render json: { loading_data_failed: true } if certification.loading_data_failed
-    return render json: { loading_data: true } if certification.loading_data
-
-    render json: { certification: certification.to_hash, form9PdfPath: form9_pdfjs_path }
   end
 
   def update_certification_from_v2_form
@@ -82,6 +73,7 @@ class CertificationsController < ApplicationController
     render json: {}
   end
 
+  # TODO: remove when v2 is rolled out
   def create
     # Can't use controller params in model mass assignments without whitelisting. See:
     # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
@@ -92,8 +84,19 @@ class CertificationsController < ApplicationController
     redirect_to certification_path(id: certification.form8.vacols_id)
   end
 
+  # TODO: remove when v2 is rolled out
   def show
+    if feature_enabled?(:certification_v2)
+      return certification_data
+    end
+
     render "confirm", layout: "application" if params[:confirm]
+  end
+
+  def certification_data
+    return render json: { loading_data_failed: true } if certification.loading_data_failed
+    return render json: { loading_data: true } if certification.loading_data
+    render json: { certification: certification.to_hash, form9PdfPath: form9_pdfjs_path }
   end
 
   def form9_pdf
@@ -109,6 +112,7 @@ class CertificationsController < ApplicationController
     send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
   end
 
+  # TODO: remove when v2 is rolled outx`
   def confirm
     @certification = Certification.find_by(vacols_id: vacols_id)
 
