@@ -34,82 +34,101 @@ describe ExternalApi::EfolderService do
     let(:appeal) { Generators::Appeal.build }
     let(:expected_response) { HTTPI::Response.new(200, [], expected_response_map.to_json) }
 
-    before do
-      expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-      expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
-      expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
-    end
+    context "metrics" do
+      let(:expected_response_map) { { data: nil } }
 
-    context "appeal with multiple documents" do
-      let(:expected_response_map) do
-        { data: [
-          {
-            id: "1",
-            type_id: "97",
-            vbms_document_id: expected_document1.vbms_document_id,
-            received_at: expected_received_at1
-          },
-          {
-            id: "2",
-            type_id: "73",
-            vbms_document_id: expected_document2.vbms_document_id,
-            received_at: expected_received_at2
-          }] }
-      end
-
-      let(:expected_received_at1) { Faker::Date.backward }
-      let(:expected_received_at2) { Faker::Date.backward }
-      let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
-      let(:expected_document2) { Generators::Document.build(type: "NOD", filename: nil) }
-
-      it "returns an array with all Document objects" do
-        # Convert the received_at to a string so we can compare the results properly
-        expected_document1.received_at = expected_received_at1.to_s
-        expected_document2.received_at = expected_received_at2.to_s
-
-        # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
-        result = ExternalApi::EfolderService.fetch_documents_for(user, appeal).map(&:to_hash)
-        expect(result).to contain_exactly(expected_document1.to_hash, expected_document2.to_hash)
+      it "are recorded using MetricsService" do
+        expect(MetricsService).to receive(:record).and_return(expected_response).once
+        ExternalApi::EfolderService.fetch_documents_for(user, appeal)
       end
     end
 
-    context "appeal with no documents" do
-      let(:expected_response_map) { { data: [] } }
-
-      it "returns empty array" do
-        expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
-      end
-    end
-
-    context "appeal with one document" do
-      let(:expected_received_at1) { Faker::Date.backward }
-      let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
-      let(:expected_response_map) do
-        { data: [
-          {
-            id: "1",
-            type_id: "97",
-            vbms_document_id: expected_document1.vbms_document_id,
-            received_at: expected_received_at1
-          }] }
+    context "eFolder returns HTTP response" do
+      before do
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
+        expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
       end
 
-      it "returns an array with the document" do
-        # Convert the received_at to a string so we can compare the results properly
-        expected_document1.received_at = expected_received_at1.to_s
+      context "with null data" do
+        let(:expected_response_map) { { data: nil } }
 
-        # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
-        result = ExternalApi::EfolderService.fetch_documents_for(user, appeal).map(&:to_hash)
-        expect(result).to contain_exactly(expected_document1.to_hash)
+        it "returns empty array" do
+          expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
+        end
       end
-    end
 
-    context "when efolder returns an error" do
-      let(:expected_response) { HTTPI::Response.new(404, [], {}) }
+      context "with no documents" do
+        let(:expected_response_map) { { data: [] } }
 
-      it "throws Caseflow::Error::DocumentRetrievalError" do
-        expect { ExternalApi::EfolderService.fetch_documents_for(user, appeal) }
-          .to raise_error(Caseflow::Error::DocumentRetrievalError)
+        it "returns empty array" do
+          expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
+        end
+      end
+
+      context "with one document" do
+        let(:expected_received_at1) { Faker::Date.backward }
+        let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
+        let(:expected_response_map) do
+          { data: [
+            {
+              id: "1",
+              type_id: "97",
+              vbms_document_id: expected_document1.vbms_document_id,
+              received_at: expected_received_at1
+            }] }
+        end
+
+        it "returns an array with the document" do
+          # Convert the received_at to a string so we can compare the results properly
+          expected_document1.received_at = expected_received_at1.to_s
+
+          # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
+          result = ExternalApi::EfolderService.fetch_documents_for(user, appeal).map(&:to_hash)
+          expect(result).to contain_exactly(expected_document1.to_hash)
+        end
+      end
+
+      context "with multiple documents" do
+        let(:expected_response_map) do
+          { data: [
+            {
+              id: "1",
+              type_id: "97",
+              vbms_document_id: expected_document1.vbms_document_id,
+              received_at: expected_received_at1
+            },
+            {
+              id: "2",
+              type_id: "73",
+              vbms_document_id: expected_document2.vbms_document_id,
+              received_at: expected_received_at2
+            }] }
+        end
+
+        let(:expected_received_at1) { Faker::Date.backward }
+        let(:expected_received_at2) { Faker::Date.backward }
+        let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
+        let(:expected_document2) { Generators::Document.build(type: "NOD", filename: nil) }
+
+        it "returns an array with all Document objects" do
+          # Convert the received_at to a string so we can compare the results properly
+          expected_document1.received_at = expected_received_at1.to_s
+          expected_document2.received_at = expected_received_at2.to_s
+
+          # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
+          result = ExternalApi::EfolderService.fetch_documents_for(user, appeal).map(&:to_hash)
+          expect(result).to contain_exactly(expected_document1.to_hash, expected_document2.to_hash)
+        end
+      end
+
+      context "with error code" do
+        let(:expected_response) { HTTPI::Response.new(404, [], {}) }
+
+        it "throws Caseflow::Error::DocumentRetrievalError" do
+          expect { ExternalApi::EfolderService.fetch_documents_for(user, appeal) }
+            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+        end
       end
     end
   end
@@ -120,22 +139,31 @@ describe ExternalApi::EfolderService do
     let(:expected_content) { Faker::Shakespeare.as_you_like_it }
     let(:expected_response) { HTTPI::Response.new(200, [], expected_content) }
 
-    before do
-      expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-      expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
-      expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
+    context "eFolder returns HTTP response" do
+      before do
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
+        expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
+      end
+
+      it "returns document content" do
+        expect(ExternalApi::EfolderService.fetch_document_file(user, document)).to eq(expected_content)
+      end
+
+      context "with error code" do
+        let(:expected_response) { HTTPI::Response.new(404, [], {}) }
+
+        it "throws Caseflow::Error::DocumentRetrievalError" do
+          expect { ExternalApi::EfolderService.fetch_document_file(user, document) }
+            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+        end
+      end
     end
 
-    it "returns document content" do
-      expect(ExternalApi::EfolderService.fetch_document_file(user, document)).to eq(expected_content)
-    end
-
-    context "when efolder returns an error" do
-      let(:expected_response) { HTTPI::Response.new(404, [], {}) }
-
-      it "throws Caseflow::Error::DocumentRetrievalError" do
-        expect { ExternalApi::EfolderService.fetch_document_file(user, document) }
-          .to raise_error(Caseflow::Error::DocumentRetrievalError)
+    context "metrics" do
+      it "are recorded using MetricsService" do
+        expect(MetricsService).to receive(:record).and_return(expected_response).once
+        expect(ExternalApi::EfolderService.fetch_document_file(user, document)).to eq(expected_content)
       end
     end
   end

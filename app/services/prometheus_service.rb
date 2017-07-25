@@ -4,6 +4,26 @@ require "prometheus/client/push"
 class PrometheusService
   # :nocov:
   class << self
+    def efolder_request_attempt_counter
+      @vbms_request_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :efolder_request_attempt_counter,
+                                "A counter of attempted eFolder requests")
+    end
+
+    def efolder_request_error_counter
+      @vbms_request_error_counter ||=
+        find_or_register_metric(:counter,
+                                :efolder_request_error_counter,
+                                "A counter of errored eFolder requests")
+    end
+
+    def efolder_request_latency
+      @vbms_request_latency ||=
+        find_or_register_gauge_and_summary(:efolder_request_latency,
+                                           "latency of completed eFolder requests")
+    end
+
     def vbms_request_attempt_counter
       @vbms_request_attempt_counter ||=
         find_or_register_metric(:counter,
