@@ -8,7 +8,7 @@ describe JobRavenReporterMiddleware do
 
   context ".call" do
     let(:call) do
-      @middleware.call(nil, @msg, :default) do
+      @middleware.call(nil, nil, :default) do
         @yield_called = true
         fail "tsk tsk tsk, you messed up!"
       end
