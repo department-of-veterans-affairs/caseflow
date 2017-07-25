@@ -4,6 +4,7 @@ import ToggleButton from '../components/ToggleButton';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import { setViewingDocumentsOrComments } from './actions';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from './constants';
 
 class DocumentsCommentsButton extends PureComponent {
   render() {
@@ -13,10 +14,10 @@ class DocumentsCommentsButton extends PureComponent {
         active={this.props.viewingDocumentsOrComments} 
         onClick={this.props.setViewingDocumentsOrComments}>
 
-        <Button name="documents" style={{marginLeft: 0}}>
+        <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS} style={{marginLeft: 0}}>
           Documents
         </Button>
-        <Button name="comments" style={{marginRight: 0}}>
+        <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} style={{marginRight: 0}}>
           Comments
         </Button>
       </ToggleButton>

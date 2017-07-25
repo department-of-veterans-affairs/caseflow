@@ -72,6 +72,11 @@ export const ANALYTICS = {
   VIEW_DOCUMENT_PAGE: 'Document Viewer'
 };
 
+export const DOCUMENTS_OR_COMMENTS_ENUM = {
+  DOCUMENTS: 'documents',
+  COMMENTS: 'comments'
+}
+
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 

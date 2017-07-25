@@ -139,7 +139,7 @@ export const initialState = {
   assignments: [],
   loadedAppealId: null,
   initialDataLoadingFail: false,
-  viewingDocumentsOrComments: 'documents',
+  viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [

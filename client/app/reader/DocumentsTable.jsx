@@ -391,7 +391,8 @@ class DocumentsTable extends React.Component {
     let rowObjects = this.props.documents.reduce((acc, row) => {
       const doc = _.find(this.props.documents, _.pick(row, 'id'));
       const docHasComments = _.size(this.props.annotationsPerDocument[doc.id]);
-      const isViewingAllCommentsDocs = this.props.viewingDocumentsOrComments === 'comments';
+      const isViewingAllCommentsDocs = 
+        this.props.viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS;
       const commentRow = {
         ...row,
         isComment: true
