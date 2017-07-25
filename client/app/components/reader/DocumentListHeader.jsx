@@ -23,6 +23,12 @@ class DocumentListHeader extends React.Component {
 
     const buttonText = props.expandAll ? 'Collapse all' : 'Expand all';
 
+    const categoryCount = _.values(props.docFilterCriteria.category).reduce((numberOfCategories, categoryShown) => {
+      return categoryShown ? numberOfCategories + 1 : numberOfCategories;
+    }, 0);
+
+    const tagCount = _.values(props.docFilterCriteria.tag).length;
+
     const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
       props.docFilterCriteria.category[category]
     );
@@ -30,8 +36,8 @@ class DocumentListHeader extends React.Component {
       props.docFilterCriteria.tag[tag]
     );
     const filteredCategories = [].concat(
-      categoryFilters ? ['categories'] : [],
-      tagFilters ? ['tags'] : []).join(' ');
+      categoryFilters ? [`Categories (${categoryCount})`] : [],
+      tagFilters ? [`Issue tags (${tagCount})`] : []).join(', ');
 
     return <div>
       <div className="usa-grid-full document-list-header">
@@ -61,17 +67,12 @@ class DocumentListHeader extends React.Component {
           </span>
         </div>
       </div>
-      {Boolean(filteredCategories.length) &&
-        <Alert
-          title="Showing limited results"
-          type="info">
-          Documents are currently
-            filtered by {filteredCategories}. <a
-              href="#"
-              id="clear-filters"
-              onClick={props.clearAllFilters}>
-            Click here to see all documents.</a>
-        </Alert>}
+        {Boolean(filteredCategories.length) &&
+        <p>Filtering by: {filteredCategories}. <a
+          href="#"
+          id="clear-filters"
+          onClick={props.clearAllFilters}>
+          Clear all filters.</a></p> }
     </div>;
   }
 }
