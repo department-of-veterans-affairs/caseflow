@@ -650,7 +650,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim")
 
         # No tasks left
-        expect(page).to have_content("There are no more claims in your queue")
+        expect(page).to have_content("Way to go! You have completed all the claims assigned to you.")
         expect(page).to have_css(".usa-button-disabled")
       end
 
