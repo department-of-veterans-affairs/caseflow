@@ -35,14 +35,14 @@ class ClaimsFolderDetails extends React.PureComponent {
 
   render() {
     const { appeal } = this.props;
-    const appealExists = _.isEmpty(appeal);
+    const appealDoesntExist = _.isEmpty(appeal);
 
     return <div className="cf-claims-folder-details">
-      {!appealExists && <h1>{appeal.veteran_full_name}'s Claims Folder</h1>}
+      {!appealDoesntExist && <h1>{appeal.veteran_full_name}'s Claims Folder</h1>}
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionSection id="claim-folder-details-accordion" className="usa-grid" 
-          loading={appealExists} title={appealExists ? 'Loading...' : 'Claims folder details'} key={1}>
-          {!appealExists &&
+          loading={appealDoesntExist} title={appealDoesntExist ? 'Loading...' : 'Claims folder details'}>
+          {!appealDoesntExist &&
           <div>
             <div className="usa-width-one-fourth">
               <b>Veteran ID</b><br />

@@ -115,7 +115,7 @@ describe Appeal do
     context "when appeal type is court remand" do
       let(:type) { "Court Remand" }
       it "returns true for cavc" do
-        subject.type = "Court Remand"
+        subject.type = type
         expect(subject.cavc).to be_truthy
       end
     end
