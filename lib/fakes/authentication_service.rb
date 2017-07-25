@@ -13,7 +13,6 @@ class Fakes::AuthenticationService
     admin_roles = roles.include?("System Admin") ? ["System Admin"] : []
     {
       "id" => user.css_id,
-      "css_id" => user.css_id,
       "roles" => roles,
       "station_id" => user.station_id,
       "name" => user.full_name,
