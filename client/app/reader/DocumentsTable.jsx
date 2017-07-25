@@ -146,24 +146,17 @@ const ConnectedDocTypeColumn = connect(
   null, mapDocTypeDispatchToProps
 )(DocTypeColumn);
 
-export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
+export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
-    const docHasComments = _.size(annotationsPerDocument[doc.id]);
-    const isViewingAllCommentsDocs =
-      viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS;
-    const commentRow = {
-      ...doc,
-      isComment: true
-    };
+    acc.push(doc);
 
-    if (isViewingAllCommentsDocs && docHasComments) {
-      acc.push(doc, commentRow);
-    }
-    if (!isViewingAllCommentsDocs) {
-      acc.push(doc);
-      if (doc.listComments && docHasComments) {
-        acc.push(commentRow);
-      }
+    const docHasComments = _.size(annotationsPerDocument[doc.id]);
+
+    if (docHasComments && doc.listComments) {
+      acc.push({
+        ...doc,
+        isComment: true
+      });
     }
 
     return acc;
@@ -414,8 +407,7 @@ class DocumentsTable extends React.Component {
   render() {
     const rowObjects = getRowObjects(
       this.props.documents,
-      this.props.annotationsPerDocument,
-      this.props.viewingDocumentsOrComments
+      this.props.annotationsPerDocument
     );
 
     return <div>
@@ -466,7 +458,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state, 'tagOptions', 'viewingDocumentsOrComments'),
+  ..._.pick(state, 'tagOptions'),
   ..._.pick(state.ui, 'pdfList'),
   ..._.pick(state.ui, 'docFilterCriteria')
 });

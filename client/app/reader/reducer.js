@@ -872,6 +872,13 @@ export const reducer = (state = initialState, action = {}) => {
       {
         viewingDocumentsOrComments: {
           $set: action.payload.documentsOrComments
+        },
+        documents: {
+          $apply: (docs) =>
+            _.mapValues(docs, (doc) => ({
+              ...doc,
+              listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
+            }))
         }
       }
     );
