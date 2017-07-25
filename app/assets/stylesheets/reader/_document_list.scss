@@ -284,15 +284,18 @@ $tag-backgrond-color: #d6d7d9;
 
   .search-bar-and-doc-count {
     display: flex;
+    flex-grow: 2;
 
     .usa-search {
       margin-right: 25px;
+      flex-grow: 1;
     }
-  }
 
-  .num-of-documents {
-    color: $gray-font-color;
-    padding: 5px;
+    .num-of-documents {
+      color: $gray-font-color;
+      padding: 5px;
+      flex-grow: 1;
+    }
   }
 }
 
