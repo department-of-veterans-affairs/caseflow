@@ -68,7 +68,7 @@ class DocumentListHeader extends React.Component {
         </div>
       </div>
         {Boolean(filteredCategories.length) &&
-        <p>Filtering by: {filteredCategories}. <a
+        <p className="document-list-filter-message">Filtering by: {filteredCategories}. <a
           href="#"
           id="clear-filters"
           onClick={props.clearAllFilters}>
