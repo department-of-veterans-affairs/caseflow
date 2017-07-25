@@ -12,10 +12,10 @@ describe('CaseSelectLoadingScreen', () => {
 
   it('displays children when the welcome page is loaded', () => {
     const wrapper = getContext().setProps({
-      loadedAssignments: []
+      assignments: []
     });
 
-    expect(wrapper.text()).to.include('Loading cases in Reader...');
+    expect(wrapper.text()).to.include('Show when welcome page is loaded');
   });
 
   it('displays the error message when the request failed', () => {

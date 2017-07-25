@@ -92,7 +92,7 @@ export class DecisionReviewer extends React.PureComponent {
 
   caseSelectPage = () => <CaseSelect />
 
-  routedCaseSelect = (props) => {
+  routedCaseSelect = () => {
     return <CaseSelectLoadingScreen
       assignments={this.props.assignments}>
       <div>
@@ -103,7 +103,7 @@ export class DecisionReviewer extends React.PureComponent {
           render={this.caseSelectPage}
         />
       </div>
-    </CaseSelectLoadingScreen>
+    </CaseSelectLoadingScreen>;
   }
 
   documentsRoute = (props) => {
