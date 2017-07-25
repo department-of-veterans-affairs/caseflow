@@ -22,16 +22,26 @@ describe StartCertificationJob do
     Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
   end
 
-  context ".peform" do
-    it "flips loading booleans to false when complete" do
+  context ".perform" do
+    it "indicates when starting certification is successful" do
       certification = Certification.new(
         vacols_id: appeal.vacols_id,
         loading_data: false
       )
-      StartCertificationJob.new.perform(certification)
+      StartCertificationJob.perform_now(certification)
 
       expect(certification.reload.loading_data).to eq(false)
       expect(certification.loading_data_failed).to eq(false)
+    end
+
+    it "indicates when starting certification failed" do
+      certification = Certification.new(
+        vacols_id: "FAKE_ID_WITH_NO_DATA",
+        loading_data: false
+      )
+      StartCertificationJob.perform_now(certification)
+
+      expect(certification.loading_data_failed).to eq(true)
     end
   end
 end

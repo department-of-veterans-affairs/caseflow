@@ -16,7 +16,8 @@ class CertificationsController < ApplicationController
       return
     end
 
-    # # Enable this block along with the front-end changes.
+    # # Enable this block along with the front-end changes
+    # and disable the one above it.
     # if feature_enabled?(:certification_v2)
     #   @form8 = certification.form8
     #   certification.async_start!
