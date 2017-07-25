@@ -421,9 +421,9 @@ RSpec.feature "Reader" do
         # Filtering the document list should work in "Comments" mode.
         find("#categories-header svg").click
         find(".checkbox-wrapper-procedural").click
-        expect(page).to have_content(documents[0].type)      
-        expect(page).not_to have_content(documents[1].type)      
-        
+        expect(page).to have_content(documents[0].type)
+        expect(page).not_to have_content(documents[1].type)
+
         click_on "Documents"
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
