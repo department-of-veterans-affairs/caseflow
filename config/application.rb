@@ -45,8 +45,7 @@ module CaseflowCertification
     # Used by the application to determine whether webpack hot reloading is active
     config.webpack_hot = (ENV["REACT_ON_RAILS_ENV"] == "HOT")
 
-    # Enable to get docs from eFolder rather than VBMS
-    config.efolder_enabled = false
+    # eFolder API URL to retrieve appeal documents
     config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
     config.efolder_key = ENV["EFOLDER_API_KEY"]
   end
