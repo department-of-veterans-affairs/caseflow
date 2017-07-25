@@ -4,6 +4,7 @@ require "json"
 class ExternalApi::EfolderService
   def self.fetch_document_file(user, document)
     # Makes a GET request to https://<efolder_url>/documents/<efolder_id>
+    # to return the content of the document
     response = MetricsService.record("eFolder GET document request for ID: #{document.efolder_id}",
                                      service: :efolder,
                                      name: "/api/v1/documents") do
@@ -18,6 +19,7 @@ class ExternalApi::EfolderService
 
   def self.fetch_documents_for(user, appeal)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
+    # to return the list of documents associated with the appeal
     headers = { "FILE-NUMBER" => appeal.sanitized_vbms_id.to_s }
     response = MetricsService.record("eFolder GET files request for VBMS ID: #{appeal.sanitized_vbms_id}",
                                      service: :efolder,
