@@ -26,18 +26,18 @@ describe StartCertificationJob do
     it "indicates when starting certification is successful" do
       certification = Certification.new(
         vacols_id: appeal.vacols_id,
-        loading_data: false
+        loading_data: true
       )
       StartCertificationJob.perform_now(certification)
 
-      expect(certification.reload.loading_data).to eq(false)
+      expect(certification.loading_data).to eq(false)
       expect(certification.loading_data_failed).to eq(false)
     end
 
     it "indicates when starting certification failed" do
       certification = Certification.new(
         vacols_id: "FAKE_ID_WITH_NO_DATA",
-        loading_data: false
+        loading_data: true
       )
       StartCertificationJob.perform_now(certification)
 
