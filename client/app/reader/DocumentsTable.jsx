@@ -147,21 +147,20 @@ const ConnectedDocTypeColumn = connect(
 )(DocTypeColumn);
 
 export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
-  return documents.reduce((acc, row) => {
-    const doc = _.find(documents, _.pick(row, 'id'));
+  return documents.reduce((acc, doc) => {
     const docHasComments = _.size(annotationsPerDocument[doc.id]);
     const isViewingAllCommentsDocs =
       viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS;
     const commentRow = {
-      ...row,
+      ...doc,
       isComment: true
     };
 
     if (isViewingAllCommentsDocs && docHasComments) {
-      acc.push(row, commentRow);
+      acc.push(doc, commentRow);
     }
     if (!isViewingAllCommentsDocs) {
-      acc.push(row);
+      acc.push(doc);
       if (doc.listComments && docHasComments) {
         acc.push(commentRow);
       }
