@@ -56,6 +56,18 @@ export class EstablishClaimEmail extends BaseForm {
       noEmailNote: note
     };
   }
+  // For Each Regional Office Mailto Link
+  renderRegionalOfficeEmaillist() {
+        return this.props.regionalOfficeEmail.map((regionalOfficeEmailMailto) => {
+            return (
+                <span>
+                  <a key={regionalOfficeEmailMailto} href={`mailto:${regionalOfficeEmailMailto}`}>
+                      {regionalOfficeEmailMailto}{'; '}
+                  </a> 
+                </span>
+              );
+        });
+  }
 
   render() {
     return <div>
@@ -76,7 +88,7 @@ export class EstablishClaimEmail extends BaseForm {
             <aside>
               <p><b>RO:</b> {this.props.regionalOffice}</p>
            
-              <p><b>RO email:</b> <a href={`mailto:${this.props.regionalOfficeEmail.join('; ')}`}>{this.props.regionalOfficeEmail.join('; ')}</a></p>
+              <p><b>RO email:</b> {this.renderRegionalOfficeEmaillist()}</p>
             </aside>
           </div>
 
