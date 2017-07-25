@@ -38,10 +38,6 @@ $tag-backgrond-color: #d6d7d9;
 
   .usa-grid {
     max-width: 85vw;
-
-    .usa-grid-full.document-list-header {
-      max-width: 85vw;
-    }
   }
 
   .documents-table {
@@ -283,6 +279,13 @@ $tag-backgrond-color: #d6d7d9;
 }
 
 .document-list-header {
+  display: flex;
+  justify-content: space-between;
+
+  .search-bar-and-doc-count {
+    display: flex;
+  }
+
   .num-of-documents {
     color: $gray-font-color;
     padding: 5px;

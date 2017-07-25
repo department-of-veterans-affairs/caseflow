@@ -32,8 +32,8 @@ class DocumentListHeader extends React.Component {
       tagFilters ? ['tags'] : []).join(' ');
 
     return <div>
-      <div className="usa-grid-full document-list-header">
-        <div className="usa-width-one-third">
+      <div className="document-list-header">
+        <div className="search-bar-and-doc-count">
           <SearchBar
             id="searchBar"
             onChange={props.setSearch}
@@ -44,13 +44,11 @@ class DocumentListHeader extends React.Component {
             size="small"
             analyticsCategory="Claims Folder"
           />
+          <div className="num-of-documents">
+            {props.numberOfDocuments} Documents
+          </div>
         </div>
-        <div className="usa-width-one-third num-of-documents">
-          {props.numberOfDocuments} Documents
-        </div>
-        <div className="usa-width-one-third">
-          <DocumentsCommentsButton />
-        </div>
+        <DocumentsCommentsButton />
       </div>
       {Boolean(filteredCategories.length) &&
         <Alert
