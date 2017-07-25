@@ -146,11 +146,13 @@ const ConnectedDocTypeColumn = connect(
   null, mapDocTypeDispatchToProps
 )(DocTypeColumn);
 
-export const getRowObjects = (documents, annotationsPerDocument) => {
+export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
   return documents.reduce((acc, doc) => {
-    acc.push(doc);
-
     const docHasComments = _.size(annotationsPerDocument[doc.id]);
+
+    if (viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS || docHasComments) {
+      acc.push(doc);
+    }
 
     if (docHasComments && doc.listComments) {
       acc.push({
@@ -407,7 +409,8 @@ class DocumentsTable extends React.Component {
   render() {
     const rowObjects = getRowObjects(
       this.props.documents,
-      this.props.annotationsPerDocument
+      this.props.annotationsPerDocument,
+      this.props.viewingDocumentsOrComments
     );
 
     return <div>
@@ -458,7 +461,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state, 'tagOptions', 'viewingDocumentsOrComments'),
   ..._.pick(state.ui, 'pdfList'),
   ..._.pick(state.ui, 'docFilterCriteria')
 });

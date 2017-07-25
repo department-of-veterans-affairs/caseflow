@@ -408,7 +408,7 @@ RSpec.feature "Reader" do
         ]
       end
 
-      scenario "Documents and Comments toggle button" do
+      scenario "Documents and Comments toggle button", focus: true do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on "Comments"
