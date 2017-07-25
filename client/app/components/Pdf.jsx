@@ -752,6 +752,7 @@ export class Pdf extends React.PureComponent {
   }
 
   // Move the comment when it's dropped on a page
+  // eslint-disable-next-line max-statements
   onCommentDrop = (pageNumber) => (event) => {
     const dragAndDropPayload = event.dataTransfer.getData('text');
     let dragAndDropData;
