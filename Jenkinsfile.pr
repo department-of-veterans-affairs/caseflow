@@ -84,6 +84,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_certification
               TEST_CATEGORY=certification && bundle exec rake spec:parallel:setup:certification
               TEST_CATEGORY=certification && bundle exec rake spec:parallel:certification
               """
@@ -95,6 +96,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_dispatch
               TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:setup:dispatch
               TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:dispatch
               """
