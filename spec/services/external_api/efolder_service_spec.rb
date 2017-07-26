@@ -85,7 +85,7 @@ describe ExternalApi::EfolderService do
                 {
                   id: "1",
                   type_id: "97",
-                  vbms_document_id: expected_document1.vbms_document_id,
+                  external_document_id: expected_document1.vbms_document_id,
                   received_at: expected_received_at1
                 }]
             } } }
@@ -109,13 +109,13 @@ describe ExternalApi::EfolderService do
                 {
                   id: "1",
                   type_id: "97",
-                  vbms_document_id: expected_document1.vbms_document_id,
+                  external_document_id: expected_document1.vbms_document_id,
                   received_at: expected_received_at1
                 },
                 {
                   id: "2",
                   type_id: "73",
-                  vbms_document_id: expected_document2.vbms_document_id,
+                  external_document_id: expected_document2.vbms_document_id,
                   received_at: expected_received_at2
                 }]
             } } }
