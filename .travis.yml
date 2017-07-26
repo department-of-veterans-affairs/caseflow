@@ -31,15 +31,13 @@ before_install:
   - sudo apt-get install pdftk
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
+  - node -v
+  - npm -v
 
 
 jobs:
   include:
-    - stage: info
-      script:
-        - node -v
-        - npm -v
-    - stage: test
+    - stage: test and lint
       script:
         - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:unit
@@ -60,7 +58,31 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:certification
-      script: 
+    - 
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake spec:parallel:setup:dispatch
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:dispatch
+    - 
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake spec:parallel:setup:reader
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:reader
+    - 
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake spec:parallel:setup:other
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:other
+    - 
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake lint
     - stage: coverage
       script: cat coverage/.resultset.json
 
