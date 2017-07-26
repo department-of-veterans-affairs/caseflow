@@ -160,7 +160,12 @@ class EstablishClaim < Task
     return :already_prepared unless may_prepare?
     return :missing_decision if appeal.decisions.empty?
 
-    appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+    begin
+      appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
+    rescue VBMS::ClientError => e
+      Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{e}"
+      return :failed
+    end
 
     prepare! && :success
   end
