@@ -102,6 +102,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
 
     stage('backend') {
       parallel (
+
         unit: {
           stage('unit test') {
             container('caseflow-test-runner') {
@@ -171,9 +172,9 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               """
             }
           }
-        })
-	
-      }
+        }
+      )
+      
 
       // stage('rake coverage') {
       //   container('caseflow-test-runner') {
