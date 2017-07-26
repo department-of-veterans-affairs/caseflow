@@ -79,6 +79,30 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
 
     stage('backend') {
       parallel (
+        unit: {
+          stage('unit test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_unit
+              TEST_CATEGORY=unit && bundle exec rake spec:parallel:setup:unit
+              TEST_CATEGORY=unit && bundle exec rake spec:parallel:unit
+              """
+            }
+          }
+        },
+        api: {
+          stage('api test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_api
+              TEST_CATEGORY=api && bundle exec rake spec:parallel:setup:api
+              TEST_CATEGORY=api && bundle exec rake spec:parallel:api
+              """
+            }
+          }
+        },
         certification: {
           stage('certification test') {
             container('caseflow-test-runner') {
@@ -99,6 +123,42 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_dispatch
               TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:setup:dispatch
               TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:dispatch
+              """
+            }
+          }
+        },
+        reader: {
+          stage('reader test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_reader
+              TEST_CATEGORY=reader && bundle exec rake spec:parallel:setup:reader
+              TEST_CATEGORY=reader && bundle exec rake spec:parallel:reader
+              """
+            }
+          }
+        },
+        other: {
+          stage('other test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_other
+              TEST_CATEGORY=other && bundle exec rake spec:parallel:setup:other
+              TEST_CATEGORY=other && bundle exec rake spec:parallel:other
+              """
+            }
+          }
+        },
+        javascript: {
+          stage('javascript test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_javascript
+              TEST_CATEGORY=javascript && bundle exec rake spec:parallel:setup:javascript
+              TEST_CATEGORY=javascript && bundle exec rake spec:parallel:javascript
               """
             }
           }
