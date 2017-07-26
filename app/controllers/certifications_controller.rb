@@ -84,9 +84,7 @@ class CertificationsController < ApplicationController
   end
 
   def show
-    if feature_enabled?(:certification_v2)
-      return certification_data
-    end
+    return certification_data if feature_enabled?(:certification_v2)
 
     render "confirm", layout: "application" if params[:confirm]
   end
