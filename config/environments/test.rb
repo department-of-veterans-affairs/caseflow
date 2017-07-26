@@ -45,9 +45,6 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = false
 
-  # Enable to get docs from eFolder rather than VBMS
-  config.efolder_enabled = false
-
   if ENV['TEST_ENV_NUMBER']
     assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")
     config.assets.configure do |env|

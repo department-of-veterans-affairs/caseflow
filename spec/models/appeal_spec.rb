@@ -276,7 +276,7 @@ describe Appeal do
         expect(result.first).to_not be_persisted
       end
 
-      context "when efolder_enabled is false" do
+      context "when efolder_docs_api is disabled" do
         it "loads document content from the VBMS service" do
           expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
           expect(EFolderService).not_to receive(:fetch_documents_for)
@@ -294,9 +294,9 @@ describe Appeal do
         end
       end
 
-      context "when efolder_enabled is true and application is reader" do
+      context "when efolder_docs_api is enabled and application is reader" do
         before do
-          Rails.application.config.efolder_enabled = true
+          FeatureToggle.enable!(:efolder_docs_api)
           RequestStore.store[:application] = "reader"
         end
 
@@ -307,7 +307,7 @@ describe Appeal do
         end
 
         after do
-          Rails.application.config.efolder_enabled = false
+          FeatureToggle.disable!(:efolder_docs_api)
         end
       end
     end
@@ -326,7 +326,7 @@ describe Appeal do
         end
       end
 
-      context "when efolder_enabled is false" do
+      context "when efolder_docs_api is disabled" do
         it "loads document content from the VBMS service" do
           expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
           expect(EFolderService).not_to receive(:fetch_documents_for)
@@ -334,9 +334,9 @@ describe Appeal do
         end
       end
 
-      context "when efolder_enabled is true and application is reader" do
+      context "when efolder_docs_api is enabled and application is reader" do
         before do
-          Rails.application.config.efolder_enabled = true
+          FeatureToggle.enable!(:efolder_docs_api)
           RequestStore.store[:application] = "reader"
         end
 
@@ -347,7 +347,7 @@ describe Appeal do
         end
 
         after do
-          Rails.application.config.efolder_enabled = false
+          FeatureToggle.disable!(:efolder_docs_api)
         end
       end
 

@@ -20,13 +20,14 @@ import _ from 'lodash';
  *
  * see StyleGuideTables.jsx for usage example.
 */
-const alignmentClasses = {
+const helperClasses = {
   center: 'cf-txt-c',
   left: 'cf-txt-l',
   right: 'cf-txt-r'
 };
 
-const cellClasses = ({ align, cellClass }) => classnames([alignmentClasses[align], cellClass]);
+
+const cellClasses = ({ align, cellClass }) => classnames([helperClasses[align], cellClass]);
 
 const getColumns = (props) => {
   return _.isFunction(props.columns) ?
