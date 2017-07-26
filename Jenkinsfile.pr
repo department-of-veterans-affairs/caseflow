@@ -77,7 +77,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       }
     }
 
-    stage('backend') {
+    stage('backend-1') {
       parallel (
         unit: {
           stage('unit test') {
@@ -115,6 +115,10 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             }
           }
         },
+      )
+    }
+    stage('backend-2') {
+      parallel (
         dispatch: {
           stage('dispatch test') {
             container('caseflow-test-runner') {
@@ -163,18 +167,6 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           }
         },
       )
-      
-
-
-      // stage('rake coverage') {
-      //   container('caseflow-test-runner') {
-      //     sh """
-      //     cd ${CASEFLOW_DIR}
-      //     rake ci:verify_code_coverage
-      //     rake konacha:run
-      //     """
-      //   }
-      // }
     }
 
     stage('frontend / lint') {
