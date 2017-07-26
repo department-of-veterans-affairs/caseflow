@@ -92,8 +92,8 @@ jobs:
 
 
 after_success:
-  - ls -al .
-  - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+  - ls -al app
+  - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
 
 bundler_args: "--deployment --without development staging production"
 cache:
