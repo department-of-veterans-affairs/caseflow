@@ -85,8 +85,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              TEST_CATEGORY=unit && bundle exec rake spec:parallel:setup:unit
-              TEST_CATEGORY=unit && bundle exec rake spec:parallel:unit
+              TEST_SUBCATEGORY=unit && bundle exec rake spec:parallel:setup:unit
+              TEST_SUBCATEGORY=unit && bundle exec rake spec:parallel:unit
               """
             }
           }
