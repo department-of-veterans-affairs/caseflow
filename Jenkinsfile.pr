@@ -156,9 +156,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_javascript
-              TEST_CATEGORY=javascript && bundle exec rake spec:parallel:setup:javascript
-              TEST_CATEGORY=javascript && bundle exec rake spec:parallel:javascript
+              bundle exec rake konacha:run
+              bundle exec rake mocha
               """
             }
           }
