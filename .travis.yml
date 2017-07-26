@@ -36,6 +36,7 @@ before_install:
 jobs:
   include:
     - stage: info
+      script:
         - node -v
         - npm -v
     - stage: test
