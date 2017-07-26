@@ -16,7 +16,7 @@ class DocumentsCommentsButton extends PureComponent {
       <Button name={DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS}>
         Documents
       </Button>
-      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} style={{ marginRight: 0 }}>
+      <Button name={DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS} className="cf-comments-button">
         Comments
       </Button>
     </ToggleButton>
