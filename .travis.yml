@@ -86,13 +86,14 @@ jobs:
         # Move the non-production node_modules back so that it's cached for next travis test run
         - rm -rf node_modules && mv node_modules_bak node_modules
     - stage: coverage
-      script: cat coverage/*.resultset.json
+      script:
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - cat ./coverage/*.resultset.json
 
 
 after_success:
-  - ls -al ~/coverage
-  - ls -al coverage
-  - aws s3 mv ~/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+  - ls -al .
+  - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
 
 bundler_args: "--deployment --without development staging production"
 cache:
