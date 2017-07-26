@@ -12,7 +12,8 @@ describe('CaseSelectLoadingScreen', () => {
 
   it('displays children when the welcome page is loaded', () => {
     const wrapper = getContext().setProps({
-      assignments: []
+      assignments: [],
+      assignmentsLoaded: true
     });
 
     expect(wrapper.text()).to.include('Show when welcome page is loaded');

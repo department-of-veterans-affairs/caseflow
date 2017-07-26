@@ -90,8 +90,6 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  caseSelectPage = () => <CaseSelect />
-
   routedCaseSelect = () => {
     return <CaseSelectLoadingScreen
       assignments={this.props.assignments}>
@@ -100,7 +98,7 @@ export class DecisionReviewer extends React.PureComponent {
           exact
           title="Assignments | Caseflow Reader"
           path="/"
-          render={this.caseSelectPage}
+          render={() => <CaseSelect />}
         />
       </div>
     </CaseSelectLoadingScreen>;

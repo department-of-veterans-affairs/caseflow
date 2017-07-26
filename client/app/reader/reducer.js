@@ -156,7 +156,8 @@ const initialShowErrorMessageState = {
 };
 
 export const initialState = {
-  assignments: null,
+  assignments: [],
+  assignmentsLoaded: false,
   loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
@@ -290,6 +291,9 @@ export const reducer = (state = initialState, action = {}) => {
       {
         assignments: {
           $set: action.payload.assignments
+        },
+        assignmentsLoaded: {
+          $set: true
         }
       });
   case Constants.SET_SEARCH:
