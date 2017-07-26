@@ -171,7 +171,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               """
             }
           }
-        },
+        })
 	
       }
 
