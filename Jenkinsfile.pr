@@ -21,6 +21,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
      command: 'cat',
      envVars: [
       containerEnvVar(key: 'POSTGRES_USER', value: 'postgres'),
+      containerEnvVar(key: 'POSTGRES_HOST', value: 'localhost'),
       containerEnvVar(key: 'RAILS_ENV', value: 'test'),
       containerEnvVar(key: 'DISPLAY', value: ':99'),
       containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser'),
