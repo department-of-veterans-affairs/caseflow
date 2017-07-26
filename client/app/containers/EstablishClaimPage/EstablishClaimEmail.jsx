@@ -47,16 +47,11 @@ export class EstablishClaimEmail extends BaseForm {
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +
       ' in your jurisdiction. Please proceed with control and implement this grant.';
 
-    let note = `This claim for Vet ID #${appeal.sanitized_vbms_id}` +
-      ` includes Special Issue(s): ${selectedSpecialIssue.join(', ')}` +
-      ' not handled by Caseflow';
-
     this.state = {
       emailForm: {
         confirmBox: new FormField(false),
         emailField: new FormField(email)
-      },
-      noEmailNote: note
+      }
     };
   }
 
@@ -147,7 +142,6 @@ EstablishClaimEmail.propTypes = {
   handleBackToDecisionReview: PropTypes.func.isRequired,
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleEmailSubmit: PropTypes.func.isRequired,
-  handleNoEmailSubmit: PropTypes.func.isRequired,
   regionalOffice: PropTypes.string,
   regionalOfficeEmail: PropTypes.arrayOf(PropTypes.string)
 };
