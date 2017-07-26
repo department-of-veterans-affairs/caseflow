@@ -5,10 +5,8 @@ import PropTypes from 'prop-types';
 
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
-import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import { FULL_GRANT, INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR } from '../../establishClaim/constants';
-import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
 import {

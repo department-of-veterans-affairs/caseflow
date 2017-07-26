@@ -64,16 +64,11 @@ const getRegionalOfficeString = (regionalOfficeKey, regionalOfficeCities) => {
   return `${regionalOfficeKey} - ${
       regionalOfficeCities[regionalOfficeKey].city}, ${
       regionalOfficeCities[regionalOfficeKey].state}`;
-}
+};
 
-// This method returns a string version of the regional office code. So it takes "R081"
-// and returns a string "RO81 - Philadelphia Pension Center, PA"
-export const getSpecialIssuesRegionalOffice = (specialIssuesRegionalOffice, regionalOfficeKey, regionalOfficeCities) => {
-  return getRegionalOfficeString(
-    getSpecialIssuesRegionalOfficeCode(specialIssuesRegionalOffice, regionalOfficeKey),
-    regionalOfficeCities
-  );
-}
+const getEmailFromConstant = (constant, regionalOfficeKey) => {
+  return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
+};
 
 export const getSpecialIssuesRegionalOfficeCode = (specialIssuesRegionalOffice, regionalOfficeKey) => {
   if (specialIssuesRegionalOffice === 'PMC') {
@@ -82,17 +77,21 @@ export const getSpecialIssuesRegionalOfficeCode = (specialIssuesRegionalOffice, 
     return ROUTING_INFORMATION.COWC[regionalOfficeKey];
   } else if (specialIssuesRegionalOffice === 'education') {
     return ROUTING_INFORMATION.EDUCATION[regionalOfficeKey];
-  } else if (!specialIssuesRegionalOffice) {
-    return null;
   }
 
   return specialIssuesRegionalOffice;
-}
 
-const getEmailFromConstant = (constant, regionalOfficeKey) => {
-  return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
-}
+};
 
+// This method returns a string version of the regional office code. So it takes "R081"
+// and returns a string "RO81 - Philadelphia Pension Center, PA"
+export const getSpecialIssuesRegionalOffice =
+  (specialIssuesRegionalOffice, regionalOfficeKey, regionalOfficeCities) => {
+    return getRegionalOfficeString(
+    getSpecialIssuesRegionalOfficeCode(specialIssuesRegionalOffice, regionalOfficeKey),
+    regionalOfficeCities
+  );
+  };
 
 export const getSpecialIssuesEmail = (specialIssuesEmail, regionalOfficeKey) => {
   if (specialIssuesEmail === 'PMC') {
@@ -103,5 +102,5 @@ export const getSpecialIssuesEmail = (specialIssuesEmail, regionalOfficeKey) => 
     return getEmailFromConstant(ROUTING_INFORMATION.EDUCATION, regionalOfficeKey);
   }
 
-  return this.state.specialIssuesEmail;
-}
+  return specialIssuesEmail;
+};

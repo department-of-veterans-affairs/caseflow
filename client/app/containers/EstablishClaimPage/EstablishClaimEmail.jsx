@@ -163,7 +163,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleEmailSubmit: () => {
     ownProps.handleAlertClear();
-    dispatch({ type: Constants.TRIGGER_LOADING, payload: { value: true  }});
+    dispatch({ type: Constants.TRIGGER_LOADING,
+      payload: {
+        value: true
+      } });
 
     const emailRoId = getSpecialIssuesRegionalOfficeCode(
       ownProps.specialIssuesRegionalOffice,
@@ -171,7 +174,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     );
 
     const data = ApiUtil.convertToSnakeCase({
-      emailRoId: emailRoId,
+      emailRoId,
       emailRecipient: ownProps.regionalOfficeEmail.join(', ')
     });
 
@@ -184,7 +187,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           'Error',
           'There was an error while completing the task. Please try again later'
         );
-        dispatch({ type: Constants.TRIGGER_LOADING, payload: { value: false  }});
+        dispatch({ type: Constants.TRIGGER_LOADING,
+          payload: { value: false } });
       });
   }
 });

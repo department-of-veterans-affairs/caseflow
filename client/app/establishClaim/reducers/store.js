@@ -7,7 +7,9 @@ import establishClaimFormReducer,
   { getEstablishClaimFormInitialState } from './establishClaimForm';
 import ConfigUtil from '../../util/ConfigUtil';
 
+// eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 export const createEstablishClaimStore = (props) => {
   let middleware = [thunk];
 
