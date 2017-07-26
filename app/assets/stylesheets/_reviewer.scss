@@ -377,8 +377,9 @@ svg[aria-hidden=true],
     text-align: right;
   }
 
+  // scss-lint:disable IdSelector
   #button-comments {
-    margin-right: 0px;
+    margin-right: 0;
   }
 }
 
