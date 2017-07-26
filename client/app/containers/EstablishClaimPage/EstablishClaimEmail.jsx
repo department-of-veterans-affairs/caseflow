@@ -164,9 +164,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleEmailSubmit: () => {
     ownProps.handleAlertClear();
     dispatch({ type: Constants.TRIGGER_LOADING,
-      payload: {
-        value: true
-      } });
+      payload: { value: true } });
 
     const emailRoId = getSpecialIssuesRegionalOfficeCode(
       ownProps.specialIssuesRegionalOffice,
