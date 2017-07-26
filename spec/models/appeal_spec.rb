@@ -255,6 +255,41 @@ describe Appeal do
       it "should return documents not saved in the database" do
         expect(result.first).to_not be_persisted
       end
+
+      context "when efolder_docs_api is disabled" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+
+        context "when application is reader" do
+          before { RequestStore.store[:application] = "reader" }
+
+          it "loads document content from the VBMS service" do
+            expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+            expect(EFolderService).not_to receive(:fetch_documents_for)
+            expect(appeal.fetch_documents!(save: save)).to eq(documents)
+          end
+        end
+      end
+
+      context "when efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+        end
+      end
     end
 
     context "when save is true" do
@@ -271,12 +306,49 @@ describe Appeal do
         end
       end
 
+      context "when efolder_docs_api is disabled" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+      end
+
+      context "when efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+        end
+      end
+
       context "when document doesn't exist in the database" do
         it "should return documents saved in the database" do
           expect(result.first).to be_persisted
         end
       end
     end
+  end
+
+  context "#fetched_documents" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
+    end
+
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents)
+    end
+
+    subject { appeal.fetched_documents }
   end
 
   context ".find_or_create_by_vacols_id" do

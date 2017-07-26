@@ -15,8 +15,9 @@ import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
-import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
+import { ANNOTATION_ICON_SIDE_LENGTH, ANALYTICS } from '../reader/constants';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import Analytics from '../util/AnalyticsUtil';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
@@ -751,19 +752,42 @@ export class Pdf extends React.PureComponent {
   }
 
   // Move the comment when it's dropped on a page
+  // eslint-disable-next-line max-statements
   onCommentDrop = (pageNumber) => (event) => {
-    event.preventDefault();
-    let data = JSON.parse(event.dataTransfer.getData('text'));
+    const dragAndDropPayload = event.dataTransfer.getData('text');
+    let dragAndDropData;
+
+    // Anything can be dragged and dropped. If the item that was
+    // dropped doesn't match what we expect, we just silently ignore it.
+    const logInvalidDragAndDrop = () => Analytics.event(ANALYTICS.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
+
+    try {
+      dragAndDropData = JSON.parse(dragAndDropPayload);
+
+      if (!dragAndDropData.iconCoordinates || !dragAndDropData.uuid) {
+        logInvalidDragAndDrop();
+
+        return;
+      }
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        logInvalidDragAndDrop();
+
+        return;
+      }
+      throw err;
+    }
+
     let pageBox = document.getElementById(`pageContainer${pageNumber}`).
       getBoundingClientRect();
 
     let coordinates = {
-      x: (event.pageX - pageBox.left - data.iconCoordinates.x) / this.props.scale,
-      y: (event.pageY - pageBox.top - data.iconCoordinates.y) / this.props.scale
+      x: (event.pageX - pageBox.left - dragAndDropData.iconCoordinates.x) / this.props.scale,
+      y: (event.pageY - pageBox.top - dragAndDropData.iconCoordinates.y) / this.props.scale
     };
 
     const droppedAnnotation = {
-      ...this.props.allAnnotations[data.uuid],
+      ...this.props.allAnnotations[dragAndDropData.uuid],
       ...coordinates
     };
 
