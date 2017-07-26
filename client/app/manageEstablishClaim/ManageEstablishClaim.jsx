@@ -64,7 +64,7 @@ class ManageEstablishClaim extends React.Component {
       },
       {   
         valueFunction: (userQuota) => <UserQuotaControls userQuota={userQuota} />,
-        align: 'center',
+        align:'center',
         cellClass: 'cf-empty-cell-header'
       }
     ];
