@@ -1,16 +1,15 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail } from './actions';
+import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail, onReceiveEfolderUrl } from './actions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
+import { documentPath } from './DecisionReviewer.jsx'
 import * as Constants from './constants';
 import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
-
-const documentUrl = ({ id }) => `/document/${id}/pdf`;
 
 export class ReaderLoadingScreen extends React.Component {
 
@@ -27,10 +26,11 @@ export class ReaderLoadingScreen extends React.Component {
       ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
-        const { annotations } = returnedObject;
+        const { annotations, efolderUrl } = returnedObject;
 
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveAnnotations(annotations);
+        this.props.onReceiveEfolderUrl(efolderUrl);
 
         const downloadDocuments = (documentUrls, index) => {
           if (index >= documentUrls.length) {
@@ -43,7 +43,7 @@ export class ReaderLoadingScreen extends React.Component {
         };
 
         for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-          downloadDocuments(documents.map((doc) => documentUrl(doc)), i);
+          downloadDocuments(documents.map((doc) => this.props.efolderDocumentUrl(doc.id)), i);
         }
       }, this.props.onInitialDataLoadingFail);
     }
@@ -73,14 +73,16 @@ export class ReaderLoadingScreen extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'initialDataLoadingFail'),
-  loadedAppealId: state.loadedAppealId
+  loadedAppealId: state.loadedAppealId,
+  efolderDocumentUrl: state.efolderDocumentUrl
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     onInitialDataLoadingFail,
     onReceiveDocs,
-    onReceiveAnnotations
+    onReceiveAnnotations,
+    onReceiveEfolderUrl
   }, dispatch)
 );
 

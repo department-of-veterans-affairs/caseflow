@@ -12,7 +12,6 @@ import CaseSelect from './CaseSelect';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
-export const documentPath = (id) => `/document/${id}/pdf`;
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {

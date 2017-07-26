@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
-import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   selectCurrentPdf } from '../reader/actions';
@@ -136,7 +135,7 @@ export class PdfViewer extends React.Component {
   getPrefetchFiles = () => _.compact([
     this.prevDocId(),
     this.nextDocId()
-  ]).map(documentPath)
+  ]).map(this.props.efolderDocumentUrl)
 
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
@@ -164,7 +163,7 @@ export class PdfViewer extends React.Component {
         <div className="cf-pdf-page-container">
           <PdfUI
             doc={doc}
-            file={documentPath(this.selectedDocId())}
+            file={this.props.efolderDocumentUrl(this.selectedDocId())}
             prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
@@ -212,7 +211,8 @@ const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
   ..._.pick(state, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
+  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation'),
+  efolderDocumentUrl: state.efolderDocumentUrl
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
