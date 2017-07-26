@@ -314,7 +314,7 @@ class Fakes::AppealRepository
   end
 
   def self.static_reader_documents
-    super_long_title = if Rails.application.config.efolder_enabled
+    super_long_title = if FeatureToggle.enabled?(:efolder_docs_api)
                          "This is a very long document type that's loaded from eFOLDER!"
                        else
                          "This is a very long document type let's see what it does to the UI!"

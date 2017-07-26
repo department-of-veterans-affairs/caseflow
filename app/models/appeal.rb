@@ -396,8 +396,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= if RequestStore.store[:application] == "reader" && Rails.application.config.efolder_enabled
-                             EFolderService.fetch_documents_for(self)
+    @fetched_documents ||= if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
+                             EFolderService.fetch_documents_for(self, RequestStore.store[:current_user])
                            else
                              self.class.vbms.fetch_documents_for(self)
                            end

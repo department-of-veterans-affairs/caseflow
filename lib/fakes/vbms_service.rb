@@ -47,7 +47,8 @@ class Fakes::VBMSService
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
-  def self.fetch_documents_for(appeal)
+  def self.fetch_documents_for(appeal, _user = nil)
+    # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
     (document_records || {})[appeal.vbms_id] || @documents || []
   end
 
