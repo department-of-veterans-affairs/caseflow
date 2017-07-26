@@ -8,7 +8,14 @@ branches:
     only:
       - master
 
+env:
+  global:
+    # include $HOME/.local/bin for `aws`
+    - PATH=$HOME/.local/bin:$PATH
+    - AWS_DEFAULT_REGION=us-west-2
+
 before_install:
+  - aws s3 sync coverage s3://travis-coverage/build-$TRAVIS_BUILD_ID
   - mkdir travis-node
   - wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz
   - tar xf $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz -C $PWD/travis-node
@@ -19,27 +26,44 @@ before_install:
   - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
   - sudo dpkg -i $PWD/chromium-chromedriver.deb
   - sudo apt-get install -f
-
-before_script:
-  - node -v
-  - npm -v
-  - cd ./client && npm install --no-optional
   - sudo apt-get install pdftk
-  - RAILS_ENV=test bundle exec rake db:create
-  - RAILS_ENV=test bundle exec rake db:schema:load
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
 
-# TODO(jd): Enable parallel tests on travis when we are ready
-# This involves adding `bundle exec rake parallel:setup[3]` in the before_script block
-# and `bundle exec rake parallel:rspec[3]` in the script block
-script:
-  - bundle exec rake spec
-  - bundle exec rake ci:other
-  # Move our node modules, then do a production install & webpack build
-  # This verifies our production webpack build step is working
+
+jobs:
+  include:
+    - stage: info
+        - node -v
+        - npm -v
+    - stage: test
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake spec:parallel:setup:unit
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:unit
+    - 
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake spec:parallel:setup:api
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:api
+    - 
+      script:
+        - cd ./client && npm install --no-optional
+        - bundle exec rake spec:parallel:setup:certification
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
+        - bundle exec rake spec:parallel:certification
+      script: 
+    - stage: coverage
+      script: cat coverage/.resultset.json
+
+
+after_success:
+  - aws s3 sync coverage s3://travis-coverage/build-$TRAVIS_BUILD_ID
   - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
   # Move the non-production node_modules back so that it's cached for next travis test run
   - rm -rf node_modules && mv node_modules_bak node_modules
