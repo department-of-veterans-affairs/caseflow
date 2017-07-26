@@ -29,7 +29,7 @@ class Document < ActiveRecord::Base
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :type, :alt_types, :received_at, :filename, :vacols_date
+  attr_accessor :efolder_id, :type, :alt_types, :received_at, :filename, :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -57,6 +57,13 @@ class Document < ActiveRecord::Base
     TYPES_OVERRIDE[vbms_type] ||
       Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
       :other
+  end
+
+  def self.from_efolder(hash)
+    new(efolder_id: hash["id"],
+        type: type_from_vbms_type(hash["type_id"]),
+        received_at: hash["received_at"],
+        vbms_document_id: hash["external_document_id"])
   end
 
   def self.from_vbms_document(vbms_document)
