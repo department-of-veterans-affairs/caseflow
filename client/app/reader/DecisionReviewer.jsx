@@ -26,6 +26,8 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
+  efolderDocumentUrl = (id) => this.props.efolderUrl.replace(':id', id)
+
   showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
       return;
@@ -79,6 +81,7 @@ export class DecisionReviewer extends React.PureComponent {
         removeTag={this.props.removeTag}
         allDocuments={_.values(this.props.storeDocuments)}
         pdfWorker={this.props.pdfWorker}
+        efolderDocumentUrl={this.efolderDocumentUrl}
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
@@ -96,7 +99,8 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+      vacolsId={vacolsId}
+      efolderDocumentUrl={this.efolderDocumentUrl}>
       <div>
 
         <PageRoute
@@ -136,6 +140,7 @@ export class DecisionReviewer extends React.PureComponent {
 
 DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
+  efolderUrl: PropTypes.string.isRequired,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,

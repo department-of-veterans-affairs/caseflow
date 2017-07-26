@@ -73,16 +73,14 @@ export class ReaderLoadingScreen extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'initialDataLoadingFail'),
-  loadedAppealId: state.loadedAppealId,
-  efolderDocumentUrl: state.efolderDocumentUrl
+  loadedAppealId: state.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     onInitialDataLoadingFail,
     onReceiveDocs,
-    onReceiveAnnotations,
-    onReceiveEfolderUrl
+    onReceiveAnnotations
   }, dispatch)
 );
 

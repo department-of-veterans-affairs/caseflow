@@ -34,11 +34,6 @@ export const onReceiveAnnotations = (annotations) => ({
   payload: { annotations }
 });
 
-export const onReceiveEfolderUrl = (url) => ({
-  type: Constants.RECEIVE_EFOLDER_URL,
-  payload: { url }
-});
-
 export const onReceiveAssignments = (assignments) => ({
   type: Constants.RECEIVE_ASSIGNMENTS,
   payload: { assignments }

@@ -211,8 +211,7 @@ const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
   ..._.pick(state, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation'),
-  efolderDocumentUrl: state.efolderDocumentUrl
+  ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({

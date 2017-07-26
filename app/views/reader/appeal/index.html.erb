@@ -1,6 +1,7 @@
 <% content_for :full_page_content do %>
   <%= react_component("BaseContainer", props: {
     page: "DecisionReviewer",
-    pdfWorker: asset_path('pdf.worker.js')
+    pdfWorker: asset_path('pdf.worker.js'),
+    efolderUrl: ExternalApi::EfolderService.efolder_documents_url
   }) %>
 <% end %>

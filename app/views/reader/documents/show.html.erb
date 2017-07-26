@@ -5,6 +5,7 @@
     page: "DecisionReviewer",
     appealDocuments: [single_document.to_hash],
     annotations: single_document.annotations.map(&:to_hash),
-    pdfWorker: asset_path('pdf.worker.js')
+    pdfWorker: asset_path('pdf.worker.js'),
+    efolderUrl: ExternalApi::EfolderService.efolder_documents_url
   }) %>
 <% end %>

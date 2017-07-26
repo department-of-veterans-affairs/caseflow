@@ -20,6 +20,14 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_url.to_s
   end
 
+  def self.efolder_documents_url
+    if FeatureToggle.enabled?(:efolder_docs_api)
+      URI.join(efolder_base_url, 'api/v1/documents/:id').to_s
+    else
+      URI.join('/document/:id/pdf').to_s
+    end
+  end
+
   def self.efolder_key
     Rails.application.config.efolder_key.to_s
   end

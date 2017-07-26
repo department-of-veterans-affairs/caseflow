@@ -11,8 +11,7 @@ class Reader::DocumentsController < Reader::ApplicationController
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
-            annotations: annotations,
-            efolderUrl: ExternalApi::EfolderService.efolder_base_url
+            annotations: annotations
           }
         end
       end

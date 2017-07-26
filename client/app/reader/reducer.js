@@ -157,7 +157,6 @@ const initialShowErrorMessageState = {
 
 export const initialState = {
   assignments: [],
-  efolderDocumentUrl: () => {},
   loadedAppealId: null,
   initialDataLoadingFail: false,
   pageCoordsBounds: {},
@@ -286,13 +285,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
-  case Constants.RECEIVE_EFOLDER_URL:
-    return update(state,
-      {
-        efolderDocumentUrl: {
-          $set: (id) => `${action.payload.url}/api/v1/documents/${id}`
-        }  
-      })
   case Constants.RECEIVE_ASSIGNMENTS:
     return update(state,
       {
