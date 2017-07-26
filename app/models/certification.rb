@@ -7,6 +7,22 @@
 class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
+  def async_start!
+    return certification_status unless can_be_updated?
+
+    update_attributes!(
+      v2: true,
+      loading_data: true,
+      loading_data_failed: false
+    )
+    # We don't run sidekiq in development mode.
+    if Rails.env.development?
+      StartCertificationJob.perform_now(self)
+    else
+      StartCertificationJob.perform_later(self)
+    end
+  end
+
   def start!
     return certification_status unless can_be_updated?
 
