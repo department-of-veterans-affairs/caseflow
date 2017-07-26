@@ -20,7 +20,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
      alwaysPullImage: true,
      command: 'cat',
      envVars: [
-      containerEnvVar(key: 'DATABASE_URL', value: 'postgres://postgres@localhost:5432/caseflow_certification'),
+      containerEnvVar(key: 'POSTGRES_USER', value: 'postgres'),
       containerEnvVar(key: 'RAILS_ENV', value: 'test'),
       containerEnvVar(key: 'DISPLAY', value: ':99'),
       containerEnvVar(key: 'CHROME_BIN', value: 'chromium-browser'),
