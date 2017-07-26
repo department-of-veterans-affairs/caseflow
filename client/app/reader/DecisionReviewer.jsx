@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
-import Perf from 'react-addons-perf';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import LoadingScreen from './LoadingScreen';
+import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
@@ -22,8 +21,6 @@ export class DecisionReviewer extends React.PureComponent {
     this.state = {
       isCommentLabelSelected: false
     };
-
-    this.isMeasuringPerf = false;
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
@@ -42,32 +39,6 @@ export class DecisionReviewer extends React.PureComponent {
     history.push(`/${vacolsId}/documents`);
   }
 
-  // eslint-disable-next-line max-statements
-  handleStartPerfMeasurement = (event) => {
-    if (!(event.altKey && event.code === 'KeyP')) {
-      return;
-    }
-    /* eslint-disable no-console */
-
-    // eslint-disable-next-line no-negated-condition
-    if (!this.isMeasuringPerf) {
-      Perf.start();
-      console.log('Started React perf measurements');
-      this.isMeasuringPerf = true;
-    } else {
-      Perf.stop();
-      this.isMeasuringPerf = false;
-
-      const measurements = Perf.getLastMeasurements();
-
-      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
-      Perf.printInclusive(measurements);
-      Perf.printWasted(measurements);
-      console.groupEnd();
-    }
-    /* eslint-enable no-console */
-  }
-
   clearPlacingAnnotationState = () => {
     if (this.props.pdf.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation();
@@ -76,11 +47,9 @@ export class DecisionReviewer extends React.PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('click', this.clearPlacingAnnotationState);
-    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
   }
 
   componentDidMount = () => {
-    window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
   }
 
@@ -125,7 +94,7 @@ export class DecisionReviewer extends React.PureComponent {
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    return <LoadingScreen
+    return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
@@ -143,7 +112,7 @@ export class DecisionReviewer extends React.PureComponent {
           render={this.routedPdfViewer}
         />
       </div>
-    </LoadingScreen>;
+    </ReaderLoadingScreen>;
   }
 
   render() {

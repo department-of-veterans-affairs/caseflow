@@ -21,6 +21,14 @@ export class DailyDocketContainer extends React.Component {
     if (!this.props.dockets) {
       this.props.getDockets();
     }
+
+    // Since the page title does not change when react router
+    // renders this component...
+    const pageTitle = document.getElementById('page-title');
+
+    if (pageTitle) {
+      pageTitle.innerHTML = ' | Daily Docket';
+    }
   }
 
   render() {

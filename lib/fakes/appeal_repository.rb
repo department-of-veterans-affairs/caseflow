@@ -314,6 +314,12 @@ class Fakes::AppealRepository
   end
 
   def self.static_reader_documents
+    super_long_title = if FeatureToggle.enabled?(:efolder_docs_api)
+                         "This is a very long document type that's loaded from eFOLDER!"
+                       else
+                         "This is a very long document type let's see what it does to the UI!"
+                       end
+
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
       Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
@@ -321,7 +327,7 @@ class Fakes::AppealRepository
                                  category_medical: true, category_procedural: true),
       Generators::Document.build(
         vbms_document_id: 5,
-        type: "This is a very long document type let's see what it does to the UI!",
+        type: super_long_title,
         received_at: 7.days.ago,
         category_other: true),
       Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
@@ -360,7 +366,15 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+               Generators::Issue.build(disposition: "Osteomyelitis",
+                                       levels: ["Osteomyelitis"],
+                                       description: [
+                                         "15 - Compensation",
+                                         "26 - Osteomyelitis"
+                                       ],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(

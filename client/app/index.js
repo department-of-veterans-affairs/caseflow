@@ -3,6 +3,7 @@ import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
+import initPerfMeasurement from './util/initPerfMeasurement';
 
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
@@ -24,6 +25,8 @@ const COMPONENTS = {
 // This removes HMR's stupid red error page, which "eats" the errors and
 // you lose valuable information about the line it occurred on from the source map.
 delete AppContainer.prototype.unstable_handleError;
+
+initPerfMeasurement();
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   const renderApp = (Component) => {

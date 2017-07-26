@@ -185,6 +185,11 @@ body {
 }
 
 .cf-app-reader {
+  // If we add this line, an extraneous scrollbar on Windows will disappear.
+  // However, this also makes a test fail on Travis (but not Jenkins).
+  // Once we cut over to Jenkins fully, let's re-enable it.
+  // overflow-y: hidden;
+
   .cf-app-width {
     @include app-width('reader');
   }
@@ -227,6 +232,13 @@ body {
 
 .cf-logo-image-feedback {
   background-image: url(asset-path('caseflow-feedback-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-hearing-prep {
+  background-image: url(asset-path('caseflow-hearing-prep-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
