@@ -79,18 +79,28 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
 
     stage('backend') {
       parallel (
-
-        unit: {
-          stage('unit test') {
+        certification: {
+          stage('certification test') {
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              TEST_SUBCATEGORY=unit && bundle exec rake spec:parallel:setup:unit
-              TEST_SUBCATEGORY=unit && bundle exec rake spec:parallel:unit
+              TEST_CATEGORY=certification && bundle exec rake spec:parallel:setup:certification
+              TEST_CATEGORY=certification && bundle exec rake spec:parallel:certification
               """
             }
           }
-        }
+        },
+        dispatch: {
+          stage('dispatch test') {
+            container('caseflow-test-runner') {
+              sh """
+              cd ${CASEFLOW_DIR}
+              TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:setup:dispatch
+              TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:dispatch
+              """
+            }
+          }
+        },
       )
       
 
