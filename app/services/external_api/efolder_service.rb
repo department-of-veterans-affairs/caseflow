@@ -1,7 +1,7 @@
 require "json"
 
 class ExternalApi::EfolderService
-  def self.fetch_documents_for(user, appeal)
+  def self.fetch_documents_for(appeal, user)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
     # to return the list of documents associated with the appeal
     headers = { "FILE-NUMBER" => appeal.sanitized_vbms_id.to_s }

@@ -40,7 +40,7 @@ describe ExternalApi::EfolderService do
       it "are recorded using MetricsService" do
         expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         expect(MetricsService).to receive(:record).and_return(expected_response).once
-        ExternalApi::EfolderService.fetch_documents_for(user, appeal)
+        ExternalApi::EfolderService.fetch_documents_for(appeal, user)
       end
     end
 
@@ -48,7 +48,7 @@ describe ExternalApi::EfolderService do
       it "throws ArgumentError" do
         expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(Faker::ChuckNorris.fact).once
         expect(HTTPI).not_to receive(:get)
-        expect { ExternalApi::EfolderService.fetch_documents_for(user, appeal) }.to raise_error(ArgumentError)
+        expect { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }.to raise_error(ArgumentError)
       end
     end
 
@@ -63,7 +63,7 @@ describe ExternalApi::EfolderService do
         let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
 
         it "returns empty array" do
-          expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
+          expect(ExternalApi::EfolderService.fetch_documents_for(appeal, user)).to be_empty
         end
       end
 
@@ -71,7 +71,7 @@ describe ExternalApi::EfolderService do
         let(:expected_response_map) { { data: { attributes: { documents: [] } } } }
 
         it "returns empty array" do
-          expect(ExternalApi::EfolderService.fetch_documents_for(user, appeal)).to be_empty
+          expect(ExternalApi::EfolderService.fetch_documents_for(appeal, user)).to be_empty
         end
       end
 
@@ -96,7 +96,7 @@ describe ExternalApi::EfolderService do
           expected_document1.received_at = expected_received_at1.to_s
 
           # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
-          result = ExternalApi::EfolderService.fetch_documents_for(user, appeal).map(&:to_hash)
+          result = ExternalApi::EfolderService.fetch_documents_for(appeal, user).map(&:to_hash)
           expect(result).to contain_exactly(expected_document1.to_hash)
         end
       end
@@ -132,7 +132,7 @@ describe ExternalApi::EfolderService do
           expected_document2.received_at = expected_received_at2.to_s
 
           # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
-          result = ExternalApi::EfolderService.fetch_documents_for(user, appeal).map(&:to_hash)
+          result = ExternalApi::EfolderService.fetch_documents_for(appeal, user).map(&:to_hash)
           expect(result).to contain_exactly(expected_document1.to_hash, expected_document2.to_hash)
         end
       end
@@ -141,7 +141,7 @@ describe ExternalApi::EfolderService do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
-          expect { ExternalApi::EfolderService.fetch_documents_for(user, appeal) }
+          expect { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError)
         end
       end
