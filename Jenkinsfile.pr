@@ -101,33 +101,89 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
     }
 
     stage('backend') {
-      stage('db:create') {
-        container('caseflow-test-runner') {
-          sh """
-          cd ${CASEFLOW_DIR}
-          rake spec:parallel:setup
-          """
-        }
+      parallel (
+        unit: {
+          stage('unit test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=unit && bundle exec rake spec:parallel:setup:unit
+              TEST_CATEGORY=unit && bundle exec rake spec:parallel:unit
+              """
+            }
+          }
+        },
+        api: {
+          stage('api test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=api && bundle exec rake spec:parallel:setup:api
+              TEST_CATEGORY=api && bundle exec rake spec:parallel:api
+              """
+            }
+          }
+        },
+        certification: {
+          stage('certification test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=certification && bundle exec rake spec:parallel:setup:certification
+              TEST_CATEGORY=certification && bundle exec rake spec:parallel:certification
+              """
+            }
+          }
+        },
+        dispatch: {
+          stage('dispatch test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:setup:dispatch
+              TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:dispatch
+              """
+            }
+          }
+        },
+        reader: {
+          stage('reader test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=reader && bundle exec rake spec:parallel:setup:reader
+              TEST_CATEGORY=reader && bundle exec rake spec:parallel:reader
+              """
+            }
+          }
+        },
+        other: {
+          stage('other test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=other && bundle exec rake spec:parallel:setup:other
+              TEST_CATEGORY=other && bundle exec rake spec:parallel:other
+              """
+            }
+          }
+        },
+        javascript: {
+          stage('javascript test') {
+            container('caseflow-test-runner') {
+              sh """
+              TEST_CATEGORY=javascript && bundle exec rake konacha:run
+              TEST_CATEGORY=javascript && bundle exec rake mocha
+              """
+            }
+          }
+        },
+	
       }
 
-      stage('rake spec') {
-        container('caseflow-test-runner') {
-          sh """
-          cd ${CASEFLOW_DIR}
-          rake spec:parallel
-          """
-        }
-      }
-
-      stage('rake coverage') {
-        container('caseflow-test-runner') {
-          sh """
-          cd ${CASEFLOW_DIR}
-          rake ci:verify_code_coverage
-          rake konacha:run
-          """
-        }
-      }
+      // stage('rake coverage') {
+      //   container('caseflow-test-runner') {
+      //     sh """
+      //     cd ${CASEFLOW_DIR}
+      //     rake ci:verify_code_coverage
+      //     rake konacha:run
+      //     """
+      //   }
+      // }
     }
   }
 }
