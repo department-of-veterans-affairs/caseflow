@@ -17,7 +17,6 @@ env:
 before_install:
   - pip install --user awscli
   - mkdir ./coverage
-  - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
   - mkdir travis-node
   - wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz
   - tar xf $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz -C $PWD/travis-node
@@ -91,7 +90,9 @@ jobs:
 
 
 after_success:
-  - aws s3 mv ./coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+  - ls -al ~/coverage
+  - ls -al coverage
+  - aws s3 mv ~/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
 
 bundler_args: "--deployment --without development staging production"
 cache:
