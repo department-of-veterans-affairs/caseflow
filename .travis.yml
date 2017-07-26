@@ -15,7 +15,9 @@ env:
     - AWS_DEFAULT_REGION=us-west-2
 
 before_install:
-  - aws s3 sync coverage s3://travis-coverage/build-$TRAVIS_BUILD_ID
+  - pip install --user awscli
+  - mkdir ./coverage
+  - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
   - mkdir travis-node
   - wget https://s3-us-gov-west-1.amazonaws.com/shared-s3/dsva-appeals/node-v6.10.2-linux-x64.tar.xz -O $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz
   - tar xf $PWD/travis-node/node-v6.10.2-linux-x64.tar.xz -C $PWD/travis-node
@@ -63,7 +65,7 @@ jobs:
 
 
 after_success:
-  - aws s3 sync coverage s3://travis-coverage/build-$TRAVIS_BUILD_ID
+  - aws s3 sync ./coverage s3://travis-coverage/build-$TRAVIS_BUILD_ID
   - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
   # Move the non-production node_modules back so that it's cached for next travis test run
   - rm -rf node_modules && mv node_modules_bak node_modules
