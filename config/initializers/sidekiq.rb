@@ -1,4 +1,5 @@
 require "#{Rails.root}/app/jobs/middleware/job_prometheus_metric_middleware"
+require "#{Rails.root}/app/jobs/middleware/job_raven_reporter_middleware"
 
 Sidekiq.configure_server do |config|
   config.redis = { url: Rails.application.secrets.redis_url_sidekiq }
@@ -13,6 +14,7 @@ Sidekiq.configure_server do |config|
 
   config.server_middleware do |chain|
     chain.add JobPrometheusMetricMiddleware
+    chain.add JobRavenReporterMiddleware
   end
 end
 
