@@ -63,7 +63,7 @@ export class EstablishClaimEmail extends BaseForm {
             return (
                   <a key={regionalOfficeEmailMailto} href={`mailto:${regionalOfficeEmailMailto}`}>
                       {regionalOfficeEmailMailto}{index === arr.length - 1 ? '' : '; '}
-                  </a> 
+                  </a>
             );
         });
   }
