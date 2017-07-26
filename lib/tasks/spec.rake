@@ -1,10 +1,14 @@
-require 'rspec/core/rake_task'
+require "rspec/core/rake_task"
 
 def run_command_and_print_output(command)
   output_stream = open("|#{command}", "r")
 
   output = ""
-  output_stream.each { |line| output << line; print "."; $stdout.flush; }
+  output_stream.each do |line|
+    output << line
+    print "."
+    $stdout.flush
+  end
   puts output
 end
 

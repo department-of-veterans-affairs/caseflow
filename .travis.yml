@@ -33,65 +33,65 @@ before_install:
   - "export DISPLAY=:99.0"
   - node -v
   - npm -v
+  - cd ./client && npm install --no-optional
 
 
 jobs:
   include:
     - stage: test and lint
+      env: TEST_CATEGORY=unit
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:unit
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:unit
     - 
+      env: TEST_CATEGORY=api
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:api
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:api
     - 
+      env: TEST_CATEGORY=certification
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:certification
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:certification
     - 
+      env: TEST_CATEGORY=dispatch
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:dispatch
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:dispatch
     - 
+      env: TEST_CATEGORY=reader
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:reader
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:reader
     - 
+      env: TEST_CATEGORY=other
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake spec:parallel:setup:other
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:other
-    - 
+    -
       script:
-        - cd ./client && npm install --no-optional
         - bundle exec rake lint
+        - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
+        # Move the non-production node_modules back so that it's cached for next travis test run
+        - rm -rf node_modules && mv node_modules_bak node_modules
     - stage: coverage
-      script: cat coverage/.resultset.json
+      script: cat coverage/*.resultset.json
 
 
 after_success:
-  - aws s3 sync ./coverage s3://travis-coverage/build-$TRAVIS_BUILD_ID
-  - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
-  # Move the non-production node_modules back so that it's cached for next travis test run
-  - rm -rf node_modules && mv node_modules_bak node_modules
+  - aws s3 mv ./coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
 
 bundler_args: "--deployment --without development staging production"
 cache:
