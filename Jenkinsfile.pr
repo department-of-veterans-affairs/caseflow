@@ -186,5 +186,16 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         }
       )
     }
+
+    stage('coverage') {
+      container('caseflow-test-runner') {
+        sh """
+        cd ${CASEFLOW_DIR}
+        rake ci:verify_code_coverage
+        rake konacha:run
+        """
+      }
+    }
+
   }
 }
