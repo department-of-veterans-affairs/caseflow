@@ -87,8 +87,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               sh """
               cd ${CASEFLOW_DIR}
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_certification
-              TEST_CATEGORY=certification && bundle exec rake spec:parallel:setup:certification
-              TEST_CATEGORY=certification && bundle exec rake spec:parallel:certification
+              bundle exec rake spec:parallel:setup:certification
+              bundle exec rake spec:parallel:certification
               """
             }
           }
@@ -99,8 +99,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               sh """
               cd ${CASEFLOW_DIR}
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_reader
-              TEST_CATEGORY=reader && bundle exec rake spec:parallel:setup:reader
-              TEST_CATEGORY=reader && bundle exec rake spec:parallel:reader
+              bundle exec rake spec:parallel:setup:reader
+              bundle exec rake spec:parallel:reader
               """
             }
           }
@@ -111,8 +111,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               sh """
               cd ${CASEFLOW_DIR}
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_dispatch
-              TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:setup:dispatch
-              TEST_CATEGORY=dispatch && bundle exec rake spec:parallel:dispatch
+              bundle exec rake spec:parallel:setup:dispatch
+              bundle exec rake spec:parallel:dispatch
               """
             }
           }
@@ -124,8 +124,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               sh """
               cd ${CASEFLOW_DIR}
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_other
-              TEST_CATEGORY=other && bundle exec rake spec:parallel:setup:other
-              TEST_CATEGORY=other && bundle exec rake spec:parallel:other
+              bundle exec rake spec:parallel:setup:other
+              bundle exec rake spec:parallel:other
               """
             }
           }
@@ -135,7 +135,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              TEST_CATEGORY=javascript && bundle exec rake mocha
+              bundle exec rake mocha
               """
             }
           }
@@ -146,8 +146,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               sh """
               cd ${CASEFLOW_DIR}
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_unit
-              TEST_CATEGORY=unit && bundle exec rake spec:parallel:setup:unit
-              TEST_CATEGORY=unit && bundle exec rake spec:parallel:unit
+              bundle exec rake spec:parallel:setup:unit
+              bundle exec rake spec:parallel:unit
               """
             }
           }
@@ -158,8 +158,8 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               sh """
               cd ${CASEFLOW_DIR}
               export DATABASE_URL=postgres://postgres@localhost:5432/caseflow_certification_api
-              TEST_CATEGORY=api && bundle exec rake spec:parallel:setup:api
-              TEST_CATEGORY=api && bundle exec rake spec:parallel:api
+              bundle exec rake spec:parallel:setup:api
+              bundle exec rake spec:parallel:api
               """
             }
           }
