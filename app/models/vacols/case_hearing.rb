@@ -30,11 +30,11 @@ class VACOLS::CaseHearing < VACOLS::Record
   }.freeze
 
   TABLE_NAMES = {
-    notes: "NOTES1",
-    disposition: "HEARING_DISP",
-    hold_open: "HOLDDAYS",
-    aod: "AOD",
-    transcript_requested: "TRANREQ"
+    notes: :notes1,
+    disposition: :hearing_disp,
+    hold_open: :holddays,
+    aod: :aod,
+    transcript_requested: :tranreq
   }.freeze
 
   NOT_MASTER_RECORD = %(
@@ -66,30 +66,17 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def update_hearing!(pkseq, hearing_info)
-      conn = connection
+      record = VACOLS::CaseHearing.find_by(hearing_pkseq: pkseq)
 
+      attrs = hearing_info.inject({}){ |result, (k,v)| result[TABLE_NAMES[k]] = v; result }
       MetricsService.record("VACOLS: update_hearing! #{pkseq}",
                             service: :vacols,
                             name: "update_hearing") do
-        conn.transaction do
-          conn.execute(<<-SQL)
-            UPDATE HEARSCHED
-            SET #{hearing_values(hearing_info)}
-            WHERE HEARING_PKSEQ = #{pkseq}
-          SQL
-        end
+        record.update(attrs)
       end
     end
 
     private
-
-    def hearing_values(hearing_info)
-      hearing_info.inject("") do |result, value|
-        result << TABLE_NAMES[value[0]] + " = " + connection.quote(value[1])
-        result << ", " unless value[0] == hearing_info.keys.last
-        result
-      end
-    end
 
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
