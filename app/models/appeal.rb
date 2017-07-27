@@ -195,7 +195,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def aod
-    self.class.repository.aod(vacols_id) == 1
+    @aod ||= self.class.repository.aod(vacols_id)
   end
 
   def nod
