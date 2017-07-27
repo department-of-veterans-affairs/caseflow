@@ -97,6 +97,9 @@ jobs:
     - 
       env: TEST_CATEGORY=javascript
       script:
+        - cd client
+        - npm run build
+        - cd ..
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake konacha:run

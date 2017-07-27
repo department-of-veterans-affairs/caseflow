@@ -56,12 +56,12 @@ namespace :ci do
     end
   end
 
-    desc "Verify code coverge (via simplecov) after tests have been run in parallel"
+  desc "Verify code coverge (via simplecov) after tests have been run in parallel"
   task :travis_verify_code_coverage do
     puts "\nVerifying code coverage"
     require "simplecov"
 
-    test_categories = ["unit", "api", "certification", "dispatch", "reader", "other"]
+    test_categories = %w(unit api certification dispatch reader other)
     merged_results = test_categories.inject({}) do |results, category|
       path = File.join("coverage/", ".#{category}.resultset.json")
 
@@ -76,9 +76,6 @@ namespace :ci do
     end
 
     result = SimpleCov::Result.new(merged_results)
-
-    puts result.covered_percent
-    puts result.covered_percentages
 
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
@@ -96,5 +93,4 @@ namespace :ci do
       puts Rainbow("Code coverage threshold met\n").green
     end
   end
-
 end
