@@ -26,8 +26,7 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
-  // doc.id is used if the efolder API is turned off. Otherwise, use the efolder_id
-  getEfolderDocumentUrl = (doc) => this.props.efolderUrl.replace(':id', doc.id).replace(':efolder_id', doc.efolder_id)
+  getEfolderDocumentUrl = (doc) => doc.content_url
 
   showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
@@ -141,7 +140,6 @@ export class DecisionReviewer extends React.PureComponent {
 
 DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
-  efolderUrl: PropTypes.string.isRequired,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
