@@ -37,7 +37,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
     // To keep the path short and avoid the "Chrome socket path too long" issue, we
     // can force Jenkins to checkout code to this directory.
     // See also: https://bugs.chromium.org/p/chromium/issues/detail?id=469065
-    def CASEFLOW_DIR = '/home/jenkins/workspace/caseflow'
+    def CASEFLOW_DIR = '/home/jenkins/workspace/caseflow-parallel-test'
     
     stage('git clone') {
       container('caseflow-test-runner') {
