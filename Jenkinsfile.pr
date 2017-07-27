@@ -79,7 +79,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
       }
     }
 
-    stage('backend-1') {
+    stage('backend') {
       parallel (
         certification: {
           stage('certification test') {
@@ -105,10 +105,6 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             }
           }
         },
-      )
-    }
-    stage('backend-2') {
-      parallel (
         dispatch: {
           stage('dispatch test') {
             container('caseflow-test-runner') {
