@@ -61,12 +61,12 @@ namespace :ci do
     puts "\nVerifying code coverage"
     require "simplecov"
 
-    test_categories = ["unit", "api", "certification", "dispatch", "reader", "other", "othererr"]
+    test_categories = ["unit", "api", "certification", "dispatch", "reader", "other"]
     merged_results = test_categories.inject({}) do |results, category|
       path = File.join("coverage/", ".#{category}.resultset.json")
 
       unless File.exist?(path)
-        puts Rainbow("Missing code coverage result files. Testing isn't complete.").yellow
+        puts Rainbow("Missing code coverage result for #{category} tests. Testing isn't complete.").yellow
         exit!(0)
       end
 
