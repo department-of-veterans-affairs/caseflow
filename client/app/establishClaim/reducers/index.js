@@ -1,11 +1,13 @@
 import * as Constants from '../constants';
+import update from 'immutability-helper';
 
 export const getEstablishClaimInitialState = function() {
   return {
     cancelFeedback: '',
     isSubmittingCancelFeedback: false,
     isShowingCancelModal: false,
-    isValidating: false
+    isValidating: false,
+    loading: false
   };
 };
 
@@ -34,6 +36,12 @@ export const establishClaim = function(state = getEstablishClaimInitialState(), 
       isValidating: false,
       isShowingCancelModal: !state.isShowingCancelModal
     };
+  case Constants.TRIGGER_LOADING:
+    return update(state, {
+      loading: {
+        $set: action.payload.value
+      }
+    });
   case Constants.CHANGE_CANCEL_FEEDBACK:
     return {
       ...state,
