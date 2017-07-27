@@ -288,7 +288,6 @@ RSpec.feature "Reader" do
       find(".checkbox-wrapper-procedural").click
       expect(find("#procedural", visible: false).checked?).to be true
 
-      binding.pry
       expect(page).to have_content("Filtering by")
 
       find("#receipt-date-header").click
