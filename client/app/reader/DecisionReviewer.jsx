@@ -9,6 +9,7 @@ import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
+import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
@@ -88,7 +89,17 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = () => <CaseSelect />
+  routedCaseSelect = () => {
+    return <CaseSelectLoadingScreen
+      assignments={this.props.assignments}>
+        <PageRoute
+          exact
+          title="Assignments | Caseflow Reader"
+          path="/"
+          render={() => <CaseSelect />}
+        />
+    </CaseSelectLoadingScreen>;
+  }
 
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
@@ -123,9 +134,8 @@ export class DecisionReviewer extends React.PureComponent {
           path="/:vacolsId/documents"
           render={this.documentsRoute}
         />
-        <PageRoute
+        <Route
           exact
-          title="Assignments | Caseflow Reader"
           path="/"
           render={this.routedCaseSelect}
         />
