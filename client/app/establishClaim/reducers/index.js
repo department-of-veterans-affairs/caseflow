@@ -1,4 +1,5 @@
 import * as Constants from '../constants';
+import update from 'immutability-helper';
 
 export const getEstablishClaimInitialState = function() {
   return {
@@ -36,6 +37,11 @@ export const establishClaim = function(state = getEstablishClaimInitialState(), 
       isShowingCancelModal: !state.isShowingCancelModal
     };
   case Constants.TRIGGER_LOADING:
+    return update(state, {
+      loading: {
+        $set: action.payload.value
+      }
+    });
     return {
       ...state,
       loading: action.payload.value
