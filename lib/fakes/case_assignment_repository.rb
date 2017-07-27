@@ -7,6 +7,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
       [
         Appeal.initialize_appeal_without_lazy_load(
           type: "Court Remand",
+          cavc: true,
           vacols_id: "reader_id1",
           date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
           date_received: "2013-05-31 00:00:00 UTC".to_datetime,
@@ -18,31 +19,25 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
           docket_number: "13 11-265",
           regional_office_key: "RO13",
           issues: [
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              program: :compensation,
+              vacols_sequence_id: 1,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
                 "Thigh, limitation of flexion of"
               ] },
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              program: :compensation,
+              vacols_sequence_id: 2,
               type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
                 "Thigh, limitation of flexion of"
               ] },
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              program: :compensation,
+              vacols_sequence_id: 3,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
@@ -51,6 +46,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
           ]),
         Appeal.initialize_appeal_without_lazy_load(
           type: "Remand",
+          cavc: false,
           vacols_id: "reader_id2",
           date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
           date_received: nil,
@@ -62,31 +58,25 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
           docket_number: "13 11-265",
           regional_office_key: "RO13",
           issues: [
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              program: :compensation,
+              vacols_sequence_id: 1,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
                 "Thigh, limitation of flexion of"
               ] },
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              program: :compensation,
+              vacols_sequence_id: 2,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
                 "Thigh, limitation of flexion of"
               ] },
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              program: :compensation,
+              vacols_sequence_id: 3,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
@@ -95,6 +85,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
           ]),
         Appeal.initialize_appeal_without_lazy_load(
           type: "Remand",
+          cavc: false,
           vacols_id: "reader_id3",
           date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
           date_received: "2013-04-29 00:00:00 UTC".to_datetime,
@@ -106,31 +97,25 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
           docket_number: "13 11-265",
           regional_office_key: "RO13",
           issues: [
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              vacols_sequence_id: 1,
+              program: :compensation,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
                 "Thigh, limitation of flexion of"
               ] },
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              vacols_sequence_id: 2,
+              program: :compensation,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",
                 "Thigh, limitation of flexion of"
               ] },
-            { disposition: :remanded, program:
-              {
-                name: :compensation,
-                label: "Compensation"
-              },
+            { disposition: :remanded,
+              vacols_sequence_id: 3,
+              program: :compensation,
               type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
                 "Lumbosacral",
                 "All Others",

@@ -25,6 +25,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :docket_number
+  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -63,8 +64,6 @@ class Appeal < ActiveRecord::Base
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
   # rubocop:enable Metrics/LineLength
-
-  CAVC_TYPE = "7".freeze
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
@@ -193,10 +192,6 @@ class Appeal < ActiveRecord::Base
   def station_key
     result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
     result && result.first
-  end
-
-  def cavc
-    type == VACOLS::Case::TYPES[CAVC_TYPE]
   end
 
   def aod
