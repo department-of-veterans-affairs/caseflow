@@ -107,20 +107,6 @@ describe Appeal do
     it { is_expected.to be_truthy }
   end
 
-  context "#cavc" do
-    subject { appeal }
-
-    it { expect(subject.cavc).to be_falsey }
-
-    context "when appeal type is court remand" do
-      let(:type) { "Court Remand" }
-      it "returns true for cavc" do
-        subject.type = type
-        expect(subject.cavc).to be_truthy
-      end
-    end
-  end
-
   context "#ssocs" do
     subject { appeal.ssocs }
 
@@ -1006,6 +992,7 @@ describe Appeal do
           docket_number: "13 11-265",
           regional_office_key: "RO13",
           type: "Court Remand",
+          cavc: true,
           vacols_record: {
             soc_date: 4.days.ago
           }
