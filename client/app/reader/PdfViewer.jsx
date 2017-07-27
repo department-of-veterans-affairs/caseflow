@@ -135,7 +135,7 @@ export class PdfViewer extends React.Component {
   getPrevDocId = () => _.get(this.getPrevDoc(), 'id')
   getNextDocId = () => _.get(this.getNextDoc(), 'id')
 
-  getPrefetchFiles = () => _.map(_.compact([this.getPrevDoc(), this.getNextDoc()]), 'content_url')
+  getPrefetchFiles = () => _.map([this.getPrevDoc(), this.getNextDoc()], 'content_url')
 
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
