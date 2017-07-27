@@ -248,7 +248,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               cd /home/jenkins/workspace
               npm i -npm@latest
               rm -rf /usr/local/lib/node_modules
-              mv node_modules /usr/local/lib/
+              mv node_modules /opt/node-v6.10.2-linux-x64/lib/
               npm -v
               cd ${CASEFLOW_DIR}/client && npm install --no-optional
               """
