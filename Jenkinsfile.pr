@@ -135,8 +135,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd ${CASEFLOW_DIR}
-              bundle exec rake konacha:run
-              bundle exec rake mocha
+              TEST_CATEGORY=javascript && bundle exec rake mocha
               """
             }
           }
