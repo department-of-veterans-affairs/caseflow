@@ -93,14 +93,12 @@ export class DecisionReviewer extends React.PureComponent {
   routedCaseSelect = () => {
     return <CaseSelectLoadingScreen
       assignments={this.props.assignments}>
-      <div>
         <PageRoute
           exact
           title="Assignments | Caseflow Reader"
           path="/"
           render={() => <CaseSelect />}
         />
-      </div>
     </CaseSelectLoadingScreen>;
   }
 
@@ -138,6 +136,7 @@ export class DecisionReviewer extends React.PureComponent {
           render={this.documentsRoute}
         />
         <Route
+          exact
           path="/"
           render={this.routedCaseSelect}
         />

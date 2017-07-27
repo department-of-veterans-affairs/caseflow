@@ -140,6 +140,7 @@ export const initialState = {
   assignmentsLoaded: false,
   loadedAppealId: null,
   initialDataLoadingFail: false,
+  initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
@@ -219,6 +220,12 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.REQUEST_INITIAL_DATA_FAILURE:
     return update(state, {
       initialDataLoadingFail: {
+        $set: action.payload.value
+      }
+    });
+  case Constants.REQUEST_INITIAL_CASE_FAILURE:
+    return update(state, {
+      initialCaseLoadingFail: {
         $set: action.payload.value
       }
     });

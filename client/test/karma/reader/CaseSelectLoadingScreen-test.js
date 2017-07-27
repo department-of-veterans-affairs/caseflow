@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { CaseSelectLoadingScreen } from '../../../app/reader/CaseSelectLoadingScreen';
 
 describe('CaseSelectLoadingScreen', () => {
-  const getContext = () => mount(<CaseSelectLoadingScreen onInitialDataLoadingFail={_.noop}>
+  const getContext = () => mount(<CaseSelectLoadingScreen onInitialCaseLoadingFail={_.noop}>
         <p>Show when welcome page is loaded</p>
     </CaseSelectLoadingScreen>);
 
@@ -20,7 +20,7 @@ describe('CaseSelectLoadingScreen', () => {
   });
 
   it('displays the error message when the request failed', () => {
-    const wrapper = getContext().setProps({ initialDataLoadingFail: true });
+    const wrapper = getContext().setProps({ initialCaseLoadingFail: true });
 
     expect(wrapper.text()).to.include('Unable to load the welcome page');
     expect(wrapper.text()).to.include('It looks like Caseflow was unable to load the welcome page.');

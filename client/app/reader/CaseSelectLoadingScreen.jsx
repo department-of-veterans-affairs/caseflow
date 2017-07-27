@@ -1,7 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
+import { onReceiveAssignments, onInitialCaseLoadingFail } from './actions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
@@ -14,13 +14,13 @@ export class CaseSelectLoadingScreen extends React.Component {
     // to a page outside of the SPA and then hit back, we want the cached version of this
     // page to be the HTML page, not the JSON object.
     if (this.props.assignments) {
-      this.props.onInitialDataLoadingFail(false);
+      this.props.onInitialCaseLoadingFail(false);
 
       ApiUtil.get('/reader/appeal?json').then((response) => {
         const returnedObject = JSON.parse(response.text);
 
         this.props.onReceiveAssignments(returnedObject.cases);
-      }, this.props.onInitialDataLoadingFail);
+      }, this.props.onInitialCaseLoadingFail);
     }
   }
 
@@ -31,7 +31,7 @@ export class CaseSelectLoadingScreen extends React.Component {
 
     return <div className="usa-grid">
         <div className="cf-app">
-          {this.props.initialDataLoadingFail ?
+          {this.props.initialCaseLoadingFail ?
             <StatusMessage
               title="Unable to load the welcome page">
               It looks like Caseflow was unable to load the welcome page.<br />
@@ -47,14 +47,14 @@ export class CaseSelectLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state, 'initialDataLoadingFail'),
+  ..._.pick(state, 'initialCaseLoadingFail'),
   assignments: state.assignments,
   assignmentsLoaded: state.assignmentsLoaded
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    onInitialDataLoadingFail,
+    onInitialCaseLoadingFail,
     onReceiveAssignments
   }, dispatch)
 );
