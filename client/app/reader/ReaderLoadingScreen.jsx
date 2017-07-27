@@ -25,8 +25,8 @@ export class ReaderLoadingScreen extends React.Component {
       ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
-        const { annotations, efolderUrl } = returnedObject;
-
+        const { annotations } = returnedObject;
+        
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveAnnotations(annotations);
 
