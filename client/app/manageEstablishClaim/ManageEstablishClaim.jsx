@@ -94,7 +94,8 @@ class ManageEstablishClaim extends React.Component {
         <div className="cf-title-meta-right">
           <h1 className="title">ARC Work Assignments</h1>
           <div className="meta">
-            {quotaTotals.tasksCompletedCount} out of {quotaTotals.taskCount} cases completed today
+            <span>{quotaTotals.tasksCompletedCount}</span> out of
+            <span>{quotaTotals.taskCount}</span> cases completed today
           </div>
         </div>
 
