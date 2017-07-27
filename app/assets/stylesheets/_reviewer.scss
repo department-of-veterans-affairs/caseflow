@@ -58,7 +58,7 @@ $bookmark-yellow: #efdf1a;
 
 
 .rc-collapse > .rc-collapse-item-disabled > .rc-collapse-header {
-  color: black;
+  color: $color-base;
 }
 
 [id=claim-folder-details-accordion] {
