@@ -63,7 +63,9 @@ class ManageEstablishClaim extends React.Component {
         cellClass: 'cf-no-padding'
       },
       {
-        valueFunction: (userQuota) => <UserQuotaControls userQuota={userQuota} />
+        valueFunction: (userQuota) => <UserQuotaControls userQuota={userQuota} />,
+        align: 'center',
+        cellClass: 'cf-empty-cell-header'
       }
     ];
   }

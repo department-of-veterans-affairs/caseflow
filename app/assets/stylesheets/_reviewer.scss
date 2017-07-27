@@ -405,6 +405,21 @@ svg[aria-hidden=true],
   }
 }
 
+.cf-documents-comments-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .cf-show-all-label {
+    text-align: right;
+  }
+
+  // scss-lint:disable IdSelector
+  #button-comments {
+    margin-right: 0;
+  }
+}
+
 .cf-add-comment-button {
   margin-top: -15px;
   margin-bottom: 10px;
