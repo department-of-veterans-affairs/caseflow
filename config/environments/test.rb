@@ -45,8 +45,8 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = false
 
-  if ENV['TEST_ENV_NUMBER']
-    assets_cache_path = Rails.root.join("tmp/cache/assets/paralleltests#{ENV['TEST_ENV_NUMBER']}")
+  if ENV['TEST_SUBCATEGORY']
+    assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")
     config.assets.configure do |env|
       env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
     end
