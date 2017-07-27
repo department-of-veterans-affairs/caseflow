@@ -246,7 +246,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
             container('caseflow-test-runner') {
               sh """
               cd /home/jenkins/workspace
-              npm i -npm@latest
+              npm i npm@latest
               rm -rf /opt/node-v6.10.2-linux-x64/lib/node_modules
               mv node_modules /opt/node-v6.10.2-linux-x64/lib/
               npm -v
