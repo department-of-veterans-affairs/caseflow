@@ -288,7 +288,7 @@ RSpec.feature "Reader" do
       find(".checkbox-wrapper-procedural").click
       expect(find("#procedural", visible: false).checked?).to be true
 
-      expect(page).to have_content("Filtering by")
+      expect(page).to have_content("Filtering by: Categories")
 
       find("#receipt-date-header").click
       expect_dropdown_filter_to_be_hidden
