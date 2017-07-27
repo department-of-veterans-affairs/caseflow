@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Collapse, { Panel } from 'rc-collapse';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 const CLASS_NAME_MAPPING = {
   bordered: 'usa-accordion-bordered',
@@ -23,7 +24,8 @@ export default class Accordion extends React.PureComponent {
       ...passthroughProps
     } = this.props;
 
-    const accordionSections = React.Children.map(children, (child) => {
+    // converting children to array and mapping over them
+    const accordionSections = _.map(React.Children.toArray(children), (child) => {
       const headerClass = 'usa-accordion-button';
 
       return <Panel id={child.props.id}
