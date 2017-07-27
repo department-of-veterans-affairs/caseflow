@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
-import Alert from '../Alert';
 import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
@@ -20,6 +19,7 @@ class DocumentListHeader extends React.Component {
 
   render() {
     const props = this.props;
+    const { viewingDocumentsOrComments } = this.props;
 
     const categoryCount = _.values(props.docFilterCriteria.category).reduce((numberOfCategories, categoryShown) => {
       return categoryShown ? numberOfCategories + 1 : numberOfCategories;
@@ -35,7 +35,9 @@ class DocumentListHeader extends React.Component {
     );
     const filteredCategories = [].concat(
       categoryFilters ? [`Categories (${categoryCount})`] : [],
-      tagFilters ? [`Issue tags (${tagCount})`] : []).join(', ');
+      tagFilters ? [`Issue tags (${tagCount})`] : [],
+      viewingDocumentsOrComments === 'comments' ? ['Comments'] : []).
+      join(', ');
 
     return <div>
       <div className="document-list-header">
@@ -76,6 +78,7 @@ DocumentListHeader.propTypes = {
 
 const mapStateToProps = (state) => ({
   numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
+  viewingDocumentsOrComments: state.viewingDocumentsOrComments,
   docFilterCriteria: state.ui.docFilterCriteria,
   vacolsId: state.loadedAppealId
 });
