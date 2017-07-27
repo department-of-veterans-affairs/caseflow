@@ -55,6 +55,17 @@ export class EstablishClaimEmail extends BaseForm {
     };
   }
 
+  // For Each Regional Office Mailto Link
+  renderRegionalOfficeEmaillist() {
+    return this.props.regionalOfficeEmail.map((regionalOfficeEmailMailto, index, arr) => {
+      return (
+                  <a key={regionalOfficeEmailMailto} href={`mailto:${regionalOfficeEmailMailto}`}>
+                      {regionalOfficeEmailMailto}{index === arr.length - 1 ? '' : '; '}
+                  </a>
+      );
+    });
+  }
+
   render() {
     return <div>
       { this.props.regionalOfficeEmail &&
@@ -62,7 +73,7 @@ export class EstablishClaimEmail extends BaseForm {
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Route Claim</h1>
             <h2>Send Email Notification</h2>
-          <div>
+          <div className="cf-email-header">
             <Alert
               title="We are unable to create an
                 EP for claims with this Special Issue"
@@ -71,8 +82,10 @@ export class EstablishClaimEmail extends BaseForm {
             </Alert>
             <p>Please send the following email message to the office
               responsible for implementing this grant.</p>
-            <p><b>RO:</b> {this.props.regionalOffice}</p>
-            <p><b>RO email:</b> {this.props.regionalOfficeEmail.join('; ')}</p>
+            <aside>
+              <p><b>RO:</b> {this.props.regionalOffice}</p>
+              <p><b>RO email:</b> {this.renderRegionalOfficeEmaillist()}</p>
+            </aside>
           </div>
 
           <div className ="cf-vbms-note">
