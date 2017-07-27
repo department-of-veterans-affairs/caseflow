@@ -163,7 +163,7 @@ export class PdfViewer extends React.Component {
         <div className="cf-pdf-page-container">
           <PdfUI
             doc={doc}
-            file={this.props.efolderDocumentUrl(this.selectedDocId())}
+            file={this.props.efolderDocumentUrl(this.selectedDoc())}
             prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"

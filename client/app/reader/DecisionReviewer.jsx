@@ -26,7 +26,7 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
-  efolderDocumentUrl = (id) => this.props.efolderUrl.replace(':id', id)
+  efolderDocumentUrl = (doc) => this.props.efolderUrl.replace(':id', doc.id).replace(':efolder_id', doc.efolder_id)
 
   showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {

@@ -118,6 +118,7 @@ class Document < ActiveRecord::Base
     super({
       methods: [
         :vbms_document_id,
+        :efolder_id,
         :type,
         :received_at,
         :filename,

@@ -22,7 +22,7 @@ class ExternalApi::EfolderService
 
   def self.efolder_documents_url
     if FeatureToggle.enabled?(:efolder_docs_api)
-      URI.join(efolder_base_url, "api/v1/documents/:id").to_s
+      URI.join(efolder_base_url, "api/v1/documents/:efolder_id").to_s
     else
       URI.join("/document/:id/pdf").to_s
     end
