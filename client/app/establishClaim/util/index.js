@@ -88,9 +88,9 @@ export const getSpecialIssuesRegionalOfficeCode = (specialIssuesRegionalOffice, 
 export const getSpecialIssuesRegionalOffice =
   (specialIssuesRegionalOffice, regionalOfficeKey, regionalOfficeCities) => {
     return getRegionalOfficeString(
-    getSpecialIssuesRegionalOfficeCode(specialIssuesRegionalOffice, regionalOfficeKey),
-    regionalOfficeCities
-  );
+      getSpecialIssuesRegionalOfficeCode(specialIssuesRegionalOffice, regionalOfficeKey),
+      regionalOfficeCities
+    );
   };
 
 export const getSpecialIssuesEmail = (specialIssuesEmail, regionalOfficeKey) => {
