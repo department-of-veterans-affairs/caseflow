@@ -158,9 +158,9 @@ class Document < ActiveRecord::Base
 
   def content_url
     if FeatureToggle.enabled?(:efolder_docs_api)
-      URI.join(ExternalApi::EfolderService.efolder_base_url, "api/v1/documents/" + efolder_id.to_s).to_s
+      URI.join(ExternalApi::EfolderService.efolder_base_url, "api/v1/documents/#{efolder_id}").to_s
     else
-      URI.join("/document/" + id.to_s + "/pdf").to_s
+      "/document/#{id}/pdf"
     end
   end
 
