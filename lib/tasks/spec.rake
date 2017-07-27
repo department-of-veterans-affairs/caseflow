@@ -1,17 +1,5 @@
 require "rspec/core/rake_task"
 
-def run_command_and_print_output(command)
-  output_stream = open("|#{command}", "r")
-
-  output = ""
-  output_stream.each do |line|
-    output << line
-    print "."
-    $stdout.flush
-  end
-  puts output
-end
-
 namespace :spec do
   feature_spec_folders = Dir.entries("./spec/feature").select do |file|
     ![".", ".."].include?(file) && File.directory?(File.join("./spec/feature", file))
@@ -36,7 +24,7 @@ namespace :spec do
           envs = "TEST_SUBCATEGORY=#{spec_name} && RAILS_ENV=test &&"
 
           ["rake db:create", "rake db:schema:load"].each do |cmd|
-            run_command_and_print_output("#{envs} #{cmd}")
+            ShellCommand.run_and_batch_output("#{envs} #{cmd}")
           end
         end
       end
@@ -54,7 +42,7 @@ namespace :spec do
       task spec_name do
         envs = "export TEST_SUBCATEGORY=#{spec_name};"
 
-        run_command_and_print_output("#{envs} rake spec:#{spec_name}")
+        ShellCommand.run_and_batch_output("#{envs} rake spec:#{spec_name}")
       end
     end
 
