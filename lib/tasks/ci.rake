@@ -56,7 +56,7 @@ namespace :ci do
     end
   end
 
-  desc "Verify code coverge (via simplecov) after tests have been run in parallel"
+  desc "Verify code coverge (via simplecov) on travis, skips if testing is incomplete"
   task :travis_verify_code_coverage do
     puts "\nVerifying code coverage"
     require "simplecov"

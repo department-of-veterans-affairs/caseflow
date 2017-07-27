@@ -40,8 +40,8 @@ require "timeout"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-download_directory = Rails.root.join("tmp/downloads")
-cache_directory = Rails.root.join("tmp/browser_cache")
+download_directory = Rails.root.join("tmp/downloads/#{ENV['TEST_CATEGORY'] || 'all'}")
+cache_directory = Rails.root.join("tmp/browser_cache/#{ENV['TEST_CATEGORY'] || 'all'}")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
 if File.directory?(cache_directory)
@@ -55,8 +55,11 @@ end
 chrome_args = !ENV["CHROME_ARGS"].nil? ? ENV["CHROME_ARGS"].split(" ") : nil
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
+  # make sure each of the parallel feature tests run on different ports
+  port_bump = %w(unit api certification dispatch reader other).index(ENV["TEST_CATEGORY"]) || 1
+
   options = {
-    port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
+    port: 51_674 + port_bump,
     browser: :chrome,
     args: chrome_args,
     prefs: {
