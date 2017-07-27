@@ -261,7 +261,8 @@ class VACOLS::Case < VACOLS::Record
         WHERE BRIEFF.BFKEY = #{vacols_id}
       SQL
 
-      aod_result = MetricsService.record "VACOLS: Case.aod #{vacols_id}" do
+      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_id}", name: "Case.aod",
+                                                                              service: :vacols) do
         conn.exec_query(query)
       end
       aod_result.to_hash.first["aod"]
