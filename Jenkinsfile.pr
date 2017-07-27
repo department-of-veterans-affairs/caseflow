@@ -245,6 +245,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           stage('npm') {
             container('caseflow-test-runner') {
               sh """
+              npm i -g npm@latest
               cd ${CASEFLOW_DIR}/client && npm install --no-optional
               """
             }
