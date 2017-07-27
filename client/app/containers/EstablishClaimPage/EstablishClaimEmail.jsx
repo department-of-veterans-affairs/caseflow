@@ -57,13 +57,13 @@ export class EstablishClaimEmail extends BaseForm {
 
   // For Each Regional Office Mailto Link
   renderRegionalOfficeEmaillist() {
-    return this.props.regionalOfficeEmail.map((regionalOfficeEmailMailto,index,arr) => {
-            return (
+    return this.props.regionalOfficeEmail.map((regionalOfficeEmailMailto, index, arr) => {
+      return (
                   <a key={regionalOfficeEmailMailto} href={`mailto:${regionalOfficeEmailMailto}`}>
                       {regionalOfficeEmailMailto}{index === arr.length - 1 ? '' : '; '}
                   </a>
-            );
-        });
+      );
+    });
   }
 
   render() {
