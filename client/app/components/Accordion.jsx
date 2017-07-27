@@ -24,7 +24,7 @@ export default class Accordion extends React.PureComponent {
       ...passthroughProps
     } = this.props;
 
-    // converting children to array and mapping over them
+    // converting children to an array and mapping through them
     const accordionSections = _.map(React.Children.toArray(children), (child) => {
       const headerClass = 'usa-accordion-button';
 

@@ -9,7 +9,7 @@ export default class AccordionSection extends React.PureComponent {
 
 AccordionSection.propTypes = {
   children: PropTypes.node,
-  title: PropTypes.node,
+  title: PropTypes.string,
   disabled: PropTypes.bool,
   id: PropTypes.string,
   sectionKey: PropTypes.string
