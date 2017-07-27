@@ -13,10 +13,7 @@ namespace :ci do
   end
 
   desc "Runs all the continuous integration scripts"
-  task :all do
-    Rake::Task["parallel:spec"].invoke(4) # 4 processes
-    Rake::Task["ci:other"].invoke
-  end
+  task all: ["spec:parallel", "ci:other"]
 
   task default: :all
 

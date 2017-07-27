@@ -50,7 +50,7 @@ else
   Dir.mkdir cache_directory
 end
 
-FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || "all"}"
+FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 # The CHROME_ARGS environment is set in test envrionments
 # to allow headless tests to run. It is expected to be a space separated list
