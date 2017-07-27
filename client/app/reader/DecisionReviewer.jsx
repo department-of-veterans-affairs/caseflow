@@ -26,6 +26,7 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
+  // doc.id is used if the efolder API is turned off. Otherwise, use the efolder_id
   efolderDocumentUrl = (doc) => this.props.efolderUrl.replace(':id', doc.id).replace(':efolder_id', doc.efolder_id)
 
   showPdf = (history, vacolsId) => (docId) => () => {
