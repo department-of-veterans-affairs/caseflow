@@ -27,7 +27,7 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   // doc.id is used if the efolder API is turned off. Otherwise, use the efolder_id
-  efolderDocumentUrl = (doc) => this.props.efolderUrl.replace(':id', doc.id).replace(':efolder_id', doc.efolder_id)
+  getEfolderDocumentUrl = (doc) => this.props.efolderUrl.replace(':id', doc.id).replace(':efolder_id', doc.efolder_id)
 
   showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
@@ -82,7 +82,7 @@ export class DecisionReviewer extends React.PureComponent {
         removeTag={this.props.removeTag}
         allDocuments={_.values(this.props.storeDocuments)}
         pdfWorker={this.props.pdfWorker}
-        efolderDocumentUrl={this.efolderDocumentUrl}
+        getEfolderDocumentUrl={this.getEfolderDocumentUrl}
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
@@ -101,7 +101,7 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}
-      efolderDocumentUrl={this.efolderDocumentUrl}>
+      getEfolderDocumentUrl={this.getEfolderDocumentUrl}>
       <div>
 
         <PageRoute
