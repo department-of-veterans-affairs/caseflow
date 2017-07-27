@@ -41,7 +41,7 @@ export class ReaderLoadingScreen extends React.Component {
         };
 
         for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-          downloadDocuments(documents.map((doc) => doc.content_url), i);
+          downloadDocuments(_.map(documents, 'content_url'), i);
         }
       }, this.props.onInitialDataLoadingFail);
     }

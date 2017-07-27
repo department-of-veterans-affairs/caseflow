@@ -86,11 +86,11 @@ export class PdfViewer extends React.Component {
 
     if (event.key === 'ArrowLeft') {
       Analytics.event('Document Viewer', 'key command', 'previous document');
-      this.props.showPdf(this.prevDocId())();
+      this.props.showPdf(this.getPrevDocId())();
     }
     if (event.key === 'ArrowRight') {
       Analytics.event('Document Viewer', 'key command', 'next document');
-      this.props.showPdf(this.nextDocId())();
+      this.props.showPdf(this.getNextDocId())();
     }
   }
 
@@ -129,15 +129,15 @@ export class PdfViewer extends React.Component {
 
   selectedDocId = () => Number(this.props.match.params.docId)
 
-  prevDoc = () => _.get(this.props.documents, [this.selectedDocIndex() - 1])
-  nextDoc = () => _.get(this.props.documents, [this.selectedDocIndex() + 1])
+  getPrevDoc = () => _.get(this.props.documents, [this.selectedDocIndex() - 1])
+  getNextDoc = () => _.get(this.props.documents, [this.selectedDocIndex() + 1])
 
-  prevDocId = () => _.get(this.props.documents, [this.selectedDocIndex() - 1, 'id'])
-  nextDocId = () => _.get(this.props.documents, [this.selectedDocIndex() + 1, 'id'])
+  getPrevDocId = () => _.get(this.getPrevDoc(), 'id')
+  getNextDocId = () => _.get(this.getNextDoc(), 'id')
 
   getPrefetchFiles = () => _.compact([
-    this.prevDoc(),
-    this.nextDoc()
+    this.getPrevDoc(),
+    this.getNextDoc()
   ]).map((doc) => doc.content_url)
 
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
@@ -173,8 +173,8 @@ export class PdfViewer extends React.Component {
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            prevDocId={this.prevDocId()}
-            nextDocId={this.nextDocId()}
+            prevDocId={this.getPrevDocId()}
+            nextDocId={this.getNextDocId()}
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}
