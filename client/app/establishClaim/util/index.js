@@ -71,16 +71,16 @@ const getEmailFromConstant = (constant, regionalOfficeKey) => {
 };
 
 export const getSpecialIssuesRegionalOfficeCode = (specialIssuesRegionalOffice, regionalOfficeKey) => {
-  if (specialIssuesRegionalOffice === 'PMC') {
+  switch (specialIssuesRegionalOffice) {
+  case 'PMC':
     return ROUTING_INFORMATION.PMC[regionalOfficeKey];
-  } else if (specialIssuesRegionalOffice === 'COWC') {
+  case 'COWC':
     return ROUTING_INFORMATION.COWC[regionalOfficeKey];
-  } else if (specialIssuesRegionalOffice === 'education') {
+  case 'education':
     return ROUTING_INFORMATION.EDUCATION[regionalOfficeKey];
+  default:
+    return specialIssuesRegionalOffice;
   }
-
-  return specialIssuesRegionalOffice;
-
 };
 
 // This method returns a string version of the regional office code. So it takes "R081"
@@ -94,13 +94,14 @@ export const getSpecialIssuesRegionalOffice =
   };
 
 export const getSpecialIssuesEmail = (specialIssuesEmail, regionalOfficeKey) => {
-  if (specialIssuesEmail === 'PMC') {
+  switch (specialIssuesEmail) {
+  case 'PMC':
     return getEmailFromConstant(ROUTING_INFORMATION.PMC, regionalOfficeKey);
-  } else if (specialIssuesEmail === 'COWC') {
+  case 'COWC':
     return getEmailFromConstant(ROUTING_INFORMATION.COWC, regionalOfficeKey);
-  } else if (specialIssuesEmail === 'education') {
+  case 'education':
     return getEmailFromConstant(ROUTING_INFORMATION.EDUCATION, regionalOfficeKey);
+  default:
+    return specialIssuesEmail;
   }
-
-  return specialIssuesEmail;
 };
