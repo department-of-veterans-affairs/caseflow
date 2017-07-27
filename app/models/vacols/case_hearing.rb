@@ -68,7 +68,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def update_hearing!(pkseq, hearing_info)
       record = VACOLS::CaseHearing.find_by(hearing_pkseq: pkseq)
 
-      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v; }
+      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
       MetricsService.record("VACOLS: update_hearing! #{pkseq}",
                             service: :vacols,
                             name: "update_hearing") do
