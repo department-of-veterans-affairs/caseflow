@@ -50,6 +50,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           stage('npm') {
             container('caseflow-test-runner') {
               sh """
+              cd /home/jenkins/workspace
               cd ${CASEFLOW_DIR}/client && npm install --no-optional
               """
             }
@@ -75,7 +76,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         """
       }
     }
-    stage('frontend / lint') {
+    stage('test') {
       parallel (
         frontend: {
           stage('npm test') {
@@ -97,39 +98,41 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
               """
             }
           }
+        },
+
+        backend: {
+          stage('backend') {
+            stage('db:create') {
+              container('caseflow-test-runner') {
+                sh """
+                cd ${CASEFLOW_DIR}
+                rake db:create
+                rake db:schema:load
+                """
+              }
+            }
+
+            stage('rake spec') {
+              container('caseflow-test-runner') {
+                sh """
+                cd ${CASEFLOW_DIR}
+                rake spec
+                """
+              }
+            }
+
+            stage('rake coverage') {
+              container('caseflow-test-runner') {
+                sh """
+                cd ${CASEFLOW_DIR}
+                rake ci:verify_code_coverage
+                rake konacha:run
+                """
+              }
+            }
+          }
         }
       )
-    }
-
-    stage('backend') {
-      stage('db:create') {
-        container('caseflow-test-runner') {
-          sh """
-          cd ${CASEFLOW_DIR}
-          rake db:create
-          rake db:schema:load
-          """
-        }
-      }
-
-      stage('rake spec') {
-        container('caseflow-test-runner') {
-          sh """
-          cd ${CASEFLOW_DIR}
-          rake spec
-          """
-        }
-      }
-
-      stage('rake coverage') {
-        container('caseflow-test-runner') {
-          sh """
-          cd ${CASEFLOW_DIR}
-          rake ci:verify_code_coverage
-          rake konacha:run
-          """
-        }
-      }
     }
   }
 }
