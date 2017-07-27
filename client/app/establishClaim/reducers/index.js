@@ -42,10 +42,6 @@ export const establishClaim = function(state = getEstablishClaimInitialState(), 
         $set: action.payload.value
       }
     });
-    return {
-      ...state,
-      loading: action.payload.value
-    };
   case Constants.CHANGE_CANCEL_FEEDBACK:
     return {
       ...state,
