@@ -1,11 +1,10 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail, onReceiveEfolderUrl } from './actions';
+import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail } from './actions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
-import { documentPath } from './DecisionReviewer.jsx'
 import * as Constants from './constants';
 import _ from 'lodash';
 
@@ -30,7 +29,6 @@ export class ReaderLoadingScreen extends React.Component {
 
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveAnnotations(annotations);
-        this.props.onReceiveEfolderUrl(efolderUrl);
 
         const downloadDocuments = (documentUrls, index) => {
           if (index >= documentUrls.length) {
