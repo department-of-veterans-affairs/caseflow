@@ -26,7 +26,7 @@ export class ReaderLoadingScreen extends React.Component {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
         const { annotations } = returnedObject;
-        
+
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveAnnotations(annotations);
 
