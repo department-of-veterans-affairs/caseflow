@@ -1,4 +1,4 @@
-import { applyMiddleware, createStore, combineReducers } from 'redux';
+import { applyMiddleware, createStore, combineReducers, compose } from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIssues';
@@ -6,6 +6,9 @@ import establishClaimReducer, { getEstablishClaimInitialState } from './index';
 import establishClaimFormReducer,
   { getEstablishClaimFormInitialState } from './establishClaimForm';
 import ConfigUtil from '../../util/ConfigUtil';
+
+// eslint-disable-next-line no-underscore-dangle
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const createEstablishClaimStore = (props) => {
   let middleware = [thunk];
@@ -28,6 +31,6 @@ export const createEstablishClaimStore = (props) => {
       establishClaimForm: getEstablishClaimFormInitialState(props),
       establishClaim: getEstablishClaimInitialState()
     },
-    applyMiddleware(...middleware)
+    composeEnhancers(applyMiddleware(...middleware))
   );
 };
