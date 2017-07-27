@@ -45,6 +45,9 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:unit
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - bundle exec rake travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=api
       script:
@@ -52,6 +55,9 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:api
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - bundle exec rake travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=certification
       script:
@@ -59,6 +65,9 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:certification
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - bundle exec rake travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=dispatch
       script:
@@ -66,6 +75,9 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:dispatch
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - bundle exec rake travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=reader
       script:
@@ -73,6 +85,9 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:reader
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - bundle exec rake travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=other
       script:
@@ -80,9 +95,14 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:other
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - bundle exec rake travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=javascript
       script:
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3 # give xvfb some time to start
         - bundle exec rake konacha:run
         - bundle exec rake mocha
     -
@@ -90,18 +110,11 @@ jobs:
       script:
         - bundle exec rake lint
         - bundle exec rake security
+        - cd ./client
         - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
         # Move the non-production node_modules back so that it's cached for next travis test run
         - rm -rf node_modules && mv node_modules_bak node_modules
-    - stage: coverage
-      script:
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
-        - cat ./coverage/*.resultset.json
 
-
-after_success:
-  - ls -al .
-  - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
 
 bundler_args: "--deployment --without development staging production"
 cache:

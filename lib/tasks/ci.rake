@@ -55,4 +55,46 @@ namespace :ci do
       puts Rainbow("Code coverage threshold met\n").green
     end
   end
+
+    desc "Verify code coverge (via simplecov) after tests have been run in parallel"
+  task :travis_verify_code_coverage do
+    puts "\nVerifying code coverage"
+    require "simplecov"
+
+    test_categories = ["unit", "api", "certification", "dispatch", "reader", "other", "othererr"]
+    merged_results = test_categories.inject({}) do |results, category|
+      path = File.join("coverage/", ".#{category}.resultset.json")
+
+      unless File.exist?(path)
+        puts Rainbow("Missing code coverage result files. Testing isn't complete.").yellow
+        exit!(0)
+      end
+
+      json = JSON.parse(File.read(path))
+      result = SimpleCov::Result.new(json[category]["coverage"])
+      result.original_result.merge_resultset(results)
+    end
+
+    result = SimpleCov::Result.new(merged_results)
+
+    puts result.covered_percent
+    puts result.covered_percentages
+
+    if result.covered_percentages.empty?
+      puts Rainbow("No valid coverage results were found").red
+      exit!(1)
+    end
+
+    # Rebuild HTML file with correct merged results
+    result.format!
+
+    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
+      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
+                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
+      exit!(1)
+    else
+      puts Rainbow("Code coverage threshold met\n").green
+    end
+  end
+
 end
