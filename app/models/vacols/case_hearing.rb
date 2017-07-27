@@ -18,6 +18,25 @@ class VACOLS::CaseHearing < VACOLS::Record
     N: :no_show
   }.freeze
 
+  HEARING_AODS = {
+    G: :granted,
+    Y: :filed,
+    N: :none
+  }.freeze
+
+  BOOLEAN_MAP = {
+    N: false,
+    Y: true
+  }.freeze
+
+  TABLE_NAMES = {
+    notes: :notes1,
+    disposition: :hearing_disp,
+    hold_open: :holddays,
+    aod: :aod,
+    transcript_requested: :tranreq
+  }.freeze
+
   NOT_MASTER_RECORD = %(
     vdkey is NOT NULL
   ).freeze
@@ -46,6 +65,17 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
 
+    def update_hearing!(pkseq, hearing_info)
+      record = VACOLS::CaseHearing.find_by(hearing_pkseq: pkseq)
+
+      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
+      MetricsService.record("VACOLS: update_hearing! #{pkseq}",
+                            service: :vacols,
+                            name: "update_hearing") do
+        record.update(attrs)
+      end
+    end
+
     private
 
     def select_hearings
@@ -60,6 +90,9 @@ class VACOLS::CaseHearing < VACOLS::Record
              :notes1,
              :folder_nr,
              :vdkey,
+             :aod,
+             :holddays,
+             :tranreq,
              :sattyid)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where(hearing_type: HEARING_TYPES.keys)
