@@ -245,7 +245,11 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
           stage('npm') {
             container('caseflow-test-runner') {
               sh """
-              npm i -g npm@latest
+              cd /home/jenkins/workspace
+              npm i -npm@latest
+              npm install npm
+              rm -rf /usr/local/lib/node_modules
+              mv node_modules /usr/local/lib/
               cd ${CASEFLOW_DIR}/client && npm install --no-optional
               """
             }
