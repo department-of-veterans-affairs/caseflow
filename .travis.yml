@@ -43,16 +43,16 @@ jobs:
       script:
         - bundle exec rake spec:parallel:setup:unit
         - bundle exec rake spec:parallel:unit
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=api
       script:
         - bundle exec rake spec:parallel:setup:api
         - bundle exec rake spec:parallel:api
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=certification
@@ -61,8 +61,8 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:certification
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=dispatch
@@ -71,8 +71,8 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:dispatch
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=reader
@@ -81,8 +81,8 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:reader
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=other
@@ -91,8 +91,8 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:other
-        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_ID/.$TEST_CATEGORY.resultset.json
-        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_ID ./coverage
+        - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
+        - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
     - 
       env: TEST_CATEGORY=javascript
