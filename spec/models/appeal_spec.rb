@@ -104,7 +104,7 @@ describe Appeal do
   context "#aod" do
     subject { appeal.aod }
 
-    it { is_expected.to be_truthy}
+    it { is_expected.to be_truthy }
   end
 
   context "#cavc" do
