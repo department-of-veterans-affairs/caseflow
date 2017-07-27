@@ -48,10 +48,6 @@ export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRe
   }
 });
 
-export const toggleExpandAll = () => ({
-  type: Constants.TOGGLE_EXPAND_ALL
-});
-
 export const setSearch = (searchQuery) => ({
   type: Constants.SET_SEARCH,
   payload: {
@@ -467,6 +463,17 @@ export const setOpenedAccordionSections = (openedAccordionSections, prevSections
     type: Constants.SET_OPENED_ACCORDION_SECTIONS,
     payload: {
       openedAccordionSections
+    }
+  };
+};
+
+export const setViewingDocumentsOrComments = (documentsOrComments) => {
+  Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'set-viewing-documents-or-comments', documentsOrComments);
+
+  return {
+    type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
+    payload: {
+      documentsOrComments
     }
   };
 };
