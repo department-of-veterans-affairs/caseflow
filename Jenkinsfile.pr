@@ -19,7 +19,9 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
      ttyEnabled: true,
      alwaysPullImage: true,
      command: 'cat',
+     resourceRequestCpu: '7',
      resourceLimitCpu: '7.5',
+     resourceRequestMemory: '10000Mi',
      resourceLimitMemory: '10000Mi',
      envVars: [
       containerEnvVar(key: 'POSTGRES_USER', value: 'postgres'),
