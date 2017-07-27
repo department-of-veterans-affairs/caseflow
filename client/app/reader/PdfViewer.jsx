@@ -129,13 +129,16 @@ export class PdfViewer extends React.Component {
 
   selectedDocId = () => Number(this.props.match.params.docId)
 
+  prevDoc = () => _.get(this.props.documents, [this.selectedDocIndex() - 1])
+  nextDoc = () => _.get(this.props.documents, [this.selectedDocIndex() + 1])
+
   prevDocId = () => _.get(this.props.documents, [this.selectedDocIndex() - 1, 'id'])
   nextDocId = () => _.get(this.props.documents, [this.selectedDocIndex() + 1, 'id'])
 
   getPrefetchFiles = () => _.compact([
-    this.prevDocId(),
-    this.nextDocId()
-  ]).map(this.props.getEfolderDocumentUrl)
+    this.prevDoc(),
+    this.nextDoc()
+  ]).map((doc) => doc.content_url)
 
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
@@ -163,7 +166,7 @@ export class PdfViewer extends React.Component {
         <div className="cf-pdf-page-container">
           <PdfUI
             doc={doc}
-            file={this.props.getEfolderDocumentUrl(this.selectedDoc())}
+            file={doc.content_url}
             prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"

@@ -26,8 +26,6 @@ export class DecisionReviewer extends React.PureComponent {
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
-  getEfolderDocumentUrl = (doc) => doc.content_url
-
   showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
       return;
@@ -81,7 +79,6 @@ export class DecisionReviewer extends React.PureComponent {
         removeTag={this.props.removeTag}
         allDocuments={_.values(this.props.storeDocuments)}
         pdfWorker={this.props.pdfWorker}
-        getEfolderDocumentUrl={this.getEfolderDocumentUrl}
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
@@ -99,8 +96,7 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}
-      getEfolderDocumentUrl={this.getEfolderDocumentUrl}>
+      vacolsId={vacolsId}>
       <div>
 
         <PageRoute
