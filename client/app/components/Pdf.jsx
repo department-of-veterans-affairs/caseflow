@@ -463,23 +463,24 @@ export class Pdf extends React.PureComponent {
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
     }
 
-    return PDFJS.getDocument({ url: file, withCredentials: true }).then((pdfDocument) => {
-      if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
+    return PDFJS.getDocument({ url: file,
+      withCredentials: true }).then((pdfDocument) => {
+        if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
-        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-          return this.predrawnPdfs[file].pdfDocument;
+          if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+            return this.predrawnPdfs[file].pdfDocument;
+          }
+          this.predrawnPdfs[file] = {
+            pdfDocument
+          };
+          this.setUpPdfObjects(file, pdfDocument);
+
+          return pdfDocument;
         }
-        this.predrawnPdfs[file] = {
-          pdfDocument
-        };
-        this.setUpPdfObjects(file, pdfDocument);
 
-        return pdfDocument;
-      }
-
-      return null;
-    });
+        return null;
+      });
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
