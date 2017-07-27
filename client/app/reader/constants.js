@@ -68,7 +68,7 @@ export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
 
-export const COMMENT_ACCORDION_KEY = 'Comments';
+export const COMMENT_ACCORDION_KEY = 'comments-header';
 
 export const ANALYTICS = {
   VIEW_DOCUMENT_PAGE: 'Document Viewer'

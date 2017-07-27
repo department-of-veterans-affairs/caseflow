@@ -23,16 +23,16 @@ export default class Accordion extends React.PureComponent {
       ...passthroughProps
     } = this.props;
 
-    console.log(passthroughProps)
     const accordionSections = React.Children.map(children, (child) => {
       const headerClass = 'usa-accordion-button';
 
-      return <Panel id={child.props.id} showArrow={false} 
+      return <Panel id={child.props.id}
         disabled={child.props.disabled}
         headerClass={classnames(headerClass, {
           disabled: child.props.disabled
         })}
-        header={child.props.title} key={child.props.title}>
+        key={child.props.sectionKey}
+        header={child.props.title}>
         <div className="usa-accordion-content">
           {child.props.children}
         </div>
