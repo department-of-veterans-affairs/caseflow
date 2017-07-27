@@ -31,7 +31,6 @@ export const COLLECT_ALL_TAGS_FOR_OPTIONS = 'COLLECT_ALL_TAGS_FOR_OPTIONS';
 export const SET_SORT = 'SET_SORT';
 export const SET_PDF_READY_TO_SHOW = 'SET_PDF_READY_TO_SHOW';
 export const SET_SEARCH = 'SET_SEARCH';
-export const TOGGLE_EXPAND_ALL = 'TOGGLE_EXPAND_ALL';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
 export const CLEAR_ALL_SEARCH = 'CLEAR_ALL_SEARCH';
 export const SET_DOC_LIST_SCROLL_POSITION = 'SET_DOC_LIST_SCROLL_POSITION';
@@ -65,11 +64,17 @@ export const SELECT_ANNOTATION = 'SELECT_ANNOTATION';
 export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
+export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
 
 export const COMMENT_ACCORDION_KEY = 'Comments';
 
 export const ANALYTICS = {
   VIEW_DOCUMENT_PAGE: 'Document Viewer'
+};
+
+export const DOCUMENTS_OR_COMMENTS_ENUM = {
+  DOCUMENTS: 'documents',
+  COMMENTS: 'comments'
 };
 
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
