@@ -139,7 +139,9 @@ export const initialState = {
   assignments: [],
   assignmentsLoaded: false,
   loadedAppealId: null,
+  loadedAppeal: {},
   initialDataLoadingFail: false,
+  didLoadAppealFail: false,
   initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   pageCoordsBounds: {},
@@ -283,6 +285,22 @@ export const reducer = (state = initialState, action = {}) => {
           $set: true
         }
       });
+  case Constants.RECEIVE_APPEAL_DETAILS:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: action.payload.appeal
+        }
+      }
+    );
+  case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
+    return update(
+      {
+        didLoadAppealFail: {
+          $set: action.payload.value
+        }
+      }
+    );
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
