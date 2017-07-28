@@ -97,6 +97,7 @@ pre {
 
     .cf-nav-dropdown {
       margin-right: 50px;
+      line-height: 3em;
     }
   }
 }
@@ -246,4 +247,11 @@ pre {
 .cf-image-loader {
   width: 400px;
   height: 400px;
+}
+
+.cf-sg-footer {
+  margin-top: 125px;
+  .cf-app-footer {
+    margin-top: 0;
+  }
 }
