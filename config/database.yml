@@ -78,7 +78,7 @@ test:
   <% if ENV['POSTGRES_PASSWORD'] %>
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
-  database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
+  database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
 
 test_vacols:
   adapter: sqlite3
