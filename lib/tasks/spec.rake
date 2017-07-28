@@ -21,7 +21,7 @@ namespace :spec do
         desc "Set the database environment for #{spec_name} tests"
 
         task spec_name do
-          envs = "TEST_SUBCATEGORY=#{spec_name} && RAILS_ENV=test &&"
+          envs = "export TEST_SUBCATEGORY=#{spec_name} && export RAILS_ENV=test &&"
 
           ["rake db:create", "rake db:schema:load"].each do |cmd|
             ShellCommand.run_and_batch_output("#{envs} #{cmd}")
