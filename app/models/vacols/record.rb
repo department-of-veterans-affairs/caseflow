@@ -9,16 +9,19 @@ class VACOLS::Record < ActiveRecord::Base
   # `date_diff` will most commonly be the rails date helpers
   # example: relative_vacols_date(7.days)
   def self.relative_vacols_date(date_diff)
+    rounded_current_time - date_diff
+  end
+
+  def self.rounded_current_time
     Time.zone = "Eastern Time (US & Canada)"
     current_time = Time.zone.now
 
     # Round off hours, minutes, and seconds
-    rounded_current_time = Time.zone.local(
+    Time.zone.local(
       current_time.year,
       current_time.month,
       current_time.day
     )
-
-    rounded_current_time - date_diff
   end
 end
+
