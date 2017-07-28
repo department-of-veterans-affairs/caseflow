@@ -38,7 +38,7 @@ describe Document do
     end
   end
 
-  context "#content_url" do
+  context ".content_url" do
     context "when efolder_docs_api is enabled and application is reader" do
       before do
         FeatureToggle.enable!(:efolder_docs_api)

@@ -58,7 +58,7 @@ export class PdfUI extends React.Component {
 
   openDownloadLink = () => {
     Analytics.event('Document Viewer', 'download', '');
-    window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
+    window.open(`${this.props.doc.content_url}?type=${this.props.doc.type}&download=true`);
   }
 
   showPreviousDocument = () => {
@@ -229,7 +229,7 @@ export class PdfUI extends React.Component {
       <div>
         <Pdf
           documentId={this.props.doc.id}
-          file={this.props.file}
+          file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
           onPageClick={this.props.onPageClick}
@@ -279,7 +279,6 @@ PdfUI.propTypes = {
     type: PropTypes.string,
     receivedAt: PropTypes.string
   }).isRequired,
-  file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
