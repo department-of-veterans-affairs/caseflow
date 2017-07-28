@@ -3,7 +3,7 @@ export const documents = [
   {
     id: 1,
     filename: 'doc1',
-    content_url: '/document/2/pdf',
+    content_url: '/document/1/pdf',
     received_at: '2017-01-02',
     category_medical: true,
     type: 'bva decision',
