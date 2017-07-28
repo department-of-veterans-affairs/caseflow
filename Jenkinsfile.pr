@@ -1,3 +1,4 @@
+import static java.util.UUID.randomUUID
 def uuid = randomUUID() as String
 def label = uuid.take(8)
 
