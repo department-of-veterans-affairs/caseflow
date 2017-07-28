@@ -26,7 +26,6 @@ namespace :ci do
     require "simplecov"
 
     result = SimpleCov::ResultMerger.merged_result
-    puts result.inspect
 
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
