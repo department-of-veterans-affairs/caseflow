@@ -24,4 +24,3 @@ class VACOLS::Record < ActiveRecord::Base
     )
   end
 end
-

@@ -7,7 +7,7 @@ describe VacolsHelper do
     subject { VacolsHelper.local_time_with_utc_timezone }
 
     it "should be time in EST with UTC timezone" do
-      now = Time.now
+      now = Time.zone.now
       expect(subject.hour).to eq now.hour
       expect(subject.zone).to eq "UTC"
     end
