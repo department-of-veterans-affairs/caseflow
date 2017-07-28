@@ -5,7 +5,6 @@ class Generators::Issue
     def default_attrs
       {
         disposition: "Allowed",
-        description_label: "Service connection",
         description: [
           "15 - Service connection",
           "03 - All Others",
@@ -14,7 +13,7 @@ class Generators::Issue
         levels: ["All Others", "Thigh, limitation of flexion of"],
         program_description: "02 - Compensation",
         program: :compensation,
-        type: :service_connection,
+        type: { name: :service_connection, label: "Service Connection" },
         category: :knee
       }
     end
