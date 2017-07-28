@@ -40,8 +40,8 @@ require "timeout"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-download_directory = Rails.root.join("tmp/downloads/#{ENV['TEST_SUBCATEGORY'] || 'all'}")
-cache_directory = Rails.root.join("tmp/browser_cache/#{ENV['TEST_SUBCATEGORY'] || 'all'}")
+download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
+cache_directory = Rails.root.join("tmp/browser_cache_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
 if File.directory?(cache_directory)
