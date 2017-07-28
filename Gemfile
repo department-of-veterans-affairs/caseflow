@@ -125,7 +125,6 @@ group :development, :test do
   gem 'poltergeist' # For legacy JS tests. Remove when we're all React
   gem 'konacha'
   gem 'database_cleaner'
-  gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
 end
