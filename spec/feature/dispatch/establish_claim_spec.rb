@@ -227,7 +227,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
   end
 
-  context "As a caseworker" do
+  skip "As a caseworker" do
     let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
 
     let!(:task) do
