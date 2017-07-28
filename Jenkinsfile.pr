@@ -54,7 +54,6 @@ podTemplate(cloud:'minikube', label:"caseflow-${label}", containers: [
           stage('npm') {
             container('caseflow-test-runner') {
               sh """
-              cd /home/jenkins/workspace
               cd ${CASEFLOW_DIR}/client && npm install --no-optional
               """
             }
@@ -80,7 +79,7 @@ podTemplate(cloud:'minikube', label:"caseflow-${label}", containers: [
         """
       }
     }
-    stage('test') {
+    stage('frontend / lint') {
       parallel (
         frontend: {
           stage('npm test') {
