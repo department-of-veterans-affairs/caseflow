@@ -50,7 +50,7 @@ export class PdfSidebar extends React.Component {
   toggleKeyboardModal = (sourceLabel) => {
     this.setState((prevState) => {
       const nextStateModalIsOpen = !prevState.modal;
-      const eventActionPrefix = sourceLabel || nextStateModalIsOpen ? 'open' : 'close';
+      const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
 
       Analytics.event(
         Constants.ANALYTICS.VIEW_DOCUMENT_PAGE,
