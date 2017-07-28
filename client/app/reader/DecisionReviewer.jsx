@@ -12,7 +12,7 @@ import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
-import {ANALYTICS} from './constants';
+import { ANALYTICS } from './constants';
 import _ from 'lodash';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
