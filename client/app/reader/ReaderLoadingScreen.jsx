@@ -35,7 +35,7 @@ export class ReaderLoadingScreen extends React.Component {
             return;
           }
 
-          ApiUtil.get(documentUrls[index], { cache: true }).then(
+          ApiUtil.get(documentUrls[index], { cache: true, withCredentials: true }).then(
             () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
           );
         };
