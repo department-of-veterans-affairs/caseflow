@@ -40,7 +40,7 @@ class ClaimsFolderDetails extends React.PureComponent {
     return <div className="cf-claims-folder-details">
       {!appealDoesntExist && <h1>{appeal.veteran_full_name}'s Claims Folder</h1>}
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
-        <AccordionSection id="claim-folder-details-accordion" className="usa-grid" sectionKey="1"
+        <AccordionSection id="claim-folder-details-accordion" className="usa-grid"
           disabled={appealDoesntExist} title={appealDoesntExist ? 'Loading...' : 'Claims folder details'}>
           {!appealDoesntExist &&
           <div>
