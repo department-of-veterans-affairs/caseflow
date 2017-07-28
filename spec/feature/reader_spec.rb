@@ -248,13 +248,13 @@ RSpec.feature "Reader" do
       # minutes to see if various changes would fix it.
       #
       # Please forgive me.
-      #skip_because_sending_keys_to_body_does_not_work_on_travis do
-        page.find("body").send_keys(:arrow_right)
-        expect_doc_type_to_be "BVA Decision"
+      # skip_because_sending_keys_to_body_does_not_work_on_travis do
+      page.find("#scrollWindow").send_keys(:arrow_right)
+      expect_doc_type_to_be "BVA Decision"
 
-        page.find("body").send_keys(:arrow_left)
-        expect_doc_type_to_be "Form 9"
-      #end
+      page.find("#scrollWindow").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
+      # end
 
       add_comment_without_clicking_save "unsaved comment text"
       find("#addComment").send_keys(:arrow_left)
