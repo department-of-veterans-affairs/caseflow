@@ -45,8 +45,6 @@ Rails.application.configure do
   config.s3_enabled = !ENV['AWS_ACCESS_KEY_ID'].nil?
   config.s3_bucket_name = "caseflow-cache"
 
-  config.efolder_url = "http://localhost:4000"
-
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
