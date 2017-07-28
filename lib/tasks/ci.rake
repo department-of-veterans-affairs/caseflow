@@ -25,16 +25,8 @@ namespace :ci do
     puts "\nVerifying code coverage"
     require "simplecov"
 
-    resultset = SimpleCov::ResultMerger.resultset
-    results = resultset.map do |command_name, data|
-      SimpleCov::Result.from_hash(command_name => data)
-    end
-
-    merged = {}
-    results.each do |result|
-      merged = result.original_result.merge_resultset(merged)
-    end
-    result = SimpleCov::Result.new(merged)
+    result = SimpleCov::ResultMerger.merged_result
+    puts result.inspect
 
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
@@ -59,7 +51,8 @@ namespace :ci do
     require "simplecov"
 
     test_categories = %w(unit api certification dispatch reader other)
-    merged_results = test_categories.inject({}) do |results, category|
+
+    merged_results = test_categories.inject({}) do |merged, category|
       path = File.join("coverage/", ".#{category}.resultset.json")
 
       unless File.exist?(path)
@@ -68,8 +61,7 @@ namespace :ci do
       end
 
       json = JSON.parse(File.read(path))
-      result = SimpleCov::Result.new(json[category]["coverage"])
-      result.original_result.merge_resultset(results)
+      SimpleCov::RawCoverage.merge_resultsets(merged, json[category]["coverage"])
     end
 
     result = SimpleCov::Result.new(merged_results)
