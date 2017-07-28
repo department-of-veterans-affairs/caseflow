@@ -43,7 +43,6 @@ jobs:
       script:
         - bundle exec rake spec:parallel:setup:unit
         - bundle exec rake spec:parallel:unit
-      after_success: 
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
@@ -52,7 +51,6 @@ jobs:
       script:
         - bundle exec rake spec:parallel:setup:api
         - bundle exec rake spec:parallel:api
-      after_success: 
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
@@ -63,7 +61,6 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:certification
-      after_success: 
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
@@ -74,7 +71,6 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:dispatch
-      after_success: 
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
@@ -85,7 +81,6 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:reader
-      after_success: 
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage
@@ -96,7 +91,6 @@ jobs:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:other
-      after_success: 
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
         - aws s3 sync s3://travis-coverage/build-$TRAVIS_BUILD_NUMBER ./coverage
         - bundle exec rake ci:travis_verify_code_coverage

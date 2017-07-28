@@ -82,6 +82,7 @@ describe "Appeals API v1", type: :request do
       expect(response.code).to eq("422")
 
       json = JSON.parse(response.body)
+      expect(1).to eq(2)
       expect(json["errors"].length).to eq(1)
       expect(json["errors"].first["title"]).to eq("Invalid SSN")
     end
