@@ -31,6 +31,42 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+.cf-claims-folder-details {
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  .claim-detail-aod {
+    color: $color-secondary;
+  }
+
+  .claim-detail-cavc {
+    color: $color-primary;
+  }
+
+  .claims-folder-issues {
+    margin-top: 20px;
+
+    ol {
+      padding-top: 3px;
+      padding-left: 1em;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+.rc-collapse > .rc-collapse-item-disabled > .rc-collapse-header {
+  color: $color-base;
+}
+
+[id=claim-folder-details-accordion] {
+  .disabled {
+    font-style: italic;
+  }
+}
+
 .cf-pdf-page-container {
   position: absolute;
   top: 4em;

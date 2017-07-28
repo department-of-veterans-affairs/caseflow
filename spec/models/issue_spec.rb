@@ -2,7 +2,7 @@ describe Issue do
   let(:disposition) { :allowed }
   let(:program) { :compensation }
   let(:category) { :elbow }
-  let(:type) { :service_connection }
+  let(:type) { { name: :service_connection, label: "Service Connection" } }
 
   let(:issue) do
     Generators::Issue.build(disposition: disposition,
@@ -36,7 +36,10 @@ describe Issue do
       expect(subject.levels).to eq(["Other", "Left knee", "Right knee"])
       expect(subject.program).to eq(:compensation)
       expect(subject.program_description).to eq("02 - Compensation")
-      expect(subject.type).to eq(:service_connection)
+      expect(subject.type).to eq(
+        name: :service_connection,
+        label: "1151 Eligibility"
+      )
       expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other", "03 - Left knee", "04 - Right knee"])
       expect(subject.disposition).to eq(:remanded)
     end
@@ -104,7 +107,7 @@ describe Issue do
     end
 
     context "when type is not service_connection" do
-      let(:type) { :increase_rating }
+      let(:type) { { name: :increase_rating, label: "Increase Rating" } }
 
       it { is_expected.to be_falsey }
     end
