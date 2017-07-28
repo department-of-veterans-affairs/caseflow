@@ -80,6 +80,12 @@ ENV POSTGRES_USER=postgres
 ENV DISPLAY=:99
 ENV CHROME_BIN=chromium-browser
 
+## Use the latest NPM for higher performance
+RUN npm i npm@latest
+RUN rm -rf /opt/node-v6.10.2-linux-x64/lib/node_modules
+RUN mv node_modules /opt/node-v6.10.2-linux-x64/lib/
+RUN npm -v
+
 ## Prefetch Gems
 WORKDIR /caseflow
 COPY Gemfile Gemfile

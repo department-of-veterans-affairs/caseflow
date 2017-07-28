@@ -137,8 +137,12 @@ const initialShowErrorMessageState = {
 
 export const initialState = {
   assignments: [],
+  assignmentsLoaded: false,
   loadedAppealId: null,
+  loadedAppeal: {},
   initialDataLoadingFail: false,
+  didLoadAppealFail: false,
+  initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
@@ -221,6 +225,12 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload.value
       }
     });
+  case Constants.REQUEST_INITIAL_CASE_FAILURE:
+    return update(state, {
+      initialCaseLoadingFail: {
+        $set: action.payload.value
+      }
+    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
@@ -270,8 +280,27 @@ export const reducer = (state = initialState, action = {}) => {
       {
         assignments: {
           $set: action.payload.assignments
+        },
+        assignmentsLoaded: {
+          $set: true
         }
       });
+  case Constants.RECEIVE_APPEAL_DETAILS:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: action.payload.appeal
+        }
+      }
+    );
+  case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
+    return update(
+      {
+        didLoadAppealFail: {
+          $set: action.payload.value
+        }
+      }
+    );
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {

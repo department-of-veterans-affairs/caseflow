@@ -16,6 +16,11 @@ export const onInitialDataLoadingFail = (value = true) => ({
   payload: { value }
 });
 
+export const onInitialCaseLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
+  payload: { value }
+});
+
 export const onReceiveDocs = (documents, vacolsId) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
@@ -418,6 +423,27 @@ export const removeTag = (doc, tagId) => (
       }, () => {
         dispatch(removeTagRequestFailure(doc.id, tagId));
       });
+  }
+);
+
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { failedToLoad }
+});
+
+export const fetchAppealDetails = (vacolsId) => (
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+    }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
 
