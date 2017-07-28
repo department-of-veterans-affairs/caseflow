@@ -21,7 +21,8 @@ describe AppealRepository do
 
   let(:folder_record) do
     OpenStruct.new(
-      tivbms: "Y"
+      tivbms: "Y",
+      ticknum: "13 11-265"
     )
   end
 
@@ -130,7 +131,9 @@ describe AppealRepository do
         hearing_held: true,
         regional_office_key: "DSUSER",
         disposition: "Withdrawn",
-        decision_date: AppealRepository.normalize_vacols_date(1.day.ago)
+        decision_date: AppealRepository.normalize_vacols_date(1.day.ago),
+        docket_number: "13 11-265",
+        cavc: false
       )
     end
 
@@ -145,6 +148,18 @@ describe AppealRepository do
       end
 
       it { is_expected.to have_attributes(appellant_relationship: "") }
+    end
+
+    context "shows cavc as true" do
+      let(:case_record) do
+        OpenStruct.new(
+          correspondent: correspondent_record,
+          folder: folder_record,
+          bfac: "7"
+        )
+      end
+
+      it { is_expected.to have_attributes(cavc: true) }
     end
   end
 

@@ -2,9 +2,8 @@
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
-  attr_accessor :program, :type, :category, :description, :disposition,
-                :program_description, :description_label,
-                :levels # Levels is an ordered array for elements for Levels 1-3
+  attr_accessor :program, :type, :category, :description, :disposition, :levels,
+                :program_description
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
@@ -46,7 +45,7 @@ class Issue < ActiveRecord::Base
   # in the appeal
   def new_material?
     program == :compensation &&
-      type == :service_connection &&
+      type[:name] == :service_connection &&
       category == :new_material
   end
 
@@ -56,7 +55,6 @@ class Issue < ActiveRecord::Base
 
   def attributes
     super.merge(
-      description_label: description_label,
       levels: levels,
       program: program,
       type: type,
@@ -89,13 +87,11 @@ class Issue < ActiveRecord::Base
 
       disposition = (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other")
                     .parameterize.underscore.to_sym
-
       new(
-        description_label: (hash["isscode_label"]).to_s,
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
-        type: TYPES[hash["isscode"]],
+        type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
         description: description(hash),

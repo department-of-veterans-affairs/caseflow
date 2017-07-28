@@ -50,26 +50,52 @@ class Generators::Appeal
           status: "Active",
           decision_date: nil,
           issues: [
-            { disposition: :nil, program: :compensation, type: :service_connection, category: :knee }
+            { disposition: :nil, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :knee }
           ]
         },
         remand_decided: {
           status: "Remand",
           disposition: "Remanded",
           decision_date: 7.days.ago,
+          docket_number: "13 12-225",
           issues: [
-            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
-            { disposition: :denied, program: :compensation, type: :service_connection, category: :elbow }
+            { disposition: :remanded, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :knee },
+            { disposition: :denied, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :elbow }
           ]
         },
         partial_grant_decided: {
           status: "Remand",
           disposition: "Allowed",
           decision_date: 7.days.ago,
+          docket_number: "13 11-263",
           issues: [
-            { disposition: :remanded, program: :compensation, type: :service_connection, category: :knee },
-            { disposition: :allowed, program: :compensation, type: :service_connection, category: :elbow },
-            { disposition: :denied, program: :compensation, type: :service_connection, category: :shoulder }
+            { disposition: :remanded, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :knee },
+            { disposition: :allowed, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :elbow },
+            { disposition: :denied, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :shoulder }
           ]
         },
         full_grant_decided: {
@@ -78,9 +104,18 @@ class Generators::Appeal
           disposition: "Allowed",
           outcoding_date: 2.days.ago,
           decision_date: 7.days.ago,
+          docket_number: "13 11-265",
           issues: [
-            { disposition: :allowed, program: :compensation, type: :service_connection, category: :elbow },
-            { disposition: :denied, program: :compensation, type: :service_connection, category: :shoulder }
+            { disposition: :allowed, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :elbow },
+            { disposition: :denied, program: :compensation,
+              type: {
+                name: :service_connection,
+                label: "Service Connection"
+              }, category: :shoulder }
           ]
         }
       }
