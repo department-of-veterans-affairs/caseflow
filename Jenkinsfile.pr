@@ -1,13 +1,12 @@
 @NonCPS
 def clearTemplateNames() {
 	def r = script.currentBuild.rawBuild
-	def action = "">
+	def action = ""
 	if(action) {
 		action.names.clear()
 	}
 }
 clearTemplateNames()
-
 podTemplate(cloud:'minikube', label:'caseflow', containers: [
   containerTemplate(
     name: 'postgres', 
