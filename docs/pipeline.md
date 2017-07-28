@@ -33,6 +33,8 @@ All PR's must be reviewed by at least one other team member. If two team members
 - Are feature tests modified or added to account for the new functionality?
 - There should be NO migrations that remove or rename columns alongside any additional code. These migrations can cause major bugs, and should be part of their own PR.
 
+If applicable, it's encouraged to post a screenshot or gif to the code review. If the PR has a user-visible design aspect, the developer and reviewer are encouraged to verify that it looks good with the designer before merging to `master`.
+
 ## Integration Testing and Deployment
 Whenever a PR is merged into master, an automated Jenkins job will deploy to all non-production environments.
 
