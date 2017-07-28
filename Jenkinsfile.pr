@@ -2,7 +2,7 @@ import static java.util.UUID.randomUUID
 def uuid = randomUUID() as String
 def label = uuid.take(8)
 
-podTemplate(cloud:'minikube', label:'caseflow-${label}', containers: [
+podTemplate(cloud:'minikube', label:"caseflow-${label}", containers: [
   containerTemplate(
     name: 'postgres', 
     image: 'postgres:9.5',
@@ -37,7 +37,7 @@ podTemplate(cloud:'minikube', label:'caseflow-${label}', containers: [
       containerEnvVar(key: 'CHROME_ARGS', value: '--no-sandbox')
      ],
   )]) {
-  node('caseflow-${label}') {
+  node("caseflow-${label}") {
 
     // /home/jenkins is a shared volume called workspace-volume for this k8s Pod.
     // To keep the path short and avoid the "Chrome socket path too long" issue, we
