@@ -26,6 +26,11 @@ class ShellCommand
       print "."
       $stdout.flush
     end
+    output_stream.close
+
     puts output
+
+    exit_status = $?.exitstatus
+    exit(exit_status) unless exit_status == 0
   end
 end
