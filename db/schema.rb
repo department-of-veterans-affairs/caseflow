@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724162126) do
+ActiveRecord::Schema.define(version: 20170727203829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,10 +161,11 @@ ActiveRecord::Schema.define(version: 20170724162126) do
   add_index "document_views", ["document_id", "user_id"], name: "index_document_views_on_document_id_and_user_id", unique: true, using: :btree
 
   create_table "documents", force: :cascade do |t|
-    t.string  "vbms_document_id",    null: false
+    t.string  "vbms_document_id",      null: false
     t.boolean "category_procedural"
     t.boolean "category_medical"
     t.boolean "category_other"
+    t.boolean "category_case_summary"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree

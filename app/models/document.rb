@@ -123,6 +123,7 @@ class Document < ActiveRecord::Base
         :filename,
         :category_procedural,
         :category_medical,
+        :category_case_summary,
         :category_other,
         :serialized_vacols_date,
         :serialized_receipt_date,

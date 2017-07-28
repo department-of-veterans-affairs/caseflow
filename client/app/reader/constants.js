@@ -99,8 +99,13 @@ export const documentCategories = {
     humanName: 'Medical',
     svg: <CategoryIcon color="#FF6868" />
   },
-  other: {
+  caseSummary: {
     renderOrder: 2,
+    humanName: 'Case Summary',
+    svg: <CategoryIcon color="#9932CC" />
+  },
+  other: {
+    renderOrder: 3,
     humanName: 'Other Evidence',
     svg: <CategoryIcon color="#5BD998" />
   }

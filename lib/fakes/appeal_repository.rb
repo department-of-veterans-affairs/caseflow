@@ -321,17 +321,19 @@ class Fakes::AppealRepository
                        end
 
     [
-      Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
-      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
+      Generators::Document.build(vbms_document_id: 1, type: "NOD",
+                                 category_procedural: true, category_case_summary: true),
+      Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true, category_case_summary: true),
       Generators::Document.build(vbms_document_id: 3, type: "Form 9",
-                                 category_medical: true, category_procedural: true),
+                                 category_medical: true, category_procedural: true, category_case_summary: true),
       Generators::Document.build(
         vbms_document_id: 5,
         type: super_long_title,
         received_at: 7.days.ago,
         category_other: true),
       Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
-                                 category_medical: true, category_procedural: true, category_other: true)
+                                 category_medical: true, category_procedural: true, category_case_summary: true,
+                                 category_other: true)
     ]
   end
 
