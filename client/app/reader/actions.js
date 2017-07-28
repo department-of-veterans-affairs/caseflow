@@ -16,6 +16,11 @@ export const onInitialDataLoadingFail = (value = true) => ({
   payload: { value }
 });
 
+export const onInitialCaseLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
+  payload: { value }
+});
+
 export const onReceiveDocs = (documents, vacolsId) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
@@ -46,10 +51,6 @@ export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRe
     categoryKey,
     categoryValueToRevertTo
   }
-});
-
-export const toggleExpandAll = () => ({
-  type: Constants.TOGGLE_EXPAND_ALL
 });
 
 export const setSearch = (searchQuery) => ({
@@ -467,6 +468,17 @@ export const setOpenedAccordionSections = (openedAccordionSections, prevSections
     type: Constants.SET_OPENED_ACCORDION_SECTIONS,
     payload: {
       openedAccordionSections
+    }
+  };
+};
+
+export const setViewingDocumentsOrComments = (documentsOrComments) => {
+  Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'set-viewing-documents-or-comments', documentsOrComments);
+
+  return {
+    type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
+    payload: {
+      documentsOrComments
     }
   };
 };

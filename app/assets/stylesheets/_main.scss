@@ -690,6 +690,10 @@ select {
     padding: 0 3px;
     vertical-align: middle;
   }
+
+  .cf-empty-cell-header {
+    min-width: 90px;
+  }
 }
 
 .cf-work-assignments-user-index {

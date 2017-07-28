@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import { expect } from 'chai';
-import { reducer } from '../../../app/reader/reducer';
+import { reducer, initialState } from '../../../app/reader/reducer';
+import { setViewingDocumentsOrComments } from '../../../app/reader/actions';
 import * as Constants from '../../../app/reader/constants';
 
 /* eslint-disable no-undefined */
@@ -8,6 +9,77 @@ import * as Constants from '../../../app/reader/constants';
 describe('Reader reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
+
+  describe(Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS, () => {
+    it('switching to Comments mode', () => {
+      const state = {
+        ...initialState,
+        documents: {
+          0: {
+            id: 0,
+            listComments: false
+          },
+          1: {
+            id: 1,
+            listComments: true
+          }
+        }
+      };
+
+      const nextState = reduceActions([
+        setViewingDocumentsOrComments(Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS)
+      ], state);
+
+      expect(nextState).to.deep.equal({
+        ...initialState,
+        documents: {
+          0: {
+            id: 0,
+            listComments: true
+          },
+          1: {
+            id: 1,
+            listComments: true
+          }
+        },
+        viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
+      });
+    });
+
+    it('switching to Documents mode', () => {
+      const state = {
+        ...initialState,
+        documents: {
+          0: {
+            id: 0,
+            listComments: false
+          },
+          1: {
+            id: 1,
+            listComments: true
+          }
+        }
+      };
+
+      const nextState = reduceActions([
+        setViewingDocumentsOrComments(Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS)
+      ], state);
+
+      expect(nextState).to.deep.equal({
+        ...initialState,
+        documents: {
+          0: {
+            id: 0,
+            listComments: false
+          },
+          1: {
+            id: 1,
+            listComments: false
+          }
+        }
+      });
+    });
+  });
 
   describe(Constants.RECEIVE_DOCUMENTS, () => {
     it('updates documents object when received', () => {
@@ -93,6 +165,17 @@ describe('Reader reducer', () => {
     }]);
 
     expect(state.initialDataLoadingFail).to.equal(true);
+  });
+
+  describe(Constants.REQUEST_INITIAL_CASE_FAILURE, () => {
+    const state = reduceActions([{
+      type: Constants.REQUEST_INITIAL_CASE_FAILURE,
+      payload: {
+        value: true
+      }
+    }]);
+
+    expect(state.initialCaseLoadingFail).to.equal(true);
   });
 
   describe(Constants.REQUEST_CREATE_ANNOTATION_FAILURE, () => {
