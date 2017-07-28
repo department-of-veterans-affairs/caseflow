@@ -43,7 +43,7 @@ describe Document do
       before do
         FeatureToggle.enable!(:efolder_docs_api)
         RequestStore.store[:application] = "reader"
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).exactly(2).times
       end
 
       let(:base_url) { Faker::Internet.url }
