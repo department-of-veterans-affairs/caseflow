@@ -36,6 +36,11 @@ describe Judge do
       expect(last_dates).to all(eq(keys.last.to_date))
     end
 
+    it "returns hearings with IDs" do
+      hearing_ids = subject.map { |key, _v| subject[key].hearings.map(&:id) }.flatten
+      expect(hearing_ids.compact.size).to eq 3
+    end
+
     it "excludes hearings for another judge" do
       hearing_ids = subject.map { |key, _v| subject[key].hearings.map(&:id) }.flatten
       expect(hearing_ids).to_not include(hearing_another_judge.id)
