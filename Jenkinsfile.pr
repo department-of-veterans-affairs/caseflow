@@ -1,6 +1,17 @@
 import static java.util.UUID.randomUUID
+
+@NonCPS
+def clearTemplateNames() {
+	def r = script.currentBuild.rawBuild
+	def action = r.getAction(PodTemplateAction.class);
+	if(action) {
+		action.names.clear()
+	}
+}
+
 def uuid = randomUUID() as String
 def label = uuid.take(8)
+clearTemplateNames()
 
 podTemplate(cloud:'minikube', label:"caseflow-${label}", containers: [
   containerTemplate(
