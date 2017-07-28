@@ -101,6 +101,12 @@ describe Appeal do
     end
   end
 
+  context "#aod" do
+    subject { appeal.aod }
+
+    it { is_expected.to be_truthy }
+  end
+
   context "#ssocs" do
     subject { appeal.ssocs }
 
@@ -977,13 +983,19 @@ describe Appeal do
   end
 
   context ".to_hash" do
-    context "when issues parameter is nil" do
+    context "when issues parameter is nil and contains additional attributes" do
       subject { appeal.to_hash(viewed: true, issues: nil) }
 
       let!(:appeal) do
         Generators::Appeal.build(
           vbms_id: "999887777S",
-          vacols_record: { soc_date: 4.days.ago }
+          docket_number: "13 11-265",
+          regional_office_key: "RO13",
+          type: "Court Remand",
+          cavc: true,
+          vacols_record: {
+            soc_date: 4.days.ago
+          }
         )
       end
 
@@ -993,6 +1005,13 @@ describe Appeal do
 
       it "issues is null in hash" do
         expect(subject["issues"]).to be_nil
+      end
+
+      it "includes aod, cavc, regional_office and docket_number" do
+        expect(subject["aod"]).to be_truthy
+        expect(subject["cavc"]).to be_truthy
+        expect(subject["regional_office"][:key]).to eq("RO13")
+        expect(subject["docket_number"]).to eq("13 11-265")
       end
     end
 
