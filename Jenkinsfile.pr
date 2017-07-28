@@ -102,41 +102,39 @@ podTemplate(cloud:'minikube', label:"caseflow-${label}", containers: [
               """
             }
           }
-        },
-
-        backend: {
-          stage('backend') {
-            stage('db:create') {
-              container('caseflow-test-runner') {
-                sh """
-                cd ${CASEFLOW_DIR}
-                rake db:create
-                rake db:schema:load
-                """
-              }
-            }
-
-            stage('rake spec') {
-              container('caseflow-test-runner') {
-                sh """
-                cd ${CASEFLOW_DIR}
-                rake spec
-                """
-              }
-            }
-
-            stage('rake coverage') {
-              container('caseflow-test-runner') {
-                sh """
-                cd ${CASEFLOW_DIR}
-                rake ci:verify_code_coverage
-                rake konacha:run
-                """
-              }
-            }
-          }
         }
       )
+    }
+
+    stage('backend') {
+      stage('db:create') {
+        container('caseflow-test-runner') {
+          sh """
+          cd ${CASEFLOW_DIR}
+          rake db:create
+          rake db:schema:load
+          """
+        }
+      }
+
+      stage('rake spec') {
+        container('caseflow-test-runner') {
+          sh """
+          cd ${CASEFLOW_DIR}
+          rake spec
+          """
+        }
+      }
+
+      stage('rake coverage') {
+        container('caseflow-test-runner') {
+          sh """
+          cd ${CASEFLOW_DIR}
+          rake ci:verify_code_coverage
+          rake konacha:run
+          """
+        }
+      }
     }
   }
 }
