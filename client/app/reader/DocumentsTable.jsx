@@ -1,9 +1,11 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
+import { singleDocumentLink } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -12,15 +14,18 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
+import Link from '../components/Link';
+import Highlight from '../components/Highlight';
 
 import { setDocListScrollPosition, changeSortState,
-  setTagFilter, setCategoryFilter } from './actions';
+  setTagFilter, setCategoryFilter, selectCurrentPdfLocally } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
+import Analytics from '../util/AnalyticsUtil';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -30,9 +35,14 @@ class FilterIcon extends React.PureComponent {
       handleActivate, label, getRef, selected, idPrefix
     } = this.props;
 
+    const onActivate = (event) => {
+      Analytics.event('Claims Folder', 'activate filter', idPrefix);
+      handleActivate(event);
+    };
+
     const handleKeyDown = (event) => {
       if (event.key === ' ' || event.key === 'Enter') {
-        handleActivate(event);
+        onActivate(event);
         event.preventDefault();
       }
     };
@@ -46,7 +56,7 @@ class FilterIcon extends React.PureComponent {
       className,
       tabIndex: '0',
       onKeyDown: handleKeyDown,
-      onClick: handleActivate
+      onClick: onActivate
     };
 
     if (selected) {
@@ -85,6 +95,75 @@ const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
   shouldShow: state.ui.pdfList.lastReadDocId === ownProps.docId
 });
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+
+class DocTypeColumn extends React.PureComponent {
+  boldUnreadContent = (content, doc) => {
+    if (!doc.opened_by_current_user) {
+      return <strong>{content}</strong>;
+    }
+
+    return content;
+  };
+
+  onClick = (id) => () => {
+    // Annoyingly if we make this call in the thread, it won't follow the link. Instead
+    // we use setTimeout to force it to run at a later point.
+    setTimeout(() => this.props.selectCurrentPdfLocally(id), 0);
+  }
+
+  render = () => {
+    const { doc } = this.props;
+
+    // We add a click handler to mark a document as read even if it's opened in a new tab.
+    // This will get fired in the current tab, as the link is followed in a new tab. We
+    // also need to add a mouseUp event since middle clicking doesn't trigger an onClick.
+    // This will not work if someone right clicks and opens in a new tab.
+    return this.boldUnreadContent(
+      <Link
+        onMouseUp={this.onClick(doc.id)}
+        onClick={this.onClick(doc.id)}
+        to={singleDocumentLink(this.props.documentPathBase, doc)}
+        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
+        <Highlight>
+          {doc.type}
+        </Highlight>
+      </Link>, doc);
+  }
+}
+
+const mapDocTypeDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    selectCurrentPdfLocally
+  }, dispatch)
+});
+
+DocTypeColumn.propTypes = {
+  doc: PropTypes.object,
+  documentPathBase: PropTypes.string
+};
+
+const ConnectedDocTypeColumn = connect(
+  null, mapDocTypeDispatchToProps
+)(DocTypeColumn);
+
+export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
+  return documents.reduce((acc, doc) => {
+    const docHasComments = _.size(annotationsPerDocument[doc.id]);
+
+    if (viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS || docHasComments) {
+      acc.push(doc);
+    }
+
+    if (docHasComments && doc.listComments) {
+      acc.push({
+        ...doc,
+        isComment: true
+      });
+    }
+
+    return acc;
+  }, []);
+};
 
 class DocumentsTable extends React.Component {
   constructor() {
@@ -178,14 +257,6 @@ class DocumentsTable extends React.Component {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
 
-    const boldUnreadContent = (content, doc) => {
-      if (!doc.opened_by_current_user) {
-        return <strong>{content}</strong>;
-      }
-
-      return content;
-    };
-
     const clearFilters = () => {
       _(Constants.documentCategories).keys().
         forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
@@ -207,6 +278,7 @@ class DocumentsTable extends React.Component {
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
     // is triggered when a middle mouse button is clicked while onClick isn't.
     if (row && row.isComment) {
+
       return [{
         valueFunction: (doc) => {
           const comments = this.props.annotationsPerDocument[doc.id];
@@ -277,10 +349,11 @@ class DocumentsTable extends React.Component {
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) =>
-          <span className="document-list-receipt-date">
+        valueFunction: (doc) => <span className="document-list-receipt-date">
+          <Highlight>
             {formatDateStr(doc.receivedAt)}
-          </span>
+          </Highlight>
+        </span>
       },
       {
         cellClass: 'doc-type-column',
@@ -290,13 +363,8 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => boldUnreadContent(
-          <a
-            href={`documents/${doc.id}`}
-            aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-            onMouseUp={this.props.showPdf(doc.id)}>
-            {doc.type}
-          </a>, doc)
+        valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc}
+          documentPathBase={this.props.documentPathBase}/>
       },
       {
         cellClass: 'tags-column',
@@ -323,9 +391,7 @@ class DocumentsTable extends React.Component {
           }
         </div>,
         valueFunction: (doc) => {
-          return <TagTableColumn
-            doc={doc}
-          />;
+          return <TagTableColumn tags={doc.tags} />;
         }
       },
       {
@@ -341,19 +407,11 @@ class DocumentsTable extends React.Component {
   }
 
   render() {
-    let rowObjects = this.props.documents.reduce((acc, row) => {
-      acc.push(row);
-      const doc = _.find(this.props.documents, _.pick(row, 'id'));
-
-      if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
-        acc.push({
-          ...row,
-          isComment: true
-        });
-      }
-
-      return acc;
-    }, []);
+    const rowObjects = getRowObjects(
+      this.props.documents,
+      this.props.annotationsPerDocument,
+      this.props.viewingDocumentsOrComments
+    );
 
     return <div>
       <Table
@@ -385,9 +443,12 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
     setTagFilter,
-    setCategoryFilter,
-    changeSortState
+    setCategoryFilter
   }, dispatch),
+  changeSortState(sortBy) {
+    Analytics.event('Claims Folder', 'sort by', sortBy);
+    dispatch(changeSortState(sortBy));
+  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
@@ -400,8 +461,9 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state, 'tagOptions'),
-  ..._.pick(state.ui, 'pdfList')
+  ..._.pick(state, 'tagOptions', 'viewingDocumentsOrComments'),
+  ..._.pick(state.ui, 'pdfList'),
+  ..._.pick(state.ui, 'docFilterCriteria')
 });
 
 export default connect(

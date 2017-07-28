@@ -177,7 +177,7 @@ class Form8 < ActiveRecord::Base
 
   def pdf_location
     path = Form8.pdf_service.output_location_for(self)
-    fetch_from_s3_and_save(path) unless File.exist?(path)
+    fetch_from_s3_and_save(path)
     path
   end
 

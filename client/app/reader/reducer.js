@@ -2,7 +2,7 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
-import { searchString } from './search';
+import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
 const updateFilteredDocIds = (nextState) => {
@@ -19,7 +19,34 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
+  const updateListComments = (state, id, foundComment) => {
+    return update(state, {
+      documents: {
+        [id]: {
+          listComments: {
+            $set: foundComment
+          }
+        }
+      }
+    });
+  };
+
+  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
+    return update(state, {
+      ui: {
+        searchCategoryHighlights: {
+          $merge: {
+            [docId]: {
+              ...categoryMatches
+            }
+          }
+        }
+      }
+    });
+  };
+
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
+  let updatedNextState = nextState;
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -37,11 +64,31 @@ const updateFilteredDocIds = (nextState) => {
     map('id').
     value();
 
+  // looping through all the documents to update category highlights and expanding comments
+  _.forEach(updatedNextState.documents, (doc) => {
+    const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
+
+    // getting all the truthy values from the object
+    // {'medical': true, 'procedural': false } turns into {'medical': true}
+    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
+
+    // update the state for all the search category highlights
+    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
+      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
+        doc.id, matchesCategories);
+    }
+
+    // updating the state of all annotations for expanded comments
+    if (containsWords !== doc.listComments) {
+      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+    }
+  });
+
   if (docFilterCriteria.sort.sortAscending) {
     filteredIds.reverse();
   }
 
-  return update(nextState, {
+  return update(updatedNextState, {
     ui: {
       filteredDocIds: {
         $set: filteredIds
@@ -82,45 +129,34 @@ const openAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
-const SHOW_EXPAND_ALL = false;
-
 const initialShowErrorMessageState = {
   tag: false,
   category: false,
   annotation: false
 };
 
-/**
- * This function takes all the documents and check the status of the
- * list comments in the document to see if Show All or Collapse All should be
- * shown based on the state.
- */
-const getExpandAllState = (documents) => {
-  let allExpanded = !SHOW_EXPAND_ALL;
-
-  _.forOwn(documents, (doc) => {
-    if (!doc.listComments) {
-      allExpanded = SHOW_EXPAND_ALL;
-    }
-  });
-
-  return Boolean(allExpanded);
-};
-
 export const initialState = {
   assignments: [],
+  assignmentsLoaded: false,
   loadedAppealId: null,
+  loadedAppeal: {},
   initialDataLoadingFail: false,
+  didLoadAppealFail: false,
+  initialCaseLoadingFail: false,
+  viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
+  openedAccordionSections: [
+    'Document information', 'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
+  ],
   ui: {
+    searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
     selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
-    expandAll: false,
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -189,6 +225,12 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload.value
       }
     });
+  case Constants.REQUEST_INITIAL_CASE_FAILURE:
+    return update(state, {
+      initialCaseLoadingFail: {
+        $set: action.payload.value
+      }
+    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
@@ -238,8 +280,27 @@ export const reducer = (state = initialState, action = {}) => {
       {
         assignments: {
           $set: action.payload.assignments
+        },
+        assignmentsLoaded: {
+          $set: true
         }
       });
+  case Constants.RECEIVE_APPEAL_DETAILS:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: action.payload.appeal
+        }
+      }
+    );
+  case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
+    return update(
+      {
+        didLoadAppealFail: {
+          $set: action.payload.value
+        }
+      }
+    );
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -609,6 +670,9 @@ export const reducer = (state = initialState, action = {}) => {
         pdf: {
           isPlacingAnnotation: { $set: true }
         }
+      },
+      openedAccordionSections: {
+        $apply: (sectionKeys) => _.union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
       }
     });
   case Constants.SHOW_PLACE_ANNOTATION_ICON:
@@ -780,17 +844,6 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
-  case Constants.TOGGLE_EXPAND_ALL:
-    return update(state, {
-      documents: {
-        $set: _.mapValues(state.documents, (document) => {
-          return update(document, { listComments: { $set: !state.ui.expandAll } });
-        })
-      },
-      ui: {
-        $merge: { expandAll: !state.ui.expandAll }
-      }
-    });
   case Constants.TOGGLE_COMMENT_LIST:
     modifiedDocuments = update(state.documents,
       {
@@ -804,8 +857,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        documents: { $set: modifiedDocuments },
-        ui: { $merge: { expandAll: getExpandAllState(modifiedDocuments) } }
+        documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return _.merge(
@@ -834,6 +886,31 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.SET_OPENED_ACCORDION_SECTIONS:
+    return update(
+      state,
+      {
+        openedAccordionSections: {
+          $set: action.payload.openedAccordionSections
+        }
+      }
+    );
+  case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
+    return update(
+      state,
+      {
+        viewingDocumentsOrComments: {
+          $set: action.payload.documentsOrComments
+        },
+        documents: {
+          $apply: (docs) =>
+            _.mapValues(docs, (doc) => ({
+              ...doc,
+              listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
+            }))
+        }
+      }
+    );
   default:
     return state;
   }

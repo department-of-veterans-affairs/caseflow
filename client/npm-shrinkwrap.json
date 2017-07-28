@@ -2167,6 +2167,11 @@
       "from": "hash.js@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.0.3.tgz"
     },
+    "highlight-words-core": {
+      "version": "1.0.3",
+      "from": "highlight-words-core@>=1.0.2 <2.0.0",
+      "resolved": "https://registry.npmjs.org/highlight-words-core/-/highlight-words-core-1.0.3.tgz"
+    },
     "history": {
       "version": "4.5.1",
       "from": "https://registry.npmjs.org/history/-/history-4.5.1.tgz",
@@ -2886,6 +2891,11 @@
       "from": "https://registry.npmjs.org/moment/-/moment-2.18.1.tgz",
       "resolved": "https://registry.npmjs.org/moment/-/moment-2.18.1.tgz"
     },
+    "moment-timezone": {
+      "version": "0.5.13",
+      "from": "moment-timezone@>=0.5.13 <0.6.0",
+      "resolved": "https://registry.npmjs.org/moment-timezone/-/moment-timezone-0.5.13.tgz"
+    },
     "ms": {
       "version": "0.7.2",
       "from": "https://registry.npmjs.org/ms/-/ms-0.7.2.tgz",
@@ -3158,6 +3168,11 @@
       "version": "15.5.4",
       "from": "react-dom@latest",
       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.5.4.tgz"
+    },
+    "react-highlight-words": {
+      "version": "0.8.0",
+      "from": "react-highlight-words@latest",
+      "resolved": "https://registry.npmjs.org/react-highlight-words/-/react-highlight-words-0.8.0.tgz"
     },
     "react-hot-loader": {
       "version": "3.0.0-beta.6",

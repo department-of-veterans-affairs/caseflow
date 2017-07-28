@@ -1,13 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
-import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 
 class CaseSelect extends React.PureComponent {
+
+  renderIssuesColumnData = (appeal) => {
+    const issues = appeal.issues || [];
+
+    return (
+      <ol className="issue-list">
+        {issues.map((issue) => {
+          const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
+
+          return <li key={issue.vacols_sequence_id}>
+              {descriptionLabel}
+             {this.renderIssueLevels(issue)}
+          </li>;
+        })}
+      </ol>
+    );
+  }
+
+  renderIssueLevels = (issue) => {
+    const levels = issue.levels || [];
+
+    return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
+  }
+
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
@@ -18,7 +39,11 @@ class CaseSelect extends React.PureComponent {
       valueName: 'vbms_id'
     },
     {
-      header: 'View Case File',
+      header: 'Issues',
+      valueFunction: this.renderIssuesColumnData
+    },
+    {
+      header: 'View claims folder',
       valueFunction: (row) => {
         let buttonText = 'New';
         let buttonType = 'primary';
@@ -50,44 +75,24 @@ class CaseSelect extends React.PureComponent {
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Welcome to Reader!</h1>
           <p className="cf-lead-paragraph">
-            Reader allows attorneys and judges to review
-            and annotate Veteran claims folders.
-            Learn more about Reader on our <a href="/reader/help">Help page</a>.
+            Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
-          <h1>Work Assignments</h1>
+          <h2>Cases checked in</h2>
           <Table
+            className="assignment-list"
             columns={this.getAssignmentColumn}
             rowObjects={this.props.assignments}
-            summary="Work Assignments"
+            summary="Cases checked in"
             getKeyForRow={this.getKeyForRow}
           />
         </div>
       </div>
     </div>;
   }
-
-  componentDidMount() {
-    // We append an unneeded query param to avoid caching the json object. If we get thrown
-    // to a page outside of the SPA and then hit back, we want the cached version of this
-    // page to be the HTML page, not the JSON object.
-    ApiUtil.get('/reader/appeal?json').then((response) => {
-      const returnedObject = JSON.parse(response.text);
-
-      this.props.onReceiveAssignments(returnedObject.cases);
-    }, this.props.onInitialDataLoadingFail);
-  }
 }
 
 const mapStateToProps = (state) => _.pick(state, 'assignments');
 
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    onInitialDataLoadingFail,
-    onReceiveAssignments
-  }, dispatch)
-);
-
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(CaseSelect);

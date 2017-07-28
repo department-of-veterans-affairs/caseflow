@@ -3,12 +3,11 @@ class HearingDocket
   include ActiveModel::Model
   include ActiveModel::Serializers::JSON
 
-  attr_accessor :date, :type, :venue, :hearings, :user
+  attr_accessor :date, :type, :regional_office_name, :hearings, :user
 
   def to_hash
     serializable_hash(
-      include: [:hearings],
-      methods: [:venue]
+      methods: [:regional_office_name, :hearings_hash]
     )
   end
 
@@ -19,14 +18,18 @@ class HearingDocket
     }
   end
 
+  def hearings_hash
+    hearings.map(&:to_hash)
+  end
+
   class << self
     def from_hearings(hearings)
       new(
         date: hearings.first.date,
         type: hearings.first.type,
-        venue: hearings.first.venue,
         hearings: hearings,
-        user: hearings.first.user
+        user: hearings.first.user,
+        regional_office_name: hearings.first.regional_office_name
       )
     end
   end

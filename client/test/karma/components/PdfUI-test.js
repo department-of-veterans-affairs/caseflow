@@ -36,10 +36,13 @@ describe('PdfUI', () => {
         expect(wrapper.find('.cf-pdf-container')).to.have.length(1);
       });
 
-      it('renders the title', () => {
-        expect(wrapper.find('Button').find({ name: 'newTab' }).
+      it('renders the title as a link', () => {
+        expect(wrapper.find('Link').find({ name: 'newTab' }).
           children().
-          text()).to.eq(doc.type);
+          text()).to.eq(`${doc.type}<ExternalLink />`);
+        expect(wrapper.find('Link').find({ name: 'newTab' }).
+          first().
+          props().target).to.eq('_blank');
       });
 
       it('does not render the page number when pdf has not been rendered', () => {
@@ -105,18 +108,6 @@ describe('PdfUI', () => {
 
           wrapper.find({ name: 'zoomOut' }).simulate('click');
           expect(wrapper.state('scale')).to.equal(currentZoom + delta);
-        });
-      });
-
-      context('document name', () => {
-        it('tries to open document in new tab', () => {
-          let url = `${DOCUMENT_PATH_BASE}/${doc.id}?type=${doc.type}` +
-            `&received_at=${doc.receivedAt}&filename=${doc.filename}`;
-          let open = sinon.spy(window, 'open');
-
-          wrapper.find('Button').find({ name: 'newTab' }).
-            simulate('click');
-          expect(open.withArgs(url, '_blank').calledOnce).to.be.true;
         });
       });
 

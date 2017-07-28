@@ -2,9 +2,9 @@ class HearingsController < ApplicationController
   # :nocov:
   before_action :verify_access
 
-  # TODO(jd): Remove this when we have a unique hearings logo
-  def logo_class
-    "cf-logo-image-default"
+  def update
+    hearing.update(update_params)
+    render json: {}
   end
 
   def logo_name
@@ -31,6 +31,25 @@ class HearingsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "hearings"
+  end
+
+  def update_params
+    params.require("hearing").permit(:notes,
+                                     :disposition,
+                                     :hold_open,
+                                     :aod,
+                                     :transcript_requested)
+  end
+
+  def date_from_string(date_string)
+    # date should be YYYY-MM-DD
+    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ date_string
+
+    begin
+      date_string.to_date
+    rescue ArgumentError
+      nil
+    end
   end
   # :nocov:
 end

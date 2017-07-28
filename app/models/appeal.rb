@@ -24,6 +24,8 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+  vacols_attr_accessor :docket_number
+  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -144,6 +146,14 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def appellant_last_first_mi
+    # returns appellant name in format <last>, <first> <middle_initial>.
+    if appellant_first_name
+      name = "#{appellant_last_name}, #{appellant_first_name}"
+      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
+    end
+  end
+
   def representative_name
     representative unless ["None", "One Time Representative", "Agent", "Attorney"].include?(representative)
   end
@@ -172,7 +182,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def regional_office
-    VACOLS::RegionalOffice::CITIES[regional_office_key] || {}
+    { key: regional_office_key }.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
   end
 
   def regional_office_name
@@ -182,6 +192,10 @@ class Appeal < ActiveRecord::Base
   def station_key
     result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
     result && result.first
+  end
+
+  def aod
+    @aod ||= self.class.repository.aod(vacols_id)
   end
 
   def nod
@@ -347,12 +361,13 @@ class Appeal < ActiveRecord::Base
     events.last.try(:date)
   end
 
-  def to_hash(viewed: nil)
+  def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name],
+      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
+      hash["issues"] = issues
     end
   end
 
@@ -387,7 +402,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= self.class.vbms.fetch_documents_for(self)
+    @fetched_documents ||= if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
+                             EFolderService.fetch_documents_for(self, RequestStore.store[:current_user])
+                           else
+                             self.class.vbms.fetch_documents_for(self)
+                           end
   end
 
   class << self

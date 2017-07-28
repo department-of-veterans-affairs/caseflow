@@ -10,6 +10,7 @@ import ValidatorsUtil from '../util/ValidatorsUtil';
 import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
+import * as AppConstants from '../constants/AppConstants';
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -131,6 +132,11 @@ class UnconnectedConfirmHearing extends React.Component {
     this.props.resetState();
   }
 
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
   /* eslint-disable max-statements */
   getValidationErrors() {
     let {
@@ -200,7 +206,7 @@ class UnconnectedConfirmHearing extends React.Component {
     let { hearingDocumentIsInVbms,
       onHearingDocumentChange,
       form9Type,
-      form9Date,
+      form9PdfPath,
       onTypeOfForm9Change,
       hearingPreference,
       onHearingPreferenceChange,
@@ -226,12 +232,11 @@ class UnconnectedConfirmHearing extends React.Component {
         to={'/certifications/error'}/>;
     }
 
-    const hearingCheckText = <span>Check the appellant's eFolder for a hearing
-    cancellation or request added after <strong>{form9Date}</strong>, the date the Form 9
-    (or statement in lieu of Form 9) was uploaded.</span>;
+    const hearingCheckText = <span>Check the eFolder for the appellant’s most
+    recent hearing preference.</span>;
 
-    const hearingChangeQuestion = <span>Was a hearing cancellation or request
-     added after <strong>{form9Date}</strong>?</span>;
+    const hearingChangeQuestion = <span>Has the appellant requested a change
+    to their hearing preference since submitting the Form 9?</span>;
 
     const shouldDisplayHearingChangeFound =
       hearingDocumentIsInVbms === Constants.vbmsHearingDocument.FOUND;
@@ -304,11 +309,11 @@ class UnconnectedConfirmHearing extends React.Component {
 
             /* TODO: restore the accessibility stuff here.
               also, we should stop using rails pdf viewer */
-            <LoadingContainer>
+            <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}>
               <iframe
                 className="cf-doc-embed cf-iframe-with-loading form9-viewer"
                 title="Form8 PDF"
-                src={`/certifications/${match.params.vacols_id}/form9_pdf`}>
+                src={form9PdfPath}>
               </iframe>
             </LoadingContainer>
           }
@@ -391,9 +396,9 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   hearingDocumentIsInVbms: state.hearingDocumentIsInVbms,
   form9Type: state.form9Type,
-  form9Date: state.form9.vacolsDate,
   hearingPreference: state.hearingPreference,
   loading: state.loading,
+  form9PdfPath: state.form9PdfPath,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
   updateSucceeded: state.updateSucceeded,
@@ -417,7 +422,7 @@ ConfirmHearing.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   form9Type: PropTypes.string,
-  form9Date: PropTypes.string,
+  form9PdfPath: PropTypes.string,
   onTypeOfForm9Change: PropTypes.func,
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,

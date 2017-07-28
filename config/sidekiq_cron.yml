@@ -1,6 +1,14 @@
-# Create establish claim tasks every night at midnight
+# For reference:
+# +--------- Minute (0-59)
+# | +------- Hour (0-23)
+# | | +----- Day Of Month (1-31)
+# | | | +--- Month (1 -12)
+# | | | | +- Day Of Week (0-6) (Sunday = 0)
+# | | | | |
+
+# Create establish claim task runs every day at 4:30pm
 create_establish_claim_tasks_job:
-  cron: "1 0 * * * America/New_York"
+  cron: "30 16 * * * America/New_York"
   class: "CreateEstablishClaimTasksJob"
   queue: default
   active_job: true
@@ -11,10 +19,9 @@ reassign_old_tasks:
   queue: default
   active_job: true
 
-# This runs an hour after the other tasks because it
-# has to run on all the tasks that the other jobs created.
+# This runs 30 min after the create_establish_claim_tasks_job
 prepare_establish_claim_tasks_job:
-  cron: "2 0 * * * America/New_York"
+  cron: "0 17 * * * America/New_York"
   class: "PrepareEstablishClaimTasksJob"
   queue: default
   active_job: true
@@ -25,5 +32,28 @@ prepare_establish_claim_tasks_job:
 heartbeat_tasks_job:
   cron: "*/5 * * * * America/New_York"
   class: "HeartbeatTasksJob"
+  queue: default
+  active_job: true
+
+# Retrieve all documents for active Reader users every night at midnight
+retrieve_documents_for_reader_job:
+  cron: "0 21 * * * America/New_York"
+  class: "RetrieveDocumentsForReaderJob"
+  args:
+    limit: 1500
+  queue: default
+  active_job: true
+
+# Checks dependecies every 30 seconds(BGS, VACOLS, VBMS, VBMS.FindDocumentSeriesReference)
+dependencies_check_job:
+  cron: "*/30 * * * * * America/New_York"
+  class: "DependenciesCheckJob"
+  queue: default
+  active_job: true
+
+# This is created to log DependenciesReportService (and to avoid flooding the logs with each browser window request)
+dependencies_report_service_log_job:
+  cron: "*/30 * * * * * America/New_York"
+  class: "DependenciesReportServiceLogJob"
   queue: default
   active_job: true

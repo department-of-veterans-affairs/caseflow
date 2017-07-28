@@ -77,8 +77,23 @@ RSpec.feature "Reader" do
   let(:vacols_record) { :remand_decided }
 
   let(:documents) { [] }
+
+  let!(:issue_levels) do
+    ["Other", "Left knee", "Right knee"]
+  end
+
+  let!(:issues) do
+    [Generators::Issue.build(disposition: :allowed,
+                             program: :compensation,
+                             type: { name: :elbow, label: "Elbow" },
+                             category: :service_connection,
+                             levels: issue_levels
+                            )
+    ]
+  end
+
   let(:appeal) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
+    Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
   end
 
   let!(:current_user) do
@@ -129,18 +144,50 @@ RSpec.feature "Reader" do
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
 
+        expect(page).to have_content(appeal.issues[0].type[:label])
+        expect(page).to have_content(appeal.issues[0].levels[0])
+        expect(page).to have_content(appeal.issues[0].levels[1])
+        expect(page).to have_content(appeal.issues[0].levels[2])
+
+        expect(page).to have_title("Assignments | Caseflow Reader")
+
         click_on "New", match: :first
 
         expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
         expect(page).to have_content("Documents")
 
+        # Test that the title changed. Functionality in PageRoute.jsx
+        expect(page).to have_title("Claims Folder | Caseflow Reader")
+
         click_on "Caseflow Reader"
         expect(page).to have_current_path("/reader/appeal")
+        expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "Continue"
 
         expect(page).to have_content("Documents")
       end
+    end
+
+    scenario "Open document in new tab" do
+      # Open the URL that the first document button points to. We cannot simply
+      # click on the link since we've overridden the mouseup event to not open
+      # the link, but instead to move to the document view in the SPA. Middle clicking
+      # is not overridden, but I cannot figure out how to middle click in the test.
+      # Instead we just visit the page specified by the link.
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      single_link = find_link(documents[0].type)[:href]
+      visit single_link
+
+      # Make sure there is document metadata, but no back button.
+      expect(page).to have_content(documents[0].type)
+      expect(page).to_not have_content("Back to all documents")
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      # Make sure the document link in the document view points to the same place
+      # as the link we just tested.
+      expect(find_link(documents[0].type)[:href]).to eq(single_link)
     end
 
     scenario "Progress indicator" do
@@ -361,21 +408,23 @@ RSpec.feature "Reader" do
         ]
       end
 
-      scenario "Expand All button" do
+      scenario "Documents and Comments toggle button" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on "Expand all"
+        click_on "Comments"
         expect(page).to have_content("another comment")
         expect(page).to have_content("how's it going")
-        click_button("expand-#{documents[0].id}-comments-button")
 
-        # when a comment is closed, the button is changed to expand all
-        expect(page).to have_button("Expand all")
+        # A doc without a comment should not show up
+        expect(page).not_to have_content(documents[2].type)
 
-        click_button("expand-#{documents[0].id}-comments-button")
+        # Filtering the document list should work in "Comments" mode.
+        find("#categories-header svg").click
+        find(".checkbox-wrapper-procedural").click
+        expect(page).to have_content(documents[0].type)
+        expect(page).not_to have_content(documents[1].type)
 
-        # when that comment is reopened, the button is changed to collapse all
-        click_on "Collapse all"
+        click_on "Documents"
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
       end
@@ -449,7 +498,7 @@ RSpec.feature "Reader" do
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
 
-        expect(in_viewport(comment_icon_id)).to be true
+        expect { in_viewport(comment_icon_id) }.to become_truthy
       end
 
       scenario "Scroll to comment" do
@@ -457,7 +506,7 @@ RSpec.feature "Reader" do
 
         click_on documents[0].type
 
-        element = "cf-comment-wrapper"
+        element = "cf-sidebar-accordion"
         scroll_to(element, 0)
 
         # Wait for PDFJS to render the pages
@@ -603,15 +652,43 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # Expect only the first page of the pdf to be rendered
-      find("#button-hide-menu").click
+      find("#hide-menu-header").click
       expect(page).to_not have_content("Document Type")
 
       click_on "Open menu"
       expect(page).to have_content("Document Type")
     end
 
-    scenario "Open and close keyboard shortcuts modal",
-             skip: "Another ticket is in place to fix keyboard events" do
+    scenario "Open and close accordion sidebar menu" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+
+      def click_accordion_header(index)
+        find_all(".rc-collapse-header")[index].click
+      end
+
+      click_accordion_header(0)
+      expect(page).to_not have_content("Document Type")
+      click_accordion_header(0)
+      expect(page).to have_content("Document Type")
+
+      click_accordion_header(1)
+      expect(page).to_not have_content("Procedural")
+      click_accordion_header(1)
+      expect(page).to have_content("Procedural")
+
+      click_accordion_header(2)
+      expect(page).to_not have_content("Select or tag issue(s)")
+      click_accordion_header(2)
+      expect(page).to have_content("Select or tag issue(s)")
+
+      click_accordion_header(3)
+      expect(page).to_not have_content("Add a comment")
+      click_accordion_header(3)
+      expect(page).to have_content("Add a comment")
+    end
+
+    scenario "Open and close keyboard shortcuts modal" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
@@ -672,6 +749,34 @@ RSpec.feature "Reader" do
       expect(find("#procedural", visible: false).checked?).to be false
       expect(find("#medical", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
+    end
+
+    scenario "Claim Folder Details" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      veteran_folder_title = "#{appeal.veteran_full_name}'s Claims Folder"
+      appeal_info = appeal.to_hash(issues: appeal.issues)
+
+      expect(page).to have_content(veteran_folder_title)
+      expect(page).to have_content("Claims folder details")
+      find_by_id("claim-folder-details-accordion").click
+      regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"
+      expect(page).to have_content(appeal_info["vbms_id"])
+      expect(page).to have_content(appeal_info["type"])
+      expect(page).to have_content(appeal_info["docket_number"])
+      expect(page).to have_content(regional_office)
+
+      # all the current issues listed in the UI
+      issue_list = all(".claims-folder-issues li")
+      expect(issue_list.count).to eq(appeal_info["issues"].length)
+      issue_list.each_with_index do |issue, index|
+        expect(issue.text.include?(appeal_info["issues"][index].type[:label])).to be true
+
+        # verifying the level information is being shown as part of the issue information
+        appeal_info["issues"][index].levels.each_with_index do |level, level_index|
+          expect(level.include?(appeal_info["issues"][index].levels[level_index])).to be true
+        end
+      end
     end
 
     scenario "Tags" do
@@ -740,6 +845,12 @@ RSpec.feature "Reader" do
       find(".cf-search-close-icon").click
 
       expect(page).to have_content("Form 9")
+
+      expect(ClaimsFolderSearch.last).to have_attributes(
+        user_id: current_user.id,
+        appeal_id: appeal.id,
+        query: "BVA"
+      )
     end
 
     scenario "When user search term is not found" do
@@ -781,7 +892,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Open a document and return to list" do
+    scenario "Open a document and return to list", skip: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom("documents-table-body")

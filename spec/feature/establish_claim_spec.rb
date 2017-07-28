@@ -48,7 +48,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.complete!(status: :routed_to_arc)
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       expect(page).to have_content("ARC Work Assignments")
 
       # Validate help link
@@ -109,7 +109,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         end
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       expect(page).to have_content("1. Janet Smith 0 0 1 1 3")
       expect(page).to have_content("2. June Smith 1 0 0 1 2")
       expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
@@ -136,10 +136,51 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
     end
 
+    scenario "Editing won't work if there's only one user" do
+      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
+
+      appeal_id = {
+        "Janet" => appeal.id
+      }
+
+      %w(Janet).each do |name|
+        Generators::EstablishClaim.create(
+          user: Generators::User.create(full_name: "#{name} Smith"),
+          aasm_state: :assigned,
+          appeal_id: appeal_id[name]
+        ).tap do |task|
+          task.start!
+          task.complete!(status: :routed_to_arc)
+        end
+      end
+
+      visit "/dispatch/work-assignments"
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+
+      # Begin editing Janet's quota
+      janet_quota = UserQuota.where(user: User.where(full_name: "Janet Smith").first).first
+
+      within("#table-row-0") do
+        click_on "Edit"
+        fill_in "quota-#{janet_quota.id}", with: "7"
+        click_on "Save"
+      end
+
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+
+      within("#table-row-0") do
+        click_on "Edit"
+        fill_in "quota-#{janet_quota.id}", with: "3"
+        click_on "Save"
+      end
+
+      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+    end
+
     scenario "View unprepared tasks page" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       click_on "View Claims Missing Decisions"
 
       # should not see any tasks younger than 1 day
@@ -151,7 +192,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       unprepared_task.update!(created_at: Time.zone.now - 1.day)
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       click_on "View Claims Missing Decisions"
 
       # should see the unprepared task
@@ -173,7 +214,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.cancel!(reason)
       end
 
-      visit "/dispatch/establish-claim"
+      visit "/dispatch/work-assignments"
       click_on "View Canceled Tasks"
 
       # should see the canceled tasks
@@ -523,7 +564,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           ]
         end
 
-        scenario "Assigning it to complete the claims establishment" do
+        skip "Assigning it to complete the claims establishment" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
@@ -609,7 +650,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim")
 
         # No tasks left
-        expect(page).to have_content("There are no more claims in your queue")
+        expect(page).to have_content("Way to go! You have completed all the claims assigned to you.")
         expect(page).to have_css(".usa-button-disabled")
       end
 

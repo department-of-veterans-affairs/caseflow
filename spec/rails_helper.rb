@@ -14,6 +14,7 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -49,10 +50,15 @@ else
   Dir.mkdir cache_directory
 end
 
+# The CHROME_ARGS environment is set in test envrionments
+# to allow headless tests to run. It is expected to be a space separated list
+chrome_args = !ENV["CHROME_ARGS"].nil? ? ENV["CHROME_ARGS"].split(" ") : nil
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
     browser: :chrome,
+    args: chrome_args,
     prefs: {
       download: {
         prompt_for_download: false,
@@ -202,7 +208,25 @@ end
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
-  10.times do
+  20.times do
     yield
+  end
+end
+
+# We generally avoid writing our own polling code, since proper Cappybara use generally
+# doesn't require it. That said, there may be some situations (such as evaluating javascript)
+# that require a spinning test. We got the following matcher from https://gist.github.com/jnicklas/4129937
+RSpec::Matchers.define :become_truthy do |_event_name|
+  supports_block_expectations
+
+  match do |block|
+    begin
+      Timeout.timeout(Capybara.default_max_wait_time) do
+        sleep(0.1) until block.call
+        true
+      end
+    rescue TimeoutError
+      false
+    end
   end
 end

@@ -1,7 +1,10 @@
+/* eslint-disable max-lines */
+
 import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
+import Analytics from '../util/AnalyticsUtil';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -10,6 +13,11 @@ export const collectAllTags = (documents) => ({
 
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,
+  payload: { value }
+});
+
+export const onInitialCaseLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
   payload: { value }
 });
 
@@ -43,10 +51,6 @@ export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRe
     categoryKey,
     categoryValueToRevertTo
   }
-});
-
-export const toggleExpandAll = () => ({
-  type: Constants.TOGGLE_EXPAND_ALL
 });
 
 export const setSearch = (searchQuery) => ({
@@ -331,6 +335,13 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   }
 });
 
+export const selectCurrentPdfLocally = (docId) => ({
+  type: Constants.SELECT_CURRENT_VIEWER_PDF,
+  payload: {
+    docId
+  }
+});
+
 export const selectCurrentPdf = (docId) => (dispatch) => {
   ApiUtil.patch(`/document/${docId}/mark-as-read`).
     catch((err) => {
@@ -338,12 +349,9 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
       console.log('Error marking as read', docId, err);
     });
 
-  dispatch({
-    type: Constants.SELECT_CURRENT_VIEWER_PDF,
-    payload: {
-      docId
-    }
-  });
+  dispatch(
+    selectCurrentPdfLocally(docId)
+  );
 };
 
 export const removeTagRequestFailure = (docId, tagId) => ({
@@ -418,6 +426,27 @@ export const removeTag = (doc, tagId) => (
   }
 );
 
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { failedToLoad }
+});
+
+export const fetchAppealDetails = (vacolsId) => (
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+    }, () => dispatch(onAppealDetailsLoadingFail()));
+  }
+);
+
 export const addNewTag = (doc, tags) => (
   (dispatch) => {
     const currentTags = doc.tags;
@@ -444,3 +473,33 @@ export const addNewTag = (doc, tags) => (
     }
   }
 );
+
+export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => {
+  const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
+  const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
+
+  addedSectionKeys.forEach(
+    (newKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
+  );
+  removedSectionKeys.forEach(
+    (oldKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
+  );
+
+  return {
+    type: Constants.SET_OPENED_ACCORDION_SECTIONS,
+    payload: {
+      openedAccordionSections
+    }
+  };
+};
+
+export const setViewingDocumentsOrComments = (documentsOrComments) => {
+  Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'set-viewing-documents-or-comments', documentsOrComments);
+
+  return {
+    type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
+    payload: {
+      documentsOrComments
+    }
+  };
+};

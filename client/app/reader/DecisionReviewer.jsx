@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
-import Perf from 'react-addons-perf';
 
+import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
-import LoadingScreen from './LoadingScreen';
+import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
+import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
@@ -22,42 +23,14 @@ export class DecisionReviewer extends React.PureComponent {
       isCommentLabelSelected: false
     };
 
-    this.isMeasuringPerf = false;
-
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
-  showPdf = (history, vacolsId) => (docId) => (event) => {
+  showPdf = (history, vacolsId) => (docId) => () => {
     if (!this.props.storeDocuments[docId]) {
       return;
-    }
-
-    if (event) {
-      // If the user is trying to open the link in a new tab/window
-      // then follow the link. Otherwise if they just clicked the link
-      // keep them contained within the SPA.
-      // ctrlKey for windows
-      // shift key for opening in new window
-      // metaKey for Macs
-      // button for middle click
-      if (event.ctrlKey ||
-          event.shiftKey ||
-          event.metaKey ||
-          (event.button &&
-          event.button === 1)) {
-
-        // For some reason calling this synchronosly prevents the new
-        // tab from opening. Move it to an asynchronus call.
-        setTimeout(() =>
-          this.props.handleSelectCurrentPdf(docId)
-        );
-
-        return true;
-      }
-
-      event.preventDefault();
     }
 
     history.push(`/${vacolsId}/documents/${docId}`);
@@ -65,32 +38,6 @@ export class DecisionReviewer extends React.PureComponent {
 
   onShowList = (history, vacolsId) => () => {
     history.push(`/${vacolsId}/documents`);
-  }
-
-  // eslint-disable-next-line max-statements
-  handleStartPerfMeasurement = (event) => {
-    if (!(event.altKey && event.code === 'KeyP')) {
-      return;
-    }
-    /* eslint-disable no-console */
-
-    // eslint-disable-next-line no-negated-condition
-    if (!this.isMeasuringPerf) {
-      Perf.start();
-      console.log('Started React perf measurements');
-      this.isMeasuringPerf = true;
-    } else {
-      Perf.stop();
-      this.isMeasuringPerf = false;
-
-      const measurements = Perf.getLastMeasurements();
-
-      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
-      Perf.printInclusive(measurements);
-      Perf.printWasted(measurements);
-      console.groupEnd();
-    }
-    /* eslint-enable no-console */
   }
 
   clearPlacingAnnotationState = () => {
@@ -101,11 +48,9 @@ export class DecisionReviewer extends React.PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('click', this.clearPlacingAnnotationState);
-    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
   }
 
   componentDidMount = () => {
-    window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
   }
 
@@ -122,7 +67,7 @@ export class DecisionReviewer extends React.PureComponent {
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
         isCommentLabelSelected={this.state.isCommentLabelSelected}
-        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         {...props}
       />;
@@ -139,23 +84,45 @@ export class DecisionReviewer extends React.PureComponent {
         onShowList={this.onShowList(props.history, vacolsId)}
         showPdf={this.showPdf(props.history, vacolsId)}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        documentPathBase={`/reader/appeal/${vacolsId}/documents`}
+        documentPathBase={`/${vacolsId}/documents`}
         {...props}
       />
     ;
   }
 
-  routedCaseSelect = () => <CaseSelect />
+  routedCaseSelect = () => {
+    return <CaseSelectLoadingScreen
+      assignments={this.props.assignments}>
+        <PageRoute
+          exact
+          title="Assignments | Caseflow Reader"
+          path="/"
+          render={() => <CaseSelect />}
+        />
+    </CaseSelectLoadingScreen>;
+  }
 
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
-    return <LoadingScreen vacolsId={vacolsId}>
+    return <ReaderLoadingScreen
+      appealDocuments={this.props.appealDocuments}
+      annotations={this.props.annotations}
+      vacolsId={vacolsId}>
       <div>
-        <Route exact path="/:vacolsId/documents" render={this.routedPdfListView} />
-        <Route path="/:vacolsId/documents/:docId" render={this.routedPdfViewer} />
+        <PageRoute
+          exact
+          title="Claims Folder | Caseflow Reader"
+          path="/:vacolsId/documents"
+          render={this.routedPdfListView}
+        />
+        <PageRoute
+          title ="Document Viewer | Caseflow Reader"
+          path="/:vacolsId/documents/:docId"
+          render={this.routedPdfViewer}
+        />
       </div>
-    </LoadingScreen>;
+    </ReaderLoadingScreen>;
   }
 
   render() {
@@ -163,8 +130,15 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
-        <Route path="/:vacolsId/documents" render={this.documentsRoute} />
-        <Route exact path="/" render={this.routedCaseSelect} />
+        <Route
+          path="/:vacolsId/documents"
+          render={this.documentsRoute}
+        />
+        <Route
+          exact
+          path="/"
+          render={this.routedCaseSelect}
+        />
       </div>
     </Router>;
   }

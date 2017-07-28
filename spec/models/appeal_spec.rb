@@ -11,6 +11,21 @@ describe Appeal do
       ssoc_dates: ssoc_dates,
       documents: documents,
       hearing_request_type: hearing_request_type,
+      video_hearing_requested: video_hearing_requested,
+      appellant_first_name: "Joe",
+      appellant_middle_initial: "E",
+      appellant_last_name: "Tester"
+    )
+  end
+
+  let(:appeal_no_appellant) do
+    Generators::Appeal.build(
+      nod_date: nod_date,
+      soc_date: soc_date,
+      form9_date: form9_date,
+      ssoc_dates: ssoc_dates,
+      documents: documents,
+      hearing_request_type: hearing_request_type,
       video_hearing_requested: video_hearing_requested
     )
   end
@@ -84,6 +99,12 @@ describe Appeal do
       let(:form9_date) { nil }
       it { is_expected.to be_nil }
     end
+  end
+
+  context "#aod" do
+    subject { appeal.aod }
+
+    it { is_expected.to be_truthy }
   end
 
   context "#ssocs" do
@@ -240,6 +261,41 @@ describe Appeal do
       it "should return documents not saved in the database" do
         expect(result.first).to_not be_persisted
       end
+
+      context "when efolder_docs_api is disabled" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+
+        context "when application is reader" do
+          before { RequestStore.store[:application] = "reader" }
+
+          it "loads document content from the VBMS service" do
+            expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+            expect(EFolderService).not_to receive(:fetch_documents_for)
+            expect(appeal.fetch_documents!(save: save)).to eq(documents)
+          end
+        end
+      end
+
+      context "when efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+        end
+      end
     end
 
     context "when save is true" do
@@ -256,12 +312,49 @@ describe Appeal do
         end
       end
 
+      context "when efolder_docs_api is disabled" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+      end
+
+      context "when efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+        end
+      end
+
       context "when document doesn't exist in the database" do
         it "should return documents saved in the database" do
           expect(result.first).to be_persisted
         end
       end
     end
+  end
+
+  context "#fetched_documents" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
+    end
+
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents)
+    end
+
+    subject { appeal.fetched_documents }
   end
 
   context ".find_or_create_by_vacols_id" do
@@ -876,6 +969,84 @@ describe Appeal do
     context "when unsupported type" do
       let(:hearing_request_type) { :confirmation_needed }
       it { is_expected.to be_nil }
+    end
+  end
+
+  context "#appellant_last_first_mi" do
+    subject { appeal.appellant_last_first_mi }
+    it { is_expected.to eql("Tester, Joe E.") }
+
+    context "when appellant has no first name" do
+      subject { appeal_no_appellant.appellant_last_first_mi }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context ".to_hash" do
+    context "when issues parameter is nil and contains additional attributes" do
+      subject { appeal.to_hash(viewed: true, issues: nil) }
+
+      let!(:appeal) do
+        Generators::Appeal.build(
+          vbms_id: "999887777S",
+          docket_number: "13 11-265",
+          regional_office_key: "RO13",
+          type: "Court Remand",
+          cavc: true,
+          vacols_record: {
+            soc_date: 4.days.ago
+          }
+        )
+      end
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "issues is null in hash" do
+        expect(subject["issues"]).to be_nil
+      end
+
+      it "includes aod, cavc, regional_office and docket_number" do
+        expect(subject["aod"]).to be_truthy
+        expect(subject["cavc"]).to be_truthy
+        expect(subject["regional_office"][:key]).to eq("RO13")
+        expect(subject["docket_number"]).to eq("13 11-265")
+      end
+    end
+
+    context "when issues and viewed attributes are provided" do
+      subject { appeal.to_hash(viewed: true, issues: issues) }
+
+      let!(:appeal) do
+        Generators::Appeal.build(
+          vbms_id: "999887777S",
+          vacols_record: { soc_date: 4.days.ago },
+          issues: issues
+        )
+      end
+
+      let!(:issue_levels) do
+        ["Other", "Left knee", "Right knee"]
+      end
+
+      let!(:issues) do
+        [Generators::Issue.build(disposition: :allowed,
+                                 program: :compensation,
+                                 type: :elbow,
+                                 category: :service_connection,
+                                 levels: issue_levels
+                                )
+        ]
+      end
+
+      it "includes viewed boolean in hash" do
+        expect(subject["viewed"]).to be_truthy
+      end
+
+      it "includes issues in hash" do
+        expect(subject["issues"]).to eq(issues)
+      end
     end
   end
 

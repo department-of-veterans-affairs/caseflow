@@ -14,19 +14,34 @@ default: &default
 
 development:
   <<: *default
-  username: <%= `whoami` %>
+  host: <%= ENV['POSTGRES_HOST'] %>
+  username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+  # If we set the value to nil when the variable isn't present,
+  # the k8s Jenkins environment won't connect
+  <% if ENV['POSTGRES_PASSWORD'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  <% end %>
   database: caseflow_certification_development
 
+demo:
+  <<: *default
+  database: caseflow_certification_demo
+
+staging:
+  <<: *default
+  database: caseflow_certification_staging
+
+
+production:
+  <<: *default
+  url: <%= ENV["POSTGRES_URL"] %>
+
+# For connecting to the VACOLS Databases
 development_vacols:
   adapter: sqlite3
   pool: 5
   timeout: 5000
   database: db/development-vacols.sqlite3
-
-demo:
-  <<: *default
-  username: <%= `whoami` %>
-  database: caseflow_certification_demo
 
 demo_vacols:
   adapter: sqlite3
@@ -34,12 +49,6 @@ demo_vacols:
   timeout: 5000
   database: db/demo-vacols.sqlite3
 
-staging:
-  <<: *default
-  username: <%= `whoami` %>
-  database: caseflow_certification_staging
-
-# For connecting to the DEV VACOLS Database
 staging_vacols:
   adapter: oracle_enhanced
   username: <%= ENV["VACOLS_USERNAME"] %>
@@ -47,10 +56,6 @@ staging_vacols:
   host: vacols.dev.vaco.va.gov
   port: 1526
   database: BVAP.VACO.VA.GOV
-
-production:
-  <<: *default
-  url: <%= ENV["POSTGRES_URL"] %>
 
 production_vacols:
   adapter: oracle_enhanced
@@ -66,7 +71,13 @@ production_vacols:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  username: <%= `whoami` %>
+  host: <%= ENV['POSTGRES_HOST'] %>
+  username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+  # If we set the value to nil when the variable isn't present,
+  # the k8s Jenkins environment won't connect
+  <% if ENV['POSTGRES_PASSWORD'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  <% end %>
   database: caseflow_certification_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 test_vacols:
@@ -74,4 +85,3 @@ test_vacols:
   pool: 5
   timeout: 5000
   database: db/development-vacols.sqlite3
-

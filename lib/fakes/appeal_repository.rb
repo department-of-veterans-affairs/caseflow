@@ -53,6 +53,10 @@ class Fakes::AppealRepository
     appeal
   end
 
+  def self.vacols_db_connection_active?
+    true
+  end
+
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
@@ -310,6 +314,12 @@ class Fakes::AppealRepository
   end
 
   def self.static_reader_documents
+    super_long_title = if FeatureToggle.enabled?(:efolder_docs_api)
+                         "This is a very long document type that's loaded from eFOLDER!"
+                       else
+                         "This is a very long document type let's see what it does to the UI!"
+                       end
+
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
       Generators::Document.build(vbms_document_id: 2, type: "SOC", category_medical: true),
@@ -317,7 +327,7 @@ class Fakes::AppealRepository
                                  category_medical: true, category_procedural: true),
       Generators::Document.build(
         vbms_document_id: 5,
-        type: "This is a very long document type let's see what it does to the UI!",
+        type: super_long_title,
         received_at: 7.days.ago,
         category_other: true),
       Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
@@ -354,8 +364,24 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Court Remand",
+        cavc: true,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
       },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+               Generators::Issue.build(disposition: "Osteomyelitis",
+                                       levels: ["Osteomyelitis"],
+                                       description: [
+                                         "15 - Compensation",
+                                         "26 - Osteomyelitis"
+                                       ],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -364,8 +390,26 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Remand",
+        cavc: false,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
       },
+      issues: [Generators::Issue.build(
+        disposition: "Remanded",
+        levels: ["Left knee", "Right knee", "Cervical strain"],
+        description: [
+          "15 - Service connection",
+          "13 - Left knee",
+          "14 - Right knee",
+          "22 - Cervical strain"
+        ],
+        program_description: "06 - Medical",
+        vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -374,9 +418,21 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Remand",
+        cavc: false,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
       },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: redacted_reader_documents
     )
+  end
+
+  def self.aod(_vacols_id)
+    1
   end
 end

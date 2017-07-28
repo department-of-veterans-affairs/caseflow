@@ -3,28 +3,33 @@ import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 
 const UnconnectedSuccess = ({
-  veteranName
+  veteranName,
+  poaCorrectLocation
 }) => {
   const checklist = [
     'Verified documents were in eFolder',
     'Completed and uploaded Form 8',
-    'Representative and hearing fields updated in VACOLS'];
+    'Hearing fields updated in VACOLS'];
+
+  const updatedRepInVacols = ['Representative fields updated in VACOLS'];
 
   const message = `${veteranName}'s case has been certified.
  You can now close this window and open another
   appeal in VACOLS.`;
 
+  window.scrollTo(0, 0);
 
   return <StatusMessage
     title="Success!"
     leadMessageList={[message]}
-    checklist={checklist}
+    checklist={poaCorrectLocation === 'VACOLS' ? checklist : checklist.concat(updatedRepInVacols)}
     type="success"
     />;
 };
 
 const mapStateToProps = (state) => ({
-  veteranName: state.veteranName
+  veteranName: state.veteranName,
+  poaCorrectLocation: state.poaCorrectLocation
 });
 
 const Success = connect(
