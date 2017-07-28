@@ -3,7 +3,7 @@ import static java.util.UUID.randomUUID
 @NonCPS
 def clearTemplateNames() {
   println('got here1')
-	def r = script.currentBuild.rawBuild
+	def r = currentBuild.rawBuild
   println('got here2')
 	def action = r.getAction(PodTemplateAction.class);
   println('got here3')
