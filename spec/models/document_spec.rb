@@ -39,54 +39,73 @@ describe Document do
   end
 
   context ".content_url" do
-    context "when efolder_docs_api is enabled and application is reader" do
+    context "when dependencies are faked" do
       before do
         FeatureToggle.enable!(:efolder_docs_api)
         RequestStore.store[:application] = "reader"
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(ApplicationController).to receive(:dependencies_faked?).and_return(true)
       end
 
-      let(:base_url) { Faker::Internet.url }
-
-      it "returns the URL for the document in efolder" do
-        document.efolder_id = Random.rand(999_999_999)
-        expect(document.content_url).to eq(base_url + "/api/v1/documents/#{document.efolder_id}")
-      end
-    end
-
-    context "when efolder_docs_api is enabled and application is not reader" do
-      before do
-        FeatureToggle.enable!(:efolder_docs_api)
-        RequestStore.store[:application] = Faker::Cat.name
-      end
-
-      it "returns the URL for the document in VBMS" do
+      it "returns the local URL" do
         document.id = Random.rand(999_999_999)
         expect(document.content_url).to eq("/document/#{document.id}/pdf")
       end
     end
 
-    context "when efolder_docs_api is disabled and application is not reader" do
+    context "when dependencies are not faked" do
       before do
-        FeatureToggle.disable!(:efolder_docs_api)
-        RequestStore.store[:application] = Faker::Cat.name
+        allow(ApplicationController).to receive(:dependencies_faked?).and_return(false)
       end
 
-      it "returns the URL for the document in VBMS" do
-        document.id = Random.rand(999_999_999)
-        expect(document.content_url).to eq("/document/#{document.id}/pdf")
-      end
-    end
+      context "and efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+          expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        end
 
-    context "when efolder_docs_api is disabled and application is reader" do
-      before do
-        FeatureToggle.disable!(:efolder_docs_api)
-        RequestStore.store[:application] = "reader"
+        let(:base_url) { Faker::Internet.url }
+
+        it "returns the URL for the document in efolder" do
+          document.efolder_id = Random.rand(999_999_999)
+          expect(document.content_url).to eq(base_url + "/api/v1/documents/#{document.efolder_id}")
+        end
       end
 
-      it "returns the URL for the document in VBMS" do
-        document.id = Random.rand(999_999_999)
-        expect(document.content_url).to eq("/document/#{document.id}/pdf")
+      context "and efolder_docs_api is enabled and application is not reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = Faker::Cat.name
+        end
+
+        it "returns the URL for the document in VBMS" do
+          document.id = Random.rand(999_999_999)
+          expect(document.content_url).to eq("/document/#{document.id}/pdf")
+        end
+      end
+
+      context "and efolder_docs_api is disabled and application is not reader" do
+        before do
+          FeatureToggle.disable!(:efolder_docs_api)
+          RequestStore.store[:application] = Faker::Cat.name
+        end
+
+        it "returns the URL for the document in VBMS" do
+          document.id = Random.rand(999_999_999)
+          expect(document.content_url).to eq("/document/#{document.id}/pdf")
+        end
+      end
+
+      context "and efolder_docs_api is disabled and application is reader" do
+        before do
+          FeatureToggle.disable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "returns the URL for the document in VBMS" do
+          document.id = Random.rand(999_999_999)
+          expect(document.content_url).to eq("/document/#{document.id}/pdf")
+        end
       end
     end
   end
