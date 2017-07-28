@@ -58,7 +58,6 @@ describe Document do
       before do
         FeatureToggle.enable!(:efolder_docs_api)
         RequestStore.store[:application] = Faker::Cat.name
-        expect(ExternalApi::EfolderService).not_to receive(:efolder_base_url)
       end
 
       it "returns the URL for the document in VBMS" do
@@ -71,7 +70,6 @@ describe Document do
       before do
         FeatureToggle.disable!(:efolder_docs_api)
         RequestStore.store[:application] = Faker::Cat.name
-        expect(ExternalApi::EfolderService).not_to receive(:efolder_base_url)
       end
 
       it "returns the URL for the document in VBMS" do
@@ -84,7 +82,6 @@ describe Document do
       before do
         FeatureToggle.disable!(:efolder_docs_api)
         RequestStore.store[:application] = "reader"
-        expect(ExternalApi::EfolderService).not_to receive(:efolder_base_url)
       end
 
       it "returns the URL for the document in VBMS" do
