@@ -147,7 +147,7 @@ export const initialState = {
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
-    'document-information', 'categories', 'issue-tags', Constants.COMMENT_ACCORDION_KEY
+    'Document information', 'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
     searchCategoryHighlights: {},

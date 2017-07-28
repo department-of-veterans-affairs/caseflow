@@ -163,7 +163,7 @@ export class PdfSidebar extends React.Component {
           <Accordion style="outline"
             onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
-            <AccordionSection title="Document information" sectionKey="document-information">
+            <AccordionSection title="Document information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">
                 <b>Document Type: </b>
                 <span title={this.props.doc.type} className="cf-document-type">
@@ -174,7 +174,7 @@ export class PdfSidebar extends React.Component {
                 <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
               </p>
             </AccordionSection>
-            <AccordionSection title="Categories" sectionKey="categories">
+            <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
                 <DocCategoryPicker
@@ -184,7 +184,7 @@ export class PdfSidebar extends React.Component {
                   categoryToggleStates={categoryToggleStates} />
               </div>
             </AccordionSection>
-            <AccordionSection title="Issue tags" sectionKey="issue-tags">
+            <AccordionSection title="Issue tags">
               <div className="cf-issue-tag-sidebar">
                 {showErrorMessage.tag && cannotSaveAlert}
                 <SearchableDropdown
@@ -201,7 +201,7 @@ export class PdfSidebar extends React.Component {
                 />
               </div>
             </AccordionSection>
-            <AccordionSection title="Comments" sectionKey={Constants.COMMENT_ACCORDION_KEY} id={Constants.COMMENT_ACCORDION_KEY}>
+            <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id={Constants.COMMENT_ACCORDION_KEY}>
                 <span className="cf-right-side cf-add-comment-button">
                   <Button
                     name="AddComment"

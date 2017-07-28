@@ -11,6 +11,5 @@ AccordionSection.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string,
   disabled: PropTypes.bool,
-  id: PropTypes.string,
-  sectionKey: PropTypes.string
+  id: PropTypes.string
 };

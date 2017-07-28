@@ -33,7 +33,7 @@ export default class Accordion extends React.PureComponent {
         headerClass={classnames(headerClass, {
           disabled: child.props.disabled
         })}
-        key={child.props.sectionKey}
+        key={child.props.title}
         header={child.props.title}>
         <div className="usa-accordion-content">
           {child.props.children}
