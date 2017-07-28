@@ -258,7 +258,7 @@ export class HearingWorksheet extends React.Component {
             <div>SSOC:</div>
             <div>01/01/1990</div>
           </div>
-           <div className="cf-push-left">
+          <div className="cf-push-left">
             <div>&nbsp;</div>
           </div>
           <div className="cf-push-left">
