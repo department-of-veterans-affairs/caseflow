@@ -57,6 +57,7 @@ jobs:
     - 
       env: TEST_CATEGORY=certification
       script:
+        - bundle exec rake spec:parallel:setup:certification
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
         - bundle exec rake spec:parallel:certification
