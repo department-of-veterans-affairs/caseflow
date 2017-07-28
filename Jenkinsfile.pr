@@ -1,7 +1,7 @@
 @NonCPS
 def clearTemplateNames() {
 	def r = script.currentBuild.rawBuild
-	def action = ""
+	def action = r.getAction(PodTemplateAction.class);
 	if(action) {
 		action.names.clear()
 	}
