@@ -110,7 +110,6 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
       <div>
-
         <PageRoute
           exact
           title="Claims Folder | Caseflow Reader"
