@@ -222,10 +222,6 @@ export class HearingWorksheet extends React.Component {
             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
             <input id="appellant-vet-witness" aria-label="Witness/Observer" type="text" />
           </div>
-          <div className="cf-push-left">
-            <div>Docs in eFolder:</div>
-            <div>80</div>
-          </div>
         </div>
 
         <div className="cf-hearings-worksheet-data">
@@ -261,6 +257,13 @@ export class HearingWorksheet extends React.Component {
           <div className="cf-push-left">
             <div>SSOC:</div>
             <div>01/01/1990</div>
+          </div>
+           <div className="cf-push-left">
+            <div>&nbsp;</div>
+          </div>
+          <div className="cf-push-left">
+            <div>Docs in eFolder:</div>
+            <div>80</div>
           </div>
         </div>
 
