@@ -33,7 +33,7 @@ podTemplate(cloud:'minikube', label:'caseflow-2', containers: [
       containerEnvVar(key: 'CHROME_ARGS', value: '--no-sandbox')
      ],
   )]) {
-  node('caseflow') {
+  node('caseflow-2') {
 
     // /home/jenkins is a shared volume called workspace-volume for this k8s Pod.
     // To keep the path short and avoid the "Chrome socket path too long" issue, we
