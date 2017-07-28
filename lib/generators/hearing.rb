@@ -26,6 +26,12 @@ class Generators::Hearing
       hearing
     end
 
+    def create(attrs = {})
+      hearing = build(attrs)
+      hearing.tap(&:save!) unless ::Hearing.exists?(vacols_id: attrs[:vacols_id])
+      hearing
+    end
+
     private
 
     def default_appeal
