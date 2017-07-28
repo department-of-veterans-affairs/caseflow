@@ -30,7 +30,7 @@ class ShellCommand
 
     puts output
 
-    exit_status = $?.exitstatus
+    exit_status = $CHILD_STATUS.exitstatus
     exit(exit_status) unless exit_status == 0
   end
 end
