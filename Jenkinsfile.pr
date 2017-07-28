@@ -34,7 +34,7 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
      ],
   )]) {
   node('caseflow') {
-
+    container('caseflow-test-runner') {
     // /home/jenkins is a shared volume called workspace-volume for this k8s Pod.
     // To keep the path short and avoid the "Chrome socket path too long" issue, we
     // can force Jenkins to checkout code to this directory.
@@ -170,6 +170,6 @@ podTemplate(cloud:'minikube', label:'caseflow', containers: [
         rake konacha:run
         """
     }
-
+  }
   }
 }
