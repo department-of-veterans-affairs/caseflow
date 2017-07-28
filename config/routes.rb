@@ -72,6 +72,8 @@ Rails.application.routes.draw do
     resources :worksheets, only: [:update, :show]
   end
 
+  resources :hearings, only: [:update]
+
   patch "certifications" => "certifications#create"
 
   namespace :admin do

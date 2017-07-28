@@ -16,6 +16,11 @@ export const onInitialDataLoadingFail = (value = true) => ({
   payload: { value }
 });
 
+export const onInitialCaseLoadingFail = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
+  payload: { value }
+});
+
 export const onReceiveDocs = (documents, vacolsId) => (
   (dispatch) => {
     dispatch(collectAllTags(documents));
