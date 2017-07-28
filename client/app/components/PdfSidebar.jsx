@@ -201,7 +201,7 @@ export class PdfSidebar extends React.Component {
                 />
               </div>
             </AccordionSection>
-            <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id={Constants.COMMENT_ACCORDION_KEY}>
+            <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
                 <span className="cf-right-side cf-add-comment-button">
                   <Button
                     name="AddComment"
