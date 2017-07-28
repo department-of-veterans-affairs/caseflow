@@ -1,4 +1,5 @@
 require "rails_helper"
+require "faker"
 
 describe Document do
   let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
@@ -34,6 +35,62 @@ describe Document do
     context "when received_at is a datetime" do
       let(:received_at) { Time.zone.now }
       it { is_expected.to eq(Time.zone.today) }
+    end
+  end
+
+  context "#content_url" do
+    context "when efolder_docs_api is enabled and application is reader" do
+      before do
+        FeatureToggle.enable!(:efolder_docs_api)
+        RequestStore.store[:application] = "reader"
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+      end
+
+      let(:base_url) { Faker::Internet.url }
+
+      it "returns the URL for the document in efolder" do
+        document.efolder_id = Random.rand(999_999_999)
+        expect(document.content_url).to eq(base_url + "/api/v1/documents/#{document.efolder_id}")
+      end
+    end
+
+    context "when efolder_docs_api is enabled and application is not reader" do
+      before do
+        FeatureToggle.enable!(:efolder_docs_api)
+        RequestStore.store[:application] = Faker::Cat.name
+        expect(ExternalApi::EfolderService).not_to receive(:efolder_base_url)
+      end
+
+      it "returns the URL for the document in VBMS" do
+        document.id = Random.rand(999_999_999)
+        expect(document.content_url).to eq("/document/#{document.id}/pdf")
+      end
+    end
+
+    context "when efolder_docs_api is disabled and application is not reader" do
+      before do
+        FeatureToggle.disable!(:efolder_docs_api)
+        RequestStore.store[:application] = Faker::Cat.name
+        expect(ExternalApi::EfolderService).not_to receive(:efolder_base_url)
+      end
+
+      it "returns the URL for the document in VBMS" do
+        document.id = Random.rand(999_999_999)
+        expect(document.content_url).to eq("/document/#{document.id}/pdf")
+      end
+    end
+
+    context "when efolder_docs_api is disabled and application is reader" do
+      before do
+        FeatureToggle.disable!(:efolder_docs_api)
+        RequestStore.store[:application] = "reader"
+        expect(ExternalApi::EfolderService).not_to receive(:efolder_base_url)
+      end
+
+      it "returns the URL for the document in VBMS" do
+        document.id = Random.rand(999_999_999)
+        expect(document.content_url).to eq("/document/#{document.id}/pdf")
+      end
     end
   end
 
