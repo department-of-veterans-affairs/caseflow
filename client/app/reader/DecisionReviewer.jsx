@@ -13,7 +13,6 @@ import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import _ from 'lodash';
 
-
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
     super(props);
