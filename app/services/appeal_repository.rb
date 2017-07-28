@@ -1,6 +1,8 @@
 
 
 class AppealRepository
+  CAVC_TYPE = "7".freeze
+
   # :nocov:
   # Used by healthcheck endpoint
   # Calling .active? triggers a query to VACOLS
@@ -104,7 +106,9 @@ class AppealRepository
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
-      private_attorney_or_agent: case_record.bfso == "T"
+      private_attorney_or_agent: case_record.bfso == "T",
+      docket_number: folder_record.ticknum,
+      cavc: VACOLS::Case::TYPES[case_record.bfac] == VACOLS::Case::TYPES[CAVC_TYPE]
     )
 
     appeal
@@ -240,6 +244,10 @@ class AppealRepository
     appeal.case_record.bfdcertool = nil
     appeal.case_record.bf41stat = nil
     appeal.case_record.save!
+  end
+
+  def self.aod(vacols_id)
+    VACOLS::Case.aod(vacols_id) == 1
   end
 
   # :nocov:
