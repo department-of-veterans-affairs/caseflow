@@ -16,12 +16,6 @@ class ExternalApi::EfolderService
     documents.map { |efolder_document| Document.from_efolder(efolder_document) }
   end
 
-  def self.efolder_enabled?
-    # If the RAILS_ENV = prod || if the ENV["EFOLDER_EXPRESS_URL"] is set
-    FeatureToggle.enabled?(:efolder_docs_api) && RequestStore.store[:application] == "reader" &&
-      (!ApplicationController.dependencies_faked? || !ExternalApi::EfolderService.efolder_base_url.empty?)
-  end
-
   def self.efolder_base_url
     Rails.application.config.efolder_url.to_s
   end

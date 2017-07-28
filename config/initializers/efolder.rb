@@ -3,4 +3,4 @@
 
 # If you're in a development or test environment and want to use the EfolderService, just set the environment variable
 # EFOLDER_EXPRESS_URL
-EFolderService = ExternalApi::EfolderService.efolder_enabled? ? ExternalApi::EfolderService : Fakes::VBMSService
+EFolderService = FeatureToggle.enabled?(:efolder_docs_api) ? ExternalApi::EfolderService : Fakes::VBMSService
