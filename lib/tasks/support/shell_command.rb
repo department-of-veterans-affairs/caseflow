@@ -16,4 +16,21 @@ class ShellCommand
 
     success
   end
+
+  def self.run_and_batch_output(command)
+    output_stream = open("|#{command}", "r")
+
+    output = ""
+    output_stream.each do |line|
+      output << line
+      print "."
+      $stdout.flush
+    end
+    output_stream.close
+
+    puts output
+
+    exit_status = $CHILD_STATUS.exitstatus
+    exit(exit_status) unless exit_status == 0
+  end
 end
