@@ -9,6 +9,6 @@ if ENV["RAILS_ENV"] == "test"
     add_filter "lib/tasks"
   end
 
-  SimpleCov.command_name "Test Run" + (ENV["TEST_ENV_NUMBER"] || "")
+  SimpleCov.command_name ENV["TEST_SUBCATEGORY"] || "all"
 end
 
