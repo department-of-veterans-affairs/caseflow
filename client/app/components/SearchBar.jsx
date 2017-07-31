@@ -79,7 +79,7 @@ export default class SearchBar extends React.Component {
         {title || 'Search small'}
       </label>
       <input
-        className='cf-search-input-with-close'
+        className="cf-search-input-with-close"
         id={id}
         onChange={this.onChange}
         onBlur={this.onBlur}

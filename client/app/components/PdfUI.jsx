@@ -150,7 +150,7 @@ export class PdfUI extends React.Component {
     this.props.onShowList();
   }
 
-  handleClickDocumentTypeLink = () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link') 
+  handleClickDocumentTypeLink = () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
     const pdfUiClass = classNames(

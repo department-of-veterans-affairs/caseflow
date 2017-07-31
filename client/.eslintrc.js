@@ -89,15 +89,12 @@ module.exports = {
     "newline-after-var": "warn",
     "newline-before-return": "warn",
     "newline-per-chained-call": "warn",
-    // TODO(jd): Consider re-adding this once we have a native
-    // react modal
-    // "no-alert": "error",
+    "no-alert": "warn",
     "no-array-constructor": "error",
     "no-bitwise": "error",
     "no-caller": "error",
     "no-catch-shadow": "error",
     "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "no-confusing-arrow": "warn",
     "no-continue": "warn",
     "no-div-regex": "warn",
     "no-duplicate-imports": "warn",
