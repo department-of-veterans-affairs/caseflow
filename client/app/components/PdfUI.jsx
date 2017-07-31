@@ -146,7 +146,7 @@ export class PdfUI extends React.Component {
   }
 
   onBackToClaimsFolder = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'Back to claims folder');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.onShowList();
   }
 
