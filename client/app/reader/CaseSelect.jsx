@@ -30,28 +30,17 @@ class CaseSelect extends React.PureComponent {
   }
 
   getClaimTypeDetailInfo = (row) => {
-    const TYPE_INFO = {
-      aod: { text: 'AOD',
-        className: 'claim-detail-aod' },
-      cavc: { text: 'CAVC',
-        className: 'claim-detail-cavc' },
-      both: { text: 'AOD, CAVC',
-        className: 'claim-detail-aod' },
-      none: { text: '',
-        className: '' }
-    };
-
-    let appealType = TYPE_INFO.none;
+    let appealTypeInfo = '';
 
     if (row.cavc && row.aod) {
-      appealType = TYPE_INFO.both;
+      appealTypeInfo = 'AOD, CAVC';
     } else if (row.cavc) {
-      appealType = TYPE_INFO.cavc;
+      appealTypeInfo = 'CAVC';
     } else if (row.aod) {
-      appealType = TYPE_INFO.aod;
+      appealTypeInfo = 'AOD';
     }
 
-    return <span className={appealType.className}>{appealType.text}</span>;
+    return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
   }
 
   getAODorCAVCforCase = (appeal) => {
