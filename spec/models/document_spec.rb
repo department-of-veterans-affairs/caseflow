@@ -87,7 +87,7 @@ describe Document do
           expect(document.content_url).to eq("/document/#{document.id}/pdf")
         end
       end
-      
+
       context "application is reader" do
         before do
           RequestStore.store[:application] = "reader"
