@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   get 'certifications(/:vacols_id)/confirm_hearing' => 'certifications#new'
   get 'certifications(/:vacols_id)/sign_and_certify' => 'certifications#new'
   get 'certifications(/:vacols_id)/success' => 'certifications#new'
+  get 'certifications(/:vacols_id)/certification_data' => 'certifications#certification_data'
+
 
   resources :certification_cancellations, only: [:show, :create]
 
