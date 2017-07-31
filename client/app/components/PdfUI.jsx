@@ -8,7 +8,6 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import * as Constants from '../reader/constants';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
@@ -16,6 +15,7 @@ import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
+import { CATEGORIES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const ZOOM_RATE = 0.3;
@@ -50,25 +50,27 @@ export class PdfUI extends React.Component {
   }
 
   zoom = (delta) => () => {
-    Analytics.event('Document Viewer', (delta > 0) ? 'zoom in' : 'zoom out', '');
+    const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
+    const zoomDirection = delta > 0 ? 'in' : 'out';
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
 
     this.setState({
-      scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
+      scale: nextScale
     });
   }
 
   openDownloadLink = () => {
-    Analytics.event('Document Viewer', 'download', '');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download', '');
     window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
   }
 
   showPreviousDocument = () => {
-    Analytics.event('Document Viewer', 'click', 'Previous document arrow');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'Previous document arrow');
     this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
-    Analytics.event('Document Viewer', 'click', 'Next document arrow');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'Next document arrow');
     this.props.showPdf(this.props.nextDocId)();
   }
 
@@ -127,7 +129,7 @@ export class PdfUI extends React.Component {
   }
 
   fitToScreen = () => {
-    Analytics.event('Document Viewer', 'fit to screen', '');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen', '');
 
     this.setState({
       scale: this.state.fitToScreenZoom
@@ -143,7 +145,7 @@ export class PdfUI extends React.Component {
   }
 
   onBackToClaimsFolder = () => {
-    Analytics.event('Document Viewer', 'click', 'Back to claims folder');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'Back to claims folder');
     this.props.onShowList();
   }
 
@@ -174,7 +176,7 @@ export class PdfUI extends React.Component {
                 ariaLabel="open document in new tab"
                 target="_blank"
                 button="matte"
-                onClick={ () => Analytics.event('Document Viewer', 'click', 'document type link') }
+                onClick={ () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'document type link') }
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
                 <span className="cf-pdf-vertically-center">
                   <span title="Open in new tab">{this.props.doc.type}</span>
