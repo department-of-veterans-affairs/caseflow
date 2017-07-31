@@ -101,10 +101,11 @@ export const documentCategories = {
     humanName: 'Medical',
     svg: <CategoryIcon color="#FF6868" />
   },
-  caseSummary: {
+  case_summary: {
     renderOrder: 2,
     humanName: 'Case Summary',
-    svg: <CategoryIcon color="#FDC231" />
+    svg: <CategoryIcon color="#FDC231" />,
+    readOnly: true
   },
   other: {
     renderOrder: 3,

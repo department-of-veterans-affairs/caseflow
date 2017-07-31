@@ -20,7 +20,7 @@ const CategorySelector = (props) => {
   };
 
   return <Checkbox name={categoryName} onChange={handleChange}
-      label={label} value={toggleState} />;
+      label={label} value={toggleState} disabled={category.readOnly} />;
 };
 
 CategorySelector.propTypes = {
