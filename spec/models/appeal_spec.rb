@@ -1129,8 +1129,8 @@ describe Appeal do
   context "#vbms_id" do
     context "when vbms_id exists in the caseflow DB" do
       it "does not make a request to VACOLS" do
-        expect(Appeal).to receive(:find_or_create_by_vacols_id)
-          .with(appeal.vacols_id).exactly(0).times
+        expect(appeal).to receive(:perform_vacols_request)
+          .exactly(0).times
 
         expect(appeal.attributes["vbms_id"]).to_not be_nil
         expect(appeal.vbms_id).to_not be_nil
@@ -1141,8 +1141,8 @@ describe Appeal do
       let(:no_vbms_id_appeal) { Appeal.create(vacols_id: appeal.vacols_id) }
 
       it "looks up vbms_id in VACOLS" do
-        expect(Appeal).to receive(:find_or_create_by_vacols_id)
-          .with(appeal.vacols_id).exactly(1).times.and_return(appeal)
+        expect(no_vbms_id_appeal).to receive(:perform_vacols_request)
+          .exactly(1).times.and_call_original
 
         expect(no_vbms_id_appeal.attributes["vbms_id"]).to be_nil
         expect(no_vbms_id_appeal.vbms_id).to_not be_nil

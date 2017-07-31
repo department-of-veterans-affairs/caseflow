@@ -90,16 +90,13 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
+  # If we do not yet have the vbms_id saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
   def vbms_id
     super || begin
-      # Despite already having an appeal object in memory, we want to
-      # call this class level method so that we "centralize" the logic
-      # for loading an appeal from VACOLS
-      appeal = self.class.find_or_create_by_vacols_id(vacols_id)
-
-      # In order to avoid an infinite loop (in the event VACOLS does not have a file number)
-      # We want to directly reference the attributes hash to retrieve the vbms_id
-      appeal.attributes["vbms_id"]
+      check_and_load_vacols_data!
+      save
+      super
     end
   end
 
