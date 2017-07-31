@@ -150,6 +150,8 @@ export class PdfUI extends React.Component {
     this.props.onShowList();
   }
 
+  handleClickDocumentTypeLink = () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link') 
+
   render() {
     const pdfUiClass = classNames(
       'cf-pdf-container',
@@ -177,7 +179,7 @@ export class PdfUI extends React.Component {
                 ariaLabel="open document in new tab"
                 target="_blank"
                 button="matte"
-                onClick={ () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'document type link') }
+                onClick={this.handleClickDocumentTypeLink}
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
                 <span className="cf-pdf-vertically-center">
                   <span title="Open in new tab">{this.props.doc.type}</span>
