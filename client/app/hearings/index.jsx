@@ -10,6 +10,7 @@ import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
+import ScrollToTop from './util/ScrollTop.js';
 
 const configureStore = (data) => {
 
