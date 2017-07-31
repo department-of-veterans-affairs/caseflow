@@ -25,7 +25,7 @@ class ClaimsFolderDetails extends React.PureComponent {
       appealType = TYPE_INFO.aod;
     }
 
-    return <span className="claim-detail-type-aod-cavc">{appealType.text}</span>;
+    return <span className="claim-detail-type-info">{appealType.text}</span>;
   }
 
   render() {
