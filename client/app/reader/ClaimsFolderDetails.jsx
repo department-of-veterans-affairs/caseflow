@@ -5,16 +5,11 @@ import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 
 const TYPE_INFO = {
-  aod: { text: 'AOD',
-    className: 'claim-detail-aod' },
-  cavc: { text: 'CAVC',
-    className: 'claim-detail-cavc' },
-  both: { text: 'AOD, CAVC',
-    className: 'claim-detail-aod' },
-  none: { text: '',
-    className: '' }
+  aod: { text: 'AOD' },
+  cavc: { text: 'CAVC' },
+  both: { text: 'AOD, CAVC' },
+  none: { text: '' }
 };
-
 
 class ClaimsFolderDetails extends React.PureComponent {
 
@@ -30,7 +25,7 @@ class ClaimsFolderDetails extends React.PureComponent {
       appealType = TYPE_INFO.aod;
     }
 
-    return <span className={appealType.className}>{appealType.text}</span>;
+    return <span className="claim-detail-type-aod-cavc">{appealType.text}</span>;
   }
 
   render() {
