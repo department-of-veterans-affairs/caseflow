@@ -865,7 +865,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # verify that the tags on the previous document still exist
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 2)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
     end
 
     scenario "Search and Filter" do
