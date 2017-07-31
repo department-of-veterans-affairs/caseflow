@@ -273,7 +273,6 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "Form 9"
     end
 
-
     context "Document header filtering message" do
       scenario "filtering categories, tags and comments" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
@@ -293,7 +292,7 @@ RSpec.feature "Reader" do
         click_on "Comments"
         expect(page).to have_content("Comments.")
 
-        # when clear filters is clicked, Filtering message is reset, 
+        # when clear filters is clicked, Filtering message is reset,
         # focus goes back on Document toggle.
         find("#clear-filters").click
         expect(page).not_to have_content("Filtering by:")

@@ -8,38 +8,40 @@ import Analytics from '../../util/AnalyticsUtil';
 import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
 
+class HeaderFilterMessage extends React.PureComponent {  
+  render() {
+    const props = this.props;
 
-const HeaderFilterMessage = (props) => {
+    const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
+      props.docFilterCriteria.category[category]
+    );
+    const tagFilters = Object.keys(props.docFilterCriteria.tag).some((tag) =>
+      props.docFilterCriteria.tag[tag]
+    );
 
-  const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
-    props.docFilterCriteria.category[category]
-  );
-  const tagFilters = Object.keys(props.docFilterCriteria.tag).some((tag) =>
-    props.docFilterCriteria.tag[tag]
-  );
+    const categoryCount = _(props.docFilterCriteria.category).
+      values().
+      compact().
+      size();
+    const tagCount = _.size(props.docFilterCriteria.tag);
 
-  const categoryCount = _(props.docFilterCriteria.category).
-    values().
-    compact().
-    size();
-  const tagCount = _.size(props.docFilterCriteria.tag);
+    const filteredCategories = _.compact([
+      categoryFilters && `Categories (${categoryCount})`,
+      tagFilters && `Issue tags (${tagCount})`,
+      props.viewingDocumentsOrComments === 'comments' && 'Comments'
+    ]).join(', ');
 
-  const filteredCategories = _.compact([
-    categoryFilters && `Categories (${categoryCount})`,
-    tagFilters && `Issue tags (${tagCount})`,
-    props.viewingDocumentsOrComments === 'comments' && 'Comments'
-  ]).join(', ');
+    if (!filteredCategories.length) {
+      return null;
+    }
 
-  if (!filteredCategories.length) {
-    return null;
+    return <p className="document-list-filter-message">Filtering by: {filteredCategories}. <a
+      href="#"
+      id="clear-filters"
+      onClick={props.clearAllFilters}>
+      Clear all filters.</a></p>;
   }
-
-  return <p className="document-list-filter-message">Filtering by: {filteredCategories}. <a
-    href="#"
-    id="clear-filters"
-    onClick={props.clearAllFilters}>
-    Clear all filters.</a></p>;
-};
+}
 
 const headerFilterMessageMapDispatchToProps = (dispatch) => ({
   clearAllFilters: () => {
