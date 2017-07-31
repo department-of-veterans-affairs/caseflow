@@ -27,6 +27,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import {INTERACTION_TYPES} from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
@@ -103,8 +104,7 @@ export class PdfSidebar extends React.Component {
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
   handleAddClick = (event) => {
-    Analytics.event('Document Viewer', 'click', 'Add comment');
-    this.props.startPlacingAnnotation();
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.CLICK);
     event.stopPropagation();
   }
   render() {

@@ -19,6 +19,7 @@ import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { CATEGORIES } from '../reader/analytics';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import Analytics from '../util/AnalyticsUtil';
+import {INTERACTION_TYPES} from '../reader/analytics';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
@@ -511,7 +512,7 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltC = () => {
-    this.props.startPlacingAnnotation();
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD);
 
     const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
     const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);

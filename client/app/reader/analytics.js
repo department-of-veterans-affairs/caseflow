@@ -6,6 +6,11 @@ export const CATEGORIES = {
   CLAIMS_FOLDER_PAGE: 'Claims Folder'
 }
 
+export const INTERACTION_TYPES = {
+  CLICK: 'click',
+  KEYBOARD: 'keyboard'
+}
+
 export const reduxAnalyticsMiddleware = (store) => (next) => ({meta, ...action}) => {
   const dispatchedAction = next(action);
   if (meta) {

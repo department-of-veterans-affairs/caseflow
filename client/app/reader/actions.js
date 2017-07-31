@@ -220,7 +220,16 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
     );
 };
 
-export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
+export const startPlacingAnnotation = (interactionType) => ({ 
+  type: Constants.START_PLACING_ANNOTATION,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'start-placing-annotation',
+      label: interactionType
+    }
+  }
+});
 
 export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   type: Constants.SHOW_PLACE_ANNOTATION_ICON,
