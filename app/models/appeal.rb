@@ -90,6 +90,18 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
+  def vbms_id
+    super || begin
+      # Despite already having an appeal object in memory, we want to
+      # call this class level method so that we "centralize" the logic
+      # for loading an appeal from VACOLS
+      appeal = self.class.find_or_create_by_vacols_id(vacols_id)
+
+      # In order to avoid an infinite loop (in the event VACOLS does not have a file number)      # We want to directly reference the attributes hash to retrieve the vbms_id
+      appeal.attributes["vbms_id"]
+    end
+  end
+
   def events
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
