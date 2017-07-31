@@ -4,7 +4,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
-import Analytics from '../util/AnalyticsUtil';
+import {actionWithAnalytics, CATEGORIES} from './analytics';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -474,32 +474,32 @@ export const addNewTag = (doc, tags) => (
   }
 );
 
-export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => {
-  const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
-  const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
+export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => actionWithAnalytics({
+  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
+  payload: {
+    openedAccordionSections
+  },
+  analytics: (triggerEvent) => {
+    const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
+    const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
 
-  addedSectionKeys.forEach(
-    (newKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
-  );
-  removedSectionKeys.forEach(
-    (oldKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
-  );
+    addedSectionKeys.forEach(
+      (newKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
+    );
+    removedSectionKeys.forEach(
+      (oldKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
+    );
+  }
+});
 
-  return {
-    type: Constants.SET_OPENED_ACCORDION_SECTIONS,
-    payload: {
-      openedAccordionSections
-    }
-  };
-};
-
-export const setViewingDocumentsOrComments = (documentsOrComments) => {
-  Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'set-viewing-documents-or-comments', documentsOrComments);
-
-  return {
-    type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
-    payload: {
-      documentsOrComments
-    }
-  };
-};
+export const setViewingDocumentsOrComments = (documentsOrComments) => ({
+  type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
+  payload: {
+    documentsOrComments
+  },
+  analytics: {
+    category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+    action: 'set-viewing-documents-or-comments',
+    label: documentsOrComments
+  }
+});

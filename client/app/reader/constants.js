@@ -71,10 +71,6 @@ export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMME
 
 export const COMMENT_ACCORDION_KEY = 'Comments';
 
-export const ANALYTICS = {
-  VIEW_DOCUMENT_PAGE: 'Document Viewer'
-};
-
 export const DOCUMENTS_OR_COMMENTS_ENUM = {
   DOCUMENTS: 'documents',
   COMMENTS: 'comments'
