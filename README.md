@@ -217,10 +217,21 @@ add more links and users as needed.
 To run the test suite:
 `$ rake`
 
-For parallelized tests:
-`$ rake parallel:setup[4]`
+### Parallelized tests
+You'll be able to get through the tests a lot faster if you put all your CPUs to work.
+Parallel test categories are split up by category:
+- `unit`: Any test that isn't a feature test, since these are :lightning: fast
+- `other`: Any feature test that is not in a subfolder
+- CATEGORY: The other feature tests are split by subfolders in `spec/feature/`. Examples are `certification` and `reader`
 
-`$ rake ci:all`
+To set your environment up for parallel testing run:
+`$ rake spec:parallel:setup`
+
+To run the test suite in parallel:
+`$ rake spec:parallel`
+
+You can run any one of the parallel categories on its own via (where `CATEGORY` is `unit`, `certification`, etc):
+`$ rake spec:parallel:CATEGORY`
 
 ## Feature Toggle
 

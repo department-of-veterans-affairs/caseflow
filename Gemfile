@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "689f4f0483730d90608d84d240361c156d2a6e60"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "1e7925e18a9a0dfd0ac1e3fca19feb7cf6755b00"
 
 gem "moment_timezone-rails"
 
@@ -119,13 +119,12 @@ group :development, :test do
   #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "master"
-  gem 'simplecov', '0.12.0', require: false
+  gem 'simplecov', git: 'https://github.com/colszowka/simplecov.git', require: false
   gem 'timecop'
 
   gem 'poltergeist' # For legacy JS tests. Remove when we're all React
   gem 'konacha'
   gem 'database_cleaner'
-  gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
 end

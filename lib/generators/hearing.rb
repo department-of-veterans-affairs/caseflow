@@ -27,8 +27,10 @@ class Generators::Hearing
     end
 
     def create(attrs = {})
-      hearing = build(attrs)
-      hearing.tap(&:save!) unless ::Hearing.exists?(vacols_id: attrs[:vacols_id])
+      hearing = Hearing.find_or_create_by(vacols_id: default_attrs.merge(attrs)[:vacols_id])
+      build(attrs.merge(id: hearing.id))
+      hearing.update_attributes(default_attrs.merge(attrs))
+
       hearing
     end
 
