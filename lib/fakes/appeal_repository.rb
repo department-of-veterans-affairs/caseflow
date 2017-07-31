@@ -433,6 +433,6 @@ class Fakes::AppealRepository
   end
 
   def self.aod(_vacols_id)
-    1
+    true
   end
 end
