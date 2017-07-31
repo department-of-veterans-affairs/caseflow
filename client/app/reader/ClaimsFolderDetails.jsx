@@ -4,28 +4,21 @@ import _ from 'lodash';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 
-const TYPE_INFO = {
-  aod: { text: 'AOD' },
-  cavc: { text: 'CAVC' },
-  both: { text: 'AOD, CAVC' },
-  none: { text: '' }
-};
-
 class ClaimsFolderDetails extends React.PureComponent {
 
   getClaimTypeDetailInfo() {
     const { appeal } = this.props;
-    let appealType = TYPE_INFO.none;
+    let appealTypeInfo = '';
 
     if (appeal.cavc && appeal.aod) {
-      appealType = TYPE_INFO.both;
+      appealTypeInfo = 'AOD, CAVC';
     } else if (appeal.cavc) {
-      appealType = TYPE_INFO.cavc;
+      appealTypeInfo = 'CAVC';
     } else if (appeal.aod) {
-      appealType = TYPE_INFO.aod;
+      appealTypeInfo = 'AOD';
     }
 
-    return <span className="claim-detail-type-info">{appealType.text}</span>;
+    return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
   }
 
   render() {
