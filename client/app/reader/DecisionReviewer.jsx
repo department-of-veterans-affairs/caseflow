@@ -18,7 +18,7 @@ import _ from 'lodash';
 const fireSingleDocumentModeEvent = _.memoize(() => {
   Analytics.event(ANALYTICS.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
-  
+
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
     super(props);
