@@ -149,6 +149,13 @@ svg[aria-hidden=true],
   .usa-alert {
     margin-top: 15px;
   }
+
+  [id="hide-menu-header"] {
+    h2 {
+      font-size: 1.7rem;
+      margin: 0;
+    }
+  }
 }
 
 .cf-sidebar-header {
@@ -592,6 +599,22 @@ svg[aria-hidden=true],
 
   svg {
     display: block;
+  }
+}
+
+[id="cf-pdf-header-doc-type"] {
+  margin: 0;
+  font-size: initial;
+  color: $color-white;
+  
+  &:hover {
+    color: inherit;
+  }
+}
+
+.usa-accordion-button {
+  h3 {
+    font-size: inherit;
   }
 }
 
