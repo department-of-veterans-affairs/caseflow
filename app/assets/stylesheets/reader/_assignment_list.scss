@@ -1,3 +1,6 @@
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
 .assignment-list {
   .issue-list {
     padding-left: 0;
@@ -5,5 +8,10 @@
 
   .issue-level {
     margin: 0;
+  }
+
+  .claim-detail-aod,
+  .claim-detail-cavc {
+    color: $color-secondary;
   }
 }

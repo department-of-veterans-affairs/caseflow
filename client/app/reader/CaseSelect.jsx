@@ -29,10 +29,39 @@ class CaseSelect extends React.PureComponent {
     return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
   }
 
+  getClaimTypeDetailInfo = (row) => {
+    const TYPE_INFO = {
+      aod: { text: 'AOD',
+        className: 'claim-detail-aod' },
+      cavc: { text: 'CAVC',
+        className: 'claim-detail-cavc' },
+      both: { text: 'AOD, CAVC',
+        className: 'claim-detail-aod' },
+      none: { text: '',
+        className: '' }
+    };
+
+    let appealType = TYPE_INFO.none;
+
+    if (row.cavc && row.aod) {
+      appealType = TYPE_INFO.both;
+    } else if (row.cavc) {
+      appealType = TYPE_INFO.cavc;
+    } else if (row.aod) {
+      appealType = TYPE_INFO.aod;
+    }
+
+    return <span className={appealType.className}>{appealType.text}</span>;
+  }
+
+  getAODorCAVCforCase = (appeal) => {
+    return <span>{appeal.veteran_full_name} <br /> {this.getClaimTypeDetailInfo(appeal)}</span>;
+  }
+
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
-      valueName: 'veteran_full_name'
+      valueFunction: this.getAODorCAVCforCase
     },
     {
       header: 'Veteran ID',
