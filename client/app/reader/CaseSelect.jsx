@@ -4,6 +4,8 @@ import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 
+import { getClaimTypeDetailInfo } from '../reader/utils';
+
 class CaseSelect extends React.PureComponent {
 
   renderIssuesColumnData = (appeal) => {
@@ -29,22 +31,8 @@ class CaseSelect extends React.PureComponent {
     return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
   }
 
-  getClaimTypeDetailInfo = (row) => {
-    let appealTypeInfo = '';
-
-    if (row.cavc && row.aod) {
-      appealTypeInfo = 'AOD, CAVC';
-    } else if (row.cavc) {
-      appealTypeInfo = 'CAVC';
-    } else if (row.aod) {
-      appealTypeInfo = 'AOD';
-    }
-
-    return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
-  }
-
   getAODorCAVCforCase = (appeal) => {
-    return <span>{appeal.veteran_full_name} <br /> {this.getClaimTypeDetailInfo(appeal)}</span>;
+    return <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
   }
 
   getAssignmentColumn = () => [
