@@ -94,7 +94,7 @@ export const documentCategories = {
   procedural: {
     renderOrder: 0,
     humanName: 'Procedural',
-    svg: <CategoryIcon color="#4A90E2" />
+    svg: <CategoryIcon color="#5A94EC" />
   },
   medical: {
     renderOrder: 1,
@@ -104,12 +104,12 @@ export const documentCategories = {
   caseSummary: {
     renderOrder: 2,
     humanName: 'Case Summary',
-    svg: <CategoryIcon color="#9932CC" />
+    svg: <CategoryIcon color="#FDC231" />
   },
   other: {
     renderOrder: 3,
     humanName: 'Other Evidence',
-    svg: <CategoryIcon color="#5BD998" />
+    svg: <CategoryIcon color="#3AD2CF" />
   }
 };
 
