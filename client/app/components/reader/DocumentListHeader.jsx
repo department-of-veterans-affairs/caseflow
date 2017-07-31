@@ -18,16 +18,17 @@ const HeaderFilterMessage = (props) => {
     props.docFilterCriteria.tag[tag]
   );
 
-  const categoryCount = _.values(props.docFilterCriteria.category).reduce((numberOfCategories, categoryShown) => {
-    return categoryShown ? numberOfCategories + 1 : numberOfCategories;
-  }, 0);
-  const tagCount = _.values(props.docFilterCriteria.tag).length;
+  const categoryCount = _(props.docFilterCriteria.category).
+    values().
+    compact().
+    size();
+  const tagCount = _.size(props.docFilterCriteria.tag);
 
-  const filteredCategories = [].concat(
-    categoryFilters ? [`Categories (${categoryCount})`] : [],
-    tagFilters ? [`Issue tags (${tagCount})`] : [],
-    props.viewingDocumentsOrComments === 'comments' ? ['Comments'] : []).
-    join(', ');
+  const filteredCategories = _.compact([
+    categoryFilters && `Categories (${categoryCount})`,
+    tagFilters && `Issue tags (${tagCount})`,
+    props.viewingDocumentsOrComments === 'comments' && 'Comments'
+  ]).join(', ');
 
   if (!filteredCategories.length) {
     return null;
