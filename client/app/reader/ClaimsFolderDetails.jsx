@@ -36,18 +36,15 @@ class ClaimsFolderDetails extends React.PureComponent {
   render() {
     const { appeal, documents } = this.props;
     const appealDoesntExist = _.isEmpty(appeal);
-    const docsViewedCount = documents.reduce(
-      (sum, doc) => {
-        return doc.opened_by_current_user ? sum + 1 : sum;
-      }, 0);
+    const docsViewedCount = _.filter(documents, 'opened_by_current_user').length;
 
     return <div className="cf-claims-folder-details">
-      {!appealDoesntExist && <div>
-        <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1>
+      <div>
+        { !appealDoesntExist && <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1> }
         <p className="cf-push-right">
           You've viewed { docsViewedCount } out of { documents.length } documents
         </p>
-      </div>}
+      </div>
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionSection id="claim-folder-details-accordion" className="usa-grid"
           disabled={appealDoesntExist} title={appealDoesntExist ? 'Loading...' : 'Claims folder details'}>
