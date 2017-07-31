@@ -78,7 +78,7 @@ export default class Certification extends React.Component {
   }
 
   checkCertificationData() {
-    ApiUtil.get(`/certifications/${this.props.vacols_id}/certification_data`).
+    ApiUtil.get(`/certifications/${this.props.vacols_id}`).
     then((data) => {
       this.setState({
         loadingData: JSON.parse(data.text).loading_data,
@@ -100,10 +100,9 @@ export default class Certification extends React.Component {
     setTimeout(
         () => {
           this.setState(
-            Object.assign({}, this.state,
-              {
-                longerThanUsual: true
-              }));
+            Object.assign({}, this.state, {
+              longerThanUsual: true
+            }));
         },
         AppConstants.LONGER_THAN_USUAL_TIMEOUT
       );
@@ -111,10 +110,9 @@ export default class Certification extends React.Component {
     setTimeout(
         () => {
           this.setState(
-            Object.assign({}, this.state,
-              {
-                overallTimeout: true
-              }));
+            Object.assign({}, this.state, {
+              overallTimeout: true
+            }));
         },
         AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT
       );
@@ -146,56 +144,58 @@ export default class Certification extends React.Component {
 
     return <div>
     {
-      !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) && <LoadingScreen
-                                  message={message}
-                                  spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}/>
+      !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) &&
+        <LoadingScreen
+          message={message}
+          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}/>
     }
 
     {
       (this.state.loadingDataFailed || this.state.overallTimeout) && !this.state.certification && failureMessage
     }
 
-    { this.state.certification && <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
-      <div>
-        <BrowserRouter>
-          <div>
-          <Header/>
-          <CertificationProgressBar/>
-          <Route path="/certifications/new/:vacols_id"
-            component={EntryPointRedirect}/>
-          <PageRoute
-            title="Check Documents | Caseflow Certification"
-            path="/certifications/:vacols_id/check_documents"
-            component={DocumentsCheck}
-          />
-          <PageRoute
-            title="Confirm Case Details | Caseflow Certification"
-            path="/certifications/:vacols_id/confirm_case_details"
-            component={ConfirmCaseDetails}
-          />
-          <PageRoute
-            title="Confirm Hearing | Caseflow Certification"
-            path="/certifications/:vacols_id/confirm_hearing"
-            component={ConfirmHearing}
-          />
-          <PageRoute
-            title="Sign and Certify | Caseflow Certification"
-            path="/certifications/:vacols_id/sign_and_certify"
-            component={SignAndCertify}/>
-          <PageRoute
-            title="Success! | Caseflow Certification"
-            path="/certifications/:vacols_id/success"
-            component={Success}
-          />
-          <PageRoute
-            title="Error | Caseflow Certification"
-            path="/certifications/error"
-            component={ErrorMessage}
-          />
+    { this.state.certification &&
+      <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
+        <div>
+          <BrowserRouter>
+            <div>
+            <Header/>
+            <CertificationProgressBar/>
+            <Route path="/certifications/new/:vacols_id"
+              component={EntryPointRedirect}/>
+            <PageRoute
+              title="Check Documents | Caseflow Certification"
+              path="/certifications/:vacols_id/check_documents"
+              component={DocumentsCheck}
+            />
+            <PageRoute
+              title="Confirm Case Details | Caseflow Certification"
+              path="/certifications/:vacols_id/confirm_case_details"
+              component={ConfirmCaseDetails}
+            />
+            <PageRoute
+              title="Confirm Hearing | Caseflow Certification"
+              path="/certifications/:vacols_id/confirm_hearing"
+              component={ConfirmHearing}
+            />
+            <PageRoute
+              title="Sign and Certify | Caseflow Certification"
+              path="/certifications/:vacols_id/sign_and_certify"
+              component={SignAndCertify}/>
+            <PageRoute
+              title="Success! | Caseflow Certification"
+              path="/certifications/:vacols_id/success"
+              component={Success}
+            />
+            <PageRoute
+              title="Error | Caseflow Certification"
+              path="/certifications/error"
+              component={ErrorMessage}
+            />
+          </div>
+          </BrowserRouter>
         </div>
-        </BrowserRouter>
-      </div>
-    </Provider> }
+      </Provider> }
     </div>;
   }
 }
