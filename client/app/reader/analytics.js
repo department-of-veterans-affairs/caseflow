@@ -6,12 +6,14 @@ export const CATEGORIES = {
   CLAIMS_FOLDER_PAGE: 'Claims Folder'
 }
 
-export const actionWithAnalytics = (action) => {
-  if (_.isFunction(action.analytics)) {
-    action.analytics(Analytics.event.bind(Analytics));
-  } else {
-    Analytics.event(action.analytics.category, event.analytics.action, event.analytics.label);
+export const reduxAnalyticsMiddleware = () => (next) => ({meta, ...action}) => {
+  if (meta) {
+    if (_.isFunction(meta.analytics)) {
+      meta.analytics(Analytics.event.bind(Analytics));
+    } else {
+      Analytics.event(meta.analytics.category, meta.analytics.action, meta.analytics.label);
+    }
   }
 
-  return _.omit(action, 'analytics');
+  return next(action);
 }

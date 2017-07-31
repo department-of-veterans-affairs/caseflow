@@ -1,14 +1,18 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
-import perflogger from 'redux-perf-middleware';
+import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
+import {reduxAnalyticsMiddleware} from './analytics';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(readerReducer, composeEnhancers(applyMiddleware(thunk, perflogger)));
+const store = createStore(
+  readerReducer, 
+  composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
+);
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
