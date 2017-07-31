@@ -410,7 +410,13 @@ export const setCategoryFilter = (categoryName, checked) => ({
 });
 
 export const clearAllFilters = () => ({
-  type: Constants.CLEAR_ALL_FILTERS
+  type: Constants.CLEAR_ALL_FILTERS,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-all-filters'
+    }
+  }
 });
 
 export const clearSearch = () => ({

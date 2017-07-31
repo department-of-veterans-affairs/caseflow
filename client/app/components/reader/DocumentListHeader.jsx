@@ -82,12 +82,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    clearSearch
+    clearSearch,
+    clearAllFilters
   }, dispatch),
-  clearAllFilters: () => {
-    Analytics.event('Claims Folder', 'click', 'Clear all filters');
-    dispatch(clearAllFilters());
-  },
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));
   }
