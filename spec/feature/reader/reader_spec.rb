@@ -759,12 +759,12 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Claims folder details")
 
       # Test the document count updates after viewing a document
-      expect(page).to have_content("You've viewed 0 out of #{ documents.length } documents")
+      expect(page).to have_content("You've viewed 0 out of #{documents.length} documents")
       click_on documents[0].type
       click_on "Back to claims folder"
-      expect(page).to have_content("You've viewed 1 out of #{ documents.length } documents")
+      expect(page).to have_content("You've viewed 1 out of #{documents.length} documents")
 
-      find(".rc-collapse-header", :text => "Claims folder details").click
+      find(".rc-collapse-header", text: "Claims folder details").click
       regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"
       expect(page).to have_content(appeal_info["vbms_id"])
       expect(page).to have_content(appeal_info["type"])
