@@ -28,7 +28,6 @@ module.exports = {
     "block-scoped-var": "error",
     "block-spacing": "warn",
     "brace-style": "warn",
-    "callback-return": "error",
     "camelcase": ["warn", {"properties": "never"}],
     "class-methods-use-this": "warn",
     "comma-dangle": "warn",

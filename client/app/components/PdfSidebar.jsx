@@ -16,7 +16,8 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections } from '../reader/actions';
+  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar 
+  } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
@@ -166,7 +167,7 @@ export class PdfSidebar extends React.Component {
             name="hide menu"
             classNames={['cf-pdf-button']}
             id="hide-menu-header"
-            onClick={this.props.handleTogglePdfSidebar}>
+            onClick={this.props.togglePdfSidebar}>
             <strong>
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
@@ -293,7 +294,7 @@ PdfSidebar.propTypes = {
     uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,
     category: PropTypes.bool,
@@ -317,6 +318,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    togglePdfSidebar,
     setOpenedAccordionSections,
     selectAnnotation,
     startPlacingAnnotation,
@@ -354,13 +356,6 @@ const mapDispatchToProps = (dispatch) => ({
         toggleState,
         docId
       }
-    });
-  },
-  handleTogglePdfSidebar() {
-    Analytics.event('Document Viewer', 'click', 'Hide menu');
-
-    dispatch({
-      type: Constants.TOGGLE_PDF_SIDEBAR
     });
   }
 });

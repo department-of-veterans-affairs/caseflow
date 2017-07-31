@@ -507,3 +507,14 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
     }
   }
 });
+
+export const togglePdfSidebar = () => ({
+  type: Constants.TOGGLE_PDF_SIDEBAR,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'toggle-pdf-sidebar',
+      label: (nextState) => nextState.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+    }
+  }
+})

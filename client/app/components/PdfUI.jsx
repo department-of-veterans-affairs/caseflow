@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import Button from '../components/Button';
 import Link from '../components/Link';
@@ -8,7 +9,7 @@ import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
-import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen } from '../components/RenderFunctions';
@@ -218,7 +219,7 @@ export class PdfUI extends React.Component {
               <Button
                 name="open menu"
                 classNames={['cf-pdf-button']}
-                onClick={this.props.handleTogglePdfSidebar}>
+                onClick={this.props.togglePdfSidebar}>
                 <strong>
                   Open menu
                 </strong>
@@ -250,20 +251,16 @@ const mapStateToProps = (state) => ({
   ...state.ui.pdf
 });
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    togglePdfSidebar
+  }, dispatch),
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
   },
   stopPlacingAnnotation: () => {
     dispatch(stopPlacingAnnotation());
   },
-  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
-  handleTogglePdfSidebar() {
-    Analytics.event('Document Viewer', 'click', 'Show menu');
-
-    dispatch({
-      type: Constants.TOGGLE_PDF_SIDEBAR
-    });
-  }
+  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
 
 export default connect(
@@ -284,7 +281,7 @@ PdfUI.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,

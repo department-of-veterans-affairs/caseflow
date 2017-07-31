@@ -6,14 +6,16 @@ export const CATEGORIES = {
   CLAIMS_FOLDER_PAGE: 'Claims Folder'
 }
 
-export const reduxAnalyticsMiddleware = () => (next) => ({meta, ...action}) => {
+export const reduxAnalyticsMiddleware = (store) => (next) => ({meta, ...action}) => {
+  const dispatchedAction = next(action);
   if (meta) {
     if (_.isFunction(meta.analytics)) {
       meta.analytics(Analytics.event.bind(Analytics));
     } else {
-      Analytics.event(meta.analytics.category, meta.analytics.action, meta.analytics.label);
+      const label = _.isFunction(meta.analytics.label) ? meta.analytics.label(store.getState()) : meta.analytics.label;
+
+      Analytics.event(meta.analytics.category, meta.analytics.action, label);
     }
   }
-
-  return next(action);
+  return dispatchedAction;
 }
