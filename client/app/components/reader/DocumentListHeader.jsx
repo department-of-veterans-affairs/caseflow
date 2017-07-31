@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
 import Alert from '../Alert';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
@@ -10,7 +11,7 @@ import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
 
 class DocumentListHeader extends React.Component {
-  // Record the search value for analytics purposes, don't worry if it fails.
+  // Record the search value for analytics purposes. Don't worry if it fails.
   recordSearch = (query) => {
     ApiUtil.post(
       `/reader/appeal/${this.props.vacolsId}/claims_folder_searches`,
@@ -80,12 +81,12 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    clearSearch
+  }, dispatch),
   clearAllFilters: () => {
     Analytics.event('Claims Folder', 'click', 'Clear all filters');
     dispatch(clearAllFilters());
-  },
-  clearSearch: () => {
-    dispatch(clearSearch());
   },
   setSearch: (searchQuery) => {
     dispatch(setSearch(searchQuery));

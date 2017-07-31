@@ -414,7 +414,13 @@ export const clearAllFilters = () => ({
 });
 
 export const clearSearch = () => ({
-  type: Constants.CLEAR_ALL_SEARCH
+  type: Constants.CLEAR_ALL_SEARCH,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-search'
+    }
+  }
 });
 
 export const removeTag = (doc, tagId) => (
