@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
-import Analytics from '../../util/AnalyticsUtil';
 import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
 
@@ -39,7 +38,6 @@ class DocumentListHeader extends React.Component {
             id="searchBar"
             onChange={props.setSearch}
             onClearSearch={props.clearSearch}
-            onClick={props.clickSearch}
             recordSearch={this.recordSearch}
             value={props.docFilterCriteria.searchQuery}
             size="small"
@@ -82,12 +80,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    setSearch,
     clearSearch,
     clearAllFilters
-  }, dispatch),
-  setSearch: (searchQuery) => {
-    dispatch(setSearch(searchQuery));
-  }
+  }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);
