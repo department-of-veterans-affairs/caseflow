@@ -481,7 +481,6 @@ class Appeal < ActiveRecord::Base
 
     def initialize_appeal_without_lazy_load(hash)
       appeal = find_or_initialize_by(vacols_id: hash[:vacols_id])
-      appeal.turn_off_lazy_loading(initial_values: hash)
       appeal
     end
 

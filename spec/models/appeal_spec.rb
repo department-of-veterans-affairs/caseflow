@@ -1104,7 +1104,8 @@ describe Appeal do
     end
   end
 
-  context ".initialize_appeal_without_lazy_load" do
+  context ".initialize_appeal_without_lazy_load",
+          skip: "Disabled without_lazy_load for appeals for fixing Welcome Gate" do
     let(:date) { Time.zone.today }
     let(:saved_appeal) do
       Generators::Appeal.build(
