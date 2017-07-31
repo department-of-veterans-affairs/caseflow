@@ -97,7 +97,8 @@ class Appeal < ActiveRecord::Base
       # for loading an appeal from VACOLS
       appeal = self.class.find_or_create_by_vacols_id(vacols_id)
 
-      # In order to avoid an infinite loop (in the event VACOLS does not have a file number)      # We want to directly reference the attributes hash to retrieve the vbms_id
+      # In order to avoid an infinite loop (in the event VACOLS does not have a file number)
+      # We want to directly reference the attributes hash to retrieve the vbms_id
       appeal.attributes["vbms_id"]
     end
   end

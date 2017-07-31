@@ -1137,7 +1137,7 @@ describe Appeal do
     end
 
     context "when vbms_id is nil" do
-      let (:no_vbms_id_appeal) { Appeal.create(vacols_id: appeal.vacols_id) }
+      let(:no_vbms_id_appeal) { Appeal.create(vacols_id: appeal.vacols_id) }
 
       it "looks up vbms_id in VACOLS" do
         expect(Appeal).to receive(:find_or_create_by_vacols_id)
