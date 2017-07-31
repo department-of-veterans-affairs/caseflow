@@ -110,7 +110,11 @@ RSpec.feature "Reader" do
           type: "BVA Decision",
           received_at: 7.days.ago,
           vbms_document_id: 6,
-          category_procedural: true
+          category_procedural: true,
+          tags: [
+            Generators::Tag.create(text: "Service Connected"),
+            Generators::Tag.create(text: "Knee Issue")
+          ]
         ),
         Generators::Document.create(
           filename: "My Form 9",
@@ -269,6 +273,34 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "Form 9"
     end
 
+
+    context "Document header filtering message" do
+      scenario "filtering categories, tags and comments" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (1)")
+
+        find("#tags-header .table-icon").click
+        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
+        tags_checkboxes[0].click
+        tags_checkboxes[1].click
+        expect(page).to have_content("Issue tags (2)")
+
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+
+        # when clear filters is clicked, Filtering message is reset, 
+        # focus goes back on Document toggle.
+        find("#clear-filters").click
+        expect(page).not_to have_content("Filtering by:")
+        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
+      end
+    end
+
     scenario "PdfListView Dropdown" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
@@ -287,8 +319,6 @@ RSpec.feature "Reader" do
 
       find(".checkbox-wrapper-procedural").click
       expect(find("#procedural", visible: false).checked?).to be true
-
-      expect(page).to have_content("Filtering by: Categories")
 
       find("#receipt-date-header").click
       expect_dropdown_filter_to_be_hidden
