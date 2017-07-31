@@ -753,12 +753,17 @@ RSpec.feature "Reader" do
 
     scenario "Claim Folder Details" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      veteran_folder_title = "#{appeal.veteran_full_name}'s Claims Folder"
       appeal_info = appeal.to_hash(issues: appeal.issues)
 
-      expect(page).to have_content(veteran_folder_title)
+      expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       expect(page).to have_content("Claims folder details")
+
+      # Test the document count updates after viewing a document
+      expect(page).to have_content("You've viewed 0 out of #{ documents.length } documents")
+      click_on documents[0].type
+      click_on "Back to claims folder"
+      expect(page).to have_content("You've viewed 1 out of #{ documents.length } documents")
+
       find_by_id("claim-folder-details-accordion").click
       regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"
       expect(page).to have_content(appeal_info["vbms_id"])
