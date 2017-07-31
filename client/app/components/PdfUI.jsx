@@ -52,6 +52,7 @@ export class PdfUI extends React.Component {
   zoom = (delta) => () => {
     const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
     const zoomDirection = delta > 0 ? 'in' : 'out';
+
     Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
 
     this.setState({

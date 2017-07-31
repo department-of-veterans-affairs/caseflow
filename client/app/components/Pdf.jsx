@@ -19,7 +19,7 @@ import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { CATEGORIES } from '../reader/analytics';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import Analytics from '../util/AnalyticsUtil';
-import {INTERACTION_TYPES} from '../reader/analytics';
+import { INTERACTION_TYPES } from '../reader/analytics';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;

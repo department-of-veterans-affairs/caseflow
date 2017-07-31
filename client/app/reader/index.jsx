@@ -5,12 +5,12 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
-import {reduxAnalyticsMiddleware} from './analytics';
+import { reduxAnalyticsMiddleware } from './analytics';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
-  readerReducer, 
+  readerReducer,
   composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
 );
 

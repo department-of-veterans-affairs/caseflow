@@ -4,7 +4,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
-import {CATEGORIES} from './analytics';
+import { CATEGORIES } from './analytics';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -220,7 +220,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
     );
 };
 
-export const startPlacingAnnotation = (interactionType) => ({ 
+export const startPlacingAnnotation = (interactionType) => ({
   type: Constants.START_PLACING_ANNOTATION,
   meta: {
     analytics: {
@@ -526,4 +526,4 @@ export const togglePdfSidebar = () => ({
       label: (nextState) => nextState.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
     }
   }
-})
+});

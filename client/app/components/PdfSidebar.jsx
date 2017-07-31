@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar 
+  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
   } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
@@ -27,7 +27,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-import {INTERACTION_TYPES} from '../reader/analytics';
+import { INTERACTION_TYPES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
