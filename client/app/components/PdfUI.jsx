@@ -15,7 +15,7 @@ import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
-import { CATEGORIES } from '../reader/analytics';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const ZOOM_RATE = 0.3;
@@ -60,17 +60,17 @@ export class PdfUI extends React.Component {
   }
 
   openDownloadLink = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download', '');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
     window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
   }
 
   showPreviousDocument = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'Previous document arrow');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, INTERACTION_TYPES.CLICK);
     this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'click', 'Next document arrow');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.CLICK);
     this.props.showPdf(this.props.nextDocId)();
   }
 
@@ -129,7 +129,7 @@ export class PdfUI extends React.Component {
   }
 
   fitToScreen = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen', '');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
     this.setState({
       scale: this.state.fitToScreenZoom

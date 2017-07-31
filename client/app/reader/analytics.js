@@ -6,6 +6,11 @@ export const CATEGORIES = {
   CLAIMS_FOLDER_PAGE: 'Claims Folder'
 }
 
+export const ACTION_NAMES = {
+  VIEW_NEXT_DOCUMENT: 'view-next-document',
+  VIEW_PREVIOUS_DOCUMENT: 'view-previous-document',
+}
+
 export const INTERACTION_TYPES = {
   CLICK: 'click',
   KEYBOARD: 'keyboard'
