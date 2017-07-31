@@ -8,7 +8,7 @@ import Analytics from '../../util/AnalyticsUtil';
 import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
 
-class HeaderFilterMessage extends React.PureComponent {  
+class HeaderFilterMessage extends React.PureComponent {
   render() {
     const props = this.props;
 

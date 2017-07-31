@@ -112,8 +112,8 @@ RSpec.feature "Reader" do
           vbms_document_id: 6,
           category_procedural: true,
           tags: [
-            Generators::Tag.create(text: "Service Connected"),
-            Generators::Tag.create(text: "Knee Issue")
+            Generators::Tag.create(text: "New Tag1"),
+            Generators::Tag.create(text: "New Tag2")
           ]
         ),
         Generators::Document.create(
