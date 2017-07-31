@@ -5,6 +5,10 @@ $gray-font-color: #6b7079;
 $tag-backgrond-color: #d6d7d9;
 
 .section--document-list {
+  .loading-text {
+    font-style: italic;
+  }
+
   mark {
     background: $color-gold-lightest;
   }
