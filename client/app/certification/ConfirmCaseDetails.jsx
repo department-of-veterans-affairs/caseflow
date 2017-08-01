@@ -399,7 +399,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
-            'Caseflow will update the representative type in VACOLS with information from VBMS.'
+            `Caseflow will update the representative type in VACOLS with information from VBMS.`
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
@@ -414,10 +414,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             // TODO: change this message when we can fetch addresses.
             (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
-            `Great! Caseflow will update the representative type and name
-             information for the selected service organization in VACOLS. After
-             this appeal is certified in Caseflow, the representative’s address
-             will need to be updated in VACOLS.`
+            'Great! Caseflow will update the representative type and name information for the selected service organization in VACOLS.'
           }
 
         </div>
