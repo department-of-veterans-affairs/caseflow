@@ -272,6 +272,7 @@ export default connect(
 
 PdfUI.propTypes = {
   doc: PropTypes.shape({
+    content_url: PropTypes.string,
     filename: PropTypes.string,
     id: PropTypes.oneOfType([
       PropTypes.string,
