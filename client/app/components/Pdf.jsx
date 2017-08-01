@@ -20,29 +20,6 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
-const transformCoordinates = (x, y, width, height, rotation) => {
-  if (rotation === 0) {
-    return { x, y };
-  } else if (rotation === 90) {
-    return { x: height - y, y: x };
-  } else if (rotation === 180) {
-    return { x: width - x, y: height - y };
-  } else if (rotation === 270) {
-    return { x: y, y: width - x };
-  }
-};
-const untransformCoordinates = (x, y, width, height, rotation) => {
-  // if (rotation === 0) {
-  //   return { x, y };
-  // } else if (rotation === 90) {
-  //   return { x: y, y: height - x };
-  // } else if (rotation === 180) {
-  //   return { x: width - x, y: height - y };
-  // } else if (rotation === 270) {
-  //   return { x: width - y, y: x };
-  // }
-  return transformCoordinates(x, y, width, height, (360 - rotation) % 360);
-};
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -55,10 +32,16 @@ const untransformCoordinates = (x, y, width, height, rotation) => {
  *    Page coordinates: A coordinate system for a given PDF page.
  *      (0, 0) is the top left hand corner of that PDF page.
  *
+ *    Div coordinates: A coordinate system for the div that holds a PDF page.
+ *      (0, 0) is the top left hand corner of that div.
+ *
  * The relationship between root and page coordinates is defined by where the PDF page is within the whole app,
  * and what the current scale factor is.
+ * 
+ * The relationship between page and div coordinates is defined by the rotation and scaling of a page. Div coordinates
+ * are page coordinates after they've been rotated and scaled.
  *
- * All coordinates in our codebase should have `page` or `root` in the name, to make it clear which
+ * All coordinates in our codebase should have `page`, `root`, or `div` in the name, to make it clear which
  * coordinate system they belong to. All converting between coordinate systems should be done with
  * the proper helper functions.
  */
@@ -66,6 +49,30 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   x: (x - pageBoundingBox.left) / scale,
   y: (y - pageBoundingBox.top) / scale
 });
+
+const divCoordinatesOfPageCoords = (x, y, width, height, rotation) => {
+  if (rotation === 0) {
+    return { x, y };
+  } else if (rotation === 90) {
+    return { x: height - y, y: x };
+  } else if (rotation === 180) {
+    return { x: width - x, y: height - y };
+  } else if (rotation === 270) {
+    return { x: y, y: width - x };
+  }
+};
+const pageCoordsOfDivCoordinates = (x, y, width, height, rotation) => {
+  // if (rotation === 0) {
+  //   return { x, y };
+  // } else if (rotation === 90) {
+  //   return { x: y, y: height - x };
+  // } else if (rotation === 180) {
+  //   return { x: width - x, y: height - y };
+  // } else if (rotation === 270) {
+  //   return { x: width - y, y: x };
+  // }
+  return divCoordinatesOfPageCoords(x, y, width, height, (360 - rotation) % 360);
+};
 
 export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
@@ -835,7 +842,7 @@ export class Pdf extends React.PureComponent {
     if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
       const { pageWidth, pageHeight } = this.getPageDimensions(this.props.placingAnnotationIconPageCoords.pageIndex);
       const { x, y } = _.pick(this.props.placingAnnotationIconPageCoords, ['x', 'y']);
-      const coords = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+      const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
 
       annotations = this.props.comments.concat([{
             temporaryId: 'placing-annotation-icon',
@@ -859,7 +866,7 @@ export class Pdf extends React.PureComponent {
       }
 
       const { pageWidth, pageHeight } = this.getPageDimensions(comment.page - 1);
-      const { x, y } = transformCoordinates(comment.x, comment.y, pageWidth, pageHeight, this.props.rotation);
+      const { x, y } = divCoordinatesOfPageCoords(comment.x, comment.y, pageWidth, pageHeight, this.props.rotation);
 
       acc[comment.page].push(
         <CommentIcon
@@ -893,7 +900,7 @@ export class Pdf extends React.PureComponent {
           );
 
           const { pageWidth, pageHeight } = this.getPageDimensions(pageIndex);
-          const coords = untransformCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+          const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
           this.props.placeAnnotation(pageIndex + 1, {
             xPosition: coords.x,
             yPosition: coords.y
