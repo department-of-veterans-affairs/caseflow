@@ -194,7 +194,7 @@ RSpec.feature "Reader" do
       before do
         Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
       end
-      
+
       scenario "Enter a case" do
         visit "/reader/appeal"
 
