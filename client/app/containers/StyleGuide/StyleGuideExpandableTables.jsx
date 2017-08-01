@@ -8,17 +8,17 @@ import { ChervonDown, ChervonUp } from '../../components/RenderFunctions';
 import Button from '../../components/Button';
 
 export default class StyleGuideExpandaleTables extends React.Component {
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
     
-    this.icons = {
-      'up' : <ChervonUp />, 
-      'down' : <ChervonDown />
-    };
-    this.state ={
-      expanded: true
-    };
-  }
+  //   this.icons = {
+  //     'up' : <ChervonUp />, 
+  //     'down' : <ChervonDown />
+  //   };
+  //   this.state ={
+  //     expanded: true
+  //   };
+  // }
 render = () => {
   // List of objects which will be used to create each row
   let rowObjects = [
@@ -72,6 +72,8 @@ render = () => {
       }
     }
   ]);
+
+  let summary = 'Example styleguide table';
 
   return <div className="cf-sg-tables-section">
     <StyleGuideComponentTitle
