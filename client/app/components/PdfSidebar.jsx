@@ -55,7 +55,7 @@ export class PdfSidebar extends React.Component {
       const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
 
       Analytics.event(
-        Constants.ANALYTICS.VIEW_DOCUMENT_PAGE,
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
         `${eventActionPrefix}-keyboard-shortcuts-modal`,
         sourceLabel
       );
