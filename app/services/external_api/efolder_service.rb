@@ -33,7 +33,7 @@ class ExternalApi::EfolderService
     headers["STATION-ID"] = user.station_id.to_s
     request.headers = headers
 
-    MetricsService.record("eFolder GET request to ${url}",
+    MetricsService.record("eFolder GET request to #{url}",
                           service: :efolder,
                           name: endpoint) do
       HTTPI.get(request)
