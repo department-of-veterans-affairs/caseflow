@@ -306,14 +306,10 @@ export class ConfirmCaseDetails extends React.Component {
     ];
 
     const representativeTypeMessage =
-        <p>Since you selected <strong>{ConfirmCaseDetails.getDisplayText(representativeType)}</strong>, make sure
-         you update the representative's name and address information in VACOLS after the appeal is certified.
-        Caseflow will update the representative type in VACOLS.</p>;
+        <p>Caseflow will update the representative type in VACOLS.</p>;
 
     const unlistedServiceMessage =
-        <p>Since you selected an <strong>Unlisted service organization</strong>, make sure you update
-         the representative's address information in VACOLS after the appeal is certified. Caseflow will update
-         the representative type and name in VACOLS.</p>;
+        <p>Caseflow will update the representative type and name in VACOLS.</p>;
 
 
     return <div>
@@ -403,9 +399,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
-            `Caseflow could not find an address for the representative in VBMS. After
-             this appeal is certified in Caseflow, the representative’s address
-             will need to be updated in VACOLS.`
+            `Caseflow will update the representative type in VACOLS with information from VBMS.`
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
