@@ -3,7 +3,7 @@ describe HearingMapper do
     let(:hearing) do
       OpenStruct.new(
         folder_nr: "123C",
-        hearing_disp: hearing_disp,
+        hearing_disp: hearing_disp
       )
     end
 
