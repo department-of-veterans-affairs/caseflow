@@ -122,6 +122,13 @@ svg[aria-hidden=true],
 }
 // scss-lint:enable QualifyingElement
 
+
+.cf-non-stylized-header {
+  font-size: inherit;
+  margin: 0;
+  color: inherit;
+}
+
 .cf-sidebar-wrapper {
   display: flex;
   flex-direction: column;
@@ -144,12 +151,6 @@ svg[aria-hidden=true],
 
   .usa-alert {
     margin-top: 15px;
-  }
-
-  .cf-non-stylized-header {
-    font-size: inherit;
-    margin: 0;
-    color: inherit;
   }
 }
 
@@ -594,16 +595,6 @@ svg[aria-hidden=true],
 
   svg {
     display: block;
-  }
-}
-
-[id="cf-pdf-header-doc-type"] {
-  margin: 0;
-  font-size: initial;
-  color: $color-white;
-
-  &:hover {
-    color: inherit;
   }
 }
 
