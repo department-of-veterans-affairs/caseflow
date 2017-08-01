@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
+import StyleGuideExpandableTables from './StyleGuideExpandableTables';
 
 // components
 import Table from '../../components/Table';
@@ -91,5 +92,6 @@ export default function StyleGuideTables() {
       "Assign >>," located on the far right column.
     </p>
     <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk={true}/>
+    <StyleGuideExpandableTables />
   </div>;
 }
