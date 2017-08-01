@@ -66,12 +66,12 @@ export class PdfUI extends React.Component {
   }
 
   showPreviousDocument = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, INTERACTION_TYPES.CLICK);
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.CLICK);
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.nextDocId)();
   }
 

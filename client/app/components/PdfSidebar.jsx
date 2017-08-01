@@ -104,7 +104,7 @@ export class PdfSidebar extends React.Component {
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
   handleAddClick = (event) => {
-    this.props.startPlacingAnnotation(INTERACTION_TYPES.CLICK);
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
     event.stopPropagation();
   }
   render() {

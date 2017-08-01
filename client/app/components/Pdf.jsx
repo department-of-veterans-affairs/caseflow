@@ -514,7 +514,7 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltC = () => {
-    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD);
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
     const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);

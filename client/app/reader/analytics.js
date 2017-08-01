@@ -12,8 +12,8 @@ export const ACTION_NAMES = {
 };
 
 export const INTERACTION_TYPES = {
-  CLICK: 'click',
-  KEYBOARD: 'keyboard'
+  VISIBLE_UI: 'visible-ui',
+  KEYBOARD_SHORTCUT: 'keyboard-shortcut'
 };
 
 export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
