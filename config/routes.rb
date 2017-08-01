@@ -61,7 +61,7 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    resources :appeal, only: [:index] do
+    resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
     end
@@ -71,6 +71,8 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show]
   end
+
+  resources :hearings, only: [:update]
 
   patch "certifications" => "certifications#create"
 

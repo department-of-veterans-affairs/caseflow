@@ -101,6 +101,12 @@ describe Appeal do
     end
   end
 
+  context "#aod" do
+    subject { appeal.aod }
+
+    it { is_expected.to be_truthy }
+  end
+
   context "#ssocs" do
     subject { appeal.ssocs }
 
@@ -255,6 +261,41 @@ describe Appeal do
       it "should return documents not saved in the database" do
         expect(result.first).to_not be_persisted
       end
+
+      context "when efolder_docs_api is disabled" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+
+        context "when application is reader" do
+          before { RequestStore.store[:application] = "reader" }
+
+          it "loads document content from the VBMS service" do
+            expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+            expect(EFolderService).not_to receive(:fetch_documents_for)
+            expect(appeal.fetch_documents!(save: save)).to eq(documents)
+          end
+        end
+      end
+
+      context "when efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+        end
+      end
     end
 
     context "when save is true" do
@@ -271,12 +312,49 @@ describe Appeal do
         end
       end
 
+      context "when efolder_docs_api is disabled" do
+        it "loads document content from the VBMS service" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(result).to eq(documents)
+        end
+      end
+
+      context "when efolder_docs_api is enabled and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+        end
+      end
+
       context "when document doesn't exist in the database" do
         it "should return documents saved in the database" do
           expect(result.first).to be_persisted
         end
       end
     end
+  end
+
+  context "#fetched_documents" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
+    end
+
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents)
+    end
+
+    subject { appeal.fetched_documents }
   end
 
   context ".find_or_create_by_vacols_id" do
@@ -905,13 +983,19 @@ describe Appeal do
   end
 
   context ".to_hash" do
-    context "when issues parameter is nil" do
+    context "when issues parameter is nil and contains additional attributes" do
       subject { appeal.to_hash(viewed: true, issues: nil) }
 
       let!(:appeal) do
         Generators::Appeal.build(
           vbms_id: "999887777S",
-          vacols_record: { soc_date: 4.days.ago }
+          docket_number: "13 11-265",
+          regional_office_key: "RO13",
+          type: "Court Remand",
+          cavc: true,
+          vacols_record: {
+            soc_date: 4.days.ago
+          }
         )
       end
 
@@ -921,6 +1005,13 @@ describe Appeal do
 
       it "issues is null in hash" do
         expect(subject["issues"]).to be_nil
+      end
+
+      it "includes aod, cavc, regional_office and docket_number" do
+        expect(subject["aod"]).to be_truthy
+        expect(subject["cavc"]).to be_truthy
+        expect(subject["regional_office"][:key]).to eq("RO13")
+        expect(subject["docket_number"]).to eq("13 11-265")
       end
     end
 
@@ -1013,7 +1104,8 @@ describe Appeal do
     end
   end
 
-  context ".initialize_appeal_without_lazy_load" do
+  context ".initialize_appeal_without_lazy_load",
+          skip: "Disabled without_lazy_load for appeals for fixing Welcome Gate" do
     let(:date) { Time.zone.today }
     let(:saved_appeal) do
       Generators::Appeal.build(

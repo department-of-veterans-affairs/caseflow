@@ -3,17 +3,21 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
-import Perf from 'react-addons-perf';
+import Analytics from '../util/AnalyticsUtil';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
 import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
+import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
+import { ANALYTICS } from './constants';
 import _ from 'lodash';
 
-export const documentPath = (id) => `/document/${id}/pdf`;
+const fireSingleDocumentModeEvent = _.memoize(() => {
+  Analytics.event(ANALYTICS.VIEW_DOCUMENT_PAGE, 'single-document-mode');
+});
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
@@ -22,8 +26,6 @@ export class DecisionReviewer extends React.PureComponent {
     this.state = {
       isCommentLabelSelected: false
     };
-
-    this.isMeasuringPerf = false;
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
@@ -42,32 +44,6 @@ export class DecisionReviewer extends React.PureComponent {
     history.push(`/${vacolsId}/documents`);
   }
 
-  // eslint-disable-next-line max-statements
-  handleStartPerfMeasurement = (event) => {
-    if (!(event.altKey && event.code === 'KeyP')) {
-      return;
-    }
-    /* eslint-disable no-console */
-
-    // eslint-disable-next-line no-negated-condition
-    if (!this.isMeasuringPerf) {
-      Perf.start();
-      console.log('Started React perf measurements');
-      this.isMeasuringPerf = true;
-    } else {
-      Perf.stop();
-      this.isMeasuringPerf = false;
-
-      const measurements = Perf.getLastMeasurements();
-
-      console.group('Stopped measuring React perf. (If nothing re-rendered, nothing will show up.) Results:');
-      Perf.printInclusive(measurements);
-      Perf.printWasted(measurements);
-      console.groupEnd();
-    }
-    /* eslint-enable no-console */
-  }
-
   clearPlacingAnnotationState = () => {
     if (this.props.pdf.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation();
@@ -76,12 +52,13 @@ export class DecisionReviewer extends React.PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('click', this.clearPlacingAnnotationState);
-    window.removeEventListener('keydown', this.handleStartPerfMeasurement);
   }
 
   componentDidMount = () => {
-    window.addEventListener('keydown', this.handleStartPerfMeasurement);
     window.addEventListener('click', this.clearPlacingAnnotationState);
+    if (this.props.singleDocumentMode) {
+      fireSingleDocumentModeEvent();
+    }
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {
@@ -120,7 +97,17 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = () => <CaseSelect />
+  routedCaseSelect = () => {
+    return <CaseSelectLoadingScreen
+      assignments={this.props.assignments}>
+        <PageRoute
+          exact
+          title="Assignments | Caseflow Reader"
+          path="/"
+          render={() => <CaseSelect />}
+        />
+    </CaseSelectLoadingScreen>;
+  }
 
   documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
@@ -130,7 +117,6 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
       <div>
-
         <PageRoute
           exact
           title="Claims Folder | Caseflow Reader"
@@ -155,9 +141,8 @@ export class DecisionReviewer extends React.PureComponent {
           path="/:vacolsId/documents"
           render={this.documentsRoute}
         />
-        <PageRoute
+        <Route
           exact
-          title="Assignments | Caseflow Reader"
           path="/"
           render={this.routedCaseSelect}
         />
@@ -171,6 +156,7 @@ DecisionReviewer.propTypes = {
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
+  singleDocumentMode: PropTypes.bool,
 
   // These two properties are exclusively for testing purposes
   router: PropTypes.func,

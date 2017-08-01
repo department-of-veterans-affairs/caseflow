@@ -31,6 +31,38 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+.claim-detail-type-info {
+  color: $color-secondary;
+}
+
+.cf-claims-folder-details {
+  p {
+    margin-top: 15px;
+  }
+
+  .claims-folder-issues {
+    margin-top: 20px;
+
+    ol {
+      padding-top: 3px;
+      padding-left: 1em;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+.rc-collapse > .rc-collapse-item-disabled > .rc-collapse-header {
+  color: $color-base;
+}
+
+[id=claim-folder-details-accordion] {
+  .disabled {
+    font-style: italic;
+  }
+}
+
 .cf-pdf-page-container {
   position: absolute;
   top: 4em;
@@ -365,6 +397,21 @@ svg[aria-hidden=true],
         }
       }
     }
+  }
+}
+
+.cf-documents-comments-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .cf-show-all-label {
+    text-align: right;
+  }
+
+  // scss-lint:disable IdSelector
+  #button-comments {
+    margin-right: 0;
   }
 }
 

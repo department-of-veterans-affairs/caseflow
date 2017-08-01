@@ -5,25 +5,6 @@ import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
-const SHOW_EXPAND_ALL = false;
-
-/**
- * This function takes all the documents and check the status of the
- * list comments in the document to see if Show All or Collapse All should be
- * shown based on the state.
- */
-const getExpandAllState = (documents) => {
-  let allExpanded = !SHOW_EXPAND_ALL;
-
-  _.forOwn(documents, (doc) => {
-    if (!doc.listComments) {
-      allExpanded = SHOW_EXPAND_ALL;
-    }
-  });
-
-  return Boolean(allExpanded);
-};
-
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
@@ -111,8 +92,7 @@ const updateFilteredDocIds = (nextState) => {
     ui: {
       filteredDocIds: {
         $set: filteredIds
-      },
-      $merge: { expandAll: getExpandAllState(updatedNextState.documents) }
+      }
     }
   });
 };
@@ -157,8 +137,13 @@ const initialShowErrorMessageState = {
 
 export const initialState = {
   assignments: [],
+  assignmentsLoaded: false,
   loadedAppealId: null,
+  loadedAppeal: {},
   initialDataLoadingFail: false,
+  didLoadAppealFail: false,
+  initialCaseLoadingFail: false,
+  viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
@@ -172,7 +157,6 @@ export const initialState = {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
-    expandAll: false,
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -241,6 +225,12 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload.value
       }
     });
+  case Constants.REQUEST_INITIAL_CASE_FAILURE:
+    return update(state, {
+      initialCaseLoadingFail: {
+        $set: action.payload.value
+      }
+    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
@@ -290,8 +280,27 @@ export const reducer = (state = initialState, action = {}) => {
       {
         assignments: {
           $set: action.payload.assignments
+        },
+        assignmentsLoaded: {
+          $set: true
         }
       });
+  case Constants.RECEIVE_APPEAL_DETAILS:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: action.payload.appeal
+        }
+      }
+    );
+  case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
+    return update(
+      {
+        didLoadAppealFail: {
+          $set: action.payload.value
+        }
+      }
+    );
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -835,17 +844,6 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
-  case Constants.TOGGLE_EXPAND_ALL:
-    return update(state, {
-      documents: {
-        $set: _.mapValues(state.documents, (document) => {
-          return update(document, { listComments: { $set: !state.ui.expandAll } });
-        })
-      },
-      ui: {
-        $merge: { expandAll: !state.ui.expandAll }
-      }
-    });
   case Constants.TOGGLE_COMMENT_LIST:
     modifiedDocuments = update(state.documents,
       {
@@ -859,8 +857,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        documents: { $set: modifiedDocuments },
-        ui: { $merge: { expandAll: getExpandAllState(modifiedDocuments) } }
+        documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return _.merge(
@@ -907,6 +904,22 @@ export const reducer = (state = initialState, action = {}) => {
       {
         openedAccordionSections: {
           $set: action.payload.openedAccordionSections
+        }
+      }
+    );
+  case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
+    return update(
+      state,
+      {
+        viewingDocumentsOrComments: {
+          $set: action.payload.documentsOrComments
+        },
+        documents: {
+          $apply: (docs) =>
+            _.mapValues(docs, (doc) => ({
+              ...doc,
+              listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
+            }))
         }
       }
     );

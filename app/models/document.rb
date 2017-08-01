@@ -29,7 +29,7 @@ class Document < ActiveRecord::Base
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :type, :alt_types, :received_at, :filename, :vacols_date
+  attr_accessor :efolder_id, :type, :alt_types, :received_at, :filename, :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -57,6 +57,13 @@ class Document < ActiveRecord::Base
     TYPES_OVERRIDE[vbms_type] ||
       Caseflow::DocumentTypes::TYPES[vbms_type.to_i] ||
       :other
+  end
+
+  def self.from_efolder(hash)
+    new(efolder_id: hash["id"],
+        type: type_from_vbms_type(hash["type_id"]),
+        received_at: hash["received_at"],
+        vbms_document_id: hash["external_document_id"])
   end
 
   def self.from_vbms_document(vbms_document)
@@ -111,6 +118,7 @@ class Document < ActiveRecord::Base
     super({
       methods: [
         :vbms_document_id,
+        :content_url,
         :type,
         :received_at,
         :filename,
@@ -146,6 +154,14 @@ class Document < ActiveRecord::Base
 
   def serialized_receipt_date
     serialize_date(receipt_date)
+  end
+
+  def content_url
+    if FeatureToggle.enabled?(:efolder_docs_api) && RequestStore.store[:application] == "reader"
+      URI(ExternalApi::EfolderService.efolder_base_url + "/api/v1/documents/#{efolder_id}").to_s
+    else
+      "/document/#{id}/pdf"
+    end
   end
 
   private

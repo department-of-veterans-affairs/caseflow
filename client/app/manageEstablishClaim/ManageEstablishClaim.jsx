@@ -59,10 +59,13 @@ class ManageEstablishClaim extends React.Component {
         header: 'Cases Assigned',
         valueFunction: (userQuota) => <AssignedTasks userQuota={userQuota} />,
         footer: <strong>{quotaTotals.taskCount}</strong>,
-        align: 'center'
+        align: 'center',
+        cellClass: 'cf-no-padding'
       },
       {
-        valueFunction: (userQuota) => <UserQuotaControls userQuota={userQuota} />
+        valueFunction: (userQuota) => <UserQuotaControls userQuota={userQuota} />,
+        align: 'center',
+        cellClass: 'cf-empty-cell-header'
       }
     ];
   }
@@ -91,7 +94,9 @@ class ManageEstablishClaim extends React.Component {
         <div className="cf-title-meta-right">
           <h1 className="title">ARC Work Assignments</h1>
           <div className="meta">
-            {quotaTotals.tasksCompletedCount} out of {quotaTotals.taskCount} cases completed today
+            <span>{quotaTotals.tasksCompletedCount}</span> out of
+            <span> {quotaTotals.taskCount} </span>
+             cases completed today
           </div>
         </div>
 

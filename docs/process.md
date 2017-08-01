@@ -37,5 +37,7 @@ A QA and/or designer should validate that the application functionality matches 
 
 Note: Developers should provide any instructions needed to test this feature in development, such as fake data or URL paths.
 
+If a ticket includes pixel measurements for layout, the QAs are not responsible for validating it. Instead, the QAs will ping the designer, posting a screenshot of the app to the GitHub issue. The designer will signal whether or not the layout looks good. If the designer approves, then the QAs can mark the ticket as **passed**. If the designer does not approve, the QAs mark the ticket as **failed**.
+
 # Additional Notes
 - Labels should be added to stories as appropriate. See the [label definitions document](/docs/labels.md) for more details.

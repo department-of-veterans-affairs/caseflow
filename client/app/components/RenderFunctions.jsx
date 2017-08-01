@@ -312,7 +312,7 @@ export const closeIcon = () => {
 };
 
 export const lockIcon = () =>
-  <svg width="18px" height="20px" viewBox="0 0 18 20" version="1.1"
+  <svg width="16px" height="18px" viewBox="0 0 18 20" version="1.1"
       xmlns="http://www.w3.org/2000/svg" className="cf-lock-icon">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
           <g fillRule="nonzero" fill="#323A45">

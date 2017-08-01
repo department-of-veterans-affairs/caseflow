@@ -5,6 +5,10 @@ $gray-font-color: #6b7079;
 $tag-backgrond-color: #d6d7d9;
 
 .section--document-list {
+  .loading-text {
+    font-style: italic;
+  }
+
   mark {
     background: $color-gold-lightest;
   }
@@ -38,10 +42,6 @@ $tag-backgrond-color: #d6d7d9;
 
   .usa-grid {
     max-width: 85vw;
-
-    .usa-grid-full.document-list-header {
-      max-width: 85vw;
-    }
   }
 
   .documents-table {
@@ -283,9 +283,23 @@ $tag-backgrond-color: #d6d7d9;
 }
 
 .document-list-header {
-  .num-of-documents {
-    color: $gray-font-color;
-    padding: 5px;
+  display: flex;
+  justify-content: space-between;
+
+  .search-bar-and-doc-count {
+    display: flex;
+    flex-grow: 2;
+
+    .usa-search {
+      margin-right: 25px;
+      flex-grow: 1;
+    }
+
+    .num-of-documents {
+      color: $gray-font-color;
+      padding: 5px;
+      flex-grow: 1;
+    }
   }
 }
 

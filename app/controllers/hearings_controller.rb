@@ -2,6 +2,11 @@ class HearingsController < ApplicationController
   # :nocov:
   before_action :verify_access
 
+  def update
+    hearing.update(update_params)
+    render json: hearing.to_hash
+  end
+
   def logo_name
     "Hearing Prep"
   end
@@ -26,6 +31,14 @@ class HearingsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "hearings"
+  end
+
+  def update_params
+    params.require("hearing").permit(:notes,
+                                     :disposition,
+                                     :hold_open,
+                                     :aod,
+                                     :transcript_requested)
   end
 
   def date_from_string(date_string)

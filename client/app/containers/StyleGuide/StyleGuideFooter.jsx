@@ -63,7 +63,7 @@ export default class StyleGuideFooter extends React.Component {
      of the app that they are viewing.</p>
 
 
-    <div>
+   <div>
       <nav className="cf-nav">
         <a href="#" id="cf-logo-link">
           <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-dispatch">
@@ -101,21 +101,23 @@ export default class StyleGuideFooter extends React.Component {
       </div>
     </div>
 
-    <footer className="cf-txt-c cf-app-footer">
-     <div>
-        <div className="cf-push-left">
-           <span title="Recent build date goes here">Built </span> with <abbr title="love">♡</abbr> by
-          the <a href="https://www.usds.gov/">Digital Service at
-          the <abbr title="Department of Veterans Affairs">VA</abbr>
-          </a>
+    <div className="cf-sg-footer">
+      <footer className="cf-txt-c cf-app-footer">
+       <div>
+          <div className="cf-push-left">
+             <span title="Recent build date goes here">Built </span> with <abbr title="love">♡</abbr> by
+            the <a href="https://www.usds.gov/">Digital Service at
+            the <abbr title="Department of Veterans Affairs">VA</abbr>
+            </a>
+          </div>
+          <div className="cf-push-right">
+            <a href="#">
+             Send feedback
+            </a>
+          </div>
         </div>
-        <div className="cf-push-right">
-          <a href="#">
-           Send feedback
-          </a>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
   </div>;
   }
 }

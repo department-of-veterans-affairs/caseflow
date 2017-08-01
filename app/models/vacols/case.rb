@@ -234,5 +234,40 @@ class VACOLS::Case < VACOLS::Record
     end
   end
 
+  def self.aod(vacols_id)
+    conn = connection
+    vacols_id = conn.quote(vacols_id)
+
+    conn.transaction do
+      query = <<-SQL
+        SELECT (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
+        FROM BRIEFF
+
+        LEFT JOIN (
+          SELECT TSKTKNM, count(*) CNT
+          FROM ASSIGN
+          WHERE TSKACTCD in ('B', 'B1', 'B2')
+          GROUP BY TSKTKNM
+        ) AOD_DIARIES
+        ON AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
+        LEFT JOIN (
+          SELECT FOLDER_NR, count(*) CNT
+          FROM HEARSCHED
+          WHERE HEARING_TYPE IN ('C', 'T', 'V')
+            AND AOD IN ('G', 'Y')
+          GROUP BY FOLDER_NR
+        ) AOD_HEARINGS
+        ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
+        WHERE BRIEFF.BFKEY = #{vacols_id}
+      SQL
+
+      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_id}", name: "Case.aod",
+                                                                              service: :vacols) do
+        conn.exec_query(query)
+      end
+      aod_result.to_hash.first["aod"]
+    end
+  end
+
   # :nocov:
 end
