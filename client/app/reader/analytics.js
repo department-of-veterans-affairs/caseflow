@@ -16,8 +16,9 @@ export const INTERACTION_TYPES = {
   KEYBOARD: 'keyboard'
 };
 
-export const reduxAnalyticsMiddleware = (store) => (next) => ({ meta, ...action }) => {
+export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
   const dispatchedAction = next(action);
+  const { meta } = action;
 
   if (meta) {
     if (_.isFunction(meta.analytics)) {

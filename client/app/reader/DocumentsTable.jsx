@@ -17,7 +17,7 @@ import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
-import { setDocListScrollPosition, changeSortState,
+import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
   setTagFilter, setCategoryFilter, selectCurrentPdfLocally } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
@@ -257,16 +257,6 @@ class DocumentsTable extends React.Component {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
 
-    const clearFilters = () => {
-      _(Constants.documentCategories).keys().
-        forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
-    };
-
-    const clearTagFilters = () => {
-      _(this.props.docFilterCriteria.tag).keys().
-        forEach((tagText) => this.props.setTagFilter(tagText, false));
-    };
-
     const anyFiltersSet = (filterType) => (
       Boolean(_.some(this.props.docFilterCriteria[filterType]))
     );
@@ -327,7 +317,7 @@ class DocumentsTable extends React.Component {
 
           {isCategoryDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.category}
-              clearFilters={clearFilters}
+              clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
               handleClose={this.toggleCategoryDropdownFilterVisiblity}>
@@ -379,7 +369,7 @@ class DocumentsTable extends React.Component {
           />
           {isTagDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
-              clearFilters={clearTagFilters}
+              clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
               handleClose={this.toggleTagDropdownFilterVisiblity}>
@@ -442,6 +432,8 @@ DocumentsTable.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setDocListScrollPosition,
+    clearTagFilters,
+    clearCategoryFilters,
     setTagFilter,
     setCategoryFilter
   }, dispatch),

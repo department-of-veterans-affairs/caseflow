@@ -423,6 +423,26 @@ export const setCategoryFilter = (categoryName, checked) => ({
   }
 });
 
+export const clearTagFilters = () => ({
+  type: Constants.CLEAR_TAG_FILTER,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-tag-filters'
+    }
+  }
+});
+
+export const clearCategoryFilters = () => ({
+  type: Constants.CLEAR_CATEGORY_FILTER,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-category-filters'
+    }
+  }
+});
+
 export const clearAllFilters = () => ({
   type: Constants.CLEAR_ALL_FILTERS,
   meta: {
