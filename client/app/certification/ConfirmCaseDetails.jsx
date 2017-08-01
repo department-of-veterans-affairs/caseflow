@@ -399,7 +399,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
-            `Caseflow will update the representative type in VACOLS with information from VBMS.`
+            'Caseflow will update the representative type in VACOLS with information from VBMS.'
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
