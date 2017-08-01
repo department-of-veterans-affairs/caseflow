@@ -1,45 +1,4 @@
 describe Hearing do
-  before do
-    Timecop.freeze(Time.utc(2017, 2, 2))
-    Time.zone = "America/Chicago"
-  end
-
-  context ".load_from_vacols" do
-    subject { Hearing.load_from_vacols(hearing_hash) }
-    let(:appeal) { Generators::Appeal.create }
-    let(:user) { Generators::User.create }
-    let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing_hash) do
-      OpenStruct.new(
-        user_id: user.vacols_id,
-        hearing_venue: "SO62",
-        hearing_date: date,
-        folder_nr: appeal.vacols_id,
-        hearing_type: "V",
-        hearing_pkseq: "12345678",
-        hearing_disp: "N",
-        aod: "Y",
-        tranreq: nil,
-        holddays: 90,
-        notes1: "test notes"
-      )
-    end
-
-    it "assigns values properly" do
-      expect(subject.venue[:city]).to eq("San Antonio")
-      expect(subject.type).to eq(:video)
-      expect(subject.vacols_record).to eq(hearing_hash)
-      expect(subject.date).to eq(date)
-      expect(subject.appeal.id).to eq(appeal.id)
-      expect(subject.user.id).to eq(user.id)
-      expect(subject.disposition).to eq(:no_show)
-      expect(subject.aod).to eq :filed
-      expect(subject.transcript_requested).to eq nil
-      expect(subject.hold_open).to eq 90
-      expect(subject.notes).to eq "test notes"
-    end
-  end
-
   context ".update" do
     subject { hearing.update(hearing_hash) }
     let(:hearing) { Generators::Hearing.build }
