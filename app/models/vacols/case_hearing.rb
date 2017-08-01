@@ -65,15 +65,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
 
-    def update_hearing!(pkseq, hearing_info)
-      record = VACOLS::CaseHearing.find_by(hearing_pkseq: pkseq)
-
-      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
-      MetricsService.record("VACOLS: update_hearing! #{pkseq}",
-                            service: :vacols,
-                            name: "update_hearing") do
-        record.update(attrs)
-      end
+    def load_hearing(pkseq)
+      select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
     private
@@ -93,11 +86,24 @@ class VACOLS::CaseHearing < VACOLS::Record
              :aod,
              :holddays,
              :tranreq,
+             :board_member,
+             :mduser,
+             :mdtime,
              :sattyid)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where(hearing_type: HEARING_TYPES.keys)
     end
   end
 
+  def update_hearing!(hearing_info)
+    slogid = staff.try(:slogid)
+
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
+    MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
+                          service: :vacols,
+                          name: "update_hearing") do
+      update(attrs.merge(mduser: slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+    end
+  end
   # :nocov:
 end

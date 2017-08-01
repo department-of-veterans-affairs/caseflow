@@ -314,12 +314,6 @@ class Fakes::AppealRepository
   end
 
   def self.static_reader_documents
-    super_long_title = if FeatureToggle.enabled?(:efolder_docs_api)
-                         "This is a very long document type that's loaded from eFOLDER!"
-                       else
-                         "This is a very long document type let's see what it does to the UI!"
-                       end
-
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD",
                                  category_procedural: true, category_case_summary: true),
@@ -328,7 +322,7 @@ class Fakes::AppealRepository
                                  category_medical: true, category_procedural: true, category_case_summary: true),
       Generators::Document.build(
         vbms_document_id: 5,
-        type: super_long_title,
+        type: "This is a very long document type let's see what it does to the UI!",
         received_at: 7.days.ago,
         category_other: true),
       Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
@@ -435,6 +429,6 @@ class Fakes::AppealRepository
   end
 
   def self.aod(_vacols_id)
-    1
+    true
   end
 end

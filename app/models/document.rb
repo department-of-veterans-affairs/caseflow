@@ -134,6 +134,7 @@ class Document < ActiveRecord::Base
     super({
       methods: [
         :vbms_document_id,
+        :content_url,
         :type,
         :received_at,
         :filename,
@@ -175,6 +176,14 @@ class Document < ActiveRecord::Base
   def set_categories
     if CASE_SUMMARY_TYPES.include?(type)
       self.category_case_summary = true
+    end
+  end
+
+  def content_url
+    if FeatureToggle.enabled?(:efolder_docs_api) && RequestStore.store[:application] == "reader"
+      URI(ExternalApi::EfolderService.efolder_base_url + "/api/v1/documents/#{efolder_id}").to_s
+    else
+      "/document/#{id}/pdf"
     end
   end
 

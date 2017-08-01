@@ -549,8 +549,9 @@ select {
   .cf-form-int-input {
     input {
       &[class*="cf-form-textinput"] {
-        margin-bottom: 0;
+        margin: 0 12px;
         width: 3em;
+        height: 36px;
       }
     }
   }
@@ -623,18 +624,16 @@ select {
   }
 
   .title {
-    width: 60%;
+    width: 55%;
   }
 
   .meta {
-    width: 40%;
     text-align: right;
-    font-size: 1.118em;
+    font-size: 1.15em;
+    width: 45%;
 
-    .value {
-      font-size: 1.263em;
-      position: relative;
-      top: .1em;
+    span {
+      font-size: 1.26em;
     }
   }
 }
