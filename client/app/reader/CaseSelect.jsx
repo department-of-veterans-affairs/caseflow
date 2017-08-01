@@ -31,14 +31,14 @@ class CaseSelect extends React.PureComponent {
     return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
   }
 
-  getAODorCAVCforCase = (appeal) => {
+  getVeteranNameAndClaimType = (appeal) => {
     return <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
   }
 
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
-      valueFunction: this.getAODorCAVCforCase
+      valueFunction: this.getVeteranNameAndClaimType
     },
     {
       header: 'Veteran ID',
