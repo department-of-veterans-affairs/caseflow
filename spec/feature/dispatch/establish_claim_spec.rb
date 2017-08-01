@@ -528,7 +528,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
-      scenario "Establish a new claim with special issues by routing via email", focus: true do
+      scenario "Establish a new claim with special issues by routing via email" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
@@ -555,7 +555,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
-      # :nocov:
       context "When there is an existing 070 EP",
               skip: "This test hangs somewhat regularly for unknown reasons" do
         before do
@@ -587,12 +586,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
     end
 
-    # :nocov:
-
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
 
-      # :nocov:
       scenario "Establish a new claim routed to ARC",
                skip: "This test is failing because of a stale element reference"do
         # Mock the claim_id returned by VBMS's create end product
@@ -658,8 +654,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Way to go! You have completed all the claims assigned to you.")
         expect(page).to have_css(".usa-button-disabled")
       end
-
-      # :nocov:
 
       scenario "Establish a new claim with special issues" do
         visit "/dispatch/establish-claim"
