@@ -19,8 +19,6 @@ const fireSingleDocumentModeEvent = _.memoize(() => {
   Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
 
-export const documentPath = (id) => `/document/${id}/pdf`;
-
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
     super(props);

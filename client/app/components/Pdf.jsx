@@ -464,7 +464,10 @@ export class Pdf extends React.PureComponent {
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
     }
 
-    return PDFJS.getDocument(file).then((pdfDocument) => {
+    return PDFJS.getDocument({
+      url: file,
+      withCredentials: true
+    }).then((pdfDocument) => {
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
