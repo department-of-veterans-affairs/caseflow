@@ -133,6 +133,59 @@ RSpec.feature "Reader" do
       ]
     end
 
+    feature "Document header filtering message" do
+      background do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      end
+
+      scenario "filtering categories" do
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+        find(".checkbox-wrapper-medical").click
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (2)")
+
+        # deselect medical filter
+        find(".checkbox-wrapper-medical").click
+        expect(page).to have_content("Categories (1)")
+      end
+
+      scenario "filtering tags and comments" do
+        find("#tags-header .table-icon").click
+        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
+        tags_checkboxes[0].click
+        tags_checkboxes[1].click
+        expect(page).to have_content("Issue tags (2)")
+
+        # unchecking tag filters
+        tags_checkboxes[0].click
+        expect(page).to have_content("Issue tags (1)")
+
+        tags_checkboxes[1].click
+        expect(page).to_not have_content("Issue tags")
+      end
+
+      scenario "filtering comments" do
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+      end
+
+      scenario "clear all filters" do
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+
+        # When the "clear filters" button is clicked, the filtering message is reset,
+        # and focus goes back on the Document toggle.
+        find("#clear-filters").click
+        expect(page).not_to have_content("Filtering by:")
+        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
+      end
+    end
+
     context "Welcome gate page" do
       let(:appeal2) do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
@@ -141,7 +194,7 @@ RSpec.feature "Reader" do
       before do
         Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
       end
-
+      
       scenario "Enter a case" do
         visit "/reader/appeal"
 
@@ -271,45 +324,6 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "Form 9"
       find("#tags").send_keys(:arrow_right)
       expect_doc_type_to_be "Form 9"
-    end
-
-    context "Document header filtering message" do
-      scenario "filtering categories, tags and comments" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-        find("#categories-header .table-icon").click
-        find(".checkbox-wrapper-procedural").click
-        find(".checkbox-wrapper-medical").click
-
-        expect(page).to have_content("Filtering by:")
-        expect(page).to have_content("Categories (2)")
-
-        # deselect medical filter
-        find(".checkbox-wrapper-medical").click
-        expect(page).to have_content("Categories (1)")
-
-        find("#tags-header .table-icon").click
-        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
-        tags_checkboxes[0].click
-        tags_checkboxes[1].click
-        expect(page).to have_content("Issue tags (2)")
-
-        # unchecking tag filters
-        tags_checkboxes[0].click
-        expect(page).to have_content("Issue tags (1)")
-
-        tags_checkboxes[1].click
-        expect(page).to_not have_content("Issue tags")
-
-        click_on "Comments"
-        expect(page).to have_content("Comments.")
-
-        # When the "clear filters" button is clicked, the filtering message is reset,
-        # and focus goes back on the Document toggle.
-        find("#clear-filters").click
-        expect(page).not_to have_content("Filtering by:")
-        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
-      end
     end
 
     scenario "PdfListView Dropdown" do
