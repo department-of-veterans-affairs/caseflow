@@ -1,4 +1,5 @@
 require "rails_helper"
+require "faker"
 
 describe Document do
   let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
@@ -34,6 +35,69 @@ describe Document do
     context "when received_at is a datetime" do
       let(:received_at) { Time.zone.now }
       it { is_expected.to eq(Time.zone.today) }
+    end
+  end
+
+  context ".content_url" do
+    context "efolder_docs_api is enabled" do
+      before do
+        FeatureToggle.enable!(:efolder_docs_api)
+      end
+
+      after { FeatureToggle.disable!(:efolder_docs_api) }
+
+      context "application is reader" do
+        before do
+          RequestStore.store[:application] = "reader"
+          expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        end
+
+        let(:base_url) { Faker::Internet.url }
+
+        it "returns the URL for the document in efolder" do
+          document.efolder_id = Generators::Document.generate_external_id
+          expect(document.content_url).to eq(base_url + "/api/v1/documents/#{document.efolder_id}")
+        end
+      end
+
+      context "application is not reader" do
+        before do
+          RequestStore.store[:application] = Faker::Cat.name
+        end
+
+        it "returns the URL for the document in VBMS" do
+          document.id = Random.rand(999_999_999)
+          expect(document.content_url).to eq("/document/#{document.id}/pdf")
+        end
+      end
+    end
+
+    context "efolder_docs_api is disabled" do
+      before do
+        FeatureToggle.disable!(:efolder_docs_api)
+      end
+
+      context "application is not reader" do
+        before do
+          RequestStore.store[:application] = Faker::Cat.name
+        end
+
+        it "returns the URL for the document in VBMS" do
+          document.id = Random.rand(999_999_999)
+          expect(document.content_url).to eq("/document/#{document.id}/pdf")
+        end
+      end
+
+      context "application is reader" do
+        before do
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "returns the URL for the document in VBMS" do
+          document.id = Random.rand(999_999_999)
+          expect(document.content_url).to eq("/document/#{document.id}/pdf")
+        end
+      end
     end
   end
 
