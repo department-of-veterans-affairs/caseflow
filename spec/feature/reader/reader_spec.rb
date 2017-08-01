@@ -292,8 +292,8 @@ RSpec.feature "Reader" do
         click_on "Comments"
         expect(page).to have_content("Comments.")
 
-        # when clear filters is clicked, Filtering message is reset,
-        # focus goes back on Document toggle.
+        # When the "clear filters" button is clicked, the filtering message is reset,
+        # and focus goes back on the Document toggle.
         find("#clear-filters").click
         expect(page).not_to have_content("Filtering by:")
         expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
