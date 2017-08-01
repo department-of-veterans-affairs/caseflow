@@ -31,17 +31,13 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+.claim-detail-type-info {
+  color: $color-secondary;
+}
+
 .cf-claims-folder-details {
-  h1 {
-    margin-bottom: 20px;
-  }
-
-  .claim-detail-aod {
-    color: $color-secondary;
-  }
-
-  .claim-detail-cavc {
-    color: $color-primary;
+  p {
+    margin-top: 15px;
   }
 
   .claims-folder-issues {
