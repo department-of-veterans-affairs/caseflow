@@ -1,4 +1,9 @@
 describe HearingRepository do
+  before do
+    Timecop.freeze(Time.utc(2017, 2, 2))
+    Time.zone = "America/Chicago"
+  end
+
   context ".transform_hearing_info" do
     subject { HearingRepository.transform_hearing_info(info) }
 
@@ -58,6 +63,38 @@ describe HearingRepository do
         result = subject
         expect(result.values.size).to eq 0
       end
+    end
+  end
+
+  context ".set_vacols_values" do
+    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
+    let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
+    let(:hearing) { Generators::Hearing.create }
+
+    let(:hearing_hash) do
+      OpenStruct.new(
+        hearing_venue: "SO62",
+        hearing_date: date,
+        hearing_type: "V",
+        hearing_pkseq: "12345678",
+        hearing_disp: "N",
+        aod: "Y",
+        tranreq: nil,
+        holddays: 90,
+        notes1: "test notes"
+      )
+    end
+
+    it "assigns values properly" do
+      expect(subject.venue[:city]).to eq("San Antonio")
+      expect(subject.type).to eq(:video)
+      expect(subject.vacols_record).to eq(hearing_hash)
+      expect(subject.date).to eq(date)
+      expect(subject.disposition).to eq(:no_show)
+      expect(subject.aod).to eq :filed
+      expect(subject.transcript_requested).to eq nil
+      expect(subject.hold_open).to eq 90
+      expect(subject.notes).to eq "test notes"
     end
   end
 end
