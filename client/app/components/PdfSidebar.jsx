@@ -167,7 +167,7 @@ export class PdfSidebar extends React.Component {
             classNames={['cf-pdf-button']}
             id="hide-menu-header"
             onClick={this.props.handleTogglePdfSidebar}>
-            <h2>
+            <h2 className="cf-non-stylized-header">
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </h2>
           </Button>

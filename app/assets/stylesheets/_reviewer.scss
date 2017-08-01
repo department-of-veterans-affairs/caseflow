@@ -146,11 +146,10 @@ svg[aria-hidden=true],
     margin-top: 15px;
   }
 
-  [id="hide-menu-header"] {
-    h2 {
-      font-size: 1.7rem;
-      margin: 0;
-    }
+  .cf-non-stylized-header {
+    font-size: inherit;
+    margin: 0;
+    color: inherit;
   }
 }
 
