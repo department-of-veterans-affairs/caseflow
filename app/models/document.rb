@@ -26,7 +26,19 @@ class Document < ActiveRecord::Base
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
-  CASE_SUMMARY_TYPES = ["NOD", "SOC", "Form 9", "BVA Decision", "SSOC"]
+  CASE_SUMMARY_TYPES = [
+    "NOD",
+    "Notice of Disagreement",
+    "SOC",
+    "Statement of Case (SOC)",
+    "Form 9",
+    "VA 8 Certification of Appeal",
+    "BVA Decision",
+    "SSOC",
+    "Supplemental Statement of Case (SSOC)",
+    "DD 214 Certified Original - Certificate of Release or Discharge From Active Duty",
+    "Rating Decision - Codesheet"
+  ]
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
