@@ -9,7 +9,7 @@ module HearingMapper
       nil
     when "C"
       "5"
-    else
+    when "N"
       "5"
     end
   end

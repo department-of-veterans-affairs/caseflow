@@ -28,5 +28,37 @@ describe HearingMapper do
 
       it { is_expected.to eq "6" }
     end
+
+    context "when disposition is held and it is travel board hearing" do
+      let(:hearing_disp) { "H" }
+      let(:bfhr) { "2" }
+      let(:bfdocind) { nil }
+
+      it { is_expected.to eq "2" }
+    end
+
+    context "when disposition is postponed" do
+      let(:hearing_disp) { "P" }
+      let(:bfhr) { "1" }
+      let(:bfdocind) { "V" }
+
+      it { is_expected.to eq nil }
+    end
+
+    context "when disposition is cancelled" do
+      let(:hearing_disp) { "C" }
+      let(:bfhr) { "2" }
+      let(:bfdocind) { nil }
+
+      it { is_expected.to eq "5" }
+    end
+
+    context "when disposition is not held" do
+      let(:hearing_disp) { "N" }
+      let(:bfhr) { "2" }
+      let(:bfdocind) { nil }
+
+      it { is_expected.to eq "5" }
+    end
   end
 end
