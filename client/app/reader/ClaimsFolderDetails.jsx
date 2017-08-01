@@ -4,41 +4,35 @@ import _ from 'lodash';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 
-const TYPE_INFO = {
-  aod: { text: 'AOD',
-    className: 'claim-detail-aod' },
-  cavc: { text: 'CAVC',
-    className: 'claim-detail-cavc' },
-  both: { text: 'AOD, CAVC',
-    className: 'claim-detail-aod' },
-  none: { text: '',
-    className: '' }
-};
-
-
 class ClaimsFolderDetails extends React.PureComponent {
 
   getClaimTypeDetailInfo() {
     const { appeal } = this.props;
-    let appealType = TYPE_INFO.none;
+    let appealTypeInfo = '';
 
     if (appeal.cavc && appeal.aod) {
-      appealType = TYPE_INFO.both;
+      appealTypeInfo = 'AOD, CAVC';
     } else if (appeal.cavc) {
-      appealType = TYPE_INFO.cavc;
+      appealTypeInfo = 'CAVC';
     } else if (appeal.aod) {
-      appealType = TYPE_INFO.aod;
+      appealTypeInfo = 'AOD';
     }
 
-    return <span className={appealType.className}>{appealType.text}</span>;
+    return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
   }
 
   render() {
-    const { appeal } = this.props;
+    const { appeal, documents } = this.props;
     const appealDoesntExist = _.isEmpty(appeal);
+    const docsViewedCount = _.filter(documents, 'opened_by_current_user').length;
 
     return <div className="cf-claims-folder-details">
-      {!appealDoesntExist && <h1>{appeal.veteran_full_name}'s Claims Folder</h1>}
+      <div>
+        { !appealDoesntExist && <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1> }
+        <p className="cf-push-right">
+          You've viewed { docsViewedCount } out of { documents.length } documents
+        </p>
+      </div>
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
         <AccordionSection id="claim-folder-details-accordion" className="usa-grid"
           disabled={appealDoesntExist} title={appealDoesntExist ? 'Loading...' : 'Claims folder details'}>
