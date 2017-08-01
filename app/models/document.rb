@@ -32,6 +32,8 @@ class Document < ActiveRecord::Base
     "SOC",
     "Statement of Case (SOC)",
     "Form 9",
+    "VA 9 Appeal to Board of Appeals",
+    "Form 8",
     "VA 8 Certification of Appeal",
     "BVA Decision",
     "SSOC",
