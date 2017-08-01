@@ -26,6 +26,8 @@ class Document < ActiveRecord::Base
     "Appeals - Supplemental Statement of the Case (SSOC)" => "SSOC"
   }.freeze
 
+  CASE_SUMMARY_TYPES = ["NOD", "SOC", "Form 9", "BVA Decision", "SSOC"]
+
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
@@ -154,6 +156,12 @@ class Document < ActiveRecord::Base
 
   def serialized_receipt_date
     serialize_date(receipt_date)
+  end
+
+  def set_categories
+    if CASE_SUMMARY_TYPES.include?(type)
+      self.category_case_summary = true
+    end
   end
 
   private
