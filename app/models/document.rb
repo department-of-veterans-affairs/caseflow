@@ -40,7 +40,7 @@ class Document < ActiveRecord::Base
     "Supplemental Statement of Case (SSOC)",
     "DD 214 Certified Original - Certificate of Release or Discharge From Active Duty",
     "Rating Decision - Codesheet"
-  ]
+  ].freeze
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
@@ -174,9 +174,7 @@ class Document < ActiveRecord::Base
   end
 
   def set_categories
-    if CASE_SUMMARY_TYPES.include?(type)
-      self.category_case_summary = true
-    end
+    self.category_case_summary = true if CASE_SUMMARY_TYPES.include?(type)
   end
 
   def content_url
