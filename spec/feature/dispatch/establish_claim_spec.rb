@@ -528,12 +528,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("routed_to_ro")
       end
 
-      scenario "Establish a new claim with special issues by routing via email" do
+      scenario "Establish a new claim with special issues by routing via email", focus: true do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
         find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
         click_on "Route claim"
+
+        # Validate the correct steps on the progress bar are activated
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Decision")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Route Claim")
+        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Confirmation")
 
         # Validate I can return to Review Decision from the VACOLS Update page
         click_on "< Back to Review Decision"
@@ -595,11 +600,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Review Decision")
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
-        # Validate the correct steps on the progress bar are activated
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Decision")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Route Claim")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Confirmation")
 
         click_on "Route claim"
 
