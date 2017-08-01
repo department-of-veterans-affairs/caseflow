@@ -393,11 +393,18 @@ export const setPdfReadyToShow = (docId) => ({
   }
 });
 
-export const setTagFilter = (text, checked) => ({
+export const setTagFilter = (text, checked, tagId) => ({
   type: Constants.SET_TAG_FILTER,
   payload: {
     text,
     checked
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: `${checked ? 'set' : 'unset'}-tag-filter`,
+      label: tagId
+    }
   }
 });
 
@@ -410,7 +417,7 @@ export const setCategoryFilter = (categoryName, checked) => ({
   meta: {
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'select' : 'unselect'} category filter`,
+      action: `${checked ? 'select' : 'unselect'}-category-filter`,
       label: categoryName
     }
   }
