@@ -279,8 +279,13 @@ RSpec.feature "Reader" do
 
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
+        find(".checkbox-wrapper-medical").click
 
         expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (2)")
+
+        # deselect medical filter
+        find(".checkbox-wrapper-medical").click
         expect(page).to have_content("Categories (1)")
 
         find("#tags-header .table-icon").click
@@ -288,6 +293,13 @@ RSpec.feature "Reader" do
         tags_checkboxes[0].click
         tags_checkboxes[1].click
         expect(page).to have_content("Issue tags (2)")
+
+        # unchecking tag filters
+        tags_checkboxes[0].click
+        expect(page).to have_content("Issue tags (1)")
+
+        tags_checkboxes[1].click
+        expect(page).to_not have_content("Issue tags")
 
         click_on "Comments"
         expect(page).to have_content("Comments.")
