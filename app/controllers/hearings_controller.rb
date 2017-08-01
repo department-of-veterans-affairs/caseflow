@@ -15,6 +15,17 @@ class HearingsController < ApplicationController
     hearings_dockets_path
   end
 
+  # Temp action to simulate the autosave feature
+  def save_data
+    sleep 1
+    Rails.logger.info "****************************"
+    Rails.logger.info "****************************"
+    Rails.logger.info "Saving #{params}"
+    Rails.logger.info "****************************"
+    Rails.logger.info "****************************"
+    render status: 200, json: {}
+  end
+
   private
 
   def hearing

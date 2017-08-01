@@ -15,8 +15,9 @@ RSpec.feature "Hearings" do
     before do
       current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
 
-      2.times do
+      2.times do |index|
         Generators::Hearing.build(
+          id: index,
           user: current_user,
           date: 5.days.from_now,
           type: "video"
@@ -24,6 +25,7 @@ RSpec.feature "Hearings" do
       end
 
       Generators::Hearing.build(
+        id: 3,
         user: current_user,
         type: "central_office",
         date: Time.zone.now
@@ -84,17 +86,15 @@ RSpec.feature "Hearings" do
       visit "/hearings/dockets/2017-01-05"
 
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
-      link_text = link.text
+      link_href = find(".cf-hearings-docket-appellant", match: :first).find("a")[:href]
 
       link.click
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Veteran ID: #{link_text}")
 
-      visit "/hearings/worksheets/#{link_text}"
+      visit link_href
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Veteran ID: #{link_text}")
     end
   end
 end

@@ -7,7 +7,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
-import { populateDockets } from '../../../app/hearings/actions/Dockets';
+import { populateDockets } from '../../../app/hearings/actions/dockets';
 import DocketsContainer from '../../../app/hearings/DocketsContainer';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));

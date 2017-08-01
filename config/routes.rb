@@ -69,8 +69,11 @@ Rails.application.routes.draw do
 
   namespace :hearings do
     resources :dockets, only: [:index, :show]
-    resources :worksheets, only: [:update, :show]
+    resources :worksheets, only: [:update]
   end
+
+  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
+  post 'hearings/save_data' => "hearings#save_data"
 
   resources :hearings, only: [:update]
 

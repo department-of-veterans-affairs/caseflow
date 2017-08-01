@@ -12,7 +12,8 @@ export default class Checkbox extends React.Component {
       name,
       required,
       value,
-      errorMessage
+      errorMessage,
+      tabIndex
     } = this.props;
 
     let classNames = [
@@ -35,6 +36,7 @@ export default class Checkbox extends React.Component {
           type="checkbox"
           id={name}
           checked={value}
+          tabIndex={tabIndex}
         />
         <label className="question-label" htmlFor={name}>
           {label || name} {required && <span className="cf-required">Required</span>}
