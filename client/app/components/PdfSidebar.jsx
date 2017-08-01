@@ -178,6 +178,7 @@ export class PdfSidebar extends React.Component {
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
                 <DocCategoryPicker
+                  allowReadOnly={true}
                   handleCategoryToggle={
                     _.partial(this.props.handleCategoryToggle, this.props.doc.id)
                   }
