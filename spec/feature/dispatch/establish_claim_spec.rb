@@ -555,6 +555,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
+      # :nocov:
       context "When there is an existing 070 EP",
               skip: "This test hangs somewhat regularly for unknown reasons" do
         before do
@@ -585,6 +586,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         end
       end
     end
+
+    # :nocov:
 
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
