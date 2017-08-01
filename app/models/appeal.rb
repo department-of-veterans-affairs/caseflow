@@ -265,7 +265,6 @@ class Appeal < ActiveRecord::Base
       if existing_documents.key?(document.vbms_document_id)
         document.merge_into(existing_documents[document.vbms_document_id])
       else
-        document.set_categories
         document.save!
         document
       end

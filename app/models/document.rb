@@ -140,7 +140,6 @@ class Document < ActiveRecord::Base
         :filename,
         :category_procedural,
         :category_medical,
-        :category_case_summary,
         :category_other,
         :serialized_vacols_date,
         :serialized_receipt_date,
@@ -171,10 +170,6 @@ class Document < ActiveRecord::Base
 
   def serialized_receipt_date
     serialize_date(receipt_date)
-  end
-
-  def set_categories
-    self.category_case_summary = true if CASE_SUMMARY_TYPES.include?(type)
   end
 
   def content_url

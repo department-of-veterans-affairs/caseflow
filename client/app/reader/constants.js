@@ -101,16 +101,16 @@ export const documentCategories = {
     humanName: 'Medical',
     svg: <CategoryIcon color="#FF6868" />
   },
+  other: {
+    renderOrder: 3,
+    humanName: 'Other Evidence',
+    svg: <CategoryIcon color="#3AD2CF" />
+  },
   case_summary: {
     renderOrder: 2,
     humanName: 'Case Summary',
     svg: <CategoryIcon color="#FDC231" />,
     readOnly: true
-  },
-  other: {
-    renderOrder: 3,
-    humanName: 'Other Evidence',
-    svg: <CategoryIcon color="#3AD2CF" />
   }
 };
 

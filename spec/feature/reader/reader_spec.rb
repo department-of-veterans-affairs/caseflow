@@ -118,8 +118,7 @@ RSpec.feature "Reader" do
           received_at: 5.days.ago,
           vbms_document_id: 5,
           category_medical: true,
-          category_other: true,
-          category_case_summary: true
+          category_other: true
         ),
         Generators::Document.create(
           filename: "My NOD",
