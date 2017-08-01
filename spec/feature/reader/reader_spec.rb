@@ -118,7 +118,8 @@ RSpec.feature "Reader" do
           received_at: 5.days.ago,
           vbms_document_id: 5,
           category_medical: true,
-          category_other: true
+          category_other: true,
+          category_case_summary: true
         ),
         Generators::Document.create(
           filename: "My NOD",
@@ -723,7 +724,7 @@ RSpec.feature "Reader" do
 
       doc_1_categories =
         get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
-      expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
+      expect(doc_1_categories).to eq(["Medical", "Case Summary", "Other Evidence"])
 
       click_on documents[0].type
 
@@ -742,12 +743,14 @@ RSpec.feature "Reader" do
 
       click_on documents[1].type
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Case Summary", "Other Evidence"])
+      expect(find("#case_summary", visible: false).disabled?).to be true
 
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
       expect(find("#medical", visible: false).checked?).to be true
+      expect(find("#case_summary", visible: false).checked?).to be false
       expect(find("#other", visible: false).checked?).to be false
     end
 
