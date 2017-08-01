@@ -4,22 +4,9 @@ import _ from 'lodash';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 
+import { getClaimTypeDetailInfo } from '../reader/utils';
+
 class ClaimsFolderDetails extends React.PureComponent {
-
-  getClaimTypeDetailInfo() {
-    const { appeal } = this.props;
-    let appealTypeInfo = '';
-
-    if (appeal.cavc && appeal.aod) {
-      appealTypeInfo = 'AOD, CAVC';
-    } else if (appeal.cavc) {
-      appealTypeInfo = 'CAVC';
-    } else if (appeal.aod) {
-      appealTypeInfo = 'AOD';
-    }
-
-    return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
-  }
 
   render() {
     const { appeal, documents } = this.props;
@@ -44,7 +31,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             </div>
             <div className="usa-width-one-fourth">
               <b>Type</b><br />
-              <span>{appeal.type}</span> {this.getClaimTypeDetailInfo()}
+              <span>{appeal.type}</span> {getClaimTypeDetailInfo(appeal)}
             </div>
             <div className="usa-width-one-fourth">
               <b>Docket Number</b><br />
