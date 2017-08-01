@@ -67,6 +67,10 @@ describe RetrieveDocumentsForReaderJob do
 
       # Fail test if Mock is called for non-reader user
       expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+
+      # Expect all tests to call Slack service at the end
+      SlackService.any_instance.should_receive(:send_notification).with(any_args).once
+
       dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
     end
 
@@ -121,7 +125,7 @@ describe RetrieveDocumentsForReaderJob do
       end
     end
 
-    context "VBMS exception is thrown" do
+    context "when VBMS exception is thrown" do
       before do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
@@ -136,6 +140,27 @@ describe RetrieveDocumentsForReaderJob do
       end
 
       it "catches the exception and continues to the next document" do
+        RetrieveDocumentsForReaderJob.perform_now
+
+        expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
+        expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
+        expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+      end
+    end
+
+    context "when HTTP Timeout occurs" do
+      before do
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1]).once
+
+        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1).and_return([expected_doc1])
+          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
+          .once
+
+        expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
+      end
+
+      it "catches the exception and continues to the next appeal" do
         RetrieveDocumentsForReaderJob.perform_now
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil

@@ -19,7 +19,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
       rescue HTTPClient::KeepAliveDisconnected => e
         # VBMS connection may die when attempting to retrieve list of docs for appeal
         counts[:appeals_failed_count] += 1
-        Rails.logger.error "Failed to retrieve #{appeal}:\n#{e.message}"
+        Rails.logger.error "Failed to retrieve appeal id #{appeal.id}:\n#{e.message}"
       end
 
       break if counts[:docs_attempted] >= limit
@@ -42,13 +42,12 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
 
   def log_info(counts)
     outout_msg = "RetrieveDocumentsForReaderJob successfully retrieved #{counts[:docs_successful_count]} documents " \
-          "and #{counts[:docs_failed_count]} documents failed"
+          "and #{counts[:docs_failed_count]} document(s) failed. #{counts[:appeals_failed_count]} appeal(s) failed."
     Rails.logger.info outout_msg
-    outout_msg += "\n<!here>" if counts[:docs_failed_count] > 0
-    SlackService.new(url: url).send_notification(outout_msg)
- end
+    SlackService.new(url: slack_url).send_notification(outout_msg)
+  end
 
-  def url
+  def slack_url
     ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 end
