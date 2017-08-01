@@ -15,10 +15,19 @@ class Fakes::HearingRepository
     (hearing_records || []).select { |h| h.appeal_id == appeal.id }
   end
 
-  def self.update_vacols_hearing!(vacols_id, hearing_info)
-    return if (hearing_info.keys & [:notes, :aod, :disposition, :hold_open, :transcript_requested]).empty?
-    hearing = hearing_records.find { |h| h.vacols_id == vacols_id }
-    hearing.update_attributes(hearing_info)
+  def self.update_vacols_hearing!(vacols_record, hearing_info)
+    return if (hearing_info.keys.map(&:to_sym) & [:notes, :aod, :disposition, :hold_open, :transcript_requested]).empty?
+    hearing = hearing_records.find { |h| h.vacols_id == vacols_record[:vacols_id] }
+    hearing.assign_from_vacols(hearing_info)
+  end
+
+  def self.load_vacols_data(hearing)
+    return false if hearing_records.blank?
+    record = hearing_records.find { |h| h.vacols_id == hearing.vacols_id }
+
+    return false unless record
+    hearing.assign_from_vacols(vacols_record: record.vacols_record)
+    true
   end
 
   def self.clean!
@@ -32,6 +41,7 @@ class Fakes::HearingRepository
 
   def self.random_attrs(i)
     {
+      vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
       type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
       date: Time.zone.now - (i % 9).days - rand(3).days,
       vacols_id: 950_330_575 + (i * 1465),
