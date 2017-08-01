@@ -26,6 +26,14 @@ class Generators::Hearing
       hearing
     end
 
+    def create(attrs = {})
+      hearing = Hearing.find_or_create_by(vacols_id: default_attrs.merge(attrs)[:vacols_id])
+      build(attrs.merge(id: hearing.id))
+      hearing.update_attributes(default_attrs.merge(attrs))
+
+      hearing
+    end
+
     private
 
     def default_appeal

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
-import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   selectCurrentPdf } from '../reader/actions';
@@ -87,11 +86,11 @@ export class PdfViewer extends React.Component {
 
     if (event.key === 'ArrowLeft') {
       Analytics.event('Document Viewer', 'key command', 'previous document');
-      this.props.showPdf(this.prevDocId())();
+      this.props.showPdf(this.getPrevDocId())();
     }
     if (event.key === 'ArrowRight') {
       Analytics.event('Document Viewer', 'key command', 'next document');
-      this.props.showPdf(this.nextDocId())();
+      this.props.showPdf(this.getNextDocId())();
     }
   }
 
@@ -130,13 +129,13 @@ export class PdfViewer extends React.Component {
 
   selectedDocId = () => Number(this.props.match.params.docId)
 
-  prevDocId = () => _.get(this.props.documents, [this.selectedDocIndex() - 1, 'id'])
-  nextDocId = () => _.get(this.props.documents, [this.selectedDocIndex() + 1, 'id'])
+  getPrevDoc = () => _.get(this.props.documents, [this.selectedDocIndex() - 1])
+  getNextDoc = () => _.get(this.props.documents, [this.selectedDocIndex() + 1])
 
-  getPrefetchFiles = () => _.compact([
-    this.prevDocId(),
-    this.nextDocId()
-  ]).map(documentPath)
+  getPrevDocId = () => _.get(this.getPrevDoc(), 'id')
+  getNextDocId = () => _.get(this.getNextDoc(), 'id')
+
+  getPrefetchFiles = () => _.compact(_.map([this.getPrevDoc(), this.getNextDoc()], 'content_url'))
 
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
@@ -164,15 +163,14 @@ export class PdfViewer extends React.Component {
         <div className="cf-pdf-page-container">
           <PdfUI
             doc={doc}
-            file={documentPath(this.selectedDocId())}
             prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            prevDocId={this.prevDocId()}
-            nextDocId={this.nextDocId()}
+            prevDocId={this.getPrevDocId()}
+            nextDocId={this.getNextDocId()}
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}

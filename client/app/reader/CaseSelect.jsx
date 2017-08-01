@@ -1,8 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialDataLoadingFail } from './actions';
-import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
@@ -14,8 +11,8 @@ class CaseSelect extends React.PureComponent {
 
     return (
       <ol className="issue-list">
-        { issues.map((issue) => {
-          const descriptionLabel = issue.levels ? `${issue.description_label}:` : issue.description_label;
+        {issues.map((issue) => {
+          const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
 
           return <li key={issue.vacols_sequence_id}>
               {descriptionLabel}
@@ -29,7 +26,7 @@ class CaseSelect extends React.PureComponent {
   renderIssueLevels = (issue) => {
     const levels = issue.levels || [];
 
-    return levels.map((level) => <p className="issue-level">{level}</p>);
+    return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
   }
 
   getAssignmentColumn = () => [
@@ -92,29 +89,10 @@ class CaseSelect extends React.PureComponent {
       </div>
     </div>;
   }
-
-  componentDidMount() {
-    // We append an unneeded query param to avoid caching the json object. If we get thrown
-    // to a page outside of the SPA and then hit back, we want the cached version of this
-    // page to be the HTML page, not the JSON object.
-    ApiUtil.get('/reader/appeal?json').then((response) => {
-      const returnedObject = JSON.parse(response.text);
-
-      this.props.onReceiveAssignments(returnedObject.cases);
-    }, this.props.onInitialDataLoadingFail);
-  }
 }
 
 const mapStateToProps = (state) => _.pick(state, 'assignments');
 
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    onInitialDataLoadingFail,
-    onReceiveAssignments
-  }, dispatch)
-);
-
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(CaseSelect);

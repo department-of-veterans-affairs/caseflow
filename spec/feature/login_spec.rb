@@ -9,7 +9,12 @@ RSpec.feature "Login" do
     }
   end
 
-  after do
+  before(:all) do
+    FeatureToggle.enable!(:certification_v2)
+  end
+
+  after(:all) do
+    FeatureToggle.disable!(:certification_v2)
     Rails.application.config.sso_service_disabled = false
   end
 
@@ -20,7 +25,7 @@ RSpec.feature "Login" do
     }
     visit "certifications/new/#{appeal.vacols_id}"
 
-    expect(page).to have_current_path(new_certification_path(vacols_id: appeal.vacols_id))
+    expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/check_documents")
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
     expect(user.reload.email).to eq "world@example.com"
   end

@@ -40,6 +40,10 @@ const ApiUtil = {
       set(this.headers(options.headers)).
       query(options.query);
 
+    if (options.withCredentials) {
+      promise.withCredentials();
+    }
+
     if (options.cache) {
       return promise;
     }

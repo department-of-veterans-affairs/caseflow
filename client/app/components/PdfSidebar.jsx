@@ -43,10 +43,25 @@ export class PdfSidebar extends React.Component {
     };
   }
 
-  toggleKeyboardModal = () => {
-    this.setState((prevState) => ({
-      modal: !prevState.modal
-    }));
+  handleKeyboardModalClose = () => this.toggleKeyboardModal('modal-close-handler')
+  closeKeyboardModalFromButton = () => this.toggleKeyboardModal('modal-got-it-button')
+  openKeyboardModal = () => this.toggleKeyboardModal('view-shortcuts-button')
+
+  toggleKeyboardModal = (sourceLabel) => {
+    this.setState((prevState) => {
+      const nextStateModalIsOpen = !prevState.modal;
+      const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
+
+      Analytics.event(
+        Constants.ANALYTICS.VIEW_DOCUMENT_PAGE,
+        `${eventActionPrefix}-keyboard-shortcuts-modal`,
+        sourceLabel
+      );
+
+      return {
+        modal: nextStateModalIsOpen
+      };
+    });
   }
 
   componentDidUpdate = () => {
@@ -163,7 +178,7 @@ export class PdfSidebar extends React.Component {
           <Accordion style="outline"
             onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
-            <AccordionSection title="Document information" key="document-information">
+            <AccordionSection title="Document information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">
                 <b>Document Type: </b>
                 <span title={this.props.doc.type} className="cf-document-type">
@@ -174,7 +189,7 @@ export class PdfSidebar extends React.Component {
                 <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
               </p>
             </AccordionSection>
-            <AccordionSection title="Categories" key="categories">
+            <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
                 <DocCategoryPicker
@@ -184,7 +199,7 @@ export class PdfSidebar extends React.Component {
                   categoryToggleStates={categoryToggleStates} />
               </div>
             </AccordionSection>
-            <AccordionSection title="Issue tags" key="issue-tags">
+            <AccordionSection title="Issue tags">
               <div className="cf-issue-tag-sidebar">
                 {showErrorMessage.tag && cannotSaveAlert}
                 <SearchableDropdown
@@ -201,7 +216,7 @@ export class PdfSidebar extends React.Component {
                 />
               </div>
             </AccordionSection>
-            <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} key="comments-header" id="comments-header">
+            <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
                 <span className="cf-right-side cf-add-comment-button">
                   <Button
                     name="AddComment"
@@ -230,7 +245,7 @@ export class PdfSidebar extends React.Component {
           <Button
               id="cf-open-keyboard-modal"
               name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
-              onClick={this.toggleKeyboardModal}
+              onClick={this.openKeyboardModal}
               classNames={['cf-btn-link']}
           />
         { this.state.modal && <div className="cf-modal-scroll">
@@ -238,10 +253,10 @@ export class PdfSidebar extends React.Component {
               buttons = {[
                 { classNames: ['usa-button', 'usa-button-secondary'],
                   name: 'Thanks, got it!',
-                  onClick: this.toggleKeyboardModal
+                  onClick: this.closeKeyboardModalFromButton
                 }
               ]}
-              closeHandler={this.toggleKeyboardModal}
+              closeHandler={this.handleKeyboardModalClose}
               title="Keyboard shortcuts"
               noDivider={true}
               id="cf-keyboard-modal">

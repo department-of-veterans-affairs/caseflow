@@ -85,7 +85,7 @@ RSpec.feature "Reader" do
   let!(:issues) do
     [Generators::Issue.build(disposition: :allowed,
                              program: :compensation,
-                             type: :elbow,
+                             type: { name: :elbow, label: "Elbow" },
                              category: :service_connection,
                              levels: issue_levels
                             )
@@ -144,7 +144,7 @@ RSpec.feature "Reader" do
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
 
-        expect(page).to have_content(appeal.issues[0].description_label)
+        expect(page).to have_content(appeal.issues[0].type[:label])
         expect(page).to have_content(appeal.issues[0].levels[0])
         expect(page).to have_content(appeal.issues[0].levels[1])
         expect(page).to have_content(appeal.issues[0].levels[2])
@@ -408,21 +408,23 @@ RSpec.feature "Reader" do
         ]
       end
 
-      scenario "Expand All button" do
+      scenario "Documents and Comments toggle button" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        click_on "Expand all"
+        click_on "Comments"
         expect(page).to have_content("another comment")
         expect(page).to have_content("how's it going")
-        click_button("expand-#{documents[0].id}-comments-button")
 
-        # when a comment is closed, the button is changed to expand all
-        expect(page).to have_button("Expand all")
+        # A doc without a comment should not show up
+        expect(page).not_to have_content(documents[2].type)
 
-        click_button("expand-#{documents[0].id}-comments-button")
+        # Filtering the document list should work in "Comments" mode.
+        find("#categories-header svg").click
+        find(".checkbox-wrapper-procedural").click
+        expect(page).to have_content(documents[0].type)
+        expect(page).not_to have_content(documents[1].type)
 
-        # when that comment is reopened, the button is changed to collapse all
-        click_on "Collapse all"
+        click_on "Documents"
         expect(page).not_to have_content("another comment")
         expect(page).not_to have_content("how's it going")
       end
@@ -747,6 +749,39 @@ RSpec.feature "Reader" do
       expect(find("#procedural", visible: false).checked?).to be false
       expect(find("#medical", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
+    end
+
+    scenario "Claim Folder Details" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      appeal_info = appeal.to_hash(issues: appeal.issues)
+
+      expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+      expect(page).to have_content("Claims folder details")
+
+      # Test the document count updates after viewing a document
+      expect(page).to have_content("You've viewed 0 out of #{documents.length} documents")
+      click_on documents[0].type
+      click_on "Back to claims folder"
+      expect(page).to have_content("You've viewed 1 out of #{documents.length} documents")
+
+      find(".rc-collapse-header", text: "Claims folder details").click
+      regional_office = "#{appeal_info['regional_office'][:key]} - #{appeal_info['regional_office'][:city]}"
+      expect(page).to have_content(appeal_info["vbms_id"])
+      expect(page).to have_content(appeal_info["type"])
+      expect(page).to have_content(appeal_info["docket_number"])
+      expect(page).to have_content(regional_office)
+
+      # all the current issues listed in the UI
+      issue_list = all(".claims-folder-issues li")
+      expect(issue_list.count).to eq(appeal_info["issues"].length)
+      issue_list.each_with_index do |issue, index|
+        expect(issue.text.include?(appeal_info["issues"][index].type[:label])).to be true
+
+        # verifying the level information is being shown as part of the issue information
+        appeal_info["issues"][index].levels.each_with_index do |level, level_index|
+          expect(level.include?(appeal_info["issues"][index].levels[level_index])).to be true
+        end
+      end
     end
 
     scenario "Tags" do
