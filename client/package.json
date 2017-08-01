@@ -46,6 +46,7 @@
     "lodash": "^4.17.2",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
+    "object-diff": "^0.0.4",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "^1.6.414",
     "prop-types": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz",

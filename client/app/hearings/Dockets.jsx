@@ -25,7 +25,6 @@ export class Dockets extends React.Component {
   }
 
   render() {
-
     const docketIndex = Object.keys(this.props.dockets).sort();
 
     const columns = [
@@ -87,7 +86,7 @@ export class Dockets extends React.Component {
           getKeyForRow={this.getKeyForRow}
         />
       </div>
-      <div className="cf-alt--actions cf-alt--app-width">
+      <div className="cf-actions cf-app-width">
         <div className="cf-push-right">
           <a className="cf-btn-link" href="#" onClick={() => {
             window.print();

@@ -1,26 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import SearchableDropdown from '../components/SearchableDropdown';
-import Checkbox from '../components/Checkbox';
+import TextareaContainer from './TextareaContainer';
+import DropdownContainer from './DropdownContainer';
+import CheckboxContainer from './CheckboxContainer';
+import AutosavePrompt from './AutosavePrompt';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
-{ value: 'noshow',
+{ value: 'no_show',
   label: 'No Show' },
-{ value: 'canceled',
-  label: 'Canceled' },
+{ value: 'cancelled',
+  label: 'Cancelled' },
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [{ value: '30',
+const holdOptions = [{ value: 30,
   label: '30 days' },
-{ value: '60',
+{ value: 60,
   label: '60 days' },
-{ value: '90',
+{ value: 90,
   label: '90 days' }];
 
 const aodOptions = [{ value: 'grant',
@@ -36,30 +38,9 @@ const getDate = (date, timezone) => {
     replace(/(p|a)m/, '$1.m.');
 };
 
-// This may go away in favor of the timestamp from updated record
-const now = () => {
-  return moment().
-    format('h:mm a').
-    replace(/(p|a)m/, '$1.m.');
-};
-
 export class DailyDocket extends React.Component {
 
-  componentDidMount = () => {
-    // TEMP logic to show Saving.../Last saved at <time>
-    setInterval(() => {
-      let text = document.getElementsByClassName('saving')[0].textContent;
-
-      if (text.startsWith('Saving...')) {
-        document.getElementsByClassName('saving')[0].innerHTML = `Last saved at ${now()}`;
-      } else {
-        document.getElementsByClassName('saving')[0].innerHTML = 'Saving...';
-      }
-    }, 3000);
-  }
-
   render() {
-
     const docket = this.props.docket;
 
     return <div>
@@ -82,7 +63,7 @@ export class DailyDocket extends React.Component {
               <th>Representative</th>
               <th>
                 <span>Actions</span>
-                <span className="saving">Last saved at {now()}</span>
+                <AutosavePrompt spinnerColor="#68bd07" />
               </th>
             </tr>
           </thead>
@@ -99,47 +80,41 @@ export class DailyDocket extends React.Component {
               </td>
               <td className="cf-hearings-docket-appellant">
                 <b>{hearing.appellant_last_first_mi}</b>
-                <Link to={`/hearings/worksheets/${hearing.vbms_id}`}>{hearing.vbms_id}</Link>
+                <Link to={`/hearings/${hearing.id}/worksheet`}>{hearing.vbms_id}</Link>
               </td>
               <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
               <td className="cf-hearings-docket-actions" rowSpan="2">
-                <SearchableDropdown
+                <DropdownContainer
                   label="Disposition"
-                  name={`disposition_${index}`}
+                  name={`${hearing.id}:disposition`}
                   options={dispositionOptions}
-                  onChange={() => {
-                    return true;
-                  }}
-                  searchable={true}
+                  defaultValue={hearing.disposition}
+                  action="updateDailyDocketAction"
+                  tabIndex={`${(index * 10) + 2}`}
                 />
-                <SearchableDropdown
+                <DropdownContainer
                   label="Hold Open"
-                  name={`hold_${index}`}
+                  name={`${hearing.id}:hold_open`}
                   options={holdOptions}
-                  onChange={() => {
-                    return true;
-                  }}
-                  searchable={true}
+                  defaultValue={hearing.hold_open}
+                  action="updateDailyDocketAction"
+                  tabIndex={`${(index * 10) + 3}`}
                 />
-                <SearchableDropdown
+                <DropdownContainer
                   label="AOD"
-                  name={`aod_${index}`}
+                  name={`${hearing.id}:aod`}
                   options={aodOptions}
-                  onChange={() => {
-                    return true;
-                  }}
-                  searchable={true}
+                  defaultValue={hearing.aod}
+                  action="updateDailyDocketAction"
+                  tabIndex={`${(index * 10) + 4}`}
                 />
-                <div className="transcriptRequired">
-                  <Checkbox
-                    label="Transcript Requested"
-                    vertical={true}
-                    name={`transcript_requested_${index}`}
-                    onChange={() => {
-                      return true;
-                    }}
-                    value={false}
-                  ></Checkbox>
+                <div className="transcriptRequested">
+                  <CheckboxContainer
+                    id={`${hearing.id}:transcript_requested`}
+                    defaultValue={hearing.transcriptRequested}
+                    action="updateDailyDocketTranscript"
+                    tabIndex={`${(index * 10) + 5}`}
+                  ></CheckboxContainer>
                 </div>
               </td>
             </tr>
@@ -147,9 +122,15 @@ export class DailyDocket extends React.Component {
               <td></td>
               <td colSpan="2" className="cf-hearings-docket-notes">
                 <div>
-                  <label htmlFor={`notes_${index}`}>Notes:</label>
+                  <label htmlFor={`${hearing.id}:notes`}>Notes:</label>
                   <div>
-                    <textarea id={`notes_${index}`} defaultValue="" />
+                    <TextareaContainer
+                      id={`${hearing.id}:notes`}
+                      defaultValue={hearing.notes}
+                      action="updateDailyDocketNotes"
+                      maxLength="100"
+                      tabIndex={`${(index * 10) + 1}`}
+                    />
                   </div>
                 </div>
               </td>
@@ -158,7 +139,7 @@ export class DailyDocket extends React.Component {
           )}
         </table>
       </div>
-      <div className="cf-alt--actions cf-alt--app-width">
+      <div className="cf-actions cf-app-width">
         <div className="cf-push-left">
           <Link to="/hearings/dockets">&lt; Back to Dockets</Link>
         </div>

@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
+import Button from '../components/Button';
+import AutosavePrompt from './AutosavePrompt';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -59,6 +62,7 @@ export class HearingWorksheet extends React.Component {
     ];
 
     // temp
+    // NOTE: this only covers issues for one appeal stream
     const issues = [
       {
         program: 'Compensation',
@@ -98,9 +102,16 @@ export class HearingWorksheet extends React.Component {
       }
     ];
 
+    // NOTE: this only covers one appeal stream.
     const rowObjects = issues.map((issue, index) => {
       return {
-        counter: <b>{index + 1}.</b>,
+        counter: <span className="cf-hearings-worksheet-issue-counter">
+            <Button
+              id={`stream-1-issue-${index}`}
+              name={`stream-1-issue-${index}`}
+              classNames={['cf-btn-link', 'cf-hearings-worksheet-delete-issue']}>x</Button>
+            <b>{index + 1}.</b>
+          </span>,
         program: issue.program,
         issue: issue.issue,
         levels: issue.levels,
@@ -166,7 +177,7 @@ export class HearingWorksheet extends React.Component {
     });
 
     return <div>
-      <div className="cf-app-segment--alt cf-hearings-worksheet">
+      <div className="cf-app-segment cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
@@ -181,7 +192,7 @@ export class HearingWorksheet extends React.Component {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <span className="saving">Saving...</span>
+          <AutosavePrompt spinnerColor="#68bd07" />
           <div className="cf-push-left">
             <div>Appellant Name:</div>
             <div><b>Somebody Mad</b></div>
@@ -277,6 +288,7 @@ export class HearingWorksheet extends React.Component {
             summary={'Worksheet Issues'}
             getKeyForRow={this.getKeyForRow}
           />
+          <Button name="Add Issue" />
         </div>
 
         <div className="cf-hearings-worksheet-data">
@@ -302,6 +314,14 @@ export class HearingWorksheet extends React.Component {
             htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
           <textarea id="worksheet-comments"
             aria-label="Comments and special instructions to attorneys"></textarea>
+        </div>
+      </div>
+      <div className="cf-actions cf-app-width">
+        <div className="cf-push-left">
+          <Link to="/hearings/dockets">&lt; Back to Dockets</Link>
+        </div>
+        <div className="cf-push-right">
+          <Button name="Review eFolder" />
         </div>
       </div>
     </div>;

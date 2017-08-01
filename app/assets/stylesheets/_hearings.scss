@@ -102,10 +102,9 @@ $color-hearings-saving: #777;
         }
       }
 
-      // TODO: get rule into a SaveData component
       .saving {
-        font-style: italic;
-        color: $color-hearings-saving;
+        width: 75%;
+        text-align: right;
       }
     }
 
@@ -144,7 +143,7 @@ $color-hearings-saving: #777;
 
       label {
         display: inline-block;
-        vertical-align: top;
+        vertical-align: middle;
         text-align: right;
         width: 15%;
 
@@ -159,6 +158,7 @@ $color-hearings-saving: #777;
       textarea {
         height: 4em;
         resize: vertical;
+        padding: 0 .4em;
       }
     }
 
@@ -178,7 +178,7 @@ $color-hearings-saving: #777;
     }
   }
 
-  .transcriptRequired {
+  .transcriptRequested {
     position: relative;
 
     > div {
@@ -219,8 +219,14 @@ $color-hearings-saving: #777;
 
 .cf-hearings-worksheet-data {
   position: relative;
-  overflow: hidden;
   margin-bottom: 1.765em;
+
+  &::after {
+    content: ' ';
+    display: block;
+    line-height: 0;
+    clear: both;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -273,6 +279,12 @@ $color-hearings-saving: #777;
     vertical-align: top;
     padding: .5em;
 
+    &:first-child {
+      padding-left: 0;
+      padding-right: 0;
+      text-align: right;
+    }
+
     &:nth-of-type(5) {
       width: 20%;
     }
@@ -317,4 +329,43 @@ $color-hearings-saving: #777;
 .cf-hearings-worksheet-desc-label {
   position: absolute;
   left: -99999px;
+}
+
+.cf-hearings-worksheet-issue-counter {
+  position: relative;
+}
+
+.cf-hearings-worksheet-delete-issue {
+  position: absolute;
+  left: -1em;
+  top: .1em;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// TODO: get rule into a SaveData component
+.saving {
+  font-style: italic;
+  color: $color-hearings-saving;
+  display: inline-block;
+
+  .loadingSymbol {
+    display: inline-block;
+    margin: 0 0 0 .25em;
+    padding: 0;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+  }
+
+  .cf-loading-button-text {
+    display: none;
+  }
 }

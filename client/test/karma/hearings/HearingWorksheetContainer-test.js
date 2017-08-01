@@ -7,7 +7,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
-import { populateWorksheet } from '../../../app/hearings/actions/Dockets';
+import { populateWorksheet } from '../../../app/hearings/actions/worksheet';
 import HearingWorksheetContainer from '../../../app/hearings/HearingWorksheetContainer';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
@@ -27,8 +27,7 @@ describe('HearingWorksheetContainer', () => {
           <div>
             <HearingWorksheetContainer
               veteran_law_judge={{ name: 'me' }}
-              date="2017-01-01"
-              vbms_id="7fbebdf24"
+              hearing_id="1"
             />
           </div>
         </MemoryRouter>

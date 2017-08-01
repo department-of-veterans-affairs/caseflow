@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as Actions from './actions/Dockets';
+import { handleServerError } from './actions/hearings';
+import { populateDockets } from './actions/dockets';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import Dockets from './Dockets';
 import ApiUtil from '../util/ApiUtil';
@@ -9,9 +10,9 @@ import ApiUtil from '../util/ApiUtil';
 export const getDockets = (dispatch) => {
   ApiUtil.get('/hearings/dockets.json', { cache: true }).
     then((response) => {
-      dispatch(Actions.populateDockets(response.body));
+      dispatch(populateDockets(response.body));
     }, (err) => {
-      dispatch(Actions.handleServerError(err));
+      dispatch(handleServerError(err));
     });
 };
 
@@ -22,7 +23,7 @@ export class DocketsContainer extends React.Component {
       this.props.getDockets();
     }
 
-      // Since the title may have changed before rendering...
+    // Since the title may have changed before rendering...
     const pageTitle = document.getElementById('page-title');
 
     if (pageTitle) {

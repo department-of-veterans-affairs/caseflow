@@ -1,27 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as Actions from './actions/Dockets';
+import { handleServerError } from './actions/hearings';
+import { populateWorksheet } from './actions/worksheet';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
 
 // TODO: method should get data to populate worksheet
 export const getWorksheet = (id, dispatch) => {
-  ApiUtil.get(`/hearings/worksheets/${id}.json`, { cache: true }).
+  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
     then((response) => {
-      dispatch(Actions.populateWorksheet(response.body));
+      dispatch(populateWorksheet(response.body));
     }, (err) => {
-      dispatch(Actions.handleServerError(err));
+      dispatch(handleServerError(err));
     });
 };
 
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
-    // TODO: if !worksheet call this.props.getWorksheet
     if (!this.props.worksheet) {
-      this.props.getWorksheet(this.props.vbms_id);
+      this.props.getWorksheet(this.props.hearing_id);
     }
 
     // Since the page title does not change when react router
