@@ -27,7 +27,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-import { INTERACTION_TYPES } from '../reader/analytics';
+import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
@@ -355,6 +355,13 @@ const mapDispatchToProps = (dispatch) => ({
         categoryKey,
         toggleState,
         docId
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+          action: `${toggleState ? 'set' : 'unset'} document category`,
+          label: categoryName
+        }
       }
     });
   }

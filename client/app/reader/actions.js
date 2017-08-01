@@ -406,6 +406,13 @@ export const setCategoryFilter = (categoryName, checked) => ({
   payload: {
     categoryName,
     checked
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: `${checked ? 'select' : 'unselect'} category filter`,
+      label: categoryName
+    }
   }
 });
 
