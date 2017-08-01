@@ -51,28 +51,23 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   y: (y - pageBoundingBox.top) / scale
 });
 
-const divCoordinatesOfPageCoords = (x, y, width, height, rotation) => {
+const divCoordinatesOfPageCoords = (x, y, width, height, rotation, scale) => {
+  const scaledX = x * scale;
+  const scaledY = y * scale;
+
   if (rotation === 0) {
-    return { x, y };
+    return { x: scaledX, y: scaledY };
   } else if (rotation === 90) {
-    return { x: height - y, y: x };
+    return { x: height - scaledY, y: scaledX };
   } else if (rotation === 180) {
-    return { x: width - x, y: height - y };
+    return { x: width - scaledX, y: height - scaledY };
   } else if (rotation === 270) {
-    return { x: y, y: width - x };
+    return { x: scaledY, y: width - scaledX };
   }
 };
-const pageCoordsOfDivCoordinates = (x, y, width, height, rotation) => {
-  // if (rotation === 0) {
-  //   return { x, y };
-  // } else if (rotation === 90) {
-  //   return { x: y, y: height - x };
-  // } else if (rotation === 180) {
-  //   return { x: width - x, y: height - y };
-  // } else if (rotation === 270) {
-  //   return { x: width - y, y: x };
-  // }
-  return divCoordinatesOfPageCoords(x, y, width, height, (360 - rotation) % 360);
+
+const pageCoordsOfDivCoordinates = (x, y, width, height, rotation, scale) => {
+  return divCoordinatesOfPageCoords(x, y, width, height, (360 - rotation) % 360, 1 / scale);
 };
 
 export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
@@ -869,7 +864,7 @@ export class Pdf extends React.PureComponent {
     if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
       const { pageWidth, pageHeight } = this.getPageDimensions(this.props.placingAnnotationIconPageCoords.pageIndex);
       const { x, y } = _.pick(this.props.placingAnnotationIconPageCoords, ['x', 'y']);
-      const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+      const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation, this.props.scale);
 
       annotations = this.props.comments.concat([{
             temporaryId: 'placing-annotation-icon',
@@ -893,14 +888,14 @@ export class Pdf extends React.PureComponent {
       }
 
       const { pageWidth, pageHeight } = this.getPageDimensions(comment.page - 1);
-      const { x, y } = divCoordinatesOfPageCoords(comment.x, comment.y, pageWidth, pageHeight, this.props.rotation);
+      const { x, y } = divCoordinatesOfPageCoords(comment.x, comment.y, pageWidth, pageHeight, this.props.rotation, this.props.scale);
 
       acc[comment.page].push(
         <CommentIcon
           comment={comment}
           position={{
-            x: x * this.props.scale,
-            y: y * this.props.scale
+            x: x,
+            y: y
           }}
           key={keyOfAnnotation(comment)}
           onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
@@ -927,7 +922,7 @@ export class Pdf extends React.PureComponent {
           );
 
           const { pageWidth, pageHeight } = this.getPageDimensions(pageIndex);
-          const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation);
+          const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation, this.props.scale);
           this.props.placeAnnotation(pageIndex + 1, {
             xPosition: coords.x,
             yPosition: coords.y
