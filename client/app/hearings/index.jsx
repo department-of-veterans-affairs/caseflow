@@ -10,7 +10,7 @@ import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
-import ScrollToTop from './util/ScrollTop.js';
+import ScrollToTop from './util/ScrollTop';
 
 const configureStore = (data) => {
 
@@ -48,6 +48,7 @@ const Hearings = ({ hearings }) => {
     <div>
       <BrowserRouter>
         <div>
+        <ScrollToTop>
           <Route exact path="/hearings/dockets"
             component={() => (
               <DocketsContainer
@@ -69,6 +70,7 @@ const Hearings = ({ hearings }) => {
                 vbms_id={props.match.params.vbms_id} />
             )}
           />
+              </ScrollToTop>
         </div>
       </BrowserRouter>
     </div>
