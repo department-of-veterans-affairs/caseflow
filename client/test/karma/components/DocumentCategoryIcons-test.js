@@ -59,7 +59,7 @@ describe('DocumentCategoryIcons', () => {
     const doc = {
       category_medical: true, // eslint-disable-line camelcase
       category_procedural: true, // eslint-disable-line camelcase
-      category_case_summary: true, //eslint-disable-line camelcase
+      category_case_summary: true, // eslint-disable-line camelcase
       category_other: true // eslint-disable-line camelcase
     };
 

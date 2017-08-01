@@ -743,7 +743,8 @@ RSpec.feature "Reader" do
 
       click_on documents[1].type
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Case Summary", "Other Evidence"])
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(
+        ["Medical", "Case Summary", "Other Evidence"])
       expect(find("#case_summary", visible: false).disabled?).to be true
 
       find("#button-next").click
