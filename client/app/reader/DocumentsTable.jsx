@@ -17,7 +17,7 @@ import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
-import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters, 
+import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
   setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {

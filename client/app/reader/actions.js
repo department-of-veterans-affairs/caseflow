@@ -79,7 +79,7 @@ export const toggleDropdownFilterVisibility = (filterName) => ({
       label: filterName
     }
   }
-})
+});
 
 export const changeSortState = (sortBy) => ({
   type: Constants.SET_SORT,
@@ -92,6 +92,8 @@ export const changeSortState = (sortBy) => ({
       action: 'change-sort-by',
       label: (nextState) => {
         const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+
+
         return `${sortBy}-${direction}`;
       }
     }

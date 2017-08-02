@@ -12,7 +12,7 @@ import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
-import {CATEGORIES, ACTION_NAMES, INTERACTION_TYPES} from '../reader/analytics';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
@@ -87,16 +87,16 @@ export class PdfViewer extends React.Component {
 
     if (event.key === 'ArrowLeft') {
       Analytics.event(
-        CATEGORIES.VIEW_DOCUMENT_PAGE, 
-        ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, 
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getPrevDocId())();
     }
     if (event.key === 'ArrowRight') {
       Analytics.event(
-        CATEGORIES.VIEW_DOCUMENT_PAGE, 
-        ACTION_NAMES.VIEW_NEXT_DOCUMENT, 
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        ACTION_NAMES.VIEW_NEXT_DOCUMENT,
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getNextDocId())();
