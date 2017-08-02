@@ -523,6 +523,32 @@ export const reducer = (state = initialState, action = {}) => {
           }
         }
       }));
+  case Constants.CLEAR_TAG_FILTER:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            tag: {
+              $set: {}
+            }
+          }
+        }
+      }
+    ));
+  case Constants.CLEAR_CATEGORY_FILTER:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        ui: {
+          docFilterCriteria: {
+            category: {
+              $set: {}
+            }
+          }
+        }
+      }
+    ));
   case Constants.CLEAR_ALL_FILTERS:
     return updateFilteredDocIds(update(
       state,
@@ -536,6 +562,9 @@ export const reducer = (state = initialState, action = {}) => {
               $set: {}
             }
           }
+        },
+        viewingDocumentsOrComments: {
+          $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
         }
       }));
   case Constants.REQUEST_REMOVE_TAG:

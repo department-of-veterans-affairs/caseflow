@@ -1125,4 +1125,28 @@ describe Appeal do
       expect { appeal.veteran_first_name }.to raise_error(AssociatedVacolsModel::LazyLoadingTurnedOffError)
     end
   end
+
+  context "#vbms_id" do
+    context "when vbms_id exists in the caseflow DB" do
+      it "does not make a request to VACOLS" do
+        expect(appeal).to receive(:perform_vacols_request)
+          .exactly(0).times
+
+        expect(appeal.attributes["vbms_id"]).to_not be_nil
+        expect(appeal.vbms_id).to_not be_nil
+      end
+    end
+
+    context "when vbms_id is nil" do
+      let(:no_vbms_id_appeal) { Appeal.create(vacols_id: appeal.vacols_id) }
+
+      it "looks up vbms_id in VACOLS" do
+        expect(no_vbms_id_appeal).to receive(:perform_vacols_request)
+          .exactly(1).times.and_call_original
+
+        expect(no_vbms_id_appeal.attributes["vbms_id"]).to be_nil
+        expect(no_vbms_id_appeal.reload.vbms_id).to_not be_nil
+      end
+    end
+  end
 end

@@ -8,8 +8,12 @@ const UnconnectedHeader = ({
 }) => {
   return <div>
     { !serverError && <div id="certifications-header" className="cf-app-segment">
+    <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
+       {veteranName} &nbsp;
+      </div>
+
       <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
-        {veteranName} &nbsp;
+        Veteran ID &nbsp;
 
         <button type="submit"
           title="Copy to clipboard"
@@ -31,6 +35,7 @@ const UnconnectedHeader = ({
         </button>
       </div>
     </div>}
+   <div className="cf-help-divider"></div>
   </div>;
 };
 
