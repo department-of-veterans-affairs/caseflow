@@ -93,7 +93,6 @@ export const changeSortState = (sortBy) => ({
       label: (nextState) => {
         const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
 
-
         return `${sortBy}-${direction}`;
       }
     }
