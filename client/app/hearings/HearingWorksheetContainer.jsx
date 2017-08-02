@@ -5,7 +5,6 @@ import * as Actions from './actions/Dockets';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
-import ScrollToTop from './util/ScrollTop'
 
 // TODO: method should get data to populate worksheet
 export const getWorksheet = (id, dispatch) => {
