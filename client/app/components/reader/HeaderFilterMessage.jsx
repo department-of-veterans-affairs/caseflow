@@ -9,7 +9,7 @@ class HeaderFilterMessage extends React.PureComponent {
   render() {
     const props = this.props;
 
-    // returns the number of 'true' values in an object
+    // returns the number of truthy values in an object
     const getTruthyCount = (obj) => _(obj).
       values().
       compact().
