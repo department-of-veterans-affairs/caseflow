@@ -28,7 +28,7 @@ class ExternalApi::EfolderService
     url = URI.escape(efolder_base_url + endpoint)
     request = HTTPI::Request.new(url)
     request.auth.ssl.ssl_version  = :TLSv1_2
-    request.auth.ssl.ca_cert_file = ENV['SSL_CERT_FILE']
+    request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
 
     headers["AUTHORIZATION"] = "Token token=#{efolder_key}"
     headers["CSS-ID"] = user.css_id.to_s
