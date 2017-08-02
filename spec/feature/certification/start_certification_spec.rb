@@ -249,7 +249,7 @@ RSpec.feature "Start Certification" do
     end
 
     scenario "loading a certification and having it error" do
-      allow(StartCertificationJob).to receive(:perform_later).and_return(true)
+      allow(StartCertificationJob).to receive(:perform_now).and_return(true)
       visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
       expect(page).to have_content("Loading")
       certification = Certification.find_by(vacols_id: appeal_ready_exact_match.vacols_id)
