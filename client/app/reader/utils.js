@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { newContext } from 'immutability-helper';
+import React from 'react';
 
 export const update = newContext();
 
@@ -81,3 +82,17 @@ export const isUserEditingText = () => _.some(
   document.querySelectorAll('input,textarea'),
   (elem) => document.activeElement === elem
 );
+
+export const getClaimTypeDetailInfo = (claim) => {
+  let appealTypeInfo = '';
+
+  if (claim.cavc && claim.aod) {
+    appealTypeInfo = 'AOD, CAVC';
+  } else if (claim.cavc) {
+    appealTypeInfo = 'CAVC';
+  } else if (claim.aod) {
+    appealTypeInfo = 'AOD';
+  }
+
+  return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
+};
