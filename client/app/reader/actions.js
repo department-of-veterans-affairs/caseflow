@@ -71,6 +71,16 @@ export const changeSortState = (sortBy) => ({
   type: Constants.SET_SORT,
   payload: {
     sortBy
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'change-sort-by',
+      label: (nextState) => {
+        const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+        return `${sortBy}-${direction}`;
+      }
+    }
   }
 });
 

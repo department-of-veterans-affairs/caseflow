@@ -435,12 +435,9 @@ const mapDispatchToProps = (dispatch) => ({
     clearTagFilters,
     clearCategoryFilters,
     setTagFilter,
+    changeSortState,
     setCategoryFilter
   }, dispatch),
-  changeSortState(sortBy) {
-    Analytics.event('Claims Folder', 'sort by', sortBy);
-    dispatch(changeSortState(sortBy));
-  },
   toggleDropdownFilterVisiblity(filterName) {
     dispatch({
       type: Constants.TOGGLE_FILTER_DROPDOWN,
