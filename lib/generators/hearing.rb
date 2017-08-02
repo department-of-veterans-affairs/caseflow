@@ -31,20 +31,23 @@ class Generators::Hearing
     def create(attrs = {})
       attrs = default_attrs.merge(attrs)
       hearing = ::Hearing.find_or_create_by(vacols_id: attrs[:vacols_id])
-      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal.id unless hearing.appeal_id
-      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id unless hearing.user_id
+      attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal_id(hearing)
+      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing.update_attributes(attrs)
 
       Fakes::HearingRepository.hearing_records ||= []
-      Fakes::HearingRepository.hearing_records.push(hearing)
-
+      Fakes::HearingRepository.hearing_records.push(hearing) unless Fakes::HearingRepository.find_by_id(hearing.id)
       hearing
     end
 
     private
 
-    def default_appeal
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing })
+    def default_appeal_id(hearing)
+      return Generators::Appeal.build(
+        vacols_record: { template: :pending_hearing },
+        id: hearing.appeal_id
+      ).id if hearing.appeal_id
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }).id
     end
   end
 end
