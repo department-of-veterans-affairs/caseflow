@@ -310,7 +310,7 @@ export class HearingWorksheet extends React.Component {
     <div classNames={['cf-push-right']} >
          <Button name="signup-1" classNames={['cf-push-right']}>Review Efolder</Button>
     </div>
-    </div>
+    </div>;
   }
 }
 
