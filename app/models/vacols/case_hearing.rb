@@ -3,7 +3,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   self.primary_key = "hearing_pkseq"
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
-  has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr
+  has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
 
   HEARING_TYPES = {
     V: :video,
@@ -48,6 +48,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     OR hearing_disp IS NULL
     -- an older hearing still awaiting a disposition
   }.freeze
+
+  after_update :update_hearing_action, if: :hearing_disp_changed?
 
   # :nocov:
   class << self
@@ -104,6 +106,12 @@ class VACOLS::CaseHearing < VACOLS::Record
                           name: "update_hearing") do
       update(attrs.merge(mduser: slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
+  end
+
+  private
+
+  def update_hearing_action
+    brieff.update(bfha: HearingMapper.bfha_vacols_code(self, brieff))
   end
   # :nocov:
 end
