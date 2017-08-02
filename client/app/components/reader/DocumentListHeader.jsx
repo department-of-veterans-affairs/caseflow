@@ -4,10 +4,11 @@ import SearchBar from '../SearchBar';
 import Alert from '../Alert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setSearch, clearAllFilters, clearSearch } from '../../reader/actions';
+import { setSearch, clearSearch } from '../../reader/actions';
 import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
+import HeaderFilterMessage from './HeaderFilterMessage';
 
 class DocumentListHeader extends React.Component {
   // Record the search value for analytics purposes. Don't worry if it fails.
@@ -20,16 +21,6 @@ class DocumentListHeader extends React.Component {
 
   render() {
     const props = this.props;
-
-    const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
-      props.docFilterCriteria.category[category]
-    );
-    const tagFilters = Object.keys(props.docFilterCriteria.tag).some((tag) =>
-      props.docFilterCriteria.tag[tag]
-    );
-    const filteredCategories = [].concat(
-      categoryFilters ? ['categories'] : [],
-      tagFilters ? ['tags'] : []).join(' ');
 
     return <div>
       <div className="document-list-header">
@@ -49,17 +40,7 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-      {Boolean(filteredCategories.length) &&
-        <Alert
-          title="Showing limited results"
-          type="info">
-          Documents are currently
-            filtered by {filteredCategories}. <a
-              href="#"
-              id="clear-filters"
-              onClick={props.clearAllFilters}>
-            Click here to see all documents.</a>
-        </Alert>}
+        <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
     </div>;
   }
 }

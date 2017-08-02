@@ -562,6 +562,9 @@ export const reducer = (state = initialState, action = {}) => {
               $set: {}
             }
           }
+        },
+        viewingDocumentsOrComments: {
+          $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
         }
       }));
   case Constants.REQUEST_REMOVE_TAG:
