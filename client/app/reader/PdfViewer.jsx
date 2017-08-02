@@ -84,11 +84,11 @@ export class PdfViewer extends React.Component {
       return;
     }
 
-    if (event.key === 'ArrowLeft') {
+    if ((event.key === 'ArrowLeft') && this.props.placedButUnsavedAnnotation === null) {
       Analytics.event('Document Viewer', 'key command', 'previous document');
       this.props.showPdf(this.getPrevDocId())();
     }
-    if (event.key === 'ArrowRight') {
+    if ((event.key === 'ArrowRight') && this.props.placedButUnsavedAnnotation === null) {
       Analytics.event('Document Viewer', 'key command', 'next document');
       this.props.showPdf(this.getNextDocId())();
     }

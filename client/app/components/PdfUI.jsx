@@ -63,12 +63,16 @@ export class PdfUI extends React.Component {
 
   showPreviousDocument = () => {
     Analytics.event('Document Viewer', 'click', 'Previous document arrow');
-    this.props.showPdf(this.props.prevDocId)();
+    if (this.props.placedButUnsavedAnnotation === null) {
+      this.props.showPdf(this.props.prevDocId)();
+    }
   }
 
   showNextDocument = () => {
     Analytics.event('Document Viewer', 'click', 'Next document arrow');
-    this.props.showPdf(this.props.nextDocId)();
+    if (this.props.placedButUnsavedAnnotation === null) {
+      this.props.showPdf(this.props.nextDocId)();
+    }
   }
 
   getPageIndicator = () => {
