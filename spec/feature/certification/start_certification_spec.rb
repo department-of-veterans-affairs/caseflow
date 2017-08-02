@@ -4,10 +4,6 @@ require "rails_helper"
 RSpec.feature "Start Certification" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-
-    allow(StartCertificationJob).to receive(:perform_later) do |certification|
-      StartCertificationJob.perform_now(certification)
-    end
   end
 
   let(:nod) { Generators::Document.build(type: "NOD") }
