@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
+import Button from '../components/Button';
 import _ from 'lodash';
 
 export class HearingWorksheet extends React.Component {
@@ -166,6 +167,7 @@ export class HearingWorksheet extends React.Component {
     });
 
     return <div>
+    <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
@@ -304,6 +306,10 @@ export class HearingWorksheet extends React.Component {
             aria-label="Comments and special instructions to attorneys"></textarea>
         </div>
       </div>
+    </div>
+    <div classNames={['cf-push-right']} >
+         <Button name="signup-1" classNames={['cf-push-right']}>Review eFolder</Button>
+    </div>
     </div>;
   }
 }
