@@ -35,6 +35,7 @@ const UnconnectedHeader = ({
         </button>
       </div>
     </div>}
+   <div className="cf-help-divider"></div>
   </div>;
 };
 
