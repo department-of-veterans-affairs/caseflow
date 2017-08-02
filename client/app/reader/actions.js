@@ -4,7 +4,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
-import Analytics from '../util/AnalyticsUtil';
+import { CATEGORIES } from './analytics';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -220,7 +220,16 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
     );
 };
 
-export const startPlacingAnnotation = () => ({ type: Constants.START_PLACING_ANNOTATION });
+export const startPlacingAnnotation = (interactionType) => ({
+  type: Constants.START_PLACING_ANNOTATION,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'start-placing-annotation',
+      label: interactionType
+    }
+  }
+});
 
 export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   type: Constants.SHOW_PLACE_ANNOTATION_ICON,
@@ -384,11 +393,18 @@ export const setPdfReadyToShow = (docId) => ({
   }
 });
 
-export const setTagFilter = (text, checked) => ({
+export const setTagFilter = (text, checked, tagId) => ({
   type: Constants.SET_TAG_FILTER,
   payload: {
     text,
     checked
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: `${checked ? 'set' : 'unset'}-tag-filter`,
+      label: tagId
+    }
   }
 });
 
@@ -397,15 +413,54 @@ export const setCategoryFilter = (categoryName, checked) => ({
   payload: {
     categoryName,
     checked
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: `${checked ? 'select' : 'unselect'}-category-filter`,
+      label: categoryName
+    }
+  }
+});
+
+export const clearTagFilters = () => ({
+  type: Constants.CLEAR_TAG_FILTER,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-tag-filters'
+    }
+  }
+});
+
+export const clearCategoryFilters = () => ({
+  type: Constants.CLEAR_CATEGORY_FILTER,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-category-filters'
+    }
   }
 });
 
 export const clearAllFilters = () => ({
-  type: Constants.CLEAR_ALL_FILTERS
+  type: Constants.CLEAR_ALL_FILTERS,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-all-filters'
+    }
+  }
 });
 
 export const clearSearch = () => ({
-  type: Constants.CLEAR_ALL_SEARCH
+  type: Constants.CLEAR_ALL_SEARCH,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'clear-search'
+    }
+  }
 });
 
 export const removeTag = (doc, tagId) => (
@@ -474,32 +529,47 @@ export const addNewTag = (doc, tags) => (
   }
 );
 
-export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => {
-  const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
-  const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
+export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
+  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
+  payload: {
+    openedAccordionSections
+  },
+  meta: {
+    analytics: (triggerEvent) => {
+      const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
+      const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
 
-  addedSectionKeys.forEach(
-    (newKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
-  );
-  removedSectionKeys.forEach(
-    (oldKey) => Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
-  );
-
-  return {
-    type: Constants.SET_OPENED_ACCORDION_SECTIONS,
-    payload: {
-      openedAccordionSections
+      addedSectionKeys.forEach(
+        (newKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
+      );
+      removedSectionKeys.forEach(
+        (oldKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
+      );
     }
-  };
-};
+  }
+});
 
-export const setViewingDocumentsOrComments = (documentsOrComments) => {
-  Analytics.event(Constants.ANALYTICS.VIEW_DOCUMENT_PAGE, 'set-viewing-documents-or-comments', documentsOrComments);
-
-  return {
-    type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
-    payload: {
-      documentsOrComments
+export const setViewingDocumentsOrComments = (documentsOrComments) => ({
+  type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
+  payload: {
+    documentsOrComments
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'set-viewing-documents-or-comments',
+      label: documentsOrComments
     }
-  };
-};
+  }
+});
+
+export const togglePdfSidebar = () => ({
+  type: Constants.TOGGLE_PDF_SIDEBAR,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'toggle-pdf-sidebar',
+      label: (nextState) => nextState.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+    }
+  }
+});
