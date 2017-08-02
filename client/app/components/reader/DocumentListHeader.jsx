@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setSearch, clearSearch } from '../../reader/actions';
+import { setSearch, clearSearch, clearAllFilters } from '../../reader/actions';
 import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 
 class DocumentListHeader extends React.Component {
-  // Record the search value for analytics purposes, don't worry if it fails.
+  // Record the search value for analytics purposes. Don't worry if it fails.
   recordSearch = (query) => {
     ApiUtil.post(
       `/reader/appeal/${this.props.vacolsId}/claims_folder_searches`,
@@ -27,7 +28,6 @@ class DocumentListHeader extends React.Component {
             id="searchBar"
             onChange={props.setSearch}
             onClearSearch={props.clearSearch}
-            onClick={props.clickSearch}
             recordSearch={this.recordSearch}
             value={props.docFilterCriteria.searchQuery}
             size="small"
@@ -59,12 +59,11 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  clearSearch: () => {
-    dispatch(clearSearch());
-  },
-  setSearch: (searchQuery) => {
-    dispatch(setSearch(searchQuery));
-  }
+  ...bindActionCreators({
+    setSearch,
+    clearSearch,
+    clearAllFilters
+  }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentListHeader);
