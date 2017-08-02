@@ -20,3 +20,27 @@ export const handleServerError = (err) => ({
     err
   }
 });
+
+export const updateDailyDocketNotes = (prop, value) => ({
+  type: Constants.UPDATE_DAILY_DOCKET_NOTES,
+  payload: {
+    prop,
+    value
+  }
+});
+
+export const updateDailyDocketAction = (prop, value) => ({
+  type: Constants.UPDATE_DAILY_DOCKET_ACTION,
+  payload: {
+    prop,
+    value
+  }
+});
+
+export const updateDailyDocketTranscript = (prop, value) => ({
+  type: Constants.UPDATE_DAILY_DOCKET_TRANSCRIPT,
+  payload: {
+    prop,
+    value
+  }
+});
