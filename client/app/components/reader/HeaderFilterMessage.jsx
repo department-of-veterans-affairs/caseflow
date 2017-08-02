@@ -9,15 +9,14 @@ class HeaderFilterMessage extends React.PureComponent {
   render() {
     const props = this.props;
 
-    const categoryCount = _(props.docFilterCriteria.category).
+    // returns the number of 'true' values in an object
+    const getTruthyCount = (obj) => _(obj).
       values().
       compact().
       size();
 
-    // tag count is the size of the truthy values in the tag filter
-    const tagCount = _(props.docFilterCriteria.tag).
-      pickBy().
-      size();
+    const categoryCount = getTruthyCount(props.docFilterCriteria.category);
+    const tagCount = getTruthyCount(props.docFilterCriteria.tag);
 
     const filteredCategories = _.compact([
       categoryCount && `Categories (${categoryCount})`,
