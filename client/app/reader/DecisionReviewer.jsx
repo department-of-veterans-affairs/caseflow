@@ -12,11 +12,11 @@ import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
-import { ANALYTICS } from './constants';
+import { CATEGORIES } from './analytics';
 import _ from 'lodash';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
-  Analytics.event(ANALYTICS.VIEW_DOCUMENT_PAGE, 'single-document-mode');
+  Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
 
 export class DecisionReviewer extends React.PureComponent {
