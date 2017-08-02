@@ -46,12 +46,18 @@ const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
  * coordinate system they belong to. All converting between coordinate systems should be done with
  * the proper helper functions.
  */
-export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
-  x: (x - pageBoundingBox.left) / scale,
-  y: (y - pageBoundingBox.top) / scale
+const divCoordsOfRootCoords = ({ x, y }, pageBoundingBox) => ({
+  x: (x - pageBoundingBox.left),
+  y: (y - pageBoundingBox.top)
 });
 
-const divCoordinatesOfPageCoords = (x, y, width, height, rotation, scale) => {
+export const pageCoordsOfRootCoords = ({ x, y }, { rotation, scale }, { width, height }) => {
+  const { divX, divY } = divCoordsOfRootCoords({ x, y }, pageBoundingBox);
+
+  return pageCoordsOfDivCoordinates({ x: divX, y: divY }, { rotation, scale }, { width, height })
+};
+
+const divCoordinatesOfPageCoords = ({ x, y }, { rotation, scale }, { width, height }) => {
   const scaledX = x * scale;
   const scaledY = y * scale;
 
@@ -66,11 +72,11 @@ const divCoordinatesOfPageCoords = (x, y, width, height, rotation, scale) => {
   }
 };
 
-const pageCoordsOfDivCoordinates = (x, y, width, height, rotation, scale) => {
-  return divCoordinatesOfPageCoords(x, y, width, height, (360 - rotation) % 360, 1 / scale);
+const pageCoordsOfDivCoordinates = ({ x, y }, { rotation, scale }, { width, height }) => {
+  return divCoordinatesOfPageCoords({ x, y }, { rotation: (360 - rotation) % 360, scale: 1.0 / scale }, { width, height });
 };
 
-export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
+export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, { rotation, scale }) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
   const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
   const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
@@ -81,7 +87,7 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
     y: _.mean([topBound, bottomBound])
   };
 
-  const pageCoords = pageCoordsOfRootCoords(rootCoords, iconPageBoundingBox, scale);
+  const pageCoords = pageCoordsOfRootCoords(rootCoords, { rotation, scale }, iconPageBoundingBox);
 
   const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
 
@@ -560,7 +566,10 @@ export class Pdf extends React.PureComponent {
     const pageCoords = getInitialAnnotationIconPageCoords(
       iconPageBoundingBox,
       scrollWindowBoundingRect,
-      this.props.scale
+      {
+        rotation: this.props.rotation,
+        scale: this.props.scale
+      }
     );
 
     this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
@@ -771,10 +780,11 @@ export class Pdf extends React.PureComponent {
     const newPageBounds = _(this.pageElements[this.props.file]).
       map((pageElem, pageIndex) => {
         const { right, bottom } = pageElem.pageContainer.getBoundingClientRect();
+        debugger;
         const pageCoords = pageCoordsOfRootCoords({
           x: right,
           y: bottom
-        }, pageElem.pageContainer.getBoundingClientRect(), this.props.scale);
+        }, { rotation: this.props.rotation, scale: this.props.scale }, pageElem.pageContainer.getBoundingClientRect());
 
         return {
           pageIndex: Number(pageIndex),
@@ -848,23 +858,22 @@ export class Pdf extends React.PureComponent {
       y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
     };
 
-    return pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
+    return pageCoordsOfRootCoords(constrainedRootCoords, { rotation: this.props.rotation, scale: this.props.scale }, container);
   }
 
   getPageDimensions = (pageIndex) => {
     const pageWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width']);
     const pageHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height']);
 
-    return { pageWidth, pageHeight };
+    return { width: pageWidth, height: pageHeight };
   }
 
   // eslint-disable-next-line max-statements
   render() {
     let annotations = [];
     if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
-      const { pageWidth, pageHeight } = this.getPageDimensions(this.props.placingAnnotationIconPageCoords.pageIndex);
       const { x, y } = _.pick(this.props.placingAnnotationIconPageCoords, ['x', 'y']);
-      const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation, this.props.scale);
+      const coords = pageCoordsOfDivCoordinates({ x, y }, { rotation: this.props.rotation, scale: this.props.scale }, this.getPageDimensions(this.props.placingAnnotationIconPageCoords.pageIndex));
 
       annotations = this.props.comments.concat([{
             temporaryId: 'placing-annotation-icon',
@@ -887,8 +896,7 @@ export class Pdf extends React.PureComponent {
         acc[comment.page] = [];
       }
 
-      const { pageWidth, pageHeight } = this.getPageDimensions(comment.page - 1);
-      const { x, y } = divCoordinatesOfPageCoords(comment.x, comment.y, pageWidth, pageHeight, this.props.rotation, this.props.scale);
+      const { x, y } = divCoordinatesOfPageCoords({ x: comment.x, y: comment.y }, { rotation: this.props.rotation, scale: this.props.scale }, this.getPageDimensions(comment.page - 1));
 
       acc[comment.page].push(
         <CommentIcon
@@ -921,8 +929,7 @@ export class Pdf extends React.PureComponent {
             this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect()
           );
 
-          const { pageWidth, pageHeight } = this.getPageDimensions(pageIndex);
-          const coords = pageCoordsOfDivCoordinates(x, y, pageWidth, pageHeight, this.props.rotation, this.props.scale);
+          const coords = pageCoordsOfDivCoordinates({ x, y }, { rotation: this.props.rotation, scale: this.props.scale }, this.getPageDimensions(pageIndex));
           this.props.placeAnnotation(pageIndex + 1, {
             xPosition: coords.x,
             yPosition: coords.y
