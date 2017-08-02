@@ -110,7 +110,11 @@ RSpec.feature "Reader" do
           type: "BVA Decision",
           received_at: 7.days.ago,
           vbms_document_id: 6,
-          category_procedural: true
+          category_procedural: true,
+          tags: [
+            Generators::Tag.create(text: "New Tag1"),
+            Generators::Tag.create(text: "New Tag2")
+          ]
         ),
         Generators::Document.create(
           filename: "My Form 9",
@@ -127,6 +131,59 @@ RSpec.feature "Reader" do
           vbms_document_id: 4
         )
       ]
+    end
+
+    feature "Document header filtering message" do
+      background do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      end
+
+      scenario "filtering categories" do
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+        find(".checkbox-wrapper-medical").click
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (2)")
+
+        # deselect medical filter
+        find(".checkbox-wrapper-medical").click
+        expect(page).to have_content("Categories (1)")
+      end
+
+      scenario "filtering tags and comments" do
+        find("#tags-header .table-icon").click
+        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
+        tags_checkboxes[0].click
+        tags_checkboxes[1].click
+        expect(page).to have_content("Issue tags (2)")
+
+        # unchecking tag filters
+        tags_checkboxes[0].click
+        expect(page).to have_content("Issue tags (1)")
+
+        tags_checkboxes[1].click
+        expect(page).to_not have_content("Issue tags")
+      end
+
+      scenario "filtering comments" do
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+      end
+
+      scenario "clear all filters" do
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+
+        # When the "clear filters" button is clicked, the filtering message is reset,
+        # and focus goes back on the Document toggle.
+        find("#clear-filters").click
+        expect(page).not_to have_content("Filtering by:")
+        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
+      end
     end
 
     context "Welcome gate page" do
@@ -287,8 +344,6 @@ RSpec.feature "Reader" do
 
       find(".checkbox-wrapper-procedural").click
       expect(find("#procedural", visible: false).checked?).to be true
-
-      expect(page).to have_content("Showing limited results")
 
       find("#receipt-date-header").click
       expect_dropdown_filter_to_be_hidden
@@ -836,7 +891,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
 
       # verify that the tags on the previous document still exist
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 2)
+      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
     end
 
     scenario "Search and Filter" do
