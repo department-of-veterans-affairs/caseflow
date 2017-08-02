@@ -43,10 +43,13 @@ class Generators::Hearing
     private
 
     def default_appeal_id(hearing)
-      return Generators::Appeal.build(
-        vacols_record: { template: :pending_hearing },
-        id: hearing.appeal_id
-      ).id if hearing.appeal_id
+      if hearing.appeal_id
+        Generators::Appeal.build(
+          vacols_record: { template: :pending_hearing },
+          vacols_id: hearing.appeal.vacols_id
+        )
+        return hearing.appeal_id
+      end
       Generators::Appeal.create(vacols_record: { template: :pending_hearing }).id
     end
   end
