@@ -41,10 +41,10 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   end
 
   def log_info(counts)
-    outout_msg = "RetrieveDocumentsForReaderJob successfully retrieved #{counts[:docs_successful_count]} documents " \
+    output_msg = "RetrieveDocumentsForReaderJob successfully retrieved #{counts[:docs_successful_count]} documents " \
           "and #{counts[:docs_failed_count]} document(s) failed. #{counts[:appeals_failed_count]} appeal(s) failed."
-    Rails.logger.info outout_msg
-    SlackService.new(url: slack_url).send_notification(outout_msg)
+    Rails.logger.info output_msg
+    SlackService.new(url: slack_url).send_notification(output_msg)
   end
 
   def slack_url
