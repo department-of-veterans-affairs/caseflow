@@ -22,7 +22,7 @@ describe AppealRepository do
   let(:folder_record) do
     OpenStruct.new(
       tivbms: "Y",
-      ticknum: "13 11-265"
+      tinum: "13 11-265"
     )
   end
 

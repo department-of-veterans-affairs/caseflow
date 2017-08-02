@@ -26,7 +26,7 @@ export class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <ClaimsFolderDetails appeal={this.props.appeal}/>
+          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents}/>
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
