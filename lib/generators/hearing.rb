@@ -42,6 +42,10 @@ class Generators::Hearing
 
     private
 
+    def default_appeal
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing })
+    end
+
     def default_appeal_id(hearing)
       if hearing.appeal_id
         Generators::Appeal.build(
@@ -50,7 +54,7 @@ class Generators::Hearing
         )
         return hearing.appeal_id
       end
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }).id
+      default_appeal.id
     end
   end
 end
