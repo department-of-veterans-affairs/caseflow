@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
+import Analytics from '../util/AnalyticsUtil';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -11,9 +12,12 @@ import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
+import { ANALYTICS } from './constants';
 import _ from 'lodash';
 
-export const documentPath = (id) => `/document/${id}/pdf`;
+const fireSingleDocumentModeEvent = _.memoize(() => {
+  Analytics.event(ANALYTICS.VIEW_DOCUMENT_PAGE, 'single-document-mode');
+});
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
@@ -52,6 +56,9 @@ export class DecisionReviewer extends React.PureComponent {
 
   componentDidMount = () => {
     window.addEventListener('click', this.clearPlacingAnnotationState);
+    if (this.props.singleDocumentMode) {
+      fireSingleDocumentModeEvent();
+    }
   }
 
   onJumpToComment = (history, vacolsId) => (comment) => () => {
@@ -149,6 +156,7 @@ DecisionReviewer.propTypes = {
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
+  singleDocumentMode: PropTypes.bool,
 
   // These two properties are exclusively for testing purposes
   router: PropTypes.func,

@@ -2,6 +2,7 @@
 
 <% content_for :full_page_content do %>
   <%= react_component("BaseContainer", props: {
+    singleDocumentMode: true,
     page: "DecisionReviewer",
     appealDocuments: [single_document.to_hash],
     annotations: single_document.annotations.map(&:to_hash),

@@ -4,6 +4,8 @@ import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 
+import { getClaimTypeDetailInfo } from '../reader/utils';
+
 class CaseSelect extends React.PureComponent {
 
   renderIssuesColumnData = (appeal) => {
@@ -29,10 +31,14 @@ class CaseSelect extends React.PureComponent {
     return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
   }
 
+  getVeteranNameAndClaimType = (appeal) => {
+    return <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
+  }
+
   getAssignmentColumn = () => [
     {
       header: 'Veteran',
-      valueName: 'veteran_full_name'
+      valueFunction: this.getVeteranNameAndClaimType
     },
     {
       header: 'Veteran ID',
