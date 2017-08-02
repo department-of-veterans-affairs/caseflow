@@ -49,14 +49,13 @@ const Hearings = ({ hearings }) => {
       <BrowserRouter>
 
         <div>
-
+         <ScrollToTop />
           <Route exact path="/hearings/dockets"
             component={() => (
               <DocketsContainer
                 veteran_law_judge={hearings.veteran_law_judge} />
             )}
           />
-           <ScrollToTop/>
 
           <Route exact path="/hearings/dockets/:date"
             component={(props) => (
@@ -65,7 +64,7 @@ const Hearings = ({ hearings }) => {
                 date={props.match.params.date} />
             )}
           />
-          <ScrollToTop/>
+
 
         <Route exact path="/hearings/worksheets/:vbms_id"
             component={(props) => (
