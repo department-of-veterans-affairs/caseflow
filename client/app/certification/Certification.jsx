@@ -75,6 +75,11 @@ export default class Certification extends React.Component {
       longerThanUsual: false,
       overallTimeout: false
     };
+
+    // Allow test harness to trigger reloads
+    window.reloadCertification = () => {
+      this.checkCertificationData();
+    };
   }
 
   checkCertificationData() {

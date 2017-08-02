@@ -4,6 +4,10 @@ require "rails_helper"
 RSpec.feature "Start Certification" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+
+    allow(StartCertificationJob).to receive(:perform_later) do |certification|
+      StartCertificationJob.perform_now(certification)
+    end
   end
 
   let(:nod) { Generators::Document.build(type: "NOD") }
@@ -242,6 +246,16 @@ RSpec.feature "Start Certification" do
       expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
       visit "certifications/#{appeal_mismatched_documents.vacols_id}/sign_and_certify"
       expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+    end
+
+    scenario "loading a certification and having it error" do
+      allow(StartCertificationJob).to receive(:perform_later).and_return(true)
+      visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
+      expect(page).to have_content("Loading")
+      certification = Certification.find_by(vacols_id: appeal_ready_exact_match.vacols_id)
+      certification.update_attributes(loading_data_failed: true)
+      page.execute_script("window.reloadCertification()")
+      expect(page).to have_content("Technical Difficulties")
     end
   end
 
