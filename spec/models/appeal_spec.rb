@@ -1145,7 +1145,7 @@ describe Appeal do
           .exactly(1).times.and_call_original
 
         expect(no_vbms_id_appeal.attributes["vbms_id"]).to be_nil
-        expect(no_vbms_id_appeal.vbms_id).to_not be_nil
+        expect(no_vbms_id_appeal.reload.vbms_id).to_not be_nil
       end
     end
   end
