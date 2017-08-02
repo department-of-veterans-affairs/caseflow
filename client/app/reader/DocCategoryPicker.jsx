@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
-import Analytics from '../util/AnalyticsUtil';
 
 const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, categoryToggleStates } = props;
@@ -14,8 +13,6 @@ const CategorySelector = (props) => {
     </div>;
 
   const handleChange = (checked) => {
-    Analytics.event('Claims Folder', `${checked ? 'select' : 'unselect'} category filter`, categoryName);
-
     handleCategoryToggle(categoryName, checked);
   };
 
