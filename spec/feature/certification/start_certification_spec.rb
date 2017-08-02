@@ -135,25 +135,25 @@ RSpec.feature "Start Certification" do
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Attorney").click
       end
-      expect(page).to have_content("Since you selected Attorney")
+      expect(page).to have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Agent").click
       end
-      expect(page).to have_content("Since you selected Agent")
+      expect(page).to have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Other").click
       end
-      expect(page).to have_content("Since you selected Other")
+      expect(page).to have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "No representative").click
       end
-      expect(page).to_not have_content("Since you selected")
+      expect(page).to_not have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Service organization").click
       end
       expect(page).to have_content("Service organization name")
       select "AMVETS", from: "Service organization name"
-      expect(page).to have_content("Great! Caseflow will update")
+      expect(page).to have_content("Great! Caseflow will update the representative type")
       click_button("Continue")
       expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
       page.go_back
