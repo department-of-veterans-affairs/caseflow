@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as Actions from './actions/Dockets';
+import { handleServerError } from './actions/hearings';
+import { populateWorksheet } from './actions/worksheet';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
@@ -10,9 +11,9 @@ import ApiUtil from '../util/ApiUtil';
 export const getWorksheet = (id, dispatch) => {
   ApiUtil.get(`/hearings/worksheets/${id}.json`, { cache: true }).
     then((response) => {
-      dispatch(Actions.populateWorksheet(response.body));
+      dispatch(populateWorksheet(response.body));
     }, (err) => {
-      dispatch(Actions.handleServerError(err));
+      dispatch(handleServerError(err));
     });
 };
 
@@ -73,6 +74,5 @@ export default connect(
 
 HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  date: PropTypes.string,
   vbms_id: PropTypes.string
 };

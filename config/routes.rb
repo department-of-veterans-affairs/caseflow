@@ -72,6 +72,8 @@ Rails.application.routes.draw do
     resources :worksheets, only: [:update, :show]
   end
 
+  post 'hearings/save_data' => "hearings#save_data"
+
   resources :hearings, only: [:update]
 
   patch "certifications" => "certifications#create"
