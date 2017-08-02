@@ -719,38 +719,38 @@ RSpec.feature "Reader" do
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq([])
+      expect(doc_0_categories).to eq(["Case Summary"])
 
       doc_1_categories =
         get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
-      expect(doc_1_categories).to eq(["Medical", "Case Summary", "Other Evidence"])
+      expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
 
       click_on documents[0].type
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural", "Case Summary"])
 
       find(".checkbox-wrapper-procedural").click
       find(".checkbox-wrapper-medical").click
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical"])
+      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Case Summary"])
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       doc_0_categories =
         get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq([])
+      expect(doc_0_categories).to eq(["Case Summary"])
 
       click_on documents[1].type
 
       expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(
-        ["Medical", "Case Summary", "Other Evidence"])
+        ["Medical", "Other Evidence", "Case Summary"])
       expect(find("#case_summary", visible: false).disabled?).to be true
 
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
       expect(find("#medical", visible: false).checked?).to be true
-      expect(find("#case_summary", visible: false).checked?).to be false
+      expect(find("#case_summary", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
     end
 
