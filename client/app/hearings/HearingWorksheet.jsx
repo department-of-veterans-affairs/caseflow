@@ -304,7 +304,7 @@ export class HearingWorksheet extends React.Component {
             aria-label="Comments and special instructions to attorneys"></textarea>
         </div>
       </div>
-    </div>;
+    </div>
   }
 }
 
