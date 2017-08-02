@@ -65,7 +65,6 @@ const Hearings = ({ hearings }) => {
             )}
           />
 
-
         <Route exact path="/hearings/worksheets/:vbms_id"
             component={(props) => (
               <HearingWorksheetContainer
