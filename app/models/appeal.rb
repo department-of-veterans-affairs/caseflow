@@ -90,6 +90,16 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
+  # If we do not yet have the vbms_id saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
+  def vbms_id
+    super || begin
+      check_and_load_vacols_data!
+      save
+      super
+    end
+  end
+
   def events
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
