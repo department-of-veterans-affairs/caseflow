@@ -67,6 +67,20 @@ export const setDocListScrollPosition = (scrollTop) => ({
   }
 });
 
+export const toggleDropdownFilterVisibility = (filterName) => ({
+  type: Constants.TOGGLE_FILTER_DROPDOWN,
+  payload: {
+    filterName
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'toggle-dropdown-filter',
+      label: filterName
+    }
+  }
+})
+
 export const changeSortState = (sortBy) => ({
   type: Constants.SET_SORT,
   payload: {
