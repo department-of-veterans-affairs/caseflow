@@ -178,6 +178,12 @@ export const jumpToPage = (pageNumber, docId) => ({
   payload: {
     pageNumber,
     docId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'jump-to-page'
+    }
   }
 });
 

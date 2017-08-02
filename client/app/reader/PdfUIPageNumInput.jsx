@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { jumpToPage } from './actions';
 import { isValidWholeNumber } from './utils';
@@ -79,12 +80,9 @@ PdfUIPageNumInput.propTypes = {
   docId: PropTypes.number
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  jumpToPage(pageNumber, docId) {
-    Analytics.event('Document Viewer', 'jump to page', `page ${pageNumber}`);
-    dispatch(jumpToPage(pageNumber, docId));
-  }
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  jumpToPage
+}, dispatch);
 
 export default connect(
   null, mapDispatchToProps
