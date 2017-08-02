@@ -120,7 +120,7 @@ export default class Certification extends React.Component {
 
   componentDidUpdate() {
     // subsequent checks if data is still loading
-    if (!this.state.certification) {
+    if (!this.state.certification && !this.state.loadingDataFailed && !this.state.overallTimeout) {
       setTimeout(() =>
        this.checkCertificationData(), AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
     }
