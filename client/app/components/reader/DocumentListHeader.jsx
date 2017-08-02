@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchBar from '../SearchBar';
-import Alert from '../Alert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setSearch, clearSearch } from '../../reader/actions';
+import { setSearch, clearSearch, clearAllFilters } from '../../reader/actions';
 import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
