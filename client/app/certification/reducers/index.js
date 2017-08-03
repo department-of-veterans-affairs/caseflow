@@ -154,6 +154,21 @@ const parseDocumentFromApi = (doc = {}, index) => ({
   isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
 });
 
+// In case of going back, remap SignAndCertify page values (db values are different than SignAdnCertify form values)
+const certifyingOfficialTitle = function(title) {
+  if (!Object.values(Constants.certifyingOfficialTitles).includes(title) && Boolean(title)) {
+    return Constants.certifyingOfficialTitles.OTHER;
+  }
+
+  return title;
+};
+
+const certifyingOfficialTitleOther = function(title) {
+  if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
+    return title;
+  }
+};
+
 export const mapDataToInitialState = (certification, form9PdfPath) => ({
   bgsRepresentativeType: certification.bgs_representative_type,
   bgsRepresentativeName: certification.bgs_representative_name,
@@ -181,5 +196,8 @@ export const mapDataToInitialState = (certification, form9PdfPath) => ({
   form9PdfPath,
   certifyingOffice: certification.certifying_office,
   certifyingUsername: certification.certifying_username,
-  certificationDate: certification.certification_date
+  certificationDate: certification.certification_date,
+  certifyingOfficialName: certification.certifying_official_name,
+  certifyingOfficialTitle: certifyingOfficialTitle(certification.certifying_official_title),
+  certifyingOfficialTitleOther: certifyingOfficialTitleOther(certification.certifying_official_title)
 });
