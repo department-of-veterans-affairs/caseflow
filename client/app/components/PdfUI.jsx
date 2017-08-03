@@ -67,16 +67,12 @@ export class PdfUI extends React.Component {
 
   showPreviousDocument = () => {
     Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
-    if (this.props.placedButUnsavedAnnotation === null) {
-      this.props.showPdf(this.props.prevDocId)();
-    }
+    this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
     Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
-    if (this.props.placedButUnsavedAnnotation === null) {
-      this.props.showPdf(this.props.nextDocId)();
-    }
+    this.props.showPdf(this.props.nextDocId)();
   }
 
   getPageIndicator = () => {
@@ -100,7 +96,7 @@ export class PdfUI extends React.Component {
 
     return <div className="cf-pdf-footer cf-pdf-toolbar">
         <div className="cf-pdf-footer-buttons-left">
-          { this.props.prevDocId &&
+          { (this.props.prevDocId && !this.props.placedButUnsavedAnnotation) &&
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
@@ -120,7 +116,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
           <div className="cf-pdf-footer-buttons-right">
-            { this.props.nextDocId &&
+            { (this.props.nextDocId && !this.props.placedButUnsavedAnnotation) &&
               <Button
                 name="next"
                 classNames={['cf-pdf-button cf-right-side']}
@@ -255,7 +251,7 @@ export class PdfUI extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'filteredDocIds'),
+  ..._.pick(state.ui, 'filteredDocIds', 'placedButUnsavedAnnotation'),
   docListIsFiltered: docListIsFiltered(state),
   ...state.ui.pdf
 });
