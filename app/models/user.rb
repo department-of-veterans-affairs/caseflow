@@ -9,12 +9,12 @@ class User < ActiveRecord::Base
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "CertificationV2", "Reader", "Hearings"].freeze
+               "CertificationV2", "Reader", "Hearing Prep"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
     "Manage Claims Establishme" => ["Manage Claim Establishment"],
-    "Hearings" => ["Reader"]
+    "Hearing Prep" => ["Reader"]
   }.freeze
 
   def username
