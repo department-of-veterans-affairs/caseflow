@@ -38,6 +38,14 @@ describe Document do
     end
   end
 
+  context "#category_case_summary" do
+    subject { document.category_case_summary }
+
+    context "when category is part of case summary" do
+      it { is_expected.to eq(true) }
+    end
+  end
+
   context ".content_url" do
     context "efolder_docs_api is enabled" do
       before do

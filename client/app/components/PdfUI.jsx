@@ -43,7 +43,7 @@ export class PdfUI extends React.Component {
     // when a document changes, remove annotation state
     if (prevProps.doc.id !== this.props.doc.id) {
       if (this.props.isPlacingAnnotation) {
-        this.props.stopPlacingAnnotation();
+        this.props.stopPlacingAnnotation('from-document-change');
       }
       this.props.resetJumpToPage();
     }
@@ -181,10 +181,10 @@ export class PdfUI extends React.Component {
                 button="matte"
                 onClick={this.handleClickDocumentTypeLink}
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
-                <span className="cf-pdf-vertically-center">
+                <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
                   <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
-                </span>
+                </h1>
               </Link>
             </span>
           </span>
@@ -257,13 +257,11 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    stopPlacingAnnotation,
     togglePdfSidebar
   }, dispatch),
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
-  },
-  stopPlacingAnnotation: () => {
-    dispatch(stopPlacingAnnotation());
   },
   selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
