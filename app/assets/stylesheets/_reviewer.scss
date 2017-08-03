@@ -367,6 +367,17 @@ svg[aria-hidden=true],
   margin-top: 0;
 }
 
+.cf-sidebar-document-information {
+  .usa-alert-heading {
+    font-size: inherit;
+  }
+
+  .usa-alert-text {
+    font-size: 90%;
+  }
+  
+}
+
 .cf-sidebar-accordion {
   margin-bottom: 0;
   overflow: auto;

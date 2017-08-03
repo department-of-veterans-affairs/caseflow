@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
@@ -12,8 +11,7 @@ import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
-import LoadingMessage from '../components/LoadingMessage';
-
+import SideBarDocumentInformation from './SideBarDocumentInformation';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -182,46 +180,9 @@ export class PdfSidebar extends React.Component {
           <Accordion style="outline"
             onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
-            {appeal && <AccordionSection title="Document information">
-              <p className="cf-pdf-meta-title cf-pdf-cutoff">
-                <b>Document Type: </b>
-                <span title={this.props.doc.type} className="cf-document-type">
-                  {this.props.doc.type}
-                </span>
-              </p>
-              <p className="cf-pdf-meta-title">
-                <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
-              </p>
-              <hr />
-              { !_.isEmpty(appeal) ?
-              <LoadingMessage message="Loading details..." spinnerColor={Constants.READER_COLOR}/> :
-              <div>
-              <p className="cf-pdf-meta-title">
-                <b>Veteran ID:</b> {appeal.vbms_id}
-              </p>
-              <p className="cf-pdf-meta-title">
-                <b>Type:</b> {appeal.type}
-              </p>
-              <p className="cf-pdf-meta-title">
-                <b>Docket Number:</b> {appeal.docket_number}
-              </p>
-              <p className="cf-pdf-meta-title">
-                <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
-              </p>
-              <p className="cf-pdf-meta-title">
-                <b>Issues</b>
-                <ol>
-                  {appeal.issues.map((issue) =>
-                    <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
-                      {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
-                    </span></li>
-                  )}
-                </ol>
-              </p>
-              </div>
-              
-              }
-            </AccordionSection>}
+            <AccordionSection title="Document information">
+              <SideBarDocumentInformation appeal={appeal} doc={this.props.doc} history={this.props.history}/>
+            </AccordionSection>
             <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}

@@ -294,10 +294,10 @@ export const reducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
-    return update(
+    return update(state,
       {
         didLoadAppealFail: {
-          $set: action.payload.value
+          $set: action.payload.failedToLoad
         }
       }
     );
