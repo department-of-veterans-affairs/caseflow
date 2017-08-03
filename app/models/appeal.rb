@@ -413,7 +413,7 @@ class Appeal < ActiveRecord::Base
 
   def fetched_documents
     @fetched_documents ||= if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
-                             EFolderService.fetch_documents_for(self, RequestStore.store[:current_user])
+                             self.class.eFolderService.fetch_documents_for(self, RequestStore.store[:current_user])
                            else
                              self.class.vbms.fetch_documents_for(self)
                            end
@@ -425,7 +425,7 @@ class Appeal < ActiveRecord::Base
     def eFolderService
       # Fakes::VBMSService provides the same functionality as a Fakes::EfolderService would. We can refactor
       # this later when we switch Caseflow to read all documents from efolder permanently
-      EFolderService = FeatureToggle.enabled?(:efolder_docs_api) ? ExternalApi::EfolderService : Fakes::VBMSService
+      EFolderService
     end
 
     def find_or_create_by_vacols_id(vacols_id)
