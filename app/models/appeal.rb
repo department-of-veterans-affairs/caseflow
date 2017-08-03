@@ -413,7 +413,7 @@ class Appeal < ActiveRecord::Base
 
   def fetched_documents
     @fetched_documents ||= if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
-                             self.class.efolder_service.fetch_documents_for(self, RequestStore.store[:current_user])
+                             self.class.document_service.fetch_documents_for(self, RequestStore.store[:current_user])
                            else
                              self.class.vbms.fetch_documents_for(self)
                            end
@@ -448,6 +448,14 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
+    def document_service
+      FeatureToggle.enabled?(:efolder_docs_api) ? EFolderService : VBMSService
+    end
+
+    def vbms
+      VBMSService
+    end
+
     def repository
       @repository ||= AppealRepository
     end
@@ -478,14 +486,6 @@ class Appeal < ActiveRecord::Base
     end
 
     private
-
-    def efolder_service
-      FeatureToggle.enabled?(:efolder_docs_api) ? EFolderService : VBMSService
-    end
-
-    def vbms
-      VBMSService
-    end
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
