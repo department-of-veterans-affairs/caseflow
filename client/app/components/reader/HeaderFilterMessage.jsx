@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Analytics from '../../util/AnalyticsUtil';
 import { clearAllFilters } from '../../reader/actions';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 class HeaderFilterMessage extends React.PureComponent {
@@ -36,12 +37,9 @@ class HeaderFilterMessage extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  clearAllFilters: () => {
-    Analytics.event('Claims Folder', 'click', 'Clear all filters');
-    dispatch(clearAllFilters());
-  }
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  clearAllFilters
+}, dispatch);
 
 HeaderFilterMessage.propTypes = {
   docFilterCriteria: PropTypes.object,
