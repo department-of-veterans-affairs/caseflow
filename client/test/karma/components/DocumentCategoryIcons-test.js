@@ -55,15 +55,16 @@ describe('DocumentCategoryIcons', () => {
       to.equal('Medical');
   });
 
-  it('renders three icons when the doc is in all categories', () => {
+  it('renders four icons when the doc is in all categories', () => {
     const doc = {
       category_medical: true, // eslint-disable-line camelcase
       category_procedural: true, // eslint-disable-line camelcase
+      category_case_summary: true, // eslint-disable-line camelcase
       category_other: true // eslint-disable-line camelcase
     };
 
     const wrapper = mount(<DocumentCategoryIcons doc={doc} />);
 
-    expect(wrapper.find('.cf-document-category-icons li')).to.have.length(3);
+    expect(wrapper.find('.cf-document-category-icons li')).to.have.length(4);
   });
 });
