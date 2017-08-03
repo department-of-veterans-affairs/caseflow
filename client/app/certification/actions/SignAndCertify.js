@@ -51,7 +51,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     certifyingOfficialTitle = params.certifyingOfficialTitle;
   }
 
-  const update = {
+  let update = {
     certifying_official_name: params.certifyingOfficialName,
     certifying_official_title: certifyingOfficialTitle
   };
@@ -66,7 +66,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     });
 
   // This is to save SignAndCertify form values (different than db values) in case going back
-  const update_state = {
+  update = {
     certifying_official_name: params.certifyingOfficialName,
     certifying_official_title: params.certifyingOfficialTitle,
     certifying_official_title_other: params.certifyingOfficialTitleOther
@@ -75,7 +75,7 @@ export const certificationUpdateStart = (params, dispatch) => {
   return {
     type: Constants.CERTIFICATION_UPDATE_REQUEST,
     payload: {
-      update_state
+      update
     }
   };
 };

@@ -16,17 +16,18 @@ describe('.updateProgressBar', () => {
   });
 });
 
-describe('.onSignAndCertifyFormChange', () => {
-  it('should create an action to change the form', () => {
-    const certifyingUsername = 'new name';
+describe('.changeCertifyingOfficialName', () => {
+  it('should create an action to change the name', () => {
+    const certifyingOfficialName = 'new name';
     const expectedAction = {
-      type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
+      type: Constants.CHANGE_CERTIFYING_OFFICIAL_NAME,
       payload: {
-        certifyingUsername
+        certifyingOfficialName
       }
     };
 
-    expect(Actions.onSignAndCertifyFormChange('certifyingUsername', certifyingUsername)).to.eql(expectedAction);
+    expect(Actions.changeCertifyingOfficialName('certifyingOfficialName', certifyingOfficialName)).
+    to.eql(expectedAction);
   });
 });
 
@@ -62,7 +63,8 @@ describe('.certificationUpdateStart', () => {
       payload: {
         update: {
           certifying_official_name: params.certifyingOfficialName,
-          certifying_official_title: params.certifyingOfficialTitle
+          certifying_official_title: params.certifyingOfficialTitle,
+          certifying_official_title_other: params.certifyingOfficialTitleOther
         }
       }
     };
