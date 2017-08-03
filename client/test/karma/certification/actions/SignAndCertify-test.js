@@ -26,7 +26,7 @@ describe('.changeCertifyingOfficialName', () => {
       }
     };
 
-    expect(Actions.changeCertifyingOfficialName('certifyingOfficialName', certifyingOfficialName)).
+    expect(Actions.changeCertifyingOfficialName(certifyingOfficialName)).
     to.eql(expectedAction);
   });
 });

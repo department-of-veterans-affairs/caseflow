@@ -225,14 +225,14 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
-  changeCertifyingOfficialName: (certifyingOfficialName) => dispatch(actions.
-    changeCertifyingOfficialName(certifyingOfficialName)),
+  changeCertifyingOfficialName: (name) => dispatch(actions.
+    changeCertifyingOfficialName(name)),
 
-  changeCertifyingOfficialTitle: (certifyingOfficialTitle) => dispatch(actions.
-    changeCertifyingOfficialTitle(certifyingOfficialTitle)),
+  changeCertifyingOfficialTitle: (title) => dispatch(actions.
+    changeCertifyingOfficialTitle(title)),
 
-  changeCertifyingOfficialTitleOther: (certifyingOfficialTitleOther) => dispatch(actions.
-    changeCertifyingOfficialTitleOther(certifyingOfficialTitleOther)),
+  changeCertifyingOfficialTitleOther: (titleOther) => dispatch(actions.
+    changeCertifyingOfficialTitleOther(titleOther)),
 
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
