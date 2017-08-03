@@ -11,11 +11,18 @@ export const mapDataToInitialState = function(state = {}) {
   return state;
 };
 
-export const newState = (action, state) => {
+export const newDocketState = (action, state) => {
+  const [, date, index,, property] = action.payload.prop.split('.');
+
   return update(state, {
-    [action.payload.prop]: { $set: action.payload.value },
-    save: { $apply: (_save) =>
-      update(_save || {}, { $merge: { [action.payload.prop]: action.payload.value } })
+    dockets: {
+      [date]: {
+        hearings_hash: {
+          [index]: {
+            [property]: { $set: action.payload.value }
+          }
+        }
+      }
     }
   });
 };
@@ -30,7 +37,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case 'UPDATE_DAILY_DOCKET_NOTES':
   case 'UPDATE_DAILY_DOCKET_TRANSCRIPT':
   case 'UPDATE_DAILY_DOCKET_ACTION':
-    return newState(action, state);
+    return newDocketState(action, state);
 
   case 'POPULATE_WORKSHEET':
     return update(state, {

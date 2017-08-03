@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { getStateProperty } from './utils';
 import * as Actions from './actions/Dockets';
 
 export class TextareaContainer extends React.Component {
 
   updateTextarea = (event) => {
-    this.props.updateTextarea(this.props.action, event.target.id, event.target.value);
+    this.props.updateTextarea(this.props.action, this.props.id, event.target.value);
   }
 
   render() {
@@ -20,9 +21,11 @@ export class TextareaContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  [ownProps.id]: state[ownProps.id]
-});
+const mapStateToProps = (state, ownProps) => {
+  return {
+    [ownProps.id]: getStateProperty(state, 'docket_note', ownProps.id)
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateTextarea: (actionName, prop, value) => {

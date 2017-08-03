@@ -62,7 +62,7 @@ export class DailyDocket extends React.Component {
               <th>Representative</th>
               <th>
                 <span>Actions</span>
-                <span className="saving">Last saved at {now()}</span>
+                <span className="saving">Last saved at 10:30am</span>
               </th>
             </tr>
           </thead>
@@ -85,7 +85,7 @@ export class DailyDocket extends React.Component {
               <td className="cf-hearings-docket-actions" rowSpan="2">
                 <DropdownContainer
                   label="Disposition"
-                  name={`${hearing.id}.disposition`}
+                  name={`hearing.${this.props.date}.${index}.${hearing.id}.disposition`}
                   options={dispositionOptions}
                   defaultValue={hearing.disposition}
                   action="updateDailyDocketAction"
@@ -93,7 +93,7 @@ export class DailyDocket extends React.Component {
                 />
                 <DropdownContainer
                   label="Hold Open"
-                  name={`${hearing.id}.hold_open`}
+                  name={`hearing.${this.props.date}.${index}.${hearing.id}.hold_open`}
                   options={holdOptions}
                   defaultValue={hearing.hold_open}
                   action="updateDailyDocketAction"
@@ -101,7 +101,7 @@ export class DailyDocket extends React.Component {
                 />
                 <DropdownContainer
                   label="AOD"
-                  name={`${hearing.id}.aod`}
+                  name={`hearing.${this.props.date}.${index}.${hearing.id}.aod`}
                   options={aodOptions}
                   defaultValue={hearing.aod}
                   action="updateDailyDocketAction"
@@ -109,7 +109,7 @@ export class DailyDocket extends React.Component {
                 />
                 <div className="transcriptRequested">
                   <CheckboxContainer
-                    id={`${hearing.id}.transcript_requested`}
+                    id={`hearing.${this.props.date}.${index}.${hearing.id}.transcript_requested`}
                     label="Transcript Requested"
                     defaultValue={hearing.transcriptRequested}
                     action="updateDailyDocketTranscript"
@@ -122,10 +122,10 @@ export class DailyDocket extends React.Component {
               <td></td>
               <td colSpan="2" className="cf-hearings-docket-notes">
                 <div>
-                  <label htmlFor={`${hearing.id}.notes`}>Notes:</label>
+                  <label htmlFor={`hearing.${this.props.date}.${index}.${hearing.id}.notes`}>Notes:</label>
                   <div>
                     <TextareaContainer
-                      id={`${hearing.id}.notes`}
+                      id={`hearing.${this.props.date}.${index}.${hearing.id}.notes`}
                       defaultValue={hearing.notes}
                       action="updateDailyDocketNotes"
                       maxLength="100"

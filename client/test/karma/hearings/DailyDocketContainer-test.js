@@ -9,12 +9,16 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
 import { populateDockets } from '../../../app/hearings/actions/Dockets';
 import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
+import TextareaContainer from '../../../app/hearings/TextareaContainer';
+import DropdownContainer from '../../../app/hearings/DropdownContainer';
+import CheckboxContainer from '../../../app/hearings/CheckboxContainer';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
 
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
+/* eslint-disable newline-per-chained-call */
 describe('DailyDocketContainer', () => {
   let wrapper;
 
@@ -57,6 +61,7 @@ describe('DailyDocketContainer', () => {
           representative_name: 'Military Order of the Purple Heart',
           request_type: 'CO',
           user_id: 9,
+          id: 1,
           vacols_id: 'f10b9ed6a',
           vbms_id: '3bf55b922',
           venue: {
@@ -80,4 +85,23 @@ describe('DailyDocketContainer', () => {
     }));
     expect(wrapper.text()).to.include('Daily Docket');
   });
+
+  it('updates a docket', () => {
+    wrapper.find(TextareaContainer).simulate('change', { target: { value: 'My new value' } });
+    wrapper.find(DropdownContainer).at(0).simulate('change', { target: { value: 'held' } });
+    wrapper.find(DropdownContainer).at(1).simulate('change', { target: { value: '60' } });
+    wrapper.find(DropdownContainer).at(2).simulate('change', { target: { value: 'grant' } });
+    wrapper.find(CheckboxContainer).simulate('click');
+    setTimeout(() => {
+      let state = store.getState();
+      let hearing = state.dockets['2017-06-17'].hearings_hash[0];
+
+      expect(hearing.notes).to.equal('My new value');
+      expect(hearing.disposition).to.equal('held');
+      expect(hearing.hold_open).to.equal('60');
+      expect(hearing.grant).to.equal('grant');
+      expect(hearing.transcript_requested).to.equal(true);
+    }, 1000);
+  });
+
 });

@@ -3,6 +3,9 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
+// TODO: Remove this line once all hearing prep redux operations are verified
+const { logger } = require('redux-logger');
+
 import thunk from 'redux-thunk';
 
 import ConfigUtil from '../util/ConfigUtil';
@@ -18,6 +21,8 @@ const configureStore = (data) => {
   if (!ConfigUtil.test()) {
     middleware.push(thunk, perflogger);
   }
+  // TODO: Remove this line once all hearing prep redux operations are verified
+  middleware.push(logger);
 
   // This is to be used with the Redux Devtools Chrome extension
   // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
