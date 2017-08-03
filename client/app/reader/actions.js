@@ -67,10 +67,35 @@ export const setDocListScrollPosition = (scrollTop) => ({
   }
 });
 
+export const toggleDropdownFilterVisibility = (filterName) => ({
+  type: Constants.TOGGLE_FILTER_DROPDOWN,
+  payload: {
+    filterName
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'toggle-dropdown-filter',
+      label: filterName
+    }
+  }
+});
+
 export const changeSortState = (sortBy) => ({
   type: Constants.SET_SORT,
   payload: {
     sortBy
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'change-sort-by',
+      label: (nextState) => {
+        const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+
+        return `${sortBy}-${direction}`;
+      }
+    }
   }
 });
 
@@ -178,6 +203,12 @@ export const jumpToPage = (pageNumber, docId) => ({
   payload: {
     pageNumber,
     docId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'jump-to-page'
+    }
   }
 });
 
