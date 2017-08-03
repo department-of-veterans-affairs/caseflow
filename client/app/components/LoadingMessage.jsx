@@ -3,11 +3,19 @@ import PropTypes from 'prop-types';
 import { loadingSymbolHtml } from './RenderFunctions';
 
 const LoadingMessage = ({ message, spinnerColor }) => (
-  <div>
-    <div style={{display: 'inline-block', width: '100%'}}>
-      <div style={{display: 'inline-block'}}><div>{message}</div></div> <div style={{width: '30px', display: 'inline-block'}}>{loadingSymbolHtml('', '100%', spinnerColor)}</div>
+  <div className="cf-loading-message">
+    <div className="loading-message-text">
+      <div>{message}</div>
+    </div> 
+    <div className="loading-message-spinner">
+      {loadingSymbolHtml('', '100%', spinnerColor)}
     </div>
   </div>
 );
+
+LoadingMessage.propTypes = {
+  message: PropTypes.string.isRequired,
+  spinnerColor: PropTypes.string.isRequired
+};
 
 export default LoadingMessage;
