@@ -122,6 +122,13 @@ svg[aria-hidden=true],
 }
 // scss-lint:enable QualifyingElement
 
+
+.cf-non-stylized-header {
+  font-size: inherit;
+  margin: 0;
+  color: inherit;
+}
+
 .cf-sidebar-wrapper {
   display: flex;
   flex-direction: column;
