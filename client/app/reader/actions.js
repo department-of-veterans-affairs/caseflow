@@ -57,6 +57,13 @@ export const setSearch = (searchQuery) => ({
   type: Constants.SET_SEARCH,
   payload: {
     searchQuery
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'search',
+      debounceMs: 500
+    }
   }
 });
 
