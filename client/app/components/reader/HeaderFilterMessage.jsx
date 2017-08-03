@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Analytics from '../../util/AnalyticsUtil';
 import { clearAllFilters } from '../../reader/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
