@@ -46,7 +46,7 @@ export class DecisionReviewer extends React.PureComponent {
 
   clearPlacingAnnotationState = () => {
     if (this.props.pdf.isPlacingAnnotation) {
-      this.props.stopPlacingAnnotation();
+      this.props.stopPlacingAnnotation('from-click-outside-doc');
     }
   }
 
