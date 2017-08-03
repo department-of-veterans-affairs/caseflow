@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../components/Checkbox';
-import Analytics from '../util/AnalyticsUtil';
 
 const TagSelector = (props) => {
   const { tag, handleTagToggle, tagToggleStates } = props;
@@ -12,9 +11,7 @@ const TagSelector = (props) => {
     </div>;
 
   const handleChange = (checked) => {
-    Analytics.event('Claims Folder', `${checked ? 'select' : 'unselect'} tag filter`, tag.text);
-
-    handleTagToggle(tag.text, checked);
+    handleTagToggle(tag.text, checked, tag.id);
   };
 
   return <Checkbox name={tag.text} onChange={handleChange}

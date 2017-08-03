@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import Button from '../components/Button';
 import Link from '../components/Link';
@@ -7,14 +8,14 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import * as Constants from '../reader/constants';
-import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const ZOOM_RATE = 0.3;
@@ -49,25 +50,28 @@ export class PdfUI extends React.Component {
   }
 
   zoom = (delta) => () => {
-    Analytics.event('Document Viewer', (delta > 0) ? 'zoom in' : 'zoom out', '');
+    const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
+    const zoomDirection = delta > 0 ? 'in' : 'out';
+
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
 
     this.setState({
-      scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
+      scale: nextScale
     });
   }
 
   openDownloadLink = () => {
-    Analytics.event('Document Viewer', 'download', '');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
     window.open(`${this.props.doc.content_url}?type=${this.props.doc.type}&download=true`);
   }
 
   showPreviousDocument = () => {
-    Analytics.event('Document Viewer', 'click', 'Previous document arrow');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
-    Analytics.event('Document Viewer', 'click', 'Next document arrow');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.nextDocId)();
   }
 
@@ -126,7 +130,7 @@ export class PdfUI extends React.Component {
   }
 
   fitToScreen = () => {
-    Analytics.event('Document Viewer', 'fit to screen', '');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
     this.setState({
       scale: this.state.fitToScreenZoom
@@ -142,9 +146,11 @@ export class PdfUI extends React.Component {
   }
 
   onBackToClaimsFolder = () => {
-    Analytics.event('Document Viewer', 'click', 'Back to claims folder');
+    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.onShowList();
   }
+
+  handleClickDocumentTypeLink = () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
     const pdfUiClass = classNames(
@@ -173,7 +179,7 @@ export class PdfUI extends React.Component {
                 ariaLabel="open document in new tab"
                 target="_blank"
                 button="matte"
-                onClick={ () => Analytics.event('Document Viewer', 'click', 'document type link') }
+                onClick={this.handleClickDocumentTypeLink}
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
@@ -218,7 +224,7 @@ export class PdfUI extends React.Component {
               <Button
                 name="open menu"
                 classNames={['cf-pdf-button']}
-                onClick={this.props.handleTogglePdfSidebar}>
+                onClick={this.props.togglePdfSidebar}>
                 <strong>
                   Open menu
                 </strong>
@@ -250,20 +256,16 @@ const mapStateToProps = (state) => ({
   ...state.ui.pdf
 });
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    togglePdfSidebar
+  }, dispatch),
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
   },
   stopPlacingAnnotation: () => {
     dispatch(stopPlacingAnnotation());
   },
-  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
-  handleTogglePdfSidebar() {
-    Analytics.event('Document Viewer', 'click', 'Show menu');
-
-    dispatch({
-      type: Constants.TOGGLE_PDF_SIDEBAR
-    });
-  }
+  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
 
 export default connect(
@@ -284,7 +286,7 @@ PdfUI.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,

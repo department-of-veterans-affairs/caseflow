@@ -17,15 +17,14 @@ import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
-import { setDocListScrollPosition, changeSortState,
-  setTagFilter, setCategoryFilter, selectCurrentPdfLocally } from './actions';
+import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
+  setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import Analytics from '../util/AnalyticsUtil';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -35,14 +34,9 @@ class FilterIcon extends React.PureComponent {
       handleActivate, label, getRef, selected, idPrefix
     } = this.props;
 
-    const onActivate = (event) => {
-      Analytics.event('Claims Folder', 'activate filter', idPrefix);
-      handleActivate(event);
-    };
-
     const handleKeyDown = (event) => {
       if (event.key === ' ' || event.key === 'Enter') {
-        onActivate(event);
+        handleActivate(event);
         event.preventDefault();
       }
     };
@@ -56,7 +50,7 @@ class FilterIcon extends React.PureComponent {
       className,
       tabIndex: '0',
       onKeyDown: handleKeyDown,
-      onClick: onActivate
+      onClick: handleActivate
     };
 
     if (selected) {
@@ -204,8 +198,8 @@ class DocumentsTable extends React.Component {
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
   getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
-  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('category')
-  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -256,16 +250,6 @@ class DocumentsTable extends React.Component {
   getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
-
-    const clearFilters = () => {
-      _(Constants.documentCategories).keys().
-        forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
-    };
-
-    const clearTagFilters = () => {
-      _(this.props.docFilterCriteria.tag).keys().
-        forEach((tagText) => this.props.setTagFilter(tagText, false));
-    };
 
     const anyFiltersSet = (filterType) => (
       Boolean(_.some(this.props.docFilterCriteria[filterType]))
@@ -327,7 +311,7 @@ class DocumentsTable extends React.Component {
 
           {isCategoryDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.category}
-              clearFilters={clearFilters}
+              clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
               handleClose={this.toggleCategoryDropdownFilterVisiblity}>
@@ -379,7 +363,7 @@ class DocumentsTable extends React.Component {
           />
           {isTagDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
-              clearFilters={clearTagFilters}
+              clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
               handleClose={this.toggleTagDropdownFilterVisiblity}>
@@ -439,25 +423,15 @@ DocumentsTable.propTypes = {
   })
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setDocListScrollPosition,
-    setTagFilter,
-    setCategoryFilter
-  }, dispatch),
-  changeSortState(sortBy) {
-    Analytics.event('Claims Folder', 'sort by', sortBy);
-    dispatch(changeSortState(sortBy));
-  },
-  toggleDropdownFilterVisiblity(filterName) {
-    dispatch({
-      type: Constants.TOGGLE_FILTER_DROPDOWN,
-      payload: {
-        filterName
-      }
-    });
-  }
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setDocListScrollPosition,
+  clearTagFilters,
+  clearCategoryFilters,
+  setTagFilter,
+  changeSortState,
+  toggleDropdownFilterVisibility,
+  setCategoryFilter
+}, dispatch);
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),

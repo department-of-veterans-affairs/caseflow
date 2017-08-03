@@ -50,24 +50,6 @@ export default class SearchBar extends React.Component {
     }
   }
 
-  onClick = () => {
-    if (this.props.analyticsCategory) {
-      Analytics.event(this.props.analyticsCategory, 'click', 'Search button');
-    }
-
-    if (this.props.onClick) {
-      this.props.onClick();
-    }
-  }
-
-  onClearSearch = () => {
-    if (this.props.analyticsCategory) {
-      Analytics.event(this.props.analyticsCategory, 'click', 'Clear search');
-    }
-
-    this.props.onClearSearch();
-  }
-
   render() {
     let {
       id,
@@ -92,29 +74,27 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
-    const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
-
     return <span className={sizeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
       <input
-        className={inputClassName}
+        className="cf-search-input-with-close"
         id={id}
         onChange={this.onChange}
         onBlur={this.onBlur}
         type="search"
         name="search"
         value={value}/>
-      {onClearSearch && _.size(value) > 0 &&
+      {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
           name="clear search"
           classNames={['cf-pdf-button cf-search-close-icon']}
-          onClick={this.onClearSearch}>
+          onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={`search-${id}`} onClick={this.onClick} type="submit" loading={loading}>
+      <Button name={`search-${id}`} type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button>
     </span>;
