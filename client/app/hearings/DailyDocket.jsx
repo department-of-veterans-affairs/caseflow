@@ -6,7 +6,6 @@ import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
-import Checkbox from '../components/Checkbox'
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
