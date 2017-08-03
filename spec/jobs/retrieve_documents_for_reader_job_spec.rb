@@ -69,7 +69,7 @@ describe RetrieveDocumentsForReaderJob do
       expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
 
       # Expect all tests to call Slack service at the end
-      SlackService.any_instance.should_receive(:send_notification).with(any_args).once
+      expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
 
       dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
     end
@@ -153,7 +153,7 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 
-        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1).and_return([expected_doc1])
+        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1)
           .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
           .once
 
@@ -166,6 +166,57 @@ describe RetrieveDocumentsForReaderJob do
         expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
         expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
         expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+      end
+    end
+
+    context "when consecutive errors occur" do
+      before do
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1, appeal_with_doc2, appeal_with_doc3, appeal_with_doc4, appeal_with_doc5]).once
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
+          .and_return(nil).once
+
+        allow(Fakes::VBMSService).to receive(:fetch_documents_for).with(any_args)
+          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
+          .exactly(5).times
+      end
+
+      let!(:expected_doc3) do
+        Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
+      end
+
+      let!(:expected_doc4) do
+        Generators::Document.build(type: "BVA Decision", received_at: 10.days.ago)
+      end
+
+      let!(:appeal_with_doc3) do
+        Generators::Appeal.create(
+          vbms_id: expected_doc3.vbms_document_id,
+          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+        )
+      end
+
+      let!(:appeal_with_doc4) do
+        Generators::Appeal.create(
+          vbms_id: expected_doc4.vbms_document_id,
+          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+        )
+      end
+
+      let!(:expected_doc5) do
+        Generators::Document.build(type: "BVA Decision", received_at: 10.days.ago)
+      end
+      let!(:appeal_with_doc5) do
+        Generators::Appeal.create(
+          vbms_id: expected_doc5.vbms_document_id,
+          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+        )
+      end
+
+      it "stops executing after 5 errors" do
+        RetrieveDocumentsForReaderJob.perform_now
+        expect(S3Service.files).to be_nil
       end
     end
   end
