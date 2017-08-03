@@ -12,6 +12,8 @@ import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
+import LoadingMessage from '../components/LoadingMessage';
+
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -112,7 +114,8 @@ export class PdfSidebar extends React.Component {
     const {
       doc,
       showErrorMessage,
-      tagOptions
+      tagOptions,
+      appeal
     } = this.props;
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
@@ -159,7 +162,7 @@ export class PdfSidebar extends React.Component {
     );
 
     const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
-
+    console.log(appeal);
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
@@ -178,7 +181,7 @@ export class PdfSidebar extends React.Component {
           <Accordion style="outline"
             onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
-            <AccordionSection title="Document information">
+            {appeal && <AccordionSection title="Document information">
               <p className="cf-pdf-meta-title cf-pdf-cutoff">
                 <b>Document Type: </b>
                 <span title={this.props.doc.type} className="cf-document-type">
@@ -188,7 +191,36 @@ export class PdfSidebar extends React.Component {
               <p className="cf-pdf-meta-title">
                 <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
               </p>
-            </AccordionSection>
+              <hr />
+              { !_.isEmpty(appeal) ?
+              <LoadingMessage message="Loading details..." spinnerColor={Constants.READER_COLOR}/> :
+              <div>
+              <p className="cf-pdf-meta-title">
+                <b>Veteran ID:</b> {appeal.vbms_id}
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Type:</b> {appeal.type}
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Docket Number:</b> {appeal.docket_number}
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Issues</b>
+                <ol>
+                  {appeal.issues.map((issue) =>
+                    <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
+                      {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
+                    </span></li>
+                  )}
+                </ol>
+              </p>
+              </div>
+              
+              }
+            </AccordionSection>}
             <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
@@ -312,6 +344,7 @@ const mapStateToProps = (state, ownProps) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
+    appeal: state.loadedAppeal,
     ..._.pick(state, 'documents', 'tagOptions', 'openedAccordionSections')
   };
 };

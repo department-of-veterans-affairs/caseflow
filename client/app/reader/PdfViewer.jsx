@@ -7,7 +7,7 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf } from '../reader/actions';
+  selectCurrentPdf, fetchAppealDetails } from '../reader/actions';
 import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
@@ -105,6 +105,11 @@ export class PdfViewer extends React.Component {
   componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
     window.addEventListener('keydown', this.keyListener);
+
+    if (_.isEmpty(this.props.appeal) ||
+      (this.props.appeal.vacols_id !== this.props.match.params.vacolsId)) {
+      this.props.fetchAppealDetails(this.props.match.params.vacolsId);
+    }
   }
 
   componentWillUnmount = () => {
@@ -208,15 +213,18 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
+  appeal: state.appeal,
   ..._.pick(state, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
+
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     showPlaceAnnotationIcon,
     closeAnnotationDeleteModal,
-    deleteAnnotation
+    deleteAnnotation,
+    fetchAppealDetails
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
