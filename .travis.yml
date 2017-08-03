@@ -12,7 +12,6 @@ env:
   global:
     # include $HOME/.local/bin for `aws`
     - PATH=$HOME/.local/bin:$PATH
-    - AWS_DEFAULT_REGION=us-west-2
 
 before_install:
   - pip install --user awscli
