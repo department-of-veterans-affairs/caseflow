@@ -215,7 +215,8 @@ describe Document do
         type: "Form 9",
         alt_types: "Alt Form 9",
         received_at: Time.now.utc,
-        filename: "test")
+        filename: "test",
+        efolder_id: 1234)
     end
     let(:persisted_document) { from_vbms_document.merge_into(Generators::Document.build) }
 
@@ -224,6 +225,7 @@ describe Document do
       expect(from_vbms_document.alt_types).to eq(persisted_document.alt_types)
       expect(from_vbms_document.received_at).to eq(persisted_document.received_at)
       expect(from_vbms_document.filename).to eq(persisted_document.filename)
+      expect(from_vbms_document.efolder_id).to eq(persisted_document.efolder_id)
     end
   end
 
