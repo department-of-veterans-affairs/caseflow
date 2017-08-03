@@ -422,10 +422,6 @@ class Appeal < ActiveRecord::Base
   class << self
     attr_writer :repository
 
-    def efolder_service
-      FeatureToggle.enabled?(:efolder_docs_api) ? EFolderService : VBMSService
-    end
-
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
@@ -450,10 +446,6 @@ class Appeal < ActiveRecord::Base
 
     def bgs
       BGSService.new
-    end
-
-    def vbms
-      VBMSService
     end
 
     def repository
@@ -486,6 +478,14 @@ class Appeal < ActiveRecord::Base
     end
 
     private
+
+    def efolder_service
+      FeatureToggle.enabled?(:efolder_docs_api) ? EFolderService : VBMSService
+    end
+
+    def vbms
+      VBMSService
+    end
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
