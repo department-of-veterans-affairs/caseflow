@@ -168,9 +168,9 @@ export class PdfSidebar extends React.Component {
             classNames={['cf-pdf-button']}
             id="hide-menu-header"
             onClick={this.props.togglePdfSidebar}>
-            <strong>
+            <h2 className="cf-non-stylized-header">
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
-            </strong>
+            </h2>
           </Button>
         </div>
         <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
