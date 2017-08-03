@@ -47,7 +47,6 @@ const Hearings = ({ hearings }) => {
   return <Provider store={configureStore(hearings)}>
     <div>
       <BrowserRouter>
-
         <div>
          <ScrollToTop />
           <Route exact path="/hearings/dockets"
@@ -73,7 +72,6 @@ const Hearings = ({ hearings }) => {
                 vbms_id={props.match.params.vbms_id} />
             )}
           />
-
         </div>
 
       </BrowserRouter>
