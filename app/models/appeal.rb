@@ -416,7 +416,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def document_service
-    RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api) ? EFolderService : VBMSService
+    @document_service ||= (RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)) ?
+      EFolderService : VBMSService
   end
 
   class << self
