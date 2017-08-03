@@ -117,7 +117,6 @@ class Document < ActiveRecord::Base
   def serializable_hash(options = {})
     super({
       methods: [
-        :efolder_id,
         :vbms_document_id,
         :content_url,
         :type,

@@ -4,7 +4,7 @@ class ExternalApi::EfolderService
   def self.fetch_documents_for(appeal, user)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
     # to return the list of documents associated with the appeal
-    headers = { "FILE-NUMBER" => appeal.vbms_id.to_s }
+    headers = { "FILE-NUMBER" => appeal.sanitized_vbms_id.to_s }
     response = get_efolder_response("/api/v1/files", user, headers)
 
     Rails.logger.error "eFolder HTTP status code: #{response.code} for appeal: #{appeal}. " if response.error?
