@@ -96,3 +96,10 @@ export const getClaimTypeDetailInfo = (claim) => {
 
   return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
 };
+
+export const getAppealIfItDoesNotExist = (currentObj) => {
+  if (_.isEmpty(currentObj.props.appeal) ||
+    (currentObj.props.appeal.vacols_id !== currentObj.props.match.params.vacolsId)) {
+    currentObj.props.fetchAppealDetails(currentObj.props.match.params.vacolsId);
+  }
+};

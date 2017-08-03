@@ -8,7 +8,7 @@ import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   selectCurrentPdf, fetchAppealDetails } from '../reader/actions';
-import { isUserEditingText, update } from '../reader/utils';
+import { isUserEditingText, update, getAppealIfItDoesNotExist } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
@@ -115,10 +115,7 @@ export class PdfViewer extends React.Component {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
     window.addEventListener('keydown', this.keyListener);
 
-    if (_.isEmpty(this.props.appeal) ||
-      (this.props.appeal.vacols_id !== this.props.match.params.vacolsId)) {
-      this.props.fetchAppealDetails(this.props.match.params.vacolsId);
-    }
+    getAppealIfItDoesNotExist(this);
   }
 
   componentWillUnmount = () => {
