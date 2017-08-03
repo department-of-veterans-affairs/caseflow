@@ -117,6 +117,7 @@ class Document < ActiveRecord::Base
   def serializable_hash(options = {})
     super({
       methods: [
+        :efolder_id,
         :vbms_document_id,
         :content_url,
         :type,
@@ -138,6 +139,7 @@ class Document < ActiveRecord::Base
 
   def merge_into(document)
     document.assign_attributes(
+      efolder_id: efolder_id,
       type: type,
       alt_types: alt_types,
       received_at: received_at,

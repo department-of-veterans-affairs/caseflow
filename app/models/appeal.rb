@@ -422,6 +422,12 @@ class Appeal < ActiveRecord::Base
   class << self
     attr_writer :repository
 
+    def eFolderService
+      # Fakes::VBMSService provides the same functionality as a Fakes::EfolderService would. We can refactor
+      # this later when we switch Caseflow to read all documents from efolder permanently
+      EFolderService = FeatureToggle.enabled?(:efolder_docs_api) ? ExternalApi::EfolderService : Fakes::VBMSService
+    end
+
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
