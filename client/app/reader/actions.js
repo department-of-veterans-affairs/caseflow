@@ -137,7 +137,7 @@ export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
     }
   }
 });
-export const closeAnnotationDeleteModal = () => ({ 
+export const closeAnnotationDeleteModal = () => ({
   type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
   meta: {
     analytics: {
@@ -354,7 +354,7 @@ export const setPageCoordBounds = (coordBounds) => ({
   }
 });
 
-export const stopPlacingAnnotation = (interactionType) => ({ 
+export const stopPlacingAnnotation = (interactionType) => ({
   type: Constants.STOP_PLACING_ANNOTATION,
   meta: {
     analytics: {
