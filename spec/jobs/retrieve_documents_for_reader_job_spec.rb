@@ -219,6 +219,32 @@ describe RetrieveDocumentsForReaderJob do
         expect(S3Service.files).to be_nil
       end
     end
+
+    context "when efolder is enabled" do
+      before do
+        FeatureToggle.enable!(:efolder_docs_api)
+        RequestStore.store[:application] = "reader"
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1]).once
+
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user)
+          .and_return([expected_doc1]).once
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
+          .and_return([appeal_with_doc2]).once
+
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
+          .and_return([expected_doc2]).once
+      end
+
+      after { FeatureToggle.disable!(:efolder_docs_api) }
+
+      it "does not fetch content" do
+        RetrieveDocumentsForReaderJob.perform_now
+        expect(S3Service.files).to be_nil
+      end
+    end
   end
 
   def dont_expect_calls_for_appeal(appeal, doc)

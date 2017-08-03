@@ -1,5 +1,5 @@
-require "set"
-
+# This job will retrieve cases from VACOLS via the CaseAssignmentRepository
+# and all documents for these cases in VBMS and store these
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :default
 
@@ -10,18 +10,9 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
     limit = args["limit"] || 1500
     counts = { docs_successful: 0, docs_failed: 0, docs_attempted: 0, appeals_failed: 0, consecutive_failures: 0 }
 
-    find_all_active_reader_appeals.each do |appeal|
-      begin
-        appeal.fetch_documents!(save: true).try(:each) do |doc|
-          counts[:docs_attempted] += 1
-          record_outcome(fetch_document_content(doc), counts)
-        end
-      rescue HTTPClient::KeepAliveDisconnected => e
-        # VBMS connection may die when attempting to retrieve list of docs for appeal
-        counts[:appeals_failed] += 1
-        counts[:consecutive_failures] += 1
-        Rails.logger.error "Failed to retrieve appeal id #{appeal.id}:\n#{e.message}"
-      end
+    find_all_active_reader_appeals.each do |user, appeals|
+      RequestStore.store[:current_user] = user
+      appeals.each { |appeal| fetch_docs_for_appeal(appeal, counts) }
 
       break if counts[:docs_attempted] >= limit || counts[:consecutive_failures] >= 5
     end
@@ -29,7 +20,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
     log_info(counts)
   end
 
-  def record_outcome(doc, counts)
+  def record_doc_outcome(doc, counts)
     if doc
       counts[:docs_successful] += 1
       counts[:consecutive_failures] = 0
@@ -40,13 +31,29 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   end
 
   def find_all_active_reader_appeals
-    User.where("'Reader' = ANY(roles)").reduce(Set.new) do |active_appeals, user|
-      active_appeals.merge(user.current_case_assignments || [])
+    User.where("'Reader' = ANY(roles)").reduce({}) do |active_appeals, user|
+      active_appeals.update(user => user.current_case_assignments)
     end
   end
 
+  def fetch_docs_for_appeal(appeal, counts)
+    appeal.fetch_documents!(save: true).try(:each) do |doc|
+      counts[:docs_attempted] += 1
+      record_doc_outcome(fetch_document_content(doc), counts)
+    end
+  rescue HTTPClient::KeepAliveDisconnected => e
+    # VBMS connection may die when attempting to retrieve list of docs for appeal
+    counts[:appeals_failed] += 1
+    counts[:consecutive_failures] += 1
+    Rails.logger.error "Failed to retrieve appeal id #{appeal.id}:\n#{e.message}"
+  end
+
   def fetch_document_content(doc)
-    doc.fetch_content unless S3Service.exists?(doc.file_name)
+    if FeatureToggle.enabled?(:efolder_docs_api)
+      true # Don't fetch the content since eFolder will begin downloading the case automatically
+    else
+      doc.fetch_content unless S3Service.exists?(doc.file_name)
+    end
   rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
     Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{e.message}"
   end
