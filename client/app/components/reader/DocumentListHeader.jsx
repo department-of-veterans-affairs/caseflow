@@ -9,55 +9,6 @@ import ApiUtil from '../../util/ApiUtil';
 import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 
-class HeaderFilterMessage extends React.PureComponent {
-  render() {
-    const props = this.props;
-
-    const categoryFilters = Object.keys(props.docFilterCriteria.category).some((category) =>
-      props.docFilterCriteria.category[category]
-    );
-    const tagFilters = Object.keys(props.docFilterCriteria.tag).some((tag) =>
-      props.docFilterCriteria.tag[tag]
-    );
-
-    const categoryCount = _(props.docFilterCriteria.category).
-      values().
-      compact().
-      size();
-    const tagCount = _.size(props.docFilterCriteria.tag);
-
-    const filteredCategories = _.compact([
-      categoryFilters && `Categories (${categoryCount})`,
-      tagFilters && `Issue tags (${tagCount})`,
-      props.viewingDocumentsOrComments === 'comments' && 'Comments'
-    ]).join(', ');
-
-    if (!filteredCategories.length) {
-      return null;
-    }
-
-    return <p className="document-list-filter-message">Filtering by: {filteredCategories}. <a
-      href="#"
-      id="clear-filters"
-      onClick={props.clearAllFilters}>
-      Clear all filters.</a></p>;
-  }
-}
-
-const headerFilterMessageMapDispatchToProps = (dispatch) => ({
-  clearAllFilters: () => {
-    Analytics.event('Claims Folder', 'click', 'Clear all filters');
-    dispatch(clearAllFilters());
-  }
-});
-
-const headerFilterMessageMapStateToProps = (state) => ({
-  viewingDocumentsOrComments: state.viewingDocumentsOrComments
-});
-
-const ConnectedHeaderFilterMessage = connect(headerFilterMessageMapStateToProps,
-                                             headerFilterMessageMapDispatchToProps)(HeaderFilterMessage);
-
 class DocumentListHeader extends React.Component {
   // Record the search value for analytics purposes. Don't worry if it fails.
   recordSearch = (query) => {
@@ -103,8 +54,8 @@ DocumentListHeader.propTypes = {
 
 const mapStateToProps = (state) => ({
   numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
-  vacolsId: state.loadedAppealId,
-  docFilterCriteria: state.ui.docFilterCriteria
+  docFilterCriteria: state.ui.docFilterCriteria,
+  vacolsId: state.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => ({
