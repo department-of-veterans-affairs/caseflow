@@ -128,7 +128,9 @@ class UnconnectedSignAndCertify extends React.Component {
 
   render() {
     let {
-      onSignAndCertifyFormChange,
+      changeCertifyingOfficialName,
+      changeCertifyingOfficialTitle,
+      changeCertifyingOfficialTitleOther,
       certifyingOffice,
       certifyingUsername,
       certifyingOfficialName,
@@ -181,14 +183,14 @@ class UnconnectedSignAndCertify extends React.Component {
             value={certifyingOfficialName}
             errorMessage={this.certifyingOfficialNameError()}
             required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
+            onChange={changeCertifyingOfficialName}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
             required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
+            onChange={changeCertifyingOfficialTitle}/>
           {
             shouldDisplayCertifyingOfficialTitleOther &&
             <TextField
@@ -196,7 +198,7 @@ class UnconnectedSignAndCertify extends React.Component {
               value={certifyingOfficialTitleOther}
               errorMessage={this.certifyingOfficialTitleOtherError()}
               required={true}
-              onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
+              onChange={changeCertifyingOfficialTitleOther}
             />
           }
           <DateSelector
@@ -223,9 +225,14 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(certificationActions.showValidationErrors(erroredFields, scrollToError));
   },
 
-  onSignAndCertifyFormChange: (fieldName, value) => {
-    dispatch(actions.onSignAndCertifyFormChange(fieldName, value));
-  },
+  changeCertifyingOfficialName: (certifyingOfficialName) => dispatch(actions.
+    changeCertifyingOfficialName(certifyingOfficialName)),
+
+  changeCertifyingOfficialTitle: (certifyingOfficialTitle) => dispatch(actions.
+    changeCertifyingOfficialTitle(certifyingOfficialTitle)),
+
+  changeCertifyingOfficialTitleOther: (certifyingOfficialTitleOther) => dispatch(actions.
+    changeCertifyingOfficialTitleOther(certifyingOfficialTitleOther)),
 
   certificationUpdateStart: (props) => {
     dispatch(actions.certificationUpdateStart(props, dispatch));
@@ -253,7 +260,9 @@ const SignAndCertify = connect(
 )(UnconnectedSignAndCertify);
 
 SignAndCertify.propTypes = {
-  onSignAndCertifyFormChange: PropTypes.func,
+  changeCertifyingOfficialName: PropTypes.func,
+  changeCertifyingOfficialTitle: PropTypes.func,
+  changeCertifyingOfficialTitleOther: PropTypes.func,
   certifyingOffice: PropTypes.string,
   certifyingUsername: PropTypes.string,
   certifyingOfficialName: PropTypes.string,

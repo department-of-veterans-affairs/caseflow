@@ -1,6 +1,7 @@
 import * as Constants from '../constants/constants';
 import * as ConfirmCaseDetailsReducers from './ConfirmCaseDetails';
 import * as CertificationReducers from './Certification';
+import * as SignAndCertifyReducers from './SignAndCertify';
 
 /*
 * This global reducer is called every time a state change is
@@ -9,18 +10,6 @@ import * as CertificationReducers from './Certification';
 * these are conventionally broken out into separate "actions" files
 * that would live at client/app/actions/**.js.
 */
-
-
-// TODO: break this out into a reducers/SignAndCertify.jsx
-const changeSignAndCertifyForm = (state, action) => {
-  const update = {};
-
-  for (const key of Object.keys(action.payload)) {
-    update[key] = action.payload[key];
-  }
-
-  return Object.assign({}, state, update);
-};
 
 // TODO: is this meant to be something like a schema?
 // it's too similar to the object in "mapDataToInitialState".
@@ -76,8 +65,15 @@ export const certificationReducers = function(state = initialState, action = {})
     return Object.assign({}, state, {
       hearingPreference: action.payload.hearingPreference
     });
-  case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
-    return changeSignAndCertifyForm(state, action);
+
+  // SignAndCertify
+  // ==================
+  case Constants.CHANGE_CERTIFYING_OFFICIAL_NAME:
+    return SignAndCertifyReducers.changeCertifyingOfficialName(state, action);
+  case Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE:
+    return SignAndCertifyReducers.changeCertifyingOfficialTitle(state, action);
+  case Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE_OTHER:
+    return SignAndCertifyReducers.changeCertifyingOfficialTitleOther(state, action);
 
   // Certification
   // ==================
@@ -150,20 +146,6 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
   return null;
 };
 
-const certifyingOfficialTitle = function(title) {
-  if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
-    return Constants.certifyingOfficialTitles.OTHER;
-  }
-
-  return title;
-};
-
-const certifyingOfficialTitleOther = function(title) {
-  if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
-    return title;
-  }
-};
-
 const parseDocumentFromApi = (doc = {}, index) => ({
   name: index ? `${doc.type} ${index}` : doc.type,
   vacolsDate: doc.serialized_vacols_date,
@@ -199,8 +181,5 @@ export const mapDataToInitialState = (certification, form9PdfPath) => ({
   form9PdfPath,
   certifyingOffice: certification.certifying_office,
   certifyingUsername: certification.certifying_username,
-  certificationDate: certification.certification_date,
-  certifyingOfficialName: certification.certifying_official_name,
-  certifyingOfficialTitle: certifyingOfficialTitle(certification.certifying_official_title),
-  certifyingOfficialTitleOther: certifyingOfficialTitleOther(certification.certifying_official_title)
+  certificationDate: certification.certification_date
 });
