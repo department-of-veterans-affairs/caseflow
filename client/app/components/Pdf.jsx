@@ -558,7 +558,7 @@ export class Pdf extends React.PureComponent {
     }
 
     if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
-      this.props.stopPlacingAnnotation();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
   }
 
