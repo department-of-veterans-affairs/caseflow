@@ -31,7 +31,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateDropdown: (actionName, prop, value) => {
-    let action = Actions[actionName];
+    const action = Actions[actionName];
 
     dispatch(action(prop, value));
   }

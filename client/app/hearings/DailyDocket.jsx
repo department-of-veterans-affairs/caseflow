@@ -89,7 +89,6 @@ export class DailyDocket extends React.Component {
                   options={dispositionOptions}
                   defaultValue={hearing.disposition}
                   action="updateDailyDocketAction"
-                  tabIndex={`${(index * 10) + 2}`}
                 />
                 <DropdownContainer
                   label="Hold Open"
@@ -97,7 +96,6 @@ export class DailyDocket extends React.Component {
                   options={holdOptions}
                   defaultValue={hearing.hold_open}
                   action="updateDailyDocketAction"
-                  tabIndex={`${(index * 10) + 3}`}
                 />
                 <DropdownContainer
                   label="AOD"
@@ -105,7 +103,6 @@ export class DailyDocket extends React.Component {
                   options={aodOptions}
                   defaultValue={hearing.aod}
                   action="updateDailyDocketAction"
-                  tabIndex={`${(index * 10) + 4}`}
                 />
                 <div className="transcriptRequested">
                   <CheckboxContainer
@@ -113,8 +110,7 @@ export class DailyDocket extends React.Component {
                     label="Transcript Requested"
                     defaultValue={hearing.transcriptRequested}
                     action="updateDailyDocketTranscript"
-                    tabIndex={`${(index * 10) + 5}`}
-                  ></CheckboxContainer>
+                  />
                 </div>
               </td>
             </tr>
@@ -129,7 +125,6 @@ export class DailyDocket extends React.Component {
                       defaultValue={hearing.notes}
                       action="updateDailyDocketNotes"
                       maxLength="100"
-                      tabIndex={`${(index * 10) + 1}`}
                     />
                   </div>
                 </div>

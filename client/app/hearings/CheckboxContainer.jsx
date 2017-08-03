@@ -17,7 +17,7 @@ export class CheckboxContainer extends React.Component {
       name={this.props.id}
       onChange={this.updateCheckbox}
       value={this.props[this.props.id] || this.props.defaultValue || false}
-    ></Checkbox>;
+    />;
   }
 }
 
@@ -29,7 +29,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateCheckbox: (actionName, prop, value) => {
-    let action = Actions[actionName];
+    const action = Actions[actionName];
 
     dispatch(action(prop, value));
   }

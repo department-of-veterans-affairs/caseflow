@@ -29,7 +29,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateTextarea: (actionName, prop, value) => {
-    let action = Actions[actionName];
+    const action = Actions[actionName];
 
     dispatch(action(prop, value));
   }
