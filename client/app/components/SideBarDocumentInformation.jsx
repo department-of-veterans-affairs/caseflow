@@ -17,12 +17,12 @@ class SideBarDocumentInformation extends PureComponent {
       appealInfo = <Alert
         title="Unable to retrieve claims folder details"
         type="error">
-        Caseflow is experiencing technical difficulties right now. 
+        Caseflow is experiencing technical difficulties right now.
         Please <a href={`/reader/appeal${this.props.history.location.pathname}${this.props.history.location.search}`}>
         refresh this page.</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {
-      appealInfo = <LoadingMessage message="Loading details..." spinnerColor={READER_COLOR}/>
+      appealInfo = <LoadingMessage message="Loading details..." spinnerColor={READER_COLOR}/>;
     }
 
     return <div className="cf-sidebar-document-information">
@@ -51,16 +51,16 @@ class SideBarDocumentInformation extends PureComponent {
       <p className="cf-pdf-meta-title">
         <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
       </p>
-      <p className="cf-pdf-meta-title">
+      <div className="cf-pdf-meta-title">
         <b>Issues</b>
-        <ol>
+        <ol className="cf-pdf-meta-doc-info-issues">
           {appeal.issues.map((issue) =>
             <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
               {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
             </span></li>
           )}
         </ol>
-      </p>
+      </div>
     </div> }
     </div>;
   }

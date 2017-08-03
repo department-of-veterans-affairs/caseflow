@@ -164,6 +164,7 @@ export class PdfViewer extends React.Component {
     // render
     // TODO(jd): We should refactor and potentially create the store
     // with the documents already added
+
     if (!doc) {
       return null;
     }
