@@ -77,7 +77,4 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
-
-  config.google_analytics_account = "UA-74789258-4"
-  config.google_analytics_host = "//www.google-analytics.com/analytics.js"
 end
