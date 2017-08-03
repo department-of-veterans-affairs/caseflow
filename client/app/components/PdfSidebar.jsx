@@ -18,7 +18,8 @@ import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections } from '../reader/actions';
+  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
+  } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
@@ -28,6 +29,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
@@ -55,7 +57,7 @@ export class PdfSidebar extends React.Component {
       const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
 
       Analytics.event(
-        Constants.ANALYTICS.VIEW_DOCUMENT_PAGE,
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
         `${eventActionPrefix}-keyboard-shortcuts-modal`,
         sourceLabel
       );
@@ -104,8 +106,7 @@ export class PdfSidebar extends React.Component {
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
   handleAddClick = (event) => {
-    Analytics.event('Document Viewer', 'click', 'Add comment');
-    this.props.startPlacingAnnotation();
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
     event.stopPropagation();
   }
   render() {
@@ -169,7 +170,7 @@ export class PdfSidebar extends React.Component {
             name="hide menu"
             classNames={['cf-pdf-button']}
             id="hide-menu-header"
-            onClick={this.props.handleTogglePdfSidebar}>
+            onClick={this.props.togglePdfSidebar}>
             <strong>
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
             </strong>
@@ -225,6 +226,7 @@ export class PdfSidebar extends React.Component {
               <div className="cf-category-sidebar">
                 {showErrorMessage.category && cannotSaveAlert}
                 <DocCategoryPicker
+                  allowReadOnly={true}
                   handleCategoryToggle={
                     _.partial(this.props.handleCategoryToggle, this.props.doc.id)
                   }
@@ -325,7 +327,7 @@ PdfSidebar.propTypes = {
     uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,
     category: PropTypes.bool,
@@ -350,6 +352,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    togglePdfSidebar,
     setOpenedAccordionSections,
     selectAnnotation,
     startPlacingAnnotation,
@@ -386,14 +389,14 @@ const mapDispatchToProps = (dispatch) => ({
         categoryKey,
         toggleState,
         docId
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+          action: `${toggleState ? 'set' : 'unset'} document category`,
+          label: categoryName
+        }
       }
-    });
-  },
-  handleTogglePdfSidebar() {
-    Analytics.event('Document Viewer', 'click', 'Hide menu');
-
-    dispatch({
-      type: Constants.TOGGLE_PDF_SIDEBAR
     });
   }
 });

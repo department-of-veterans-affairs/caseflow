@@ -15,7 +15,8 @@ import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
-import { ANNOTATION_ICON_SIDE_LENGTH, ANALYTICS } from '../reader/constants';
+import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
+import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import Analytics from '../util/AnalyticsUtil';
 
@@ -513,7 +514,7 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltC = () => {
-    this.props.startPlacingAnnotation();
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
     const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
@@ -762,7 +763,7 @@ export class Pdf extends React.PureComponent {
 
     // Anything can be dragged and dropped. If the item that was
     // dropped doesn't match what we expect, we just silently ignore it.
-    const logInvalidDragAndDrop = () => Analytics.event(ANALYTICS.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
+    const logInvalidDragAndDrop = () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
 
     try {
       dragAndDropData = JSON.parse(dragAndDropPayload);

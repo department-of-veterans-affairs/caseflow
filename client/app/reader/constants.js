@@ -14,6 +14,8 @@ export const REQUEST_INITIAL_CASE_FAILURE = 'INITIAL_CASE_LOADING_FAIL';
 export const TOGGLE_FILTER_DROPDOWN = 'TOGGLE_FILTER_DROPDOWN';
 export const SET_CATEGORY_FILTER = 'SET_CATEGORY_FILTER';
 export const SET_TAG_FILTER = 'SET_TAG_FILTER';
+export const CLEAR_CATEGORY_FILTER = 'CLEAR_CATEGORY_FILTER';
+export const CLEAR_TAG_FILTER = 'CLEAR_TAG_FILTER';
 export const ADD_NEW_TAG = 'ADD_NEW_TAG';
 export const REMOVE_TAG = 'REMOVE_TAG';
 export const REQUEST_NEW_TAG_CREATION_SUCCESS = 'REQUEST_NEW_TAG_CREATION_SUCCESS';
@@ -71,10 +73,6 @@ export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMME
 
 export const COMMENT_ACCORDION_KEY = 'Comments';
 
-export const ANALYTICS = {
-  VIEW_DOCUMENT_PAGE: 'Document Viewer'
-};
-
 export const DOCUMENTS_OR_COMMENTS_ENUM = {
   DOCUMENTS: 'documents',
   COMMENTS: 'comments'
@@ -94,7 +92,7 @@ export const documentCategories = {
   procedural: {
     renderOrder: 0,
     humanName: 'Procedural',
-    svg: <CategoryIcon color="#4A90E2" />
+    svg: <CategoryIcon color="#5A94EC" />
   },
   medical: {
     renderOrder: 1,
@@ -104,7 +102,13 @@ export const documentCategories = {
   other: {
     renderOrder: 2,
     humanName: 'Other Evidence',
-    svg: <CategoryIcon color="#5BD998" />
+    svg: <CategoryIcon color="#3AD2CF" />
+  },
+  case_summary: {
+    renderOrder: 3,
+    humanName: 'Case Summary',
+    svg: <CategoryIcon color="#FDC231" />,
+    readOnly: true
   }
 };
 

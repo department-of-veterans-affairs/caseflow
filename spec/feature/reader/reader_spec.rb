@@ -133,6 +133,59 @@ RSpec.feature "Reader" do
       ]
     end
 
+    feature "Document header filtering message" do
+      background do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      end
+
+      scenario "filtering categories" do
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+        find(".checkbox-wrapper-medical").click
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (2)")
+
+        # deselect medical filter
+        find(".checkbox-wrapper-medical").click
+        expect(page).to have_content("Categories (1)")
+      end
+
+      scenario "filtering tags and comments" do
+        find("#tags-header .table-icon").click
+        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
+        tags_checkboxes[0].click
+        tags_checkboxes[1].click
+        expect(page).to have_content("Issue tags (2)")
+
+        # unchecking tag filters
+        tags_checkboxes[0].click
+        expect(page).to have_content("Issue tags (1)")
+
+        tags_checkboxes[1].click
+        expect(page).to_not have_content("Issue tags")
+      end
+
+      scenario "filtering comments" do
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+      end
+
+      scenario "clear all filters" do
+        click_on "Comments"
+        expect(page).to have_content("Comments.")
+
+        find("#categories-header .table-icon").click
+        find(".checkbox-wrapper-procedural").click
+
+        # When the "clear filters" button is clicked, the filtering message is reset,
+        # and focus goes back on the Document toggle.
+        find("#clear-filters").click
+        expect(page).not_to have_content("Filtering by:")
+        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
+      end
+    end
+
     context "Welcome gate page" do
       let(:appeal2) do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
@@ -747,36 +800,39 @@ RSpec.feature "Reader" do
       end
 
       doc_0_categories =
-        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq([])
+        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li", count: 1)
+      expect(doc_0_categories).to eq(["Case Summary"])
 
       doc_1_categories =
-        get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li")
-      expect(doc_1_categories).to eq(["Medical", "Other Evidence"])
+        get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li", count: 3)
+      expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
 
       click_on documents[0].type
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Procedural"])
+      expect((get_aria_labels all(".cf-document-category-icons li", count: 2))).to eq(["Procedural", "Case Summary"])
 
       find(".checkbox-wrapper-procedural").click
       find(".checkbox-wrapper-medical").click
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical"])
+      expect((get_aria_labels all(".cf-document-category-icons li", count: 2))).to eq(["Medical", "Case Summary"])
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       doc_0_categories =
-        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li")
-      expect(doc_0_categories).to eq([])
+        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li", count: 1)
+      expect(doc_0_categories).to eq(["Case Summary"])
 
       click_on documents[1].type
 
-      expect((get_aria_labels all(".cf-document-category-icons li"))).to eq(["Medical", "Other Evidence"])
+      expect((get_aria_labels all(".cf-document-category-icons li", count: 3))).to eq(
+        ["Medical", "Other Evidence", "Case Summary"])
+      expect(find("#case_summary", visible: false).disabled?).to be true
 
       find("#button-next").click
 
       expect(find("#procedural", visible: false).checked?).to be false
       expect(find("#medical", visible: false).checked?).to be true
+      expect(find("#case_summary", visible: false).checked?).to be true
       expect(find("#other", visible: false).checked?).to be false
     end
 

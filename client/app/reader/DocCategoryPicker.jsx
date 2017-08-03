@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import * as Constants from './constants';
 import Checkbox from '../components/Checkbox';
-import Analytics from '../util/AnalyticsUtil';
 
 const CategorySelector = (props) => {
-  const { category, categoryName, handleCategoryToggle, categoryToggleStates } = props;
+  const { category, categoryName, handleCategoryToggle, categoryToggleStates, allowReadOnly } = props;
   const toggleState = categoryToggleStates[categoryName] || false;
   const label = <div className="cf-category-selector">
       {category.svg}
@@ -14,25 +13,25 @@ const CategorySelector = (props) => {
     </div>;
 
   const handleChange = (checked) => {
-    Analytics.event('Claims Folder', `${checked ? 'select' : 'unselect'} category filter`, categoryName);
-
     handleCategoryToggle(categoryName, checked);
   };
 
   return <Checkbox name={categoryName} onChange={handleChange}
-      label={label} value={toggleState} />;
+      label={label} value={toggleState} disabled={category.readOnly && allowReadOnly} />;
 };
 
 CategorySelector.propTypes = {
+  allowReadOnly: PropTypes.bool,
   category: PropTypes.shape({
     humanName: PropTypes.string.isRequired,
-    svg: PropTypes.element.isRequired
+    svg: PropTypes.element.isRequired,
+    readOnly: PropTypes.bool
   }).isRequired,
   categoryToggleStates: PropTypes.object,
   categoryName: PropTypes.string.isRequired
 };
 
-const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle }) => {
+const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle, allowReadOnly }) => {
   return <ul className="cf-document-filter-picker cf-document-category-picker">
     {
       _(Constants.documentCategories).
@@ -42,6 +41,7 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle }) => {
         map(
           ([categoryName, category]) => <li key={categoryName}>
             <CategorySelector category={category}
+              allowReadOnly={allowReadOnly}
               handleCategoryToggle={handleCategoryToggle}
               categoryName={categoryName} categoryToggleStates={categoryToggleStates} />
           </li>
@@ -53,7 +53,8 @@ const DocCategoryPicker = ({ categoryToggleStates, handleCategoryToggle }) => {
 
 DocCategoryPicker.propTypes = {
   handleCategoryToggle: PropTypes.func.isRequired,
-  categoryToggleStates: PropTypes.object
+  categoryToggleStates: PropTypes.object,
+  allowReadOnly: PropTypes.bool
 };
 
 export default DocCategoryPicker;
