@@ -228,6 +228,7 @@ export class HearingWorksheet extends React.Component {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
+          <h4>Docs in eFolder: 80</h4>
           <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
           <div className="cf-push-left">
             <div>NOD:</div>
@@ -263,10 +264,7 @@ export class HearingWorksheet extends React.Component {
           <div className="cf-push-left">
             <div>&nbsp;</div>
           </div>
-          <div className="cf-push-left">
-            <div>Docs in eFolder:</div>
-            <div>80</div>
-          </div>
+
         </div>
 
         <div className="cf-hearings-worksheet-data">
