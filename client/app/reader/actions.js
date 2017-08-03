@@ -354,7 +354,16 @@ export const setPageCoordBounds = (coordBounds) => ({
   }
 });
 
-export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
+export const stopPlacingAnnotation = (interactionType) => ({ 
+  type: Constants.STOP_PLACING_ANNOTATION,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'stop-placing-annotation',
+      label: interactionType
+    }
+  }
+});
 
 export const createAnnotation = (annotation) => (dispatch) => {
   const temporaryId = uuid.v4();
