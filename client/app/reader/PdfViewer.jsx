@@ -12,6 +12,7 @@ import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 import Analytics from '../util/AnalyticsUtil';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
@@ -84,12 +85,20 @@ export class PdfViewer extends React.Component {
       return;
     }
 
-    if ((event.key === 'ArrowLeft') && !this.props.placedButUnsavedAnnotation) {
-      Analytics.event('Document Viewer', 'key command', 'previous document');
+    if (event.key === 'ArrowLeft' && !this.props.placedButUnsavedAnnotation) {
+      Analytics.event(
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
+        INTERACTION_TYPES.KEYBOARD_SHORTCUT
+      );
       this.props.showPdf(this.getPrevDocId())();
     }
-    if ((event.key === 'ArrowRight') && !this.props.placedButUnsavedAnnotation) {
-      Analytics.event('Document Viewer', 'key command', 'next document');
+    if (event.key === 'ArrowRight' && !this.props.placedButUnsavedAnnotation) {
+      Analytics.event(
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        ACTION_NAMES.VIEW_NEXT_DOCUMENT,
+        INTERACTION_TYPES.KEYBOARD_SHORTCUT
+      );
       this.props.showPdf(this.getNextDocId())();
     }
   }

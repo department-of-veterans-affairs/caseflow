@@ -181,10 +181,10 @@ export class PdfUI extends React.Component {
                 button="matte"
                 onClick={this.handleClickDocumentTypeLink}
                 href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
-                <span className="cf-pdf-vertically-center">
+                <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
                   <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
-                </span>
+                </h1>
               </Link>
             </span>
           </span>
