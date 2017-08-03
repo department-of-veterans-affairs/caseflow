@@ -12,7 +12,7 @@ class SideBarDocumentInformation extends PureComponent {
   render() {
     const { appeal } = this.props;
     let appealInfo;
-    console.log(this.props.history.location);
+
     if (this.props.didLoadAppealFail) {
       appealInfo = <Alert
         title="Unable to retrieve claims folder details"
