@@ -12,6 +12,7 @@ export default class Checkbox extends React.Component {
       name,
       required,
       value,
+      disabled,
       errorMessage
     } = this.props;
 
@@ -35,6 +36,7 @@ export default class Checkbox extends React.Component {
           type="checkbox"
           id={name}
           checked={value}
+          disabled={disabled}
         />
         <label className="question-label" htmlFor={name}>
           {label || name} {required && <span className="cf-required">Required</span>}
@@ -52,5 +54,6 @@ Checkbox.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
   value: PropTypes.bool
 };
