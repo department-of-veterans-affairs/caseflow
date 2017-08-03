@@ -100,7 +100,7 @@ export class PdfSidebar extends React.Component {
     }
   }
 
-  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-cancelling-new-annotation');
+  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
 
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
