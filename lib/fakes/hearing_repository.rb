@@ -17,17 +17,25 @@ class Fakes::HearingRepository
 
   def self.update_vacols_hearing!(vacols_record, hearing_info)
     return if (hearing_info.keys.map(&:to_sym) & [:notes, :aod, :disposition, :hold_open, :transcript_requested]).empty?
-    hearing = hearing_records.find { |h| h.vacols_id == vacols_record[:vacols_id] }
+    hearing = find_by_vacols_id(vacols_record[:vacols_id])
     hearing.assign_from_vacols(hearing_info)
   end
 
   def self.load_vacols_data(hearing)
     return false if hearing_records.blank?
-    record = hearing_records.find { |h| h.vacols_id == hearing.vacols_id }
+    record = find_by_vacols_id(hearing.vacols_id)
 
     return false unless record
     hearing.assign_from_vacols(vacols_record: record.vacols_record)
     true
+  end
+
+  def self.find_by_vacols_id(vacols_id)
+    hearing_records.find { |h| h.vacols_id == vacols_id }
+  end
+
+  def self.find_by_id(id)
+    hearing_records.find { |h| h.id == id }
   end
 
   def self.clean!
