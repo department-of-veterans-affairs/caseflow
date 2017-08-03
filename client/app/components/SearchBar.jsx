@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
-import Analytics from '../util/AnalyticsUtil';
 import _ from 'lodash';
 
 export default class SearchBar extends React.Component {
@@ -13,14 +12,10 @@ export default class SearchBar extends React.Component {
 
   // A "search" event occurs when a user finishes typing
   // a search query. This is 500ms after the last character
-  // typed or when focus is lost
+  // typed or when focus is lost.
   onSearch = () => {
-    if (this.props.value && this.props.analyticsCategory) {
-      Analytics.event(this.props.analyticsCategory, 'search', '');
-
-      if (this.props.recordSearch) {
-        this.props.recordSearch(this.props.value);
-      }
+    if (this.props.value && this.props.recordSearch) {
+      this.props.recordSearch(this.props.value);
     }
   }
 

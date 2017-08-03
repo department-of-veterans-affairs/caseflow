@@ -16,6 +16,8 @@ export const INTERACTION_TYPES = {
   KEYBOARD_SHORTCUT: 'keyboard-shortcut'
 };
 
+const debounceFns = {};
+
 export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
   const dispatchedAction = next(action);
   const { meta } = action;
@@ -26,7 +28,14 @@ export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
     } else {
       const label = _.isFunction(meta.analytics.label) ? meta.analytics.label(store.getState()) : meta.analytics.label;
 
-      Analytics.event(meta.analytics.category, meta.analytics.action, label);
+      if (!debounceFns[action.type]) {
+        debounceFns[action.type] = _.debounce(
+          (eventLabel) => Analytics.event(meta.analytics.category, meta.analytics.action, eventLabel),
+          meta.analytics.debounceMs || 0
+        );
+      }
+
+      debounceFns[action.type](label);
     }
   }
 
