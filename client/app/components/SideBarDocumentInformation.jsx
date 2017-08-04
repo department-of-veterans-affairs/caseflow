@@ -17,9 +17,8 @@ class SideBarDocumentInformation extends PureComponent {
       appealInfo = <Alert
         title="Unable to retrieve claims folder details"
         type="error">
-        Caseflow is experiencing technical difficulties right now.
         Please <a href={`/reader/appeal${this.props.history.location.pathname}${this.props.history.location.search}`}>
-        refresh this page.</a> or try again later.
+        refresh this page</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {
       appealInfo = <LoadingMessage message="Loading details..." spinnerColor={READER_COLOR}/>;
