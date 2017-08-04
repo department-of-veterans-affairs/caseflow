@@ -65,18 +65,9 @@ export const certificationUpdateStart = (params, dispatch) => {
       dispatch(handleServerError(err));
     });
 
-  // This is to save SignAndCertify form values (different than db values) in case going back
-  update = {
-    certifying_official_name: params.certifyingOfficialName,
-    certifying_official_title: params.certifyingOfficialTitle,
-    certifying_official_title_other: params.certifyingOfficialTitleOther
-  };
-
   return {
     type: Constants.CERTIFICATION_UPDATE_REQUEST,
-    payload: {
-      update
-    }
+    payload: {}
   };
 };
 
