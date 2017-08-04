@@ -412,11 +412,16 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    @fetched_documents ||= if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
-                             EFolderService.fetch_documents_for(self, RequestStore.store[:current_user])
-                           else
-                             self.class.vbms.fetch_documents_for(self)
-                           end
+    @fetched_documents ||= document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+  end
+
+  def document_service
+    @document_service ||=
+      if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
+        EFolderService
+      else
+        VBMSService
+      end
   end
 
   class << self
