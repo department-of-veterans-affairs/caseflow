@@ -465,8 +465,7 @@ export class Pdf extends React.PureComponent {
     }
 
     if (!this.isGettingPdf[file]) {
-      console.log('getdocument', file);
-      this.isGettingPdf[file] = false;
+      this.isGettingPdf[file] = true;
       return PDFJS.getDocument({
         url: file,
         withCredentials: true
