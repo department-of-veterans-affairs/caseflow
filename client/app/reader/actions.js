@@ -57,6 +57,13 @@ export const setSearch = (searchQuery) => ({
   type: Constants.SET_SEARCH,
   payload: {
     searchQuery
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'search',
+      debounceMs: 500
+    }
   }
 });
 
@@ -67,10 +74,35 @@ export const setDocListScrollPosition = (scrollTop) => ({
   }
 });
 
+export const toggleDropdownFilterVisibility = (filterName) => ({
+  type: Constants.TOGGLE_FILTER_DROPDOWN,
+  payload: {
+    filterName
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'toggle-dropdown-filter',
+      label: filterName
+    }
+  }
+});
+
 export const changeSortState = (sortBy) => ({
   type: Constants.SET_SORT,
   payload: {
     sortBy
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'change-sort-by',
+      label: (nextState) => {
+        const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+
+        return `${sortBy}-${direction}`;
+      }
+    }
   }
 });
 
@@ -83,20 +115,47 @@ export const startEditAnnotation = (annotationId) => ({
   type: Constants.START_EDIT_ANNOTATION,
   payload: {
     annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'start-edit-annotation'
+    }
   }
 });
 
-export const openAnnotationDeleteModal = (annotationId) => ({
+export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
   type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
   payload: {
     annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'open-annotation-delete-modal',
+      label: analyticsLabel
+    }
   }
 });
-export const closeAnnotationDeleteModal = () => ({ type: Constants.CLOSE_ANNOTATION_DELETE_MODAL });
+export const closeAnnotationDeleteModal = () => ({
+  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'close-annotation-delete-modal'
+    }
+  }
+});
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
   payload: {
     annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'select-annotation'
+    }
   }
 });
 
@@ -106,6 +165,12 @@ export const deleteAnnotation = (docId, annotationId) =>
       type: Constants.REQUEST_DELETE_ANNOTATION,
       payload: {
         annotationId
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+          action: 'request-delete-annotation'
+        }
       }
     });
 
@@ -131,6 +196,12 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
     type: Constants.REQUEST_MOVE_ANNOTATION,
     payload: {
       annotation
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+        action: 'request-move-annotation'
+      }
     }
   });
 
@@ -157,6 +228,12 @@ export const cancelEditAnnotation = (annotationId) => ({
   type: Constants.CANCEL_EDIT_ANNOTATION,
   payload: {
     annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'cancel-edit-annotation'
+    }
   }
 });
 export const updateAnnotationContent = (content, annotationId) => ({
@@ -164,6 +241,13 @@ export const updateAnnotationContent = (content, annotationId) => ({
   payload: {
     annotationId,
     content
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'edit-annotation-content-locally',
+      debounceMs: 500
+    }
   }
 });
 export const updateNewAnnotationContent = (content) => ({
@@ -178,6 +262,12 @@ export const jumpToPage = (pageNumber, docId) => ({
   payload: {
     pageNumber,
     docId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'jump-to-page'
+    }
   }
 });
 
@@ -189,7 +279,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
   // If the user removed all text content in the annotation, ask them if they're
   // intending to delete it.
   if (!annotation.comment) {
-    dispatch(openAnnotationDeleteModal(annotation.id));
+    dispatch(openAnnotationDeleteModal(annotation.id, 'open-by-deleting-all-annotation-content'));
 
     return;
   }
@@ -198,6 +288,12 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
     type: Constants.REQUEST_EDIT_ANNOTATION,
     payload: {
       annotationId: annotation.id
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+        action: 'request-edit-annotation'
+      }
     }
   });
 
@@ -258,7 +354,16 @@ export const setPageCoordBounds = (coordBounds) => ({
   }
 });
 
-export const stopPlacingAnnotation = () => ({ type: Constants.STOP_PLACING_ANNOTATION });
+export const stopPlacingAnnotation = (interactionType) => ({
+  type: Constants.STOP_PLACING_ANNOTATION,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'stop-placing-annotation',
+      label: interactionType
+    }
+  }
+});
 
 export const createAnnotation = (annotation) => (dispatch) => {
   const temporaryId = uuid.v4();
