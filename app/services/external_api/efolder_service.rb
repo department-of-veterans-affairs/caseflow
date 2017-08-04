@@ -29,6 +29,7 @@ class ExternalApi::EfolderService
     request = HTTPI::Request.new(url)
     request.auth.ssl.ssl_version  = :TLSv1_2
     request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
+    request.read_timeout = 60
 
     headers["AUTHORIZATION"] = "Token token=#{efolder_key}"
     headers["CSS-ID"] = user.css_id.to_s
