@@ -15,10 +15,10 @@ module HearingMapper
       }.select { |k, _v| hearing_info.keys.include? k } # only send updates to key/values that are passed
     end
 
-    def bfha_vacols_code(hearing_record, case_record)
+    def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
       when "H"
-        code_based_on_hearing_type(case_record)
+        code_based_on_hearing_type(hearing_record.hearing_type.to_sym)
       when "P"
         nil
       when "C"
@@ -30,10 +30,10 @@ module HearingMapper
 
     private
 
-    def code_based_on_hearing_type(case_record)
-      return "1" if case_record.bfhr == "1"
-      return "2" if case_record.bfhr == "2" && case_record.bfdocind != "V"
-      return "6" if case_record.bfhr == "2" && case_record.bfdocind == "V"
+    def code_based_on_hearing_type(type)
+      return "1" if type == :C
+      return "2" if type == :T
+      return "6" if type == :V
     end
 
     def notes_to_vacols_format(value)
