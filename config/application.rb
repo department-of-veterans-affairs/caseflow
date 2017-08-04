@@ -35,7 +35,6 @@ module CaseflowCertification
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
 
     config.google_analytics_account = "UA-74789258-4"
-    config.google_analytics_host = "//www.google-analytics.com/analytics.js"
 
     config.active_job.queue_adapter = :sidekiq
 
