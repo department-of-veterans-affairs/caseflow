@@ -239,29 +239,26 @@ $color-hearings-saving: #777;
     right: 0;
   }
 
-  .cf-hearings-worksheet-data-unit {
+  .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
     margin-top: 1em;
     vertical-align: top;
     padding-left: .2em;
 
-    &:nth-of-type(1),
-    &:nth-of-type(6), {
+    &.column-1 {
       padding-left: 0;
     }
 
-    &:nth-of-type(2),
-    &:nth-of-type(7), {
+    &.column-2 {
       width: 18%;
     }
 
-    &:nth-of-type(4),
-    &:nth-of-type(9), {
+    &.column-4 {
       width: 21%;
     }
 
-    &:nth-of-type(5n + 5) {
+    &.column-5 {
       width: 21%;
     }
   }

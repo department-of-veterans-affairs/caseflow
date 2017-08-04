@@ -183,43 +183,43 @@ export class HearingWorksheet extends React.Component {
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
           <span className="saving">Saving...</span>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
             <div><b>Somebody Mad</b></div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
             <div>Lansing, MI</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Regional Office:</div>
             <div>Detroit, MI</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Representative Org:</div>
             <div>Veterans of Foreign Wars</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-5">
             <label htmlFor="appellant-vet-rep-name">Rep. Name:</label>
             <input id="appellant-vet-rep-name" aria-label="Representative Name" type="text" />
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
             <div><b>Somebody Madder</b></div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Veteran ID:</div>
             <div><b>{this.props.vbms_id}</b></div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Docket Number:</div>
             <div>1234567</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Veteran's Age:</div>
             <div>32</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-5">
             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
             <input id="appellant-vet-witness" aria-label="Witness/Observer" type="text" />
           </div>
@@ -229,38 +229,38 @@ export class HearingWorksheet extends React.Component {
           <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
           <h4>Docs in eFolder: 80</h4>
           <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-1">
             <div>NOD:</div>
             <div>01/01/1990</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Form 9:</div>
             <div>01/01/1990</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Prior BVA Decision:</div>
             <div>01/01/1990</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>&nbsp;</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-5">
             <div>Docs since Certification:</div>
             <div>23</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-1">
             <div>SOC:</div>
             <div>01/01/1990</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Certification:</div>
             <div>01/01/1990</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-3">
             <div>SSOC:</div>
             <div>01/01/1990</div>
           </div>
-          <div className="cf-hearings-worksheet-data-unit">
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>&nbsp;</div>
           </div>
 
