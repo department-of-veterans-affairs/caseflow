@@ -6,6 +6,11 @@ global.document = jsdom('<html><head></head><body><div id="app" /></body></html>
 global.window = document.defaultView;
 global.HTMLElement = global.window.HTMLElement;
 
+// eslint-disable-next-line no-empty-function
+global.window.analyticsPageView = () => {};
+// eslint-disable-next-line no-empty-function
+global.window.analyticsEvent = () => {};
+
 
 // JSDOM returns undefined for these properties, so we can mock them out globally here.
 // Every DOM element will now return 100 for its offsetHeight. We gate it with the if

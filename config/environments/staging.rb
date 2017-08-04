@@ -40,6 +40,8 @@ Rails.application.configure do
   config.s3_enabled = ENV["AWS_ACCESS_KEY_ID"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
 
+  config.google_analytics_account = "UA-74789258-5"
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
