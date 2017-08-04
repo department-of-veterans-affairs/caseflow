@@ -115,6 +115,7 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isDrawing = {};
+    this.isGettingPdf = {};
 
     this.refFunctionGetters = {
       canvas: {},
@@ -464,26 +465,44 @@ export class Pdf extends React.PureComponent {
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
     }
 
-    return PDFJS.getDocument({
-      url: file,
-      withCredentials: true
-    }).then((pdfDocument) => {
-      if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
-        // There is a chance another async call has resolved in the time that
-        // getDocument took to run. If so, again just use the cached version.
-        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-          return this.predrawnPdfs[file].pdfDocument;
+    if (!this.isGettingPdf[file]) {
+      console.log('getdocument', file);
+      this.isGettingPdf[file] = true;
+      return PDFJS.getDocument({
+        url: file,
+        withCredentials: true
+      }).then((pdfDocument) => {
+        this.isGettingPdf[file] = false;
+
+        if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
+          // There is a chance another async call has resolved in the time that
+          // getDocument took to run. If so, again just use the cached version.
+          if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+            return this.predrawnPdfs[file].pdfDocument;
+          }
+          this.predrawnPdfs[file] = {
+            pdfDocument
+          };
+          this.setUpPdfObjects(file, pdfDocument);
+
+          return pdfDocument;
         }
-        this.predrawnPdfs[file] = {
-          pdfDocument
-        };
-        this.setUpPdfObjects(file, pdfDocument);
 
-        return pdfDocument;
-      }
+        return null;
+      }).catch(() => {
+        this.isGettingPdf[file] = false;
 
-      return null;
-    });
+        return null;
+      });
+    } else {
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          this.getDocument(file).then((pdfDocument) => {
+            resolve(pdfDocument)
+          });
+        }, 100);
+      });
+    }
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
