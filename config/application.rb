@@ -34,9 +34,7 @@ module CaseflowCertification
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
 
-    # default to no analytics (production only)
     config.google_analytics_account = nil
-    config.google_analytics_host = nil
 
     config.active_job.queue_adapter = :sidekiq
 
