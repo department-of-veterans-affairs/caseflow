@@ -29,6 +29,7 @@ module.exports = function(config) {
     },
 
     files: [
+      'test/karma/setup.js',
       { pattern: karmaTestPattern }
     ],
 
