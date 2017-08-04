@@ -9,24 +9,10 @@ export const updateProgressBar = () => ({
   }
 });
 
-export const changeCertifyingOfficialName = (certifyingOfficialName) => ({
-  type: Constants.CHANGE_CERTIFYING_OFFICIAL_NAME,
+export const onSignAndCertifyFormChange = (fieldName, value) => ({
+  type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
   payload: {
-    certifyingOfficialName
-  }
-});
-
-export const changeCertifyingOfficialTitle = (certifyingOfficialTitle) => ({
-  type: Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE,
-  payload: {
-    certifyingOfficialTitle
-  }
-});
-
-export const changeCertifyingOfficialTitleOther = (certifyingOfficialTitleOther) => ({
-  type: Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE_OTHER,
-  payload: {
-    certifyingOfficialTitleOther
+    [fieldName]: value
   }
 });
 
@@ -51,7 +37,7 @@ export const certificationUpdateStart = (params, dispatch) => {
     certifyingOfficialTitle = params.certifyingOfficialTitle;
   }
 
-  let update = {
+  const update = {
     certifying_official_name: params.certifyingOfficialName,
     certifying_official_title: certifyingOfficialTitle
   };

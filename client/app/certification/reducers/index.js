@@ -68,12 +68,8 @@ export const certificationReducers = function(state = initialState, action = {})
 
   // SignAndCertify
   // ==================
-  case Constants.CHANGE_CERTIFYING_OFFICIAL_NAME:
-    return SignAndCertifyReducers.changeCertifyingOfficialName(state, action);
-  case Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE:
-    return SignAndCertifyReducers.changeCertifyingOfficialTitle(state, action);
-  case Constants.CHANGE_CERTIFYING_OFFICIAL_TITLE_OTHER:
-    return SignAndCertifyReducers.changeCertifyingOfficialTitleOther(state, action);
+  case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
+    return SignAndCertifyReducers.changeSignAndCertifyForm(state, action);
 
   // Certification
   // ==================
