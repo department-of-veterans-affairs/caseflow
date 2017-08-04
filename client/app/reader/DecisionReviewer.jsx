@@ -24,10 +24,18 @@ export class DecisionReviewer extends React.PureComponent {
     super(props);
 
     this.state = {
-      isCommentLabelSelected: false
+      isCommentLabelSelected: false,
+      ui: {
+        pdfList: {
+          dropdowns: {
+            case_summary: false
+          }
+        }
+      }
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
+    this.routedPdfListViewCaseSummary.displayName = 'RoutedPdfListViewCaseSummary';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
@@ -80,6 +88,20 @@ export class DecisionReviewer extends React.PureComponent {
       />;
   }
 
+    routedPdfListViewCaseSummary = (props) => {
+      const { vacolsId } = props.match.params;
+
+      return <PdfListView
+          showPdf={this.showPdf(props.history, vacolsId)}
+          sortBy={this.state.sortBy}
+          selectedLabels={this.state.selectedLabels}
+          isCommentLabelSelected={this.state.isCommentLabelSelected}
+          documentPathBase={`/${vacolsId}/documents`}
+          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+          {...props}
+      />;
+    }
+
   routedPdfViewer = (props) => {
     const { vacolsId } = props.match.params;
 
@@ -122,6 +144,12 @@ export class DecisionReviewer extends React.PureComponent {
           title="Claims Folder | Caseflow Reader"
           path="/:vacolsId/documents"
           render={this.routedPdfListView}
+        />
+        <PageRoute
+          exact
+          title="Claims Folder | Caseflow Reader"
+          path="/:vacolsId/documents/case-summary"
+          render={this.routedPdfListViewCaseSummary}
         />
         <PageRoute
           title ="Document Viewer | Caseflow Reader"
