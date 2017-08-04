@@ -73,7 +73,6 @@
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-    // Allow both caseflow domains to send analytics data
     ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto', {
       userId: '<%= current_user ? current_user.id : "" %>'
     });
