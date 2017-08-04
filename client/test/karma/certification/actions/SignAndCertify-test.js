@@ -17,7 +17,7 @@ describe('.updateProgressBar', () => {
 });
 
 describe('.onSignAndCertifyFormChange', () => {
-  it('should create an action to change the name', () => {
+  it('should create an action to change the form', () => {
     const certifyingUsername = 'new name';
     const expectedAction = {
       type: Constants.CHANGE_SIGN_AND_CERTIFY_FORM,
