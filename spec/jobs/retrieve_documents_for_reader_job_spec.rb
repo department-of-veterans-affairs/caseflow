@@ -100,7 +100,7 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 
-        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1)
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
           .and_return([expected_doc1, new_doc]).once
 
         expect_calls_for_doc(expected_doc1, doc1_expected_content)
@@ -126,9 +126,9 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
-        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1).and_return([expected_doc1])
-          .once
-        expect(VBMSService).to receive(:fetch_document_file).with(expected_doc1)
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
+          .and_return([expected_doc1]).once
+        expect(EFolderService).to receive(:fetch_document_file).with(expected_doc1)
           .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>"))
           .once
 
@@ -146,9 +146,9 @@ describe RetrieveDocumentsForReaderJob do
   end
 
   def dont_expect_calls_for_appeal(appeal, doc)
-    expect(VBMSService).not_to receive(:fetch_documents_for).with(appeal)
+    expect(EFolderService).not_to receive(:fetch_documents_for).with(appeal, anything)
     expect(S3Service).not_to receive(:exists?).with(doc.vbms_document_id)
-    expect(VBMSService).not_to receive(:fetch_document_file).with(doc)
+    expect(EFolderService).not_to receive(:fetch_document_file).with(doc)
   end
 
   def expect_all_calls_for_user(user, appeal, doc, content)
@@ -158,12 +158,12 @@ describe RetrieveDocumentsForReaderJob do
   end
 
   def expect_calls_for_appeal(appeal, doc, content)
-    expect(VBMSService).to receive(:fetch_documents_for).with(appeal).and_return([doc]).once
+    expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return([doc]).once
     expect_calls_for_doc(doc, content)
   end
 
   def expect_calls_for_doc(doc, content)
     expect(S3Service).to receive(:exists?).with(doc.vbms_document_id).and_return(false).once
-    expect(VBMSService).to receive(:fetch_document_file).with(doc).and_return(content).once
+    expect(EFolderService).to receive(:fetch_document_file).with(doc).and_return(content).once
   end
 end
