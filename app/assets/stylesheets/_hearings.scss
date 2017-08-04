@@ -223,12 +223,6 @@ $color-hearings-saving: #777;
   position: relative;
   margin-bottom: 1.765em;
 
-  &::after {
-    content: ' ';
-    line-height: 0;
-    clear: both;
-  }
-
   &:last-child {
     margin-bottom: 0;
   }
@@ -250,6 +244,12 @@ $color-hearings-saving: #777;
     width: 20%;
     margin-top: 1em;
     vertical-align: top;
+    padding-left: .2em;
+
+    &:nth-of-type(1),
+    &:nth-of-type(6), {
+      padding-left: 0;
+    }
 
     &:nth-of-type(2),
     &:nth-of-type(7), {
@@ -258,7 +258,11 @@ $color-hearings-saving: #777;
 
     &:nth-of-type(4),
     &:nth-of-type(9), {
-      width: 22%;
+      width: 21%;
+    }
+
+    &:nth-of-type(5n + 5) {
+      width: 21%;
     }
   }
 
