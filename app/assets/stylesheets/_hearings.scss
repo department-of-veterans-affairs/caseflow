@@ -221,8 +221,13 @@ $color-hearings-saving: #777;
 
 .cf-hearings-worksheet-data {
   position: relative;
-  overflow: hidden;
   margin-bottom: 1.765em;
+
+  &::after {
+    content: ' ';
+    line-height: 0;
+    clear: both;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -240,9 +245,21 @@ $color-hearings-saving: #777;
     right: 0;
   }
 
-  .cf-push-left {
+  .cf-hearings-worksheet-data-unit {
+    display: inline-block;
     width: 20%;
     margin-top: 1em;
+    vertical-align: top;
+
+    &:nth-of-type(2),
+    &:nth-of-type(7), {
+      width: 18%;
+    }
+
+    &:nth-of-type(4),
+    &:nth-of-type(9), {
+      width: 22%;
+    }
   }
 
   .cf-appeal-stream-label {
