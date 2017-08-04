@@ -28,7 +28,7 @@ class VACOLS::RegionalOffice < VACOLS::Record
     "323" => "RO23",
     "325" => "RO25",
     "326" => "RO26",
-    "327" => "RO27",
+    "327" => %w(RO27 RO70),
     "328" => "RO28",
     "329" => "RO29",
     "330" => %w(RO30 RO75 RO82 RO85),
