@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { openAnnotationDeleteModal } from '../reader/actions';
+import { INTERACTION_TYPES } from '../reader/analytics';
 import Highlight from '../components/Highlight';
 
 // A rounded rectangle with a user's comment inside.
@@ -17,7 +18,7 @@ export class Comment extends React.Component {
 
   onEditComment = () => this.props.onEditComment(this.props.uuid)
 
-  onClickDelete = () => this.props.openAnnotationDeleteModal(this.props.uuid)
+  onClickDelete = () => this.props.openAnnotationDeleteModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI)
 
   getControlButtons = () => {
     return <div>
