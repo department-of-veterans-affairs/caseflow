@@ -126,8 +126,8 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
-        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything).and_return([expected_doc1])
-          .once
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
+          .and_return([expected_doc1]).once
         expect(EFolderService).to receive(:fetch_document_file).with(expected_doc1)
           .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>"))
           .once
