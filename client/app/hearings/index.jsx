@@ -13,6 +13,7 @@ import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
+import ScrollToTop from './util/ScrollTop';
 
 const configureStore = (data) => {
 
@@ -52,12 +53,14 @@ const Hearings = ({ hearings }) => {
     <div>
       <BrowserRouter>
         <div>
+         <ScrollToTop />
           <Route exact path="/hearings/dockets"
             component={() => (
               <DocketsContainer
                 veteran_law_judge={hearings.veteran_law_judge} />
             )}
           />
+
           <Route exact path="/hearings/dockets/:date"
             component={(props) => (
               <DailyDocketContainer
@@ -65,6 +68,7 @@ const Hearings = ({ hearings }) => {
                 date={props.match.params.date} />
             )}
           />
+
         <Route exact path="/hearings/worksheets/:vbms_id"
             component={(props) => (
               <HearingWorksheetContainer
@@ -74,6 +78,7 @@ const Hearings = ({ hearings }) => {
             )}
           />
         </div>
+
       </BrowserRouter>
     </div>
   </Provider>;

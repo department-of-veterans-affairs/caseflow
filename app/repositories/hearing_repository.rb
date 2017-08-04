@@ -10,7 +10,7 @@ class HearingRepository
     end
 
     def update_vacols_hearing!(vacols_record, hearing_hash)
-      hearing_hash = transform_hearing_info(hearing_hash)
+      hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
       vacols_record.update_hearing!(hearing_hash)
     end
 
@@ -36,16 +36,6 @@ class HearingRepository
         type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       )
       hearing
-    end
-
-    def transform_hearing_info(hearing_hash)
-      {
-        notes: hearing_hash[:notes].present? ? hearing_hash[:notes][0, 100] : nil,
-        disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(hearing_hash[:disposition]),
-        hold_open: hearing_hash[:hold_open],
-        aod: VACOLS::CaseHearing::HEARING_AODS.key(hearing_hash[:aod]),
-        transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP.key(hearing_hash[:transcript_requested])
-      }.select { |k, _v| hearing_hash.keys.include? k } # only send updates to key/values that are passed
     end
 
     private

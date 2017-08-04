@@ -1,4 +1,3 @@
-import Analytics from '../util/AnalyticsUtil';
 import _ from 'lodash';
 
 export const CATEGORIES = {
@@ -16,17 +15,26 @@ export const INTERACTION_TYPES = {
   KEYBOARD_SHORTCUT: 'keyboard-shortcut'
 };
 
+const debounceFns = {};
+
 export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
   const dispatchedAction = next(action);
   const { meta } = action;
 
   if (meta) {
     if (_.isFunction(meta.analytics)) {
-      meta.analytics(Analytics.event.bind(Analytics));
+      meta.analytics(window.analyticsEvent);
     } else {
       const label = _.isFunction(meta.analytics.label) ? meta.analytics.label(store.getState()) : meta.analytics.label;
 
-      Analytics.event(meta.analytics.category, meta.analytics.action, label);
+      if (!debounceFns[action.type]) {
+        debounceFns[action.type] = _.debounce(
+          (eventLabel) => window.analyticsEvent(meta.analytics.category, meta.analytics.action, eventLabel),
+          meta.analytics.debounceMs || 0
+        );
+      }
+
+      debounceFns[action.type](label);
     }
   }
 
