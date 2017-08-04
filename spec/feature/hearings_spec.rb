@@ -8,6 +8,10 @@ RSpec.feature "Hearings" do
     FeatureToggle.enable!(:reader)
   end
 
+  let(:appeal) do
+    Generators::Appeal.create
+  end
+
   context "Upcoming Hearing Days" do
     let!(:current_user) do
       User.authenticate!(roles: ["Hearing Prep"])
@@ -32,8 +36,8 @@ RSpec.feature "Hearings" do
     end
 
     scenario "User can access reader" do
-      visit "/reader/appeal"
-      expect(page).to have_content("Welcome to Reader!")
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("You've viewed 0 out of 0 documents")
     end
 
     scenario "Shows dockets for each day" do
