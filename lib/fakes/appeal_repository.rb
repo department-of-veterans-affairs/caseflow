@@ -53,6 +53,10 @@ class Fakes::AppealRepository
     appeal
   end
 
+  def self.vacols_db_connection_active?
+    true
+  end
+
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
@@ -354,8 +358,24 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Court Remand",
+        cavc: true,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
       },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+               Generators::Issue.build(disposition: "Osteomyelitis",
+                                       levels: ["Osteomyelitis"],
+                                       description: [
+                                         "15 - Compensation",
+                                         "26 - Osteomyelitis"
+                                       ],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -364,8 +384,26 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Remand",
+        cavc: false,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
       },
+      issues: [Generators::Issue.build(
+        disposition: "Remanded",
+        levels: ["Left knee", "Right knee", "Cervical strain"],
+        description: [
+          "15 - Service connection",
+          "13 - Left knee",
+          "14 - Right knee",
+          "22 - Cervical strain"
+        ],
+        program_description: "06 - Medical",
+        vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -374,9 +412,21 @@ class Fakes::AppealRepository
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
-        veteran_last_name: "Smith"
+        veteran_last_name: "Smith",
+        type: "Remand",
+        cavc: false,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
       },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: redacted_reader_documents
     )
+  end
+
+  def self.aod(_vacols_id)
+    true
   end
 end

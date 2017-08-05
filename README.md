@@ -22,7 +22,45 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-## Initial Setup (MacOSX)
+## Setup 
+### Docker container
+All dependencies for the application and external services are contained with the [Dockerfile](Dockerfile) and the [docker-compose.yml](docker-compose.yml) files.
+
+To run these, install [Docker](https://www.docker.com/) if you haven't already. Then, execute:
+```
+docker-compose build
+docker-compose up
+```
+
+This will start the app, a Redis service, and a PostgreSQL database service in the foreground. If you wish to run it in the background, run:
+```
+docker-compose up -d
+```
+
+You can then stop the containers by executing `docker-compose stop`. This will keep the containers on your local file system in case you want to run them again without having to build. To destroy them completely, execute `docker-compose down`.
+
+Now that the app is running, set up the database by running:
+
+First time user will need to run `create` before `setup`:
+
+```
+docker-compose run rake db:create
+``` 
+Followed by:
+
+```
+docker-compose run rake db:setup
+``` 
+
+
+
+That's it! You're now up and running and can access the application from http://localhost:3000 on your web browser.
+
+If you wish to attach to the running web container and execute some shell commands, run `docker-compose exec web /bin/bash`.
+
+### Mac OSX Setup
+Alternatively, if you don't want to use Docker, you can follow these instructions to set the application up on Mac OS X.
+
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 
 Then run the following:
@@ -179,10 +217,21 @@ add more links and users as needed.
 To run the test suite:
 `$ rake`
 
-For parallelized tests:
-`$ rake parallel:setup[4]`
+### Parallelized tests
+You'll be able to get through the tests a lot faster if you put all your CPUs to work.
+Parallel test categories are split up by category:
+- `unit`: Any test that isn't a feature test, since these are :lightning: fast
+- `other`: Any feature test that is not in a subfolder
+- CATEGORY: The other feature tests are split by subfolders in `spec/feature/`. Examples are `certification` and `reader`
 
-`$ rake ci:all`
+To set your environment up for parallel testing run:
+`$ rake spec:parallel:setup`
+
+To run the test suite in parallel:
+`$ rake spec:parallel`
+
+You can run any one of the parallel categories on its own via (where `CATEGORY` is `unit`, `certification`, etc):
+`$ rake spec:parallel:CATEGORY`
 
 ## Feature Toggle
 
@@ -224,3 +273,7 @@ FeatureToggle.details_for(:apple)
 => { :regional_offices =>["RO08"] }
 ```
 
+# Support
+![BrowserStack logo](./browserstack-logo.png)
+
+Thanks to [BrowserStack](https://www.browserstack.com/) for providing free support to this open-source project.

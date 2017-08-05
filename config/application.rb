@@ -34,9 +34,7 @@ module CaseflowCertification
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
 
-    # default to no analytics (production only)
     config.google_analytics_account = nil
-    config.google_analytics_host = nil
 
     config.active_job.queue_adapter = :sidekiq
 
@@ -44,5 +42,9 @@ module CaseflowCertification
 
     # Used by the application to determine whether webpack hot reloading is active
     config.webpack_hot = (ENV["REACT_ON_RAILS_ENV"] == "HOT")
+
+    # eFolder API URL to retrieve appeal documents
+    config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
+    config.efolder_key = ENV["EFOLDER_API_KEY"]
   end
 end

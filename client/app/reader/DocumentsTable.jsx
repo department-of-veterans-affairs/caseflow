@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -13,10 +14,11 @@ import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
+import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
-import { setDocListScrollPosition, changeSortState,
-  setTagFilter, setCategoryFilter } from './actions';
+import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
+  setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,
@@ -97,24 +99,64 @@ class DocTypeColumn extends React.PureComponent {
     return content;
   };
 
-  render() {
+  onClick = (id) => () => {
+    // Annoyingly if we make this call in the thread, it won't follow the link. Instead
+    // we use setTimeout to force it to run at a later point.
+    setTimeout(() => this.props.selectCurrentPdfLocally(id), 0);
+  }
+
+  render = () => {
     const { doc } = this.props;
 
+    // We add a click handler to mark a document as read even if it's opened in a new tab.
+    // This will get fired in the current tab, as the link is followed in a new tab. We
+    // also need to add a mouseUp event since middle clicking doesn't trigger an onClick.
+    // This will not work if someone right clicks and opens in a new tab.
     return this.boldUnreadContent(
-      <a
-        href={singleDocumentLink(this.props.documentPathBase, doc)}
-        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}
-        onMouseUp={this.props.showPdf(doc.id)}>
+      <Link
+        onMouseUp={this.onClick(doc.id)}
+        onClick={this.onClick(doc.id)}
+        to={singleDocumentLink(this.props.documentPathBase, doc)}
+        aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
         <Highlight>
           {doc.type}
         </Highlight>
-      </a>, doc);
+      </Link>, doc);
   }
 }
+
+const mapDocTypeDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    selectCurrentPdfLocally
+  }, dispatch)
+});
 
 DocTypeColumn.propTypes = {
   doc: PropTypes.object,
   documentPathBase: PropTypes.string
+};
+
+const ConnectedDocTypeColumn = connect(
+  null, mapDocTypeDispatchToProps
+)(DocTypeColumn);
+
+export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
+  return documents.reduce((acc, doc) => {
+    const docHasComments = _.size(annotationsPerDocument[doc.id]);
+
+    if (viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS || docHasComments) {
+      acc.push(doc);
+    }
+
+    if (docHasComments && doc.listComments) {
+      acc.push({
+        ...doc,
+        isComment: true
+      });
+    }
+
+    return acc;
+  }, []);
 };
 
 class DocumentsTable extends React.Component {
@@ -156,8 +198,8 @@ class DocumentsTable extends React.Component {
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
   getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
   getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
-  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('category')
-  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisiblity('tag')
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -208,16 +250,6 @@ class DocumentsTable extends React.Component {
   getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
-
-    const clearFilters = () => {
-      _(Constants.documentCategories).keys().
-        forEach((categoryName) => this.props.setCategoryFilter(categoryName, false));
-    };
-
-    const clearTagFilters = () => {
-      _(this.props.docFilterCriteria.tag).keys().
-        forEach((tagText) => this.props.setTagFilter(tagText, false));
-    };
 
     const anyFiltersSet = (filterType) => (
       Boolean(_.some(this.props.docFilterCriteria[filterType]))
@@ -279,7 +311,7 @@ class DocumentsTable extends React.Component {
 
           {isCategoryDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.category}
-              clearFilters={clearFilters}
+              clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
               handleClose={this.toggleCategoryDropdownFilterVisiblity}>
@@ -315,7 +347,7 @@ class DocumentsTable extends React.Component {
         onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
-        valueFunction: (doc) => <DocTypeColumn doc={doc} showPdf={this.props.showPdf}
+        valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc}
           documentPathBase={this.props.documentPathBase}/>
       },
       {
@@ -331,7 +363,7 @@ class DocumentsTable extends React.Component {
           />
           {isTagDropdownFilterOpen &&
             <DropdownFilter baseCoordinates={this.state.filterPositions.tag}
-              clearFilters={clearTagFilters}
+              clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
               handleClose={this.toggleTagDropdownFilterVisiblity}>
@@ -359,19 +391,11 @@ class DocumentsTable extends React.Component {
   }
 
   render() {
-    let rowObjects = this.props.documents.reduce((acc, row) => {
-      acc.push(row);
-      const doc = _.find(this.props.documents, _.pick(row, 'id'));
-
-      if (_.size(this.props.annotationsPerDocument[doc.id]) && doc.listComments) {
-        acc.push({
-          ...row,
-          isComment: true
-        });
-      }
-
-      return acc;
-    }, []);
+    const rowObjects = getRowObjects(
+      this.props.documents,
+      this.props.annotationsPerDocument,
+      this.props.viewingDocumentsOrComments
+    );
 
     return <div>
       <Table
@@ -399,26 +423,19 @@ DocumentsTable.propTypes = {
   })
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setDocListScrollPosition,
-    setTagFilter,
-    setCategoryFilter,
-    changeSortState
-  }, dispatch),
-  toggleDropdownFilterVisiblity(filterName) {
-    dispatch({
-      type: Constants.TOGGLE_FILTER_DROPDOWN,
-      payload: {
-        filterName
-      }
-    });
-  }
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setDocListScrollPosition,
+  clearTagFilters,
+  clearCategoryFilters,
+  setTagFilter,
+  changeSortState,
+  toggleDropdownFilterVisibility,
+  setCategoryFilter
+}, dispatch);
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state, 'tagOptions'),
+  ..._.pick(state, 'tagOptions', 'viewingDocumentsOrComments'),
   ..._.pick(state.ui, 'pdfList'),
   ..._.pick(state.ui, 'docFilterCriteria')
 });

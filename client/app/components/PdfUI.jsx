@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import Button from '../components/Button';
 import Link from '../components/Link';
@@ -7,13 +8,14 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from '../components/Pdf';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import * as Constants from '../reader/constants';
-import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
-import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron } from '../components/RenderFunctions';
+import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
+  ExternalLink, FitToScreen } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -40,19 +42,41 @@ export class PdfUI extends React.Component {
     // when a document changes, remove annotation state
     if (prevProps.doc.id !== this.props.doc.id) {
       if (this.props.isPlacingAnnotation) {
-        this.props.stopPlacingAnnotation();
+        this.props.stopPlacingAnnotation('from-document-change');
       }
       this.props.resetJumpToPage();
     }
   }
+
   zoom = (delta) => () => {
+    const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
+    const zoomDirection = delta > 0 ? 'in' : 'out';
+
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
+
     this.setState({
-      scale: Math.max(MINIMUM_ZOOM, this.state.scale + delta)
+      scale: nextScale
     });
   }
 
-  openDownloadLink = () =>
-    window.open(`${this.props.file}?type=${this.props.doc.type}&download=true`);
+  openDownloadLink = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+    window.open(`${this.props.doc.content_url}?type=${this.props.doc.type}&download=true`);
+  }
+
+  showPreviousDocument = () => {
+    window.analyticsEvent(
+      CATEGORIES.VIEW_DOCUMENT_PAGE,
+      ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
+      INTERACTION_TYPES.VISIBLE_UI
+    );
+    this.props.showPdf(this.props.prevDocId)();
+  }
+
+  showNextDocument = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
+    this.props.showPdf(this.props.nextDocId)();
+  }
 
   getPageIndicator = () => {
     if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
@@ -79,7 +103,7 @@ export class PdfUI extends React.Component {
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
-              onClick={this.props.showPdf(this.props.prevDocId)}
+              onClick={this.showPreviousDocument}
               ariaLabel="previous PDF">
               <PageArrowLeft /><span className="left-button-label">Previous</span>
             </Button>
@@ -99,7 +123,7 @@ export class PdfUI extends React.Component {
               <Button
                 name="next"
                 classNames={['cf-pdf-button cf-right-side']}
-                onClick={this.props.showPdf(this.props.nextDocId)}
+                onClick={this.showNextDocument}
                 ariaLabel="next PDF">
                 <span className="right-button-label">Next</span><PageArrowRight />
               </Button>
@@ -109,6 +133,8 @@ export class PdfUI extends React.Component {
   }
 
   fitToScreen = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
+
     this.setState({
       scale: this.state.fitToScreenZoom
     });
@@ -122,6 +148,13 @@ export class PdfUI extends React.Component {
     });
   }
 
+  onBackToClaimsFolder = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+    this.props.onShowList();
+  }
+
+  handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
+
   render() {
     const pdfUiClass = classNames(
       'cf-pdf-container',
@@ -133,7 +166,7 @@ export class PdfUI extends React.Component {
           { this.props.showClaimsFolderNavigation && <Button
             name="backToClaimsFolder"
             classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
-            onClick={this.props.onShowList}>
+            onClick={this.onBackToClaimsFolder}>
             <LeftChevron />
             &nbsp; Back to claims folder
           </Button> }
@@ -149,26 +182,24 @@ export class PdfUI extends React.Component {
                 ariaLabel="open document in new tab"
                 target="_blank"
                 button="matte"
-                href={singleDocumentLink(this.props.documentPathBase, this.props.doc)}>
-                <span title={this.props.doc.type}>{this.props.doc.type}</span>
+                onClick={this.handleClickDocumentTypeLink}
+                href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
+                <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
+                  <span title="Open in new tab">{this.props.doc.type}</span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
+                </h1>
               </Link>
             </span>
-            </span>
+          </span>
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-right">
+          Zoom:
           <Button
             name="zoomOut"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(-ZOOM_RATE)}
             ariaLabel="zoom out">
             <i className="fa fa-minus" aria-hidden="true"></i>
-          </Button>
-          <Button
-            name="fit"
-            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
-            onClick={this.fitToScreen}
-            ariaLabel="fit to screen">
-            <i className="fa fa-arrows-alt" aria-hidden="true"></i>
           </Button>
           <Button
             name="zoomIn"
@@ -178,18 +209,25 @@ export class PdfUI extends React.Component {
             <i className="fa fa-plus" aria-hidden="true"></i>
           </Button>
           <Button
-            name="download"
+            name="fit"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.fitToScreen}
+            ariaLabel="fit to screen">
+            <FitToScreen/>
+          </Button>
+          <Button
+            name="download"
+            classNames={['cf-pdf-button cf-pdf-download-icon']}
             onClick={this.openDownloadLink}
             ariaLabel="download pdf">
-            <DownloadIcon />
+            <DownloadIcon/>
           </Button>
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
               <Button
                 name="open menu"
                 classNames={['cf-pdf-button']}
-                onClick={this.props.handleTogglePdfSidebar}>
+                onClick={this.props.togglePdfSidebar}>
                 <strong>
                   Open menu
                 </strong>
@@ -200,7 +238,7 @@ export class PdfUI extends React.Component {
       <div>
         <Pdf
           documentId={this.props.doc.id}
-          file={this.props.file}
+          file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
           onPageClick={this.props.onPageClick}
@@ -221,18 +259,14 @@ const mapStateToProps = (state) => ({
   ...state.ui.pdf
 });
 const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    stopPlacingAnnotation,
+    togglePdfSidebar
+  }, dispatch),
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
   },
-  stopPlacingAnnotation: () => {
-    dispatch(stopPlacingAnnotation());
-  },
-  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId)),
-  handleTogglePdfSidebar() {
-    dispatch({
-      type: Constants.TOGGLE_PDF_SIDEBAR
-    });
-  }
+  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
 
 export default connect(
@@ -241,6 +275,7 @@ export default connect(
 
 PdfUI.propTypes = {
   doc: PropTypes.shape({
+    content_url: PropTypes.string,
     filename: PropTypes.string,
     id: PropTypes.oneOfType([
       PropTypes.string,
@@ -248,12 +283,11 @@ PdfUI.propTypes = {
     type: PropTypes.string,
     receivedAt: PropTypes.string
   }).isRequired,
-  file: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
   nextDocId: PropTypes.number,
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,

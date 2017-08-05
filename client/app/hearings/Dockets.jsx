@@ -62,7 +62,9 @@ export class Dockets extends React.Component {
       let docket = this.props.dockets[docketDate];
 
       return {
-        date: <Link to={`dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>{moment(docket.date).format('l')}</Link>,
+        date: <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
+          {moment(docket.date).format('l')}
+        </Link>,
         start_time: this.getStartTime(),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
@@ -72,22 +74,22 @@ export class Dockets extends React.Component {
     });
 
     return <div>
-      <div className="content cf-hearings-schedule">
+      <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
-          <h1>Hearing Schedule</h1>
+          <h1>Upcoming Hearing Days</h1>
           <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
         </div>
         <Table
           className="dockets"
           columns={columns}
           rowObjects={rowObjects}
-          summary={'Hearing Schedule?'}
+          summary={'Upcoming Hearing Days?'}
           getKeyForRow={this.getKeyForRow}
         />
       </div>
       <div className="cf-alt--actions cf-alt--app-width">
         <div className="cf-push-right">
-          <a href="#" onClick={() => {
+          <a className="cf-btn-link" href="#" onClick={() => {
             window.print();
           }}>Print</a>
         </div>

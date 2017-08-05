@@ -40,8 +40,8 @@ require "timeout"
 require "capybara"
 Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
 
-download_directory = Rails.root.join("tmp/downloads")
-cache_directory = Rails.root.join("tmp/browser_cache")
+download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
+cache_directory = Rails.root.join("tmp/browser_cache_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
 
 Dir.mkdir download_directory unless File.directory?(download_directory)
 if File.directory?(cache_directory)
@@ -50,10 +50,17 @@ else
   Dir.mkdir cache_directory
 end
 
+FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
+
+# The CHROME_ARGS environment is set in test envrionments
+# to allow headless tests to run. It is expected to be a space separated list
+chrome_args = !ENV["CHROME_ARGS"].nil? ? ENV["CHROME_ARGS"].split(" ") : nil
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
-    port: 51_674 + (ENV["TEST_ENV_NUMBER"] || 1).to_i,
+    port: 51_674,
     browser: :chrome,
+    args: chrome_args,
     prefs: {
       download: {
         prompt_for_download: false,
@@ -203,7 +210,7 @@ end
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
-  10.times do
+  20.times do
     yield
   end
 end

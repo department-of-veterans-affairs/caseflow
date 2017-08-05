@@ -7,7 +7,26 @@
 class Certification < ActiveRecord::Base
   has_one :certification_cancellation, dependent: :destroy
 
+  def async_start!
+    return certification_status unless can_be_updated?
+
+    update_attributes!(
+      v2: true,
+      loading_data: true,
+      loading_data_failed: false
+    )
+
+    # We don't run sidekiq in development mode.
+    if Rails.env.development? || Rails.env.test?
+      StartCertificationJob.perform_now(self)
+    else
+      StartCertificationJob.perform_later(self)
+    end
+  end
+
   def start!
+    return certification_status unless can_be_updated?
+
     create_or_update_form8
 
     update_attributes!(
@@ -224,6 +243,10 @@ class Certification < ActiveRecord::Base
 
   def calculate_ssocs_required
     appeal.ssocs.any?
+  end
+
+  def can_be_updated?
+    Rails.env.development? || Rails.env.demo? || !already_certified
   end
 
   class << self

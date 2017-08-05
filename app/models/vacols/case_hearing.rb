@@ -3,7 +3,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   self.primary_key = "hearing_pkseq"
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
-  has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr
+  has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
 
   HEARING_TYPES = {
     V: :video,
@@ -13,9 +13,28 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   HEARING_DISPOSITIONS = {
     H: :held,
-    C: :canceled,
+    C: :cancelled,
     P: :postponed,
     N: :no_show
+  }.freeze
+
+  HEARING_AODS = {
+    G: :granted,
+    Y: :filed,
+    N: :none
+  }.freeze
+
+  BOOLEAN_MAP = {
+    N: false,
+    Y: true
+  }.freeze
+
+  TABLE_NAMES = {
+    notes: :notes1,
+    disposition: :hearing_disp,
+    hold_open: :holddays,
+    aod: :aod,
+    transcript_requested: :tranreq
   }.freeze
 
   NOT_MASTER_RECORD = %(
@@ -29,6 +48,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     OR hearing_disp IS NULL
     -- an older hearing still awaiting a disposition
   }.freeze
+
+  after_update :update_hearing_action, if: :hearing_disp_changed?
 
   # :nocov:
   class << self
@@ -46,9 +67,15 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
 
+    def load_hearing(pkseq)
+      select_hearings.find_by(hearing_pkseq: pkseq)
+    end
+
     private
 
     def select_hearings
+      # VACOLS overloads the HEARSCHED table with other types of hearings
+      # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
              "staff.stafkey as user_id",
              :hearing_disp,
@@ -58,11 +85,33 @@ class VACOLS::CaseHearing < VACOLS::Record
              :notes1,
              :folder_nr,
              :vdkey,
-             :sattyid,
-             :clsdate)
-        .joins(:staff)
+             :aod,
+             :holddays,
+             :tranreq,
+             :board_member,
+             :mduser,
+             :mdtime,
+             :sattyid)
+        .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .where(hearing_type: HEARING_TYPES.keys)
     end
   end
 
+  def update_hearing!(hearing_info)
+    slogid = staff.try(:slogid)
+
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
+    MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
+                          service: :vacols,
+                          name: "update_hearing") do
+      update(attrs.merge(mduser: slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+    end
+  end
+
+  private
+
+  def update_hearing_action
+    brieff.update(bfha: HearingMapper.bfha_vacols_code(self, brieff))
+  end
   # :nocov:
 end

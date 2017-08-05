@@ -2,18 +2,15 @@ class CertificationsController < ApplicationController
   before_action :verify_access
 
   def new
-    status = certification.start!
-    @form8 = certification.form8
-
     if feature_enabled?(:certification_v2)
-      # this line was introduced for v2 stats
-      certification.v2 = true
-      # only make the bgs and vacols calls if we're actually
-      # starting a certification
-      certification.fetch_power_of_attorney! if status == :started
+      certification.async_start!
+      react_routed
       render "v2", layout: "application"
       return
     end
+
+    status = certification.start!
+    @form8 = certification.form8
 
     case status
     when :already_certified    then render "already_certified"
@@ -72,7 +69,15 @@ class CertificationsController < ApplicationController
   end
 
   def show
+    return certification_data if feature_enabled?(:certification_v2)
+
     render "confirm", layout: "application" if params[:confirm]
+  end
+
+  def certification_data
+    return render json: { loading_data_failed: true } if certification.loading_data_failed
+    return render json: { loading_data: true } if certification.loading_data
+    render json: { certification: certification.to_hash, form9PdfPath: form9_pdfjs_path }
   end
 
   def form9_pdf
@@ -80,10 +85,15 @@ class CertificationsController < ApplicationController
     send_file(form9.serve, type: "application/pdf", disposition: "inline")
   end
 
+  def form9_pdfjs_path
+    pdfjs.full_path(file: form9_pdf_certification_path(id: certification.vacols_id))
+  end
+
   def pdf
     send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
   end
 
+  # TODO: remove when v2 is rolled outx`
   def confirm
     @certification = Certification.find_by(vacols_id: vacols_id)
 

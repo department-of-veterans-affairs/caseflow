@@ -37,7 +37,7 @@ class DropdownFilter extends React.PureComponent {
         <button className="cf-text-button" onClick={this.props.clearFilters}
             disabled={!this.props.isClearEnabled}>
           <div className="cf-clear-filter-button-wrapper">
-              { `Clear ${name} filter` }
+              Clear {name} filter
           </div>
         </button>
       </div>

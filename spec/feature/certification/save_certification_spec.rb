@@ -448,8 +448,12 @@ RSpec.feature "Save Certification" do
 
         fill_in "Specify other title of certifying official", with: "President"
 
+        expect(page).to have_title("Sign and Certify | Caseflow Certification")
+
         click_button("Continue")
+        expect(page).to have_title("Success! | Caseflow Certification")
         expect(page).to have_content "Success"
+        expect(page).to have_content "Representative fields updated in VACOLS"
 
         expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
           case_record: nil,

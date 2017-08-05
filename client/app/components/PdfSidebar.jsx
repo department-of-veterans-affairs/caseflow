@@ -10,11 +10,14 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
+import Accordion from '../components/Accordion';
+import AccordionSection from '../components/AccordionSection';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation } from '../reader/actions';
+  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
+  } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from '../reader/utils';
@@ -24,6 +27,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -40,10 +44,25 @@ export class PdfSidebar extends React.Component {
     };
   }
 
-  toggleKeyboardModal = () => {
-    this.setState((prevState) => ({
-      modal: !prevState.modal
-    }));
+  handleKeyboardModalClose = () => this.toggleKeyboardModal('modal-close-handler')
+  closeKeyboardModalFromButton = () => this.toggleKeyboardModal('modal-got-it-button')
+  openKeyboardModal = () => this.toggleKeyboardModal('view-shortcuts-button')
+
+  toggleKeyboardModal = (sourceLabel) => {
+    this.setState((prevState) => {
+      const nextStateModalIsOpen = !prevState.modal;
+      const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
+
+      window.analyticsEvent(
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        `${eventActionPrefix}-keyboard-shortcuts-modal`,
+        sourceLabel
+      );
+
+      return {
+        modal: nextStateModalIsOpen
+      };
+    });
   }
 
   componentDidUpdate = () => {
@@ -80,8 +99,13 @@ export class PdfSidebar extends React.Component {
     }
   }
 
+  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
+
+  onAccordionOpenOrClose = (openedSections) =>
+    this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
+
   handleAddClick = (event) => {
-    this.props.startPlacingAnnotation();
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
     event.stopPropagation();
   }
   render() {
@@ -143,112 +167,122 @@ export class PdfSidebar extends React.Component {
           <Button
             name="hide menu"
             classNames={['cf-pdf-button']}
-            onClick={this.props.handleTogglePdfSidebar}>
-            <strong>
+            id="hide-menu-header"
+            onClick={this.props.togglePdfSidebar}>
+            <h2 className="cf-non-stylized-header">
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
-            </strong>
+            </h2>
           </Button>
         </div>
-        <div className="cf-document-info-wrapper">
-          <p className="cf-pdf-meta-title cf-pdf-cutoff">
-            <b>Document Type: </b>
-            <span title={this.props.doc.type} className="cf-document-type">
-              {this.props.doc.type}
-            </span>
-          </p>
-          <p className="cf-pdf-meta-title">
-            <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
-          </p>
-          {showErrorMessage.category && cannotSaveAlert}
-          <DocCategoryPicker
-            handleCategoryToggle={
-              _.partial(this.props.handleCategoryToggle, this.props.doc.id)
-            }
-            categoryToggleStates={categoryToggleStates} />
-          <div className="cf-sidebar-heading cf-sidebar-heading-related-issues">
-            Related Issues
-          </div>
-          {showErrorMessage.tag && cannotSaveAlert}
-          <SearchableDropdown
-            key={doc.id}
-            name="tags"
-            label="Select or tag issue(s)"
-            multi={true}
-            creatable={true}
-            options={this.generateOptionsFromTags(tagOptions)}
-            placeholder=""
-            value={this.generateOptionsFromTags(doc.tags)}
-            onChange={this.onChange}
-            selfManageValueState={true}
-          />
-          <div className="cf-sidebar-heading">
-            Comments
-            <span className="cf-right-side cf-add-comment-button">
-              <Button
-                name="AddComment"
-                onClick={this.handleAddClick}>
-                <span>{ plusIcon() } &nbsp; Add a comment</span>
-              </Button>
-            </span>
-          </div>
-        </div>
-
-        <div id="cf-comment-wrapper" className="cf-comment-wrapper"
-          ref={(commentListElement) => {
-            this.commentListElement = commentListElement;
-          }}>
-          {showErrorMessage.annotation && cannotSaveAlert}
-          <div className="cf-pdf-comment-list">
-            {this.props.placedButUnsavedAnnotation &&
-              <EditComment
-                comment={this.props.placedButUnsavedAnnotation}
-                id="addComment"
-                disableOnEmpty={true}
-                onChange={this.props.updateNewAnnotationContent}
-                onCancelCommentEdit={this.props.stopPlacingAnnotation}
-                onSaveCommentEdit={this.props.createAnnotation} />}
-            {comments}
-          </div>
-          <div className="cf-keyboard-shortcuts">
-            <Button
-                id="cf-open-keyboard-modal"
-                name={<span><Keyboard />View keyboard shortcuts</span>}
-                onClick={this.toggleKeyboardModal}
-                classNames={['cf-btn-link']}
-            />
-          { this.state.modal && <div className="cf-modal-scroll">
-            <Modal
-                buttons = {[
-                  { classNames: ['usa-button', 'usa-button-secondary'],
-                    name: 'Thanks, got it!',
-                    onClick: this.toggleKeyboardModal
+        <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
+          this.commentListElement = commentListElement;
+        }}>
+          <Accordion style="outline"
+            onChange={this.onAccordionOpenOrClose}
+            activeKey={this.props.openedAccordionSections}>
+            <AccordionSection title="Document information">
+              <p className="cf-pdf-meta-title cf-pdf-cutoff">
+                <b>Document Type: </b>
+                <span title={this.props.doc.type} className="cf-document-type">
+                  {this.props.doc.type}
+                </span>
+              </p>
+              <p className="cf-pdf-meta-title">
+                <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
+              </p>
+            </AccordionSection>
+            <AccordionSection title="Categories">
+              <div className="cf-category-sidebar">
+                {showErrorMessage.category && cannotSaveAlert}
+                <DocCategoryPicker
+                  allowReadOnly={true}
+                  handleCategoryToggle={
+                    _.partial(this.props.handleCategoryToggle, this.props.doc.id)
                   }
-                ]}
-                closeHandler={this.toggleKeyboardModal}
-                title="Keyboard shortcuts"
-                noDivider={true}
-                id="cf-keyboard-modal">
-                <div className="cf-keyboard-modal-scroll">
-                  <Table
-                    columns={scrollColumns}
-                    rowObjects={scrollInstructions}
-                    slowReRendersAreOk={true}
-                    className="cf-keyboard-modal-table"/>
-                  <Table
-                    columns={commentColumns}
-                    rowObjects={commentInstructions}
-                    slowReRendersAreOk={true}
-                    className="cf-keyboard-modal-table"/>
-                  <Table
-                    columns={documentsColumns}
-                    rowObjects={documentsInstructions}
-                    slowReRendersAreOk={true}
-                    className="cf-keyboard-modal-table"/>
+                  categoryToggleStates={categoryToggleStates} />
+              </div>
+            </AccordionSection>
+            <AccordionSection title="Issue tags">
+              <div className="cf-issue-tag-sidebar">
+                {showErrorMessage.tag && cannotSaveAlert}
+                <SearchableDropdown
+                  key={doc.id}
+                  name="tags"
+                  label="Select or tag issue(s)"
+                  multi={true}
+                  creatable={true}
+                  options={this.generateOptionsFromTags(tagOptions)}
+                  placeholder=""
+                  value={this.generateOptionsFromTags(doc.tags)}
+                  onChange={this.onChange}
+                  selfManageValueState={true}
+                />
+              </div>
+            </AccordionSection>
+            <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
+                <span className="cf-right-side cf-add-comment-button">
+                  <Button
+                    name="AddComment"
+                    onClick={this.handleAddClick}>
+                    <span>{ plusIcon() } &nbsp; Add a comment</span>
+                  </Button>
+                </span>
+              <div id="cf-comment-wrapper" className="cf-comment-wrapper">
+                {showErrorMessage.annotation && cannotSaveAlert}
+                <div className="cf-pdf-comment-list">
+                  {this.props.placedButUnsavedAnnotation &&
+                    <EditComment
+                      comment={this.props.placedButUnsavedAnnotation}
+                      id="addComment"
+                      disableOnEmpty={true}
+                      onChange={this.props.updateNewAnnotationContent}
+                      onCancelCommentEdit={this.stopPlacingAnnotation}
+                      onSaveCommentEdit={this.props.createAnnotation} />}
+                  {comments}
                 </div>
-              </Modal>
-          </div>
-          }
-          </div>
+              </div>
+            </AccordionSection>
+          </Accordion>
+        </div>
+        <div className="cf-keyboard-shortcuts">
+          <Button
+              id="cf-open-keyboard-modal"
+              name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+              onClick={this.openKeyboardModal}
+              classNames={['cf-btn-link']}
+          />
+        { this.state.modal && <div className="cf-modal-scroll">
+          <Modal
+              buttons = {[
+                { classNames: ['usa-button', 'usa-button-secondary'],
+                  name: 'Thanks, got it!',
+                  onClick: this.closeKeyboardModalFromButton
+                }
+              ]}
+              closeHandler={this.handleKeyboardModalClose}
+              title="Keyboard shortcuts"
+              noDivider={true}
+              id="cf-keyboard-modal">
+              <div className="cf-keyboard-modal-scroll">
+                <Table
+                  columns={scrollColumns}
+                  rowObjects={scrollInstructions}
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
+                <Table
+                  columns={commentColumns}
+                  rowObjects={commentInstructions}
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
+                <Table
+                  columns={documentsColumns}
+                  rowObjects={documentsInstructions}
+                  slowReRendersAreOk={true}
+                  className="cf-keyboard-modal-table"/>
+              </div>
+            </Modal>
+        </div>
+        }
         </div>
       </div>;
   }
@@ -262,7 +296,7 @@ PdfSidebar.propTypes = {
     uuid: PropTypes.number
   })),
   onJumpToComment: PropTypes.func,
-  handleTogglePdfSidebar: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
   showErrorMessage: PropTypes.shape({
     tag: PropTypes.bool,
     category: PropTypes.bool,
@@ -281,12 +315,13 @@ const mapStateToProps = (state, ownProps) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
-    documents: state.documents,
-    tagOptions: state.tagOptions
+    ..._.pick(state, 'documents', 'tagOptions', 'openedAccordionSections')
   };
 };
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    togglePdfSidebar,
+    setOpenedAccordionSections,
     selectAnnotation,
     startPlacingAnnotation,
     createAnnotation,
@@ -322,12 +357,14 @@ const mapDispatchToProps = (dispatch) => ({
         categoryKey,
         toggleState,
         docId
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+          action: `${toggleState ? 'set' : 'unset'} document category`,
+          label: categoryName
+        }
       }
-    });
-  },
-  handleTogglePdfSidebar() {
-    dispatch({
-      type: Constants.TOGGLE_PDF_SIDEBAR
     });
   }
 });

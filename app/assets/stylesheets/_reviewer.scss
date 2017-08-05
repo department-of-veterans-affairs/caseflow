@@ -12,6 +12,13 @@ $bookmark-pink: #f772e7;
 $bookmark-green: #3fcd65;
 $bookmark-yellow: #efdf1a;
 
+@mixin focus {
+  &:focus {
+    box-shadow: $focus-shadow;
+    outline: 0;
+  }
+}
+
 .cf-nav-full-screen {
   padding: 10px 30px;
 
@@ -24,9 +31,41 @@ $bookmark-yellow: #efdf1a;
   }
 }
 
+.claim-detail-type-info {
+  color: $color-secondary;
+}
+
+.cf-claims-folder-details {
+  p {
+    margin-top: 15px;
+  }
+
+  .claims-folder-issues {
+    margin-top: 20px;
+
+    ol {
+      padding-top: 3px;
+      padding-left: 1em;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+.rc-collapse > .rc-collapse-item-disabled > .rc-collapse-header {
+  color: $color-base;
+}
+
+[id=claim-folder-details-accordion] {
+  .disabled {
+    font-style: italic;
+  }
+}
+
 .cf-pdf-page-container {
   position: absolute;
-  top: 50px;
+  top: 4em;
   bottom: 0;
   right: 0;
   left: 0;
@@ -56,6 +95,9 @@ $bookmark-yellow: #efdf1a;
   overflow-x: visible;
   text-align: center;
   float: left;
+  z-index: 5;
+
+  @include focus;
 }
 
 .cf-pdf-page {
@@ -80,6 +122,13 @@ svg[aria-hidden=true],
 }
 // scss-lint:enable QualifyingElement
 
+
+.cf-non-stylized-header {
+  font-size: inherit;
+  margin: 0;
+  color: inherit;
+}
+
 .cf-sidebar-wrapper {
   display: flex;
   flex-direction: column;
@@ -96,6 +145,10 @@ svg[aria-hidden=true],
     visibility: hidden;
   }
 
+  .usa-accordion-content {
+    background-color: $caseflow-background;
+  }
+
   .usa-alert {
     margin-top: 15px;
   }
@@ -103,7 +156,6 @@ svg[aria-hidden=true],
 
 .cf-sidebar-header {
   padding-left: 20px;
-  margin-bottom: 10px;
   height: 50px;
   background-color: $color-gray-warm-light;
   line-height: 50px;
@@ -114,12 +166,21 @@ svg[aria-hidden=true],
   padding: 0 30px;
 }
 
+.cf-category-sidebar {
+  overflow-y: hidden;
+}
+
+.cf-issue-tag-sidebar {
+  overflow: visible;
+
+  .Select-menu-outer {
+    position: relative;
+  }
+}
+
 .cf-comment-wrapper {
-  padding: 0 30px;
-  width: 380px;
   $comment-wrapper-vertical-margin: 15px;
   margin-top: $comment-wrapper-vertical-margin;
-  overflow-y: scroll;
 
   .usa-alert {
     margin-top: 0;
@@ -138,7 +199,6 @@ svg[aria-hidden=true],
 
 .cf-pdf-header {
   position: absolute;
-  z-index: 15;
   opacity: 1;
   padding: 15px 23px 15px 15px;
 
@@ -165,7 +225,6 @@ svg[aria-hidden=true],
 
 .cf-pdf-footer {
   position: absolute;
-  z-index: 15;
   opacity: 1;
   bottom: 0;
   padding: 0 20px;
@@ -275,14 +334,10 @@ svg[aria-hidden=true],
   svg {
     vertical-align: bottom;
   }
-
-  &:focus {
-    box-shadow: none;
-  }
 }
 
 .cf-pdf-spaced-buttons {
-  padding: 0 15px;
+  margin: 0 25px;
 }
 
 .cf-pdf-edit-comment {
@@ -319,8 +374,57 @@ svg[aria-hidden=true],
   margin-top: 0;
 }
 
+.cf-sidebar-accordion {
+  margin-bottom: 0;
+  overflow: auto;
+
+  .usa-accordion-content {
+    padding: 14px 30px;
+
+    .cf-form-checkboxes {
+      margin-top: 6px;
+      margin-bottom: 20px;
+
+      .cf-form-checkbox {
+
+        label:last-child {
+          margin-bottom: 0;
+
+          .cf-category-selector {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .cf-document-category-picker {
+      li:last-child {
+        div {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+.cf-documents-comments-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .cf-show-all-label {
+    text-align: right;
+  }
+
+  // scss-lint:disable IdSelector
+  #button-comments {
+    margin-right: 0;
+  }
+}
+
 .cf-add-comment-button {
   margin-top: -15px;
+  margin-bottom: 10px;
 }
 
 .cf-pdf-meta-title {
@@ -420,6 +524,10 @@ svg[aria-hidden=true],
     float: left;
   }
 
+  .highlighted {
+    filter: drop-shadow(0 0 5px $color-primary-alt);
+  }
+
   li:not(:first-child) {
     padding-left: 10px;
   }
@@ -481,6 +589,24 @@ svg[aria-hidden=true],
   }
 }
 
+.cf-pdf-vertically-center {
+  display: flex;
+  align-items: center;
+
+  svg {
+    display: block;
+  }
+}
+
+.cf-pdf-external-link-icon {
+  margin-left: 8px;
+}
+
+[type="button"].cf-pdf-download-icon {
+  margin-left: 40px;
+  margin-right: 23px;
+}
+
 // scss-lint:disable QualifyingElement
 input[type="search"].cf-search-input-with-close {
   padding-right: 25px;
@@ -505,7 +631,7 @@ input[type="search"].cf-search-input-with-close {
   bottom: 0;
   position: relative;
   text-align: center;
-  height: 50px;
+  margin: 10px 0;
 
   .cf-btn-link {
     &:hover {

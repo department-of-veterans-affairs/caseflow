@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "0414595a1856a10c57487b12732293342e7d4206"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6e8bed78dcb4e6699f55257ad90d016b71639ec0"
 
 gem "moment_timezone-rails"
 
@@ -113,18 +113,18 @@ group :development, :test do
   gem 'bundler-audit'
 
   # Testing tools
+  gem 'faker'
   gem 'rspec'
   gem 'rspec-rails'
   #gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem 'capybara'
   gem 'sniffybara', git: 'https://github.com/department-of-veterans-affairs/sniffybara.git', branch: "master"
-  gem 'simplecov', '0.12.0', require: false
+  gem 'simplecov', git: 'https://github.com/colszowka/simplecov.git', require: false
   gem 'timecop'
 
   gem 'poltergeist' # For legacy JS tests. Remove when we're all React
   gem 'konacha'
   gem 'database_cleaner'
-  gem 'parallel_tests'
   # to save and open specific page in capybara tests
   gem 'launchy'
 end
@@ -133,6 +133,7 @@ group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0', platforms: :ruby
   gem 'foreman'
+  gem 'dotenv-rails'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby

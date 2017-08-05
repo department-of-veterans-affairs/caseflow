@@ -10,13 +10,47 @@ export default class SearchBar extends React.Component {
     this.props.onChange(event.target.value);
   }
 
+  // A "search" event occurs when a user finishes typing
+  // a search query. This is 500ms after the last character
+  // typed or when focus is lost.
+  onSearch = () => {
+    if (this.props.value && this.props.recordSearch) {
+      this.props.recordSearch(this.props.value);
+    }
+  }
+
+  clearSearchCallback() {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = null;
+
+      return true;
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.value !== nextProps.value) {
+      this.clearSearchCallback();
+
+      this.searchTimeout = setTimeout(() => {
+        this.onSearch();
+        this.searchTimeout = null;
+      }, 500);
+    }
+  }
+
+  onBlur = () => {
+    if (this.clearSearchCallback()) {
+      this.onSearch();
+    }
+  }
+
   render() {
     let {
       id,
-      onClick,
       value,
-      onClearSearch,
       loading,
+      onClearSearch,
       size,
       title
     } = this.props;
@@ -35,20 +69,19 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
-    const inputClassName = onClearSearch ? 'cf-search-input-with-close' : '';
-
     return <span className={sizeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
       <input
-        className={inputClassName}
+        className="cf-search-input-with-close"
         id={id}
         onChange={this.onChange}
+        onBlur={this.onBlur}
         type="search"
         name="search"
         value={value}/>
-      {onClearSearch && _.size(value) > 0 &&
+      {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
           name="clear search"
@@ -56,7 +89,7 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
+      <Button name={`search-${id}`} type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button>
     </span>;
@@ -70,6 +103,9 @@ SearchBar.propTypes = {
   onChange: PropTypes.func,
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
+  recordSearch: PropTypes.func,
   loading: PropTypes.bool,
-  value: PropTypes.string
+  value: PropTypes.string,
+  analyticsCategory: PropTypes.string
 };
+

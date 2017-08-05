@@ -7,10 +7,15 @@ export const TOGGLE_DOCUMENT_CATEGORY_FAIL = 'TOGGLE_DOCUMENT_CATEGORY_FAIL';
 export const RECEIVE_DOCUMENTS = 'RECEIVE_DOCUMENTS';
 export const RECEIVE_ANNOTATIONS = 'RECEIVE_ANNOTATIONS';
 export const RECEIVE_ASSIGNMENTS = 'RECEIVE_ASSIGNMENTS';
+export const RECEIVE_APPEAL_DETAILS = 'RECEIVE_APPEAL_DETAILS';
+export const RECEIVE_APPEAL_DETAILS_FAILURE = 'RECEIVE_APPEAL_DETAILS_FAILURE';
 export const REQUEST_INITIAL_DATA_FAILURE = 'INITIAL_DATA_LOADING_FAIL';
+export const REQUEST_INITIAL_CASE_FAILURE = 'INITIAL_CASE_LOADING_FAIL';
 export const TOGGLE_FILTER_DROPDOWN = 'TOGGLE_FILTER_DROPDOWN';
 export const SET_CATEGORY_FILTER = 'SET_CATEGORY_FILTER';
 export const SET_TAG_FILTER = 'SET_TAG_FILTER';
+export const CLEAR_CATEGORY_FILTER = 'CLEAR_CATEGORY_FILTER';
+export const CLEAR_TAG_FILTER = 'CLEAR_TAG_FILTER';
 export const ADD_NEW_TAG = 'ADD_NEW_TAG';
 export const REMOVE_TAG = 'REMOVE_TAG';
 export const REQUEST_NEW_TAG_CREATION_SUCCESS = 'REQUEST_NEW_TAG_CREATION_SUCCESS';
@@ -31,7 +36,6 @@ export const COLLECT_ALL_TAGS_FOR_OPTIONS = 'COLLECT_ALL_TAGS_FOR_OPTIONS';
 export const SET_SORT = 'SET_SORT';
 export const SET_PDF_READY_TO_SHOW = 'SET_PDF_READY_TO_SHOW';
 export const SET_SEARCH = 'SET_SEARCH';
-export const TOGGLE_EXPAND_ALL = 'TOGGLE_EXPAND_ALL';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
 export const CLEAR_ALL_SEARCH = 'CLEAR_ALL_SEARCH';
 export const SET_DOC_LIST_SCROLL_POSITION = 'SET_DOC_LIST_SCROLL_POSITION';
@@ -64,6 +68,16 @@ export const STOP_PLACING_ANNOTATION = 'STOP_PLACING_ANNOTATION';
 export const SELECT_ANNOTATION = 'SELECT_ANNOTATION';
 export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
 
+export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
+export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
+
+export const COMMENT_ACCORDION_KEY = 'Comments';
+
+export const DOCUMENTS_OR_COMMENTS_ENUM = {
+  DOCUMENTS: 'documents',
+  COMMENTS: 'comments'
+};
+
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
@@ -78,7 +92,7 @@ export const documentCategories = {
   procedural: {
     renderOrder: 0,
     humanName: 'Procedural',
-    svg: <CategoryIcon color="#4A90E2" />
+    svg: <CategoryIcon color="#5A94EC" />
   },
   medical: {
     renderOrder: 1,
@@ -88,7 +102,13 @@ export const documentCategories = {
   other: {
     renderOrder: 2,
     humanName: 'Other Evidence',
-    svg: <CategoryIcon color="#5BD998" />
+    svg: <CategoryIcon color="#3AD2CF" />
+  },
+  case_summary: {
+    renderOrder: 3,
+    humanName: 'Case Summary',
+    svg: <CategoryIcon color="#FDC231" />,
+    readOnly: true
   }
 };
 

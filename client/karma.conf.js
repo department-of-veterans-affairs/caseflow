@@ -1,11 +1,15 @@
+/* eslint-disable no-process-env */
 const _ = require('lodash');
 const webpackConfig = require('./webpack.config.js');
 
 const karmaTestPattern = 'test/karma/**/*-test.js';
 
 module.exports = function(config) {
+  // CHROME_ARGS is expected to be a space separated list of arguments
+  const chromeArgs = process.env.CHROME_ARGS ? process.env.CHROME_ARGS.split(' ') : [];
+
   config.set({
-    browsers: ['Chrome'],
+    browsers: ['Chrome_with_options'],
     frameworks: ['mocha'],
     reporters: ['mocha'],
     singleRun: true,
@@ -15,7 +19,17 @@ module.exports = function(config) {
       level: ''
     },
 
+    customLaunchers: {
+      Chrome_with_options: {
+        base: 'Chrome',
+        // The CHROME_ARGS environment is set in test envrionments
+        // to allow headless tests to run
+        flags: chromeArgs
+      }
+    },
+
     files: [
+      'test/karma/setup.js',
       { pattern: karmaTestPattern }
     ],
 

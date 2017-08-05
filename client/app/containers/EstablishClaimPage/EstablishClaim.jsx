@@ -5,13 +5,15 @@ import PropTypes from 'prop-types';
 
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
-import ROUTING_INFORMATION from '../../constants/Routing';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import { FULL_GRANT, INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR } from '../../establishClaim/constants';
-import BaseForm from '../BaseForm';
 
 import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
-import { validModifiers } from '../../establishClaim/util';
+import {
+  validModifiers,
+  getSpecialIssuesEmail,
+  getSpecialIssuesRegionalOffice
+} from '../../establishClaim/util';
 import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import { formatDate } from '../../util/DateUtil';
@@ -95,7 +97,7 @@ const BACK_TO_DECISION_REVIEW_TEXT = '< Back to Review Decision';
 // has been made. By establishing an EP, we ensure the appeal
 // has properly been "handed off" to the right party for adjusting
 // the veteran's benefits
-export default class EstablishClaim extends BaseForm {
+export default class EstablishClaim extends React.Component {
   constructor(props) {
     super(props);
     this.store = createEstablishClaimStore(props);
@@ -361,59 +363,6 @@ export default class EstablishClaim extends BaseForm {
       });
   }
 
-  handleEmailPageSubmit = () => {
-    let { handleAlert, handleAlertClear, task } = this.props;
-
-    handleAlertClear();
-
-    this.setState({
-      loading: true
-    });
-
-    let data = ApiUtil.convertToSnakeCase({
-      emailRoId: this.getSpecialIssuesRegionalOfficeCode(),
-      emailRecipient: this.getSpecialIssuesEmail().join(', ')
-    });
-
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/email-complete`, { data }).
-      then(() => {
-        WindowUtil.reloadPage();
-      }, () => {
-        handleAlert(
-        'error',
-        'Error',
-        'There was an error while completing the task. Please try again later'
-        );
-        this.setState({
-          loading: false
-        });
-      });
-  };
-
-  handleNoEmailPageSubmit = () => {
-    let { handleAlert, handleAlertClear, task } = this.props;
-
-    handleAlertClear();
-
-    this.setState({
-      loading: true
-    });
-
-    return ApiUtil.post(`/dispatch/establish-claim/${task.id}/no-email-complete`).
-    then(() => {
-      WindowUtil.reloadPage();
-    }, () => {
-      handleAlert(
-        'error',
-        'Error',
-        'There was an error while completing the task. Please try again later'
-      );
-
-      this.setState({
-        loading: false
-      });
-    });
-  };
 
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
@@ -421,60 +370,6 @@ export default class EstablishClaim extends BaseForm {
 
   handleBackToDecisionReview = () => {
     this.handlePageChange(DECISION_PAGE);
-  }
-
-  getSpecialIssuesEmail() {
-    if (this.state.specialIssuesEmail === 'PMC') {
-      return this.getEmailFromConstant(ROUTING_INFORMATION.PMC);
-    } else if (this.state.specialIssuesEmail === 'COWC') {
-      return this.getEmailFromConstant(ROUTING_INFORMATION.COWC);
-    } else if (this.state.specialIssuesEmail === 'education') {
-      return this.getEmailFromConstant(ROUTING_INFORMATION.EDUCATION);
-    }
-
-    return this.state.specialIssuesEmail;
-  }
-
-  getEmailFromConstant(constant) {
-    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
-
-    return ROUTING_INFORMATION.codeToEmailMapper[constant[regionalOfficeKey]];
-  }
-
-  getCityAndState(regionalOfficeKey) {
-    if (!regionalOfficeKey) {
-      return null;
-    }
-
-    return `${regionalOfficeKey} - ${
-      this.props.regionalOfficeCities[regionalOfficeKey].city}, ${
-      this.props.regionalOfficeCities[regionalOfficeKey].state}`;
-  }
-
-  getSpecialIssuesRegionalOffice() {
-    return this.getCityAndState(
-      this.getSpecialIssuesRegionalOfficeCode(this.state.specialIssuesRegionalOffice)
-    );
-  }
-
-  getSpecialIssuesRegionalOfficeCode() {
-    if (this.state.specialIssuesRegionalOffice === 'PMC') {
-      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.PMC);
-    } else if (this.state.specialIssuesRegionalOffice === 'COWC') {
-      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.COWC);
-    } else if (this.state.specialIssuesRegionalOffice === 'education') {
-      return this.getRegionalOfficeFromConstant(ROUTING_INFORMATION.EDUCATION);
-    } else if (!this.state.specialIssuesRegionalOffice) {
-      return null;
-    }
-
-    return this.state.specialIssuesRegionalOffice;
-  }
-
-  getRegionalOfficeFromConstant(constant) {
-    let regionalOfficeKey = this.props.task.appeal.regional_office_key;
-
-    return constant[regionalOfficeKey];
   }
 
   formattedDecisionDate = () => {
@@ -629,15 +524,27 @@ export default class EstablishClaim extends BaseForm {
         }
         { this.isEmailPage() &&
           <EstablishClaimEmail
-            loading={this.state.loading}
             appeal={this.props.task.appeal}
-            handleEmailSubmit={this.handleEmailPageSubmit}
-            handleNoEmailSubmit={this.handleNoEmailPageSubmit}
-            regionalOffice={this.getSpecialIssuesRegionalOffice()}
-            regionalOfficeEmail={this.getSpecialIssuesEmail()}
-            specialIssues={specialIssues}
+            handleAlertClear={this.props.handleAlertClear}
+            handleAlert={this.props.handleAlert}
+            regionalOfficeEmail={
+              getSpecialIssuesEmail(
+                this.state.specialIssuesEmail,
+                this.props.task.appeal.regional_office_key
+              )
+            }
+            regionalOffice={
+              getSpecialIssuesRegionalOffice(
+                this.state.specialIssuesRegionalOffice,
+                this.props.task.appeal.regional_office_key,
+                this.props.regionalOfficeCities
+              )
+            }
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
+            specialIssues={specialIssues}
+            specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
+            taskId={this.props.task.id}
           />
         }
         <CancelModal

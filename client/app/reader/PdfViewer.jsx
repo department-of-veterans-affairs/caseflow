@@ -5,14 +5,14 @@ import { connect } from 'react-redux';
 
 import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
-import { documentPath } from './DecisionReviewer';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  handleSelectCommentIcon, selectCurrentPdf } from '../reader/actions';
+  selectCurrentPdf } from '../reader/actions';
 import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
   const moveAmountPx = 5;
@@ -85,10 +85,20 @@ export class PdfViewer extends React.Component {
     }
 
     if (event.key === 'ArrowLeft') {
-      this.props.showPdf(this.prevDocId())();
+      window.analyticsEvent(
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
+        INTERACTION_TYPES.KEYBOARD_SHORTCUT
+      );
+      this.props.showPdf(this.getPrevDocId())();
     }
     if (event.key === 'ArrowRight') {
-      this.props.showPdf(this.nextDocId())();
+      window.analyticsEvent(
+        CATEGORIES.VIEW_DOCUMENT_PAGE,
+        ACTION_NAMES.VIEW_NEXT_DOCUMENT,
+        INTERACTION_TYPES.KEYBOARD_SHORTCUT
+      );
+      this.props.showPdf(this.getNextDocId())();
     }
   }
 
@@ -127,13 +137,13 @@ export class PdfViewer extends React.Component {
 
   selectedDocId = () => Number(this.props.match.params.docId)
 
-  prevDocId = () => _.get(this.props.documents, [this.selectedDocIndex() - 1, 'id'])
-  nextDocId = () => _.get(this.props.documents, [this.selectedDocIndex() + 1, 'id'])
+  getPrevDoc = () => _.get(this.props.documents, [this.selectedDocIndex() - 1])
+  getNextDoc = () => _.get(this.props.documents, [this.selectedDocIndex() + 1])
 
-  getPrefetchFiles = () => _.compact([
-    this.prevDocId(),
-    this.nextDocId()
-  ]).map(documentPath)
+  getPrevDocId = () => _.get(this.getPrevDoc(), 'id')
+  getNextDocId = () => _.get(this.getNextDoc(), 'id')
+
+  getPrefetchFiles = () => _.compact(_.map([this.getPrevDoc(), this.getNextDoc()], 'content_url'))
 
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
@@ -161,15 +171,14 @@ export class PdfViewer extends React.Component {
         <div className="cf-pdf-page-container">
           <PdfUI
             doc={doc}
-            file={documentPath(this.selectedDocId())}
             prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             onShowList={this.props.onShowList}
-            prevDocId={this.prevDocId()}
-            nextDocId={this.nextDocId()}
+            prevDocId={this.getPrevDocId()}
+            nextDocId={this.getNextDocId()}
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}
@@ -218,7 +227,6 @@ const mapDispatchToProps = (dispatch) => ({
     deleteAnnotation
   }, dispatch),
 
-  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment)),
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
 
@@ -234,7 +242,6 @@ PdfViewer.propTypes = {
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
   onScrollToComment: PropTypes.func,
-  handleSelectCommentIcon: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,

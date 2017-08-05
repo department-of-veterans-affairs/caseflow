@@ -2,7 +2,7 @@ describe Issue do
   let(:disposition) { :allowed }
   let(:program) { :compensation }
   let(:category) { :elbow }
-  let(:type) { :service_connection }
+  let(:type) { { name: :service_connection, label: "Service Connection" } }
 
   let(:issue) do
     Generators::Issue.build(disposition: disposition,
@@ -23,21 +23,55 @@ describe Issue do
         "issprog" => "02",
         "isscode" => "15",
         "isslev1" => "02",
-        "isslev2" => nil,
-        "isslev3" => nil,
+        "isslev2" => "03",
+        "isslev3" => "04",
         "issprog_label" => "Compensation",
         "isscode_label" => "1151 Eligibility",
         "isslev1_label" => "Other",
-        "isslev2_label" => nil,
-        "isslev3_label" => nil }
+        "isslev2_label" => "Left knee",
+        "isslev3_label" => "Right knee" }
     end
 
     it "assigns values properly" do
+      expect(subject.levels).to eq(["Other", "Left knee", "Right knee"])
       expect(subject.program).to eq(:compensation)
       expect(subject.program_description).to eq("02 - Compensation")
-      expect(subject.type).to eq(:service_connection)
-      expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other"])
+      expect(subject.type).to eq(
+        name: :service_connection,
+        label: "1151 Eligibility"
+      )
+      expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other", "03 - Left knee", "04 - Right knee"])
       expect(subject.disposition).to eq(:remanded)
+    end
+  end
+
+  context ".parse_levels_from_vacols" do
+    subject { Issue.parse_levels_from_vacols(levels_hash) }
+
+    context "when all three levels are present in VACOLS" do
+      let(:levels_hash) do
+        { "isslev1" => "02",
+          "isslev2" => "0304",
+          "isslev3" => "0404",
+          "isslev1_label" => "Other",
+          "isslev2_label" => "Right elbow",
+          "isslev3_label" => "Right shoulder" }
+      end
+
+      it "returns level descriptions in order" do
+        expect(subject).to eq(["Other", "Right elbow", "Right shoulder"])
+      end
+    end
+
+    context "when there are less than three levels returned from VACOLS" do
+      let(:levels_hash) do
+        { "isslev1" => "02",
+          "isslev1_label" => "Other" }
+      end
+
+      it "returns the amount of issue levels present" do
+        expect(subject).to eq(["Other"])
+      end
     end
   end
 
@@ -73,7 +107,7 @@ describe Issue do
     end
 
     context "when type is not service_connection" do
-      let(:type) { :increase_rating }
+      let(:type) { { name: :increase_rating, label: "Increase Rating" } }
 
       it { is_expected.to be_falsey }
     end

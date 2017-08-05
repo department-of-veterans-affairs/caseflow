@@ -27,6 +27,11 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+  # Docker configurations for hot module reloading
+  # Also stops web-console spam when trying to get webfonts
+  # and other assets.
+  config.web_console.whitelisted_ips = ['172.18.0.0/12','192.168.0.0/16']
+
   # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
   config.assets.digest = true
@@ -52,6 +57,12 @@ Rails.application.configure do
   # Uncomment to enable certification v2.
   # TODO: remove this when we set it up with roles/featureflag
   # ENV["ENABLE_CERTIFICATION_V2"] = "true"
+
+  # eFolder API URL to retrieve appeal documents
+  config.efolder_url = "http://localhost:4000"
+  config.efolder_key = "token"
+
+  config.google_analytics_account = "UA-74789258-5"
 
   # configure pry
   silence_warnings do

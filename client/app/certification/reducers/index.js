@@ -1,6 +1,7 @@
 import * as Constants from '../constants/constants';
 import * as ConfirmCaseDetailsReducers from './ConfirmCaseDetails';
 import * as CertificationReducers from './Certification';
+import * as SignAndCertifyReducers from './SignAndCertify';
 
 /*
 * This global reducer is called every time a state change is
@@ -9,18 +10,6 @@ import * as CertificationReducers from './Certification';
 * these are conventionally broken out into separate "actions" files
 * that would live at client/app/actions/**.js.
 */
-
-
-// TODO: break this out into a reducers/SignAndCertify.jsx
-const changeSignAndCertifyForm = (state, action) => {
-  const update = {};
-
-  for (const key of Object.keys(action.payload)) {
-    update[key] = action.payload[key];
-  }
-
-  return Object.assign({}, state, update);
-};
 
 // TODO: is this meant to be something like a schema?
 // it's too similar to the object in "mapDataToInitialState".
@@ -76,8 +65,11 @@ export const certificationReducers = function(state = initialState, action = {})
     return Object.assign({}, state, {
       hearingPreference: action.payload.hearingPreference
     });
+
+  // SignAndCertify
+  // ==================
   case Constants.CHANGE_SIGN_AND_CERTIFY_FORM:
-    return changeSignAndCertifyForm(state, action);
+    return SignAndCertifyReducers.changeSignAndCertifyForm(state, action);
 
   // Certification
   // ==================
@@ -151,7 +143,7 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
 };
 
 const certifyingOfficialTitle = function(title) {
-  if (!Object.values(Constants.certifyingOfficialTitles).includes(title)) {
+  if (!Object.values(Constants.certifyingOfficialTitles).includes(title) && Boolean(title)) {
     return Constants.certifyingOfficialTitles.OTHER;
   }
 
@@ -172,34 +164,35 @@ const parseDocumentFromApi = (doc = {}, index) => ({
   isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
 });
 
-export const mapDataToInitialState = (state) => ({
-  bgsRepresentativeType: state.bgs_representative_type,
-  bgsRepresentativeName: state.bgs_representative_name,
-  bgsPoaAddressFound: state['bgs_rep_address_found?'],
-  vacolsRepresentativeType: state.vacols_representative_type,
-  vacolsRepresentativeName: state.vacols_representative_name,
-  representativeType: state.representative_type,
-  representativeName: state.representative_name,
-  organizationName: state.organizationName,
-  poaMatches: poaMatchesToStr(state.poa_matches),
-  poaCorrectLocation: poaCorrectLocationToStr(state.poa_correct_in_vacols, state.poa_correct_in_bgs),
-  nod: parseDocumentFromApi(state.appeal.nod),
-  soc: parseDocumentFromApi(state.appeal.soc),
-  form9: parseDocumentFromApi(state.appeal.form9),
-  ssocs: (state.appeal.ssocs || []).map((ssoc, i) => parseDocumentFromApi(ssoc, i + 1)),
-  documentsMatch: state.appeal['documents_match?'],
-  certificationId: state.id,
-  vbmsId: state.appeal.vbms_id,
-  veteranName: state.appeal.veteran_name,
-  certificationStatus: state.certification_status,
-  vacolsId: state.vacols_id,
-  hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(state.hearing_change_doc_found_in_vbms),
-  hearingPreference: state.hearing_preference,
-  form9Type: state.form9_type,
-  certifyingOffice: state.certifying_office,
-  certifyingUsername: state.certifying_username,
-  certificationDate: state.certification_date,
-  certifyingOfficialName: state.certifying_official_name,
-  certifyingOfficialTitle: certifyingOfficialTitle(state.certifying_official_title),
-  certifyingOfficialTitleOther: certifyingOfficialTitleOther(state.certifying_official_title)
+export const mapDataToInitialState = (certification, form9PdfPath) => ({
+  bgsRepresentativeType: certification.bgs_representative_type,
+  bgsRepresentativeName: certification.bgs_representative_name,
+  bgsPoaAddressFound: certification['bgs_rep_address_found?'],
+  vacolsRepresentativeType: certification.vacols_representative_type,
+  vacolsRepresentativeName: certification.vacols_representative_name,
+  representativeType: certification.representative_type,
+  representativeName: certification.representative_name,
+  organizationName: certification.organizationName,
+  poaMatches: poaMatchesToStr(certification.poa_matches),
+  poaCorrectLocation: poaCorrectLocationToStr(certification.poa_correct_in_vacols, certification.poa_correct_in_bgs),
+  nod: parseDocumentFromApi(certification.appeal.nod),
+  soc: parseDocumentFromApi(certification.appeal.soc),
+  form9: parseDocumentFromApi(certification.appeal.form9),
+  ssocs: (certification.appeal.ssocs || []).map((ssoc, i) => parseDocumentFromApi(ssoc, i + 1)),
+  documentsMatch: certification.appeal['documents_match?'],
+  certificationId: certification.id,
+  vbmsId: certification.appeal.vbms_id,
+  veteranName: certification.appeal.veteran_name,
+  certificationStatus: certification.certification_status,
+  vacolsId: certification.vacols_id,
+  hearingDocumentIsInVbms: hearingDocumentIsInVbmsToStr(certification.hearing_change_doc_found_in_vbms),
+  hearingPreference: certification.hearing_preference,
+  form9Type: certification.form9_type,
+  form9PdfPath,
+  certifyingOffice: certification.certifying_office,
+  certifyingUsername: certification.certifying_username,
+  certificationDate: certification.certification_date,
+  certifyingOfficialName: certification.certifying_official_name,
+  certifyingOfficialTitle: certifyingOfficialTitle(certification.certifying_official_title),
+  certifyingOfficialTitleOther: certifyingOfficialTitleOther(certification.certifying_official_title)
 });

@@ -116,11 +116,13 @@ RSpec.feature "Start Certification" do
     scenario "Starting a Certification v2 with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
+      expect(page).to have_title("Check Documents | Caseflow Certification")
       expect(page).to have_content("All documents found with matching VBMS and VACOLS dates.")
       expect(page).to have_content("SOC and SSOC dates in VBMS can be up to 4 days")
       expect(page).to have_content("SOC 09/10/1987 09/06/1987")
 
       click_button("Continue")
+      expect(page).to have_title("Confirm Case Details | Caseflow Certification")
       expect(page).to have_content("Review information about the appellant's representative from VBMS and VACOLS.")
 
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
@@ -133,25 +135,25 @@ RSpec.feature "Start Certification" do
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Attorney").click
       end
-      expect(page).to have_content("Since you selected Attorney")
+      expect(page).to have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Agent").click
       end
-      expect(page).to have_content("Since you selected Agent")
+      expect(page).to have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Other").click
       end
-      expect(page).to have_content("Since you selected Other")
+      expect(page).to have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "No representative").click
       end
-      expect(page).to_not have_content("Since you selected")
+      expect(page).to_not have_content("Caseflow will update the representative type")
       within_fieldset("What type of representative did the appellant request for this appeal? ") do
         find("label", text: "Service organization").click
       end
       expect(page).to have_content("Service organization name")
       select "AMVETS", from: "Service organization name"
-      expect(page).to have_content("Great! Caseflow will update")
+      expect(page).to have_content("Great! Caseflow will update the representative type")
       click_button("Continue")
       expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
       page.go_back
@@ -168,10 +170,12 @@ RSpec.feature "Start Certification" do
       expect(page).to_not have_content("Since you selected Unlisted")
       fill_in "Enter the service organization's name:", with: "Test"
       click_button("Continue")
+      expect(page).to have_title("Confirm Hearing | Caseflow Certification")
       expect(page).to have_content("Check the eFolder for the appellant’s most recent hearing preference")
 
       # go back to the case details page
       page.go_back
+      expect(page).to have_title("Confirm Case Details | Caseflow Certification")
       within_fieldset("Does the representative information from VBMS and VACOLS match?") do
         expect(find_field("No", visible: false)).to be_checked
       end
@@ -238,6 +242,16 @@ RSpec.feature "Start Certification" do
       expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
       visit "certifications/#{appeal_mismatched_documents.vacols_id}/sign_and_certify"
       expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
+    end
+
+    scenario "loading a certification and having it error" do
+      allow(StartCertificationJob).to receive(:perform_now).and_return(true)
+      visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
+      expect(page).to have_content("Loading")
+      certification = Certification.find_by(vacols_id: appeal_ready_exact_match.vacols_id)
+      certification.update_attributes(loading_data_failed: true)
+      page.execute_script("window.reloadCertification()")
+      expect(page).to have_content("Technical Difficulties")
     end
   end
 
@@ -325,6 +339,15 @@ RSpec.feature "Start Certification" do
       visit "certifications/new/#{appeal_already_certified.vacols_id}"
       expect(find("#page-title")).to have_content "Already Certified"
       expect(page).to have_content "Appeal has already been Certified"
+    end
+
+    scenario "There is a dependency outage" do
+      allow(DependenciesReportService).to receive(:outage_present?).and_return(true)
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).to have_content "We've detected technical issues in our system"
+      User.unauthenticate!
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).not_to have_content "We've detected technical issues in our system"
     end
   end
 end

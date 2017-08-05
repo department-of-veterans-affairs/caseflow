@@ -108,8 +108,6 @@ const ERRORS = {
 };
 
 /*
- * Confirm Case Details
- *
  * This page will display information from BGS
  * about the appellant's representation for the appeal
  * and confirm it.
@@ -119,7 +117,6 @@ const ERRORS = {
  * information in VACOLS is very often out of date, which can
  * in case delays -- attorneys can't access the appeal information
  * if they're not noted as being the appellant's representative
- *
  */
 
 export class ConfirmCaseDetails extends React.Component {
@@ -132,6 +129,11 @@ export class ConfirmCaseDetails extends React.Component {
 
   componentWillUnmount() {
     this.props.resetState();
+  }
+
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
+  componentDidMount() {
+    window.scrollTo(0, 0);
   }
 
   getValidationErrors() {
@@ -304,14 +306,10 @@ export class ConfirmCaseDetails extends React.Component {
     ];
 
     const representativeTypeMessage =
-        <p>Since you selected <strong>{ConfirmCaseDetails.getDisplayText(representativeType)}</strong>, make sure
-         you update the representative's name and address information in VACOLS after the appeal is certified.
-        Caseflow will update the representative type in VACOLS.</p>;
+        <p>Caseflow will update the representative type in VACOLS.</p>;
 
     const unlistedServiceMessage =
-        <p>Since you selected an <strong>Unlisted service organization</strong>, make sure you update
-         the representative's address information in VACOLS after the appeal is certified. Caseflow will update
-         the representative type and name in VACOLS.</p>;
+        <p>Caseflow will update the representative type and name in VACOLS.</p>;
 
 
     return <div>
@@ -401,9 +399,7 @@ export class ConfirmCaseDetails extends React.Component {
           {
             poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
-            `Caseflow could not find an address for the representative in VBMS. After
-             this appeal is certified in Caseflow, the representative’s address
-             will need to be updated in VACOLS.`
+            'Caseflow will update the representative type in VACOLS with information from VBMS.'
           }
           {
             (representativeType === Constants.representativeTypes.ATTORNEY ||
@@ -418,10 +414,8 @@ export class ConfirmCaseDetails extends React.Component {
           {
             // TODO: change this message when we can fetch addresses.
             (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
-            `Great! Caseflow will update the representative type and name
-             information for the selected service organization in VACOLS. After
-             this appeal is certified in Caseflow, the representative’s address
-             will need to be updated in VACOLS.`
+            'Great! Caseflow will update the representative type and name information for the selected service ' +
+            'organization in VACOLS.'
           }
 
         </div>
