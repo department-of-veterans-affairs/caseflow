@@ -1,6 +1,5 @@
 class CertificationsController < ApplicationController
-  before_action :verify_access
-  before_action :check_certification_out_of_service
+  before_action :verify_access, :check_certification_out_of_service
 
   def new
     if feature_enabled?(:certification_v2)
