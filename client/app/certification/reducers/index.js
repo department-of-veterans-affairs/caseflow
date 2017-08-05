@@ -142,15 +142,6 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
   return null;
 };
 
-const parseDocumentFromApi = (doc = {}, index) => ({
-  name: index ? `${doc.type} ${index}` : doc.type,
-  vacolsDate: doc.serialized_vacols_date,
-  vbmsDate: doc.serialized_receipt_date,
-  isMatching: doc['matching?'],
-  isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
-});
-
-// In case of going back, remap SignAndCertify page values (db values are different than SignAdnCertify form values)
 const certifyingOfficialTitle = function(title) {
   if (!Object.values(Constants.certifyingOfficialTitles).includes(title) && Boolean(title)) {
     return Constants.certifyingOfficialTitles.OTHER;
@@ -164,6 +155,14 @@ const certifyingOfficialTitleOther = function(title) {
     return title;
   }
 };
+
+const parseDocumentFromApi = (doc = {}, index) => ({
+  name: index ? `${doc.type} ${index}` : doc.type,
+  vacolsDate: doc.serialized_vacols_date,
+  vbmsDate: doc.serialized_receipt_date,
+  isMatching: doc['matching?'],
+  isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
+});
 
 export const mapDataToInitialState = (certification, form9PdfPath) => ({
   bgsRepresentativeType: certification.bgs_representative_type,
