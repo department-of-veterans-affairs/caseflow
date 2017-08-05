@@ -28,7 +28,6 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
-import Analytics from '../util/AnalyticsUtil';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -54,7 +53,7 @@ export class PdfSidebar extends React.Component {
       const nextStateModalIsOpen = !prevState.modal;
       const eventActionPrefix = nextStateModalIsOpen ? 'open' : 'close';
 
-      Analytics.event(
+      window.analyticsEvent(
         CATEGORIES.VIEW_DOCUMENT_PAGE,
         `${eventActionPrefix}-keyboard-shortcuts-modal`,
         sourceLabel
@@ -99,6 +98,8 @@ export class PdfSidebar extends React.Component {
       this.props.addNewTag(this.props.doc, values);
     }
   }
+
+  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
 
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
@@ -235,7 +236,7 @@ export class PdfSidebar extends React.Component {
                       id="addComment"
                       disableOnEmpty={true}
                       onChange={this.props.updateNewAnnotationContent}
-                      onCancelCommentEdit={this.props.stopPlacingAnnotation}
+                      onCancelCommentEdit={this.stopPlacingAnnotation}
                       onSaveCommentEdit={this.props.createAnnotation} />}
                   {comments}
                 </div>
