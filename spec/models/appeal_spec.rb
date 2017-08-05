@@ -1138,14 +1138,29 @@ describe Appeal do
     end
 
     context "when vbms_id is nil" do
-      let(:no_vbms_id_appeal) { Appeal.create(vacols_id: appeal.vacols_id) }
+      let(:no_vbms_id_appeal) { Appeal.new(vacols_id: appeal.vacols_id) }
 
-      it "looks up vbms_id in VACOLS" do
-        expect(no_vbms_id_appeal).to receive(:perform_vacols_request)
-          .exactly(1).times.and_call_original
+      context "when appeal is in the DB" do
+        before { no_vbms_id_appeal.save! }
 
-        expect(no_vbms_id_appeal.attributes["vbms_id"]).to be_nil
-        expect(no_vbms_id_appeal.reload.vbms_id).to_not be_nil
+        it "looks up vbms_id in VACOLS and saves" do
+          expect(no_vbms_id_appeal).to receive(:perform_vacols_request)
+            .exactly(1).times.and_call_original
+
+          expect(no_vbms_id_appeal.attributes["vbms_id"]).to be_nil
+          expect(no_vbms_id_appeal.reload.vbms_id).to_not be_nil
+        end
+      end
+
+      context "when appeal is not in the DB" do
+        it "looks up vbms_id in VACOLS but does not save" do
+          expect(no_vbms_id_appeal).to receive(:perform_vacols_request)
+            .exactly(1).times.and_call_original
+
+          expect(no_vbms_id_appeal.attributes["vbms_id"]).to be_nil
+          expect(no_vbms_id_appeal.vbms_id).to_not be_nil
+          expect(no_vbms_id_appeal).to_not be_persisted
+        end
       end
     end
   end
