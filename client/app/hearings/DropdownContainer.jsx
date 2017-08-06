@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getStateProperty } from './utils';
 import * as Actions from './actions/Dockets';
 import SearchableDropdown from '../components/SearchableDropdown';
 
@@ -23,22 +22,14 @@ export class DropdownContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    [ownProps.name]: getStateProperty(state, 'docket_dropdown_action', ownProps.name)
-  };
-};
-
 const mapDispatchToProps = (dispatch) => ({
   updateDropdown: (actionName, prop, value) => {
-    const action = Actions[actionName];
-
-    dispatch(action(prop, value));
+    dispatch(Actions[actionName](prop, value));
   }
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(DropdownContainer);
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getStateProperty } from './utils';
 import * as Actions from './actions/Dockets';
 import Checkbox from '../components/Checkbox';
 
@@ -21,22 +20,14 @@ export class CheckboxContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    [ownProps.id]: getStateProperty(state, 'docket_transcript_required', ownProps.id)
-  };
-};
-
 const mapDispatchToProps = (dispatch) => ({
   updateCheckbox: (actionName, prop, value) => {
-    const action = Actions[actionName];
-
-    dispatch(action(prop, value));
+    dispatch(Actions[actionName](prop, value));
   }
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(CheckboxContainer);
 
