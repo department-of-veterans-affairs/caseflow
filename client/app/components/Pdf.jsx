@@ -82,6 +82,7 @@ const COVER_SCROLL_HEIGHT = 120;
 
 const NUM_PAGES_TO_PREDRAW = 2;
 const MAX_PAGES_TO_DRAW_AT_ONCE = 2;
+const TIMEOUT_FOR_GET_DOCUMENT = 100;
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
@@ -114,6 +115,7 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isDrawing = {};
+    this.isGettingPdf = {};
 
     this.refFunctionGetters = {
       canvas: {},
@@ -463,26 +465,43 @@ export class Pdf extends React.PureComponent {
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
     }
 
-    return PDFJS.getDocument({
-      url: file,
-      withCredentials: true
-    }).then((pdfDocument) => {
-      if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
-        // There is a chance another async call has resolved in the time that
-        // getDocument took to run. If so, again just use the cached version.
-        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-          return this.predrawnPdfs[file].pdfDocument;
+    if (!this.isGettingPdf[file]) {
+      this.isGettingPdf[file] = true;
+      return PDFJS.getDocument({
+        url: file,
+        withCredentials: true
+      }).then((pdfDocument) => {
+        this.isGettingPdf[file] = false;
+
+        if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
+          // There is a chance another async call has resolved in the time that
+          // getDocument took to run. If so, again just use the cached version.
+          if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+            return this.predrawnPdfs[file].pdfDocument;
+          }
+          this.predrawnPdfs[file] = {
+            pdfDocument
+          };
+          this.setUpPdfObjects(file, pdfDocument);
+
+          return pdfDocument;
         }
-        this.predrawnPdfs[file] = {
-          pdfDocument
-        };
-        this.setUpPdfObjects(file, pdfDocument);
 
-        return pdfDocument;
-      }
+        return null;
+      }).catch(() => {
+        this.isGettingPdf[file] = false;
 
-      return null;
-    });
+        return null;
+      });
+    } else {
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          this.getDocument(file).then((pdfDocument) => {
+            resolve(pdfDocument)
+          });
+        }, TIMEOUT_FOR_GET_DOCUMENT);
+      });
+    }
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
