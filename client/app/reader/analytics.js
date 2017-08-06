@@ -1,4 +1,3 @@
-import Analytics from '../util/AnalyticsUtil';
 import _ from 'lodash';
 
 export const CATEGORIES = {
@@ -24,13 +23,13 @@ export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
 
   if (meta) {
     if (_.isFunction(meta.analytics)) {
-      meta.analytics(Analytics.event.bind(Analytics));
+      meta.analytics(window.analyticsEvent);
     } else {
       const label = _.isFunction(meta.analytics.label) ? meta.analytics.label(store.getState()) : meta.analytics.label;
 
       if (!debounceFns[action.type]) {
         debounceFns[action.type] = _.debounce(
-          (eventLabel) => Analytics.event(meta.analytics.category, meta.analytics.action, eventLabel),
+          (eventLabel) => window.analyticsEvent(meta.analytics.category, meta.analytics.action, eventLabel),
           meta.analytics.debounceMs || 0
         );
       }
