@@ -22,7 +22,7 @@ class Reader::DocumentsController < Reader::ApplicationController
     # If we have sufficient metadata to show a single document,
     # then we'll render the show. Otherwise we want to render index
     # which will grab the metadata for all documents
-    return render(:index) unless metadata?
+    return render(:index)
   end
 
   private
