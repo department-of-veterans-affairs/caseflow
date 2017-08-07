@@ -277,6 +277,7 @@ FeatureToggle.details_for(:apple)
 
 To enable and disable 'Out of Service' feature using `rails c`. Example usage:
 
+```
 # enable globally
 Rails.cache.write("out_of_service", true)
 
@@ -294,6 +295,7 @@ Rails.cache.write("reader_out_of_service", true)
 
 # to disable, e.g.
 Rails.cache.write("certification_out_of_service", false)
+```
 
 # Support
 ![BrowserStack logo](./browserstack-logo.png)
