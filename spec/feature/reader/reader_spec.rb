@@ -709,7 +709,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
       find("h3", text: "Document information").click
-      
+
       # Expect only the first page of the pdf to be rendered
       find("#hide-menu-header").click
       expect(page).to_not have_content("Document Type")
