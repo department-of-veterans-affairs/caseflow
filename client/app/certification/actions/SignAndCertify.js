@@ -53,9 +53,7 @@ export const certificationUpdateStart = (params, dispatch) => {
 
   return {
     type: Constants.CERTIFICATION_UPDATE_REQUEST,
-    payload: {
-      update
-    }
+    payload: {}
   };
 };
 
