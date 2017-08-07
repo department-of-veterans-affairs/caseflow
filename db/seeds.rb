@@ -81,7 +81,7 @@ class SeedDB
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
     @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina Smith"))
     @users.push(
-      User.create(css_id: "Hearings", station_id: "283", full_name: "Lauren Roth", vacols_id: "LROTH")
+      User.create(css_id: "Hearing Prep", station_id: "283", full_name: "Lauren Roth", vacols_id: "LROTH")
     )
   end
 

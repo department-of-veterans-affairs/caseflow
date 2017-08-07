@@ -31,7 +31,7 @@ class ExternalApi::VBMSService
     result && result.content
   end
 
-  def self.fetch_documents_for(appeal)
+  def self.fetch_documents_for(appeal, _user = nil)
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
