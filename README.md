@@ -295,6 +295,7 @@ Rails.cache.write("reader_out_of_service", true)
 
 # to disable, e.g.
 Rails.cache.write("certification_out_of_service", false)
+
 ```
 
 # Support
