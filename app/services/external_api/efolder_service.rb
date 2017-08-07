@@ -4,8 +4,7 @@ class ExternalApi::EfolderService
   def self.fetch_documents_for(appeal, user)
     # Makes a GET request to https://<efolder_url>/files/<file_number>
     # to return the list of documents associated with the appeal
-
-    sanitized_vbms_id = if Rails.application.config.use_efolder_locally
+    sanitized_vbms_id = if Rails.application.config.use_efolder_locally && appeal.vbms_id =~ /DEMO/
                           # If testing against a local eFolder express instance then we want to pass DEMO
                           # values, so we should not sanitize the vbms_id.
                           appeal.vbms_id.to_s

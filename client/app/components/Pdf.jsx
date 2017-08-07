@@ -460,12 +460,27 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  // This method is a wrapper around PDFJS's getDocument function. We wrap that function
+  // so that we can call this whenever we need a reference to the document at the location
+  // specified by `file`. This method will only make the request to the server once. Afterwards
+  // it will return a cached version of it.
   getDocument = (file) => {
     if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+      // If the document has already been retrieved, just return it.
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
-    }
-
-    if (!this.isGettingPdf[file]) {
+    } else if (this.isGettingPdf[file]) {
+      // If the document is currently being retrieved we wait until it is, then return it.
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          this.getDocument(file).then((pdfDocument) => {
+            resolve(pdfDocument);
+          });
+        }, TIMEOUT_FOR_GET_DOCUMENT);
+      });
+    } else {
+      // If the document has not been retrieved yet, we make a request to the server and
+      // set isGettingPdf true so that we don't try to request it again, while the first
+      // request is finishing.
       this.isGettingPdf[file] = true;
 
       return PDFJS.getDocument({
@@ -496,15 +511,6 @@ export class Pdf extends React.PureComponent {
         return null;
       });
     }
-
-    return new Promise((resolve) => {
-      return setTimeout(() => {
-        this.getDocument(file).then((pdfDocument) => {
-          resolve(pdfDocument);
-        });
-      }, TIMEOUT_FOR_GET_DOCUMENT);
-    });
-
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
