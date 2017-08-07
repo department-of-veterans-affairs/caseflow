@@ -477,40 +477,40 @@ export class Pdf extends React.PureComponent {
           });
         }, TIMEOUT_FOR_GET_DOCUMENT);
       });
-    } else {
-      // If the document has not been retrieved yet, we make a request to the server and
-      // set isGettingPdf true so that we don't try to request it again, while the first
-      // request is finishing.
-      this.isGettingPdf[file] = true;
-
-      return PDFJS.getDocument({
-        url: file,
-        withCredentials: true
-      }).then((pdfDocument) => {
-        this.isGettingPdf[file] = false;
-
-        if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
-          // There is a chance another async call has resolved in the time that
-          // getDocument took to run. If so, again just use the cached version.
-          if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-            return this.predrawnPdfs[file].pdfDocument;
-          }
-          this.predrawnPdfs[file] = {
-            pdfDocument
-          };
-          this.setUpPdfObjects(file, pdfDocument);
-
-          return pdfDocument;
-        }
-
-        return null;
-      }).
-      catch(() => {
-        this.isGettingPdf[file] = false;
-
-        return null;
-      });
     }
+
+    // If the document has not been retrieved yet, we make a request to the server and
+    // set isGettingPdf true so that we don't try to request it again, while the first
+    // request is finishing.
+    this.isGettingPdf[file] = true;
+
+    return PDFJS.getDocument({
+      url: file,
+      withCredentials: true
+    }).then((pdfDocument) => {
+      this.isGettingPdf[file] = false;
+
+      if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
+        // There is a chance another async call has resolved in the time that
+        // getDocument took to run. If so, again just use the cached version.
+        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+          return this.predrawnPdfs[file].pdfDocument;
+        }
+        this.predrawnPdfs[file] = {
+          pdfDocument
+        };
+        this.setUpPdfObjects(file, pdfDocument);
+
+        return pdfDocument;
+      }
+
+      return null;
+    }).
+    catch(() => {
+      this.isGettingPdf[file] = false;
+
+      return null;
+    });
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
