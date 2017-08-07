@@ -8,17 +8,17 @@ module HearingMapper
     def hearing_fields_to_vacols_codes(hearing_info)
       {
         notes: notes_to_vacols_format(hearing_info[:notes]),
-        disposition: disposition_to_vacols_format(hearing_info[:disposition]),
+        disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
         aod: aod_to_vacols_format(hearing_info[:aod]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested])
       }.select { |k, _v| hearing_info.keys.include? k } # only send updates to key/values that are passed
     end
 
-    def bfha_vacols_code(hearing_record, case_record)
+    def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
       when "H"
-        code_based_on_hearing_type(case_record)
+        code_based_on_hearing_type(hearing_record.hearing_type.to_sym)
       when "P"
         nil
       when "C"
@@ -30,19 +30,20 @@ module HearingMapper
 
     private
 
-    def code_based_on_hearing_type(case_record)
-      return "1" if case_record.bfhr == "1"
-      return "2" if case_record.bfhr == "2" && case_record.bfdocind != "V"
-      return "6" if case_record.bfhr == "2" && case_record.bfdocind == "V"
+    def code_based_on_hearing_type(type)
+      return "1" if type == :C
+      return "2" if type == :T
+      return "6" if type == :V
     end
 
     def notes_to_vacols_format(value)
       value.present? ? value[0, 100] : nil
     end
 
-    def disposition_to_vacols_format(value)
+    def disposition_to_vacols_format(value, keys)
       vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value)
-      fail(InvalidDispositionError) if value && vacols_code.blank?
+      # disposition cannot be nil
+      fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
       vacols_code
     end
 

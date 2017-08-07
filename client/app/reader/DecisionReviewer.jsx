@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
-import Analytics from '../util/AnalyticsUtil';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -16,7 +15,7 @@ import { CATEGORIES } from './analytics';
 import _ from 'lodash';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
-  Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
+  window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
 
 export class DecisionReviewer extends React.PureComponent {

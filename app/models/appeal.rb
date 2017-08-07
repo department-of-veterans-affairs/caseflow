@@ -95,7 +95,7 @@ class Appeal < ActiveRecord::Base
   def vbms_id
     super || begin
       check_and_load_vacols_data!
-      save
+      save if persisted?
       super
     end
   end
