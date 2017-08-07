@@ -8,7 +8,7 @@ module HearingMapper
     def hearing_fields_to_vacols_codes(hearing_info)
       {
         notes: notes_to_vacols_format(hearing_info[:notes]),
-        disposition: disposition_to_vacols_format(hearing_info[:disposition]),
+        disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
         aod: aod_to_vacols_format(hearing_info[:aod]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested])
@@ -40,9 +40,10 @@ module HearingMapper
       value.present? ? value[0, 100] : nil
     end
 
-    def disposition_to_vacols_format(value)
+    def disposition_to_vacols_format(value, keys)
       vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value)
-      fail(InvalidDispositionError) if value && vacols_code.blank?
+      # disposition cannot be nil
+      fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
       vacols_code
     end
 

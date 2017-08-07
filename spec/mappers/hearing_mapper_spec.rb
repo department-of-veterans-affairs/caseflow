@@ -137,6 +137,15 @@ describe HearingMapper do
       end
     end
 
+    context "when disposition is nil" do
+      let(:info) do
+        { disposition: nil }
+      end
+      it "raises InvalidDispositionError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidDispositionError)
+      end
+    end
+
     context "when transcript_requested is not valid" do
       let(:info) do
         { transcript_requested: :foo }
