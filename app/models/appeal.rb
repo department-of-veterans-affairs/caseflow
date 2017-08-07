@@ -271,6 +271,7 @@ class Appeal < ActiveRecord::Base
                                  .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
       accumulator[document.vbms_document_id] = document
     end
+
     fetched_documents.map do |document|
       if existing_documents.key?(document.vbms_document_id)
         document.merge_into(existing_documents[document.vbms_document_id])
@@ -479,11 +480,6 @@ class Appeal < ActiveRecord::Base
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
 
       fail Caseflow::Error::InvalidFileNumber
-    end
-
-    def initialize_appeal_without_lazy_load(hash)
-      appeal = find_or_initialize_by(vacols_id: hash[:vacols_id])
-      appeal
     end
 
     private
