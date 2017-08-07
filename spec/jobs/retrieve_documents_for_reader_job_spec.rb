@@ -152,20 +152,17 @@ describe RetrieveDocumentsForReaderJob do
       before do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
+          .and_return([appeal_with_doc2]).once
 
-        expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc1)
-          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
-          .once
-
-        expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
+        expect(VBMSService).to receive(:fetch_documents_for).with(any_args)
+          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).exactly(2).times
       end
 
       it "catches the exception and continues to the next appeal" do
         RetrieveDocumentsForReaderJob.perform_now
 
-        expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
-        expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
-        expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+        expect(S3Service.files).to be_nil
       end
     end
 
