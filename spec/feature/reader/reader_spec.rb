@@ -746,6 +746,7 @@ RSpec.feature "Reader" do
     scenario "Document information contains Claims information" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
+      find("h3", text: "Document information").click
 
       expect(page).to have_content("Document Type")
       expect(page).to have_content("Veteran ID")
