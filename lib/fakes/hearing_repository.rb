@@ -4,9 +4,9 @@ class Fakes::HearingRepository
     attr_accessor :hearing_records
   end
 
-  def self.upcoming_hearings_for_judge(vacols_user_id, date_diff: 7.days.ago)
+  def self.upcoming_hearings_for_judge(vacols_user_id)
     user = User.find_by_vacols_id(vacols_user_id)
-    (hearing_records || []).select { |h| h.user_id == user.id && date_diff }
+    (hearing_records || []).select { |h| h.user_id == user.id }
   end
 
   def self.hearings_for_appeal(appeal_vacols_id)

@@ -53,11 +53,11 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   # :nocov:
   class << self
-    def upcoming_for_judge(vacols_user_id, date_diff: 7.days)
-      id = connection.quote(vacols_user_id)
+    def upcoming_for_judge(css_id)
+      id = connection.quote(css_id)
 
       select_hearings
-        .where("staff.stafkey = #{id}")
+        .where("staff.sdomainid = #{id}")
         .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
                relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
         .where(NOT_MASTER_RECORD)
