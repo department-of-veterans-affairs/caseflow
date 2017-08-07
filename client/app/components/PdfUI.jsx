@@ -99,7 +99,7 @@ export class PdfUI extends React.Component {
 
     return <div className="cf-pdf-footer cf-pdf-toolbar">
         <div className="cf-pdf-footer-buttons-left">
-          { (this.props.prevDocId && !this.props.placedButUnsavedAnnotation) &&
+          { this.props.prevDocId &&
             <Button
               name="previous"
               classNames={['cf-pdf-button']}
@@ -119,7 +119,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
           <div className="cf-pdf-footer-buttons-right">
-            { (this.props.nextDocId && !this.props.placedButUnsavedAnnotation) &&
+            { this.props.nextDocId &&
               <Button
                 name="next"
                 classNames={['cf-pdf-button cf-right-side']}

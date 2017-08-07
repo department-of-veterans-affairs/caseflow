@@ -84,7 +84,7 @@ export class PdfViewer extends React.Component {
       return;
     }
 
-    if (event.key === 'ArrowLeft' && !this.props.placedButUnsavedAnnotation) {
+    if (event.key === 'ArrowLeft') {
       window.analyticsEvent(
         CATEGORIES.VIEW_DOCUMENT_PAGE,
         ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
@@ -92,7 +92,7 @@ export class PdfViewer extends React.Component {
       );
       this.props.showPdf(this.getPrevDocId())();
     }
-    if (event.key === 'ArrowRight' && !this.props.placedButUnsavedAnnotation) {
+    if (event.key === 'ArrowRight') {
       window.analyticsEvent(
         CATEGORIES.VIEW_DOCUMENT_PAGE,
         ACTION_NAMES.VIEW_NEXT_DOCUMENT,

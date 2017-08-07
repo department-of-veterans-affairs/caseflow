@@ -270,18 +270,10 @@ RSpec.feature "Reader" do
       add_comment_without_clicking_save("text")
       page.find("body").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")
-    end
 
-    scenario "Next and Previous buttons do not appear in annotation mode" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       add_comment_without_clicking_save("text")
-      expect(page).to_not have_css("#button-next")
-      expect(page).to_not have_css("#button-previous")
-
-      # Makes sure buttons appear after user exits annotation mode
-      find("#button-cancel").click
-      expect(page).to have_css("#button-next")
-      expect(page).to have_css("#button-previous")
+      find("#button-next").click
+      expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
     scenario "Next and Previous buttons move between docs" do
