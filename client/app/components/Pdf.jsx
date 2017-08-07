@@ -467,6 +467,7 @@ export class Pdf extends React.PureComponent {
 
     if (!this.isGettingPdf[file]) {
       this.isGettingPdf[file] = true;
+
       return PDFJS.getDocument({
         url: file,
         withCredentials: true
@@ -488,20 +489,22 @@ export class Pdf extends React.PureComponent {
         }
 
         return null;
-      }).catch(() => {
+      }).
+      catch(() => {
         this.isGettingPdf[file] = false;
 
         return null;
       });
-    } else {
-      return new Promise((resolve) => {
-        return setTimeout(() => {
-          this.getDocument(file).then((pdfDocument) => {
-            resolve(pdfDocument)
-          });
-        }, TIMEOUT_FOR_GET_DOCUMENT);
-      });
     }
+
+    return new Promise((resolve) => {
+      return setTimeout(() => {
+        this.getDocument(file).then((pdfDocument) => {
+          resolve(pdfDocument);
+        });
+      }, TIMEOUT_FOR_GET_DOCUMENT);
+    });
+
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
