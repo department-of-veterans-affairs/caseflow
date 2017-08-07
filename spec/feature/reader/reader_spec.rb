@@ -270,7 +270,6 @@ RSpec.feature "Reader" do
       add_comment_without_clicking_save("text")
       page.find("body").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")
-
       add_comment_without_clicking_save("text")
       find("#button-next").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")

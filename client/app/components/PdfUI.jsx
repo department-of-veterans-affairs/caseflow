@@ -256,7 +256,7 @@ export class PdfUI extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'filteredDocIds', 'placedButUnsavedAnnotation'),
+  ..._.pick(state.ui, 'filteredDocIds'),
   docListIsFiltered: docListIsFiltered(state),
   ...state.ui.pdf
 });
