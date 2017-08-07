@@ -12,11 +12,15 @@ class SideBarDocumentInformation extends PureComponent {
     const { appeal } = this.props;
     let renderComponent;
 
+    const reload = () => {
+      window.location.href = window.location.href;
+    };
+
     if (this.props.didLoadAppealFail) {
       renderComponent = <Alert
         title="Unable to retrieve claim details"
         type="error">
-        Please <a href={`/reader/appeal${this.props.history.location.pathname}${this.props.history.location.search}`}>
+        Please <a href="#" onClick={reload}>
         refresh this page</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {

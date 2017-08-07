@@ -10,8 +10,7 @@ const LoadingMessage = ({ message }) => (
 );
 
 LoadingMessage.propTypes = {
-  message: PropTypes.string.isRequired,
-  spinnerColor: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired
 };
 
 export default LoadingMessage;

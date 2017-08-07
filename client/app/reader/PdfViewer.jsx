@@ -163,7 +163,6 @@ export class PdfViewer extends React.Component {
     // render
     // TODO(jd): We should refactor and potentially create the store
     // with the documents already added
-
     if (!doc) {
       return null;
     }
@@ -191,7 +190,6 @@ export class PdfViewer extends React.Component {
             removeTag={this.props.removeTag}
             doc={doc}
             onJumpToComment={this.props.onJumpToComment}
-            history={this.props.history}
           />
         </div>
         {this.props.deleteAnnotationModalIsOpenFor && <Modal

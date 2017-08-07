@@ -182,7 +182,7 @@ export class PdfSidebar extends React.Component {
             onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
             <AccordionSection title="Document information">
-              <SideBarDocumentInformation appeal={appeal} doc={this.props.doc} history={this.props.history}/>
+              <SideBarDocumentInformation appeal={appeal} doc={this.props.doc}/>
             </AccordionSection>
             <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
