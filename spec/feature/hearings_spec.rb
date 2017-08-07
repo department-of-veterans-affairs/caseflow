@@ -5,11 +5,16 @@ RSpec.feature "Hearings" do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
+    FeatureToggle.enable!(:reader)
+  end
+
+  let(:appeal) do
+    Generators::Appeal.create
   end
 
   context "Upcoming Hearing Days" do
     let!(:current_user) do
-      User.authenticate!(roles: ["Hearings"])
+      User.authenticate!(roles: ["Hearing Prep"])
     end
 
     before do
@@ -28,6 +33,11 @@ RSpec.feature "Hearings" do
         type: "central_office",
         date: Time.zone.now
       )
+    end
+
+    scenario "User can access reader" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("You've viewed 0 out of 0 documents")
     end
 
     scenario "Shows dockets for each day" do
