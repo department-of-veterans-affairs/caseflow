@@ -10,17 +10,17 @@ import Alert from '../components/Alert';
 class SideBarDocumentInformation extends PureComponent {
   render() {
     const { appeal } = this.props;
-    let appealInfo;
+    let renderComponent;
 
     if (this.props.didLoadAppealFail) {
-      appealInfo = <Alert
+      renderComponent = <Alert
         title="Unable to retrieve claim details"
         type="error">
         Please <a href={`/reader/appeal${this.props.history.location.pathname}${this.props.history.location.search}`}>
         refresh this page</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {
-      appealInfo = <LoadingMessage message="Loading details..."/>;
+      renderComponent = <LoadingMessage message="Loading details..."/>;
     }
 
     return <div className="cf-sidebar-document-information">
@@ -34,8 +34,8 @@ class SideBarDocumentInformation extends PureComponent {
       <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
     </p>
     <hr />
-    { appealInfo ?
-    appealInfo :
+    { renderComponent ?
+    renderComponent :
     <div>
       <p className="cf-pdf-meta-title">
         <b>Veteran ID:</b> {appeal.vbms_id}
