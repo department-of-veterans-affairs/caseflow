@@ -3,6 +3,7 @@ module HearingMapper
   class InvalidAodError < StandardError; end
   class InvalidDispositionError < StandardError; end
   class InvalidTranscriptRequestedError < StandardError; end
+  class InvalidNotesError < StandardError; end
 
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
@@ -37,7 +38,9 @@ module HearingMapper
     end
 
     def notes_to_vacols_format(value)
-      value.present? ? value[0, 100] : nil
+      return if value.nil?
+      fail(InvalidNotesError) if !value.is_a?(String)
+      value[0, 100]
     end
 
     def disposition_to_vacols_format(value, keys)
