@@ -278,6 +278,8 @@ RSpec.feature "Reader" do
     scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       find("#button-next").click
+
+      find("h3", text: "Document information").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
       find("#button-previous").click
       find("#button-previous").click
@@ -293,6 +295,7 @@ RSpec.feature "Reader" do
 
       add_comment("comment text")
       click_on "Edit"
+      find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
       find("#editCommentBox-1").send_keys(:arrow_right)
@@ -705,7 +708,8 @@ RSpec.feature "Reader" do
     scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
-
+      find("h3", text: "Document information").click
+      
       # Expect only the first page of the pdf to be rendered
       find("#hide-menu-header").click
       expect(page).to_not have_content("Document Type")
