@@ -15,7 +15,7 @@ class SideBarDocumentInformation extends PureComponent {
 
     if (this.props.didLoadAppealFail) {
       appealInfo = <Alert
-        title="Unable to retrieve claims folder details"
+        title="Unable to retrieve claim details"
         type="error">
         Please <a href={`/reader/appeal${this.props.history.location.pathname}${this.props.history.location.search}`}>
         refresh this page</a> or try again later.
