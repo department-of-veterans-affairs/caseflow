@@ -128,6 +128,15 @@ describe HearingMapper do
       end
     end
 
+    context "when notes is not valid" do
+      let(:info) do
+        { notes: 77 }
+      end
+      it "raises InvalidNotesError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidNotesError)
+      end
+    end
+
     context "when aod is false" do
       let(:info) do
         { aod: false }
