@@ -25,6 +25,31 @@ class SideBarDocumentInformation extends PureComponent {
       </Alert>;
     } else if (_.isEmpty(appeal)) {
       renderComponent = <LoadingMessage message="Loading details..."/>;
+    } else {
+      renderComponent = <div>
+        <p className="cf-pdf-meta-title">
+          <b>Veteran ID:</b> {appeal.vbms_id}
+        </p>
+        <p className="cf-pdf-meta-title">
+          <b>Type:</b> {appeal.type}
+        </p>
+        <p className="cf-pdf-meta-title">
+          <b>Docket Number:</b> {appeal.docket_number}
+        </p>
+        <p className="cf-pdf-meta-title">
+          <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
+        </p>
+        <div className="cf-pdf-meta-title">
+          <b>Issues</b>
+          <ol className="cf-pdf-meta-doc-info-issues">
+            {appeal.issues.map((issue) =>
+              <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
+                {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
+              </span></li>
+            )}
+          </ol>
+        </div>
+      </div>;
     }
 
     return <div className="cf-sidebar-document-information">
@@ -38,32 +63,7 @@ class SideBarDocumentInformation extends PureComponent {
       <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
     </p>
     <hr />
-    { renderComponent ?
-    renderComponent :
-    <div>
-      <p className="cf-pdf-meta-title">
-        <b>Veteran ID:</b> {appeal.vbms_id}
-      </p>
-      <p className="cf-pdf-meta-title">
-        <b>Type:</b> {appeal.type}
-      </p>
-      <p className="cf-pdf-meta-title">
-        <b>Docket Number:</b> {appeal.docket_number}
-      </p>
-      <p className="cf-pdf-meta-title">
-        <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
-      </p>
-      <div className="cf-pdf-meta-title">
-        <b>Issues</b>
-        <ol className="cf-pdf-meta-doc-info-issues">
-          {appeal.issues.map((issue) =>
-            <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
-              {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
-            </span></li>
-          )}
-        </ol>
-      </div>
-    </div> }
+    {renderComponent}
     </div>;
   }
 }
