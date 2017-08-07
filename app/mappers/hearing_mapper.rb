@@ -48,13 +48,13 @@ module HearingMapper
     end
 
     def hold_open_to_vacols_format(value)
-      fail(InvalidHoldOpenError) if value && (!value.is_a?(Integer) || value < 0 || value > 90)
+      fail(InvalidHoldOpenError) if !value.nil? && (!value.is_a?(Integer) || value < 0 || value > 90)
       value
     end
 
     def aod_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value)
-      fail(InvalidAodError) if value && vacols_code.blank?
+      fail(InvalidAodError) if !value.nil? && vacols_code.blank?
       vacols_code
     end
 
