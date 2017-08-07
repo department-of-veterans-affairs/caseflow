@@ -743,6 +743,28 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Add a comment")
     end
 
+    scenario "Document information contains Claims information" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+
+      expect(page).to have_content("Document Type")
+      expect(page).to have_content("Veteran ID")
+      expect(page).to have_content(appeal.vbms_id)
+      expect(page).to have_content("Type")
+      expect(page).to have_content(appeal.type)
+      expect(page).to have_content("Docket Number")
+      expect(page).to have_content(appeal.docket_number)
+      expect(page).to have_content("Regional Office")
+      expect(page).to have_content("#{appeal.regional_office[:key]} - #{appeal.regional_office[:city]}")
+      expect(page).to have_content("Issues")
+      appeal.issues do |issue|
+        expect(page).to have_content(issue.type[:label])
+        issue.levels do |level|
+          expect(page).to have_content(level)
+        end
+      end
+    end
+
     scenario "Open and close keyboard shortcuts modal" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
