@@ -292,7 +292,7 @@ Rails.cache.write("hearings_prep_out_of_service", true)
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)
 
-# to disable, i.e.
+# to disable, e.g.
 Rails.cache.write("certification_out_of_service", false)
 
 # Support
