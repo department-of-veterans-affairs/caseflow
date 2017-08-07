@@ -99,7 +99,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def update_hearing!(hearing_info)
     slogid = staff.try(:slogid)
-
     attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
@@ -111,7 +110,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   private
 
   def update_hearing_action
-    brieff.update(bfha: HearingMapper.bfha_vacols_code(self, brieff))
+    brieff.update(bfha: HearingMapper.bfha_vacols_code(self))
   end
   # :nocov:
 end
