@@ -18,9 +18,9 @@ class Certification < ActiveRecord::Base
 
     # We don't run sidekiq in development mode.
     if Rails.env.development? || Rails.env.test?
-      StartCertificationJob.perform_now(self)
+      StartCertificationJob.perform_now(self, current_user)
     else
-      StartCertificationJob.perform_later(self)
+      StartCertificationJob.perform_later(self, current_user)
     end
   end
 
