@@ -145,7 +145,7 @@ RSpec.feature "Out of Service" do
     end
 
     let!(:current_user) do
-      User.authenticate!(roles: ["Hearings"])
+      User.authenticate!(roles: ["Hearing Prep"])
     end
 
     scenario "When out of service is disabled, it shows Hearings page" do
