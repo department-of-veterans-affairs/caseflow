@@ -1,5 +1,5 @@
 class CertificationsController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, :check_certification_out_of_service
 
   def new
     if feature_enabled?(:certification_v2)
@@ -107,6 +107,10 @@ class CertificationsController < ApplicationController
   end
 
   private
+
+  def check_certification_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("certification_out_of_service")
+  end
 
   # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
   def validate_data_presence_v2
