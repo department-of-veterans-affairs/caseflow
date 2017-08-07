@@ -5,7 +5,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
     # rubocop:disable Metrics/MethodLength
     def default_records
       [
-        Appeal.initialize_appeal_without_lazy_load(
+        Generators::Appeal.build(
           type: "Court Remand",
           cavc: true,
           vacols_id: "reader_id1",
@@ -44,7 +44,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
                 "Thigh, limitation of flexion of"
               ] }
           ]),
-        Appeal.initialize_appeal_without_lazy_load(
+        Generators::Appeal.build(
           type: "Remand",
           cavc: false,
           vacols_id: "reader_id2",
@@ -83,7 +83,7 @@ class Fakes::CaseAssignmentRepository < CaseAssignmentRepository
                 "Thigh, limitation of flexion of"
               ] }
           ]),
-        Appeal.initialize_appeal_without_lazy_load(
+        Generators::Appeal.build(
           type: "Remand",
           cavc: false,
           vacols_id: "reader_id3",

@@ -151,7 +151,8 @@ class Generators::Appeal
       cast_datetime_fields(attrs)
       inaccessible = attrs.delete(:inaccessible)
 
-      appeal = Appeal.new(attrs)
+      appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
+      appeal.attributes = attrs
 
       vacols_record[:vbms_id] = appeal.vbms_id
 
