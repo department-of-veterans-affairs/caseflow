@@ -1,5 +1,5 @@
 class Reader::ApplicationController < ApplicationController
-  before_action :verify_access, :verify_reader_feature_enabled, :react_routed
+  before_action :verify_access, :verify_reader_feature_enabled, :react_routed, :check_reader_out_of_service
 
   def logo_name
     "Reader"
@@ -19,5 +19,11 @@ class Reader::ApplicationController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Reader")
+  end
+
+  private
+
+  def check_reader_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("reader_out_of_service")
   end
 end
