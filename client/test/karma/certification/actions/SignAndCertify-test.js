@@ -59,12 +59,7 @@ describe('.certificationUpdateStart', () => {
 
     const expectedAction = {
       type: Constants.CERTIFICATION_UPDATE_REQUEST,
-      payload: {
-        update: {
-          certifying_official_name: params.certifyingOfficialName,
-          certifying_official_title: params.certifyingOfficialTitle
-        }
-      }
+      payload: {}
     };
 
     expect(Actions.certificationUpdateStart(params)).to.eql(expectedAction);
