@@ -128,6 +128,24 @@ describe HearingMapper do
       end
     end
 
+    context "when notes is not valid" do
+      let(:info) do
+        { notes: 77 }
+      end
+      it "raises InvalidNotesError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidNotesError)
+      end
+    end
+
+    context "when aod is false" do
+      let(:info) do
+        { aod: false }
+      end
+      it "raises InvalidAodError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidAodError)
+      end
+    end
+
     context "when disposition is not valid" do
       let(:info) do
         { disposition: :foo }
@@ -158,6 +176,15 @@ describe HearingMapper do
     context "when hold_open is not valid" do
       let(:info) do
         { hold_open: -7 }
+      end
+      it "raises InvalidHoldOpenError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidHoldOpenError)
+      end
+    end
+
+    context "when hold_open is false" do
+      let(:info) do
+        { hold_open: false }
       end
       it "raises InvalidHoldOpenError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidHoldOpenError)
