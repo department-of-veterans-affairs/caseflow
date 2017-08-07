@@ -168,8 +168,7 @@ export class DailyDocket extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets,
-  currentlyLiveHearing: state.currentlyLiveHearing
+  dockets: state.dockets
 });
 
 export default connect(
