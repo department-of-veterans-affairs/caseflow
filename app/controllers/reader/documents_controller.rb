@@ -19,7 +19,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def show
-    return render(:index)
+    render(:index)
   end
 
   private
