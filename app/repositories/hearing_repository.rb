@@ -11,7 +11,7 @@ class HearingRepository
 
     def update_vacols_hearing!(vacols_record, hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
-      vacols_record.update_hearing!(hearing_hash)
+      vacols_record.update_hearing!(hearing_hash) if hearing_hash.present?
     end
 
     def load_vacols_data(hearing)
