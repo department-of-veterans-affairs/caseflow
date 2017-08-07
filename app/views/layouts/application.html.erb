@@ -74,6 +74,7 @@
     })(window,document,'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
     ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto', {
+      siteSpeedSampleRate: 100,
       userId: '<%= current_user ? current_user.id : "" %>'
     });
 
