@@ -6,7 +6,7 @@ class CaseAssignmentRepository
                           name: "active_cases_for_user") do
       VACOLS::CaseAssignment.active_cases_for_user(css_id).map do |assignment|
         appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
-        appeal.attributes(assignment)
+        appeal.attributes = assignment
         appeal.save
         appeal
       end
