@@ -4,8 +4,8 @@ class Fakes::HearingRepository
     attr_accessor :hearing_records
   end
 
-  def self.upcoming_hearings_for_judge(vacols_user_id)
-    user = User.find_by_vacols_id(vacols_user_id)
+  def self.upcoming_hearings_for_judge(css_id)
+    user = User.find_by_css_id(css_id)
     (hearing_records || []).select { |h| h.user_id == user.id }
   end
 
