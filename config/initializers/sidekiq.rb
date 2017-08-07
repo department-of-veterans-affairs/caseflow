@@ -16,7 +16,7 @@ Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
     chain.add JobPrometheusMetricMiddleware
     chain.add JobRavenReporterMiddleware
-    chain.add RequestStoreMiddleware
+    chain.add JobRequestStoreMiddleware
   end
 end
 
