@@ -71,11 +71,13 @@ export class PdfUI extends React.Component {
       INTERACTION_TYPES.VISIBLE_UI
     );
     this.props.showPdf(this.props.prevDocId)();
+    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
 
   showNextDocument = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.nextDocId)();
+    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
 
   getPageIndicator = () => {

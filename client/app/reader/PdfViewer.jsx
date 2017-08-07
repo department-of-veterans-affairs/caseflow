@@ -7,7 +7,7 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf } from '../reader/actions';
+  selectCurrentPdf, stopPlacingAnnotation } from '../reader/actions';
 import { isUserEditingText, update } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
@@ -91,6 +91,7 @@ export class PdfViewer extends React.Component {
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getPrevDocId())();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
     }
     if (event.key === 'ArrowRight') {
       window.analyticsEvent(
@@ -99,6 +100,7 @@ export class PdfViewer extends React.Component {
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getNextDocId())();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
     }
   }
 
@@ -224,7 +226,8 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     showPlaceAnnotationIcon,
     closeAnnotationDeleteModal,
-    deleteAnnotation
+    deleteAnnotation,
+    stopPlacingAnnotation
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
