@@ -1,4 +1,3 @@
-require 'byebug'
 class Generators::Appeal
   extend Generators::Base
 
@@ -151,7 +150,7 @@ class Generators::Appeal
       issues = attrs.delete(:issues)
       cast_datetime_fields(attrs)
       inaccessible = attrs.delete(:inaccessible)
-      
+
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
       appeal.attributes = attrs
 
