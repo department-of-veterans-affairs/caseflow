@@ -1,6 +1,6 @@
 class HearingsController < ApplicationController
   # :nocov:
-  before_action :verify_access
+  before_action :verify_access, :check_hearings_prep_out_of_service
 
   def update
     hearing.update(update_params)
@@ -17,6 +17,10 @@ class HearingsController < ApplicationController
 
   private
 
+  def check_hearings_prep_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("hearings_prep_out_of_service")
+  end
+
   def hearing
     @hearing ||= Hearing.find(hearing_id)
   end
@@ -26,7 +30,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Hearings")
+    verify_authorized_roles("Hearing Prep")
   end
 
   def set_application

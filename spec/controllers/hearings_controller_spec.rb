@@ -1,5 +1,5 @@
 RSpec.describe HearingsController, type: :controller do
-  let!(:user) { User.authenticate!(roles: ["Hearings"]) }
+  let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let(:hearing) { Generators::Hearing.create }
 
   describe "PATCH update" do
