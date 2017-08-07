@@ -157,6 +157,7 @@ export class PdfViewer extends React.Component {
 
   render() {
     const doc = this.selectedDoc();
+
     // If we don't have a currently selected document, we
     // shouldn't render anything. On the next tick we dispatch
     // the action to redux that populates the documents and then we
