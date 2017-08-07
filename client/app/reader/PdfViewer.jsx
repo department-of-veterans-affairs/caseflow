@@ -13,7 +13,6 @@ import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
-import Analytics from '../util/AnalyticsUtil';
 
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
   const moveAmountPx = 5;
@@ -86,7 +85,7 @@ export class PdfViewer extends React.Component {
     }
 
     if (event.key === 'ArrowLeft' && !this.props.placedButUnsavedAnnotation) {
-      Analytics.event(
+      window.analyticsEvent(
         CATEGORIES.VIEW_DOCUMENT_PAGE,
         ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
@@ -94,7 +93,7 @@ export class PdfViewer extends React.Component {
       this.props.showPdf(this.getPrevDocId())();
     }
     if (event.key === 'ArrowRight' && !this.props.placedButUnsavedAnnotation) {
-      Analytics.event(
+      window.analyticsEvent(
         CATEGORIES.VIEW_DOCUMENT_PAGE,
         ACTION_NAMES.VIEW_NEXT_DOCUMENT,
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
