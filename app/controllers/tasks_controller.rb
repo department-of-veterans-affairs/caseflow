@@ -3,8 +3,13 @@
 #       from EstablishClaimsController can be abstracted out
 class TasksController < ApplicationController
   class TaskTypeMissingError < StandardError; end
+  before_action :check_dispatch_out_of_service
 
   private
+
+  def check_dispatch_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("dispatch_out_of_service")
+  end
 
   # Future safeguard for when we give managers a show view for a given task
   def start_task!
