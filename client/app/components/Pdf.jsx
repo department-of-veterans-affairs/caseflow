@@ -82,6 +82,7 @@ const COVER_SCROLL_HEIGHT = 120;
 
 const NUM_PAGES_TO_PREDRAW = 2;
 const MAX_PAGES_TO_DRAW_AT_ONCE = 2;
+const TIMEOUT_FOR_GET_DOCUMENT = 100;
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
@@ -114,6 +115,7 @@ export class Pdf extends React.PureComponent {
 
     this.currentPage = 0;
     this.isDrawing = {};
+    this.isGettingPdf = {};
 
     this.refFunctionGetters = {
       canvas: {},
@@ -458,15 +460,36 @@ export class Pdf extends React.PureComponent {
     });
   }
 
+  // This method is a wrapper around PDFJS's getDocument function. We wrap that function
+  // so that we can call this whenever we need a reference to the document at the location
+  // specified by `file`. This method will only make the request to the server once. Afterwards
+  // it will return a cached version of it.
   getDocument = (file) => {
     if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+      // If the document has already been retrieved, just return it.
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
+    } else if (this.isGettingPdf[file]) {
+      // If the document is currently being retrieved we wait until it is, then return it.
+      return new Promise((resolve) => {
+        return setTimeout(() => {
+          this.getDocument(file).then((pdfDocument) => {
+            resolve(pdfDocument);
+          });
+        }, TIMEOUT_FOR_GET_DOCUMENT);
+      });
     }
+
+    // If the document has not been retrieved yet, we make a request to the server and
+    // set isGettingPdf true so that we don't try to request it again, while the first
+    // request is finishing.
+    this.isGettingPdf[file] = true;
 
     return PDFJS.getDocument({
       url: file,
       withCredentials: true
     }).then((pdfDocument) => {
+      this.isGettingPdf[file] = false;
+
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
@@ -480,6 +503,11 @@ export class Pdf extends React.PureComponent {
 
         return pdfDocument;
       }
+
+      return null;
+    }).
+    catch(() => {
+      this.isGettingPdf[file] = false;
 
       return null;
     });
