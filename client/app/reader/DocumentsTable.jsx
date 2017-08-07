@@ -116,7 +116,7 @@ class DocTypeColumn extends React.PureComponent {
       <Link
         onMouseUp={this.onClick(doc.id)}
         onClick={this.onClick(doc.id)}
-        to={singleDocumentLink(this.props.documentPathBase, doc)}
+        to={`${this.props.documentPathBase}/${doc.id}`}
         aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
         <Highlight>
           {doc.type}

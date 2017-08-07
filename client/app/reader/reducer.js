@@ -327,7 +327,6 @@ export const reducer = (state = initialState, action = {}) => {
       }
     }));
   case Constants.SELECT_CURRENT_VIEWER_PDF:
-    debugger;
     return updateLastReadDoc(update(state, {
       ui: {
         pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
