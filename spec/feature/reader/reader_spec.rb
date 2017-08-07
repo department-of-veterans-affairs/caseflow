@@ -726,6 +726,7 @@ RSpec.feature "Reader" do
         find_all(".rc-collapse-header")[index].click
       end
 
+      find("h3", text: "Document information").click
       click_accordion_header(0)
       expect(page).to_not have_content("Document Type")
       click_accordion_header(0)
