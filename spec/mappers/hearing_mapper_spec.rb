@@ -40,14 +40,12 @@ describe HearingMapper do
       let(:hearing_disp) { "P" }
       let(:hearing_type) { "T" }
 
-
       it { is_expected.to eq nil }
     end
 
     context "when disposition is cancelled" do
       let(:hearing_disp) { "C" }
       let(:hearing_type) { "V" }
-
 
       it { is_expected.to eq "5" }
     end
