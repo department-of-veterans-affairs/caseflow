@@ -6,7 +6,6 @@ import _ from 'lodash';
 
 import LoadingMessage from '../components/LoadingMessage';
 import Alert from '../components/Alert';
-import { READER_COLOR } from '../reader/constants';
 
 class SideBarDocumentInformation extends PureComponent {
   render() {
@@ -21,7 +20,7 @@ class SideBarDocumentInformation extends PureComponent {
         refresh this page</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {
-      appealInfo = <LoadingMessage message="Loading details..." spinnerColor={READER_COLOR}/>;
+      appealInfo = <LoadingMessage message="Loading details..."/>;
     }
 
     return <div className="cf-sidebar-document-information">

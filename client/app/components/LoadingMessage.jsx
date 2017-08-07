@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { loadingSymbolHtml } from './RenderFunctions';
 
-const LoadingMessage = ({ message, spinnerColor }) => (
+const LoadingMessage = ({ message }) => (
   <div className="cf-loading-message">
     <div className="loading-message-text">
       <div>{message}</div>
-    </div>
-    <div className="loading-message-spinner">
-      {loadingSymbolHtml('', '100%', spinnerColor)}
     </div>
   </div>
 );
