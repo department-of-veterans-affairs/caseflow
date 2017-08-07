@@ -42,6 +42,7 @@ module CaseflowCertification
 
     # Used by the application to determine whether webpack hot reloading is active
     config.webpack_hot = (ENV["REACT_ON_RAILS_ENV"] == "HOT")
+    config.use_efolder_locally = false
 
     # eFolder API URL to retrieve appeal documents
     config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
