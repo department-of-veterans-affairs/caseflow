@@ -9,8 +9,9 @@ class StartCertificationJob < ActiveJob::Base
       loading_data: false,
       loading_data_failed: false
     )
-  rescue
-    Rails.logger.info "StartCertificationJob failed"
+  rescue => e
+    Rails.logger.info "StartCertificationJob failed: #{e.message}"
+    Rails.logger.info e.backtrace.join("\n")
     certification.update_attributes!(
       loading_data: false,
       loading_data_failed: true
