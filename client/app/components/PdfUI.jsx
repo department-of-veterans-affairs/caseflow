@@ -16,7 +16,6 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { singleDocumentLink } from '../reader/utils';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
-import Analytics from '../util/AnalyticsUtil';
 
 const ZOOM_RATE = 0.3;
 const MINIMUM_ZOOM = 0.1;
@@ -43,7 +42,7 @@ export class PdfUI extends React.Component {
     // when a document changes, remove annotation state
     if (prevProps.doc.id !== this.props.doc.id) {
       if (this.props.isPlacingAnnotation) {
-        this.props.stopPlacingAnnotation();
+        this.props.stopPlacingAnnotation('from-document-change');
       }
       this.props.resetJumpToPage();
     }
@@ -53,7 +52,7 @@ export class PdfUI extends React.Component {
     const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
     const zoomDirection = delta > 0 ? 'in' : 'out';
 
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
 
     this.setState({
       scale: nextScale
@@ -61,17 +60,21 @@ export class PdfUI extends React.Component {
   }
 
   openDownloadLink = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'download');
     window.open(`${this.props.doc.content_url}?type=${this.props.doc.type}&download=true`);
   }
 
   showPreviousDocument = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
+    window.analyticsEvent(
+      CATEGORIES.VIEW_DOCUMENT_PAGE,
+      ACTION_NAMES.VIEW_PREVIOUS_DOCUMENT,
+      INTERACTION_TYPES.VISIBLE_UI
+    );
     this.props.showPdf(this.props.prevDocId)();
   }
 
   showNextDocument = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.nextDocId)();
   }
 
@@ -130,7 +133,7 @@ export class PdfUI extends React.Component {
   }
 
   fitToScreen = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
     this.setState({
       scale: this.state.fitToScreenZoom
@@ -146,11 +149,11 @@ export class PdfUI extends React.Component {
   }
 
   onBackToClaimsFolder = () => {
-    Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.onShowList();
   }
 
-  handleClickDocumentTypeLink = () => Analytics.event(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
+  handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
 
   render() {
     const pdfUiClass = classNames(
@@ -257,13 +260,11 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    stopPlacingAnnotation,
     togglePdfSidebar
   }, dispatch),
   resetJumpToPage: () => {
     dispatch(resetJumpToPage());
-  },
-  stopPlacingAnnotation: () => {
-    dispatch(stopPlacingAnnotation());
   },
   selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
 });
