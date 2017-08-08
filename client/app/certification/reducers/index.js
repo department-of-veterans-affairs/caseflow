@@ -142,6 +142,10 @@ export const poaCorrectLocationToStr = function(poaCorrectInVacols, poaCorrectIn
   return null;
 };
 
+const certifyingOfficialName = function(certificationName, userName) {
+  return certificationName ? certificationName : userName;
+};
+
 const certifyingOfficialTitle = function(title) {
   if (!Object.values(Constants.certifyingOfficialTitles).includes(title) && Boolean(title)) {
     return Constants.certifyingOfficialTitles.OTHER;
@@ -164,7 +168,7 @@ const parseDocumentFromApi = (doc = {}, index) => ({
   isExactlyMatching: doc.serialized_vacols_date === doc.serialized_receipt_date
 });
 
-export const mapDataToInitialState = (certification, form9PdfPath) => ({
+export const mapDataToInitialState = (certification, form9PdfPath, userFullName) => ({
   bgsRepresentativeType: certification.bgs_representative_type,
   bgsRepresentativeName: certification.bgs_representative_name,
   bgsPoaAddressFound: certification['bgs_rep_address_found?'],
@@ -192,7 +196,7 @@ export const mapDataToInitialState = (certification, form9PdfPath) => ({
   certifyingOffice: certification.certifying_office,
   certifyingUsername: certification.certifying_username,
   certificationDate: certification.certification_date,
-  certifyingOfficialName: certification.certifying_official_name,
+  certifyingOfficialName: certifyingOfficialName(certification.certifying_official_name, userFullName),
   certifyingOfficialTitle: certifyingOfficialTitle(certification.certifying_official_title),
   certifyingOfficialTitleOther: certifyingOfficialTitleOther(certification.certifying_official_title)
 });
