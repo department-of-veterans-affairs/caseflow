@@ -1,7 +1,8 @@
 class StartCertificationJob < ActiveJob::Base
   queue_as :default
 
-  def perform(certification)
+  def perform(certification, user = nil)
+    RequestStore.store[:current_user] = user if user
     # Results in calls to VBMS and VACOLS
     status = certification.start!
     certification.fetch_power_of_attorney! if status == :started

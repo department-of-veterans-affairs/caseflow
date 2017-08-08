@@ -28,19 +28,19 @@ class SideBarDocumentInformation extends PureComponent {
     } else {
       renderComponent = <div>
         <p className="cf-pdf-meta-title">
-          <b>Veteran ID:</b> {appeal.vbms_id}
+          <strong>Veteran ID:</strong> {appeal.vbms_id}
         </p>
         <p className="cf-pdf-meta-title">
-          <b>Type:</b> {appeal.type}
+          <strong>Type:</strong> {appeal.type}
         </p>
         <p className="cf-pdf-meta-title">
-          <b>Docket Number:</b> {appeal.docket_number}
+          <strong>Docket Number:</strong> {appeal.docket_number}
         </p>
         <p className="cf-pdf-meta-title">
-          <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
+          <strong>Regional Office:</strong> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
         </p>
         <div className="cf-pdf-meta-title">
-          <b>Issues:</b> {_.size(appeal.issues) ?
+          <strong>Issues:</strong> {_.size(appeal.issues) ?
             <ol className="cf-pdf-meta-doc-info-issues">
               {appeal.issues.map((issue) =>
                 <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}>
@@ -58,13 +58,13 @@ class SideBarDocumentInformation extends PureComponent {
 
     return <div className="cf-sidebar-document-information">
       <p className="cf-pdf-meta-title cf-pdf-cutoff">
-        <b>Document Type: </b>
+        <strong>Document Type: </strong>
         <span title={this.props.doc.type} className="cf-document-type">
           {this.props.doc.type}
         </span>
       </p>
       <p className="cf-pdf-meta-title">
-        <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
+        <strong>Receipt Date:</strong> {formatDateStr(this.props.doc.receivedAt)}
       </p>
       <hr />
       {renderComponent}
