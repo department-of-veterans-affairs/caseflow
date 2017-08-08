@@ -54,7 +54,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
     if FeatureToggle.enabled?(:efolder_docs_api)
       true # Don't fetch the content since eFolder will begin downloading the case automatically
     else
-      doc.fetch_content unless S3Service.exists?(doc.file_name)
+      doc.fetch_content_unless_cached
     end
   rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
     Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{e.message}"
