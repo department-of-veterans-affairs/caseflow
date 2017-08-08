@@ -29,15 +29,10 @@ All dependencies for the application and external services are contained with th
 To run these, install [Docker](https://www.docker.com/) if you haven't already. Then, execute:
 ```
 docker-compose build
-docker-compose up
+docker-compose up --abort-on-container-exit
 ```
 
-This will start the app, a Redis service, and a PostgreSQL database service in the foreground. If you wish to run it in the background, run:
-```
-docker-compose up -d
-```
-
-You can then stop the containers by executing `docker-compose stop`. This will keep the containers on your local file system in case you want to run them again without having to build. To destroy them completely, execute `docker-compose down`.
+This will start the app, a Redis service, and a PostgreSQL database service in the foreground. You can then stop the containers with Ctrl+C. This will keep the containers on your local file system in case you want to run them again without having to build. To destroy them completely, execute `docker-compose down`.
 
 Now that the app is running, set up the database by running:
 
