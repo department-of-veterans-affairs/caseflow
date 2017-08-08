@@ -10,7 +10,7 @@ import { INTERACTION_TYPES } from './analytics';
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
 
-  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId);
+  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId)
 
   render() {
     const { annotationsCount, expanded, docId } = this.props;
