@@ -80,6 +80,8 @@ class CaseSelect extends React.PureComponent {
   }
 
   render() {
+    console.log(this.props.loadedAppeal);
+
     if (!this.props.assignments) {
       return null;
     }
@@ -119,7 +121,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'assignments'),
-  ..._.pick(state, 'appeals')
+  ..._.pick(state, 'loadedAppeal')
 });
 
 export default connect(

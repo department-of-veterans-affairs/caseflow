@@ -13,6 +13,8 @@ import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import { CATEGORIES } from './analytics';
 import _ from 'lodash';
+import history from './history'
+
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -134,7 +136,7 @@ export class DecisionReviewer extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
+    return <Router history={history} basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
         <Route
           path="/:vacolsId/documents"

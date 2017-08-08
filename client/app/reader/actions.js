@@ -612,12 +612,24 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   payload: { appeals }
 });
 
+import history from './history' 
+
 export const fetchAppealUsingVeteranId = (veteranId) => (
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
+      const numOfAppeals = _.size(returnedObject.appeals);
+      console.log(numOfAppeals);
 
-      dispatch(onReceiveAppealDetails(returnedObject.appeals));
+      if (numOfAppeals === 1) {
+        console.log("History");
+        console.log(history)
+        console.log(`/reader/appeal/${returnedObject.appeals[0].vacols_id}/documents`)
+        history.replace(`/reader/appeal/${returnedObject.appeals[0].vacols_id}/documents`)
+        //dispatch(onReceiveAppealDetails(returnedObject.appeals[0]));
+      } else if (_.size(numOfAppeals) > 1) {
+        // here
+      }
     }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
