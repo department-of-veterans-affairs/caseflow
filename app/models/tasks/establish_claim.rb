@@ -26,6 +26,10 @@ class EstablishClaim < Task
     appeal.serialized_decision_date
   end
 
+  cache_attribute :cached_outcoded_by do
+    appeal.outcoded_by
+  end
+
   def to_hash
     serializable_hash(
       include: [:user],
@@ -36,6 +40,7 @@ class EstablishClaim < Task
         :cached_decision_type,
         :cached_veteran_name,
         :cached_serialized_decision_date,
+        :cached_outcoded_by,
         :vbms_id
       ]
     )
