@@ -64,23 +64,20 @@ describe RetrieveDocumentsForReaderJob do
     before do
       # Reset S3 mock files
       S3Service.files = nil
-
-      # Fail test if Mock is called for non-reader user
-      expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-
-      # Expect all tests to call Slack service at the end
-      expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
-      dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
     end
 
     context "when a limit is not provided" do
-      before do
+      it "retrieves the appeal documents for all reader users" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+
         expect_all_calls_for_user(reader_user, appeal_with_doc1, expected_doc1, doc1_expected_content)
         expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
-      end
 
-      it "retrieves the appeal documents for all reader users" do
         RetrieveDocumentsForReaderJob.perform_now
 
         # Validate that the decision content is cached in S3 mock
@@ -99,7 +96,14 @@ describe RetrieveDocumentsForReaderJob do
         Faker::Shakespeare.king_richard_iii_quote
       end
 
-      before do
+      it "stops if limit is reached after finishing current case" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+
         # appeal_with_doc1 will have 2 docs associated with it
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
@@ -113,9 +117,7 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
           .and_return([appeal_with_doc2]).once
         dont_expect_calls_for_appeal(appeal_with_doc2, expected_doc2)
-      end
 
-      it "stops if limit is reached after finishing current case" do
         RetrieveDocumentsForReaderJob.perform_now("limit" => 1)
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
@@ -125,8 +127,15 @@ describe RetrieveDocumentsForReaderJob do
       end
     end
 
-    context "when VBMS exception is thrown" do
-      before do
+    context "when VBMS exception is thrown" do\
+      it "catches the exception and continues to the next document" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
@@ -137,9 +146,7 @@ describe RetrieveDocumentsForReaderJob do
           .once
 
         expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
-      end
 
-      it "catches the exception and continues to the next document" do
         RetrieveDocumentsForReaderJob.perform_now
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
@@ -149,7 +156,14 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when HTTP Timeout occurs" do
-      before do
+      it "catches the exception and continues to the next appeal" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
@@ -157,9 +171,7 @@ describe RetrieveDocumentsForReaderJob do
 
         expect(VBMSService).to receive(:fetch_documents_for).with(any_args)
           .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).exactly(2).times
-      end
 
-      it "catches the exception and continues to the next appeal" do
         RetrieveDocumentsForReaderJob.perform_now
 
         expect(S3Service.files).to be_nil
@@ -167,18 +179,6 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when consecutive errors occur" do
-      before do
-        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1, appeal_with_doc2, appeal_with_doc3, appeal_with_doc4, appeal_with_doc5]).once
-
-        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
-          .and_return(nil).once
-
-        allow(Fakes::VBMSService).to receive(:fetch_documents_for).with(any_args)
-          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
-          .exactly(5).times
-      end
-
       let!(:expected_doc3) do
         Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
       end
@@ -212,6 +212,23 @@ describe RetrieveDocumentsForReaderJob do
       end
 
       it "stops executing after 5 errors" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1, appeal_with_doc2, appeal_with_doc3, appeal_with_doc4, appeal_with_doc5]).once
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
+          .and_return(nil).once
+
+        expect(Fakes::VBMSService).to receive(:fetch_documents_for).with(any_args)
+          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
+          .exactly(5).times
+
         RetrieveDocumentsForReaderJob.perform_now
         expect(S3Service.files).to be_nil
       end
@@ -221,6 +238,17 @@ describe RetrieveDocumentsForReaderJob do
       before do
         FeatureToggle.enable!(:efolder_docs_api)
         RequestStore.store[:application] = "reader"
+      end
+
+      after { FeatureToggle.disable!(:efolder_docs_api) }
+
+      it "does not fetch content" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
 
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
@@ -233,11 +261,7 @@ describe RetrieveDocumentsForReaderJob do
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
           .and_return([expected_doc2]).once
-      end
 
-      after { FeatureToggle.disable!(:efolder_docs_api) }
-
-      it "does not fetch content" do
         RetrieveDocumentsForReaderJob.perform_now
         expect(S3Service.files).to be_nil
       end
