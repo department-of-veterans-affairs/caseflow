@@ -5,6 +5,7 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
+import SearchBar from '../components/SearchBar';
 
 class CaseSelect extends React.PureComponent {
 
@@ -71,6 +72,10 @@ class CaseSelect extends React.PureComponent {
 
   getKeyForRow = (index, row) => row.vacols_id;
 
+  searchOnChange = (text) => {
+    console.log(text);
+  }
+
   render() {
     if (!this.props.assignments) {
       return null;
@@ -80,6 +85,12 @@ class CaseSelect extends React.PureComponent {
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Welcome to Reader!</h1>
+          <SearchBar
+            id="search-small"
+            size="small"
+            onChange={this.searchOnChange}
+            loading={false}
+          />
           <p className="cf-lead-paragraph">
             Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
