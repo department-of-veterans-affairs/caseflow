@@ -5,11 +5,15 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
+import { INTERACTION_TYPES } from './analytics';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
 
-  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId)
+  toggleComments = () => {
+    window.analyticsEvent(INTERACTION_TYPES.VISIBLE_UI, 'toggle-comment-list');
+    this.props.handleToggleCommentOpened(this.props.docId);
+  }
 
   render() {
     const { annotationsCount, expanded, docId } = this.props;
