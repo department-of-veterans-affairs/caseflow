@@ -23,14 +23,7 @@ export class DecisionReviewer extends React.PureComponent {
     super(props);
 
     this.state = {
-      isCommentLabelSelected: false,
-      ui: {
-        pdfList: {
-          dropdowns: {
-            case_summary: false
-          }
-        }
-      }
+      isCommentLabelSelected: false
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
@@ -87,19 +80,19 @@ export class DecisionReviewer extends React.PureComponent {
       />;
   }
 
-    routedPdfListViewCaseSummary = (props) => {
-      const { vacolsId } = props.match.params;
+  routedPdfListViewCaseSummary = (props) => {
+    const { vacolsId } = props.match.params;
 
-      return <PdfListView
-          showPdf={this.showPdf(props.history, vacolsId)}
-          sortBy={this.state.sortBy}
-          selectedLabels={this.state.selectedLabels}
-          isCommentLabelSelected={this.state.isCommentLabelSelected}
-          documentPathBase={`/${vacolsId}/documents`}
-          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-          {...props}
-      />;
-    }
+    return <PdfListView
+        showPdf={this.showPdf(props.history, vacolsId)}
+        sortBy={this.state.sortBy}
+        selectedLabels={this.state.selectedLabels}
+        isCommentLabelSelected={this.state.isCommentLabelSelected}
+        documentPathBase={`/${vacolsId}/documents`}
+        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        {...props}
+    />;
+  }
 
   routedPdfViewer = (props) => {
     const { vacolsId } = props.match.params;
