@@ -147,7 +147,7 @@ export const initialState = {
   pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
-    'Document information', 'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
+    'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
     searchCategoryHighlights: {},
@@ -294,10 +294,10 @@ export const reducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
-    return update(
+    return update(state,
       {
         didLoadAppealFail: {
-          $set: action.payload.value
+          $set: action.payload.failedToLoad
         }
       }
     );
