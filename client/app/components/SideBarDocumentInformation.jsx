@@ -40,14 +40,18 @@ class SideBarDocumentInformation extends PureComponent {
           <b>Regional Office:</b> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
         </p>
         <div className="cf-pdf-meta-title">
-          <b>Issues</b>
-          <ol className="cf-pdf-meta-doc-info-issues">
-            {appeal.issues.map((issue) =>
-              <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
-                {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
-              </span></li>
-            )}
-          </ol>
+          <b>Issues:</b> {_.size(appeal.issues) ?
+            <ol className="cf-pdf-meta-doc-info-issues">
+              {appeal.issues.map((issue) =>
+                <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}>
+                  <span>
+                    {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
+                  </span>
+                </li>
+              )}
+            </ol> :
+            'No issues on appeal'
+          }
         </div>
       </div>;
     }
