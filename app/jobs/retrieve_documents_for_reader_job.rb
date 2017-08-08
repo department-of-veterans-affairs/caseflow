@@ -1,5 +1,5 @@
 # This job will retrieve cases from VACOLS via the CaseAssignmentRepository
-# and all documents for these cases in VBMS and store these
+# and all documents for these cases in VBMS and store them
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :default
 
