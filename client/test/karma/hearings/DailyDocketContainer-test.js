@@ -9,12 +9,6 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
 import { populateDockets } from '../../../app/hearings/actions/Dockets';
 import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
-
-/*
-import TextareaContainer from '../../../app/hearings/TextareaContainer';
-import DropdownContainer from '../../../app/hearings/DropdownContainer';
-import CheckboxContainer from '../../../app/hearings/CheckboxContainer';
-*/
 import Checkbox from '../../../app/components/Checkbox';
 import SearchableDropdown from '../../../app/components/SearchableDropdown';
 

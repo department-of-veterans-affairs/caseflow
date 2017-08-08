@@ -40,26 +40,21 @@ const getDate = (date, timezone) => {
 
 export class DocketHearingRow extends React.Component {
 
-  callSetDisposition = (valueObject) => this.props.setDisposition(this.props.index, valueObject.value, this.props.hearingDate);
+  setDisposition = (valueObject) => this.props.setDisposition(this.props.index, valueObject.value, this.props.hearingDate);
 
-  callSetHoldOpen = (valueObject) => this.props.setHoldOpen(this.props.index, valueObject.value, this.props.hearingDate);
+  setHoldOpen = (valueObject) => this.props.setHoldOpen(this.props.index, valueObject.value, this.props.hearingDate);
 
-  callSetAOD = (valueObject) => this.props.setAOD(this.props.index, valueObject.value, this.props.hearingDate);
+  setAOD = (valueObject) => this.props.setAOD(this.props.index, valueObject.value, this.props.hearingDate);
 
-  callSetTranscriptRequested = (value) => this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+  setTranscriptRequested = (value) => this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
-  callSetNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
+  setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
   render() {
     const {
       index,
       hearing,
-      hearingDate,
-      setNotes,
-      setDisposition,
-      setHoldOpen,
-      setAOD,
-      setTranscriptRequested
+      hearingDate
     } = this.props;
 
     return <tbody>
@@ -82,7 +77,7 @@ export class DocketHearingRow extends React.Component {
             label="Disposition"
             name={`hearing.${this.props.date}.${index}.${hearing.id}.disposition`}
             options={dispositionOptions}
-            onChange={this.callSetDisposition}
+            onChange={this.setDisposition}
             value={hearing.disposition}
             searchable={true}
           />
@@ -90,7 +85,7 @@ export class DocketHearingRow extends React.Component {
             label="Hold Open"
             name={`hearing.${this.props.date}.${index}.${hearing.id}.hold_open`}
             options={holdOptions}
-            onChange={this.callSetHoldOpen}
+            onChange={this.setHoldOpen}
             value={hearing.hold_open}
             searchable={true}
           />
@@ -98,7 +93,7 @@ export class DocketHearingRow extends React.Component {
             label="AOD"
             name={`hearing.${this.props.date}.${index}.${hearing.id}.aod`}
             options={aodOptions}
-            onChange={this.callSetAOD}
+            onChange={this.setAOD}
             value={hearing.aod}
             searchable={true}
           />
@@ -107,7 +102,7 @@ export class DocketHearingRow extends React.Component {
               label="Transcript Requested"
               name={`hearing.${this.props.date}.${index}.${hearing.id}.transcript_requested`}
               value={hearing.transcriptRequested}
-              onChange={this.callSetTranscriptRequested}
+              onChange={this.setTranscriptRequested}
             />
           </div>
         </td>
@@ -121,7 +116,7 @@ export class DocketHearingRow extends React.Component {
               <textarea
                 id={`hearing.${hearingDate}.${index}.${hearing.id}.notes`}
                 defaultValue={hearing.notes}
-                onChange={this.callSetNotes}
+                onChange={this.setNotes}
                 maxLength="100"
               />
             </div>
