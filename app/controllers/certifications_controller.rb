@@ -45,7 +45,7 @@ class CertificationsController < ApplicationController
     update_certification_from_v2_form
     validate_data_presence_v2
 
-    if certification.hearing_preference == "NO_HEARING_DESIRED" || "NO_BOX_SELECTED" || "HEARING_CANCELLED"
+    if %w(NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED).include?(certification.hearing_preference)
       hearing_requested = "No"
     else
       hearing_requested = "Yes"
