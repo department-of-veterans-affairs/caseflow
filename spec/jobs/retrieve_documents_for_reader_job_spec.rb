@@ -201,38 +201,6 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when consecutive errors occur" do
-      let!(:expected_doc3) do
-        Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)
-      end
-
-      let!(:expected_doc4) do
-        Generators::Document.build(type: "BVA Decision", received_at: 10.days.ago)
-      end
-
-      let!(:appeal_with_doc3) do
-        Generators::Appeal.create(
-          vbms_id: expected_doc3.vbms_document_id,
-          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
-        )
-      end
-
-      let!(:appeal_with_doc4) do
-        Generators::Appeal.create(
-          vbms_id: expected_doc4.vbms_document_id,
-          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
-        )
-      end
-
-      let!(:expected_doc5) do
-        Generators::Document.build(type: "BVA Decision", received_at: 10.days.ago)
-      end
-      let!(:appeal_with_doc5) do
-        Generators::Appeal.create(
-          vbms_id: expected_doc5.vbms_document_id,
-          vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
-        )
-      end
-
       it "stops executing after 5 errors" do
         # Fail test if Mock is called for non-reader user
         expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
@@ -241,18 +209,28 @@ describe RetrieveDocumentsForReaderJob do
         # Expect all tests to call Slack service at the end
         expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
 
+        appeals_that_fail = [appeal_with_doc1] + (0..4).map { create_doc_and_appeal }
+        reader_user_appeals = [appeal_with_doc2] + appeals_that_fail
+
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1, appeal_with_doc2, appeal_with_doc3, appeal_with_doc4, appeal_with_doc5]).once
+          .and_return(reader_user_appeals).once
 
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
           .and_return(nil).once
 
-        expect(Fakes::VBMSService).to receive(:fetch_documents_for).with(any_args)
-          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
-          .exactly(5).times
+        # Checks that counter is reset by having one call succeed in between failures
+        expect_calls_for_appeal(appeal_with_doc2, expected_doc2, doc2_expected_content)
+
+        appeals_that_fail.each do |appeal|
+          expect(Fakes::VBMSService).to receive(:fetch_documents_for).with(appeal, instance_of(User))
+            .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
+            .once
+        end
 
         RetrieveDocumentsForReaderJob.perform_now
-        expect(S3Service.files).to be_nil
+
+        expect(S3Service.files.length).to eq(1)
+        expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
       end
     end
 
@@ -310,5 +288,13 @@ describe RetrieveDocumentsForReaderJob do
   def expect_calls_for_doc(doc, content)
     expect(S3Service).to receive(:exists?).with(doc.vbms_document_id).and_return(false).once
     expect(EFolderService).to receive(:fetch_document_file).with(doc).and_return(content).once
+  end
+
+  def create_doc_and_appeal
+    doc = Generators::Document.build(type: "BVA Decision", received_at: 10.days.ago)
+    Generators::Appeal.create(
+      vbms_id: doc.vbms_document_id,
+      vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
+    )
   end
 end
