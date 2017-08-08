@@ -8,60 +8,51 @@ describe HearingMapper do
     let(:hearing) do
       OpenStruct.new(
         folder_nr: "123C",
-        hearing_disp: hearing_disp
+        hearing_disp: hearing_disp,
+        hearing_type: hearing_type
       )
     end
 
-    let(:brieff) do
-      OpenStruct.new(bfhr: bfhr, bfdocind: bfdocind)
-    end
-
-    subject { HearingMapper.bfha_vacols_code(hearing, brieff) }
+    subject { HearingMapper.bfha_vacols_code(hearing) }
 
     context "when disposition is held and it is central office hearing" do
       let(:hearing_disp) { "H" }
-      let(:bfhr) { "1" }
-      let(:bfdocind) { nil }
+      let(:hearing_type) { "C" }
 
       it { is_expected.to eq "1" }
     end
 
     context "when disposition is held and it is video hearing" do
       let(:hearing_disp) { "H" }
-      let(:bfhr) { "2" }
-      let(:bfdocind) { "V" }
+      let(:hearing_type) { "V" }
 
       it { is_expected.to eq "6" }
     end
 
     context "when disposition is held and it is travel board hearing" do
       let(:hearing_disp) { "H" }
-      let(:bfhr) { "2" }
-      let(:bfdocind) { nil }
+      let(:hearing_type) { "T" }
 
       it { is_expected.to eq "2" }
     end
 
     context "when disposition is postponed" do
       let(:hearing_disp) { "P" }
-      let(:bfhr) { "1" }
-      let(:bfdocind) { "V" }
+      let(:hearing_type) { "T" }
 
       it { is_expected.to eq nil }
     end
 
     context "when disposition is cancelled" do
       let(:hearing_disp) { "C" }
-      let(:bfhr) { "2" }
-      let(:bfdocind) { nil }
+      let(:hearing_type) { "V" }
 
       it { is_expected.to eq "5" }
     end
 
     context "when disposition is not held" do
       let(:hearing_disp) { "N" }
-      let(:bfhr) { "2" }
-      let(:bfdocind) { nil }
+      let(:hearing_type) { "C" }
 
       it { is_expected.to eq "5" }
     end
@@ -137,9 +128,36 @@ describe HearingMapper do
       end
     end
 
+    context "when notes is not valid" do
+      let(:info) do
+        { notes: 77 }
+      end
+      it "raises InvalidNotesError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidNotesError)
+      end
+    end
+
+    context "when aod is false" do
+      let(:info) do
+        { aod: false }
+      end
+      it "raises InvalidAodError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidAodError)
+      end
+    end
+
     context "when disposition is not valid" do
       let(:info) do
         { disposition: :foo }
+      end
+      it "raises InvalidDispositionError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidDispositionError)
+      end
+    end
+
+    context "when disposition is nil" do
+      let(:info) do
+        { disposition: nil }
       end
       it "raises InvalidDispositionError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidDispositionError)
@@ -158,6 +176,15 @@ describe HearingMapper do
     context "when hold_open is not valid" do
       let(:info) do
         { hold_open: -7 }
+      end
+      it "raises InvalidHoldOpenError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidHoldOpenError)
+      end
+    end
+
+    context "when hold_open is false" do
+      let(:info) do
+        { hold_open: false }
       end
       it "raises InvalidHoldOpenError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidHoldOpenError)

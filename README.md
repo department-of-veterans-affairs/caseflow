@@ -22,7 +22,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-## Setup 
+## Setup
 ### Docker container
 All dependencies for the application and external services are contained with the [Dockerfile](Dockerfile) and the [docker-compose.yml](docker-compose.yml) files.
 
@@ -45,12 +45,12 @@ First time user will need to run `create` before `setup`:
 
 ```
 docker-compose run rake db:create
-``` 
+```
 Followed by:
 
 ```
 docker-compose run rake db:setup
-``` 
+```
 
 
 
@@ -271,6 +271,31 @@ FeatureToggle.disable!(:apple, regional_offices: ["RO03", "RO09"])
 => true
 FeatureToggle.details_for(:apple)
 => { :regional_offices =>["RO08"] }
+```
+
+## Out of Service
+
+To enable and disable 'Out of Service' feature using `rails c`. Example usage:
+
+```
+# enable globally
+Rails.cache.write("out_of_service", true)
+
+# enable for certification only
+Rails.cache.write("certification_out_of_service", true)
+
+# enable for dispatch only
+Rails.cache.write("dispatch_out_of_service", true)
+
+# enable for hearings only
+Rails.cache.write("hearings_prep_out_of_service", true)
+
+# enable for reader only
+Rails.cache.write("reader_out_of_service", true)
+
+# to disable, e.g.
+Rails.cache.write("certification_out_of_service", false)
+
 ```
 
 # Support
