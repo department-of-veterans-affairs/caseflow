@@ -64,17 +64,17 @@ describe RetrieveDocumentsForReaderJob do
     before do
       # Reset S3 mock files
       S3Service.files = nil
+
+      # Fail test if Mock is called for non-reader user
+      expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+      dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+      # Expect all tests to call Slack service at the end
+      expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
     end
 
     context "when a limit is not provided" do
       it "retrieves the appeal documents for all reader users" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         expect_all_calls_for_user(reader_user, appeal_with_doc1, expected_doc1, doc1_expected_content)
         expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
 
@@ -97,13 +97,6 @@ describe RetrieveDocumentsForReaderJob do
       end
 
       it "stops if limit is reached after finishing current case" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         # appeal_with_doc1 will have 2 docs associated with it
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
@@ -129,13 +122,6 @@ describe RetrieveDocumentsForReaderJob do
 
     context "when VBMS exception is thrown" do
       it "catches the exception when thrown by fetch_documents_for and continues to the next appeal" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
@@ -151,13 +137,6 @@ describe RetrieveDocumentsForReaderJob do
       end
 
       it "catches the exception when thrown by fetch_content and continues to the next document" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
@@ -179,13 +158,6 @@ describe RetrieveDocumentsForReaderJob do
 
     context "when HTTP Timeout occurs" do
       it "catches the exception and continues to the next appeal" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
@@ -202,13 +174,6 @@ describe RetrieveDocumentsForReaderJob do
 
     context "when consecutive errors occur" do
       it "stops executing after 5 errors" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         appeals_that_fail = [appeal_with_doc1] + (0..4).map { create_doc_and_appeal }
         reader_user_appeals = [appeal_with_doc2] + appeals_that_fail
 
@@ -243,13 +208,6 @@ describe RetrieveDocumentsForReaderJob do
       after { FeatureToggle.disable!(:efolder_docs_api) }
 
       it "does not fetch content" do
-        # Fail test if Mock is called for non-reader user
-        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
-        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
-
-        # Expect all tests to call Slack service at the end
-        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
-
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 
