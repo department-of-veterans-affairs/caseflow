@@ -6,21 +6,18 @@
 * that would live at client/app/actions/**.js.
 */
 import update from 'immutability-helper';
+import * as Constants from '../constants/constants';
 
 export const mapDataToInitialState = function(state = {}) {
   return state;
 };
 
-export const newDocketState = (action, state) => {
-  const [, date, index,, property] = action.payload.prop.split('.');
-
+export const newHearingState = (state, action, spec) => {
   return update(state, {
     dockets: {
-      [date]: {
+      [action.payload.date]: {
         hearings_hash: {
-          [index]: {
-            [property]: { $set: action.payload.value }
-          }
+          [action.payload.hearingIndex]: spec
         }
       }
     }
@@ -29,32 +26,38 @@ export const newDocketState = (action, state) => {
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
-  case 'POPULATE_DOCKETS':
+  case Constants.POPULATE_DOCKETS:
     return update(state, {
       dockets: { $set: action.payload.dockets }
     });
 
-  case 'UPDATE_DAILY_DOCKET_NOTES':
-  case 'UPDATE_DAILY_DOCKET_TRANSCRIPT':
-  case 'UPDATE_DAILY_DOCKET_ACTION':
-    return newDocketState(action, state);
-
-  case 'POPULATE_WORKSHEET':
+  case Constants.POPULATE_WORKSHEET:
     return update(state, {
       worksheet: { $set: action.payload.worksheet }
     });
 
-  case 'TOGGLE_SAVING':
-    return update(state, {
-      saving: { $set: !state.saving }
-    });
-
-  case 'HANDLE_SERVER_ERROR':
+  case Constants.HANDLE_SERVER_ERROR:
     return update(state, {
       serverError: { $set: action.payload.err }
     });
 
+  case Constants.SET_NOTES:
+    return newHearingState(state, action, { notes: { $set: action.payload.value } });
+
+  case Constants.SET_DISPOSITION:
+    return newHearingState(state, action, { disposition: { $set: action.payload.value } });
+
+  case Constants.SET_HOLD_OPEN:
+    return newHearingState(state, action, { hold_open: { $set: action.payload.value } });
+
+  case Constants.SET_AOD:
+    return newHearingState(state, action, { aod: { $set: action.payload.value } });
+
+  case Constants.SET_TRANSCRIPT_REQUESTED:
+    return newHearingState(state, action, { transcript_requested: { $set: action.payload.value } });
+
   default: return state;
   }
 };
+
 export default hearingsReducers;
