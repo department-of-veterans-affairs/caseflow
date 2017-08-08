@@ -478,6 +478,7 @@ RSpec.feature "Save Certification" do
 
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
+
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
           find("label", text: "Other").click
