@@ -10,10 +10,7 @@ import { INTERACTION_TYPES } from './analytics';
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
 
-  toggleComments = () => {
-    window.analyticsEvent(INTERACTION_TYPES.VISIBLE_UI, 'toggle-comment-list');
-    this.props.handleToggleCommentOpened(this.props.docId);
-  }
+  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId);
 
   render() {
     const { annotationsCount, expanded, docId } = this.props;
@@ -53,6 +50,12 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.TOGGLE_COMMENT_LIST,
       payload: {
         docId
+      },
+      meta: {
+        analytics: {
+          category: INTERACTION_TYPES.VISIBLE_UI,
+          action: 'toggle-comment-list'
+        }
       }
     });
   }
