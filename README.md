@@ -283,7 +283,7 @@ Rails.cache.write("certification_out_of_service", true)
 Rails.cache.write("dispatch_out_of_service", true)
 
 # enable for hearings only
-Rails.cache.write("hearings_prep_out_of_service", true)
+Rails.cache.write("hearing_prep_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)
