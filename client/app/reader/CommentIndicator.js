@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { ChervonDown, ChervonUp } from '../components/RenderFunctions';
+import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
@@ -14,7 +14,7 @@ class CommentIndicator extends React.PureComponent {
   render() {
     const { annotationsCount, expanded, docId } = this.props;
     const name = `expand ${annotationsCount} comments`;
-    const commentArrowComponent = expanded ? <ChervonUp /> : <ChervonDown />;
+    const commentArrowComponent = expanded ? <ChevronUp /> : <ChevronDown />;
 
     return <span className="document-list-comments-indicator">
       {annotationsCount > 0 &&
