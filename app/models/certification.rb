@@ -18,7 +18,6 @@ class Certification < ActiveRecord::Base
 
     # We don't run sidekiq in development mode.
     if Rails.env.development? || Rails.env.test?
-      binding.pry
       StartCertificationJob.perform_now(self, RequestStore[:current_user], RequestStore[:current_user].ip_address)
     else
       StartCertificationJob.perform_later(self, RequestStore[:current_user], RequestStore[:current_user].ip_address)
