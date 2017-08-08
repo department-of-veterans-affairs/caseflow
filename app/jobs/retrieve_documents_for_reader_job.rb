@@ -3,11 +3,13 @@
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :default
 
+  DEFAULT_DOCUMENTS_DOWNLOADED_LIMIT = 1500
+
   def perform(args = {})
     RequestStore.store[:application] = "reader"
 
     # Args should be set in sidekiq_cron.yml, but default the limit to 1500 if they aren't
-    limit = args["limit"] || 1500
+    limit = args["limit"] || DEFAULT_DOCUMENTS_DOWNLOADED_LIMIT
     counts = { docs_successful: 0, docs_failed: 0, docs_attempted: 0, appeals_failed: 0, consecutive_failures: 0 }
 
     find_all_active_reader_appeals.each do |user, appeals|
