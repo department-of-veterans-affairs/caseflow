@@ -602,7 +602,6 @@ RSpec.feature "Save Certification" do
       scenario "on the save and certify page" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         click_button("Continue")
-        expect(page).to have_content "Please enter the name of the certifying official (usually your name)."
         expect(page).to have_content "Please enter the title of the certifying official."
         fill_in "Name of certifying official", with: "12345678901234567890123456789012345678901"
         click_button("Continue")
