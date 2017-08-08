@@ -1,5 +1,6 @@
 # This middleware makes it safe to use RequestStore inside jobs by ensuring
 # that RequestStore is cleared after every job.
+# :nocov:
 class JobRequestStoreMiddleware
   def call(_worker, _msg, _queue)
     yield
@@ -7,3 +8,4 @@ class JobRequestStoreMiddleware
     ::RequestStore.clear! if defined?(::RequestStore)
   end
 end
+# :nocov:
