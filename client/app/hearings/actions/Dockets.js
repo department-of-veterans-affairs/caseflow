@@ -21,26 +21,47 @@ export const handleServerError = (err) => ({
   }
 });
 
-export const updateDailyDocketNotes = (prop, value) => ({
-  type: Constants.UPDATE_DAILY_DOCKET_NOTES,
+export const setNotes = (hearingIndex, value, date) => ({
+  type: Constants.SET_NOTES,
   payload: {
-    prop,
-    value
+    hearingIndex,
+    value,
+    date
   }
 });
 
-export const updateDailyDocketAction = (prop, value) => ({
-  type: Constants.UPDATE_DAILY_DOCKET_ACTION,
+export const setDisposition = (hearingIndex, value, date) => ({
+  type: Constants.SET_DISPOSITION,
   payload: {
-    prop,
-    value
+    hearingIndex,
+    value,
+    date
   }
 });
 
-export const updateDailyDocketTranscript = (prop, value) => ({
-  type: Constants.UPDATE_DAILY_DOCKET_TRANSCRIPT,
+export const setHoldOpen = (hearingIndex, value, date) => ({
+  type: Constants.SET_HOLD_OPEN,
   payload: {
-    prop,
-    value
+    hearingIndex,
+    value,
+    date
+  }
+});
+
+export const setAOD = (hearingIndex, value, date) => ({
+  type: Constants.SET_AOD,
+  payload: {
+    hearingIndex,
+    value,
+    date
+  }
+});
+
+export const setTranscriptRequested = (hearingIndex, value, date) => ({
+  type: Constants.SET_TRANSCRIPT_REQUESTED,
+  payload: {
+    hearingIndex,
+    value,
+    date
   }
 });

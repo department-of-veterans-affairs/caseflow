@@ -9,9 +9,14 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
 import { populateDockets } from '../../../app/hearings/actions/Dockets';
 import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
+
+/*
 import TextareaContainer from '../../../app/hearings/TextareaContainer';
 import DropdownContainer from '../../../app/hearings/DropdownContainer';
 import CheckboxContainer from '../../../app/hearings/CheckboxContainer';
+*/
+import Checkbox from '../../../app/components/Checkbox';
+import SearchableDropdown from '../../../app/components/SearchableDropdown';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
 
@@ -87,11 +92,11 @@ describe('DailyDocketContainer', () => {
   });
 
   it('updates a docket', () => {
-    wrapper.find(TextareaContainer).simulate('change', { target: { value: 'My new value' } });
-    wrapper.find(DropdownContainer).at(0).simulate('change', { target: { value: 'held' } });
-    wrapper.find(DropdownContainer).at(1).simulate('change', { target: { value: '60' } });
-    wrapper.find(DropdownContainer).at(2).simulate('change', { target: { value: 'grant' } });
-    wrapper.find(CheckboxContainer).simulate('click');
+    wrapper.find('textarea').simulate('change', { target: { value: 'My new value' } });
+    wrapper.find(SearchableDropdown).at(0).simulate('change', { target: { value: 'held' } });
+    wrapper.find(SearchableDropdown).at(1).simulate('change', { target: { value: '60' } });
+    wrapper.find(SearchableDropdown).at(2).simulate('change', { target: { value: 'grant' } });
+    wrapper.find(Checkbox).simulate('click');
     setTimeout(() => {
       let state = store.getState();
       let hearing = state.dockets['2017-06-17'].hearings_hash[0];
