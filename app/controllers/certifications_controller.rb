@@ -44,12 +44,19 @@ class CertificationsController < ApplicationController
   def certify_v2
     update_certification_from_v2_form
     validate_data_presence_v2
+
+    if certification.hearing_preference == "NO_HEARING_DESIRED" || "NO_BOX_SELECTED" || "HEARING_CANCELLED"
+      hearing_requested = "No"
+    else
+      hearing_requested = "Yes"
+    end
+
     form8.update_from_string_params(
       representative_type: certification.rep_type,
       representative_name: certification.rep_name,
       hearing_preference: certification.hearing_preference,
       # This field is necessary when on v2 certification but v1 form8
-      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" || "NO_BOX_SELECTED" || "HEARING_CANCELLED" ? "No" : "Yes",
+      hearing_requested: hearing_requested,
       certifying_official_name: certification.certifying_official_name,
       certifying_official_title: certification.certifying_official_title
     )
