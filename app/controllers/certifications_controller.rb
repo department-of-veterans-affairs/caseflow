@@ -49,7 +49,7 @@ class CertificationsController < ApplicationController
       representative_name: certification.rep_name,
       hearing_preference: certification.hearing_preference,
       # This field is necessary when on v2 certification but v1 form8
-      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
+      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" || "NO_BOX_SELECTED" || "HEARING_CANCELLED" ? "No" : "Yes",
       certifying_official_name: certification.certifying_official_name,
       certifying_official_title: certification.certifying_official_title
     )
