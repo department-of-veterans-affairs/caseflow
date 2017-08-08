@@ -3,7 +3,7 @@
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
   attr_accessor :program, :type, :category, :description, :disposition, :levels,
-                :program_description
+                :program_description, :note
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
@@ -92,6 +92,7 @@ class Issue < ActiveRecord::Base
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
+        note: hash["issdesc"],
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
         description: description(hash),
