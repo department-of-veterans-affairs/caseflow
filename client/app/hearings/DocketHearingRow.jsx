@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Checkbox from '../components/Checkbox';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setNotes, setDisposition, setHoldOpen, setAOD, setTranscriptRequested } from './actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
@@ -35,7 +38,17 @@ const getDate = (date, timezone) => {
     replace(/(p|a)m/, '$1.m.');
 };
 
-export default class DocketHearingRow extends React.Component {
+export class DocketHearingRow extends React.Component {
+
+  callSetDisposition = (valueObject) => this.props.setDisposition(this.props.index, valueObject.value, this.props.hearingDate);
+
+  callSetHoldOpen = (valueObject) => this.props.setHoldOpen(this.props.index, valueObject.value, this.props.hearingDate);
+
+  callSetAOD = (valueObject) => this.props.setAOD(this.props.index, valueObject.value, this.props.hearingDate);
+
+  callSetTranscriptRequested = (value) => this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+
+  callSetNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
   render() {
     const {
@@ -67,34 +80,34 @@ export default class DocketHearingRow extends React.Component {
         <td className="cf-hearings-docket-actions" rowSpan="2">
           <SearchableDropdown
             label="Disposition"
-            name="Disposition"
+            name={`hearing.${this.props.date}.${index}.${hearing.id}.disposition`}
             options={dispositionOptions}
-            onChange={(valueObject) => setDisposition(index, valueObject.value, hearingDate)}
+            onChange={this.callSetDisposition}
             value={hearing.disposition}
             searchable={true}
           />
           <SearchableDropdown
             label="Hold Open"
-            name="Hold Open"
+            name={`hearing.${this.props.date}.${index}.${hearing.id}.hold_open`}
             options={holdOptions}
-            onChange={(valueObject) => setHoldOpen(index, valueObject.value, hearingDate)}
+            onChange={this.callSetHoldOpen}
             value={hearing.hold_open}
             searchable={true}
           />
           <SearchableDropdown
             label="AOD"
-            name="AOD"
+            name={`hearing.${this.props.date}.${index}.${hearing.id}.aod`}
             options={aodOptions}
-            onChange={(valueObject) => setAOD(index, valueObject.value, hearingDate)}
+            onChange={this.callSetAOD}
             value={hearing.aod}
             searchable={true}
           />
           <div className="transcriptRequested">
             <Checkbox
               label="Transcript Requested"
-              name="Transcript Requested"
+              name={`hearing.${this.props.date}.${index}.${hearing.id}.transcript_requested`}
               value={hearing.transcriptRequested}
-              onChange={(value) => setTranscriptRequested(index, value, hearingDate)}
+              onChange={this.callSetTranscriptRequested}
             />
           </div>
         </td>
@@ -108,7 +121,7 @@ export default class DocketHearingRow extends React.Component {
               <textarea
                 id={`hearing.${hearingDate}.${index}.${hearing.id}.notes`}
                 defaultValue={hearing.notes}
-                onChange={(event) => setNotes(index, event.target.value, hearingDate)}
+                onChange={this.callSetNotes}
                 maxLength="100"
               />
             </div>
@@ -119,13 +132,21 @@ export default class DocketHearingRow extends React.Component {
   }
 }
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setNotes,
+  setDisposition,
+  setHoldOpen,
+  setAOD,
+  setTranscriptRequested
+}, dispatch);
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(DocketHearingRow);
+
 DocketHearingRow.propTypes = {
   index: PropTypes.number.isRequired,
   hearing: PropTypes.object.isRequired,
-  hearingDate: PropTypes.string.isRequired,
-  setNotes: PropTypes.func.isRequired,
-  setDisposition: PropTypes.func.isRequired,
-  setHoldOpen: PropTypes.func.isRequired,
-  setAOD: PropTypes.func.isRequired,
-  setTranscriptRequested: PropTypes.func.isRequired
+  hearingDate: PropTypes.string.isRequired
 };

@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import DocketHearingRow from './DocketHearingRow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { setNotes, setDisposition, setHoldOpen, setAOD, setTranscriptRequested } from './actions/Dockets';
 
 export class DailyDocket extends React.Component {
 
@@ -41,11 +39,6 @@ export class DailyDocket extends React.Component {
               index={index}
               hearing={hearing}
               hearingDate={this.props.date}
-              setNotes={this.props.setNotes}
-              setDisposition={this.props.setDisposition}
-              setHoldOpen={this.props.setHoldOpen}
-              setAOD={this.props.setAOD}
-              setTranscriptRequested={this.props.setTranscriptRequested}
             />
           )}
         </table>
@@ -63,17 +56,8 @@ const mapStateToProps = (state) => ({
   dockets: state.dockets
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setNotes,
-  setDisposition,
-  setHoldOpen,
-  setAOD,
-  setTranscriptRequested
-}, dispatch);
-
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(DailyDocket);
 
 DailyDocket.propTypes = {
