@@ -20,7 +20,7 @@ class Certification < ActiveRecord::Base
     if Rails.env.development? || Rails.env.test?
       StartCertificationJob.perform_now(self)
     else
-      StartCertificationJob.perform_later(self)
+      StartCertificationJob.perform_later(self, RequestStore[:current_user], RequestStore[:current_user].ip_address)
     end
   end
 

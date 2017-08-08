@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
@@ -12,6 +11,7 @@ import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
+import SideBarDocumentInformation from './SideBarDocumentInformation';
 import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -114,7 +114,8 @@ export class PdfSidebar extends React.Component {
     const {
       doc,
       showErrorMessage,
-      tagOptions
+      tagOptions,
+      appeal
     } = this.props;
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
@@ -181,15 +182,7 @@ export class PdfSidebar extends React.Component {
             onChange={this.onAccordionOpenOrClose}
             activeKey={this.props.openedAccordionSections}>
             <AccordionSection title="Document information">
-              <p className="cf-pdf-meta-title cf-pdf-cutoff">
-                <b>Document Type: </b>
-                <span title={this.props.doc.type} className="cf-document-type">
-                  {this.props.doc.type}
-                </span>
-              </p>
-              <p className="cf-pdf-meta-title">
-                <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
-              </p>
+              <SideBarDocumentInformation appeal={appeal} doc={this.props.doc}/>
             </AccordionSection>
             <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
@@ -315,6 +308,7 @@ const mapStateToProps = (state, ownProps) => {
     scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
+    appeal: state.loadedAppeal,
     ..._.pick(state, 'documents', 'tagOptions', 'openedAccordionSections')
   };
 };
