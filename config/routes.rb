@@ -61,7 +61,7 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    get 'appeal/vbms-id/:vbms_id', to: "appeal#find_appeals_by_vbms_id"
+    get 'appeal/veteran-id/:veteran_id', to: "appeal#find_appeals_by_veteran_id"
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create

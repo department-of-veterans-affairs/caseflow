@@ -5,6 +5,8 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
+import { fetchAppealUsingVeteranId } from './actions';
+
 import SearchBar from '../components/SearchBar';
 
 class CaseSelect extends React.PureComponent {
@@ -74,6 +76,7 @@ class CaseSelect extends React.PureComponent {
 
   searchOnChange = (text) => {
     console.log(text);
+    this.props.fetchAppealUsingVeteranId(text);
   }
 
   render() {
@@ -108,8 +111,18 @@ class CaseSelect extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state, 'assignments');
+const mapDispatchToProps = (dispatch) => ({
+  fetchAppealUsingVeteranId(veteranId) {
+    dispatch(fetchAppealUsingVeteranId(veteranId));
+  }
+});
+
+const mapStateToProps = (state) => ({
+  ..._.pick(state, 'assignments'),
+  ..._.pick(state, 'appeals')
+});
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(CaseSelect);

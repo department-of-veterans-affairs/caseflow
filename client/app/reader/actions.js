@@ -607,6 +607,22 @@ export const fetchAppealDetails = (vacolsId) => (
   }
 );
 
+export const onReceiveAppealsUsingVeteranId = (appeals) => ({
+  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID,
+  payload: { appeals }
+});
+
+export const fetchAppealUsingVeteranId = (veteranId) => (
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAppealDetails(returnedObject.appeals));
+    }, () => dispatch(onAppealDetailsLoadingFail()));
+  }
+);
+
+
 export const addNewTag = (doc, tags) => (
   (dispatch) => {
     const currentTags = doc.tags;
