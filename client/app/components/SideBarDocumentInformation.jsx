@@ -54,16 +54,16 @@ class SideBarDocumentInformation extends PureComponent {
 
     return <div className="cf-sidebar-document-information">
       <p className="cf-pdf-meta-title cf-pdf-cutoff">
-      <b>Document Type: </b>
-      <span title={this.props.doc.type} className="cf-document-type">
-        {this.props.doc.type}
-      </span>
-    </p>
-    <p className="cf-pdf-meta-title">
-      <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
-    </p>
-    <hr />
-    {renderComponent}
+        <b>Document Type: </b>
+        <span title={this.props.doc.type} className="cf-document-type">
+          {this.props.doc.type}
+        </span>
+      </p>
+      <p className="cf-pdf-meta-title">
+        <b>Receipt Date:</b> {formatDateStr(this.props.doc.receivedAt)}
+      </p>
+      <hr />
+      {renderComponent}
     </div>;
   }
 }
