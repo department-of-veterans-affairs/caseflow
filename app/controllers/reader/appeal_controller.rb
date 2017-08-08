@@ -12,6 +12,28 @@ class Reader::AppealController < Reader::ApplicationController
     end
   end
 
+  def find_appeals_by_vbms_id
+    vmbs_id = params[:vmbs_id]
+
+    respond_to do |format|
+      format.json do
+        MetricsService.record("VACOLS: Get appeal information for #{vmbs_id}",
+                              name: "AppealController.find_appeals_by_vbms_id") do
+          appeals = Appeal.appeals_by_vbms_id(vacols_id)
+
+          hashed_appeals = {}
+          appeals.each do |appeal|
+            hashed_appeals << appeals.to_hash(issues: appeal.issues)
+          end
+
+          render json: {
+            appeals: hashed_appeals
+          }
+        end
+      end
+    end
+  end
+
   def show
     vacols_id = params[:id]
 
