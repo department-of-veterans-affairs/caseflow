@@ -278,6 +278,8 @@ RSpec.feature "Reader" do
     scenario "Next and Previous buttons move between docs" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       find("#button-next").click
+
+      find("h3", text: "Document information").click
       expect(find(".cf-document-type")).to have_text("BVA Decision")
       find("#button-previous").click
       find("#button-previous").click
@@ -293,6 +295,7 @@ RSpec.feature "Reader" do
 
       add_comment("comment text")
       click_on "Edit"
+      find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
       find("#editCommentBox-1").send_keys(:arrow_right)
@@ -705,6 +708,7 @@ RSpec.feature "Reader" do
     scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
+      find("h3", text: "Document information").click
 
       # Expect only the first page of the pdf to be rendered
       find("#hide-menu-header").click
@@ -722,6 +726,7 @@ RSpec.feature "Reader" do
         find_all(".rc-collapse-header")[index].click
       end
 
+      find("h3", text: "Document information").click
       click_accordion_header(0)
       expect(page).to_not have_content("Document Type")
       click_accordion_header(0)
@@ -741,6 +746,29 @@ RSpec.feature "Reader" do
       expect(page).to_not have_content("Add a comment")
       click_accordion_header(3)
       expect(page).to have_content("Add a comment")
+    end
+
+    scenario "Document information contains Claims information" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+      find("h3", text: "Document information").click
+
+      expect(page).to have_content("Document Type")
+      expect(page).to have_content("Veteran ID")
+      expect(page).to have_content(appeal.vbms_id)
+      expect(page).to have_content("Type")
+      expect(page).to have_content(appeal.type)
+      expect(page).to have_content("Docket Number")
+      expect(page).to have_content(appeal.docket_number)
+      expect(page).to have_content("Regional Office")
+      expect(page).to have_content("#{appeal.regional_office[:key]} - #{appeal.regional_office[:city]}")
+      expect(page).to have_content("Issues")
+      appeal.issues do |issue|
+        expect(page).to have_content(issue.type[:label])
+        issue.levels do |level|
+          expect(page).to have_content(level)
+        end
+      end
     end
 
     scenario "Open and close keyboard shortcuts modal" do
