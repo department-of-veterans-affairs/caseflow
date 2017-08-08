@@ -40,13 +40,15 @@ const getDate = (date, timezone) => {
 
 export class DocketHearingRow extends React.Component {
 
-  setDisposition = (valueObject) => this.props.setDisposition(this.props.index, valueObject.value, this.props.hearingDate);
+  setDisposition = (valueObject) =>
+      this.props.setDisposition(this.props.index, valueObject.value, this.props.hearingDate);
 
   setHoldOpen = (valueObject) => this.props.setHoldOpen(this.props.index, valueObject.value, this.props.hearingDate);
 
   setAOD = (valueObject) => this.props.setAOD(this.props.index, valueObject.value, this.props.hearingDate);
 
-  setTranscriptRequested = (value) => this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+  setTranscriptRequested = (value) =>
+      this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
   setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
