@@ -43,7 +43,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
       @counts[:docs_attempted] += 1
       record_doc_outcome(fetch_document_content(doc))
     end
-  rescue HTTPClient::KeepAliveDisconnected => e
+  rescue HTTPClient::KeepAliveDisconnected, VBMS::ClientError => e
     # VBMS connection may die when attempting to retrieve list of docs for appeal
     @counts[:appeals_failed] += 1
     @counts[:consecutive_failures] += 1

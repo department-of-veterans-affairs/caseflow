@@ -127,8 +127,30 @@ describe RetrieveDocumentsForReaderJob do
       end
     end
 
-    context "when VBMS exception is thrown" do\
-      it "catches the exception and continues to the next document" do
+    context "when VBMS exception is thrown" do
+      it "catches the exception when thrown by fetch_documents_for and continues to the next appeal" do
+        # Fail test if Mock is called for non-reader user
+        expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
+        dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
+
+        # Expect all tests to call Slack service at the end
+        expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1]).once
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
+          .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>")).once
+
+        expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
+
+        RetrieveDocumentsForReaderJob.perform_now
+
+        expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
+        expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
+        expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+      end
+
+      it "catches the exception when thrown by fetch_content and continues to the next document" do
         # Fail test if Mock is called for non-reader user
         expect(Fakes::CaseAssignmentRepository).not_to receive(:load_from_vacols).with(non_reader_user.css_id)
         dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
