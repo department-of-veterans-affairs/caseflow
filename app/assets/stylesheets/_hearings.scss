@@ -6,6 +6,11 @@
 
 $color-hearings-saving: #777;
 
+.saving {
+  font-style: italic;
+  color: $color-hearings-saving;
+}
+
 .cf-hearings,
 .cf-hearings-schedule,
 .cf-hearings-worksheet {
@@ -100,12 +105,6 @@ $color-hearings-saving: #777;
           width: 75%;
           text-align: right;
         }
-      }
-
-      // TODO: get rule into a SaveData component
-      .saving {
-        font-style: italic;
-        color: $color-hearings-saving;
       }
     }
 
