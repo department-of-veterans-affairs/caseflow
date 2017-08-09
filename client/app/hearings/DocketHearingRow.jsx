@@ -4,7 +4,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAOD, setTranscriptRequested } from './actions/Dockets';
+import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from './actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
@@ -45,7 +45,7 @@ export class DocketHearingRow extends React.Component {
 
   setHoldOpen = (valueObject) => this.props.setHoldOpen(this.props.index, valueObject.value, this.props.hearingDate);
 
-  setAOD = (valueObject) => this.props.setAOD(this.props.index, valueObject.value, this.props.hearingDate);
+  setAod = (valueObject) => this.props.setAod(this.props.index, valueObject.value, this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
       this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
@@ -95,7 +95,7 @@ export class DocketHearingRow extends React.Component {
             label="AOD"
             name={`hearing.${this.props.date}.${index}.${hearing.id}.aod`}
             options={aodOptions}
-            onChange={this.setAOD}
+            onChange={this.setAod}
             value={hearing.aod}
             searchable={true}
           />
@@ -133,7 +133,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setNotes,
   setDisposition,
   setHoldOpen,
-  setAOD,
+  setAod,
   setTranscriptRequested
 }, dispatch);
 

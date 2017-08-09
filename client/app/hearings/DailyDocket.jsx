@@ -35,7 +35,8 @@ export class DailyDocket extends React.Component {
             </tr>
           </thead>
           {docket.map((hearing, index) =>
-            <DocketHearingRow key={index}
+            <DocketHearingRow
+              key={index}
               index={index}
               hearing={hearing}
               hearingDate={this.props.date}

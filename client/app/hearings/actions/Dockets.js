@@ -48,7 +48,7 @@ export const setHoldOpen = (hearingIndex, value, date) => ({
   }
 });
 
-export const setAOD = (hearingIndex, value, date) => ({
+export const setAod = (hearingIndex, value, date) => ({
   type: Constants.SET_AOD,
   payload: {
     hearingIndex,
