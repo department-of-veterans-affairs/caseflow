@@ -48,6 +48,10 @@ export class PdfUI extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('click', this.onBackToClaimsFolder);
+  }
+
   zoom = (delta) => () => {
     const nextScale = Math.max(MINIMUM_ZOOM, _.round(this.state.scale + delta, 2));
     const zoomDirection = delta > 0 ? 'in' : 'out';
@@ -152,7 +156,9 @@ export class PdfUI extends React.Component {
 
   onBackToClaimsFolder = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
-    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
+    if (this.props.placedButUnsavedAnnotation) {
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
+    }
     this.props.onShowList();
   }
 
@@ -257,7 +263,7 @@ export class PdfUI extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'filteredDocIds'),
+  ..._.pick(state.ui, 'filteredDocIds', 'placedButUnsavedAnnotation'),
   docListIsFiltered: docListIsFiltered(state),
   ...state.ui.pdf
 });
