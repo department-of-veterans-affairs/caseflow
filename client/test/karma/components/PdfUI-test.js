@@ -112,16 +112,19 @@ describe('PdfUI', () => {
       });
 
       context('backToClaimsFolder', () => {
-        it('calls the onShowList prop', () => {
+        it.only('calls the onShowList and stopPlacingAnnotation props', () => {
           const mockOnClick = sinon.spy();
+          const mockOnClick2 = sinon.spy();
 
           wrapper.setProps({
             showClaimsFolderNavigation: true,
-            onShowList: mockOnClick
+            onShowList: mockOnClick,
+            stopPlacingAnnotation: mockOnClick2
           });
           wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
 
           expect(mockOnClick.calledOnce).to.be.true;
+          expect(mockOnClick2.calledOnce).to.be.true;
         });
       });
     });
