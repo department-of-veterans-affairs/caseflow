@@ -112,7 +112,7 @@ describe('PdfUI', () => {
       });
 
       context('backToClaimsFolder', () => {
-        it.only('calls the onShowList and stopPlacingAnnotation props', () => {
+        it('calls the onShowList and stopPlacingAnnotation props', () => {
           const mockOnClick = sinon.spy();
           const mockOnClick2 = sinon.spy();
 
