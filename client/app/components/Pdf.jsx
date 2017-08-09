@@ -482,8 +482,7 @@ export class Pdf extends React.PureComponent {
     // If the document has not been retrieved yet, we make a request to the server and
     // set isGettingPdf true so that we don't try to request it again, while the first
     // request is finishing.
-    // TODO Figure out how to fix this code without setting this to false!
-    this.isGettingPdf[file] = false;
+    this.isGettingPdf[file] = true;
 
     return PDFJS.getDocument({
       url: file,
