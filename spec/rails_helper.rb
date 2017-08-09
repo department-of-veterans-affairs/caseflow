@@ -95,6 +95,7 @@ module StubbableUser
       self.stub = User.from_session(
         { "user" =>
           { "id" => "DSUSER",
+            "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",
             "roles" => roles || ["Certify Appeal"],
