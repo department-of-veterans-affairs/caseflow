@@ -27,7 +27,7 @@ class EstablishClaim < Task
   end
 
   cache_attribute :cached_outcoded_by do
-    appeal.outcoded_by
+    appeal.outcoded_by_name
   end
 
   def to_hash
