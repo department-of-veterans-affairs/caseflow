@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import { fetchAppealDetails } from './actions';
+import { getAppealIfItDoesNotExist } from '../reader/utils';
 
 import _ from 'lodash';
 import DocumentsTable from './DocumentsTable';
@@ -14,10 +15,7 @@ import NoSearchResults from './NoSearchResults';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-    if (_.isEmpty(this.props.appeal) ||
-      (this.props.appeal.vacols_id !== this.props.match.params.vacolsId)) {
-      this.props.fetchAppealDetails(this.props.match.params.vacolsId);
-    }
+    getAppealIfItDoesNotExist(this);
   }
 
   render() {
