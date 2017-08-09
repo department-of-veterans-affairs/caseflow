@@ -13,7 +13,6 @@ module AssociatedVacolsModel
     def vacols_attr_accessor(*fields)
       fields.each do |field|
         define_method field do
-          fail LazyLoadingTurnedOffError if !lazy_loading_enabled? && !@provided_values.include?(field)
           check_and_load_vacols_data!
           instance_variable_get("@#{field}".to_sym)
         end
@@ -45,14 +44,6 @@ module AssociatedVacolsModel
     check_and_load_vacols_data!
   end
 
-  def turn_off_lazy_loading(initial_values: nil)
-    @vacols_load_status = :disabled
-    @provided_values = initial_values.keys
-    initial_values.each do |key, value|
-      send("#{key}=", value)
-    end
-  end
-
   private
 
   def perform_vacols_request
@@ -66,10 +57,6 @@ module AssociatedVacolsModel
   end
 
   def vacols_success?
-    @vacols_load_status == :success || @vacols_load_status == :disabled
-  end
-
-  def lazy_loading_enabled?
-    @vacols_load_status != :disabled
+    @vacols_load_status == :success
   end
 end

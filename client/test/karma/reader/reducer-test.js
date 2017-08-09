@@ -581,4 +581,29 @@ describe('Reader reducer', () => {
       ]);
     });
   });
+
+  describe(Constants.RECEIVE_APPEAL_DETAILS_FAILURE, () => {
+    const getContext = () => {
+      const stateAfterFetchFailure = {
+        didLoadAppealFail: false
+      };
+
+      return {
+        stateAfterFetchFailure: reduceActions([
+          {
+            type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+            payload: {
+              failedToLoad: true
+            }
+          },
+          stateAfterFetchFailure])
+      };
+    };
+
+    it('shows an error message when the request fails', () => {
+      const { stateAfterFetchFailure } = getContext();
+
+      expect(stateAfterFetchFailure.didLoadAppealFail).to.equal(true);
+    });
+  });
 });
