@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6e8bed78dcb4e6699f55257ad90d016b71639ec0"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "ff94bc32a637c77230a3fa5f793e77966ec02c61"
 
 gem "moment_timezone-rails"
 
