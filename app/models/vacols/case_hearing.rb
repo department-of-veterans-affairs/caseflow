@@ -50,6 +50,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
+  after_update :create_or_update_diary, if: :holddays_changed?
 
   # :nocov:
   class << self
@@ -111,6 +112,24 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def update_hearing_action
     brieff.update(bfha: HearingMapper.bfha_vacols_code(self))
+  end
+
+  def create_or_update_diary
+    css_id = RequestStore.store[:current_user].css_id.upcase
+
+    VACOLS::Note.delete!(case_id: brieff.bfkey,
+                         code: :A,
+                         user_id: css_id) if holddays.nil?
+
+    if holddays && holddays > 0
+      VACOLS::Note.update_or_create!(case_id: brieff.bfkey,
+                                     text: "Record held open by VLJ at hearing for additional evidence.",
+                                     code: :A,
+                                     days_to_complete: holddays + 5,
+                                     days_til_due: holddays + 5,
+                                     assigned_to: VACOLS::Note.assignee(:A),
+                                     user_id: css_id)
+    end
   end
   # :nocov:
 end

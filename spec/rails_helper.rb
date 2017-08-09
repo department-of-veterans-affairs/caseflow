@@ -52,15 +52,10 @@ end
 
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
-# The CHROME_ARGS environment is set in test envrionments
-# to allow headless tests to run. It is expected to be a space separated list
-chrome_args = !ENV["CHROME_ARGS"].nil? ? ENV["CHROME_ARGS"].split(" ") : nil
-
 Capybara.register_driver(:parallel_sniffybara) do |app|
   options = {
     port: 51_674,
     browser: :chrome,
-    args: chrome_args,
     prefs: {
       download: {
         prompt_for_download: false,

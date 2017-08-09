@@ -303,8 +303,8 @@ export class HearingWorksheet extends React.Component {
             aria-label="Comments and special instructions to attorneys"></textarea>
         </div>
       </div>
-      <div classNames={['cf-push-right']} >
-        <Button name="signup-1" classNames={['cf-push-right']}>Review eFolder</Button>
+      <div className="cf-push-right">
+        <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
       </div>
     </div>;
   }

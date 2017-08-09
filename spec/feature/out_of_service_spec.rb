@@ -121,7 +121,7 @@ RSpec.feature "Out of Service" do
     end
   end
 
-  context "Hearings Prep" do
+  context "Hearing Prep" do
     before do
       2.times do
         Generators::Hearing.build(
@@ -139,7 +139,7 @@ RSpec.feature "Out of Service" do
     end
 
     after do
-      Rails.cache.write("hearings_prep_out_of_service", false)
+      Rails.cache.write("hearing_prep_out_of_service", false)
     end
 
     let!(:current_user) do
@@ -153,7 +153,7 @@ RSpec.feature "Out of Service" do
     end
 
     scenario "When out of service is enabled, it shows Out of service page" do
-      Rails.cache.write("hearings_prep_out_of_service", true)
+      Rails.cache.write("hearing_prep_out_of_service", true)
       visit "/hearings/dockets"
       expect(page).to have_content("Technical Difficulties")
     end
