@@ -27,25 +27,25 @@ Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://git
 
 Then run the following:
 
-> $ rbenv install 2.2.4
+    rbenv install 2.2.4
 
-> $ gem install bundler
+    gem install bundler
 
 You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
-> $ brew install postgresql
+    brew install postgresql
 
-> $ brew install redis
+    brew install redis
 
-> $ brew install chromedriver
+    brew install chromedriver
 
 You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let brew tell you how to do that:
 
-> $ brew info redis
+    brew info redis
 
-> $ brew info postgresql
+    brew info postgresql
 
-> $ brew info chromedriver
+    brew info chromedriver
 
 Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
@@ -54,29 +54,29 @@ The version on the website does not work on recent versions of OSX (Sierra and E
 
 For the frontend, you'll need to install Node and the relevant npm modules
 
-> $ nvm install v6.10.2
+    nvm install v6.10.2
 
-> $ cd client && nvm use && npm install
+    cd client && nvm use && npm install
 
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.
 
-`$ bundle install --without production staging`
+    bundle install --without production staging
 
 Setup and seed the DB
 
-> $ rake db:setup
+    rake db:setup
 
 And by default, Rails will run in the development environment, which will mock out data. For an improved development experience with faster iteration, the application by default runs in "hot mode". This will cause Javascript changes to immediately show up on the page on save, without having to reload the page. You can start the application via:
 
-`$ foreman start`
+    foreman start
 
 Or to run the rails server and frontend webpack server separately:
 
-`$ REACT_ON_RAILS_ENV=hot bundle exec rails s`
+    REACT_ON_RAILS_ENV=hot bundle exec rails s
 
-`$ cd client && nvm use && npm run dev`
+    cd client && nvm use && npm run dev
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
@@ -151,7 +151,7 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 
 ### Run the app
 Now you'll be able to install the gems required to run the app connected to VBMS and VACOLS:
-`$ bundle install --with staging`
+    bundle install --with staging
 
 Set the development VACOLS credentials as environment variables.
 (ask a team member for them)
@@ -161,7 +161,7 @@ export VACOLS_PASSWORD=secret_password
 ```
 
 Finally, just run Rails in the staging environment!
-`$ rails s -e staging`
+    rails s -e staging
 
 ## Changing between test users
 Select 'Switch User' from the dropdown or navigate to
@@ -177,7 +177,7 @@ add more links and users as needed.
 ## Running tests
 
 To run the test suite:
-`$ rake`
+    rake
 
 ### Parallelized tests
 You'll be able to get through the tests a lot faster if you put all your CPUs to work.
@@ -187,13 +187,13 @@ Parallel test categories are split up by category:
 - CATEGORY: The other feature tests are split by subfolders in `spec/feature/`. Examples are `certification` and `reader`
 
 To set your environment up for parallel testing run:
-`$ rake spec:parallel:setup`
+    rake spec:parallel:setup
 
 To run the test suite in parallel:
-`$ rake spec:parallel`
+    rake spec:parallel
 
 You can run any one of the parallel categories on its own via (where `CATEGORY` is `unit`, `certification`, etc):
-`$ rake spec:parallel:CATEGORY`
+    rake spec:parallel:CATEGORY
 
 ## Feature Toggle
 
