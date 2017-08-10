@@ -91,6 +91,7 @@ export class PdfViewer extends React.Component {
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getPrevDocId())();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
     if (event.key === 'ArrowRight') {
       window.analyticsEvent(
@@ -99,6 +100,7 @@ export class PdfViewer extends React.Component {
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getNextDocId())();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
   }
 
