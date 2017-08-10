@@ -30,6 +30,10 @@ export default class UnpreparedTasksIndex extends React.Component {
       {
         header: 'Days Since Outcoding',
         valueFunction: (task) => `${task.days_since_creation} days`
+      },
+      {
+        header: 'Outcoded By',
+        valueFunction: (task) => `${task.cached_outcoded_by}`
       }
     ];
 

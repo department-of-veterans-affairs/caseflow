@@ -19,10 +19,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def show
-    # If we have sufficient metadata to show a single document,
-    # then we'll render the show. Otherwise we want to render index
-    # which will grab the metadata for all documents
-    return render(:index) unless metadata?
+    render(:index)
   end
 
   private
@@ -52,21 +49,6 @@ class Reader::DocumentsController < Reader::ApplicationController
       end
     end
   end
-
-  def metadata?
-    params[:received_at] && params[:type] && params[:filename]
-  end
-
-  # :nocov:
-  def single_document
-    Document.find(params[:id]).tap do |t|
-      t.filename = params[:filename]
-      t.type = params[:type]
-      t.received_at = params[:received_at]
-    end
-  end
-  helper_method :single_document
-  # :nocov:
 
   def appeal_id
     params[:appeal_id]
