@@ -38,7 +38,7 @@ const getDate = (date, timezone) => {
     replace(/(p|a)m/, '$1.m.');
 };
 
-export class DocketHearingRow extends React.Component {
+export class DocketHearingRow extends React.PureComponent {
 
   setDisposition = (valueObject) =>
       this.props.setDisposition(this.props.index, valueObject.value, this.props.hearingDate);
