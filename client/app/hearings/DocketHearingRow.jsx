@@ -55,7 +55,6 @@ export class DocketHearingRow extends React.PureComponent {
     const {
       index,
       hearing,
-      hearingDate
     } = this.props;
 
     return <tbody>
@@ -76,32 +75,32 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-actions" rowSpan="2">
           <SearchableDropdown
             label="Disposition"
-            name={`hearing.${this.props.date}.${index}.${hearing.id}.disposition`}
+            name={`${hearing.id}.disposition`}
             options={dispositionOptions}
             onChange={this.setDisposition}
             value={hearing.disposition}
-            searchable={true}
+            searchable
           />
           <SearchableDropdown
             label="Hold Open"
-            name={`hearing.${this.props.date}.${index}.${hearing.id}.hold_open`}
+            name={`${hearing.id}.hold_open`}
             options={holdOptions}
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
-            searchable={true}
+            searchable
           />
           <SearchableDropdown
             label="AOD"
-            name={`hearing.${this.props.date}.${index}.${hearing.id}.aod`}
+            name={`${hearing.id}.aod`}
             options={aodOptions}
             onChange={this.setAod}
             value={hearing.aod}
-            searchable={true}
+            searchable
           />
           <div className="transcriptRequested">
             <Checkbox
               label="Transcript Requested"
-              name={`hearing.${this.props.date}.${index}.${hearing.id}.transcript_requested`}
+              name={`${hearing.id}.transcript_requested`}
               value={hearing.transcriptRequested}
               onChange={this.setTranscriptRequested}
             />
@@ -112,10 +111,10 @@ export class DocketHearingRow extends React.PureComponent {
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
-            <label htmlFor={`hearing.${hearingDate}.${index}.${hearing.id}.notes`}>Notes:</label>
+            <label htmlFor={`${hearing.id}.notes`}>Notes:</label>
             <div>
               <textarea
-                id={`hearing.${hearingDate}.${index}.${hearing.id}.notes`}
+                id={`${hearing.id}.notes`}
                 defaultValue={hearing.notes}
                 onChange={this.setNotes}
                 maxLength="100"
