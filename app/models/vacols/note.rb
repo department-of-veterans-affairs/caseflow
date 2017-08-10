@@ -4,7 +4,6 @@ class VACOLS::Note < VACOLS::Record
 
   class InvalidNoteCodeError < StandardError; end
   class InvalidNotelengthError < StandardError; end
-  class TextRequiredError < StandardError; end
 
   CODE_ACTKEY_MAPPING = {
     other: "BVA30",
@@ -43,7 +42,7 @@ class VACOLS::Note < VACOLS::Record
 
     # rubocop:disable MethodLength
     def create!(note)
-      validate!(text: note[:text], code: note[:code])
+      validate!(note)
 
       primary_key = generate_primary_key(note[:case_id])
 
@@ -97,28 +96,26 @@ class VACOLS::Note < VACOLS::Record
       record = find_active_by_user_and_type(note)
       return create!(note) unless record
 
-      attrs = {
-        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
-        tskdtc: note[:days_to_complete]
-      }
-      # only send update to tskddue if days_til_due is passed, otherwise it will cause
-      # invalid updates to tskddue
-      attrs = attrs.merge(tskddue: Time.zone.now + note[:days_til_due].days) if note[:days_til_due]
-      record.update(attrs)
+      VacolsHelper.validate_presence!(note, [:days_to_complete, :days_til_due])
+
+      record.update!(tskmdtm: VacolsHelper.local_time_with_utc_timezone,
+                     tskdtc: note[:days_to_complete],
+                     tskddue: Time.zone.now + note[:days_til_due].days)
     end
 
-    # ACTCODE keeps track who should be assigned diaries of a given type (based on the note_code)
+    # ACSPARE1 keeps track who should be assigned diaries of a given type (based on the note_code)
     def assignee(note_code)
-      note_code = conn.quote(CODE_ACTKEY_MAPPING[note_code])
-      conn.exec_query(<<-SQL).to_hash.first["acspare1"]
-        select ACSPARE1 from ACTCODE where ACTCKEY = #{note_code}
-      SQL
+      VACOLS::Actcode.find_by(actckey: CODE_ACTKEY_MAPPING[note_code]).try(:acspare1)
     end
 
-    def validate!(text:, code:)
-      fail(TextRequiredError) unless text
-      fail(InvalidNotelengthError) if text.length > 280
-      fail(InvalidNoteCodeError) unless CODE_ACTKEY_MAPPING[code]
+    def default_number_of_days(note_code)
+      VACOLS::Actcode.find_by(actckey: CODE_ACTKEY_MAPPING[note_code]).try(:actcdtc)
+    end
+
+    def validate!(note)
+      VacolsHelper.validate_presence!(note, [:days_to_complete, :days_til_due, :code, :user_id, :assigned_to, :case_id, :text])
+      fail(InvalidNotelengthError) if note[:text].length > 280
+      fail(InvalidNoteCodeError) unless CODE_ACTKEY_MAPPING[note[:code]]
     end
   end
 end
