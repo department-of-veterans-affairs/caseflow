@@ -151,7 +151,7 @@ class Appeal < ActiveRecord::Base
     [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ").titleize
   end
 
-  # When the decision is signed by an attorney at BVA, an outcoder physically signs the appeal decision,
+  # When the decision is signed by an attorney at BVA, an outcoder physically stamps the date,
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize

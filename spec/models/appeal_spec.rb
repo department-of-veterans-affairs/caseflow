@@ -685,7 +685,7 @@ describe Appeal do
       Appeal.new(
         outcoder_last_name: "King",
         outcoder_middle_initial: "Q",
-        outcoder_first_name: "Andrew",
+        outcoder_first_name: "Andrew"
       )
     end
 
