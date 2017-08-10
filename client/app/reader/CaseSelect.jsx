@@ -3,13 +3,25 @@ import { connect } from 'react-redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
+import { Redirect } from 'react-router-dom';
 
-import { getClaimTypeDetailInfo } from '../reader/utils';
-import { fetchAppealUsingVeteranId } from './actions';
+import { getClaimTypeDetailInfo, generateIssueList } from '../reader/utils';
+import { fetchAppealUsingVeteranId, clearLoadedAppeal, clearReceivedAppeals, onReceiveAppealDetails } from './actions';
 
 import SearchBar from '../components/SearchBar';
+import Modal from '../components/Modal';
+import RadioField from '../components/RadioField';
 
 class CaseSelect extends React.PureComponent {
+
+  constructor() {
+    super();
+    this.state = {
+      selectedAppealVacolsId: null
+    }
+  }
+
+  componentDidMount = () => this.props.clearLoadedAppeal();
 
   renderIssuesColumnData = (appeal) => {
     const issues = appeal.issues || [];
@@ -20,8 +32,8 @@ class CaseSelect extends React.PureComponent {
           const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
 
           return <li key={issue.vacols_sequence_id}>
-              {descriptionLabel}
-             {this.renderIssueLevels(issue)}
+            {descriptionLabel}
+            {this.renderIssueLevels(issue)}
           </li>;
         })}
       </ol>
@@ -73,18 +85,57 @@ class CaseSelect extends React.PureComponent {
   ];
 
   getKeyForRow = (index, row) => row.vacols_id;
+  
 
   searchOnChange = (text) => {
-    console.log(text);
     this.props.fetchAppealUsingVeteranId(text);
   }
 
+  handleModalClose = () => {
+    // clearing the state of the modal
+    this.setState({ selectedAppealVacolsId: null });
+    this.props.clearReceivedAppeals();
+  }
+
+  handleSelectAppeal = () => {
+    console.log(this.state.selectedAppealVacolsId);
+    const appeal = _.find(this.props.receivedAppeals,
+      { vacols_id: this.state.selectedAppealVacolsId });
+
+    this.props.onReceiveAppealDetails(appeal);
+  }
+
+  handleChangeAppealSelection = (vacolsId) => {
+    console.log(vacolsId);
+    this.setState({selectedAppealVacolsId: vacolsId})
+  }
+
   render() {
-    console.log(this.props.loadedAppeal);
+    console.log(this.props.receivedAppeals)
+    if (this.props.loadedAppeal.vacols_id) {
+      return <Redirect
+        to={`/${this.props.loadedAppeal.vacols_id}/documents`}/>;
+    }
 
     if (!this.props.assignments) {
       return null;
     }
+
+    const createAppealOptions = (appeals) => {
+      return appeals.map((appeal) => {
+        return {
+          displayText: <div>
+            <strong>Veteran</strong> {appeal.veteran_full_name} <br />
+            <strong>Veteran ID</strong> {appeal.vbms_id} <br />
+            <strong>Issues</strong><br />
+              <ol>
+                {generateIssueList(appeal)}
+              </ol>
+          </div>,
+          value: appeal.vacols_id
+        };
+      });
+    };
 
     return <div className="usa-grid">
       <div className="cf-app">
@@ -96,6 +147,28 @@ class CaseSelect extends React.PureComponent {
             onChange={this.searchOnChange}
             loading={false}
           />
+          { _.size(this.props.receivedAppeals) ? <Modal
+            buttons = {[
+              { classNames: ['cf-modal-link', 'cf-btn-link'],
+                name: 'Cancel',
+                onClick: this.handleModalClose
+              },
+              { classNames: ['usa-button', 'usa-button-primary'],
+                name: 'Okay',
+                onClick: this.handleSelectAppeal
+              }
+            ]}
+            closeHandler={this.handleModalClose}
+            title = "Select claims folder">
+            <RadioField
+              name="claims-folder-select"
+              options={createAppealOptions(this.props.receivedAppeals)}
+              value={this.state.selectedAppealVacolsId}
+              onChange={this.handleChangeAppealSelection}
+              hideLabel={false}
+            />
+          </Modal> : ''
+          }
           <p className="cf-lead-paragraph">
             Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
@@ -116,12 +189,22 @@ class CaseSelect extends React.PureComponent {
 const mapDispatchToProps = (dispatch) => ({
   fetchAppealUsingVeteranId(veteranId) {
     dispatch(fetchAppealUsingVeteranId(veteranId));
+  },
+  clearLoadedAppeal() {
+    dispatch(clearLoadedAppeal());
+  },
+  clearReceivedAppeals() {
+    dispatch(clearReceivedAppeals());
+  },
+  onReceiveAppealDetails(appeal) {
+    dispatch(onReceiveAppealDetails(appeal));
   }
 });
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'assignments'),
-  ..._.pick(state, 'loadedAppeal')
+  ..._.pick(state, 'loadedAppeal'),
+  ..._.pick(state.ui, 'receivedAppeals')
 });
 
 export default connect(

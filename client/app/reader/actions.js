@@ -612,28 +612,35 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   payload: { appeals }
 });
 
-import history from './history' 
+export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
+  type: Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID,
+  payload: { appeals }
+});
 
 export const fetchAppealUsingVeteranId = (veteranId) => (
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
       const numOfAppeals = _.size(returnedObject.appeals);
-      console.log(numOfAppeals);
 
+      // if the veteran only has one appeal associated
       if (numOfAppeals === 1) {
-        console.log("History");
-        console.log(history)
-        console.log(`/reader/appeal/${returnedObject.appeals[0].vacols_id}/documents`)
-        history.replace(`/reader/appeal/${returnedObject.appeals[0].vacols_id}/documents`)
-        //dispatch(onReceiveAppealDetails(returnedObject.appeals[0]));
-      } else if (_.size(numOfAppeals) > 1) {
+        dispatch(onReceiveAppealDetails(returnedObject.appeals[0]));
+      } else if (numOfAppeals > 1) {
         // here
+        dispatch(onReceiveMultipleAppealsWithVeteranId(returnedObject.appeals));
       }
     }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
 
+export const clearLoadedAppeal = () => ({
+  type: Constants.CLEAR_LOADED_APPEAL
+});
+
+export const clearReceivedAppeals = () => ({
+  type: Constants.CLEAR_RECEIVED_APPEALS
+});
 
 export const addNewTag = (doc, tags) => (
   (dispatch) => {

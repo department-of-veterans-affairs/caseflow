@@ -285,6 +285,14 @@ export const reducer = (state = initialState, action = {}) => {
           $set: true
         }
       });
+  case Constants.CLEAR_LOADED_APPEAL:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: {}
+        }
+      }
+    )
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -756,6 +764,22 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID:
+    return update(state, {
+      ui: {
+        receivedAppeals: {
+          $set: action.payload.appeals
+        }
+      }
+    });
+  case Constants.CLEAR_RECEIVED_APPEALS:
+    return update(state, {
+      ui: {
+        receivedAppeals: {
+          $set: {}
+        }
+      }
+    })
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
     return update(showErrorMessage(state, 'annotation'), {
       ui: {
