@@ -17,7 +17,7 @@ describe('.setNotes', () => {
       }
     };
 
-    expect(Actions.setNotes(hearingIndex, notes, date)).to.eql(expectedAction);
+    expect(Actions.setNotes(hearingIndex, notes, date)).to.deep.equal(expectedAction);
   });
 });
 
@@ -35,7 +35,7 @@ describe('.setDisposition', () => {
       }
     };
 
-    expect(Actions.setDisposition(hearingIndex, disposition, date)).to.eql(expectedAction);
+    expect(Actions.setDisposition(hearingIndex, disposition, date)).to.deep.equal(expectedAction);
   });
 });
 
@@ -53,7 +53,7 @@ describe('.setHoldOpen', () => {
       }
     };
 
-    expect(Actions.setHoldOpen(hearingIndex, holdOpen, date)).to.eql(expectedAction);
+    expect(Actions.setHoldOpen(hearingIndex, holdOpen, date)).to.deep.equal(expectedAction);
   });
 });
 
@@ -71,7 +71,7 @@ describe('.setAod', () => {
       }
     };
 
-    expect(Actions.setAod(hearingIndex, aod, date)).to.eql(expectedAction);
+    expect(Actions.setAod(hearingIndex, aod, date)).to.deep.equal(expectedAction);
   });
 });
 
@@ -89,6 +89,6 @@ describe('.setTranscriptRequested', () => {
       }
     };
 
-    expect(Actions.setTranscriptRequested(hearingIndex, transcriptRequested, date)).to.eql(expectedAction);
+    expect(Actions.setTranscriptRequested(hearingIndex, transcriptRequested, date)).to.deep.equal(expectedAction);
   });
 });
