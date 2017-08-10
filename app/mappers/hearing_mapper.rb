@@ -3,6 +3,7 @@ module HearingMapper
   class InvalidAodError < StandardError; end
   class InvalidDispositionError < StandardError; end
   class InvalidTranscriptRequestedError < StandardError; end
+  class InvalidNotesError < StandardError; end
 
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
@@ -37,7 +38,9 @@ module HearingMapper
     end
 
     def notes_to_vacols_format(value)
-      value.present? ? value[0, 100] : nil
+      return if value.nil?
+      fail(InvalidNotesError) if !value.is_a?(String)
+      value[0, 100]
     end
 
     def disposition_to_vacols_format(value, keys)
@@ -48,13 +51,13 @@ module HearingMapper
     end
 
     def hold_open_to_vacols_format(value)
-      fail(InvalidHoldOpenError) if value && (!value.is_a?(Integer) || value < 0 || value > 90)
+      fail(InvalidHoldOpenError) if !value.nil? && (!value.is_a?(Integer) || value < 0 || value > 90)
       value
     end
 
     def aod_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value)
-      fail(InvalidAodError) if value && vacols_code.blank?
+      fail(InvalidAodError) if !value.nil? && vacols_code.blank?
       vacols_code
     end
 

@@ -47,16 +47,19 @@ describe Document do
   end
 
   context ".content_url" do
-    context "efolder_docs_api is enabled" do
+    context "EFolderService is ExternalApi::EfolderService" do
+      OldEFolderService = EFolderService
+
       before do
-        FeatureToggle.enable!(:efolder_docs_api)
+        EFolderService = ExternalApi::EfolderService
       end
 
-      after { FeatureToggle.disable!(:efolder_docs_api) }
+      after { EFolderService = OldEFolderService }
 
       context "application is reader" do
         before do
           RequestStore.store[:application] = "reader"
+          FeatureToggle.enable!(:efolder_docs_api)
           expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         end
 
@@ -80,7 +83,7 @@ describe Document do
       end
     end
 
-    context "efolder_docs_api is disabled" do
+    context "EFolderService is Fakes::VBMSService" do
       before do
         FeatureToggle.disable!(:efolder_docs_api)
       end

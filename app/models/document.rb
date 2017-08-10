@@ -179,7 +179,9 @@ class Document < ActiveRecord::Base
   end
 
   def content_url
-    if FeatureToggle.enabled?(:efolder_docs_api) && RequestStore.store[:application] == "reader"
+    if EFolderService == ExternalApi::EfolderService &&
+       RequestStore.store[:application] == "reader" &&
+       FeatureToggle.enabled?(:efolder_docs_api)
       URI(ExternalApi::EfolderService.efolder_base_url + "/api/v1/documents/#{efolder_id}").to_s
     else
       "/document/#{id}/pdf"

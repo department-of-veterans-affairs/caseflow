@@ -1,5 +1,5 @@
 class CertificationsController < ApplicationController
-  before_action :verify_access
+  before_action :verify_access, :check_certification_out_of_service
 
   def new
     if feature_enabled?(:certification_v2)
@@ -44,12 +44,19 @@ class CertificationsController < ApplicationController
   def certify_v2
     update_certification_from_v2_form
     validate_data_presence_v2
+
+    if %w(NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED).include?(certification.hearing_preference)
+      hearing_requested = "No"
+    else
+      hearing_requested = "Yes"
+    end
+
     form8.update_from_string_params(
       representative_type: certification.rep_type,
       representative_name: certification.rep_name,
       hearing_preference: certification.hearing_preference,
       # This field is necessary when on v2 certification but v1 form8
-      hearing_requested: certification.hearing_preference == "NO_HEARING_DESIRED" ? "No" : "Yes",
+      hearing_requested: hearing_requested,
       certifying_official_name: certification.certifying_official_name,
       certifying_official_title: certification.certifying_official_title
     )
@@ -107,6 +114,10 @@ class CertificationsController < ApplicationController
   end
 
   private
+
+  def check_certification_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("certification_out_of_service")
+  end
 
   # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
   def validate_data_presence_v2

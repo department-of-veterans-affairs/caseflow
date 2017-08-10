@@ -354,7 +354,7 @@ class Fakes::AppealRepository
   def self.seed_reader_data!
     Generators::Appeal.build(
       vacols_id: "reader_id1",
-      vbms_id: "reader_id1",
+      vbms_id: "DEMO123",
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
@@ -380,7 +380,7 @@ class Fakes::AppealRepository
     )
     Generators::Appeal.build(
       vacols_id: "reader_id2",
-      vbms_id: "reader_id2",
+      vbms_id: "DEMO456",
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
@@ -408,7 +408,7 @@ class Fakes::AppealRepository
     )
     Generators::Appeal.build(
       vacols_id: "reader_id3",
-      vbms_id: "reader_id3",
+      vbms_id: "DEMO789",
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
