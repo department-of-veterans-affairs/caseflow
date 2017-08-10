@@ -5,6 +5,7 @@ import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
+import TextareaField from '../components/TextareaField';
 import _ from 'lodash';
 
 export class HearingWorksheet extends React.Component {
@@ -24,6 +25,13 @@ export class HearingWorksheet extends React.Component {
   getKeyForRow = (index) => {
     return index;
   }
+
+
+  onTextAreaChange = (value) => {
+  this.setState({
+  });
+  this.handleFieldChange()(value);
+}
 
   render() {
 
@@ -281,26 +289,49 @@ export class HearingWorksheet extends React.Component {
         <div className="cf-hearings-worksheet-data">
           <label className="cf-hearings-worksheet-header"
             htmlFor="worksheet-contentions">Contentions</label>
-          <textarea id="worksheet-contentions" aria-label="Contentions"></textarea>
+         <TextareaField
+                name="Contentions"
+                required={false}
+                aria-label="Contentions"
+                id={this.props.id}
+          onChange={this.onTextAreaChange}
+              />
         </div>
 
         <div className="cf-hearings-worksheet-data">
           <label className="cf-hearings-worksheet-header"
             htmlFor="worksheet-periods">Periods and circumstances of service</label>
-          <textarea id="worksheet-periods" aria-label="Periods and circumstances of service"></textarea>
+       <TextareaField
+                name="worksheet-periods"
+                required={false}
+                aria-label="Periods and circumstances of service"
+                  id={this.props.id}
+          onChange={this.onTextAreaChange}
+              />
         </div>
 
         <div className="cf-hearings-worksheet-data">
           <label className="cf-hearings-worksheet-header"
             htmlFor="worksheet-evidence">Evidence</label>
-          <textarea id="worksheet-evidence" aria-label="Evidence"></textarea>
+            <TextareaField
+                name="worksheet-evidence"
+                required={false}
+                aria-label="Evidence"
+                id={this.props.id}
+          onChange={this.onTextAreaChange}
+              />
         </div>
 
         <div className="cf-hearings-worksheet-data">
           <label className="cf-hearings-worksheet-header"
             htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
-          <textarea id="worksheet-comments"
-            aria-label="Comments and special instructions to attorneys"></textarea>
+              <TextareaField
+                name="worksheet-comments"
+                required={false}
+                aria-label="Comments and special instructions to attorneys"
+                    id={this.props.id}
+              onChange={this.onTextAreaChange}
+              />
         </div>
       </div>
       <div className="cf-push-right">
