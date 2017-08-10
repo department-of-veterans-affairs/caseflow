@@ -123,8 +123,6 @@ RSpec.feature "Out of Service" do
 
   context "Hearing Prep" do
     before do
-      current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
-
       2.times do
         Generators::Hearing.build(
           user: current_user,

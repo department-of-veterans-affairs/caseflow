@@ -4,17 +4,18 @@ import { connect } from 'react-redux';
 import * as Constants from './constants';
 import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { ChervonDown, ChervonUp } from '../components/RenderFunctions';
+import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
+import { INTERACTION_TYPES } from './analytics';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
 
-  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId)
+  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId, this.props.expanded)
 
   render() {
     const { annotationsCount, expanded, docId } = this.props;
     const name = `expand ${annotationsCount} comments`;
-    const commentArrowComponent = expanded ? <ChervonUp /> : <ChervonDown />;
+    const commentArrowComponent = expanded ? <ChevronUp /> : <ChevronDown />;
 
     return <span className="document-list-comments-indicator">
       {annotationsCount > 0 &&
@@ -45,10 +46,18 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => ({
   handleToggleCommentOpened(docId) {
+
     dispatch({
       type: Constants.TOGGLE_COMMENT_LIST,
       payload: {
         docId
+      },
+      meta: {
+        analytics: {
+          category: INTERACTION_TYPES.VISIBLE_UI,
+          action: 'toggle-comment-list',
+          label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
+        }
       }
     });
   }
