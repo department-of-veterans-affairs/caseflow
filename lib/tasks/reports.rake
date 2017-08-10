@@ -22,4 +22,10 @@ namespace :reports do
     Rails.application.eager_load!
     RemandsReport.new.run!
   end
+
+  desc "Run the unprepared denials report"
+  task unprepared: [:environment] do
+    Rails.application.eager_load!
+    UnpreparedDenialsReport.new.run!
+  end
 end

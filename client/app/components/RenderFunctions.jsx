@@ -29,9 +29,9 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
 
   return (
       <div>
-        <div className="cf-loading-button-text">
+        {text && <div className="cf-loading-button-text">
           {text}
-        </div>
+        </div>}
         <div className="cf-loading-button-symbol">
           <svg
             width={imgSize}
