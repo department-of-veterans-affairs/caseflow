@@ -7,7 +7,7 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf, fetchAppealDetails } from '../reader/actions';
+  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from '../reader/actions';
 import { isUserEditingText, update, getAppealIfItDoesNotExist } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
