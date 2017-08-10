@@ -23,7 +23,7 @@ class Reader::AppealController < Reader::ApplicationController
           hashed_appeals = appeals.map { |appeal| appeal.to_hash(issues: appeal.issues) }
 
           render json: {
-            appeals:  hashed_appeals
+            appeals: hashed_appeals
           }
         end
       end
