@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { formatDateStr } from '../util/DateUtil';
 import Comment from '../components/Comment';
-import { singleDocumentLink } from '../reader/utils';
 import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
 import TagTableColumn from '../components/reader/TagTableColumn';
 import Table from '../components/Table';
@@ -116,7 +115,7 @@ class DocTypeColumn extends React.PureComponent {
       <Link
         onMouseUp={this.onClick(doc.id)}
         onClick={this.onClick(doc.id)}
-        to={singleDocumentLink(this.props.documentPathBase, doc)}
+        to={`${this.props.documentPathBase}/${doc.id}`}
         aria-label={doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')}>
         <Highlight>
           {doc.type}
