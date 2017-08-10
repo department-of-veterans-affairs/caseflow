@@ -680,6 +680,22 @@ describe Appeal do
     end
   end
 
+  context "#outcoded_by_name" do
+    let(:appeal) do
+      Appeal.new(
+        outcoder_last_name: "King",
+        outcoder_middle_initial: "Q",
+        outcoder_first_name: "Andrew"
+      )
+    end
+
+    subject { appeal.outcoded_by_name }
+
+    it "returns the correct string" do
+      expect(subject).to eq("King, Andrew, Q")
+    end
+  end
+
   context "#station_key" do
     let(:appeal) do
       Appeal.new(

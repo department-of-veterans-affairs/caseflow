@@ -73,6 +73,7 @@ class AppealRepository
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
+    outcoder_record = folder_record.outcoder
 
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
@@ -82,6 +83,9 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
+      outcoder_first_name: outcoder_record.try(:snamef),
+      outcoder_last_name: outcoder_record.try(:snamel),
+      outcoder_middle_initial: outcoder_record.try(:snamemi),
       appellant_first_name: correspondent_record.sspare1,
       appellant_middle_initial: correspondent_record.sspare2,
       appellant_last_name: correspondent_record.sspare3,
