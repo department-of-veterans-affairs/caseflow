@@ -14,7 +14,6 @@ import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { singleDocumentLink } from '../reader/utils';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 
 const ZOOM_RATE = 0.3;
@@ -71,11 +70,13 @@ export class PdfUI extends React.Component {
       INTERACTION_TYPES.VISIBLE_UI
     );
     this.props.showPdf(this.props.prevDocId)();
+    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
 
   showNextDocument = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, ACTION_NAMES.VIEW_NEXT_DOCUMENT, INTERACTION_TYPES.VISIBLE_UI);
     this.props.showPdf(this.props.nextDocId)();
+    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
   }
 
   getPageIndicator = () => {
@@ -150,6 +151,7 @@ export class PdfUI extends React.Component {
 
   onBackToClaimsFolder = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
     this.props.onShowList();
   }
 
@@ -183,7 +185,7 @@ export class PdfUI extends React.Component {
                 target="_blank"
                 button="matte"
                 onClick={this.handleClickDocumentTypeLink}
-                href={singleDocumentLink(`/reader/appeal${this.props.documentPathBase}`, this.props.doc)}>
+                href={`/reader/appeal${this.props.documentPathBase}/${this.props.doc.id}`}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
                   <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
