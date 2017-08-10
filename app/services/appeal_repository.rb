@@ -184,8 +184,14 @@ class AppealRepository
       update_location_after_dispatch!(appeal: appeal)
 
       if vacols_note
-        VACOLS::Note.create!(case_record: appeal.case_record,
-                             text: vacols_note)
+        VACOLS::Note.create!(case_id: appeal.case_record.bfkey,
+                             text: vacols_note,
+                             user_id: RequestStore.store[:current_user].regional_office.upcase,
+                             assigned_to: appeal.case_record.bfregoff,
+                             code: :other,
+                             days_to_complete: 30,
+                             days_til_due: 30
+                            )
       end
     end
   end

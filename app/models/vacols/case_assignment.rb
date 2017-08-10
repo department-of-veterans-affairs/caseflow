@@ -16,7 +16,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select("decass.defolder as vacols_id",
              "decass.deassign as date_assigned",
              "decass.dereceive as date_received",
-             "staff.slogid as vacols_user_id",
              "brieff.bfddec as signed_date",
              "brieff.bfcorlid as vbms_id",
              "corres.snamef as veteran_first_name",
