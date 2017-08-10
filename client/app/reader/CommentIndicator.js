@@ -45,8 +45,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  handleToggleCommentOpened(docId, expanded) {
-    const actionType = expanded ? 'closed-comment-list' : 'opened-comment-list';
+  handleToggleCommentOpened(docId) {
 
     dispatch({
       type: Constants.TOGGLE_COMMENT_LIST,
@@ -56,7 +55,8 @@ const mapDispatchToProps = (dispatch) => ({
       meta: {
         analytics: {
           category: INTERACTION_TYPES.VISIBLE_UI,
-          action: actionType
+          action: 'toggle-comment-list',
+          label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
         }
       }
     });
