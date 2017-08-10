@@ -2,10 +2,6 @@ class Hearings::DocketsController < HearingsController
   before_action :verify_access
 
   def index
-    # If the user does not have a vacols_id, we cannot pull their hearings
-    # For now, show them the 404 page
-    return not_found unless current_user.vacols_id
-
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json { render json: current_user_dockets.transform_values(&:to_hash) }
