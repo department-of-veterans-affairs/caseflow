@@ -40,11 +40,11 @@ const getDate = (date, timezone) => {
 
 export class DocketHearingRow extends React.PureComponent {
 
-  setDisposition = ({value}) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);
+  setDisposition = ({ value }) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);
 
-  setHoldOpen = ({value}) => this.props.setHoldOpen(this.props.index, value, this.props.hearingDate);
+  setHoldOpen = ({ value }) => this.props.setHoldOpen(this.props.index, value, this.props.hearingDate);
 
-  setAod = ({value}) => this.props.setAod(this.props.index, value, this.props.hearingDate);
+  setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
       this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
@@ -54,7 +54,7 @@ export class DocketHearingRow extends React.PureComponent {
   render() {
     const {
       index,
-      hearing,
+      hearing
     } = this.props;
 
     return <tbody>
