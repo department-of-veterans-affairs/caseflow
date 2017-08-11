@@ -101,7 +101,7 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               label="Transcript Requested"
               name={`${hearing.id}.transcript_requested`}
-              value={hearing.transcriptRequested}
+              value={hearing.transcript_requested}
               onChange={this.setTranscriptRequested}
             />
           </div>
