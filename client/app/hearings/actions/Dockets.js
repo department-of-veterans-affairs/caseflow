@@ -20,3 +20,48 @@ export const handleServerError = (err) => ({
     err
   }
 });
+
+export const setNotes = (hearingIndex, notes, date) => ({
+  type: Constants.SET_NOTES,
+  payload: {
+    hearingIndex,
+    notes,
+    date
+  }
+});
+
+export const setDisposition = (hearingIndex, disposition, date) => ({
+  type: Constants.SET_DISPOSITION,
+  payload: {
+    hearingIndex,
+    disposition,
+    date
+  }
+});
+
+export const setHoldOpen = (hearingIndex, holdOpen, date) => ({
+  type: Constants.SET_HOLD_OPEN,
+  payload: {
+    hearingIndex,
+    holdOpen,
+    date
+  }
+});
+
+export const setAod = (hearingIndex, aod, date) => ({
+  type: Constants.SET_AOD,
+  payload: {
+    hearingIndex,
+    aod,
+    date
+  }
+});
+
+export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => ({
+  type: Constants.SET_TRANSCRIPT_REQUESTED,
+  payload: {
+    hearingIndex,
+    transcriptRequested,
+    date
+  }
+});
