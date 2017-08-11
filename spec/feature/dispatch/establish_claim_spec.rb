@@ -199,6 +199,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       page.within_window windows.last do
         expect(page).to have_content("Claims Missing Decisions")
         expect(page).to have_content(unprepared_task.appeal.veteran_name)
+        expect(page).to have_content(unprepared_task.appeal.outcoded_by_name)
         page.driver.browser.close
       end
     end

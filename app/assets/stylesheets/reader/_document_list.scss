@@ -113,10 +113,15 @@ $tag-backgrond-color: #d6d7d9;
 
       .comment-page-number {
         width: 10rem;
+
+        h4 {
+          line-height: 50px;
+        }
       }
 
       .comment-jump-to-section {
         width: 20rem;
+        line-height: 50px;
       }
     }
   }
