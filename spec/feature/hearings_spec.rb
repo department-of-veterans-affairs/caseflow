@@ -18,8 +18,6 @@ RSpec.feature "Hearings" do
     end
 
     before do
-      current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
-
       2.times do
         Generators::Hearing.build(
           user: current_user,
@@ -75,12 +73,6 @@ RSpec.feature "Hearings" do
       find('#menu-trigger').click
       find_link("Help").click
       expect(page).to have_content("Caseflow Hearings Help")
-    end
-
-    scenario "User visits page without a vacols_id" do
-      current_user.update!(vacols_id: nil)
-      visit "/hearings/dockets"
-      expect(page).to have_content("Page not found")
     end
 
     scenario "Shows a daily docket" do
