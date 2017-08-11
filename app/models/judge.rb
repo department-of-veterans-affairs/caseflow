@@ -21,7 +21,7 @@ class Judge
   end
 
   def upcoming_hearings
-    Hearing.repository.upcoming_hearings_for_judge(user.vacols_id).sort_by(&:date)
+    Hearing.repository.upcoming_hearings_for_judge(user.css_id).sort_by(&:date)
   end
 
   def upcoming_hearings_on(date)
