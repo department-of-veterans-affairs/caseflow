@@ -1,5 +1,4 @@
 module VacolsHelper
-
   class MissingRequiredFieldError < StandardError; end
 
   # There is a bug in Vacols where timestamps are saved in local time with UTC timezone
