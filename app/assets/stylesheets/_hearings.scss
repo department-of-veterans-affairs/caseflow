@@ -203,9 +203,13 @@ $color-hearings-saving: #777;
   }
 
   .cf-form-textarea {
-    margin: 0;
-    width: 100%;
-    resize: vertical;
+    max-width: 100%;
+
+    textarea {
+      margin: 0;
+      width: 100%;
+      resize: vertical;
+    }
   }
 
   [type="text"],
