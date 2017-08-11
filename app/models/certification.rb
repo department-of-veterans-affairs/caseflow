@@ -27,6 +27,8 @@ class Certification < ActiveRecord::Base
   def start!
     return certification_status unless can_be_updated?
 
+    user = RequestStore[:current_user]
+
     create_or_update_form8
 
     update_attributes!(
@@ -41,6 +43,7 @@ class Certification < ActiveRecord::Base
       vacols_hearing_preference: appeal.hearing_request_type,
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
+      certifying_official_name: user ? user.full_name : nil,
       certification_date: Time.zone.now.to_date
     )
 
