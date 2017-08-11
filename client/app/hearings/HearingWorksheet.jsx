@@ -9,16 +9,16 @@ import TextareaField from '../components/TextareaField';
 import _ from 'lodash';
 
 export class HearingWorksheet extends React.Component {
-   constructor(props) {
-      super(props);
+  constructor(props) {
+    super(props);
 
-      this.state = {
-        contentions:'',
-        evidence:'',
-        worksheetPeriods:'',
-        worksheetComments:''
-      };
-    }
+    this.state = {
+      contentions: '',
+      evidence: '',
+      worksheetPeriods: '',
+      worksheetComments: ''
+    };
+  }
 
   getType = (type) => {
     return (type === 'central_office') ? 'CO' : type;
@@ -35,8 +35,6 @@ export class HearingWorksheet extends React.Component {
   getKeyForRow = (index) => {
     return index;
   }
-
-
 
 
   render() {
@@ -311,7 +309,7 @@ export class HearingWorksheet extends React.Component {
                 this.setState({ worksheetPeriods });
               }}
               />
-    
+
         </div>
 
         <div className="cf-hearings-worksheet-data">
@@ -322,7 +320,7 @@ export class HearingWorksheet extends React.Component {
                 this.setState({ evidence });
               }}
               />
-    
+
         </div>
 
         <div className="cf-hearings-worksheet-data">
@@ -333,9 +331,8 @@ export class HearingWorksheet extends React.Component {
                 this.setState({ worksheetComments });
               }}
               />
- 
-    
-         
+
+
         </div>
       </div>
       <div className="cf-push-right">
