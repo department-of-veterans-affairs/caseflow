@@ -113,6 +113,10 @@ class Document < ActiveRecord::Base
     content || fetch_and_cache_document_from_vbms
   end
 
+  def fetch_content_unless_cached
+    fetch_content unless S3Service.exists?(file_name)
+  end
+
   def content
     @content ||= fetch_content
   end
