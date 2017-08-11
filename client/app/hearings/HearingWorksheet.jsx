@@ -36,6 +36,33 @@ export class HearingWorksheet extends React.Component {
     return index;
   }
 
+  onContentionsChange = (contentions) => {
+    this.setState({
+      contentions
+    });
+    this.handleFieldChange('form')(contentions);
+  }
+
+  onEvidenceChange = (evidence) => {
+    this.setState({
+      evidence
+    });
+    this.handleFieldChange('form')(evidence);
+  }
+
+  onWorksheetPeriodsChange = (worksheetPeriods) => {
+    this.setState({
+      worksheetPeriods
+    });
+    this.handleFieldChange('form')(worksheetPeriods);
+  }
+
+  onWorksheetCommentsChange = (worksheetComments) => {
+    this.setState({
+      worksheetComments
+    });
+    this.handleFieldChange('form')(worksheetComments);
+  }
 
   render() {
 
@@ -289,51 +316,43 @@ export class HearingWorksheet extends React.Component {
             getKeyForRow={this.getKeyForRow}
           />
         </div>
-
-        <div className="cf-hearings-worksheet-data">
-        <TextareaField
+        <form className="cf-hearings-worksheet-form">
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
               name="Contentions"
               value={this.state.contentions}
-              onChange={(contentions) => {
-                this.setState({ contentions });
-              }}
+              onChange={this.onContentionsChange}
+              id="worksheet-contentions"
               />
-        </div>
+          </div>
+          <div className="cf-hearings-worksheet-data">
+             <TextareaField
+                name="Periods and circumstances of service"
+                value={this.state.worksheetPeriods}
+                onChange={this.onWorksheetPeriodsChange}
+                id="worksheet-periods"
+                />
+          </div>
 
-        <div className="cf-hearings-worksheet-data">
-
-       <TextareaField
-              name="Periods and circumstances of service"
-              value={this.state.worksheetPeriods}
-              onChange={(worksheetPeriods) => {
-                this.setState({ worksheetPeriods });
-              }}
-              />
-
-        </div>
-
-        <div className="cf-hearings-worksheet-data">
-         <TextareaField
+          <div className="cf-hearings-worksheet-data">
+           <TextareaField
               name="Evidence"
               value={this.state.evidence}
-              onChange={(evidence) => {
-                this.setState({ evidence });
-              }}
+              onChange={this.onEvidenceChange}
+              id="worksheet-evidence"
               />
+          </div>
 
-        </div>
-
-        <div className="cf-hearings-worksheet-data">
-         <TextareaField
+          <div className="cf-hearings-worksheet-data">
+           <TextareaField
               name="Comments and special instructions to attorneys"
+              id="contentions"
               value={this.state.worksheetComments}
-              onChange={(worksheetComments) => {
-                this.setState({ worksheetComments });
-              }}
+              id="worksheet-comments"
+              onChange={this.onWorksheetCommentsChange}
               />
-
-
-        </div>
+          </div>
+        </form>
       </div>
       <div className="cf-push-right">
         <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
