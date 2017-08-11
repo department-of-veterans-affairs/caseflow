@@ -32,7 +32,7 @@ const EntryPointRedirect = connect(
   mapStateToProps
 )(UnconnectedEntryPointRedirect);
 
-const configureStore = (certification, form9PdfPath, userFullName) => {
+const configureStore = (certification, form9PdfPath) => {
 
   const middleware = [];
 
@@ -45,7 +45,7 @@ const configureStore = (certification, form9PdfPath, userFullName) => {
   // eslint-disable-next-line no-underscore-dangle
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-  const initialData = mapDataToInitialState(certification, form9PdfPath, userFullName);
+  const initialData = mapDataToInitialState(certification, form9PdfPath);
 
   const store = createStore(
     certificationReducers,
@@ -160,7 +160,7 @@ export default class Certification extends React.Component {
     }
 
     { this.state.certification &&
-      <Provider store={configureStore(this.state.certification, this.state.form9PdfPath, this.props.userFullName)}>
+      <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
         <div>
           <BrowserRouter>
             <div>

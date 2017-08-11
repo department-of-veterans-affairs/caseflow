@@ -497,7 +497,7 @@ RSpec.feature "Save Certification" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         expect(find_field("Name and location of certifying office").value).to eq "Digital Service HQ, DC"
         expect(find_field("Organizational elements certifying appeal").value).to eq "DSUSER"
-        expect(find_field("Name of certifying official").value).to eq "Tom Cruz"
+        expect(find_field("Name of certifying official").value).to eq "Agent Smith"
 
         within_fieldset("Title of certifying official") do
           expect(find_field("Other", visible: false)).to be_checked
