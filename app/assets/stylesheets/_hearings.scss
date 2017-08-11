@@ -226,6 +226,12 @@ $color-hearings-saving: #777;
     margin-bottom: 0;
   }
 
+  label {
+  font-weight: bold;
+  font-size: 1.05em;
+  padding-bottom: .3em;
+}
+
   h4 {
     font-weight: normal;
     margin-top: 27px;
@@ -237,6 +243,8 @@ $color-hearings-saving: #777;
     top: 0;
     right: 0;
   }
+
+
 
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
@@ -273,11 +281,7 @@ $color-hearings-saving: #777;
   }
 }
 
-.cf-hearings-worksheet-header {
-  font-weight: bold;
-  font-size: 1.05em;
-  padding-bottom: .3em;
-}
+
 
 .cf-hearings-worksheet-issues {
   margin: 0;

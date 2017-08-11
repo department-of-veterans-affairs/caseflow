@@ -9,6 +9,16 @@ import TextareaField from '../components/TextareaField';
 import _ from 'lodash';
 
 export class HearingWorksheet extends React.Component {
+   constructor(props) {
+      super(props);
+
+      this.state = {
+        contentions:'',
+        evidence:'',
+        worksheetPeriods:'',
+        worksheetComments:''
+      };
+    }
 
   getType = (type) => {
     return (type === 'central_office') ? 'CO' : type;
@@ -27,11 +37,7 @@ export class HearingWorksheet extends React.Component {
   }
 
 
-  onTextAreaChange = (value) => {
-  this.setState({
-  });
-  this.handleFieldChange()(value);
-}
+
 
   render() {
 
@@ -287,51 +293,49 @@ export class HearingWorksheet extends React.Component {
         </div>
 
         <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-contentions">Contentions</label>
-         <TextareaField
-                name="Contentions"
-                required={false}
-                aria-label="Contentions"
-                id={this.props.id}
-          onChange={this.onTextAreaChange}
+        <TextareaField
+              name="Contentions"
+              value={this.state.contentions}
+              onChange={(contentions) => {
+                this.setState({ contentions });
+              }}
               />
         </div>
 
         <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-periods">Periods and circumstances of service</label>
+
        <TextareaField
-                name="worksheet-periods"
-                required={false}
-                aria-label="Periods and circumstances of service"
-                  id={this.props.id}
-          onChange={this.onTextAreaChange}
+              name="Periods and circumstances of service"
+              value={this.state.worksheetPeriods}
+              onChange={(worksheetPeriods) => {
+                this.setState({ worksheetPeriods });
+              }}
               />
+    
         </div>
 
         <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-evidence">Evidence</label>
-            <TextareaField
-                name="worksheet-evidence"
-                required={false}
-                aria-label="Evidence"
-                id={this.props.id}
-          onChange={this.onTextAreaChange}
+         <TextareaField
+              name="Evidence"
+              value={this.state.evidence}
+              onChange={(evidence) => {
+                this.setState({ evidence });
+              }}
               />
+    
         </div>
 
         <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
-              <TextareaField
-                name="worksheet-comments"
-                required={false}
-                aria-label="Comments and special instructions to attorneys"
-                    id={this.props.id}
-              onChange={this.onTextAreaChange}
+         <TextareaField
+              name="Comments and special instructions to attorneys"
+              value={this.state.worksheetComments}
+              onChange={(worksheetComments) => {
+                this.setState({ worksheetComments });
+              }}
               />
+ 
+    
+         
         </div>
       </div>
       <div className="cf-push-right">
