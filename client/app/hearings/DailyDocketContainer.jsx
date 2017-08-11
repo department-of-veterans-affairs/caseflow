@@ -51,6 +51,7 @@ export class DailyDocketContainer extends React.Component {
 
     return <DailyDocket
       veteran_law_judge={this.props.veteran_law_judge}
+      date={this.props.date}
       docket={this.props.dockets[this.props.date].hearings_hash}
     />;
   }
