@@ -231,6 +231,7 @@ const mapDispatchToProps = (dispatch) => ({
     showPlaceAnnotationIcon,
     closeAnnotationDeleteModal,
     deleteAnnotation,
+    stopPlacingAnnotation,
     fetchAppealDetails
   }, dispatch),
 
