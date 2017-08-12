@@ -83,7 +83,7 @@ export default class Certification extends React.Component {
   }
 
   checkCertificationData() {
-    ApiUtil.get(`/certifications/${this.props.vacols_id}`).
+    ApiUtil.get(`/certifications/${this.props.vacolsId}`).
     then((data) => {
       this.setState({
         loadingData: JSON.parse(data.text).loading_data,
