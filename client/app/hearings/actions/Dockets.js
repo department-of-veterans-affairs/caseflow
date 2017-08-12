@@ -66,10 +66,31 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
-export const onContentionsChange = ( worksheet, contentions ) => ({
+export const onContentionsChange = (contentions) => ({
   type: Constants.SET_CONTENTIONS,
   payload: {
-    worksheet
+    contentions
+  }
+});
+
+export const onWorksheetPeriodsChange = (worksheetPeriods) => ({
+  type: Constants.SET_WORKSHEET_PERIODS,
+  payload: {
+    worksheetPeriods
+  }
+});
+
+export const onEvidenceChange = (evidence) => ({
+  type: Constants.SET_EVIDENCE,
+  payload: {
+    evidence
+  }
+});
+
+export const onWorksheetCommentsChange = (worksheetComments) => ({
+  type: Constants.SET_WORKSHEET_COMMENTS,
+  payload: {
+    worksheetComments
   }
 });
 

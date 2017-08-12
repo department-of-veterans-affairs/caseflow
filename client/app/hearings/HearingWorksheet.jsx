@@ -4,22 +4,20 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
-import BaseForm from '../containers/BaseForm';
 import moment from 'moment';
 import Button from '../components/Button';
-import { onContentionsChange } from './actions/Dockets';
+import TextareaField from '../components/TextareaField';
+import {
+  onContentionsChange,
+  onWorksheetPeriodsChange,
+  onEvidenceChange,
+  onWorksheetCommentsChange
+       } from './actions/Dockets';
 
 import _ from 'lodash';
 
-export class HearingWorksheet extends React.Component {
+export class HearingWorksheet extends React.PureComponent {
 
-  constructor(props) {
-    super(props);
-
-    this.setState = {
-      contentions:''
-    }
-  }
 
   getType = (type) => {
     return (type === 'central_office') ? 'CO' : type;
@@ -37,34 +35,15 @@ export class HearingWorksheet extends React.Component {
     return index;
   }
 
+  onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
 
+  onWorksheetPeriodsChange = (worksheetPeriods) => this.props.onWorksheetPeriodsChange(worksheetPeriods)
 
+  onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
 
-
-   onContentionsChange = (contentions) => this.props.onContentionsChange(this.props.contentions)
-
-
-  onEvidenceChange = (evidence) => {
-
-    this.handleFieldChange('form')(evidence);
-  }
-
-  onWorksheetPeriodsChange = (worksheetPeriods) => {
-
-    this.handleFieldChange('form')(worksheetPeriods);
-  }
-
-  onWorksheetCommentsChange = (worksheetComments) => {
-
-    this.handleFieldChange('form')(worksheetComments);
-  }
+  onWorksheetCommentsChange = (worksheetComments) => this.props.onContentionsChange(worksheetComments)
 
   render() {
-
-    const {
-      index,
-      contentions
-    } = this.props;
 
     const columns = [
       {
@@ -318,24 +297,39 @@ export class HearingWorksheet extends React.Component {
         </div>
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <textarea
+            <TextareaField
               name="Contentions"
+              value=""
               onChange={this.onContentionsChange}
-              value="ffd"
               id="worksheet-contentions"
-              maxLength="100"
               />
           </div>
+
           <div className="cf-hearings-worksheet-data">
-          
+            <TextareaField
+              name="Periods and circumstances of service"
+              value=""
+              onChange={this.onWorksheetPeriodsChange}
+              id="worksheet-periods"
+              />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-
+            <TextareaField
+              name="Evidence"
+              value=""
+              onChange={this.onEvidenceChange}
+              id="worksheet-evidence"
+              />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-        
+            <TextareaField
+              name="Comments and special instructions to attorneys"
+              value=""
+              id="worksheet-comments"
+              onChange={this.onWorksheetCommentsChange}
+              />
           </div>
         </form>
       </div>
@@ -351,7 +345,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onContentionsChange
+  onContentionsChange,
+  onWorksheetPeriodsChange,
+  onEvidenceChange,
+  onWorksheetCommentsChange
 }, dispatch);
 
 
@@ -363,7 +360,5 @@ export default connect(
 HearingWorksheet.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   date: PropTypes.string,
-  vbms_id: PropTypes.string,
-  contentions:PropTypes.string,
-  index: PropTypes.string,
+  vbms_id: PropTypes.string
 };
