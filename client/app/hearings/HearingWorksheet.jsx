@@ -1,23 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
+import BaseForm from '../containers/BaseForm';
 import moment from 'moment';
 import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
+import { onContentionsChange } from './actions/Dockets';
+
 import _ from 'lodash';
 
 export class HearingWorksheet extends React.Component {
+
   constructor(props) {
     super(props);
 
-    this.state = {
-      contentions: '',
-      evidence: '',
-      worksheetPeriods: '',
-      worksheetComments: ''
-    };
+    this.setState = {
+      contentions:''
+    }
   }
 
   getType = (type) => {
@@ -36,35 +37,34 @@ export class HearingWorksheet extends React.Component {
     return index;
   }
 
-  onContentionsChange = (contentions) => {
-    this.setState({
-      contentions
-    });
-    this.handleFieldChange('form')(contentions);
-  }
+
+
+
+
+   onContentionsChange = (contentions) => this.props.onContentionsChange(this.props.contentions)
+
 
   onEvidenceChange = (evidence) => {
-    this.setState({
-      evidence
-    });
+
     this.handleFieldChange('form')(evidence);
   }
 
   onWorksheetPeriodsChange = (worksheetPeriods) => {
-    this.setState({
-      worksheetPeriods
-    });
+
     this.handleFieldChange('form')(worksheetPeriods);
   }
 
   onWorksheetCommentsChange = (worksheetComments) => {
-    this.setState({
-      worksheetComments
-    });
+
     this.handleFieldChange('form')(worksheetComments);
   }
 
   render() {
+
+    const {
+      index,
+      contentions
+    } = this.props;
 
     const columns = [
       {
@@ -318,39 +318,24 @@ export class HearingWorksheet extends React.Component {
         </div>
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <textarea
               name="Contentions"
-              value={this.state.contentions}
               onChange={this.onContentionsChange}
+              value="ffd"
               id="worksheet-contentions"
+              maxLength="100"
               />
           </div>
           <div className="cf-hearings-worksheet-data">
-             <TextareaField
-                name="Periods and circumstances of service"
-                value={this.state.worksheetPeriods}
-                onChange={this.onWorksheetPeriodsChange}
-                id="worksheet-periods"
-                />
+          
           </div>
 
           <div className="cf-hearings-worksheet-data">
-           <TextareaField
-              name="Evidence"
-              value={this.state.evidence}
-              onChange={this.onEvidenceChange}
-              id="worksheet-evidence"
-              />
+
           </div>
 
           <div className="cf-hearings-worksheet-data">
-           <TextareaField
-              name="Comments and special instructions to attorneys"
-              id="contentions"
-              value={this.state.worksheetComments}
-              id="worksheet-comments"
-              onChange={this.onWorksheetCommentsChange}
-              />
+        
           </div>
         </form>
       </div>
@@ -365,12 +350,20 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onContentionsChange
+}, dispatch);
+
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(HearingWorksheet);
 
 HearingWorksheet.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   date: PropTypes.string,
-  vbms_id: PropTypes.string
+  vbms_id: PropTypes.string,
+  contentions:PropTypes.string,
+  index: PropTypes.string,
 };

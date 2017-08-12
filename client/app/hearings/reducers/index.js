@@ -56,6 +56,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
+  case Constants.SET_CONTENTIONS:
+    return newHearingState(state, action, { contentions: { $set: action.payload.contentions } });
+
   default: return state;
   }
 };

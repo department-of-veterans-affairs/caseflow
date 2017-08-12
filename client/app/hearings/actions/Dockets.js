@@ -65,3 +65,12 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     date
   }
 });
+
+export const onContentionsChange = ( worksheet, contentions ) => ({
+  type: Constants.SET_CONTENTIONS,
+  payload: {
+    worksheet
+  }
+});
+
+
