@@ -6,8 +6,8 @@ RSpec.feature "Switch User" do
     ENV["DEPLOY_ENV"] = "dev"
     BGSService.end_product_data = BGSService.no_grants
 
-    User.create(station_id: "283", css_id: "123")
-    User.create(station_id: "ABC", css_id: "456")
+    User.create(station_id: "283", css_id: User::FUNCTIONS.all.sample)
+    User.create(station_id: "ABC", css_id: User::FUNCTIONS.all.sample)
     User.create(station_id: "283", css_id: "ANNE MERICA")
     User.authenticate!
   end
