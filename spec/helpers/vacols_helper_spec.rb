@@ -12,4 +12,30 @@ describe VacolsHelper do
       expect(subject.zone).to eq "UTC"
     end
   end
+
+  context ".validate_presence" do
+    subject { VacolsHelper.validate_presence(hash, required_keys) }
+
+    context "when there is a missing field" do
+      let(:hash) do
+        { foo: "bar", grip: "foo" }
+      end
+      let(:required_keys) { [:foo, :grip, :dre] }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(VacolsHelper::MissingRequiredFieldError)
+      end
+    end
+
+    context "when there is no missing field" do
+      let(:hash) do
+        { foo: "bar", grip: "foo" }
+      end
+      let(:required_keys) { [:foo, :grip] }
+
+      it "raises an error" do
+        expect { subject }.to_not raise_error(VacolsHelper::MissingRequiredFieldError)
+      end
+    end
+  end
 end
