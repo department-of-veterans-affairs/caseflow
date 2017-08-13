@@ -47,7 +47,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
     module.hot.accept([
       './containers/BaseContainer',
 			'./login/index',
-			'./test/users',
+			'./test/TestUsers',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
       './hearings/index'
