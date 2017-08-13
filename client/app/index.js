@@ -11,7 +11,7 @@ import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
 import Login from './login';
-import TestUsers from './test/users';
+import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 
 const COMPONENTS = {

@@ -34,6 +34,13 @@ class Test::UsersController < ApplicationController
         links: {
           upcoming_days: "/hearings/dockets"
         }
+      },
+      {
+        name: "Miscelaneous",
+        links: {
+          styleguide: "/styleguide",
+          stats: "/stats"
+        }
       }
     ]
     @ep_types = ["full", "partial", "none", "all" ]

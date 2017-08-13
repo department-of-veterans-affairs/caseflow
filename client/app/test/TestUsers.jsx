@@ -16,13 +16,17 @@ export default class TestUsers extends React.PureComponent {
 				};
     }
 
-		handleEpSeed = ( type ) => ApiUtil.post('/test/set_end_products', { type: type });
+		handleEpSeed = ( type ) => ApiUtil.post(`/test/set_end_products?type=${type}`).catch((err) => {
+						console.warn(err)
+				});
 		handleUserSelect = ({ value }) => this.setState({ userSelect: value });
 		handleUserSwitch = () => {
 				this.setState({ isSwitching: true})
 				ApiUtil.post(`/test/set_user/${this.state.userSelect}`).then(() => {
 						window.location.reload()
 						this.setState({ isSwitching: false })
+				}).catch((err) => {
+						console.warn(err)
 				});
 		}
 
@@ -46,6 +50,22 @@ export default class TestUsers extends React.PureComponent {
 														<a href={app.links[name]}>{StringUtil.snakeCaseToCapitalized(name)}</a>
 												</li>
 								})}</ul>
+								{ app.name == "Dispatch" && <div>
+										<p>
+												For Dispatch we are processing different types of grants, here you can select which type you want to preload.
+										</p>
+										<ul>
+												{ this.props.epTypes.map((type) => {
+															let label = `Seed ${type} grants`
+															return <li key={type}>
+																	<Button
+																	onClick={() => this.handleEpSeed(type)}
+																	name={label} />
+															</li>;
+												}, this)}
+										</ul>
+								</div>
+								}
 						</div>;
 						return tab;
 
@@ -80,16 +100,6 @@ export default class TestUsers extends React.PureComponent {
 						<strong>App Selector:</strong>
 						<TabWindow
 						tabs={tabs}/>
-						<ul>
-								{ this.props.epTypes.map((ep) => {
-											let label = `Seed ${ep} grants`
-											return <li key={ep}>
-													<Button
-													onClick={(ep) => this.handleEpSeed(ep)}
-													name={label} />
-											</li>;
-								})}
-						</ul>
 				</div>;
 		}
 
