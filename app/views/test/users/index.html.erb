@@ -1,8 +1,8 @@
 <% content_for :page_title do %>&nbsp &gt &nbspTest Users<% end %>
 
 <%= react_component("TestUsers", props: {
-		currentUser: current_user.to_hash,
-		testUsersList: @test_users,
-		appSelectList: @apps,
-		epTypes: @ep_types
+	currentUser: current_user.to_hash,
+	testUsersList: @test_users,
+	appSelectList: Test::UsersController::APPS,
+	epTypes: @ep_types
 }) %>

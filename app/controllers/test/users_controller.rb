@@ -1,49 +1,49 @@
 class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products]
 
+  APPS = [
+    {
+      name: "Certification",
+      links: {
+        new: "/certifications/new/123C",
+        missing_docs: "/certifications/new/456C",
+        already_certified: "/certifications/new/789C",
+        vbms_error: "/certifications/new/000ERR",
+        unable_to_certify: "/certifications/new/001ERR"
+      }
+    },
+    {
+      name: "Dispatch",
+      links: {
+        work_history: "/dispatch/establish-claim",
+        work_assignments: "/dispatch/work-assignments"
+      }
+    },
+    {
+      name: "Reader",
+      links: {
+        welcome_gate: "/reader/appeal",
+        document_list: "/reader/appeal/reader_id1/documents"
+      }
+    },
+    {
+      name: "Hearing prep",
+      links: {
+        upcoming_days: "/hearings/dockets"
+      }
+    },
+    {
+      name: "Miscelaneous",
+      links: {
+        styleguide: "/styleguide",
+        stats: "/stats"
+      }
+    }
+  ].freeze
+
   # :nocov:
-  # rubocop:disable Metrics/MethodLength
   def index
     @test_users = User.all.select { |u| User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") }
-    @apps = [
-      {
-        name: "Certification",
-        links: {
-          new: "/certifications/new/123C",
-          missing_docs: "/certifications/new/456C",
-          already_certified: "/certifications/new/789C",
-          vbms_error: "/certifications/new/000ERR",
-          unable_to_certify: "/certifications/new/001ERR"
-        }
-      },
-      {
-        name: "Dispatch",
-        links: {
-          work_history: "/dispatch/establish-claim",
-          work_assignments: "/dispatch/work-assignments"
-        }
-      },
-      {
-        name: "Reader",
-        links: {
-          welcome_gate: "/reader/appeal",
-          document_list: "/reader/appeal/reader_id1/documents"
-        }
-      },
-      {
-        name: "Hearing prep",
-        links: {
-          upcoming_days: "/hearings/dockets"
-        }
-      },
-      {
-        name: "Miscelaneous",
-        links: {
-          styleguide: "/styleguide",
-          stats: "/stats"
-        }
-      }
-    ]
     @ep_types = %w(full partial none all)
     render "index"
   end
