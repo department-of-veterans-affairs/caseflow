@@ -18,8 +18,8 @@ const COMPONENTS = {
   BaseContainer,
   Certification,
   ManageEstablishClaim,
-	Login,
-	TestUsers,
+  Login,
+  TestUsers,
   Hearings,
   PerformanceDegradationBanner
 };
@@ -46,8 +46,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   if (module.hot) {
     module.hot.accept([
       './containers/BaseContainer',
-			'./login/index',
-			'./test/TestUsers',
+      './login/index',
+      './test/TestUsers',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
       './hearings/index'

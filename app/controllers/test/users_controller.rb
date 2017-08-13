@@ -2,6 +2,7 @@ class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products]
 
   # :nocov:
+  # rubocop:disable Metrics/MethodLength
   def index
     @test_users = User.all.select { |u| User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") }
     @apps = [
@@ -43,7 +44,7 @@ class Test::UsersController < ApplicationController
         }
       }
     ]
-    @ep_types = ["full", "partial", "none", "all" ]
+    @ep_types = %w(full partial none all)
     render "index"
   end
 
@@ -52,7 +53,7 @@ class Test::UsersController < ApplicationController
     User.before_set_user # for testing only
 
     session["user"] = User.authentication_service.get_user_session(params[:id])
-    render :nothing => true, :status => 200
+    render nothing: true, status: 200
   end
 
   # Set end products in DEMO
@@ -68,7 +69,7 @@ class Test::UsersController < ApplicationController
       BGSService.end_product_data = BGSService.all_grants
     end
 
-    render :nothing => true, :status => 200
+    render nothing: true, status: 200
   end
 
   def require_demo
