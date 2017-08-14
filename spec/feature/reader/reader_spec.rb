@@ -754,6 +754,8 @@ RSpec.feature "Reader" do
       find("h3", text: "Document information").click
 
       expect(page).to have_content("Document Type")
+      expect(page).to have_content("BVA Decision")
+      expect(page).to have_content("AOD")
       expect(page).to have_content("Veteran ID")
       expect(page).to have_content(appeal.vbms_id)
       expect(page).to have_content("Type")
