@@ -93,5 +93,3 @@ export const onWorksheetCommentsChange = (worksheetComments) => ({
     worksheetComments
   }
 });
-
-
