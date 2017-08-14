@@ -33,11 +33,6 @@ RSpec.feature "Hearings" do
       )
     end
 
-    scenario "User can access reader" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("You've viewed 0 out of 0 documents")
-    end
-
     scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
@@ -101,6 +96,9 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_content("Veteran ID: #{link_text}")
+
+      # There's no functionality yet, but you should be able to...
+      click_on "Review eFolder"
     end
   end
 end
