@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
+import ApiUtil from '../util/ApiUtil';
 
 import CommentIcon from './CommentIcon';
 import { connect } from 'react-redux';
@@ -484,29 +485,36 @@ export class Pdf extends React.PureComponent {
     // request is finishing.
     this.isGettingPdf[file] = true;
 
-    return PDFJS.getDocument({
-      url: file,
+    return ApiUtil.get(file, {
+      cache: true,
       withCredentials: true
-    }).then((pdfDocument) => {
-      this.isGettingPdf[file] = false;
+    }).then((data) => {
+      debugger;
+      return PDFJS.getDocument(new Uint8Array(data.text)).then((pdfDocument) => {
+        this.isGettingPdf[file] = false;
 
-      if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
-        // There is a chance another async call has resolved in the time that
-        // getDocument took to run. If so, again just use the cached version.
-        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-          return this.predrawnPdfs[file].pdfDocument;
+        if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
+          // There is a chance another async call has resolved in the time that
+          // getDocument took to run. If so, again just use the cached version.
+          if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+            return this.predrawnPdfs[file].pdfDocument;
+          }
+          this.predrawnPdfs[file] = {
+            pdfDocument
+          };
+          this.setUpPdfObjects(file, pdfDocument);
+
+          return pdfDocument;
         }
-        this.predrawnPdfs[file] = {
-          pdfDocument
-        };
-        this.setUpPdfObjects(file, pdfDocument);
 
-        return pdfDocument;
-      }
+        return null;
+      }).
+      catch(() => {
+        this.isGettingPdf[file] = false;
 
-      return null;
-    }).
-    catch(() => {
+        return null;
+      });
+    }).catch(() => {
       this.isGettingPdf[file] = false;
 
       return null;
