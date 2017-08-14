@@ -177,14 +177,23 @@ $color-hearings-saving: #777;
     }
   }
 
+  .addOn,
   .transcriptRequested {
-    position: relative;
+    display: inline-block;
+    text-align: left;
+    padding: 0 .32em;
 
-    > div {
-      position: absolute;
-      top: 0;
-      right: .5em;
+    .cf-form-checkboxes {
+      margin-bottom: 0;
     }
+  }
+
+  .addOn {
+    width: 33%;
+  }
+
+  .transcriptRequested {
+    width: 67%;
   }
 }
 
