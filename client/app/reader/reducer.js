@@ -344,6 +344,11 @@ export const reducer = (state = initialState, action = {}) => {
           searchQuery: {
             $set: ''
           }
+        },
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: false }
+          }
         }
       }
     });

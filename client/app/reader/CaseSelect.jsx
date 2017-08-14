@@ -159,6 +159,7 @@ class CaseSelect extends React.PureComponent {
                 size="small"
                 onChange={this.props.setCaseSelectSearch}
                 value={this.props.caseSelectCriteria.searchQuery}
+                onClearSearch={this.props.clearCaseSelectSearch}
                 onSubmit={this.searchOnChange}
               />
             </div>
@@ -170,7 +171,8 @@ class CaseSelect extends React.PureComponent {
               },
               { classNames: ['usa-button', 'usa-button-primary'],
                 name: 'Okay',
-                onClick: this.handleSelectAppeal
+                onClick: this.handleSelectAppeal,
+                disabled: _.isEmpty(this.state.selectedAppealVacolsId)
               }
             ]}
             closeHandler={this.handleModalClose}
