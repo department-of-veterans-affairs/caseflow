@@ -57,6 +57,15 @@ export const setAod = (hearingIndex, aod, date) => ({
   }
 });
 
+export const setAddOn = (hearingIndex, addOn, date) => ({
+  type: Constants.SET_ADD_ON,
+  payload: {
+    hearingIndex,
+    addOn,
+    date
+  }
+});
+
 export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => ({
   type: Constants.SET_TRANSCRIPT_REQUESTED,
   payload: {

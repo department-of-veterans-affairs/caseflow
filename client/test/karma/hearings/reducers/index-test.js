@@ -93,6 +93,25 @@ describe('hearingsReducer', () => {
     });
   });
 
+  context(Constants.SET_ADD_ON, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_ADD_ON,
+        payload: {
+          hearingIndex: 0,
+          addOn: true,
+          date: '2017-08-10'
+        }
+      });
+    });
+
+    it('sets addon', () => {
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { addon: true } } } });
+    });
+  });
+
   context(Constants.SET_TRANSCRIPT_REQUESTED, () => {
     let state;
 

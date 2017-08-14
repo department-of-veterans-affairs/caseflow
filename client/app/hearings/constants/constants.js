@@ -8,6 +8,7 @@ export const SET_NOTES = 'SET_NOTES';
 export const SET_DISPOSITION = 'SET_DISPOSITION';
 export const SET_HOLD_OPEN = 'SET_HOLD_OPEN';
 export const SET_AOD = 'SET_AOD';
+export const SET_ADD_ON = 'SET_ADD_ON';
 export const SET_TRANSCRIPT_REQUESTED = 'SET_TRANSCRIPT_REQUESTED';
 
 export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
