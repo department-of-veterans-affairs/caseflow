@@ -129,7 +129,6 @@ describe('hearingsReducer', () => {
     });
   });
 
-
   context(Constants.SET_WORKSHEET_PERIODS, () => {
     let state;
 
@@ -164,7 +163,6 @@ describe('hearingsReducer', () => {
     });
   });
 
-
   context(Constants.SET_WORKSHEET_COMMENTS, () => {
     let state;
 
@@ -181,6 +179,4 @@ describe('hearingsReducer', () => {
       expect(state.worksheet).to.deep.equal({   worksheet: { worksheetComments: 'this is a worksheet comments text' } });
     });
   });
-
-
-
+});
