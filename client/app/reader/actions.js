@@ -67,6 +67,17 @@ export const setSearch = (searchQuery) => ({
   }
 });
 
+export const setCaseSelectSearch = (searchQuery) => ({
+  type: Constants.SET_CASE_SELECT_SEARCH,
+  payload: {
+    searchQuery
+  }
+});
+
+export const clearCaseSelectSearch = () => ({
+  type: Constants.CLEAR_CASE_SELECT_SEARCH
+});
+
 export const setDocListScrollPosition = (scrollTop) => ({
   type: Constants.SET_DOC_LIST_SCROLL_POSITION,
   payload: {
@@ -612,6 +623,10 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   payload: { appeals }
 });
 
+export const fetchAppealUsingVeteranIdFailed = () => ({
+  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED
+});
+
 export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
   type: Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID,
   payload: { appeals }
@@ -630,7 +645,7 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
         // here
         dispatch(onReceiveMultipleAppealsWithVeteranId(returnedObject.appeals));
       }
-    }, () => dispatch(onAppealDetailsLoadingFail()));
+    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
 );
 

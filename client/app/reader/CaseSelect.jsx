@@ -3,14 +3,19 @@ import { connect } from 'react-redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 
 import { getClaimTypeDetailInfo, generateIssueList } from '../reader/utils';
-import { fetchAppealUsingVeteranId, clearLoadedAppeal, clearReceivedAppeals, onReceiveAppealDetails } from './actions';
+import { fetchAppealUsingVeteranId, clearLoadedAppeal, 
+  clearReceivedAppeals, onReceiveAppealDetails, setCaseSelectSearch,
+  clearCaseSelectSearch
+} from './actions';
 
 import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
 import RadioField from '../components/RadioField';
+import Alert from '../components/Alert';
 
 class CaseSelect extends React.PureComponent {
 
@@ -18,7 +23,7 @@ class CaseSelect extends React.PureComponent {
     super();
     this.state = {
       selectedAppealVacolsId: null
-    }
+    };
   }
 
   componentDidMount = () => this.props.clearLoadedAppeal();
@@ -85,20 +90,21 @@ class CaseSelect extends React.PureComponent {
   ];
 
   getKeyForRow = (index, row) => row.vacols_id;
-  
 
   searchOnChange = (text) => {
-    this.props.fetchAppealUsingVeteranId(text);
+    if (_.size(text)) {
+      this.props.fetchAppealUsingVeteranId(text);
+    }
   }
 
   handleModalClose = () => {
     // clearing the state of the modal
     this.setState({ selectedAppealVacolsId: null });
+    this.props.clearCaseSelectSearch();
     this.props.clearReceivedAppeals();
   }
 
   handleSelectAppeal = () => {
-    console.log(this.state.selectedAppealVacolsId);
     const appeal = _.find(this.props.receivedAppeals,
       { vacols_id: this.state.selectedAppealVacolsId });
 
@@ -106,12 +112,13 @@ class CaseSelect extends React.PureComponent {
   }
 
   handleChangeAppealSelection = (vacolsId) => {
-    console.log(vacolsId);
-    this.setState({selectedAppealVacolsId: vacolsId})
+    this.setState({ selectedAppealVacolsId: vacolsId });
   }
 
   render() {
-    console.log(this.props.receivedAppeals)
+
+    const { caseSelect } = this.props;
+
     if (this.props.loadedAppeal.vacols_id) {
       return <Redirect
         to={`/${this.props.loadedAppeal.vacols_id}/documents`}/>;
@@ -137,16 +144,24 @@ class CaseSelect extends React.PureComponent {
       });
     };
 
-    return <div className="usa-grid">
+    return <div className="usa-grid section--case-select">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Welcome to Reader!</h1>
-          <SearchBar
-            id="search-small"
-            size="small"
-            onChange={this.searchOnChange}
-            loading={false}
-          />
+          <h1 id="welcome-header">Welcome to Reader!</h1>
+            <div className="section-search">
+              {caseSelect.search.showErrorMessage &&
+                <Alert title="Veteran ID not found" type="error">
+                  Please enter the correct Veteran ID and try again.
+                </Alert>
+              }
+              <SearchBar
+                id="search-small"
+                size="small"
+                onChange={this.props.setCaseSelectSearch}
+                value={this.props.caseSelectCriteria.searchQuery}
+                onSubmit={this.searchOnChange}
+              />
+            </div>
           { _.size(this.props.receivedAppeals) ? <Modal
             buttons = {[
               { classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -165,7 +180,7 @@ class CaseSelect extends React.PureComponent {
               options={createAppealOptions(this.props.receivedAppeals)}
               value={this.state.selectedAppealVacolsId}
               onChange={this.handleChangeAppealSelection}
-              hideLabel={false}
+              hideLabel={true}
             />
           </Modal> : ''
           }
@@ -187,24 +202,22 @@ class CaseSelect extends React.PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAppealUsingVeteranId(veteranId) {
-    dispatch(fetchAppealUsingVeteranId(veteranId));
-  },
-  clearLoadedAppeal() {
-    dispatch(clearLoadedAppeal());
-  },
-  clearReceivedAppeals() {
-    dispatch(clearReceivedAppeals());
-  },
-  onReceiveAppealDetails(appeal) {
-    dispatch(onReceiveAppealDetails(appeal));
-  }
+  ...bindActionCreators({
+    fetchAppealUsingVeteranId,
+    clearLoadedAppeal,
+    clearReceivedAppeals,
+    onReceiveAppealDetails,
+    setCaseSelectSearch,
+    clearCaseSelectSearch
+  }, dispatch)
 });
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'assignments'),
   ..._.pick(state, 'loadedAppeal'),
-  ..._.pick(state.ui, 'receivedAppeals')
+  ..._.pick(state.ui, 'receivedAppeals'),
+  ..._.pick(state.ui, 'caseSelect'),
+  ..._.pick(state.ui, 'caseSelectCriteria')
 });
 
 export default connect(

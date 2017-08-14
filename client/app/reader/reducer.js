@@ -150,6 +150,11 @@ export const initialState = {
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
+    caseSelect: {
+      search: {
+        showErrorMessage: false
+      }
+    },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -157,6 +162,9 @@ export const initialState = {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
+    caseSelectCriteria: {
+      searchQuery: ''
+    },
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -319,6 +327,26 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
+  case Constants.SET_CASE_SELECT_SEARCH:
+    return update(state, {
+      ui: {
+        caseSelectCriteria: {
+          searchQuery: {
+            $set: action.payload.searchQuery
+          }
+        }
+      }
+    });
+  case Constants.CLEAR_CASE_SELECT_SEARCH:
+    return update(state, {
+      ui: {
+        caseSelectCriteria: {
+          searchQuery: {
+            $set: ''
+          }
+        }
+      }
+    });
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -769,6 +797,21 @@ export const reducer = (state = initialState, action = {}) => {
       ui: {
         receivedAppeals: {
           $set: action.payload.appeals
+        },
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: false }
+          }
+        }
+      }
+    });
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: true }
+          }
         }
       }
     });
