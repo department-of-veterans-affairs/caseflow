@@ -4,7 +4,7 @@ RSpec.feature "Hearings" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1))
+    Timecop.freeze(Time.utc(2017, 1, 1, 13))
     FeatureToggle.enable!(:reader)
   end
 
@@ -71,9 +71,9 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Shows a daily docket" do
-      visit "/hearings/dockets/2017-01-05"
+      visit "/hearings/dockets/2017-01-06"
       expect(page).to have_content("Daily Docket")
-      expect(page).to have_content("1/5/2017")
+      expect(page).to have_content("1/6/2017")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
 
@@ -82,7 +82,7 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Shows a hearing worksheet" do
-      visit "/hearings/dockets/2017-01-05"
+      visit "/hearings/dockets/2017-01-06"
 
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
       link_text = link.text
