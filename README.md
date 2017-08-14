@@ -177,6 +177,7 @@ add more links and users as needed.
 ## Running tests
 
 To run the test suite:
+
     rake
 
 ### Parallelized tests
@@ -187,12 +188,15 @@ Parallel test categories are split up by category:
 - CATEGORY: The other feature tests are split by subfolders in `spec/feature/`. Examples are `certification` and `reader`
 
 To set your environment up for parallel testing run:
+
     rake spec:parallel:setup
 
 To run the test suite in parallel:
+
     rake spec:parallel
 
 You can run any one of the parallel categories on its own via (where `CATEGORY` is `unit`, `certification`, etc):
+
     rake spec:parallel:CATEGORY
 
 ## Feature Toggle
