@@ -44,6 +44,10 @@ const ApiUtil = {
       promise.withCredentials();
     }
 
+    if (options.binary) {
+      promise.responseType('arraybuffer');
+    }
+
     if (options.cache) {
       return promise;
     }

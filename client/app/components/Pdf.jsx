@@ -487,10 +487,10 @@ export class Pdf extends React.PureComponent {
 
     return ApiUtil.get(file, {
       cache: true,
-      withCredentials: true
+      withCredentials: true,
+      binary: true
     }).then((data) => {
-      debugger;
-      return PDFJS.getDocument({ data: data.text }).then((pdfDocument) => {
+      return PDFJS.getDocument({ data: data.xhr.response }).then((pdfDocument) => {
         this.isGettingPdf[file] = false;
 
         if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
