@@ -57,3 +57,11 @@ dependencies_report_service_log_job:
   class: "DependenciesReportServiceLogJob"
   queue: default
   active_job: true
+
+# Check which apps are out of service and post a reminder to slack, if any, every 3 hours
+out_of_service_reminder_job:
+  cron: "0 */3 * * * America/New_York"
+  class: "OutOfServiceReminderJob"
+  queue: default
+  active_job: true
+
