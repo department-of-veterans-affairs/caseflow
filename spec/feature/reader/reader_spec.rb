@@ -324,12 +324,12 @@ RSpec.feature "Reader" do
 
       # Check if annotation mode disappears when moving to another document
       skip_because_sending_keys_to_body_does_not_work_on_travis do
-        find(".cf-pdf-page").click
         add_comment_without_clicking_save "unsaved comment text"
+        find("#pageContainer1").click
         find("body").send_keys(:arrow_left)
         expect(page).to_not have_css(".comment-textarea")
-        find(".cf-pdf-page").click
         add_comment_without_clicking_save "unsaved comment text"
+        find("#pageContainer1").click
         find("body").send_keys(:arrow_right)
         expect(page).to_not have_css(".comment-textarea")
       end
