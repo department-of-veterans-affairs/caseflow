@@ -103,8 +103,8 @@ export class DocketHearingRow extends React.PureComponent {
           <div className="addOn">
             <Checkbox
               label="Add on"
-              name={`${hearing.id}.add_on`}
-              value={hearing.add_on}
+              name={`${hearing.id}.addon`}
+              value={hearing.addon}
               onChange={this.setAddOn}
             />
           </div>

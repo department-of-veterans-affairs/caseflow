@@ -107,8 +107,8 @@ describe('hearingsReducer', () => {
       });
     });
 
-    it('sets add_on', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { add_on: true } } } });
+    it('sets addon', () => {
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { addon: true } } } });
     });
   });
 
