@@ -52,6 +52,7 @@ export default class SearchBar extends React.Component {
       loading,
       onClearSearch,
       size,
+      placeholder,
       title
     } = this.props;
 
@@ -80,6 +81,7 @@ export default class SearchBar extends React.Component {
         onBlur={this.onBlur}
         type="search"
         name="search"
+        placeholder={placeholder}
         value={value}/>
       {_.size(value) > 0 &&
         <Button
@@ -108,4 +110,3 @@ SearchBar.propTypes = {
   value: PropTypes.string,
   analyticsCategory: PropTypes.string
 };
-

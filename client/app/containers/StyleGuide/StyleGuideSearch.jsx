@@ -9,7 +9,8 @@ class StyleGuideSearch extends Component {
     this.state = {
       loading: {
         small: false,
-        big: false
+        big: false,
+        searchAhead: false
       }
     };
 
@@ -30,6 +31,8 @@ class StyleGuideSearch extends Component {
   handleBigClick = () => this.handleSearchClick('big')
 
   handleSmallClick = () => this.handleSearchClick('small')
+
+  handleSearchAheadClick = () => this.handleSearchClick('searchAhead')
 
   render() {
 
@@ -70,6 +73,16 @@ class StyleGuideSearch extends Component {
             loading={this.state.small}
           />
        </div>
+       <div className="cf-sg-searchbar-example">
+         <SearchBar
+           id="search-ahead"
+           title="Search Ahead"
+           size="small"
+           placeholder="Type to search..."
+           onClick={this.handleSearchAheadClick}
+           loading={this.state.searchAhead}
+         />
+      </div>
     </div>
     );
   }
