@@ -11,6 +11,7 @@ class Appeal < ActiveRecord::Base
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
+  vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
@@ -148,6 +149,12 @@ class Appeal < ActiveRecord::Base
 
   def veteran_full_name
     [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ").titleize
+  end
+
+  # When the decision is signed by an attorney at BVA, an outcoder physically stamps the date,
+  # checks for data accuracy and uploads the decision to VBMS
+  def outcoded_by_name
+    [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
   end
 
   def appellant_name

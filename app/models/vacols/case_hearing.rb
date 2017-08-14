@@ -50,14 +50,15 @@ class VACOLS::CaseHearing < VACOLS::Record
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
+  after_update :create_or_update_diaries
 
   # :nocov:
   class << self
-    def upcoming_for_judge(vacols_user_id, date_diff: 7.days)
-      id = connection.quote(vacols_user_id)
+    def upcoming_for_judge(css_id)
+      id = connection.quote(css_id)
 
       select_hearings
-        .where("staff.stafkey = #{id}")
+        .where("staff.sdomainid = #{id}")
         .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
                relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
         .where(NOT_MASTER_RECORD)
@@ -111,6 +112,59 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def update_hearing_action
     brieff.update(bfha: HearingMapper.bfha_vacols_code(self))
+  end
+
+  def create_or_update_diaries
+    create_or_update_abeyance_diary if holddays_changed?
+    create_or_update_aod_diary if aod_changed?
+  end
+
+  def current_user_css_id
+    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+  end
+
+  def case_id
+    @case_id ||= brieff.bfkey
+  end
+
+  def create_or_update_abeyance_diary
+    # If hold open is set to nil or 0, delete the diary
+    return delete_diary([:A]) if !holddays || holddays == 0
+
+    VACOLS::Note.update_or_create!(case_id: case_id,
+                                   text: "Record held open by VLJ at hearing for additional evidence.",
+                                   code: :A,
+                                   days_to_complete: holddays + 5,
+                                   days_til_due: holddays + 5,
+                                   assigned_to: VACOLS::Note.assignee(:A),
+                                   user_id: current_user_css_id)
+  end
+
+  def create_or_update_aod_diary
+    # If the representative is the Paralyzed Veterans of America (BRIEFF.BFSO = 'G'),
+    # then a second diary entry should be created
+    codes = brieff.bfso == "G" ? [:B, :B1] : [:B]
+    # If aod is nil or :none, delete the diary
+    return delete_diary(codes) if !aod || aod == "N"
+
+    codes.each do |code|
+      days = VACOLS::Note.default_number_of_days(code).try(:to_i)
+      VACOLS::Note.update_or_create!(case_id: case_id,
+                                     text: "AOD granted on Record during hearing.",
+                                     code: code,
+                                     days_to_complete: days,
+                                     days_til_due: days,
+                                     assigned_to: VACOLS::Note.assignee(code),
+                                     user_id: current_user_css_id)
+    end
+  end
+
+  def delete_diary(codes)
+    codes.each do |code|
+      VACOLS::Note.delete!(case_id: brieff.bfkey,
+                           code: code,
+                           user_id: current_user_css_id)
+    end
   end
   # :nocov:
 end

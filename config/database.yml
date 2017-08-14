@@ -71,13 +71,7 @@ production_vacols:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  host: <%= ENV['POSTGRES_HOST'] %>
-  username: <%= ENV['POSTGRES_USER'] || `whoami` %>
-  # If we set the value to nil when the variable isn't present,
-  # the k8s Jenkins environment won't connect
-  <% if ENV['POSTGRES_PASSWORD'] %>
-  password: <%= ENV['POSTGRES_PASSWORD'] %>
-  <% end %>
+  username: <%= `whoami` %>
   database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
 
 test_vacols:

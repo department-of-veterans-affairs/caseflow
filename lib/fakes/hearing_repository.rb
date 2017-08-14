@@ -4,9 +4,9 @@ class Fakes::HearingRepository
     attr_accessor :hearing_records
   end
 
-  def self.upcoming_hearings_for_judge(vacols_user_id, date_diff: 7.days.ago)
-    user = User.find_by_vacols_id(vacols_user_id)
-    (hearing_records || []).select { |h| h.user_id == user.id && date_diff }
+  def self.upcoming_hearings_for_judge(css_id)
+    user = User.find_by_css_id(css_id)
+    (hearing_records || []).select { |h| h.user_id == user.id }
   end
 
   def self.hearings_for_appeal(appeal_vacols_id)
@@ -43,7 +43,7 @@ class Fakes::HearingRepository
   end
 
   def self.seed!
-    user = User.find_by_vacols_id("LROTH")
+    user = User.find_by_css_id("Hearing Prep")
     50.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
   end
 
