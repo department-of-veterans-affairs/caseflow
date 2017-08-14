@@ -111,5 +111,78 @@ describe('hearingsReducer', () => {
       expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { transcript_requested: true } } } });
     });
   });
+
+
+  context(Constants.SET_CONTENTIONS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_CONTENTIONS,
+        payload: {
+          contentions:
+        }
+      });
+    });
+
+    it('sets contentions', () => {
+      expect(state.worksheet).to.deep.equal({   worksheet: { contentions: 'this is a contention text' } });
+    });
 });
+
+
+  context(Constants.SET_WORKSHEET_PERIODS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_WORKSHEET_PERIODS,
+        payload: {
+          worksheetPeriods: 'filled'
+        }
+      });
+    });
+
+    it('sets contentions', () => {
+      expect(state.worksheet).to.deep.equal({   worksheet: { worksheetPeriods: 'this is a worksheet periods text' } });
+    });
+});
+
+
+  context(Constants.SET_EVIDENCE, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_EVIDENCE,
+        payload: {
+          evidence: 'filled'
+        }
+      });
+    });
+
+    it('sets contentions', () => {
+      expect(state.worksheet).to.deep.equal({   worksheet: { evidence: 'this is a evidence text' } });
+    });
+});
+
+
+  context(Constants.SET_WORKSHEET_COMMENTS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_WORKSHEET_COMMENTS,
+        payload: {
+          worksheetComments: 'filled'
+        }
+      });
+    });
+
+    it('sets contentions', () => {
+      expect(state.worksheet).to.deep.equal({   worksheet: { worksheetComments: 'this is a worksheet comments text' } });
+    });
+});
+
+
 
