@@ -610,6 +610,10 @@ select {
       }
     }
   }
+
+  [type="search"]{
+    border: 1px solid $color-gray-dark;
+  }
 }
 
 .cf-title-meta-right {
@@ -720,4 +724,3 @@ select {
   font-size: 22px;
   color: $color-gray-dark;
 }
-

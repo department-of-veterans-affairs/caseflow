@@ -9,7 +9,8 @@ class StyleGuideSearch extends Component {
     this.state = {
       loading: {
         small: false,
-        big: false
+        big: false,
+        searchAheadValue: ''
       }
     };
 
@@ -86,6 +87,7 @@ class StyleGuideSearch extends Component {
            size="small"
            placeholder="Type to search..."
            onChange={this.onChange}
+           isSearchAhead={true}
          />
       </div>
     </div>
