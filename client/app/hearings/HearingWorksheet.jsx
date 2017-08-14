@@ -299,7 +299,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value=""
+              value={this.contentions}
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -308,7 +308,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value=""
+              value={this.worksheetPeriods}
               onChange={this.onWorksheetPeriodsChange}
               id="worksheet-periods"
               />
@@ -317,7 +317,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value=""
+              value={this.evidence}
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -326,7 +326,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value=""
+              value={this.worksheetComments}
               id="worksheet-comments"
               onChange={this.onWorksheetCommentsChange}
               />

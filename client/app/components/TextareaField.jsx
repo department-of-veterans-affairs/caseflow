@@ -21,7 +21,7 @@ export default class TextareaField extends React.Component {
     let className = 'cf-form-textarea' +
           `${errorMessage ? ' usa-input-error' : ''}`;
 
-    let characterLimitCount = maxlength - value.length;
+    let characterLimitCount = maxlength - this.length;
 
     return <div className={className}>
       <label className="question-label" htmlFor={name}>
