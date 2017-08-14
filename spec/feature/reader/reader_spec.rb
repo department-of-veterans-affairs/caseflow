@@ -331,7 +331,7 @@ RSpec.feature "Reader" do
         find("body").send_keys(:arrow_right)
         expect(page).to_not have_css(".comment-textarea")
       end
-      
+
       fill_in "tags", with: "tag content"
       find("#tags").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
