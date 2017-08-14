@@ -112,7 +112,6 @@ describe('hearingsReducer', () => {
     });
   });
 
-
   context(Constants.SET_CONTENTIONS, () => {
     let state;
 
@@ -128,7 +127,7 @@ describe('hearingsReducer', () => {
     it('sets contentions', () => {
       expect(state.worksheet).to.deep.equal({   worksheet: { contentions: 'this is a contention text' } });
     });
-});
+  });
 
 
   context(Constants.SET_WORKSHEET_PERIODS, () => {
@@ -146,8 +145,7 @@ describe('hearingsReducer', () => {
     it('sets contentions', () => {
       expect(state.worksheet).to.deep.equal({   worksheet: { worksheetPeriods: 'this is a worksheet periods text' } });
     });
-});
-
+  });
 
   context(Constants.SET_EVIDENCE, () => {
     let state;
@@ -164,7 +162,7 @@ describe('hearingsReducer', () => {
     it('sets contentions', () => {
       expect(state.worksheet).to.deep.equal({   worksheet: { evidence: 'this is a evidence text' } });
     });
-});
+  });
 
 
   context(Constants.SET_WORKSHEET_COMMENTS, () => {
@@ -182,7 +180,7 @@ describe('hearingsReducer', () => {
     it('sets contentions', () => {
       expect(state.worksheet).to.deep.equal({   worksheet: { worksheetComments: 'this is a worksheet comments text' } });
     });
-});
+  });
 
 
 
