@@ -71,7 +71,7 @@ production_vacols:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  host: <%= `whoami` %>
+  username: <%= `whoami` %>
   database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
 
 test_vacols:
