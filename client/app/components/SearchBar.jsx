@@ -51,6 +51,7 @@ export default class SearchBar extends React.Component {
       value,
       loading,
       onClearSearch,
+      onClick,
       size,
       placeholder,
       title
@@ -91,7 +92,7 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={`search-${id}`} type="submit" loading={loading}>
+      <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button>
     </span>;

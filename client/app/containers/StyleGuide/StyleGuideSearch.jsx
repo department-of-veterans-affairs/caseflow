@@ -9,8 +9,7 @@ class StyleGuideSearch extends Component {
     this.state = {
       loading: {
         small: false,
-        big: false,
-        searchAhead: false
+        big: false
       }
     };
 
@@ -32,7 +31,7 @@ class StyleGuideSearch extends Component {
 
   handleSmallClick = () => this.handleSearchClick('small')
 
-  handleSearchAheadClick = () => this.handleSearchClick('searchAhead')
+  onChange = (value) => this.setState({ value });
 
   render() {
 
@@ -54,6 +53,12 @@ class StyleGuideSearch extends Component {
         There is also a unique Caseflow search behavior that displays a spinning logo to indicate load times.
         </p>
 
+        <p>
+        <b>Technical notes:</b> In the "Search Big" and the "Search Small" examples below,
+        click on the Search buttons to activate the loading spinner for a 2 second
+        period.
+        </p>
+
         <div className="cf-sg-searchbar-example">
           <SearchBar
             id="search-big"
@@ -61,9 +66,9 @@ class StyleGuideSearch extends Component {
             size="big"
             onClick={this.handleBigClick}
             loading={this.state.big}
+            onChange={this.onChange}
           />
         </div>
-        <br/>
         <div className="cf-sg-searchbar-example">
           <SearchBar
             id="search-small"
@@ -71,6 +76,7 @@ class StyleGuideSearch extends Component {
             size="small"
             onClick={this.handleSmallClick}
             loading={this.state.small}
+            onChange={this.onChange}
           />
        </div>
        <div className="cf-sg-searchbar-example">
@@ -79,8 +85,7 @@ class StyleGuideSearch extends Component {
            title="Search Ahead"
            size="small"
            placeholder="Type to search..."
-           onClick={this.handleSearchAheadClick}
-           loading={this.state.searchAhead}
+           onChange={this.onChange}
          />
       </div>
     </div>
