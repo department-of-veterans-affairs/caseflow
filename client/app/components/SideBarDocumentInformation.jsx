@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import LoadingMessage from '../components/LoadingMessage';
+import { getClaimTypeDetailInfo } from '../reader/utils';
 import Alert from '../components/Alert';
 
 class SideBarDocumentInformation extends PureComponent {
@@ -31,7 +32,7 @@ class SideBarDocumentInformation extends PureComponent {
           <strong>Veteran ID:</strong> {appeal.vbms_id}
         </p>
         <p className="cf-pdf-meta-title">
-          <strong>Type:</strong> {appeal.type}
+          <strong>Type:</strong> {appeal.type} {getClaimTypeDetailInfo(appeal)}
         </p>
         <p className="cf-pdf-meta-title">
           <strong>Docket Number:</strong> {appeal.docket_number}
