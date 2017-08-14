@@ -440,6 +440,7 @@ RSpec.feature "Save Certification" do
         end
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/sign_and_certify")
+        expect(find_field("Name of certifying official").value).to eq "Lauren Roth"
 
         fill_in "Name of certifying official", with: "Tom Cruz"
         within_fieldset("Title of certifying official") do
@@ -496,7 +497,7 @@ RSpec.feature "Save Certification" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         expect(find_field("Name and location of certifying office").value).to eq "Digital Service HQ, DC"
         expect(find_field("Organizational elements certifying appeal").value).to eq "DSUSER"
-        expect(find_field("Name of certifying official").value).to eq "Tom Cruz"
+        expect(find_field("Name of certifying official").value).to eq "Lauren Roth"
 
         within_fieldset("Title of certifying official") do
           expect(find_field("Other", visible: false)).to be_checked
@@ -601,7 +602,6 @@ RSpec.feature "Save Certification" do
       scenario "on the save and certify page" do
         visit "certifications/#{appeal.vacols_id}/sign_and_certify"
         click_button("Continue")
-        expect(page).to have_content "Please enter the name of the certifying official (usually your name)."
         expect(page).to have_content "Please enter the title of the certifying official."
         fill_in "Name of certifying official", with: "12345678901234567890123456789012345678901"
         click_button("Continue")
