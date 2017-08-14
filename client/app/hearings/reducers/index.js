@@ -56,8 +56,29 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
+  case Constants.SET_CONTENTIONS:
+    return update(state, {
+      worksheet: { contentions: { $set: action.payload.contentions } }
+    });
+
+  case Constants.SET_WORKSHEET_PERIODS:
+    return update(state, {
+      worksheet: { worksheetPeriods: { $set: action.payload.evidence } }
+    });
+
+  case Constants.SET_EVIDENCE:
+    return update(state, {
+      worksheet: { evidence: { $set: action.payload.evidence } }
+    });
+
+  case Constants.SET_WORKSHEET_COMMENTS:
+    return update(state, {
+      worksheet: { worksheetComments: { $set: action.payload.worksheetComments } }
+    });
+
   default: return state;
   }
 };
+
 
 export default hearingsReducers;
