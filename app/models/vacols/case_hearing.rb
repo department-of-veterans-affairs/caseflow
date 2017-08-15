@@ -41,10 +41,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     vdkey is NOT NULL
   ).freeze
 
-  WITHOUT_DISPOSITION = %{
+  WITHOUT_DISPOSITION = %(
     hearing_disp IS NULL
     -- an older hearing still awaiting a disposition
-  }.freeze
+  ).freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
   after_update :create_or_update_diaries
