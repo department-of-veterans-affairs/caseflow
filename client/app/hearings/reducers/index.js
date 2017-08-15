@@ -14,7 +14,7 @@ export const mapDataToInitialState = function(state = {}) {
 };
 
 export const newHearingState = (state, action, spec) => {
-  _.extend(spec, {edited: {$set: true}});
+  _.extend(spec, { edited: { $set: true } });
 
   return update(state, {
     dockets: {
