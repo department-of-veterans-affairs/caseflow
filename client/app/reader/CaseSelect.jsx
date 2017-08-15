@@ -130,11 +130,11 @@ class CaseSelect extends React.PureComponent {
     const createAppealOptions = (appeals) => {
       return appeals.map((appeal) => {
         return {
-          displayText: <div>
+          displayText: <div className="folder-option">
             <strong>Veteran</strong> {appeal.veteran_full_name} <br />
             <strong>Veteran ID</strong> {appeal.vbms_id} <br />
             <strong>Issues</strong><br />
-              <ol>
+              <ol className="issues">
                 {generateIssueList(appeal)}
               </ol>
           </div>,
@@ -184,6 +184,14 @@ class CaseSelect extends React.PureComponent {
               onChange={this.handleChangeAppealSelection}
               hideLabel={true}
             />
+            <p>
+              Not seeing what you expected? <a
+                name="feedbackUrl"
+                ariaLabel="open document in new tab"
+                href={this.props.feedbackUrl}>
+                Please send us feedback.
+              </a>
+            </p>
           </Modal> : ''
           }
           <p className="cf-lead-paragraph">
