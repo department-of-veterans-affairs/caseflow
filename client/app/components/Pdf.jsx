@@ -615,7 +615,7 @@ export class Pdf extends React.PureComponent {
     this.updatePageBounds();
   }
 
-  comopnentWillUnmount() {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.drawInViewPages);
     window.removeEventListener('keydown', this.keyListener);
   }
