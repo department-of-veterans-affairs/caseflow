@@ -45,21 +45,29 @@ export default function StyleGuideAlerts() {
         in our app with a different layout, specifically to call out features with
         smaller dimensions. Currently it is being used in the Caseflow Reader Menu.
       </p>
-      <Alert
-        type="success">
-        Success status lite
-      </Alert>
-      <Alert
-        type="warning">
-        Warning status lite
-      </Alert>
-      <Alert
-        type="error">
-        Error status lite
-      </Alert>
-      <Alert
-        type="info">
-        Informative status lite
-      </Alert>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="success">
+          Success status lite
+        </Alert>
+      </div>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="warning">
+          Warning status lite
+        </Alert>
+      </div>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="error">
+          Error status lite
+        </Alert>
+      </div>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="info">
+          Informative status lite
+        </Alert>
+      </div>
     </div>;
 }
