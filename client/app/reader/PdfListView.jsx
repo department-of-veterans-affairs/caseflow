@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
-import { fetchAppealDetails } from './actions';
+import { fetchAppealDetails, onReceiveAppealDetails } from './actions';
 import { getAppealIfItDoesNotExist } from '../reader/utils';
 
 import _ from 'lodash';
@@ -49,13 +49,15 @@ const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state),
     ..._.pick(state.ui, 'docFilterCriteria'),
     appeal: _.find(state.assignments, { vacols_id: props.match.params.vacolsId }) ||
-      state.loadedAppeal
+      state.loadedAppeal,
+    caseSelectedAppeal: state.ui.caseSelect.selectedAppeal
   };
 };
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    fetchAppealDetails
+    fetchAppealDetails,
+    onReceiveAppealDetails
   }, dispatch)
 );
 
