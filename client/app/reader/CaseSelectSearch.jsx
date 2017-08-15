@@ -24,6 +24,10 @@ class CaseSelectSearch extends React.PureComponent {
   }
 
   componentDidUpdate = () => {
+
+    // when an appeal is selected using claim search,
+    // this method redirects to the claim folder page
+    // and also does a bit of store clean up.
     if (this.props.caseSelect.selectedAppeal.vacols_id) {
       this.props.history.push(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
       this.props.clearCaseSelectSearch();
@@ -40,9 +44,11 @@ class CaseSelectSearch extends React.PureComponent {
   }
 
   handleSelectAppeal = () => {
+    // get the appeal selected from the modal
     const appeal = _.find(this.props.caseSelect.receivedAppeals,
       { vacols_id: this.state.selectedAppealVacolsId });
 
+    // set the selected appeal
     this.props.caseSelectAppeal(appeal);
   }
 
@@ -116,7 +122,6 @@ class CaseSelectSearch extends React.PureComponent {
       <p>
         Not seeing what you expected? <a
           name="feedbackUrl"
-          ariaLabel="open document in new tab"
           href={this.props.feedbackUrl}>
           Please send us feedback.
         </a>
