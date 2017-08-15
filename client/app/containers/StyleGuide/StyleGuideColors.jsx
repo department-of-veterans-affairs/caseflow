@@ -24,11 +24,12 @@ export default class StyleGuideColors extends React.Component {
     Dispatch: '#844e9f',
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
+    Certification: '#459fd7',
     Reader: '#417505',
     Hearing: '#fdc231',
     Procedural: '#5a94ec',
     Medical: '#ff6868',
-    Certification: '#3ad2cf'
+    CertificationCategory: '#3ad2cf'
   };
 
   Primary = [
@@ -72,7 +73,7 @@ export default class StyleGuideColors extends React.Component {
     'Hearing',
     'Procedural',
     'Medical',
-    'Certification'
+    'CertificationCategory'
   ];
 
   colorVar = (name) => {
@@ -171,13 +172,13 @@ export default class StyleGuideColors extends React.Component {
       <div className="sg-colors-swatches">
       {this.Reader.map((name) =>
         <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
+          <div style={{ background: this.Colors[name] }}>
+          </div>
           <b>{this.Colors[name]}</b>
-          <p>{name}</p>
+          <p>{name === 'CertificationCategory' ? 'Certification' : name}</p>
         </div>
       )}
       </div>
-
 
       <h3>Text Accessibility</h3>
 
