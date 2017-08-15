@@ -300,7 +300,7 @@ export const reducer = (state = initialState, action = {}) => {
           $set: {}
         }
       }
-    )
+    );
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -827,7 +827,7 @@ export const reducer = (state = initialState, action = {}) => {
           $set: {}
         }
       }
-    })
+    });
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
     return update(showErrorMessage(state, 'annotation'), {
       ui: {
