@@ -1,41 +1,8 @@
-<div class="content cf-app-segment cf-app-segment--alt">
-  <div class="usa-grid-full">
-    <div class="usa-width-one-half">
-      <h1>Switch User</h1>
+<% content_for :page_title do %>&nbsp &gt &nbspTest Users<% end %>
 
-      <% @users.each do |user| %>
-        <p><%= link_to "#{user.css_id} at station #{user.station_id}", test_set_user_path(user), method: :post %></p>
-      <% end %>
-    </div>
-
-    <div class="usa-width-one-half">
-      <h1>Page Links</h1>
-      <h2>Dispatch</h2>
-      <p><a href="/dispatch/establish-claim">Establish Claim</a></p>
-      <h2>Certification</h2>
-      <p><a href="/certifications/new/123C">Ready to Certify</a></p>
-      <p><a href="/certifications/new/456C">Mismatched Documents</a></p>
-      <p><a href="/certifications/new/789C">Already Certified</a></p>
-      <p><a href="/certifications/new/000ERR">VBMS Error</a></p>
-      <p><a href="/certifications/new/001ERR">Unable to Certify</a></p>
-      <h2>Reader</h2>
-      <p><a href="/reader/appeal/reader_id1/documents">Case File</a></p>
-      <h2>Hearings</h2>
-      <p><a href="/hearings/dockets">Hearing Prep</a></p>
-      <h2>Misc.</h2>
-      <p><a href="/styleguide">Commons Style Guide</a></p>
-      <p><a href="/stats">Stats</a></p>
-    </div>
-  </div>
-  <div class="usa-grid-full">
-    <div class="usa-width-one-half">
-      <h1>End Product Seed Data</h1>
-      <p><%= link_to "All Grants", test_set_end_products_path(type: "all"), method: :post %></a></p>
-      <p><%= link_to "No Grants", test_set_end_products_path(type: "none"), method: :post %></a></p>
-      <p><%= link_to "Partial Grants", test_set_end_products_path(type: "partial"), method: :post %></a></p>
-      <p><%= link_to "Full Grants", test_set_end_products_path(type: "full"), method: :post %></a></p>
-    </div>
-    <div class="usa-width-one-half">
-    </div>
-  </div>
-</div>
+<%= react_component("TestUsers", props: {
+	currentUser: current_user.to_hash,
+	testUsersList: @test_users,
+	appSelectList: Test::UsersController::APPS,
+	epTypes: @ep_types
+}) %>
