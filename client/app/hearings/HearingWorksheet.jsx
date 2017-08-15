@@ -281,7 +281,6 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>&nbsp;</div>
           </div>
-
         </div>
 
         <div className="cf-hearings-worksheet-data">
@@ -295,6 +294,7 @@ export class HearingWorksheet extends React.PureComponent {
             getKeyForRow={this.getKeyForRow}
           />
         </div>
+
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
             <TextareaField
@@ -350,7 +350,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onEvidenceChange,
   onWorksheetCommentsChange
 }, dispatch);
-
 
 export default connect(
   mapStateToProps,

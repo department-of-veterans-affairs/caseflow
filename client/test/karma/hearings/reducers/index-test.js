@@ -138,13 +138,13 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_CONTENTIONS,
         payload: {
-          contentions:
+          contentions: 'filled'
         }
       });
     });
 
-    it('sets contentions', () => {
-      expect(state.worksheet).to.deep.equal({   worksheet: { contentions: 'this is a contention text' } });
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet).to.deep.equal({ worksheet: { contentions: 'this is a contention text' } });
     });
   });
 
@@ -160,8 +160,8 @@ describe('hearingsReducer', () => {
       });
     });
 
-    it('sets contentions', () => {
-      expect(state.worksheet).to.deep.equal({   worksheet: { worksheetPeriods: 'this is a worksheet periods text' } });
+    it('sets worksheet periods', () => {
+      expect(state.worksheet).to.deep.equal({ worksheet: { worksheetPeriods: 'this is a worksheet periods text' } });
     });
   });
 
@@ -177,8 +177,8 @@ describe('hearingsReducer', () => {
       });
     });
 
-    it('sets contentions', () => {
-      expect(state.worksheet).to.deep.equal({   worksheet: { evidence: 'this is a evidence text' } });
+    it('sets evidences', () => {
+      expect(state.worksheet).to.deep.equal({ worksheet: { evidence: 'this is a evidence text' } });
     });
   });
 
@@ -194,8 +194,8 @@ describe('hearingsReducer', () => {
       });
     });
 
-    it('sets contentions', () => {
-      expect(state.worksheet).to.deep.equal({   worksheet: { worksheetComments: 'this is a worksheet comments text' } });
+    it('sets worksheet comments', () => {
+      expect(state.worksheet).to.deep.equal({ worksheet: { worksheetComments: 'this is a worksheet comments text' } });
     });
   });
 });

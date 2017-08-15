@@ -83,7 +83,7 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Shows a hearing worksheet" do
-      visit "/hearings/dockets/2017-01-05"
+      visit "hearings/worksheets/25f4d2d26"
 
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
       link_text = link.text
