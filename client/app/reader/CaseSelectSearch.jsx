@@ -123,7 +123,7 @@ class CaseSelectSearch extends React.PureComponent {
       </p>
     </Modal> : ''
     }
-    </div>
+    </div>;
   }
 }
 
