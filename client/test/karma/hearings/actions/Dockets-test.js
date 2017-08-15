@@ -92,3 +92,63 @@ describe('.setTranscriptRequested', () => {
     expect(Actions.setTranscriptRequested(hearingIndex, transcriptRequested, date)).to.deep.equal(expectedAction);
   });
 });
+
+describe('.onContentionsChange', () => {
+  it('sets contention text', () => {
+
+    const contentions = 'this is a contention text';
+    const expectedAction = {
+      type: Constants.SET_CONTENTIONS,
+      payload: {
+        contentions
+      }
+    };
+
+    expect(Actions.onContentionsChange(contentions)).to.deep.equal(expectedAction);
+  });
+});
+
+describe('.onWorksheetPeriodsChange', () => {
+  it('sets worksheet periods text', () => {
+
+    const worksheetPeriods = 'this is a worksheet periods text';
+    const expectedAction = {
+      type: Constants.SET_WORKSHEET_PERIODS,
+      payload: {
+        worksheetPeriods
+      }
+    };
+
+    expect(Actions.onWorksheetPeriodsChange(worksheetPeriods)).to.deep.equal(expectedAction);
+  });
+});
+
+describe('.onEvidenceChange', () => {
+  it('sets evidence text', () => {
+
+    const evidence = 'this is a evidence text';
+    const expectedAction = {
+      type: Constants.SET_EVIDENCE,
+      payload: {
+        evidence
+      }
+    };
+
+    expect(Actions.onEvidenceChange(evidence)).to.deep.equal(expectedAction);
+  });
+});
+
+describe('.onContentionsChange', () => {
+  it('sets contention text', () => {
+
+    const worksheetComments = 'this is a contention text';
+    const expectedAction = {
+      type: Constants.SET_WORKSHEET_COMMENTS,
+      payload: {
+        worksheetComments
+      }
+    };
+
+    expect(Actions.onWorksheetCommentsChange(worksheetComments)).to.deep.equal(expectedAction);
+  });
+});
