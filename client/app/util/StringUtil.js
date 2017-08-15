@@ -26,8 +26,9 @@ const StringUtil = {
         if (Number(match) === 0) {
           return '';
         }
-          return index === 0 ? match.toLowerCase() : match.toUpperCase();
-        });
+
+        return index === 0 ? match.toLowerCase() : match.toUpperCase();
+      });
   },
 
   leftPad(string, width, padding = '0') {
