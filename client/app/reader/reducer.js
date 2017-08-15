@@ -151,6 +151,7 @@ export const initialState = {
   ],
   ui: {
     caseSelect: {
+      selectedAppeal: {},
       search: {
         showErrorMessage: false
       }
@@ -807,6 +808,22 @@ export const reducer = (state = initialState, action = {}) => {
           search: {
             showErrorMessage: { $set: false }
           }
+        }
+      }
+    });
+  case Constants.CASE_SELECT_APPEAL:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          selectedAppeal: { $set: action.payload.appeal }
+        }
+      }
+    });
+  case Constants.CLEAR_SELECTED_APPEAL:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          selectedAppeal: { $set: {} }
         }
       }
     });

@@ -4,12 +4,11 @@ import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { Redirect } from 'react-router-dom';
 
 import { getClaimTypeDetailInfo, generateIssueList } from '../reader/utils';
 import { fetchAppealUsingVeteranId, clearLoadedAppeal,
   clearReceivedAppeals, onReceiveAppealDetails, setCaseSelectSearch,
-  clearCaseSelectSearch
+  clearCaseSelectSearch, caseSelectAppeal, clearSelectedAppeal
 } from './actions';
 
 import SearchBar from '../components/SearchBar';
@@ -108,7 +107,7 @@ class CaseSelect extends React.PureComponent {
     const appeal = _.find(this.props.receivedAppeals,
       { vacols_id: this.state.selectedAppealVacolsId });
 
-    this.props.onReceiveAppealDetails(appeal);
+    this.props.caseSelectAppeal(appeal);
   }
 
   handleChangeAppealSelection = (vacolsId) => {
@@ -119,9 +118,11 @@ class CaseSelect extends React.PureComponent {
 
     const { caseSelect } = this.props;
 
-    if (this.props.loadedAppeal.vacols_id) {
-      this.props.history.push(`/${this.props.loadedAppeal.vacols_id}/documents`);
-      this.props.clearLoadedAppeal();
+    if (caseSelect.selectedAppeal.vacols_id) {
+      this.props.history.push(`/${caseSelect.selectedAppeal.vacols_id}/documents`);
+      this.props.clearCaseSelectSearch();
+      this.props.clearReceivedAppeals();
+      this.props.clearSelectedAppeal();
     }
 
     if (!this.props.assignments) {
@@ -210,7 +211,9 @@ const mapDispatchToProps = (dispatch) => ({
     clearReceivedAppeals,
     onReceiveAppealDetails,
     setCaseSelectSearch,
-    clearCaseSelectSearch
+    clearCaseSelectSearch,
+    caseSelectAppeal,
+    clearSelectedAppeal
   }, dispatch)
 });
 
