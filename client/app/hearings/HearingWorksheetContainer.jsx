@@ -21,7 +21,7 @@ export class HearingWorksheetContainer extends React.Component {
   componentDidMount() {
     // TODO: if !worksheet call this.props.getWorksheet
     if (!this.props.worksheet) {
-      this.props.getWorksheet(this.props.hearindId);
+      this.props.getWorksheet(this.props.hearingId);
     }
 
     // Since the page title does not change when react router
@@ -73,5 +73,5 @@ export default connect(
 
 HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  hearingId: PropTypes.string
+  hearingId: PropTypes.string.isRequired
 };
