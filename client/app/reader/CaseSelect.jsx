@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 
 import { getClaimTypeDetailInfo, generateIssueList } from '../reader/utils';
-import { fetchAppealUsingVeteranId, clearLoadedAppeal, 
+import { fetchAppealUsingVeteranId, clearLoadedAppeal,
   clearReceivedAppeals, onReceiveAppealDetails, setCaseSelectSearch,
   clearCaseSelectSearch
 } from './actions';
@@ -120,8 +120,8 @@ class CaseSelect extends React.PureComponent {
     const { caseSelect } = this.props;
 
     if (this.props.loadedAppeal.vacols_id) {
-      return <Redirect
-        to={`/${this.props.loadedAppeal.vacols_id}/documents`}/>;
+      this.props.history.push(`/${this.props.loadedAppeal.vacols_id}/documents`);
+      this.props.clearLoadedAppeal();
     }
 
     if (!this.props.assignments) {
@@ -147,7 +147,7 @@ class CaseSelect extends React.PureComponent {
     return <div className="usa-grid section--case-select">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1 id="welcome-header">Welcome to Reader!</h1>
+          <h1 className="welcome-header">Welcome to Reader!</h1>
             <div className="section-search">
               {caseSelect.search.showErrorMessage &&
                 <Alert title="Veteran ID not found" type="error">

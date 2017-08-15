@@ -13,8 +13,6 @@ import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import { CATEGORIES } from './analytics';
 import _ from 'lodash';
-import history from './history'
-
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -98,14 +96,14 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = () => {
+  routedCaseSelect = (props) => {
     return <CaseSelectLoadingScreen
       assignments={this.props.assignments}>
         <PageRoute
           exact
           title="Assignments | Caseflow Reader"
           path="/"
-          render={() => <CaseSelect />}
+          render={() => <CaseSelect history={props.history} />}
         />
     </CaseSelectLoadingScreen>;
   }
