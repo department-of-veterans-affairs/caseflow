@@ -7,7 +7,7 @@ import initPerfMeasurement from './util/initPerfMeasurement';
 
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
-import Certification from './certification/Certification';
+import { Certification } from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
 import Login from './login';

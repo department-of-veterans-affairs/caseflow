@@ -120,7 +120,7 @@ const ERRORS = {
  */
 // TODO: refactor to use shared components where helpful
 
-class UnconnectedConfirmHearing extends React.Component {
+export class ConfirmHearing extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
@@ -411,10 +411,10 @@ const mapStateToProps = (state) => ({
  * using the state & dispatch map functions and the
  * ConfirmHearing function.
  */
-const ConfirmHearing = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UnconnectedConfirmHearing);
+)(ConfirmHearing);
 
 ConfirmHearing.propTypes = {
   hearingDocumentIsInVbms: PropTypes.string,
@@ -429,5 +429,3 @@ ConfirmHearing.propTypes = {
   match: PropTypes.object.isRequired,
   certificationStatus: PropTypes.string
 };
-
-export default ConfirmHearing;
