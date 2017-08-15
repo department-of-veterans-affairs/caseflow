@@ -217,7 +217,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'assignments'),
-  ..._.pick(state, 'loadedAppeal'),
   ..._.pick(state.ui, 'caseSelect'),
   ..._.pick(state.ui, 'caseSelectCriteria')
 });
