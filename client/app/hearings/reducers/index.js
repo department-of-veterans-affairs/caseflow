@@ -83,5 +83,4 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   }
 };
 
-
 export default hearingsReducers;
