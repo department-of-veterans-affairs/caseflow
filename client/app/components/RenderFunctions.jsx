@@ -29,9 +29,9 @@ export const loadingSymbolHtml = function(text = 'Loading', size = '30px', color
 
   return (
       <div>
-        <div className="cf-loading-button-text">
+        {text && <div className="cf-loading-button-text">
           {text}
-        </div>
+        </div>}
         <div className="cf-loading-button-symbol">
           <svg
             width={imgSize}
@@ -433,7 +433,7 @@ export class Keyboard extends React.PureComponent {
   }
 }
 
-export class ChervonDown extends React.PureComponent {
+export class ChevronDown extends React.PureComponent {
    // eslint-disable-next-line class-methods-use-this
   render() {
     return <svg width="14px" height="10px" className="table-icon" viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -446,7 +446,7 @@ export class ChervonDown extends React.PureComponent {
   }
 }
 
-export class ChervonUp extends React.PureComponent {
+export class ChevronUp extends React.PureComponent {
   // eslint-disable-next-line class-methods-use-this
   render () {
     return <svg width="13px" height="10px" className="table-icon" viewBox="0 0 17 11" version="1.1" xmlns="http://www.w3.org/2000/svg">

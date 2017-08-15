@@ -13,4 +13,5 @@
  *= require ./_link.scss
  *= require ./_toggle_button.scss
  *= require ./_performance_degradation_banner.scss
+ *= require ./_loading-message.scss
  */

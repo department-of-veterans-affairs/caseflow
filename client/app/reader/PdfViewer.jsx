@@ -7,8 +7,8 @@ import PdfUI from '../components/PdfUI';
 import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf } from '../reader/actions';
-import { isUserEditingText, update } from '../reader/utils';
+  selectCurrentPdf, fetchAppealDetails } from '../reader/actions';
+import { isUserEditingText, update, getAppealIfItDoesNotExist } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
@@ -91,6 +91,7 @@ export class PdfViewer extends React.Component {
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getPrevDocId())();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
     if (event.key === 'ArrowRight') {
       window.analyticsEvent(
@@ -99,6 +100,7 @@ export class PdfViewer extends React.Component {
         INTERACTION_TYPES.KEYBOARD_SHORTCUT
       );
       this.props.showPdf(this.getNextDocId())();
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
   }
 
@@ -113,6 +115,8 @@ export class PdfViewer extends React.Component {
   componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
     window.addEventListener('keydown', this.keyListener);
+
+    getAppealIfItDoesNotExist(this);
   }
 
   componentWillUnmount = () => {
@@ -216,15 +220,18 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
+  appeal: state.appeal,
   ..._.pick(state, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
   ..._.pick(state.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
+
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     showPlaceAnnotationIcon,
     closeAnnotationDeleteModal,
-    deleteAnnotation
+    deleteAnnotation,
+    fetchAppealDetails
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))

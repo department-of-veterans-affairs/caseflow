@@ -4,17 +4,20 @@ RSpec.feature "Hearings" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1))
+    Timecop.freeze(Time.utc(2017, 1, 1, 13))
+    FeatureToggle.enable!(:reader)
+  end
+
+  let(:appeal) do
+    Generators::Appeal.create
   end
 
   context "Upcoming Hearing Days" do
     let!(:current_user) do
-      User.authenticate!(roles: ["Hearings"])
+      User.authenticate!(roles: ["Hearing Prep"])
     end
 
     before do
-      current_user.update!(full_name: "Lauren Roth", vacols_id: "LROTH")
-
       2.times do
         Generators::Hearing.build(
           user: current_user,
@@ -67,21 +70,19 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Caseflow Hearings Help")
     end
 
-    scenario "User visits page without a vacols_id" do
-      current_user.update!(vacols_id: nil)
-      visit "/hearings/dockets"
-      expect(page).to have_content("Page not found")
-    end
-
     scenario "Shows a daily docket" do
-      visit "/hearings/dockets/2017-01-05"
+      visit "/hearings/dockets/2017-01-06"
       expect(page).to have_content("Daily Docket")
+      expect(page).to have_content("1/6/2017")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
+
+      find_link("Back to Upcoming Hearing Days").click
+      expect(page).to have_content("Upcoming Hearing Days")
     end
 
     scenario "Shows a hearing worksheet" do
-      visit "/hearings/dockets/2017-01-05"
+      visit "/hearings/dockets/2017-01-06"
 
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
       link_text = link.text
@@ -95,6 +96,9 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_content("Veteran ID: #{link_text}")
+
+      # There's no functionality yet, but you should be able to...
+      click_on "Review eFolder"
     end
   end
 end

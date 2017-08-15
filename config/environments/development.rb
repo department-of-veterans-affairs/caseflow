@@ -27,11 +27,6 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
-  # Docker configurations for hot module reloading
-  # Also stops web-console spam when trying to get webfonts
-  # and other assets.
-  config.web_console.whitelisted_ips = ['172.18.0.0/12','192.168.0.0/16']
-
   # Asset digests allow you to set far-future HTTP expiration dates on all assets,
   # yet still be able to expire them through the digest params.
   config.assets.digest = true
@@ -44,6 +39,9 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = !ENV['AWS_ACCESS_KEY_ID'].nil?
   config.s3_bucket_name = "caseflow-cache"
+
+  # Set to true to get the documents from efolder running locally on port 4000.
+  config.use_efolder_locally = false
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

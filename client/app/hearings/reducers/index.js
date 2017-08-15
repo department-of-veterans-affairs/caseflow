@@ -5,26 +5,62 @@
 * these are conventionally broken out into separate "actions" files
 * that would live at client/app/actions/**.js.
 */
+import update from 'immutability-helper';
+import * as Constants from '../constants/constants';
 
 export const mapDataToInitialState = function(state = {}) {
   return state;
 };
 
+export const newHearingState = (state, action, spec) => {
+  return update(state, {
+    dockets: {
+      [action.payload.date]: {
+        hearings_hash: {
+          [action.payload.hearingIndex]: spec
+        }
+      }
+    }
+  });
+};
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
-  case 'POPULATE_DOCKETS':
-    return Object.assign({}, state, {
-      dockets: action.payload.dockets
+  case Constants.POPULATE_DOCKETS:
+    return update(state, {
+      dockets: { $set: action.payload.dockets }
     });
-  case 'POPULATE_WORKSHEET':
-    return Object.assign({}, state, {
-      worksheet: action.payload.worksheet
+
+  case Constants.POPULATE_WORKSHEET:
+    return update(state, {
+      worksheet: { $set: action.payload.worksheet }
     });
-  case 'HANDLE_SERVER_ERROR':
-    return Object.assign({}, state, {
-      serverError: action.payload.err
+
+  case Constants.HANDLE_SERVER_ERROR:
+    return update(state, {
+      serverError: { $set: action.payload.err }
     });
+
+  case Constants.SET_NOTES:
+    return newHearingState(state, action, { notes: { $set: action.payload.notes } });
+
+  case Constants.SET_DISPOSITION:
+    return newHearingState(state, action, { disposition: { $set: action.payload.disposition } });
+
+  case Constants.SET_HOLD_OPEN:
+    return newHearingState(state, action, { hold_open: { $set: action.payload.holdOpen } });
+
+  case Constants.SET_AOD:
+    return newHearingState(state, action, { aod: { $set: action.payload.aod } });
+
+  case Constants.SET_ADD_ON:
+    return newHearingState(state, action, { addon: { $set: action.payload.addOn } });
+
+  case Constants.SET_TRANSCRIPT_REQUESTED:
+    return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
+
   default: return state;
   }
 };
+
 export default hearingsReducers;

@@ -20,6 +20,9 @@ class Generators::Appeal
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,
+        outcoder_first_name: generate_first_name,
+        outcoder_middle_initial: "B",
+        outcoder_last_name: generate_last_name,
         appellant_first_name: generate_first_name,
         appellant_middle_initial: "A",
         appellant_last_name: last_name,
@@ -151,7 +154,8 @@ class Generators::Appeal
       cast_datetime_fields(attrs)
       inaccessible = attrs.delete(:inaccessible)
 
-      appeal = Appeal.new(attrs)
+      appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
+      appeal.attributes = attrs
 
       vacols_record[:vbms_id] = appeal.vbms_id
 

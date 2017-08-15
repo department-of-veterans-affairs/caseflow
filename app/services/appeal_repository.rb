@@ -73,6 +73,7 @@ class AppealRepository
   def self.set_vacols_values(appeal:, case_record:)
     correspondent_record = case_record.correspondent
     folder_record = case_record.folder
+    outcoder_record = folder_record.outcoder
 
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
@@ -82,6 +83,9 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
+      outcoder_first_name: outcoder_record.try(:snamef),
+      outcoder_last_name: outcoder_record.try(:snamel),
+      outcoder_middle_initial: outcoder_record.try(:snamemi),
       appellant_first_name: correspondent_record.sspare1,
       appellant_middle_initial: correspondent_record.sspare2,
       appellant_last_name: correspondent_record.sspare3,
@@ -184,8 +188,14 @@ class AppealRepository
       update_location_after_dispatch!(appeal: appeal)
 
       if vacols_note
-        VACOLS::Note.create!(case_record: appeal.case_record,
-                             text: vacols_note)
+        VACOLS::Note.create!(case_id: appeal.case_record.bfkey,
+                             text: vacols_note,
+                             user_id: RequestStore.store[:current_user].regional_office.upcase,
+                             assigned_to: appeal.case_record.bfregoff,
+                             code: :other,
+                             days_to_complete: 30,
+                             days_til_due: 30
+                            )
       end
     end
   end

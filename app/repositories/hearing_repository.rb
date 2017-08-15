@@ -1,8 +1,8 @@
 class HearingRepository
   class << self
     # :nocov:
-    def upcoming_hearings_for_judge(vacols_user_id, date_diff: 7.days)
-      hearings_for(VACOLS::CaseHearing.upcoming_for_judge(vacols_user_id, date_diff: date_diff))
+    def upcoming_hearings_for_judge(css_id)
+      hearings_for(VACOLS::CaseHearing.upcoming_for_judge(css_id))
     end
 
     def hearings_for_appeal(appeal_vacols_id)
@@ -11,7 +11,7 @@ class HearingRepository
 
     def update_vacols_hearing!(vacols_record, hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
-      vacols_record.update_hearing!(hearing_hash)
+      vacols_record.update_hearing!(hearing_hash) if hearing_hash.present?
     end
 
     def load_vacols_data(hearing)

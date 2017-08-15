@@ -6,16 +6,6 @@ export const update = newContext();
 
 update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
 
-export const singleDocumentLink = (basePath, doc) => {
-  let id = doc.id;
-  let filename = doc.filename;
-  let type = doc.type;
-  let receivedAt = doc.receivedAt;
-
-  return `${basePath}/${id}?type=${type}` +
-    `&received_at=${receivedAt}&filename=${filename}`;
-};
-
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
 
@@ -95,4 +85,11 @@ export const getClaimTypeDetailInfo = (claim) => {
   }
 
   return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
+};
+
+export const getAppealIfItDoesNotExist = (component) => {
+  if (_.isEmpty(component.props.appeal) ||
+    (component.props.appeal.vacols_id !== component.props.match.params.vacolsId)) {
+    component.props.fetchAppealDetails(component.props.match.params.vacolsId);
+  }
 };

@@ -19,7 +19,7 @@ describe Issue do
       { "isskey" => "12345678",
         "issseq" => 1,
         "issdc" => "3",
-        "issdesc" => nil,
+        "issdesc" => "CERVICAL CONDITION AS CLAIMED",
         "issprog" => "02",
         "isscode" => "15",
         "isslev1" => "02",
@@ -40,6 +40,7 @@ describe Issue do
         name: :service_connection,
         label: "1151 Eligibility"
       )
+      expect(subject.note).to eq("CERVICAL CONDITION AS CLAIMED")
       expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other", "03 - Left knee", "04 - Right knee"])
       expect(subject.disposition).to eq(:remanded)
     end
