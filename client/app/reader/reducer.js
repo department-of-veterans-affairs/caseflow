@@ -294,14 +294,6 @@ export const reducer = (state = initialState, action = {}) => {
           $set: true
         }
       });
-  case Constants.CLEAR_LOADED_APPEAL:
-    return update(state,
-      {
-        loadedAppeal: {
-          $set: {}
-        }
-      }
-    );
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -811,6 +803,16 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: true }
+          }
+        }
+      }
+    });
   case Constants.CASE_SELECT_APPEAL:
     return update(state, {
       ui: {
@@ -824,16 +826,6 @@ export const reducer = (state = initialState, action = {}) => {
       ui: {
         caseSelect: {
           selectedAppeal: { $set: {} }
-        }
-      }
-    });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          search: {
-            showErrorMessage: { $set: true }
-          }
         }
       }
     });

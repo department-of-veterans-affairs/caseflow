@@ -657,10 +657,6 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
   }
 );
 
-export const clearLoadedAppeal = () => ({
-  type: Constants.CLEAR_LOADED_APPEAL
-});
-
 export const clearReceivedAppeals = () => ({
   type: Constants.CLEAR_RECEIVED_APPEALS
 });
