@@ -76,24 +76,24 @@ export default class TestUsers extends React.PureComponent {
     return <div className="cf-app-segment--alt">
       <div>
         <h1>Welcome to Caseflow Demo!</h1>
-          <p>
-            Here you can test out different user stories by selecting
-            a Test User and accessing different parts of the application.</p>
-          <p>
-            Some of our users come from different stations acorss the country,
-            therefore selecting station 405 might lead to an extra Login screen.</p>
-          <strong>User Selector:</strong>
-            <SearchableDropdown
-              name=""
-              options={userOptions} searchable={false}
-              onChange={this.handleUserSelect}
-              value={this.state.userSelect} />
+        <p>
+          Here you can test out different user stories by selecting
+          a Test User and accessing different parts of the application.</p>
+        <p>
+          Some of our users come from different stations acorss the country,
+          therefore selecting station 405 might lead to an extra Login screen.</p>
+        <strong>User Selector:</strong>
+          <SearchableDropdown
+            name=""
+            options={userOptions} searchable={false}
+            onChange={this.handleUserSelect}
+            value={this.state.userSelect} />
 
-            <Button
-              onClick={this.handleUserSwitch}
-              name="Switch user"
-              loading={this.state.isSwitching}
-              loadingText="Switching users" />
+          <Button
+            onClick={this.handleUserSwitch}
+            name="Switch user"
+            loading={this.state.isSwitching}
+            loadingText="Switching users" />
       </div>
       <p>
         Not all applications are available to every user. Additionally,
