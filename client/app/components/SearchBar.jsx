@@ -65,7 +65,8 @@ export default class SearchBar extends React.Component {
       onClearSearch,
       size,
       title,
-      onSubmit
+      onSubmit,
+      allowInputSubmission
     } = this.props;
 
     const sizeClasses = classnames('usa-search', {
@@ -94,7 +95,7 @@ export default class SearchBar extends React.Component {
         type="search"
         name="search"
         value={value}
-        onKeyPress={this.handleKeyPress}
+        onKeyPress={allowInputSubmission ? this.handleKeyPress : null}
         />
       {_.size(value) > 0 &&
         <Button
@@ -121,6 +122,8 @@ SearchBar.propTypes = {
   recordSearch: PropTypes.func,
   loading: PropTypes.bool,
   value: PropTypes.string,
-  analyticsCategory: PropTypes.string
+  analyticsCategory: PropTypes.string,
+  onSubmit: PropTypes.func,
+  allowInputSubmission: PropTypes.bool
 };
 

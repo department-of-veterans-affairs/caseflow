@@ -160,6 +160,7 @@ class CaseSelect extends React.PureComponent {
                 value={this.props.caseSelectCriteria.searchQuery}
                 onClearSearch={this.props.clearCaseSelectSearch}
                 onSubmit={this.searchOnChange}
+                allowInputSubmission={true}
               />
             </div>
           { _.size(caseSelect.receivedAppeals) ? <Modal
