@@ -144,7 +144,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet contentions', () => {
-      expect(state.worksheet).to.deep.equal({ worksheet: { contentions: 'this is a contention text' } });
+      expect(state.worksheet).to.deep.equal({ contentions: 'this is a contention text' });
     });
   });
 
@@ -161,7 +161,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet periods', () => {
-      expect(state.worksheet).to.deep.equal({ worksheet: { worksheetPeriods: 'this is a worksheet periods text' } });
+      expect(state.worksheet).to.deep.equal({ worksheetPeriods: 'this is a worksheet periods text' });
     });
   });
 
@@ -178,7 +178,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets evidences', () => {
-      expect(state.worksheet).to.deep.equal({ worksheet: { evidence: 'this is a evidence text' } });
+      expect(state.worksheet).to.deep.equal({ evidence: 'this is a evidence text' });
     });
   });
 
@@ -195,7 +195,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet comments', () => {
-      expect(state.worksheet).to.deep.equal({ worksheet: { worksheetComments: 'this is a worksheet comments text' } });
+      expect(state.worksheet).to.deep.equal({ worksheetComments: 'this is a worksheet comments text' });
     });
   });
 });

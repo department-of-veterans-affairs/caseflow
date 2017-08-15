@@ -138,10 +138,10 @@ describe('.onEvidenceChange', () => {
   });
 });
 
-describe('.onContentionsChange', () => {
+describe('.onWorksheetCommentsChange', () => {
   it('sets contention text', () => {
 
-    const worksheetComments = 'this is a contention text';
+    const worksheetComments = 'this is a worksheetComments text';
     const expectedAction = {
       type: Constants.SET_WORKSHEET_COMMENTS,
       payload: {
