@@ -272,7 +272,7 @@ RSpec.feature "Reader" do
             fill_in "searchBar", with: (appeal4.vbms_id + "\n")
 
             click_on "Cancel"
-            expect("searchBar").to have_content("")
+            expect(find("#searchBar")).to have_content("")
           end
 
           scenario "using X button" do
@@ -280,7 +280,7 @@ RSpec.feature "Reader" do
             fill_in "searchBar", with: (appeal4.vbms_id + "\n")
 
             click_button("Select-claims-folder-button-id-close")
-            expect("searchBar").to have_content("")
+            expect(find("#searchBar")).to have_content("")
           end
 
           scenario "and search again" do
