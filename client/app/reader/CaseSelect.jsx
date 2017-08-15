@@ -3,13 +3,8 @@ import { connect } from 'react-redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
-import { bindActionCreators } from 'redux';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
-import { fetchAppealUsingVeteranId,
-  clearReceivedAppeals, onReceiveAppealDetails, setCaseSelectSearch,
-  clearCaseSelectSearch, caseSelectAppeal, clearSelectedAppeal
-} from './actions';
 
 import CaseSelectSearch from './CaseSelectSearch';
 
