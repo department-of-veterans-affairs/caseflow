@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 
 import { getClaimTypeDetailInfo, generateIssueList } from '../reader/utils';
-import { fetchAppealUsingVeteranId, clearLoadedAppeal,
+import { fetchAppealUsingVeteranId,
   clearReceivedAppeals, onReceiveAppealDetails, setCaseSelectSearch,
   clearCaseSelectSearch, caseSelectAppeal, clearSelectedAppeal
 } from './actions';
@@ -24,8 +24,6 @@ class CaseSelect extends React.PureComponent {
       selectedAppealVacolsId: null
     };
   }
-
-  componentDidMount = () => this.props.clearLoadedAppeal();
 
   renderIssuesColumnData = (appeal) => {
     const issues = appeal.issues || [];
@@ -207,7 +205,6 @@ class CaseSelect extends React.PureComponent {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     fetchAppealUsingVeteranId,
-    clearLoadedAppeal,
     clearReceivedAppeals,
     onReceiveAppealDetails,
     setCaseSelectSearch,
