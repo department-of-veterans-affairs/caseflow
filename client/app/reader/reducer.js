@@ -801,10 +801,10 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID:
     return update(state, {
       ui: {
-        receivedAppeals: {
-          $set: action.payload.appeals
-        },
         caseSelect: {
+          receivedAppeals: {
+            $set: action.payload.appeals
+          },
           search: {
             showErrorMessage: { $set: false }
           }
@@ -840,8 +840,8 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.CLEAR_RECEIVED_APPEALS:
     return update(state, {
       ui: {
-        receivedAppeals: {
-          $set: {}
+        caseSelect: {
+          receivedAppeals: { $set: {} }
         }
       }
     });

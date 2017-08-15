@@ -104,7 +104,7 @@ class CaseSelect extends React.PureComponent {
   }
 
   handleSelectAppeal = () => {
-    const appeal = _.find(this.props.receivedAppeals,
+    const appeal = _.find(this.props.caseSelect.receivedAppeals,
       { vacols_id: this.state.selectedAppealVacolsId });
 
     this.props.caseSelectAppeal(appeal);
@@ -164,7 +164,7 @@ class CaseSelect extends React.PureComponent {
                 onSubmit={this.searchOnChange}
               />
             </div>
-          { _.size(this.props.receivedAppeals) ? <Modal
+          { _.size(caseSelect.receivedAppeals) ? <Modal
             buttons = {[
               { classNames: ['cf-modal-link', 'cf-btn-link'],
                 name: 'Cancel',
@@ -180,7 +180,7 @@ class CaseSelect extends React.PureComponent {
             title = "Select claims folder">
             <RadioField
               name="claims-folder-select"
-              options={createAppealOptions(this.props.receivedAppeals)}
+              options={createAppealOptions(caseSelect.receivedAppeals)}
               value={this.state.selectedAppealVacolsId}
               onChange={this.handleChangeAppealSelection}
               hideLabel={true}
@@ -220,7 +220,6 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'assignments'),
   ..._.pick(state, 'loadedAppeal'),
-  ..._.pick(state.ui, 'receivedAppeals'),
   ..._.pick(state.ui, 'caseSelect'),
   ..._.pick(state.ui, 'caseSelectCriteria')
 });
