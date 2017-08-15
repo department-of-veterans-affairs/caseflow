@@ -1,9 +1,50 @@
 class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products]
 
+  APPS = [
+    {
+      name: "Certification",
+      links: {
+        new: "/certifications/new/123C",
+        missing_docs: "/certifications/new/456C",
+        already_certified: "/certifications/new/789C",
+        vbms_error: "/certifications/new/000ERR",
+        unable_to_certify: "/certifications/new/001ERR"
+      }
+    },
+    {
+      name: "Dispatch",
+      links: {
+        work_history: "/dispatch/establish-claim",
+        work_assignments: "/dispatch/work-assignments"
+      }
+    },
+    {
+      name: "Reader",
+      links: {
+        welcome_gate: "/reader/appeal",
+        document_list: "/reader/appeal/reader_id1/documents"
+      }
+    },
+    {
+      name: "Hearing prep",
+      links: {
+        upcoming_days: "/hearings/dockets"
+      }
+    },
+    {
+      name: "Miscelaneous",
+      links: {
+        styleguide: "/styleguide",
+        stats: "/stats"
+      }
+    }
+  ].freeze
+
   # :nocov:
   def index
-    @users = User.all
+    @test_users = User.all.select { |u| User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") }
+    @ep_types = %w(full partial none all)
     render "index"
   end
 
@@ -12,7 +53,7 @@ class Test::UsersController < ApplicationController
     User.before_set_user # for testing only
 
     session["user"] = User.authentication_service.get_user_session(params[:id])
-    redirect_to "/test/users"
+    render nothing: true, status: 200
   end
 
   # Set end products in DEMO
@@ -28,7 +69,7 @@ class Test::UsersController < ApplicationController
       BGSService.end_product_data = BGSService.all_grants
     end
 
-    redirect_to "/test/users"
+    render nothing: true, status: 200
   end
 
   def require_demo

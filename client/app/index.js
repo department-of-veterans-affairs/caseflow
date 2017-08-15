@@ -11,6 +11,7 @@ import Certification from './certification/Certification';
 import ManageEstablishClaim from './manageEstablishClaim/index';
 import Hearings from './hearings/index';
 import Login from './login';
+import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 
 const COMPONENTS = {
@@ -18,6 +19,7 @@ const COMPONENTS = {
   Certification,
   ManageEstablishClaim,
   Login,
+  TestUsers,
   Hearings,
   PerformanceDegradationBanner
 };
@@ -45,6 +47,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
     module.hot.accept([
       './containers/BaseContainer',
       './login/index',
+      './test/TestUsers',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
       './hearings/index'
