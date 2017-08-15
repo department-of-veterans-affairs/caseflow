@@ -21,14 +21,14 @@ const StringUtil = {
   convertToCamelCase(phrase = '') {
     // Code courtesy of Stack Overflow, Question 2970525
     return phrase.toLowerCase().
-        replace(/[^a-zA-Z ]/g, '').
-        replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
-          if (Number(match) === 0) {
-            return '';
-          }
+      replace(/[^a-zA-Z ]/g, '').
+      replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => {
+        if (Number(match) === 0) {
+          return '';
+        }
 
-          return index === 0 ? match.toLowerCase() : match.toUpperCase();
-        });
+        return index === 0 ? match.toLowerCase() : match.toUpperCase();
+      });
   },
 
   leftPad(string, width, padding = '0') {
@@ -53,7 +53,15 @@ const StringUtil = {
     // convert key from camelCase to snake_case
     return variable.replace(/(_\w)/g, (found) => found[1].toUpperCase());
   },
-
+    // convert snake_case to Capitalized Words
+  snakeCaseToCapitalized(variable) {
+    return variable.replace(/_/g, ' ').
+                    split(' ').
+                    map((word) => {
+                      return word[0].toUpperCase() + word.substr(1);
+                    }).
+                    join(' ');
+  },
   html5CompliantId(str) {
     return str.replace(/[^A-Za-z0-9-]/g, '-').replace(/-+/g, '-');
   }
