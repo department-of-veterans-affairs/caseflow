@@ -322,11 +322,15 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
+    const t0 = performance.now();
     this.drawPage(this.props.file, prioritzedPage).then(() => {
+      console.log('drew page', this.props.file, 'number', prioritzedPage, 'in', performance.now() - t0);
       this.drawInViewPages();
       this.preDrawPages();
     }).
-    catch();
+    catch(() => {
+      console.log('failed to draw page', this.props.file, 'number', prioritzedPage, 'in', performance.now() - t0);
+    });
   }
 
   performFunctionOnEachPage = (func) => {
@@ -485,12 +489,16 @@ export class Pdf extends React.PureComponent {
     // request is finishing.
     this.isGettingPdf[file] = true;
 
+    const t0 = performance.now();
     return ApiUtil.get(file, {
       cache: true,
       withCredentials: true,
       binary: true
     }).then((data) => {
+      const t1 = performance.now();
+      console.log('API', t1 - t0);
       return PDFJS.getDocument({ data: data.xhr.response }).then((pdfDocument) => {
+        console.log('PDFJS', performance.now() - t1);
         this.isGettingPdf[file] = false;
 
         if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
@@ -707,9 +715,15 @@ export class Pdf extends React.PureComponent {
               !_.get(this.state, ['isDrawn', file, pageIndex]) &&
               !this.isPrerdrawing) {
               this.isPrerdrawing = true;
-
-              this.drawPage(file, pageIndex).then(finishPredraw).
-                catch(() => this.isPrerdrawing = false);
+              const t0 = performance.now();
+              this.drawPage(file, pageIndex).then(() => {
+                finishPredraw();
+                console.log('drew page (2)', file, 'number', pageIndex, 'in', performance.now() - t0);
+              }).
+                catch(() => {
+                  this.isPrerdrawing = false;
+                  console.log('failed to draw page (2)', file, 'number', pageIndex, 'in', performance.now() - t0);
+                });
             }
           });
         }

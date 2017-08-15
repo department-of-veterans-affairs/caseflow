@@ -32,11 +32,13 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   showPdf = (history, vacolsId) => (docId) => () => {
+    const t0 = performance.now();
     if (!this.props.storeDocuments[docId]) {
       return;
     }
 
     history.push(`/${vacolsId}/documents/${docId}`);
+    console.log('FULL TIME', performance.now() - t0);
   }
 
   onShowList = (history, vacolsId) => () => {
