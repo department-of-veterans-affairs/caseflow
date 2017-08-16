@@ -154,7 +154,8 @@ export const initialState = {
       selectedAppeal: {},
       search: {
         showErrorMessage: false
-      }
+      },
+      receivedAppeals: []
     },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
