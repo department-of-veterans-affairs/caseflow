@@ -69,7 +69,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_WORKSHEET_PERIODS:
     return update(state, {
-      worksheetPeriods: { $set: action.payload.evidence }
+      worksheetPeriods: { $set: action.payload.worksheetPeriods }
     });
 
   case Constants.SET_EVIDENCE:
