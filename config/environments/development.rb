@@ -41,7 +41,7 @@ Rails.application.configure do
   config.s3_bucket_name = "caseflow-cache"
 
   # Set to true to get the documents from efolder running locally on port 4000.
-  config.use_efolder_locally = false
+  config.use_efolder_locally = true
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
