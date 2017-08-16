@@ -72,6 +72,7 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show]
   end
+  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
   resources :hearings, only: [:update]
 
