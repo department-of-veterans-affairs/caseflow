@@ -495,6 +495,10 @@ select {
 
 .usa-alert.no-title {
   background-position: 1rem 1.5rem;
+
+  .usa-alert-text {
+    font-size: 19px;
+  }
 }
 
 .cf-no-styling-list {
