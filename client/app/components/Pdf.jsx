@@ -670,9 +670,9 @@ export class Pdf extends React.PureComponent {
     if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
       const pdfsToKeep = [...nextProps.prefetchFiles, nextProps.file];
 
-      Object.keys(this.predrawnPdfs).forEach((pdf) => {
-        if (!pdfsToKeep.includes(pdf)) {
-          this.cleanUpPdf(this.predrawnPdfs[pdf], pdf);
+      Object.keys(this.predrawnPdfs).forEach((file) => {
+        if (!pdfsToKeep.includes(file)) {
+          this.cleanUpPdf(this.predrawnPdfs[file], file);
         }
       });
 
