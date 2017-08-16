@@ -64,12 +64,11 @@ const Hearings = ({ hearings }) => {
             )}
           />
 
-        <Route exact path="/hearings/worksheets/:vbms_id"
+        <Route exact path="/hearings/:hearingId/worksheet"
             component={(props) => (
               <HearingWorksheetContainer
                 veteran_law_judge={hearings.veteran_law_judge}
-                date={props.match.params.date}
-                vbms_id={props.match.params.vbms_id} />
+                hearingId={props.match.params.hearingId} />
             )}
           />
         </div>
