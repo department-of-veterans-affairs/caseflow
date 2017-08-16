@@ -72,6 +72,8 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
+    const removeSearchButton = isSearchAhead ? {float: 'none'} : null;
+
     return <span className={sizeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
@@ -84,7 +86,8 @@ export default class SearchBar extends React.Component {
         type="search"
         name="search"
         placeholder={placeholder}
-        value={value}/>
+        value={value}
+        style={removeSearchButton}/>
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"

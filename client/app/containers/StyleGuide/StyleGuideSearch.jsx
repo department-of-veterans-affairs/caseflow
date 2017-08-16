@@ -10,8 +10,7 @@ class StyleGuideSearch extends Component {
       loading: {
         small: false,
         big: false
-      },
-      searchAheadValue: ''
+      }
     };
 
   }
@@ -32,37 +31,35 @@ class StyleGuideSearch extends Component {
 
   handleSmallClick = () => this.handleSearchClick('small')
 
-  onChange = (searchBarName) => {
+  onChange = (searchBarName, value) => {
     const changeState = () => {
-      this.setState({searchBarName: event.target.value});
+      this.setState({[searchBarName]: value});
     }
 
     changeState();
   }
 
-  changeSmallValue = () => this.onChange('smallValue');
+  changeSmallValue = (value) => this.onChange('smallValue', value);
 
-  changeBigValue = () => this.onChange('bigValue');
+  changeBigValue = (value) => this.onChange('bigValue', value);
 
-  changeSearchAheadValue = () => this.onChange('searchAheadValue');
+  changeSearchAheadValue = (value) => this.onChange('searchAheadValue', value);
 
   onClearSearch = (searchBarName) => {
     const clearSearch = () => {
-      this.setState({searchBarName: ''});
+      this.setState({[searchBarName]: ''});
     }
 
     clearSearch();
   }
 
-  clearSmallValue = () => this.onClearSearch('smallValue');
+  clearSmallValue = () => this.onClearSearch('smallValue', value);
 
-  clearBigValue = () => this.onClearSearch('bigValue');
+  clearBigValue = () => this.onClearSearch('bigValue', value);
 
-  clearSearchAheadValue = () => this.onClearSearch('searchAheadValue');
+  clearSearchAheadValue = () => this.onClearSearch('searchAheadValue', value);
 
   render() {
-    console.log("my value " , this.state.searchAheadValue);
-
     return (
       <div>
         <StyleGuideComponentTitle
@@ -96,7 +93,6 @@ class StyleGuideSearch extends Component {
             onClick={this.handleBigClick}
             onClearSearch={this.clearSmallValue}
             loading={this.state.big}
-            value={this.state.value}
           />
         </div>
         <div className="cf-sg-searchbar-example">
@@ -108,7 +104,6 @@ class StyleGuideSearch extends Component {
             onClick={this.handleSmallClick}
             onClearSearch={this.clearBigValue}
             loading={this.state.small}
-            value={this.state.value}
           />
        </div>
        <div className="cf-sg-searchbar-example">
@@ -120,7 +115,6 @@ class StyleGuideSearch extends Component {
            onClearSearch={this.clearSearchAheadValue}
            placeholder="Type to search..."
            isSearchAhead={true}
-           value={this.state.searchAheadValue}
          />
       </div>
     </div>
