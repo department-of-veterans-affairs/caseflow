@@ -9,9 +9,9 @@ class StyleGuideSearch extends Component {
     this.state = {
       loading: {
         small: false,
-        big: false,
-        searchAheadValue: ''
-      }
+        big: false
+      },
+      searchAheadValue: ''
     };
 
   }
@@ -32,9 +32,36 @@ class StyleGuideSearch extends Component {
 
   handleSmallClick = () => this.handleSearchClick('small')
 
-  onChange = (value) => this.setState({ value });
+  onChange = (searchBarName) => {
+    const changeState = () => {
+      this.setState({searchBarName: event.target.value});
+    }
+
+    changeState();
+  }
+
+  changeSmallValue = () => this.onChange('smallValue');
+
+  changeBigValue = () => this.onChange('bigValue');
+
+  changeSearchAheadValue = () => this.onChange('searchAheadValue');
+
+  onClearSearch = (searchBarName) => {
+    const clearSearch = () => {
+      this.setState({searchBarName: ''});
+    }
+
+    clearSearch();
+  }
+
+  clearSmallValue = () => this.onClearSearch('smallValue');
+
+  clearBigValue = () => this.onClearSearch('bigValue');
+
+  clearSearchAheadValue = () => this.onClearSearch('searchAheadValue');
 
   render() {
+    console.log("my value " , this.state.searchAheadValue);
 
     return (
       <div>
@@ -65,9 +92,11 @@ class StyleGuideSearch extends Component {
             id="search-big"
             title="Search Big"
             size="big"
+            onChange={this.changeBigValue}
             onClick={this.handleBigClick}
+            onClearSearch={this.clearSmallValue}
             loading={this.state.big}
-            onChange={this.onChange}
+            value={this.state.value}
           />
         </div>
         <div className="cf-sg-searchbar-example">
@@ -75,9 +104,11 @@ class StyleGuideSearch extends Component {
             id="search-small"
             title="Search Small"
             size="small"
+            onChange={this.changeSmallValue}
             onClick={this.handleSmallClick}
+            onClearSearch={this.clearBigValue}
             loading={this.state.small}
-            onChange={this.onChange}
+            value={this.state.value}
           />
        </div>
        <div className="cf-sg-searchbar-example">
@@ -85,9 +116,11 @@ class StyleGuideSearch extends Component {
            id="search-ahead"
            title="Search Ahead"
            size="small"
+           onChange={this.changeSearchAheadValue}
+           onClearSearch={this.clearSearchAheadValue}
            placeholder="Type to search..."
-           onChange={this.onChange}
            isSearchAhead={true}
+           value={this.state.searchAheadValue}
          />
       </div>
     </div>
