@@ -18,8 +18,9 @@ RSpec.feature "Hearings" do
     end
 
     before do
-      2.times do
+      2.times do |id|
         Generators::Hearing.build(
+          id: id,
           user: current_user,
           date: 5.days.from_now,
           type: "video"
@@ -27,6 +28,7 @@ RSpec.feature "Hearings" do
       end
 
       Generators::Hearing.build(
+        id: 3,
         user: current_user,
         type: "central_office",
         date: Time.zone.now
@@ -85,17 +87,21 @@ RSpec.feature "Hearings" do
       visit "/hearings/dockets/2017-01-06"
 
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
-      link_text = link.text
+      link_href = link[:href]
+      # bring this test back once hearings worksheet is populated from server
+      # link_text = link.text
 
       link.click
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Veteran ID: #{link_text}")
+      # bring this test back once hearings worksheet is populated from server
+      # expect(page).to have_content("Veteran ID: #{link_text}")
 
-      visit "/hearings/worksheets/#{link_text}"
+      visit link_href
       expect(page).to have_content("Hearing Worksheet")
       expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Veteran ID: #{link_text}")
+      # bring this test back once hearings worksheet is populated from server
+      # expect(page).to have_content("Veteran ID: #{link_text}")
 
       # There's no functionality yet, but you should be able to...
       click_on "Review eFolder"
