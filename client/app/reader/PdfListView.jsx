@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
-import { fetchAppealDetails, onReceiveAppealDetails } from './actions';
+import { fetchAppealDetails } from './actions';
 import { getAppealIfItDoesNotExist } from '../reader/utils';
 
 import _ from 'lodash';
@@ -56,8 +56,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    fetchAppealDetails,
-    onReceiveAppealDetails
+    fetchAppealDetails
   }, dispatch)
 );
 
