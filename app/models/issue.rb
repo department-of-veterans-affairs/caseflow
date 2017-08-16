@@ -8,13 +8,6 @@ class Issue < ActiveRecord::Base
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
 
-  enum hearing_worksheet_status: {
-    allow: 0,
-    deny: 1,
-    remand: 2,
-    dismiss: 3
-  }
-
   PROGRAMS = {
     "02" => :compensation
   }.freeze
