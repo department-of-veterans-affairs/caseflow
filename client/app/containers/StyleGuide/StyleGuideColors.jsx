@@ -25,7 +25,11 @@ export default class StyleGuideColors extends React.Component {
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
     Certification: '#459fd7',
-    Reader: '#417505'
+    Reader: '#417505',
+    Hearing: '#fdc231',
+    Procedural: '#5a94ec',
+    Medical: '#ff6868',
+    CertificationCategory: '#3ad2cf'
   };
 
   Primary = [
@@ -65,6 +69,13 @@ export default class StyleGuideColors extends React.Component {
     'Green'
   ];
 
+  Reader = [
+    'Hearing',
+    'Procedural',
+    'Medical',
+    'CertificationCategory'
+  ];
+
   colorVar = (name) => {
     return (`$color-${name}`).toLowerCase();
   };
@@ -96,8 +107,8 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Primary.map((name, i) =>
-        <div className="sg-colors-swatch" key={name + i}>
+      {this.Primary.map((name) =>
+        <div className="sg-colors-swatch" key={name}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
           <p>{name}</p>
@@ -117,8 +128,8 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(0, 3).map((name, i) =>
-        <div className="sg-colors-swatch" key={name + i}>
+      {this.Secondary.slice(0, 3).map((name) =>
+        <div className="sg-colors-swatch" key={name}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
           <p>{name}</p>
@@ -128,8 +139,8 @@ export default class StyleGuideColors extends React.Component {
       </div>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(3).map((name, i) =>
-        <div className="sg-colors-swatch" key={name + i}>
+      {this.Secondary.slice(3).map((name) =>
+        <div className="sg-colors-swatch" key={name}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
           <p>{name}</p>
@@ -147,11 +158,24 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Logos.map((name, i) =>
-        <div className="sg-colors-swatch" key={name + i}>
+      {this.Logos.map((name) =>
+        <div className="sg-colors-swatch" key={name}>
           <div style={{ background: this.Colors[name] }}></div>
           <b>{this.Colors[name]}</b>
           <p>{name}</p>
+        </div>
+      )}
+      </div>
+
+      <h3>Reader Categories</h3>
+
+      <div className="sg-colors-swatches">
+      {this.Reader.map((name) =>
+        <div className="sg-colors-swatch" key={name}>
+          <div style={{ background: this.Colors[name] }}>
+          </div>
+          <b>{this.Colors[name]}</b>
+          <p>{name === 'CertificationCategory' ? 'Certification' : name}</p>
         </div>
       )}
       </div>
@@ -179,8 +203,8 @@ export default class StyleGuideColors extends React.Component {
 
       <h4>Fully Accessible Text Combinations</h4>
 
-      {this.Combos.map((name, i) =>
-        <div className="sg-colors-combo" key={name + i}
+      {this.Combos.map((name) =>
+        <div className="sg-colors-combo" key={name}
           style={{ color: this.Colors[name] }}>
           <b>{name.toLowerCase()} - on white</b>
         </div>
