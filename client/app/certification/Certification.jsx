@@ -21,7 +21,7 @@ import * as AppConstants from '../constants/AppConstants';
 import StatusMessage from '../components/StatusMessage';
 
 
-export class EntryPointRedirect extends React.Component {
+class EntryPointRedirect extends React.Component {
   render() {
     let {
       match
