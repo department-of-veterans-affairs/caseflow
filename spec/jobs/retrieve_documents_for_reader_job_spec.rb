@@ -61,11 +61,6 @@ describe RetrieveDocumentsForReaderJob do
       Faker::Pokemon.name
     end
 
-    let!(:expected_slack_msg) do
-      "RetrieveDocumentsForReaderJob successfully retrieved 2 documents for 2 appeals and 0 document(s) failed.\n" \
-        "Failed to retrieve documents for 0 appeal(s)."
-    end
-
     before do
       # Reset S3 mock files
       S3Service.files = nil
@@ -79,6 +74,11 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when a limit is not provided" do
+      let!(:expected_slack_msg) do
+        "RetrieveDocumentsForReaderJob successfully retrieved 2 documents for 2 appeals and 0 document(s) failed.\n" \
+          "Failed to retrieve documents for 0 appeal(s)."
+      end
+
       it "retrieves the appeal documents for all reader users" do
         expect_all_calls_for_user(reader_user, appeal_with_doc1, expected_doc1, doc1_expected_content)
         expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
@@ -241,6 +241,11 @@ describe RetrieveDocumentsForReaderJob do
 
       after { FeatureToggle.disable!(:efolder_docs_api) }
 
+      let!(:expected_slack_msg) do
+        "RetrieveDocumentsForReaderJob successfully retrieved 0 documents for 2 appeals and 0 document(s) failed.\n" \
+          "Failed to retrieve documents for 0 appeal(s)."
+      end
+
       it "does not fetch content" do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
@@ -260,6 +265,11 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when files exist in S3" do
+      let!(:expected_slack_msg) do
+        "RetrieveDocumentsForReaderJob successfully retrieved 0 documents for 2 appeals and 0 document(s) failed.\n" \
+          "Failed to retrieve documents for 0 appeal(s)."
+      end
+
       it "does not fetch content" do
         allow(S3Service).to receive(:exists?).with(any_args).and_return(true)
 
