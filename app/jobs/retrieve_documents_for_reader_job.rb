@@ -48,7 +48,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   def fetch_docs_for_appeal(appeal)
     appeal.fetch_documents!(save: true).try(:each) do |doc|
       @counts[:docs_attempted] += 1
-      record_doc_outcome(fetch_document_content(doc))
+      record_doc_outcome(fetch_document_content?(doc))
     end
 
     @counts[:appeals_successful] += 1
@@ -63,7 +63,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   # skip this check since the call to eFolder in fetch_docs_for_appeal is supposed to cache the doc for us
   #
   # Returns a boolean if the content has been cached without errors
-  def fetch_document_content(doc)
+  def fetch_document_content?(doc)
     if !FeatureToggle.enabled?(:efolder_docs_api) && !S3Service.exists?(doc.file_name)
       doc.fetch_content
     end
