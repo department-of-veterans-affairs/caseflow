@@ -34,5 +34,40 @@ export default function StyleGuideAlerts() {
         type="info">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
       </Alert>
+
+      <StyleGuideComponentTitle
+        title="Alerts lite"
+        id="alerts_lite"
+        link="StyleGuideAlerts.jsx"
+      />
+      <p>
+        Alert lite is a lighter version of our banner alerts designed for sections
+        in our app with a different layout, specifically to call out features with
+        smaller dimensions. Currently it is being used in the Caseflow Reader Menu.
+      </p>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="success">
+          Success status lite
+        </Alert>
+      </div>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="warning">
+          Warning status lite
+        </Alert>
+      </div>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="error">
+          Error status lite
+        </Alert>
+      </div>
+      <div className="cf-sg-alert-lite">
+        <Alert
+          type="info">
+          Informative status lite
+        </Alert>
+      </div>
     </div>;
 }

@@ -4,7 +4,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from './actions/Dockets';
+import { setNotes, setDisposition, setHoldOpen, setAod, setAddOn, setTranscriptRequested } from './actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
@@ -46,6 +46,9 @@ export class DocketHearingRow extends React.PureComponent {
 
   setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
 
+  setAddOn = (value) =>
+      this.props.setAddOn(this.props.index, value, this.props.hearingDate);
+
   setTranscriptRequested = (value) =>
       this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
@@ -69,7 +72,7 @@ export class DocketHearingRow extends React.PureComponent {
         </td>
         <td className="cf-hearings-docket-appellant">
           <b>{hearing.appellant_last_first_mi}</b>
-          <Link to={`/hearings/worksheets/${hearing.vbms_id}`}>{hearing.vbms_id}</Link>
+          <Link to={`/hearings/${hearing.id}/worksheet`}>{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
@@ -97,6 +100,14 @@ export class DocketHearingRow extends React.PureComponent {
             value={hearing.aod}
             searchable
           />
+          <div className="addOn">
+            <Checkbox
+              label="Add on"
+              name={`${hearing.id}.addon`}
+              value={hearing.addon}
+              onChange={this.setAddOn}
+            />
+          </div>
           <div className="transcriptRequested">
             <Checkbox
               label="Transcript Requested"
@@ -132,6 +143,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDisposition,
   setHoldOpen,
   setAod,
+  setAddOn,
   setTranscriptRequested
 }, dispatch);
 

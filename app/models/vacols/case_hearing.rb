@@ -41,13 +41,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     vdkey is NOT NULL
   ).freeze
 
-  WITHOUT_DISPOSITION_OR_AFTER_DATE = %{
-    hearing_date >= to_date(?, 'YYYY-MM-DD HH24:MI')
-    -- Hearing is after a provided date (a recent hearing)
-
-    OR hearing_disp IS NULL
+  WITHOUT_DISPOSITION = %(
+    hearing_disp IS NULL
     -- an older hearing still awaiting a disposition
-  }.freeze
+  ).freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
   after_update :create_or_update_diaries
@@ -59,8 +56,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings
         .where("staff.sdomainid = #{id}")
-        .where(WITHOUT_DISPOSITION_OR_AFTER_DATE,
-               relative_vacols_date(date_diff).to_formatted_s(:oracle_date))
+        .where(WITHOUT_DISPOSITION)
         .where(NOT_MASTER_RECORD)
     end
 
@@ -78,7 +74,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
-             "staff.stafkey as user_id",
+             "staff.sdomainid as css_id",
              :hearing_disp,
              :hearing_pkseq,
              :hearing_date,

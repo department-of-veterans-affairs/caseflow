@@ -322,6 +322,20 @@ RSpec.feature "Reader" do
       find("#addComment").send_keys(:arrow_right)
       expect_doc_type_to_be "Form 9"
 
+      # Check if annotation mode disappears when moving to another document
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        add_comment_without_clicking_save "unsaved comment text"
+        scroll_to_bottom("scrollWindow")
+        find(".cf-pdf-page").click
+        find("body").send_keys(:arrow_left)
+        expect(page).to_not have_css(".comment-textarea")
+        add_comment_without_clicking_save "unsaved comment text"
+        scroll_to_bottom("scrollWindow")
+        find(".cf-pdf-page").click
+        find("body").send_keys(:arrow_right)
+        expect(page).to_not have_css(".comment-textarea")
+      end
+
       fill_in "tags", with: "tag content"
       find("#tags").send_keys(:arrow_left)
       expect_doc_type_to_be "Form 9"
@@ -754,6 +768,8 @@ RSpec.feature "Reader" do
       find("h3", text: "Document information").click
 
       expect(page).to have_content("Document Type")
+      expect(page).to have_content("BVA Decision")
+      expect(page).to have_content("AOD")
       expect(page).to have_content("Veteran ID")
       expect(page).to have_content(appeal.vbms_id)
       expect(page).to have_content("Type")

@@ -7,12 +7,15 @@
 */
 import update from 'immutability-helper';
 import * as Constants from '../constants/constants';
+import _ from 'lodash';
 
 export const mapDataToInitialState = function(state = {}) {
   return state;
 };
 
 export const newHearingState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
+
   return update(state, {
     dockets: {
       [action.payload.date]: {
@@ -52,6 +55,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_AOD:
     return newHearingState(state, action, { aod: { $set: action.payload.aod } });
+
+  case Constants.SET_ADD_ON:
+    return newHearingState(state, action, { addon: { $set: action.payload.addOn } });
 
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
