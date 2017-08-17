@@ -30,7 +30,28 @@ Each engineer should work on no more than three issues at a time. This allows us
 
 Each ticket should be small enough that it can be completed in no more than 2-3 business days. If a ticket takes 4 or more days, then either there are blockers that need to be addressed, or the ticket should be split up into smaller parts. 
 
-As a corollary, each PR should be as small as possible. It should not contain anything extraneous other than what the ticket's acceptance criteria require. Ideally, PRs will be `200` lines or fewer. It is ok to send multiple PRs for a single ticket if that makes it easier to implement and review.
+As a corollary, each PR should be as small as possible. It should only address a single ticket. It should not contain anything extraneous other than what the ticket's acceptance criteria require. Each PR will have 200 or fewer added lines. If a PR has many more, it will not be reviewed unless you have an explicit understanding with your reviewer.
+
+To see how many lines your PR currently is, you can run the following command:
+
+```
+$ git diff master..head --stat | grep insertions
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+```
+
+You can also look for the following indicator in the GitHub UI:
+
+![GitHub UI screenshot](https://user-images.githubusercontent.com/829827/29422265-b0236682-8345-11e7-80fd-ba6f1db8b935.png)
+
+If you are having trouble getting the PR under 200 lines, talk to your tech lead early. Do not just present a completed PR that's way too big to a reviewer and ask them to look at it anyway.
+
+Here are some strategies for keeping PRs a manageable size:
+
+* Send multiple PRs to a feature branch.
+* Hide incomplete features behind a feature flag.
+* Do frontend and backend work in separate tickets.
+* Remove anything that is not absolutely essential to the ticket. Even little things add up.
+
 
 ## PR Descriptions
 
@@ -67,3 +88,9 @@ When in doubt, overcommunicate.
 ## Pair Programming
  
 Pair programming is the one of the quickest ways to expand your knowledge of the codebase. When you learn of an interesting ticket during standup, ask that engineer if you can pair with them on it. Similarly, engineers working on a particularly challenging ticket should ask for someone to pair with them. A second set of eyes during development can improve the quality of the code and reduce bugs. 
+
+## Be Mindful of Ops Impact of New Features
+When you roll out a new feature, be mindful of the impact it'll have on our larger system, and on the VA as a whole. For instance, if you change the way that Caseflow talks to VBMS, you should monitor our VBMS traffic to ensure that we aren't putting excessive new load on that system.
+
+## Verifying Code on UAT
+If you have code that talks to external dependencies, push your PR branch to UAT to validate it. This will provide a much better test than trying to run locally with dependencies mocked out. Do not rely on QA's integration tests to catch errors.
