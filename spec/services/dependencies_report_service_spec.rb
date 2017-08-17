@@ -36,4 +36,24 @@ describe DependenciesReportService do
       expect(DependenciesReportService.outage_present?).to be_falsey
     end
   end
+
+  context "when an outage has been declared manually" do
+    before do
+      Rails.cache.write(:degraded_service, true)
+    end
+
+    it "returns degraded service" do
+      expect(DependenciesReportService.outage_present?).to be_truthy
+    end
+  end
+
+  context "when an outage has been resolved manually" do
+    before do
+      Rails.cache.write(:degraded_service, false)
+    end
+
+    it "returns no outage" do
+      expect(DependenciesReportService.outage_present?).to be_falsey
+    end
+  end
 end
