@@ -61,6 +61,11 @@ describe RetrieveDocumentsForReaderJob do
       Faker::Pokemon.name
     end
 
+    let!(:expected_slack_msg) do
+      "RetrieveDocumentsForReaderJob successfully retrieved 2 documents for 2 appeals and 0 document(s) failed.\n" \
+        "Failed to retrieve documents for 0 appeal(s)."
+    end
+
     before do
       # Reset S3 mock files
       S3Service.files = nil
@@ -70,7 +75,7 @@ describe RetrieveDocumentsForReaderJob do
       dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
 
       # Expect all tests to call Slack service at the end
-      expect_any_instance_of(SlackService).to receive(:send_notification).with(any_args).once
+      expect_any_instance_of(SlackService).to receive(:send_notification).with(expected_slack_msg).once
     end
 
     context "when a limit is not provided" do
@@ -94,6 +99,11 @@ describe RetrieveDocumentsForReaderJob do
 
       let!(:new_doc_expected_content) do
         Faker::Shakespeare.king_richard_iii_quote
+      end
+
+      let!(:expected_slack_msg) do
+        "RetrieveDocumentsForReaderJob successfully retrieved 2 documents for 1 appeals and 0 document(s) failed.\n" \
+        "Failed to retrieve documents for 0 appeal(s)."
       end
 
       it "stops if limit is reached after finishing current case" do
@@ -121,42 +131,61 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when VBMS exception is thrown" do
-      it "catches the exception when thrown by fetch_documents_for and continues to the next appeal" do
-        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1]).once
-        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
-          .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>")).once
+      context "when trying to fetch an appeal" do
+        let!(:expected_slack_msg) do
+          "RetrieveDocumentsForReaderJob successfully retrieved 1 documents for 1 appeals and 0 document(s) failed.\n" \
+          "Failed to retrieve documents for 1 appeal(s)."
+        end
 
-        expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
+        it "catches the exception when thrown by fetch_documents_for and continues to the next appeal" do
+          expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+            .and_return([appeal_with_doc1]).once
+          expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
+            .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>")).once
 
-        RetrieveDocumentsForReaderJob.perform_now
+          expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
 
-        expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
-        expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
-        expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+          RetrieveDocumentsForReaderJob.perform_now
+
+          expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
+          expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
+          expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+        end
       end
 
-      it "catches the exception when thrown by fetch_content and continues to the next document" do
-        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1]).once
-        expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
-        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
-          .and_return([expected_doc1]).once
-        expect(EFolderService).to receive(:fetch_document_file).with(expected_doc1)
-          .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>"))
-          .once
+      context "when trying to fetch an appeal" do
+        let!(:expected_slack_msg) do
+          "RetrieveDocumentsForReaderJob successfully retrieved 1 documents for 2 appeals and 1 document(s) failed.\n" \
+          "Failed to retrieve documents for 0 appeal(s)."
+        end
 
-        expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
+        it "catches the exception when thrown by fetch_content and continues to the next document" do
+          expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+            .and_return([appeal_with_doc1]).once
+          expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
+          expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
+            .and_return([expected_doc1]).once
+          expect(EFolderService).to receive(:fetch_document_file).with(expected_doc1)
+            .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>"))
+            .once
 
-        RetrieveDocumentsForReaderJob.perform_now
+          expect_all_calls_for_user(reader_user_w_many_roles, appeal_with_doc2, expected_doc2, doc2_expected_content)
 
-        expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
-        expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
-        expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+          RetrieveDocumentsForReaderJob.perform_now
+
+          expect(S3Service.files[expected_doc1.vbms_document_id]).to be_nil
+          expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
+          expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+        end
       end
     end
 
     context "when HTTP Timeout occurs" do
+      let!(:expected_slack_msg) do
+        "RetrieveDocumentsForReaderJob successfully retrieved 0 documents for 0 appeals and 0 document(s) failed.\n" \
+        "Failed to retrieve documents for 2 appeal(s)."
+      end
+
       it "catches the exception and continues to the next appeal" do
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
@@ -173,6 +202,11 @@ describe RetrieveDocumentsForReaderJob do
     end
 
     context "when consecutive errors occur" do
+      let!(:expected_slack_msg) do
+        "RetrieveDocumentsForReaderJob successfully retrieved 1 documents for 1 appeals and 0 document(s) failed.\n" \
+        "Failed to retrieve documents for 6 appeal(s).\nJob stopped after 6 failures"
+      end
+
       it "stops executing after 5 errors" do
         appeals_that_fail = [appeal_with_doc1] + (0..4).map { create_doc_and_appeal }
         reader_user_appeals = [appeal_with_doc2] + appeals_that_fail
@@ -208,6 +242,27 @@ describe RetrieveDocumentsForReaderJob do
       after { FeatureToggle.disable!(:efolder_docs_api) }
 
       it "does not fetch content" do
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
+          .and_return([appeal_with_doc1]).once
+
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user)
+          .and_return([expected_doc1]).once
+
+        expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user_w_many_roles.css_id)
+          .and_return([appeal_with_doc2]).once
+
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
+          .and_return([expected_doc2]).once
+
+        RetrieveDocumentsForReaderJob.perform_now
+        expect(S3Service.files).to be_nil
+      end
+    end
+
+    context "when files exist in S3" do
+      it "does not fetch content" do
+        allow(S3Service).to receive(:exists?).with(any_args).and_return(true)
+
         expect(Fakes::CaseAssignmentRepository).to receive(:load_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 

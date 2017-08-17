@@ -10,7 +10,14 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
 
     # Args should be set in sidekiq_cron.yml, but default the limit to 1500 if they aren't
     limit = args["limit"] || DEFAULT_DOCUMENTS_DOWNLOADED_LIMIT
-    @counts = { docs_successful: 0, docs_failed: 0, docs_attempted: 0, appeals_failed: 0, consecutive_failures: 0 }
+    @counts = {
+      docs_successful: 0,
+      docs_failed: 0,
+      docs_attempted: 0,
+      appeals_successful: 0,
+      appeals_failed: 0,
+      consecutive_failures: 0
+    }
 
     find_all_active_reader_appeals.each do |user, appeals|
       RequestStore.store[:current_user] = user
@@ -43,6 +50,8 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
       @counts[:docs_attempted] += 1
       record_doc_outcome(fetch_document_content(doc))
     end
+
+    @counts[:appeals_successful] += 1
   rescue HTTPClient::KeepAliveDisconnected, VBMS::ClientError => e
     # VBMS connection may die when attempting to retrieve list of docs for appeal
     @counts[:appeals_failed] += 1
@@ -50,21 +59,29 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
     Rails.logger.error "Failed to retrieve appeal id #{appeal.id}:\n#{e.message}"
   end
 
+  # Checks if the doc is already stored in S3 and fetches it from VBMS if necessary.  If eFolder is enabled,
+  # skip this check since the call to eFolder in fetch_docs_for_appeal is supposed to cache the doc for us
+  #
+  # Returns a boolean if the content has been cached without errors
   def fetch_document_content(doc)
-    if FeatureToggle.enabled?(:efolder_docs_api)
-      true # Don't fetch the content since eFolder will begin downloading the case automatically
-    else
-      doc.fetch_content_unless_cached
+    if !FeatureToggle.enabled?(:efolder_docs_api) && !S3Service.exists?(doc.file_name)
+      doc.fetch_content
     end
+
+    return true
   rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
     Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{e.message}"
+    return false
   end
 
   def log_info
     output_msg = "RetrieveDocumentsForReaderJob successfully retrieved #{@counts[:docs_successful]} documents " \
-          "and #{@counts[:docs_failed]} document(s) failed. #{@counts[:appeals_failed]} appeal(s) failed."
+          "for #{@counts[:appeals_successful]} appeals and #{@counts[:docs_failed]} document(s) failed.\n" \
+          "Failed to retrieve documents for #{@counts[:appeals_failed]} appeal(s)."
 
-    output_msg = "\nJob stopped after #{@counts[:consecutive_failures]} failures" if @counts[:consecutive_failures] >= 5
+    if @counts[:consecutive_failures] >= 5
+      output_msg += "\nJob stopped after #{@counts[:consecutive_failures]} failures"
+    end
 
     Rails.logger.info output_msg
     SlackService.new(url: slack_url).send_notification(output_msg)
