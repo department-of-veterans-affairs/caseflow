@@ -297,11 +297,9 @@ $tag-backgrond-color: #d6d7d9;
   justify-content: space-between;
 
   .search-bar-and-doc-count {
-    display: flex;
     flex-grow: 2;
 
     .usa-search {
-      margin-right: 25px;
       flex-grow: 1;
     }
 

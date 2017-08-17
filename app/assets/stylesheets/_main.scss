@@ -603,6 +603,11 @@ select {
         width: 14rem;
       }
     }
+    [type="button"].cf-search-close-icon {
+      margin-left: -20px;
+      margin-top: 6px;
+      position: absolute;
+    }
   }
 
   &.usa-search-small {
@@ -615,9 +620,23 @@ select {
     }
   }
 
+  &.cf-search-ahead {
+    flex-grow: 1;
+
+    input {
+      &::placeholder {
+        font-style: italic;
+      }
+    }
+  }
+
   [type="search"]{
     border: 1px solid $color-gray-dark;
   }
+}
+
+.cf-search-ahead-parent {
+  display: flex;
 }
 
 .cf-title-meta-right {

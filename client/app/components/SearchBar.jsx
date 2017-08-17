@@ -58,9 +58,10 @@ export default class SearchBar extends React.Component {
       title
     } = this.props;
 
-    const sizeClasses = classnames('usa-search', {
+    const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
-      'usa-search-small': size === 'small'
+      'usa-search-small': size === 'small',
+      'cf-search-ahead': isSearchAhead
     });
 
     const buttonClassNames = classnames({
@@ -72,7 +73,7 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
-    return <span className={sizeClasses} role="search">
+    return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
@@ -84,8 +85,7 @@ export default class SearchBar extends React.Component {
         type="search"
         name="search"
         placeholder={placeholder}
-        value={value}
-        style={isSearchAhead ? {float: 'none'} : null}/>
+        value={value}/>
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"

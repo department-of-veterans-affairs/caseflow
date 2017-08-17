@@ -10,7 +10,10 @@ class StyleGuideSearch extends Component {
       loading: {
         small: false,
         big: false
-      }
+      },
+      smallValue: '',
+      bigValue: '',
+      searchAheadValue: ''
     };
 
   }
@@ -53,11 +56,11 @@ class StyleGuideSearch extends Component {
     clearSearch();
   }
 
-  clearSmallValue = () => this.onClearSearch('smallValue', value);
+  clearSmallValue = () => this.onClearSearch('smallValue');
 
-  clearBigValue = () => this.onClearSearch('bigValue', value);
+  clearBigValue = () => this.onClearSearch('bigValue');
 
-  clearSearchAheadValue = () => this.onClearSearch('searchAheadValue', value);
+  clearSearchAheadValue = () => this.onClearSearch('searchAheadValue');
 
   render() {
     return (
@@ -81,7 +84,8 @@ class StyleGuideSearch extends Component {
         <p>
         <b>Technical notes:</b> In the "Search Big" and the "Search Small" examples below,
         click on the Search buttons to activate the loading spinner for a 2 second
-        period.
+        period. For any search ahead search bars, the class <code>cf-search-ahead-parent</code>
+        must be applied to the parent element.
         </p>
 
         <div className="cf-sg-searchbar-example">
@@ -91,8 +95,9 @@ class StyleGuideSearch extends Component {
             size="big"
             onChange={this.changeBigValue}
             onClick={this.handleBigClick}
-            onClearSearch={this.clearSmallValue}
+            onClearSearch={this.clearBigValue}
             loading={this.state.big}
+            value={this.state.bigValue}
           />
         </div>
         <div className="cf-sg-searchbar-example">
@@ -102,11 +107,12 @@ class StyleGuideSearch extends Component {
             size="small"
             onChange={this.changeSmallValue}
             onClick={this.handleSmallClick}
-            onClearSearch={this.clearBigValue}
+            onClearSearch={this.clearSmallValue}
             loading={this.state.small}
+            value={this.state.smallValue}
           />
        </div>
-       <div className="cf-sg-searchbar-example">
+       <div className="cf-sg-searchbar-example cf-search-ahead-parent">
          <SearchBar
            id="search-ahead"
            title="Search Ahead"
@@ -115,6 +121,7 @@ class StyleGuideSearch extends Component {
            onClearSearch={this.clearSearchAheadValue}
            placeholder="Type to search..."
            isSearchAhead={true}
+           value={this.state.searchAheadValue}
          />
       </div>
     </div>
