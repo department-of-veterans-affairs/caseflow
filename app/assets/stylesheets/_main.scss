@@ -603,6 +603,7 @@ select {
         width: 14rem;
       }
     }
+
     [type="button"].cf-search-close-icon {
       margin-left: -20px;
       margin-top: 6px;
@@ -630,7 +631,7 @@ select {
     }
   }
 
-  [type="search"]{
+  [type="search"] {
     border: 1px solid $color-gray-dark;
   }
 }

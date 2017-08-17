@@ -36,8 +36,8 @@ class StyleGuideSearch extends Component {
 
   onChange = (searchBarName, value) => {
     const changeState = () => {
-      this.setState({[searchBarName]: value});
-    }
+      this.setState({ [searchBarName]: value });
+    };
 
     changeState();
   }
@@ -50,8 +50,8 @@ class StyleGuideSearch extends Component {
 
   onClearSearch = (searchBarName) => {
     const clearSearch = () => {
-      this.setState({[searchBarName]: ''});
-    }
+      this.setState({ [searchBarName]: '' });
+    };
 
     clearSearch();
   }
