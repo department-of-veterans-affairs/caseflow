@@ -4,7 +4,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
-import { CATEGORIES } from './analytics';
+import { CATEGORIES, INTERACTION_TYPES } from './analytics';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -675,6 +675,21 @@ export const togglePdfSidebar = () => ({
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'toggle-pdf-sidebar',
       label: (nextState) => nextState.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+    }
+  }
+});
+
+
+export const handleToggleCommentOpened = (docId) => ({
+  type: Constants.TOGGLE_COMMENT_LIST,
+  payload: {
+    docId
+  },
+  meta: {
+    analytics: {
+      category: INTERACTION_TYPES.VISIBLE_UI,
+      action: 'toggle-comment-list',
+      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

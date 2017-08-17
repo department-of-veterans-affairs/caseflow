@@ -1,11 +1,12 @@
 import React from 'react';
-import Button from '../components/Button';
 import { connect } from 'react-redux';
-import * as Constants from './constants';
+import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
-import { INTERACTION_TYPES } from './analytics';
+import Button from '../components/Button';
+import { handleToggleCommentOpened } from './actions';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
@@ -44,24 +45,12 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  handleToggleCommentOpened(docId) {
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    handleToggleCommentOpened
+  }, dispatch)
+);
 
-    dispatch({
-      type: Constants.TOGGLE_COMMENT_LIST,
-      payload: {
-        docId
-      },
-      meta: {
-        analytics: {
-          category: INTERACTION_TYPES.VISIBLE_UI,
-          action: 'toggle-comment-list',
-          label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
-        }
-      }
-    });
-  }
-});
 
 export default connect(
   mapStateToProps,
