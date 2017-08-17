@@ -90,6 +90,21 @@ export const getClaimTypeDetailInfo = (claim) => {
 export const getAppealIfItDoesNotExist = (component) => {
   if (_.isEmpty(component.props.appeal) ||
     (component.props.appeal.vacols_id !== component.props.match.params.vacolsId)) {
-    component.props.fetchAppealDetails(component.props.match.params.vacolsId);
+
+    // check if case select fetched this appeal information already
+    if (component.props.caseSelectedAppeal &&
+      (component.props.caseSelectedAppeal.vacols_id === component.props.match.params.vacolsId)) {
+      this.props.onReceiveAppealDetails(component.props.caseSelectedAppeal);
+    } else {
+      component.props.fetchAppealDetails(component.props.match.params.vacolsId);
+    }
   }
 };
+
+export const generateIssueList = (appeal) => (
+  appeal.issues.map((issue) =>
+    <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
+      {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
+    </span></li>
+  )
+);

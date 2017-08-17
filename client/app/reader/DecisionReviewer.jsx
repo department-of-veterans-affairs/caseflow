@@ -96,14 +96,15 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = () => {
+  routedCaseSelect = (props) => {
     return <CaseSelectLoadingScreen
       assignments={this.props.assignments}>
         <PageRoute
           exact
           title="Assignments | Caseflow Reader"
           path="/"
-          render={() => <CaseSelect />}
+          render={() => <CaseSelect history={props.history}
+            feedbackUrl={this.props.feedbackUrl} />}
         />
     </CaseSelectLoadingScreen>;
   }
@@ -134,7 +135,7 @@ export class DecisionReviewer extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
 
-    return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
+    return <Router history={history} basename="/reader/appeal" {...this.props.routerTestProps}>
       <div className="section--document-list">
         <Route
           path="/:vacolsId/documents"

@@ -6,6 +6,9 @@ import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
 
+import CaseSelectSearch from './CaseSelectSearch';
+
+
 class CaseSelect extends React.PureComponent {
 
   renderIssuesColumnData = (appeal) => {
@@ -17,8 +20,8 @@ class CaseSelect extends React.PureComponent {
           const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
 
           return <li key={issue.vacols_sequence_id}>
-              {descriptionLabel}
-             {this.renderIssueLevels(issue)}
+            {descriptionLabel}
+            {this.renderIssueLevels(issue)}
           </li>;
         })}
       </ol>
@@ -72,14 +75,16 @@ class CaseSelect extends React.PureComponent {
   getKeyForRow = (index, row) => row.vacols_id;
 
   render() {
+
     if (!this.props.assignments) {
       return null;
     }
 
-    return <div className="usa-grid">
+    return <div className="usa-grid section--case-select">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Welcome to Reader!</h1>
+          <h1 className="welcome-header">Welcome to Reader!</h1>
+          <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl}/>
           <p className="cf-lead-paragraph">
             Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>

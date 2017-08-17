@@ -461,6 +461,10 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
+    def fetch_appeals_by_vbms_id(vbms_id)
+      @repository.appeals_by_vbms_id(vbms_id)
+    end
+
     def vbms
       VBMSService
     end

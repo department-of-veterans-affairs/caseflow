@@ -150,6 +150,13 @@ export const initialState = {
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
+    caseSelect: {
+      selectedAppeal: {},
+      search: {
+        showErrorMessage: false
+      },
+      receivedAppeals: []
+    },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -157,6 +164,9 @@ export const initialState = {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
+    caseSelectCriteria: {
+      searchQuery: ''
+    },
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -311,6 +321,31 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
+  case Constants.SET_CASE_SELECT_SEARCH:
+    return update(state, {
+      ui: {
+        caseSelectCriteria: {
+          searchQuery: {
+            $set: action.payload.searchQuery
+          }
+        }
+      }
+    });
+  case Constants.CLEAR_CASE_SELECT_SEARCH:
+    return update(state, {
+      ui: {
+        caseSelectCriteria: {
+          searchQuery: {
+            $set: ''
+          }
+        },
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: false }
+          }
+        }
+      }
+    });
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -753,6 +788,53 @@ export const reducer = (state = initialState, action = {}) => {
 
             ...action.payload.annotation
           }
+        }
+      }
+    });
+  case Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          receivedAppeals: {
+            $set: action.payload.appeals
+          },
+          search: {
+            showErrorMessage: { $set: false }
+          }
+        }
+      }
+    });
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: true }
+          }
+        }
+      }
+    });
+  case Constants.CASE_SELECT_APPEAL:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          selectedAppeal: { $set: action.payload.appeal }
+        }
+      }
+    });
+  case Constants.CLEAR_SELECTED_APPEAL:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          selectedAppeal: { $set: {} }
+        }
+      }
+    });
+  case Constants.CLEAR_RECEIVED_APPEALS:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          receivedAppeals: { $set: {} }
         }
       }
     });
