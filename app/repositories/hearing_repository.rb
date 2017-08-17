@@ -46,7 +46,7 @@ class HearingRepository
         Hearing.find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
           hearing.attributes = {
             appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(vacols_id: vacols_record.user_id)
+            user: User.find_by(css_id: vacols_record.css_id)
           }
           set_vacols_values(hearing, vacols_record)
         end
