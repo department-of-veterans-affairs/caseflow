@@ -20,17 +20,24 @@ import LoadingScreen from '../components/LoadingScreen';
 import * as AppConstants from '../constants/AppConstants';
 import StatusMessage from '../components/StatusMessage';
 
-const UnconnectedEntryPointRedirect = ({ match }) => {
-  return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
-};
+
+class EntryPointRedirect extends React.Component {
+  render() {
+    let {
+      match
+    } = this.props;
+
+    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+  }
+}
 
 const mapStateToProps = (state) => ({
   certificationStatus: state.certificationStatus
 });
 
-const EntryPointRedirect = connect(
+export default connect(
   mapStateToProps
-)(UnconnectedEntryPointRedirect);
+)(EntryPointRedirect);
 
 const configureStore = (certification, form9PdfPath) => {
 
@@ -63,7 +70,7 @@ const configureStore = (certification, form9PdfPath) => {
   return store;
 };
 
-export default class Certification extends React.Component {
+export class Certification extends React.Component {
 
   constructor(props) {
     super(props);
@@ -83,7 +90,7 @@ export default class Certification extends React.Component {
   }
 
   checkCertificationData() {
-    ApiUtil.get(`/certifications/${this.props.vacols_id}`).
+    ApiUtil.get(`/certifications/${this.props.vacolsId}`).
     then((data) => {
       this.setState({
         loadingData: JSON.parse(data.text).loading_data,

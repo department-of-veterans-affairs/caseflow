@@ -1,8 +1,8 @@
 class HearingRepository
   class << self
     # :nocov:
-    def upcoming_hearings_for_judge(vacols_user_id, date_diff: 7.days)
-      hearings_for(VACOLS::CaseHearing.upcoming_for_judge(vacols_user_id, date_diff: date_diff))
+    def upcoming_hearings_for_judge(css_id)
+      hearings_for(VACOLS::CaseHearing.upcoming_for_judge(css_id))
     end
 
     def hearings_for_appeal(appeal_vacols_id)
@@ -46,7 +46,7 @@ class HearingRepository
         Hearing.find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
           hearing.attributes = {
             appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(vacols_id: vacols_record.user_id)
+            user: User.find_by(css_id: vacols_record.css_id)
           }
           set_vacols_values(hearing, vacols_record)
         end

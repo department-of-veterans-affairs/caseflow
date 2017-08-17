@@ -615,7 +615,7 @@ export class Pdf extends React.PureComponent {
     this.updatePageBounds();
   }
 
-  comopnentWillUnmount() {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.drawInViewPages);
     window.removeEventListener('keydown', this.keyListener);
   }
@@ -670,7 +670,11 @@ export class Pdf extends React.PureComponent {
     if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
       const pdfsToKeep = [...nextProps.prefetchFiles, nextProps.file];
 
-      _.forEach(_.omit(this.predrawnPdfs, pdfsToKeep), this.cleanUpPdf);
+      Object.keys(this.predrawnPdfs).forEach((file) => {
+        if (!pdfsToKeep.includes(file)) {
+          this.cleanUpPdf(this.predrawnPdfs[file], file);
+        }
+      });
 
       this.predrawnPdfs = _.pick(this.predrawnPdfs, pdfsToKeep);
     }

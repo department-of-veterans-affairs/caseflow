@@ -20,12 +20,14 @@ class Certification < ActiveRecord::Base
     if Rails.env.development? || Rails.env.test?
       StartCertificationJob.perform_now(self)
     else
-      StartCertificationJob.perform_later(self, RequestStore[:current_user])
+      StartCertificationJob.perform_later(self, RequestStore[:current_user], RequestStore[:current_user].ip_address)
     end
   end
 
   def start!
     return certification_status unless can_be_updated?
+
+    user = RequestStore[:current_user]
 
     create_or_update_form8
 
@@ -41,6 +43,7 @@ class Certification < ActiveRecord::Base
       vacols_hearing_preference: appeal.hearing_request_type,
       certifying_office: appeal.regional_office_name,
       certifying_username: appeal.regional_office_key,
+      certifying_official_name: user ? user.full_name : nil,
       certification_date: Time.zone.now.to_date
     )
 
