@@ -290,7 +290,19 @@ Rails.cache.write("reader_out_of_service", true)
 
 # to disable, e.g.
 Rails.cache.write("certification_out_of_service", false)
+```
 
+## Degraded Service
+To enable the "Degraded Service" banner:
+```
+rails c
+Rails.cache.write(:degraded_service, true)
+```
+
+To disable the "Degraded Service" banner:
+```
+rails c
+Rails.cache.write(:degraded_service, false)
 ```
 
 # Support
