@@ -263,12 +263,10 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     stopPlacingAnnotation,
-    togglePdfSidebar
-  }, dispatch),
-  resetJumpToPage: () => {
-    dispatch(resetJumpToPage());
-  },
-  selectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
+    togglePdfSidebar,
+    resetJumpToPage,
+    selectCurrentPdf
+  }, dispatch)
 });
 
 export default connect(
