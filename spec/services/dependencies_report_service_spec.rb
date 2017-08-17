@@ -37,6 +37,18 @@ describe DependenciesReportService do
     end
   end
 
+  # needed to reach 90% test coverage
+  context "when dependencies report is invalid" do
+    before do
+      Rails.cache.write(:dependencies_report,
+                        'This isn\'t JSON')
+    end
+
+    it "returns no outage" do
+      expect(DependenciesReportService.outage_present?).to be_falsey
+    end
+  end
+
   context "when an outage has been declared manually" do
     before do
       Rails.cache.write(:degraded_service, true)
