@@ -1,6 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import { loadingSymbolHtml } from '../../components/RenderFunctions';
+import SmallLoader from '../../components/SmallLoader';
+import * as AppConstants from '../../constants/AppConstants';
 
 export default class StyleGuideSmallLoader extends React.Component {
 
@@ -16,9 +17,10 @@ export default class StyleGuideSmallLoader extends React.Component {
       for a specific section on a page. Designers are responsible to indicate what the
       message should say and which application logo to use in the acceptance criteria. </p>
 
-      <div className="cf-sg-loader-font">
-      {loadingSymbolHtml('Loading...', '19px', '#417505')}
-      </div>
+     <SmallLoader
+        message="Loading..."
+        spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_READER}
+      />
     </div>;
 
   }

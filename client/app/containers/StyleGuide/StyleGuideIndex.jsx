@@ -84,7 +84,7 @@ export default function StyleGuideIndex() {
       name: 'Loaders'
     },
     {
-      anchor: '#small_loaders',
+      anchor: '#small_loader',
       name: 'Small Loader'
     },
     {
