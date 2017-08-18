@@ -43,7 +43,8 @@ retrieve_documents_for_reader_job:
   args:
     limit: 1500
   queue: default
-  active_job: false
+  active_job: true
+  disabled: true
 
 # Checks dependecies every 30 seconds(BGS, VACOLS, VBMS, VBMS.FindDocumentSeriesReference)
 dependencies_check_job:
