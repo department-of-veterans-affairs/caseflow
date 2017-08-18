@@ -11,20 +11,22 @@ RSpec.describe Reader::AppealController, type: :controller do
       response_body = JSON.parse(response.body)["appeals"]
 
       appeal_response = response_body[0].deep_symbolize_keys
+      hashed_issue = hashed_appeal["issues"]
+
       expect(appeal_response[:vacols_id]).to eq hashed_appeal["vacols_id"]
       expect(appeal_response[:vbms_id]).to eq hashed_appeal["vbms_id"]
 
       appeal_response[:issues].each_with_index do |issue, index|
-        expect(issue[:id]).to eq hashed_appeal["issues"][index][:id]
-        expect(issue[:allow]).to eq hashed_appeal["issues"][index][:allow]
-        expect(issue[:deny]).to eq hashed_appeal["issues"][index][:deny]
-        expect(issue[:remand]).to eq hashed_appeal["issues"][index][:remand]
-        expect(issue[:description]).to eq hashed_appeal["issues"][index].description
-        expect(issue[:type][:name]).to eq hashed_appeal["issues"][index].type[:name].to_s
-        expect(issue[:type][:label]).to eq hashed_appeal["issues"][index].type[:label]
-        expect(issue[:vacols_sequence_id]).to eq hashed_appeal["issues"][index][:vacols_sequence_id]
-        expect(issue[:hearing_worksheet_reopen]).to eq hashed_appeal["issues"][index][:hearing_worksheet_reopen]
-        expect(issue[:hearing_worksheet_vha]).to eq hashed_appeal["issues"][index][:hearing_worksheet_vha]
+        expect(issue[:id]).to eq hashed_issue[index][:id]
+        expect(issue[:allow]).to eq hashed_issue[index][:allow]
+        expect(issue[:deny]).to eq hashed_issue[index][:deny]
+        expect(issue[:remand]).to eq hashed_issue[index][:remand]
+        expect(issue[:description]).to eq hashed_issue[index].description
+        expect(issue[:type][:name]).to eq hashed_issue[index].type[:name].to_s
+        expect(issue[:type][:label]).to eq hashed_issue[index].type[:label]
+        expect(issue[:vacols_sequence_id]).to eq hashed_issue[index][:vacols_sequence_id]
+        expect(issue[:hearing_worksheet_reopen]).to eq hashed_issue[index][:hearing_worksheet_reopen]
+        expect(issue[:hearing_worksheet_vha]).to eq hashed_issue[index][:hearing_worksheet_vha]
       end
 
       expect(appeal_response[:docket_number]).to eq hashed_appeal["docket_number"]
