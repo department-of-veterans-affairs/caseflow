@@ -43,13 +43,13 @@ export class HearingWorksheetContainer extends React.Component {
 
     if (!this.props.worksheet) {
       return <div className="loading-hearings">
-         <div className="cf-sg-loader">
-      <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
-        <div className="cf-image-loader">
+        <div className="cf-sg-loader">
+          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
+            <div className="cf-image-loader">
+            </div>
+            <p className="cf-txt-c"><div>Loading worksheet, please wait...</div></p>
+          </LoadingContainer>
         </div>
-        <p className="cf-txt-c"><div>Loading worksheet, please wait...</div></p>
-      </LoadingContainer>
-     </div>
       </div>;
     }
 
