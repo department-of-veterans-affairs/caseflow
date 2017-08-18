@@ -594,52 +594,6 @@ select {
   }
 }
 
-.usa-search {
-  &.usa-search-big {
-    [type="submit"] {
-      background-image: none;
-
-      &[class*="cf-loading"] {
-        width: 14rem;
-      }
-    }
-
-    [type="button"].cf-search-close-icon {
-      margin-left: -20px;
-      margin-top: 6px;
-      position: absolute;
-    }
-  }
-
-  &.usa-search-small {
-    [type="submit"] {
-
-      &[class*="cf-loading"] {
-        width: 13rem;
-        background-image: none;
-      }
-    }
-  }
-
-  &.cf-search-ahead {
-    flex-grow: 1;
-
-    input {
-      &::placeholder {
-        font-style: italic;
-      }
-    }
-  }
-
-  [type="search"] {
-    border: 1px solid $color-gray-dark;
-  }
-}
-
-.cf-search-ahead-parent {
-  display: flex;
-}
-
 .cf-title-meta-right {
   line-height: 1em;
   margin-bottom: 1.76em;
