@@ -23,6 +23,6 @@ class OutOfServiceReminderJob < ActiveJob::Base
   end
 
   def url
-    ENV["SLACK_OUT_OF_SERVICE_REMINDER_URL"]
+    ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 end
