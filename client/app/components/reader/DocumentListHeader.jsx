@@ -30,6 +30,7 @@ class DocumentListHeader extends React.Component {
             onClearSearch={props.clearSearch}
             recordSearch={this.recordSearch}
             isSearchAhead={true}
+            placeholder="Type to search..."
             value={props.docFilterCriteria.searchQuery}
             size="small"
             analyticsCategory="Claims Folder"
