@@ -13,7 +13,9 @@ describe('hearingsReducer', () => {
             0: {}
           }
         }
-      }
+      },
+       worksheet: {
+       }
     });
   });
 
