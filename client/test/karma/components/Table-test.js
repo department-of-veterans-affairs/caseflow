@@ -26,7 +26,7 @@ describe('Table', () => {
   context('renders', () => {
     it('works', () => {
       wrapper = mount(
-        <Table columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk={true} />
+        <Table columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       let headerCount = 3;
