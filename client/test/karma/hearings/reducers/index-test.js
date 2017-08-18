@@ -150,7 +150,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet contentions', () => {
-      expect(state.worksheet);
+      expect(state.worksheet.contentions).to.deep.equal('filled');
     });
   });
 
@@ -167,7 +167,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet periods', () => {
-      expect(state.worksheet);
+      expect(state.worksheet.worksheetPeriods).to.deep.equal('filled');
     });
   });
 
@@ -184,7 +184,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets evidences', () => {
-      expect(state.worksheet);
+      expect(state.worksheet.evidence).to.deep.equal('filled');
     });
   });
 
@@ -201,7 +201,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet comments', () => {
-      expect(state.worksheet);
+      expect(state.worksheet.worksheetComments).to.deep.equal('filled');
     });
   });
 });
