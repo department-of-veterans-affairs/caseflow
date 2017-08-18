@@ -37,7 +37,8 @@ RSpec.describe Reader::AppealController, type: :controller do
     end
 
     it "fails routing validation" do
-      expect { get :find_appeals_by_veteran_id, veteran_id: "03023232S!" }.to raise_error(ActionController::UrlGenerationError)
+      expect { get :find_appeals_by_veteran_id, veteran_id: "03023232S!" }
+        .to raise_error(ActionController::UrlGenerationError)
       expect { get :find_appeals_by_veteran_id, veteran_id: nil }.to raise_error(ActionController::UrlGenerationError)
       expect { get :find_appeals_by_veteran_id, veteran_id: "2" }.to raise_error(ActionController::UrlGenerationError)
       expect { get :find_appeals_by_veteran_id, veteran_id: "221121212121212" }
