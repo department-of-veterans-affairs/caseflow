@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe DependenciesReportService do
-  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'
+  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.freeze
 {
   "BGS":{"name":"BGS","up_rate_5":100.0},
   "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
@@ -10,7 +10,7 @@ describe DependenciesReportService do
     "up_rate_5":100.0}
 }
   EOF
-  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = <<-'EOF'
+  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = <<-'EOF'.freeze
 {
   "BGS":{"name":"BGS","up_rate_5":100.0},
   "VACOLS":{"name":"VACOLS","up_rate_5":100.0},
@@ -102,5 +102,4 @@ describe DependenciesReportService do
       end
     end
   end
-
 end
