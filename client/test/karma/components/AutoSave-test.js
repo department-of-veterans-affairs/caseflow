@@ -49,7 +49,7 @@ describe('AutoSave', () => {
       const wrapper = mount(
         <Provider store={store}>
           <AutoSave
-            isSaving={true}
+            isSaving
             beforeWindowClosesActionCreator={actionCreator}
           />
         </Provider>
@@ -68,7 +68,7 @@ describe('AutoSave', () => {
           <Provider store={store}>
             <AutoSave
               app={key}
-              isSaving={true}
+              isSaving
               beforeWindowClosesActionCreator={actionCreator}
             />
           </Provider>
