@@ -4,23 +4,33 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 // components
 import Table from '../../components/Table';
-import { ChervonDown, ChervonUp } from '../../components/RenderFunctions';
 import Button from '../../components/Button';
+import { ChevronDown, ChevronUp } from '../../components/RenderFunctions';
+
 
 export default class StyleGuideExpandaleTables extends React.Component {
   constructor(props) {
     super(props);
-    
-    this.icons = {
-      'up' : <ChervonUp />, 
-      'down' : <ChervonDown />
-    };
+
     this.state ={
-     expanded: true
+     expanded: null
    };
+}
+
+  handleClick() {
+    this.setState(prevState => ({
+      expanded: !prevState.expanded
+    }));
   }
 
+
+
 render = () => {
+
+  const name = 'See more';
+  const sortedIcon = <ChevronUp />;
+  const notsortedIcon = <ChevronDown />;
+
   // List of objects which will be used to create each row
   let rowObjects = [
     { name: 'Marian',
@@ -67,22 +77,34 @@ render = () => {
       valueFunction: (person, rowNumber) => {
         return <Button
          classNames={['cf-btn-link']}
-         name="See more"
-         href={`#details-${rowNumber}`}
+         name={name}
+         onClick={this.handleClick}
+         expanded={this.state.expanded ? sortedIcon : notsortedIcon}
          />
       }
     }
   ]);
-  
+
+
  let summary = 'Example styleguide table';
 
  return <div className="cf-sg-tables-section">
   <StyleGuideComponentTitle
      title="Expandable Tables"
-      id="table"
+      id="expandable_table"
       link="StyleGuideExpanableTables.jsx"
-      isSubsection={true}
     />
+
+    <h3>Table accordion</h3>
+    <p>
+      The table accordion was initially designed for Caseflow Reader to allow
+      users to see additional information of a specific section. 
+      Many times the length of content can break the balance of design 
+      and we want to make sure we capture the most important elements in a row. 
+      This design cues users to expand a view so that they have enough context 
+      to know what to expect.
+    </p>
+
     <div className="cf-push-right">
     <Button
       name="Expand all"

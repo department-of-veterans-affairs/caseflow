@@ -7,6 +7,7 @@ import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
+import StyleGuideExpandableTables from './StyleGuideExpandableTables';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
@@ -65,6 +66,10 @@ export default function StyleGuideIndex() {
     {
       anchor: '#tables',
       name: 'Tables'
+    },
+    {
+      anchor: '#expandable_table',
+      name: 'Expandable Tables'
     },
     {
       anchor: '#tabs',
@@ -175,6 +180,8 @@ export default function StyleGuideIndex() {
           id="date_input" />
         <div className="cf-help-divider"></div>
         <StyleGuideTables />
+        <div className="cf-help-divider"></div>
+        <StyleGuideExpandableTables />
         <div className="cf-help-divider"></div>
         <StyleGuideTabs />
         <div className="cf-help-divider"></div>
