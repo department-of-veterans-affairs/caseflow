@@ -28,7 +28,7 @@ describe('HearingWorksheetContainer', () => {
             <HearingWorksheetContainer
               veteran_law_judge={{ name: 'me' }}
               date="2017-01-01"
-              vbms_id="7fbebdf24"
+              hearingId="1"
             />
           </div>
         </MemoryRouter>
