@@ -13,7 +13,13 @@ class DependenciesReportService
     end
 
     def outage_present?
-      find_degraded_dependencies.present? or Rails.cache.read(:degraded_service)
+      case Rails.cache.read(:degraded_service_banner)
+      when :always_show
+        return true
+      when :never_show
+        return false
+      end
+      find_degraded_dependencies.present? 
     rescue => error
       Rails.logger.warn "Exception thrown while checking dependency "\
         "status: #{error}"

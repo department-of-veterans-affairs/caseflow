@@ -264,16 +264,24 @@ Rails.cache.write("certification_out_of_service", false)
 ```
 
 ## Degraded Service
-To enable the "Degraded Service" banner:
+We show a "Degraded Service" banner across all Caseflow applications automatically when [Caseflow Monitor](https://github.com/department-of-veterans-affairs/caseflow-monitor) detects that our dependencies may be down. To enable this banner manually, overriding our automatic checks, run the following code from the Rails console:
 ```
-rails c
-Rails.cache.write(:degraded_service, true)
+Rails.cache.write(:degraded_service, :always_show)
 ```
 
-To disable the "Degraded Service" banner:
+When the dependencies have recovered, switch the banner back to automatic mode:
 ```
-rails c
-Rails.cache.write(:degraded_service, false)
+Rails.cache.write(:degraded_service, :auto)
+```
+
+*DANGER*: If Caseflow Monitor is incorrectly reporting a dependency issue, you can disable the "Degraded Service" banner with the following code:
+```
+Rails.cache.write(:degraded_service, :never_show)
+```
+
+When Caseflow Monitor starts working again, switch the banner back to automatic mode:
+```
+Rails.cache.write(:degraded_service, :auto)
 ```
 
 # Support
