@@ -22,15 +22,6 @@ const fakeStore = (state) => ({
 
 const store = fakeStore({ dockets: {} });
 
-const appColors = {
-  certification: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION,
-  dispatch: AppConstants.LOADING_INDICATOR_COLOR_DISPATCH,
-  efolder: AppConstants.LOADING_INDICATOR_COLOR_EFOLDER,
-  feedback: AppConstants.LOADING_INDICATOR_COLOR_FEEDBACK,
-  hearings: AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP,
-  reader: AppConstants.LOADING_INDICATOR_COLOR_READER
-};
-
 describe('AutoSave', () => {
   context('when isSaving is not true', () => {
     it('renders "Last saved at"', () => {
@@ -60,22 +51,20 @@ describe('AutoSave', () => {
       expect(spinner).to.have.length(1);
     });
 
-    it('renders a spinner for each application', () => {
-      let wrapper;
+    it('renders a spinner for an application', () => {
+      const wrapper = mount(
+        <Provider store={store}>
+          <AutoSave
+            isSaving
+            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP}
+            beforeWindowClosesActionCreator={actionCreator}
+          />
+        </Provider>
+      );
 
-      Object.keys(appColors).forEach((key) => {
-        wrapper = mount(
-          <Provider store={store}>
-            <AutoSave
-              app={key}
-              isSaving
-              beforeWindowClosesActionCreator={actionCreator}
-            />
-          </Provider>
-        );
+      const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP}"]`).first();
 
-        expect(wrapper.find(`[fill="${appColors[key]}"]`).first()).to.have.length(1);
-      });
+      expect(spinner).to.have.length(1);
     });
   });
 
