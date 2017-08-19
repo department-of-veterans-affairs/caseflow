@@ -9,9 +9,9 @@ import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
 import {
   onContentionsChange,
-  onWorksheetPeriodsChange,
+  onPeriodsChange,
   onEvidenceChange,
-  onWorksheetCommentsChange
+  onCommentsChange
        } from './actions/Dockets';
 
 import _ from 'lodash';
@@ -37,11 +37,11 @@ export class HearingWorksheet extends React.PureComponent {
 
   onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
 
-  onWorksheetPeriodsChange = (worksheetPeriods) => this.props.onWorksheetPeriodsChange(worksheetPeriods)
+  onPeriodsChange = (periods) => this.props.onPeriodsChange(periods)
 
   onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
 
-  onWorksheetCommentsChange = (worksheetComments) => this.props.onContentionsChange(worksheetComments)
+  onCommentsChange = (comments) => this.props.onContentionsChange(comments)
 
   render() {
 
@@ -308,8 +308,8 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheetPeriods}
-              onChange={this.props.onWorksheetPeriodsChange}
+              value={this.props.periods}
+              onChange={this.props.onPeriodsChange}
               id="worksheet-periods"
               />
           </div>
@@ -326,9 +326,9 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheetComments}
+              value={this.props.comments}
               id="worksheet-comments"
-              onChange={this.props.onWorksheetCommentsChange}
+              onChange={this.props.onCommentsChange}
               />
           </div>
         </form>
@@ -346,9 +346,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
-  onWorksheetPeriodsChange,
+  onPeriodsChange,
   onEvidenceChange,
-  onWorksheetCommentsChange
+  onCommentsChange
 }, dispatch);
 
 export default connect(

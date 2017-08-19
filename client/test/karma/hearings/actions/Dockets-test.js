@@ -96,7 +96,7 @@ describe('.setTranscriptRequested', () => {
 describe('.onContentionsChange', () => {
   it('sets contention text', () => {
 
-    const contentions = 'this is a contention text';
+    const contentions = 'this is a worksheet contention text';
     const expectedAction = {
       type: Constants.SET_CONTENTIONS,
       payload: {
@@ -108,25 +108,25 @@ describe('.onContentionsChange', () => {
   });
 });
 
-describe('.onWorksheetPeriodsChange', () => {
-  it('sets worksheet periods text', () => {
+describe('.onPeriodsChange', () => {
+  it('sets periods text', () => {
 
-    const worksheetPeriods = 'this is a worksheet periods text';
+    const periods = 'this is a worksheet periods text';
     const expectedAction = {
-      type: Constants.SET_WORKSHEET_PERIODS,
+      type: Constants.SET_PERIODS,
       payload: {
-        worksheetPeriods
+        periods
       }
     };
 
-    expect(Actions.onWorksheetPeriodsChange(worksheetPeriods)).to.deep.equal(expectedAction);
+    expect(Actions.onPeriodsChange(periods)).to.deep.equal(expectedAction);
   });
 });
 
 describe('.onEvidenceChange', () => {
   it('sets evidence text', () => {
 
-    const evidence = 'this is a evidence text';
+    const evidence = 'this is a worksheet evidence text';
     const expectedAction = {
       type: Constants.SET_EVIDENCE,
       payload: {
@@ -138,17 +138,17 @@ describe('.onEvidenceChange', () => {
   });
 });
 
-describe('.onWorksheetCommentsChange', () => {
-  it('sets contention text', () => {
+describe('.onCommentsChange', () => {
+  it('sets comment text', () => {
 
-    const worksheetComments = 'this is a worksheetComments text';
+    const comments = 'this is a worksheet comments text';
     const expectedAction = {
-      type: Constants.SET_WORKSHEET_COMMENTS,
+      type: Constants.SET_COMMENTS,
       payload: {
-        worksheetComments
+        comments
       }
     };
 
-    expect(Actions.onWorksheetCommentsChange(worksheetComments)).to.deep.equal(expectedAction);
+    expect(Actions.onCommentsChange(comments)).to.deep.equal(expectedAction);
   });
 });

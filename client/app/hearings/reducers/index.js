@@ -67,9 +67,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { contentions: { $set: action.payload.contentions } }
     });
 
-  case Constants.SET_WORKSHEET_PERIODS:
+  case Constants.SET_PERIODS:
     return update(state, {
-      worksheet: { worksheetPeriods: { $set: action.payload.worksheetPeriods } }
+      worksheet: { periods: { $set: action.payload.periods } }
     });
 
   case Constants.SET_EVIDENCE:
@@ -77,9 +77,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { evidence: { $set: action.payload.evidence } }
     });
 
-  case Constants.SET_WORKSHEET_COMMENTS:
+  case Constants.SET_COMMENTS:
     return update(state, {
-      worksheet: { worksheetComments: { $set: action.payload.worksheetComments } }
+      worksheet: { comments: { $set: action.payload.comments } }
     });
 
   default: return state;

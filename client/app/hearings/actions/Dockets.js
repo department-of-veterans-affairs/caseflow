@@ -82,10 +82,10 @@ export const onContentionsChange = (contentions) => ({
   }
 });
 
-export const onWorksheetPeriodsChange = (worksheetPeriods) => ({
-  type: Constants.SET_WORKSHEET_PERIODS,
+export const onPeriodsChange = (periods) => ({
+  type: Constants.SET_PERIODS,
   payload: {
-    worksheetPeriods
+    periods
   }
 });
 
@@ -96,9 +96,9 @@ export const onEvidenceChange = (evidence) => ({
   }
 });
 
-export const onWorksheetCommentsChange = (worksheetComments) => ({
-  type: Constants.SET_WORKSHEET_COMMENTS,
+export const onCommentsChange = (comments) => ({
+  type: Constants.SET_COMMENTS,
   payload: {
-    worksheetComments
+    comments
   }
 });

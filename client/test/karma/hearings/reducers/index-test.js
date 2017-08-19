@@ -156,20 +156,20 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_WORKSHEET_PERIODS, () => {
+  context(Constants.SET_PERIODS, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_WORKSHEET_PERIODS,
+        type: Constants.SET_PERIODS,
         payload: {
-          worksheetPeriods: 'filled'
+          periods: 'filled'
         }
       });
     });
 
     it('sets worksheet periods', () => {
-      expect(state.worksheet.worksheetPeriods).to.deep.equal('filled');
+      expect(state.worksheet.periods).to.deep.equal('filled');
     });
   });
 
@@ -190,20 +190,20 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_WORKSHEET_COMMENTS, () => {
+  context(Constants.SET_COMMENTS, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_WORKSHEET_COMMENTS,
+        type: Constants.SET_COMMENTS,
         payload: {
-          worksheetComments: 'filled'
+          comments: 'filled'
         }
       });
     });
 
     it('sets worksheet comments', () => {
-      expect(state.worksheet.worksheetComments).to.deep.equal('filled');
+      expect(state.worksheet.comments).to.deep.equal('filled');
     });
   });
 });
