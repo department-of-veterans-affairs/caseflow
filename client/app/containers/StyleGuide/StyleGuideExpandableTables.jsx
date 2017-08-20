@@ -13,7 +13,7 @@ export default class StyleGuideExpandaleTables extends React.Component {
     super(props);
 
     this.state ={
-     expanded: null
+     expanded: true
    };
 }
 
@@ -22,8 +22,6 @@ export default class StyleGuideExpandaleTables extends React.Component {
       expanded: !prevState.expanded
     }));
   }
-
-
 
 render = () => {
 
@@ -70,17 +68,19 @@ render = () => {
     return rowObject.likesIceCream ? 'cf-success' : '';
   };
 
+  
   let columnsWithAction = _.concat(columns, [
     {
       header: 'Details',
       align: 'right',
-      valueFunction: (person, rowNumber) => {
-        return <Button
-         classNames={['cf-btn-link']}
-         name={name}
-         onClick={this.handleClick}
-         expanded={this.state.expanded ? sortedIcon : notsortedIcon}
-         />
+      valueFunction: () => {
+        return 
+          <Button 
+            classNames={['cf-btn-link']}
+            name={name}
+            onClick={this.handleClick}> See More
+            {this.state.expanded ? sortedIcon : notsortedIcon}
+            </Button>;
       }
     }
   ]);
