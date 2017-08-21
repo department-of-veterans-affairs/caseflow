@@ -8,7 +8,64 @@ Prod Squad is a rotating assignment with two people are responsible for daily op
 1. We don't have enough pure DevOps people to ask them to be solely responsible for operating the site.
 1. Operational stability is everyone's responsibility, and having people take turns on prod squad reinforces that.
 
-## When you're on prod squad
+We have two alert rotations, staffed by different people: "Business Hours" and "Non-Business Hours". Both receive the same alerts. Because working outside of regular business hours is more painful, that rotation has more people in it.
+
+## Non-Business Hours
+
+In order to have an acceptable level of uptime, our team needs to be responsive to issues outside of regular working hours.
+
+### Proposed Staffing
+* Nick
+* Mike
+* JD
+* Alex
+* Anya
+* Sharon
+* Artem
+* Mark
+* Evan
+* Teja
+* Shane
+* Sunil (when he arrives)
+* Alan
+
+### Rotation
+Each person will take one week being the primary responder. If the primary does not respond in time, Pager Duty will escalate to everyone else at the same time. This has the benefit of being simple to implement, and provides a hilarious consequence for people who are not responsive.
+
+### On Call Hours
+Monday through Saturday: 6a - 12a (except business hours)
+Sunday and federal holidays: 9p - 12a
+
+### Response Time SLA
+Responders should acknowledge an alert within 20 minutes. Responders should be able to be at a laptop and debugging within an hour.
+
+### Meaningful Alerts
+As a team, we owe it to each other to have only meaningful alerts. If people get paged for no reason, it will cause pain, and will make people stop paying attention to the pager. It is better to under-alert than to over-alert, since they produce the same outcome, but over-alerting is more painful.
+
+### Runbooks
+We must have well-documented runbooks to help people respond to issues. We will ensure that the runbooks are ready as part of this plan.
+
+### Comfort
+We recognize that being on call can be painful, particularly in a ~~godforesaken hellscape~~ unstable environment like the VA. For many issues, the on call response will be getting in touch with the right VA team, rather than fixing anything on our end.
+
+To have an on-call rotation with minimal pain:
+* People should swap specific time to make their lives easier. ("I'm going camping this weekend – can we trade these two weekends?")
+* People should swap recurring time to make their lives easier ("I'd prefer to be on call in the morning rather than the evening – how about I'll do mornings for your shift, and you can do evenings for mine?")
+* If you work extra time off-hours responding to a page, feel free to deduct that time from the amount that you'll work for the week overall. So if I normally leave at 5p, but I get woken up at 6a that day to respond to a page and work on it for an hour, then I may leave at 4p.
+* We will use time zones to our advantange. Shane will be on call during time that's business hours in PST but not EST. Shane will never be on call during time that's business hours in EST but not PST.
+
+We'll have to figure out holidays when they arise. For holidays that not everyone celebrates, like Hanukkah, we should ensure that people are not on call during holidays that are relevant to them. If there are holidays that everyone on the team celebrates, like Thanksgiving, then whomever takes a shift during that time gets to skip their next shift.
+
+## Business Hours
+
+### Proposed Staffing
+* Marian
+* Alexis
+* Shade
+* Nolawi
+* Nemo
+
+### When you're on prod squad
 
 You must respond to every error logged in #appeals-devops-alerts. You are not expected the fix everything, but you are the first line of defense to determine if we have a serious problem or not. This is a painful job if there are many alerts, so it's on all of us to silence alerts that are not meaningful.
 
@@ -47,22 +104,22 @@ This procedure only needs to be done during business hours. When you start work 
 ### Backup
 Two people are on prod squad at any given time. The primary person is responsible for following the [Sentry Errors](#sentry-errors) procedure. The secondary person takes over whenever the primary is not available. The primary is responsible for notifying the secondary when they are not available. This includes PTO, a midday appointment, or a no-laptops meeting.
 
+## Both Business Hours and Non-Business Hours
+
 ### Post Mortems
 For major outages or data corruption issues, we need to dig into the root causes of why the outage happened and take steps to prevent similar problems from happening in the future.
 
-1. Create an issue in the appropriate repo, and label it "post-mortem"
-1. Describe the details and the timeline of the outage and resolution in the issue
-1. Move the issue to In Progress, announce it to the team, and call for feedback on the issue
-1. Discuss the action items after standup with the team, 
+1. Create an issue in the appropriate repo, and label it "post-mortem".
+1. Describe the details and the timeline of the outage and resolution in the issue.
+1. Move the issue to In Progress, announce it to the team, and call for feedback on the issue.
+1. Discuss the action items after standup with the team.
 
 ## Who is on prod squad
-All engineers with VA email addresses participate in prod squad. The VA email address gives the ability to access our production systems.
-
 If you are on prod squad, you must have access to the following:
 
 1. PagerDuty
 1. [CloudWatch logs](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/cheatsheet/logs.md)
-1. Sentry
+1. [Sentry](https://sentry.ds.va.gov)
 1. AWS
 1. Production (i.e. you can log into prod as a user)
     * Note: we are currently in the process of getting production access. It's ok if you don't have this yet.
@@ -71,7 +128,7 @@ If you are on prod squad, you must have access to the following:
 
 If you don't have access to everything on this list, talk to your team lead about getting access.
 
-The Prod Squad schedule is managed inside of pager duty. See https://dsva-appeals.pagerduty.com/escalation_policies for schedule.
+The Prod Squad schedule is managed via Pager Duty. See https://dsva-appeals.pagerduty.com/escalation_policies for the schedule.
 
 ## Responsibility for Errors
 | App | Team | Tech Lead |
