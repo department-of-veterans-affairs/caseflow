@@ -21,10 +21,10 @@ export default class TextareaField extends React.Component {
     let className = 'cf-form-textarea' +
           `${errorMessage ? ' usa-input-error' : ''}`;
 
-    let characterLimitCount = maxlength - this.length;
+    let characterLimitCount = maxlength - value.length;
 
     return <div className={className}>
-      <label className="question-label" htmlFor={id || name}>
+      <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}

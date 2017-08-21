@@ -6,7 +6,6 @@ import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
-import TextareaField from '../components/TextareaField';
 import {
   onContentionsChange,
   onPeriodsChange,
@@ -297,7 +296,8 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <label htmlFor="worksheet-contentions">Contentions</label>
+            <textarea
               name="Contentions"
               value={this.props.contentions}
               onChange={this.props.onContentionsChange}
@@ -306,7 +306,8 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <label htmlFor="worksheet-periods">Periods and circumstances of service</label>
+            <textarea
               name="Periods and circumstances of service"
               value={this.props.periods}
               onChange={this.props.onPeriodsChange}
@@ -315,7 +316,9 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+                    <label
+            htmlFor="worksheet-evidence">Evidence</label>
+            <textarea
               name="Evidence"
               value={this.props.evidence}
               onChange={this.props.onEvidenceChange}
@@ -324,7 +327,8 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <label htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
+            <textarea
               name="Comments and special instructions to attorneys"
               value={this.props.comments}
               id="worksheet-comments"
