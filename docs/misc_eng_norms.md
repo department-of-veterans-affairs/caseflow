@@ -65,9 +65,10 @@ Where appropriate, GIFs are also great. Check out [Licecap](http://www.cockos.co
  
 Almost every PR should have a “Testing:” section, where you describe how you validated your change. For complex changes, the testing section may be quite extensive, but for simple changes like styling or content, it might be no more than “Verified change in UI.”
 
-## Code Reviews
- 
+## Code Reviews 
 The best way to ensure shared context and correct software is through a culture of deep code reviews. Expect your reviewer to poke holes in your reasoning, point out improvements, ask you to test more thoroughly, add more unit tests, etc. This is done out of love and reverence for our project.
+
+When you have code ready for review, open a pull request and ask your tech lead who should review it. The tech lead, or someone else who the tech lead specifically delegates to for that PR, are the only people who are permitted to approve the PR.
  
 As the reviewer, be mindful of scope creep. Sometimes, it takes more than one PR to put the code in a good state. As the dev, if you feel you’re being asked to significantly expand the scope of the original change, it’s perfectly fine to say “I agree with your comment, but I think that change is out of scope and should be addressed in a future PR. 
  
