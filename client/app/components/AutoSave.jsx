@@ -35,7 +35,7 @@ export class AutoSave extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   isSaving: state.isSaving
 });
 

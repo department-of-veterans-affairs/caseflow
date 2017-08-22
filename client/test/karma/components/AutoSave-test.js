@@ -1,7 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
 import { AutoSave } from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 
@@ -25,6 +24,7 @@ describe('AutoSave', () => {
       );
 
       const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_DEFAULT}"]`).first();
+
       expect(spinner).to.have.length(1);
     });
 
@@ -37,6 +37,7 @@ describe('AutoSave', () => {
       );
 
       const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP}"]`).first();
+
       expect(spinner).to.have.length(1);
     });
   });
@@ -48,7 +49,7 @@ describe('AutoSave', () => {
 
     window.close();
     setTimeout(() => {
-      expect(actionCreator.calledOnce).to.equal(true)
+      expect(actionCreator.calledOnce).to.equal(true);
     });
   });
 });
