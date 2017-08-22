@@ -1,4 +1,8 @@
 RSpec.describe Reader::AppealController, type: :controller do
+  before do
+    FeatureToggle.enable!(:reader)
+  end
+
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:vacols_record) { :remand_decided }
   let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
@@ -6,6 +10,7 @@ RSpec.describe Reader::AppealController, type: :controller do
   describe "GET fetch appeal by VBMS Id" do
     it "should be succesful" do
       get :find_appeals_by_veteran_id, veteran_id: appeal[:vbms_id]
+
       expect(response.status).to eq 200
       hashed_appeal = appeal.to_hash(issues: appeal.issues)
       response_body = JSON.parse(response.body)["appeals"]
