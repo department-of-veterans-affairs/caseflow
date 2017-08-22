@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
-import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
+import LoadingContainer from '../components/LoadingContainer';
+import * as AppConstants from '../constants/AppConstants';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
 
@@ -39,9 +40,14 @@ export class DailyDocketContainer extends React.Component {
     }
 
     if (!this.props.dockets) {
-      return <div className="loading-dockets">
-        <div>{loadingSymbolHtml('', '50%', '#68bd07')}</div>
-        <div>Loading hearings, please wait...</div>
+      return <div className="loading-hearings">
+        <div className="cf-sg-loader">
+          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
+            <div className="cf-image-loader">
+            </div>
+            <p className="cf-txt-c"><div>Loading dockets, please wait...</div></p>
+          </LoadingContainer>
+        </div>
       </div>;
     }
 
