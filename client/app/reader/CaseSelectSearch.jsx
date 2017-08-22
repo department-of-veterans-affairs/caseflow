@@ -113,13 +113,6 @@ class CaseSelectSearch extends React.PureComponent {
         onChange={this.handleChangeAppealSelection}
         hideLabel={true}
       />
-      <p>
-        Not seeing what you expected? <a
-          name="feedbackUrl"
-          href={this.props.feedbackUrl}>
-          Please send us feedback.
-        </a>
-      </p>
     </Modal> : ''
     }
     </div>;
