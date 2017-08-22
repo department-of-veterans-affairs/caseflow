@@ -15,7 +15,7 @@ const now = () => {
 export class AutoSave extends React.Component {
 
   componentDidMount = () => {
-    if (typeof this.props.doBeforeWindowCloses !== 'undefined' && !window.onbeforeunload) {
+    if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
         this.props.doBeforeWindowCloses();
       };
@@ -53,5 +53,5 @@ export default connect(
 AutoSave.propTypes = {
   isSaving: PropTypes.bool,
   spinnerColor: PropTypes.string,
-  beforeWindowClosesActionCreator: PropTypes.func
+  beforeWindowClosesActionCreator: PropTypes.func.isRequired
 };

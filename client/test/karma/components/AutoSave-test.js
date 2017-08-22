@@ -10,7 +10,7 @@ describe('AutoSave', () => {
   context('when isSaving is not true', () => {
     it('renders "Last saved at"', () => {
       const wrapper = mount(
-          <AutoSave />
+          <AutoSave beforeWindowClosesActionCreator={actionCreator} />
       );
 
       expect(wrapper.find('.saving').text()).to.include('Last saved at');
@@ -20,7 +20,10 @@ describe('AutoSave', () => {
   context('when isSaving is true', () => {
     it('renders default spinner', () => {
       const wrapper = mount(
-          <AutoSave isSaving />
+          <AutoSave
+            isSaving
+            beforeWindowClosesActionCreator={actionCreator}
+          />
       );
 
       const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_DEFAULT}"]`).first();
@@ -33,6 +36,7 @@ describe('AutoSave', () => {
         <AutoSave
           isSaving
           spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP}
+          beforeWindowClosesActionCreator={actionCreator}
         />
       );
 
