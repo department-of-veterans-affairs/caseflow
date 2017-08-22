@@ -93,6 +93,12 @@ class Fakes::AppealRepository
     true
   end
 
+  def self.appeals_ready_for_hearing(vbms_id)
+    (records || []).select do |_, a|
+      a[:vbms_id] == vbms_id && a[:decision_date].nil? && !a[:form9_date].nil?
+    end
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")

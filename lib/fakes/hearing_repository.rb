@@ -30,6 +30,10 @@ class Fakes::HearingRepository
     true
   end
 
+  def self.appeals_ready_for_hearing(vbms_id)
+    Fakes::AppealRepository.appeals_ready_for_hearing(vbms_id)
+  end
+
   def self.find_by_vacols_id(vacols_id)
     hearing_records.find { |h| h.vacols_id == vacols_id }
   end
