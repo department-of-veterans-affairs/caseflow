@@ -646,7 +646,7 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
       if (numOfAppeals === 1) {
         dispatch(caseSelectAppeal(returnedObject.appeals[0]));
       }
-    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+    });
   }
 );
 
