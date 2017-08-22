@@ -35,13 +35,13 @@ export class HearingWorksheet extends React.PureComponent {
     return index;
   }
 
-  onContentionsChange = ({ contentions }) => this.props.onContentionsChange(contentions)
+  onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
 
-  onPeriodsChange = ({ periods }) => this.props.onPeriodsChange(periods)
+  onPeriodsChange = (periods) => this.props.onPeriodsChange(periods)
 
-  onEvidenceChange = ({ evidence }) => this.props.onEvidenceChange(evidence)
+  onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
 
-  onCommentsChange = ({ comments }) => this.props.onContentionsChange(comments)
+  onCommentsChange = (comments) => this.props.onContentionsChange(comments)
 
   render() {
 
