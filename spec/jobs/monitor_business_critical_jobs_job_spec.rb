@@ -11,6 +11,13 @@ describe MonitorBusinessCriticalJobsJob do
     end
   end
 
+  after do
+    MonitorBusinessCriticalJobsJob::BUSINESS_CRITICAL_JOBS.each do |job_class|
+      Rails.cache.write("#{job_class}_last_started_at", nil)
+      Rails.cache.write("#{job_class}_last_completed_at", nil)
+    end
+  end
+
   let(:job) { MonitorBusinessCriticalJobsJob.new }
   let!(:success_started_at) { 1.hour.ago }
   let!(:success_completed_at) { 30.minutes.ago }
@@ -47,6 +54,8 @@ describe MonitorBusinessCriticalJobsJob do
         expect(job.slack_service).to receive(:send_notification)
           .with(including(*included_values))
 
+        p job.results
+        job.send(:slack_message).split("\n").each { |m| p m }
         job.perform
       end
     end
