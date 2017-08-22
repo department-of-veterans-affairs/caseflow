@@ -39,9 +39,9 @@ const mapStateToProps = (state) => ({
   isSaving: state.isSaving
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch) => ({
   doBeforeWindowCloses: () => {
-    dispatch(ownProps.beforeWindowClosesActionCreator());
+    dispatch(this.props.beforeWindowClosesActionCreator());
   }
 });
 
