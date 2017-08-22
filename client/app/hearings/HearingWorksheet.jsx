@@ -35,16 +35,6 @@ export class HearingWorksheet extends React.PureComponent {
     return index;
   }
 
-  // TODO to move the default value to the backend
-
-  onContentionsChange = (contentions) => onContentionsChange(contentions)
-
-  onPeriodsChange = (periods) => onPeriodsChange(periods)
-
-  onEvidenceChange = (evidence) => onEvidenceChange(evidence)
-
-  onCommentsChange = (comments) => onContentionsChange(comments)
-
   render() {
 
     const columns = [
@@ -299,6 +289,8 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
+
+            { /* TODO to move the default value to the backend */ }
             <TextareaField
               name="Contentions"
               value={this.props.worksheet.contentions || ''}
