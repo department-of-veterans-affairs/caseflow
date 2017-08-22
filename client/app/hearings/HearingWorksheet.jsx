@@ -1,13 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
+import TextareaField from '../components/TextareaField';
+import {
+  onContentionsChange,
+  onPeriodsChange,
+  onEvidenceChange,
+  onCommentsChange
+       } from './actions/Dockets';
+
 import _ from 'lodash';
 
-export class HearingWorksheet extends React.Component {
+export class HearingWorksheet extends React.PureComponent {
+
 
   getType = (type) => {
     return (type === 'central_office') ? 'CO' : type;
@@ -24,6 +34,16 @@ export class HearingWorksheet extends React.Component {
   getKeyForRow = (index) => {
     return index;
   }
+
+  // TODO to move the default value to the backend
+
+  onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
+
+  onPeriodsChange = (periods) => this.props.onPeriodsChange(periods)
+
+  onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
+
+  onCommentsChange = (comments) => this.props.onContentionsChange(comments)
 
   render() {
 
@@ -263,7 +283,6 @@ export class HearingWorksheet extends React.Component {
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>&nbsp;</div>
           </div>
-
         </div>
 
         <div className="cf-hearings-worksheet-data">
@@ -278,30 +297,43 @@ export class HearingWorksheet extends React.Component {
           />
         </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-contentions">Contentions</label>
-          <textarea id="worksheet-contentions" aria-label="Contentions"></textarea>
-        </div>
+        <form className="cf-hearings-worksheet-form">
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Contentions"
+              value={this.props.worksheet.contentions || ''}
+              onChange={this.props.onContentionsChange}
+              id="worksheet-contentions"
+              />
+          </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-periods">Periods and circumstances of service</label>
-          <textarea id="worksheet-periods" aria-label="Periods and circumstances of service"></textarea>
-        </div>
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Periods and circumstances of service"
+              value={this.props.worksheet.periods || ''}
+              onChange={this.props.onPeriodsChange}
+              id="worksheet-periods"
+              />
+          </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-evidence">Evidence</label>
-          <textarea id="worksheet-evidence" aria-label="Evidence"></textarea>
-        </div>
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Evidence"
+              value={this.props.worksheet.evidence || ''}
+              onChange={this.props.onEvidenceChange}
+              id="worksheet-evidence"
+              />
+          </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <label className="cf-hearings-worksheet-header"
-            htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
-          <textarea id="worksheet-comments"
-            aria-label="Comments and special instructions to attorneys"></textarea>
-        </div>
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Comments and special instructions to attorneys"
+              value={this.props.worksheet.comments || ''}
+              id="worksheet-comments"
+              onChange={this.props.onCommentsChange}
+              />
+          </div>
+        </form>
       </div>
       <div className="cf-push-right">
         <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
@@ -314,8 +346,16 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onContentionsChange,
+  onPeriodsChange,
+  onEvidenceChange,
+  onCommentsChange
+}, dispatch);
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(HearingWorksheet);
 
 HearingWorksheet.propTypes = {
