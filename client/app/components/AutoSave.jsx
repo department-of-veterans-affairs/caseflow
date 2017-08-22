@@ -15,7 +15,7 @@ const now = () => {
 export class AutoSave extends React.Component {
 
   componentDidMount = () => {
-    if (!window.onbeforeunload) {
+    if (typeof this.props.doBeforeWindowCloses !== 'undefined' && !window.onbeforeunload) {
       window.onbeforeunload = () => {
         this.props.doBeforeWindowCloses();
       };
@@ -23,9 +23,9 @@ export class AutoSave extends React.Component {
   }
 
   render() {
-    const color = this.props.spinnerColor || LOADING_INDICATOR_COLOR_DEFAULT;
-
     if (this.props.isSaving) {
+      const color = this.props.spinnerColor || LOADING_INDICATOR_COLOR_DEFAULT;
+
       return <div className="saving">Saving...
         <div className="loadingSymbol">{loadingSymbolHtml('', '100%', color)}</div>
       </div>;
