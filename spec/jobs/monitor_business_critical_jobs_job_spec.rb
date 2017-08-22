@@ -30,32 +30,36 @@ describe MonitorBusinessCriticalJobsJob do
     context "when one job has failed to start or complete" do
       before do
         # Set up failure job to have jobs not run for 24 hours
-        failure_job_class = MonitorBusinessCriticalJobsJob::BUSINESS_CRITICAL_JOBS.last
-        Rails.cache.write("#{failure_job_class}_last_started_at", 1.day.ago)
-        Rails.cache.write("#{failure_job_class}_last_completed_at", 1.day.ago)
+        @failure_job_class = MonitorBusinessCriticalJobsJob::BUSINESS_CRITICAL_JOBS.last
+        Rails.cache.write("#{@failure_job_class}_last_started_at", 1.day.ago)
+        Rails.cache.write("#{@failure_job_class}_last_completed_at", 1.day.ago)
       end
 
       it "sends a slack notification with failure information" do
-        expect(job.slack_service).to receive(:send_notification).with(including(
+        included_values = [
           "Business critical job",
           "CreateEstablishClaimTasksJob: Last started: 2017-02-01",
           "PrepareEstablishClaimTasksJob: Last started: 2017-02-01",
-          "CreateEstablishClaimTasksJob failed to start in the last 5 hours",
-          "CreateEstablishClaimTasksJob failed to complete in the last 5 hours",
+          "#{@failure_job_class} failed to start in the last 5 hours",
+          "#{@failure_job_class} failed to complete in the last 5 hours",
           "here"
-        ))
-        binding.pry
+        ]
+        expect(job.slack_service).to
+        receive(:send_notification).with(including(included_values))
+
         job.perform
       end
     end
 
     context "when all jobs have started/completed as expected" do
       it "does not @here channel if no failures" do
-        expect(job.slack_service).to receive(:send_notification).with(excluding(
+        excluded_values = [
           "failed to start",
           "failed to compelete",
           "here"
-        ))
+        ]
+        expect(job.slack_service).to
+        receive(:send_notification).with(excluding(excluded_values))
         job.perform
       end
     end

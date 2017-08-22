@@ -26,6 +26,14 @@ prepare_establish_claim_tasks_job:
   queue: default
   active_job: true
 
+# This job runs at 5:30pm ET and checks that mission critical jobs have *started*
+# This will alert us if a job has not run due to sidekiq-cron being unreliable
+monitor_business_critical_jobs_job:
+  cron: "30 17 * * * America/New_York"
+  class: "MonitorBusinessCriticalJobsJob"
+  queue: default
+  active_job: true
+
 # This job is used to debug https://github.com/department-of-veterans-affairs/caseflow/issues/1814
 # It is scheduled to run every 5 minute to make sure Sidekiq and Sidekiq Cron
 # are both operational. It will be removed once the issue is fixed.

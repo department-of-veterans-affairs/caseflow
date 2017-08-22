@@ -53,10 +53,7 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
                    "Last completed: #{result[:completed]}\n"
       end
 
-      if !message.length.zero?
-        message += "<!here>"
-      end
-
+      message += "<!here>" if !message.length.zero?
       message
     end
   end

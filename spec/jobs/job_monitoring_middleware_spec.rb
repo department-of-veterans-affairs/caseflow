@@ -20,8 +20,8 @@ describe JobMonitoringMiddleware do
       expect(@yield_called).to be_falsey
       call
       expect(@yield_called).to be_truthy
-      expect(last_started_at).to eq(Time.now)
-      expect(last_completed_at).to eq(Time.now)
+      expect(last_started_at).to eq(Time.now.utc)
+      expect(last_completed_at).to eq(Time.now.utc)
     end
   end
 end
