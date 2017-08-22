@@ -23,6 +23,10 @@ class Hearing < ActiveRecord::Base
     date && !closed?
   end
 
+  def active_appeal_streams
+    self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
+  end
+
   def update(hearing_hash)
     transaction do
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)

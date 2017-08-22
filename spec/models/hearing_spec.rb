@@ -1,5 +1,27 @@
 describe Hearing do
-  context ".update" do
+  context "#active_appeal_streams" do
+    subject { hearing.active_appeal_streams }
+
+    let(:appeal1) do
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+    end
+    let!(:appeal2) do
+      Generators::Appeal.create(vacols_record: { template: :remand_decided }, vbms_id: "123C")
+    end
+    let!(:appeal3) do
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+    end
+    let!(:appeal4) do
+      Generators::Appeal.create(vacols_record: { template: :form9_not_submitted }, vbms_id: "123C")
+    end
+    let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
+
+    it "returns active appeals with no decision date and with form9 date" do
+      expect(subject.size).to eq 2
+    end
+  end
+
+  context "#update" do
     subject { hearing.update(hearing_hash) }
     let(:hearing) { Generators::Hearing.build }
 
