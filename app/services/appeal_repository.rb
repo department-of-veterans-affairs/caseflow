@@ -37,6 +37,20 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record) }
   end
 
+  def self.appeals_ready_for_hearing(vbms_id)
+    cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
+                                  service: :vacols,
+                                  name: "appeals_ready_for_hearing") do
+      # An appeal is ready for hearing if form 9 has been submitted, but no decision
+      # has yet been made
+      VACOLS::Case.where(bfcorlid: vbms_id, bfddec: nil)
+                  .where.not(bfd19: nil)
+                  .includes(:folder, :correspondent)
+    end
+
+    cases.map { |case_record| build_appeal(case_record) }
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     case_scope = case decision_type
                  when "Full Grant"

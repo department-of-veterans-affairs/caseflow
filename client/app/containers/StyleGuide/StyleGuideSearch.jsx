@@ -10,7 +10,10 @@ class StyleGuideSearch extends Component {
       loading: {
         small: false,
         big: false
-      }
+      },
+      smallValue: '',
+      bigValue: '',
+      searchAheadValue: ''
     };
 
   }
@@ -31,8 +34,35 @@ class StyleGuideSearch extends Component {
 
   handleSmallClick = () => this.handleSearchClick('small')
 
-  render() {
+  onChange = (searchBarName, value) => {
+    const changeState = () => {
+      this.setState({ [searchBarName]: value });
+    };
 
+    changeState();
+  }
+
+  changeSmallValue = (value) => this.onChange('smallValue', value);
+
+  changeBigValue = (value) => this.onChange('bigValue', value);
+
+  changeSearchAheadValue = (value) => this.onChange('searchAheadValue', value);
+
+  onClearSearch = (searchBarName) => {
+    const clearSearch = () => {
+      this.setState({ [searchBarName]: '' });
+    };
+
+    clearSearch();
+  }
+
+  clearSmallValue = () => this.onClearSearch('smallValue');
+
+  clearBigValue = () => this.onClearSearch('bigValue');
+
+  clearSearchAheadValue = () => this.onClearSearch('searchAheadValue');
+
+  render() {
     return (
       <div>
         <StyleGuideComponentTitle
@@ -51,25 +81,50 @@ class StyleGuideSearch extends Component {
         There is also a unique Caseflow search behavior that displays a spinning logo to indicate load times.
         </p>
 
+        <p>
+        <b>Technical notes:</b> In the "Search Big" and the "Search Small" examples below,
+        click on the Search buttons to activate the loading spinner for a 2 second
+        period. For any search ahead search bars, the class <code>cf-search-ahead-parent</code>
+        must be applied to the parent element.
+        </p>
+
         <div className="cf-sg-searchbar-example">
           <SearchBar
             id="search-big"
             title="Search Big"
             size="big"
-            onClick={this.handleBigClick}
+            onChange={this.changeBigValue}
+            onSubmit={this.handleBigClick}
+            onClearSearch={this.clearBigValue}
             loading={this.state.big}
+            value={this.state.bigValue}
           />
         </div>
-        <br/>
         <div className="cf-sg-searchbar-example">
           <SearchBar
             id="search-small"
             title="Search Small"
             size="small"
-            onClick={this.handleSmallClick}
+            onChange={this.changeSmallValue}
+            onSubmit={this.handleSmallClick}
+            onClearSearch={this.clearSmallValue}
             loading={this.state.small}
+            value={this.state.smallValue}
+            submitUsingEnterKey={true}
           />
        </div>
+       <div className="cf-sg-searchbar-example cf-search-ahead-parent">
+         <SearchBar
+           id="search-ahead"
+           title="Search Ahead"
+           size="small"
+           onChange={this.changeSearchAheadValue}
+           onClearSearch={this.clearSearchAheadValue}
+           placeholder="Type to search..."
+           isSearchAhead={true}
+           value={this.state.searchAheadValue}
+         />
+      </div>
     </div>
     );
   }

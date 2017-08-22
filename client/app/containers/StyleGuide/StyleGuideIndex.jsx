@@ -16,6 +16,7 @@ import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLoaders from './StyleGuideLoaders';
+import StyleGuideSmallLoader from './StyleGuideSmallLoader';
 import StyleGuideLayout from './StyleGuideLayout';
 import StyleGuideDashboard from './StyleGuideDashboard';
 import StyleGuideTypography from './StyleGuideTypography';
@@ -81,6 +82,10 @@ export default function StyleGuideIndex() {
     {
       anchor: '#loaders',
       name: 'Loaders'
+    },
+    {
+      anchor: '#small_loader',
+      name: 'Small Loader'
     },
     {
       anchor: '#loading_buttons',
@@ -183,6 +188,8 @@ export default function StyleGuideIndex() {
         <StyleGuideFormFields />
         <div className="cf-help-divider"></div>
         <StyleGuideLoaders />
+        <div className="cf-help-divider"></div>
+        <StyleGuideSmallLoader />
         <div className="cf-help-divider"></div>
         <StyleGuideLoadingButton />
         <div className="cf-help-divider"></div>
