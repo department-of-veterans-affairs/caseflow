@@ -305,7 +305,6 @@ export class HearingWorksheet extends React.Component {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-contentions">Contentions</label>
             <TextareaField
               name="Contentions"
               value={this.props.contentions}
@@ -315,7 +314,6 @@ export class HearingWorksheet extends React.Component {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-periods">Periods and circumstances of service</label>
             <TextareaField
               name="Periods and circumstances of service"
               value={this.props.periods}
@@ -325,8 +323,6 @@ export class HearingWorksheet extends React.Component {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-                    <label
-            htmlFor="worksheet-evidence">Evidence</label>
             <TextareaField
               name="Evidence"
               value={this.props.evidence}
@@ -336,7 +332,6 @@ export class HearingWorksheet extends React.Component {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
             <TextareaField
               name="Comments and special instructions to attorneys"
               value={this.props.comments}
