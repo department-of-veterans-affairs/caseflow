@@ -37,13 +37,13 @@ export class HearingWorksheet extends React.PureComponent {
 
   // TODO to move the default value to the backend
 
-  onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
+  onContentionsChange = (contentions) => onContentionsChange(contentions)
 
-  onPeriodsChange = (periods) => this.props.onPeriodsChange(periods)
+  onPeriodsChange = (periods) => onPeriodsChange(periods)
 
-  onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
+  onEvidenceChange = (evidence) => onEvidenceChange(evidence)
 
-  onCommentsChange = (comments) => this.props.onContentionsChange(comments)
+  onCommentsChange = (comments) => onContentionsChange(comments)
 
   render() {
 
