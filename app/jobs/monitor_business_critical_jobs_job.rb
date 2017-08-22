@@ -44,12 +44,12 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
   def failure_message
     @failure_message ||= results.reduce("") do |message, (job_class, result)|
       if !result[:started] || result[:started] < ALERT_THRESHOLD_IN_HOURS.hours.ago
-        message += "#{job_class} failed to start in the last #{ALERT_THRESHOLD_IN_HOURS} hours. " \
+        message += "*#{job_class} failed to start in the last #{ALERT_THRESHOLD_IN_HOURS} hours.* " \
                    "Last started: #{result[:started]}\n"
       end
 
       if !result[:completed] || result[:completed] < ALERT_THRESHOLD_IN_HOURS.hours.ago
-        message += "#{job_class} failed to complete in the last #{ALERT_THRESHOLD_IN_HOURS} hours. " \
+        message += "*#{job_class} failed to complete in the last #{ALERT_THRESHOLD_IN_HOURS} hours.* " \
                    "Last completed: #{result[:completed]}\n"
       end
 

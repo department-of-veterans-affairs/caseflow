@@ -44,8 +44,8 @@ describe MonitorBusinessCriticalJobsJob do
           "#{@failure_job_class} failed to complete in the last 5 hours",
           "here"
         ]
-        expect(job.slack_service).to
-        receive(:send_notification).with(including(included_values))
+        expect(job.slack_service).to receive(:send_notification)
+          .with(including(*included_values))
 
         job.perform
       end
@@ -58,8 +58,8 @@ describe MonitorBusinessCriticalJobsJob do
           "failed to compelete",
           "here"
         ]
-        expect(job.slack_service).to
-        receive(:send_notification).with(excluding(excluded_values))
+        expect(job.slack_service).to receive(:send_notification)
+          .with(excluding(*excluded_values))
         job.perform
       end
     end
