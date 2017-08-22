@@ -26,10 +26,10 @@ prepare_establish_claim_tasks_job:
   queue: default
   active_job: true
 
-# This job runs at 5:30pm ET and checks that mission critical jobs have *started*
+# This job runs at 6pm ET and checks that mission critical jobs have *started*
 # This will alert us if a job has not run due to sidekiq-cron being unreliable
 monitor_business_critical_jobs_job:
-  cron: "30 17 * * * America/New_York"
+  cron: "0 18 * * * America/New_York"
   class: "MonitorBusinessCriticalJobsJob"
   queue: default
   active_job: true
