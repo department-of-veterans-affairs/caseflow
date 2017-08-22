@@ -16,15 +16,7 @@ import {
 
 import _ from 'lodash';
 
-export class HearingWorksheet extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      contentions: ''
-    };
-  }
+export class HearingWorksheet extends React.PureComponent {
 
 
   getType = (type) => {
