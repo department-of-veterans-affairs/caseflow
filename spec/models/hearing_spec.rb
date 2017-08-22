@@ -1,5 +1,4 @@
 describe Hearing do
-
   context "#active_appeal_streams" do
     subject { hearing.active_appeal_streams }
 
