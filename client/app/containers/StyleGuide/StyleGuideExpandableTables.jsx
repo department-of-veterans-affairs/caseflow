@@ -5,6 +5,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 // components
 import Table from '../../components/Table';
 import Button from '../../components/Button';
+import Link from '../../components/Link';
 import { ChevronDown, ChevronUp } from '../../components/RenderFunctions';
 
 
@@ -17,15 +18,14 @@ export default class StyleGuideExpandaleTables extends React.Component {
    };
 }
 
-  handleClick() {
-    this.setState(prevState => ({
-      expanded: !prevState.expanded
-    }));
+  handleClick = () => {
+    this.setState({
+      expanded: !this.state.expanded
+    });
   }
 
 render = () => {
 
-  const name = 'See more';
   const sortedIcon = <ChevronUp />;
   const notsortedIcon = <ChevronDown />;
 
@@ -48,7 +48,7 @@ render = () => {
   let columns = [
     {
       header: 'Name',
-     valueName: 'name',
+      valueName: 'name',
    },
     {
       header: 'Date of Birth',
@@ -72,19 +72,21 @@ render = () => {
   let columnsWithAction = _.concat(columns, [
     {
       header: 'Details',
-      align: 'right',
+      align: 'center',
       valueFunction: () => {
-        return 
-          <Button 
+        return (
+          <Link 
             classNames={['cf-btn-link']}
-            name={name}
-            onClick={this.handleClick}> See More
+            name="Seemore"
+            onClick={this.handleClick}>See more
+            <span className="cf-table-left">
             {this.state.expanded ? sortedIcon : notsortedIcon}
-            </Button>;
+            </span>
+          </Link>
+        )
       }
     }
   ]);
-
 
  let summary = 'Example styleguide table';
 
