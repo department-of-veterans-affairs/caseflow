@@ -240,58 +240,6 @@ RSpec.feature "Reader" do
 
           expect(page).to have_content(appeal2.veteran_full_name + "\'s Claims Folder")
         end
-
-        scenario "with mutiple appeals" do
-          visit "/reader/appeal"
-          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-          expect(page).to have_content("Select claims folder")
-          appeal_options = find_all(".cf-form-radio-option")
-          expect(appeal_options.count).to eq(2)
-
-          expect(appeal_options[0]).to have_content("Veteran " + appeal3.veteran_full_name)
-          expect(appeal_options[0]).to have_content("Veteran ID " + appeal3.vbms_id)
-          expect(appeal_options[0]).to have_content("Issues")
-          expect(appeal_options[0].find_all("li").count).to eq(1)
-
-          expect(appeal_options[1]).to have_content("Veteran " + appeal4.veteran_full_name)
-          expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
-          expect(appeal_options[1]).to have_content("Issues")
-          expect(appeal_options[1].find_all("li").count).to eq(1)
-
-          find("button", text: "Okay").should be_disabled
-
-          appeal_options[0].click
-          click_on "Okay"
-          expect(page).to have_content(appeal3.veteran_full_name + "\'s Claims Folder")
-        end
-
-        context "with multiple appeals but cancel search on modal" do
-          scenario "using cancel button" do
-            visit "/reader/appeal"
-            fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-            click_on "Cancel"
-            expect(find("#searchBar")).to have_content("")
-          end
-
-          scenario "using X button" do
-            visit "/reader/appeal"
-            fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-            click_button("Select-claims-folder-button-id-close")
-            expect(find("#searchBar")).to have_content("")
-          end
-
-          scenario "and search again" do
-            visit "/reader/appeal"
-            fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-            click_button("Select-claims-folder-button-id-close")
-            fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-            expect(find("button", text: "Okay")).to be_disabled
-          end
-        end
       end
     end
 

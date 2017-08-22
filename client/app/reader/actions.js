@@ -627,11 +627,6 @@ export const fetchAppealUsingVeteranIdFailed = () => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED
 });
 
-export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
-  type: Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID,
-  payload: { appeals }
-});
-
 export const caseSelectAppeal = (appeal) => ({
   type: Constants.CASE_SELECT_APPEAL,
   payload: { appeal }
@@ -650,8 +645,6 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
       // if the veteran only has one appeal associated
       if (numOfAppeals === 1) {
         dispatch(caseSelectAppeal(returnedObject.appeals[0]));
-      } else if (numOfAppeals > 1) {
-        dispatch(onReceiveMultipleAppealsWithVeteranId(returnedObject.appeals));
       }
     }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
