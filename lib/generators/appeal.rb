@@ -28,7 +28,8 @@ class Generators::Appeal
         appellant_last_name: last_name,
         appellant_relationship: "Child",
         regional_office_key: "RO13",
-        decision_date: 7.days.ago
+        decision_date: 7.days.ago,
+        form9_date: 11.days.ago
       }
     end
 
@@ -48,6 +49,10 @@ class Generators::Appeal
         },
         certified: {
           certification_date: 1.day.ago
+        },
+        form9_not_submitted: {
+          decision_date: nil,
+          form9_date: nil
         },
         pending_hearing: {
           status: "Active",
@@ -207,7 +212,6 @@ class Generators::Appeal
                                     end
 
       template = vacols_record_templates[template_key] || {}
-
       vacols_record_default_attrs.merge(template).merge(vacols_record)
     end
   end

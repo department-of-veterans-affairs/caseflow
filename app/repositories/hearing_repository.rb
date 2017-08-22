@@ -21,6 +21,10 @@ class HearingRepository
     rescue ActiveRecord::RecordNotFound
       false
     end
+
+    def appeals_ready_for_hearing(vbms_id)
+      AppealRepository.appeals_ready_for_hearing(vbms_id)
+    end
     # :nocov:
 
     def set_vacols_values(hearing, vacols_record)

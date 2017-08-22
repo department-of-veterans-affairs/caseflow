@@ -63,15 +63,18 @@ export default class SearchBar extends React.Component {
       value,
       loading,
       onClearSearch,
+      isSearchAhead,
       size,
       title,
       onSubmit,
-      submitOnReturnKey
+      submitUsingEnterKey,
+      placeholder
     } = this.props;
 
-    const sizeClasses = classnames('usa-search', {
+    const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
-      'usa-search-small': size === 'small'
+      'usa-search-small': size === 'small',
+      'cf-search-ahead': isSearchAhead
     });
 
     const buttonClassNames = classnames({
@@ -83,7 +86,7 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
-    return <span className={sizeClasses} role="search">
+    return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
@@ -95,8 +98,9 @@ export default class SearchBar extends React.Component {
         type="search"
         name="search"
         value={value}
-        onKeyPress={submitOnReturnKey ? this.handleKeyPress : null}
-        />
+        onKeyPress={submitUsingEnterKey ? this.handleKeyPress : null}
+        placeholder={placeholder}
+        value={value}/>
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
@@ -105,9 +109,10 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      <Button name={`search-${id}`} type="submit" loading={loading} onClick={onSubmit ? this.onSubmit : null}>
+      { !isSearchAhead && <Button name={`search-${id}`}
+        onClick={onSubmit ? this.onSubmit : null} on type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
-      </Button>
+      </Button> }
     </span>;
   }
 }
@@ -124,6 +129,5 @@ SearchBar.propTypes = {
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
-  allowInputSubmission: PropTypes.bool
+  submitUsingEnterKey: PropTypes.bool
 };
-
