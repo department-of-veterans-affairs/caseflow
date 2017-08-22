@@ -6,6 +6,7 @@ import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
+import TextareaField from '../components/TextareaField';
 import {
   onContentionsChange,
   onPeriodsChange,
@@ -15,7 +16,15 @@ import {
 
 import _ from 'lodash';
 
-export class HearingWorksheet extends React.PureComponent {
+export class HearingWorksheet extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      contentions: ''
+    };
+  }
 
 
   getType = (type) => {
@@ -34,13 +43,13 @@ export class HearingWorksheet extends React.PureComponent {
     return index;
   }
 
-  onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
+  onContentionsChange = ({ contentions }) => this.props.onContentionsChange(contentions)
 
-  onPeriodsChange = (periods) => this.props.onPeriodsChange(periods)
+  onPeriodsChange = ({ periods }) => this.props.onPeriodsChange(periods)
 
-  onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
+  onEvidenceChange = ({ evidence }) => this.props.onEvidenceChange(evidence)
 
-  onCommentsChange = (comments) => this.props.onContentionsChange(comments)
+  onCommentsChange = ({ comments }) => this.props.onContentionsChange(comments)
 
   render() {
 
@@ -297,7 +306,7 @@ export class HearingWorksheet extends React.PureComponent {
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-contentions">Contentions</label>
-            <textarea
+            <TextareaField
               name="Contentions"
               value={this.props.contentions}
               onChange={this.props.onContentionsChange}
@@ -307,7 +316,7 @@ export class HearingWorksheet extends React.PureComponent {
 
           <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-periods">Periods and circumstances of service</label>
-            <textarea
+            <TextareaField
               name="Periods and circumstances of service"
               value={this.props.periods}
               onChange={this.props.onPeriodsChange}
@@ -318,7 +327,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
                     <label
             htmlFor="worksheet-evidence">Evidence</label>
-            <textarea
+            <TextareaField
               name="Evidence"
               value={this.props.evidence}
               onChange={this.props.onEvidenceChange}
@@ -328,7 +337,7 @@ export class HearingWorksheet extends React.PureComponent {
 
           <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-comments">Comments and special instructions to attorneys</label>
-            <textarea
+            <TextareaField
               name="Comments and special instructions to attorneys"
               value={this.props.comments}
               id="worksheet-comments"
