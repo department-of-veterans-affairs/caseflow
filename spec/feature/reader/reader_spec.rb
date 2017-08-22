@@ -292,14 +292,6 @@ RSpec.feature "Reader" do
             expect(find("button", text: "Okay")).to be_disabled
           end
         end
-
-        scenario "search for invalid veteran id" do
-          visit "/reader/appeal"
-          fill_in "searchBar", with: "does not exist"
-          click_button("submit-search-searchBar")
-
-          expect(page).to have_content("Veteran ID not found")
-        end
       end
     end
 

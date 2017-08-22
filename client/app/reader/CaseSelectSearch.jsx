@@ -12,7 +12,6 @@ import { fetchAppealUsingVeteranId,
 import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
 import RadioField from '../components/RadioField';
-import Alert from '../components/Alert';
 
 class CaseSelectSearch extends React.PureComponent {
 
@@ -84,11 +83,6 @@ class CaseSelectSearch extends React.PureComponent {
     };
 
     return <div className="section-search">
-      {caseSelect.search.showErrorMessage &&
-        <Alert title="Veteran ID not found" type="error">
-          Please enter the correct Veteran ID and try again.
-        </Alert>
-      }
       <SearchBar
         id="searchBar"
         size="small"
@@ -133,17 +127,15 @@ class CaseSelectSearch extends React.PureComponent {
 }
 
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    fetchAppealUsingVeteranId,
-    clearReceivedAppeals,
-    onReceiveAppealDetails,
-    setCaseSelectSearch,
-    clearCaseSelectSearch,
-    caseSelectAppeal,
-    clearSelectedAppeal
-  }, dispatch)
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  fetchAppealUsingVeteranId,
+  clearReceivedAppeals,
+  onReceiveAppealDetails,
+  setCaseSelectSearch,
+  clearCaseSelectSearch,
+  caseSelectAppeal,
+  clearSelectedAppeal
+}, dispatch);
 
 const mapStateToProps = (state) => ({
   ..._.pick(state, 'assignments'),

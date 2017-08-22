@@ -152,9 +152,6 @@ export const initialState = {
   ui: {
     caseSelect: {
       selectedAppeal: {},
-      search: {
-        showErrorMessage: false
-      },
       receivedAppeals: []
     },
     searchCategoryHighlights: {},
@@ -337,11 +334,6 @@ export const reducer = (state = initialState, action = {}) => {
         caseSelectCriteria: {
           searchQuery: {
             $set: ''
-          }
-        },
-        caseSelect: {
-          search: {
-            showErrorMessage: { $set: false }
           }
         }
       }
@@ -797,19 +789,6 @@ export const reducer = (state = initialState, action = {}) => {
         caseSelect: {
           receivedAppeals: {
             $set: action.payload.appeals
-          },
-          search: {
-            showErrorMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          search: {
-            showErrorMessage: { $set: true }
           }
         }
       }
