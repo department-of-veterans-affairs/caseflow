@@ -33,8 +33,8 @@ In order to have an acceptable level of uptime, our team needs to be responsive 
 Each person will take one week being the primary responder. If the primary does not respond in time, Pager Duty will escalate to everyone else at the same time. This has the benefit of being simple to implement, and provides a hilarious consequence for people who are not responsive.
 
 ### On Call Hours
-Monday through Saturday: 6a - 12a (except business hours)
-Sunday and federal holidays: 9p - 12a
+Monday through Saturday: 6a - 12a EST (except [business hours](#On-Call Hours))
+Sunday and federal holidays: 9p - 12a EST
 
 ### Response Time SLA
 Responders should acknowledge an alert within 20 minutes. Responders should be able to be at a laptop and debugging within an hour.
@@ -64,6 +64,9 @@ We'll have to figure out holidays when they arise. For holidays that not everyon
 * Shade
 * Nolawi
 * Nemo
+
+### On-Call Hours
+Monday - Friday: 9a-5p EST
 
 ### When you're on prod squad
 
