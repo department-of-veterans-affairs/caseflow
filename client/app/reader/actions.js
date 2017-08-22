@@ -687,7 +687,7 @@ export const handleToggleCommentOpened = (docId) => ({
   },
   meta: {
     analytics: {
-      category: INTERACTION_TYPES.VISIBLE_UI,
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
       label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
     }

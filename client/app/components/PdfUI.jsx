@@ -260,14 +260,14 @@ const mapStateToProps = (state) => ({
   docListIsFiltered: docListIsFiltered(state),
   ...state.ui.pdf
 });
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
     stopPlacingAnnotation,
     togglePdfSidebar,
     resetJumpToPage,
     selectCurrentPdf
   }, dispatch)
-});
+);
 
 export default connect(
   mapStateToProps, mapDispatchToProps
