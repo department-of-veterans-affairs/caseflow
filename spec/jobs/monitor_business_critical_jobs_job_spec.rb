@@ -3,6 +3,7 @@ require "rails_helper"
 describe MonitorBusinessCriticalJobsJob do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2, 20))
+    Time.zone = "UTC"
 
     # Loop through and set successful values for all jobs
     MonitorBusinessCriticalJobsJob::BUSINESS_CRITICAL_JOBS.each do |job_class|
@@ -45,7 +46,7 @@ describe MonitorBusinessCriticalJobsJob do
       it "sends a slack notification with failure information" do
         included_values = [
           "Business critical job",
-          "CreateEstablishClaimTasksJob: Last started: 2017-02-01",
+          "CreateEstablishClaimTasksJob: Last started: 2017-02-02",
           "PrepareEstablishClaimTasksJob: Last started: 2017-02-01",
           "#{@failure_job_class} failed to start in the last 5 hours",
           "#{@failure_job_class} failed to complete in the last 5 hours",
