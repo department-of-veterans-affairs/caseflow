@@ -23,12 +23,14 @@ class DocumentListHeader extends React.Component {
 
     return <div>
       <div className="document-list-header">
-        <div className="search-bar-and-doc-count">
+        <div className="search-bar-and-doc-count cf-search-ahead-parent">
           <SearchBar
             id="searchBar"
             onChange={props.setSearch}
             onClearSearch={props.clearSearch}
             recordSearch={this.recordSearch}
+            isSearchAhead={true}
+            placeholder="Type to search..."
             value={props.docFilterCriteria.searchQuery}
             size="small"
             analyticsCategory="Claims Folder"

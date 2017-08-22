@@ -30,7 +30,28 @@ Each engineer should work on no more than three issues at a time. This allows us
 
 Each ticket should be small enough that it can be completed in no more than 2-3 business days. If a ticket takes 4 or more days, then either there are blockers that need to be addressed, or the ticket should be split up into smaller parts. 
 
-As a corollary, each PR should be as small as possible. It should not contain anything extraneous other than what the ticket's acceptance criteria require. Ideally, PRs will be `200` lines or fewer. It is ok to send multiple PRs for a single ticket if that makes it easier to implement and review.
+As a corollary, each PR should be as small as possible. It should only address a single ticket. It should not contain anything extraneous other than what the ticket's acceptance criteria require. Each PR will have 200 or fewer added lines. If a PR has many more, it will not be reviewed unless you have an explicit understanding with your reviewer.
+
+To see how many lines your PR currently is, you can run the following command:
+
+```
+$ git diff master..head --stat | grep insertions
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+```
+
+You can also look for the following indicator in the GitHub UI:
+
+![GitHub UI screenshot](https://user-images.githubusercontent.com/829827/29422265-b0236682-8345-11e7-80fd-ba6f1db8b935.png)
+
+If you are having trouble getting the PR under 200 lines, talk to your tech lead early. Do not just present a completed PR that's way too big to a reviewer and ask them to look at it anyway.
+
+Here are some strategies for keeping PRs a manageable size:
+
+* Send multiple PRs to a feature branch.
+* Hide incomplete features behind a feature flag.
+* Do frontend and backend work in separate tickets.
+* Remove anything that is not absolutely essential to the ticket. Even little things add up.
+
 
 ## PR Descriptions
 
@@ -44,9 +65,10 @@ Where appropriate, GIFs are also great. Check out [Licecap](http://www.cockos.co
  
 Almost every PR should have a “Testing:” section, where you describe how you validated your change. For complex changes, the testing section may be quite extensive, but for simple changes like styling or content, it might be no more than “Verified change in UI.”
 
-## Code Reviews
- 
+## Code Reviews 
 The best way to ensure shared context and correct software is through a culture of deep code reviews. Expect your reviewer to poke holes in your reasoning, point out improvements, ask you to test more thoroughly, add more unit tests, etc. This is done out of love and reverence for our project.
+
+When you have code ready for review, open a pull request and ask your tech lead who should review it. The tech lead, or someone else who the tech lead specifically delegates to for that PR, are the only people who are permitted to approve the PR.
  
 As the reviewer, be mindful of scope creep. Sometimes, it takes more than one PR to put the code in a good state. As the dev, if you feel you’re being asked to significantly expand the scope of the original change, it’s perfectly fine to say “I agree with your comment, but I think that change is out of scope and should be addressed in a future PR. 
  
@@ -67,3 +89,9 @@ When in doubt, overcommunicate.
 ## Pair Programming
  
 Pair programming is the one of the quickest ways to expand your knowledge of the codebase. When you learn of an interesting ticket during standup, ask that engineer if you can pair with them on it. Similarly, engineers working on a particularly challenging ticket should ask for someone to pair with them. A second set of eyes during development can improve the quality of the code and reduce bugs. 
+
+## Be Mindful of Ops Impact of New Features
+When you roll out a new feature, be mindful of the impact it'll have on our larger system, and on the VA as a whole. For instance, if you change the way that Caseflow talks to VBMS, you should monitor our VBMS traffic to ensure that we aren't putting excessive new load on that system.
+
+## Verifying Code on UAT
+If you have code that talks to external dependencies, push your PR branch to UAT to validate it. This will provide a much better test than trying to run locally with dependencies mocked out. Do not rely on QA's integration tests to catch errors.
