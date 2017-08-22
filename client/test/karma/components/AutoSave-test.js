@@ -1,6 +1,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import { asyncTest, pause } from '../../helpers/AsyncTests';
 import { AutoSave } from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 
@@ -46,14 +47,13 @@ describe('AutoSave', () => {
     });
   });
 
-  it('calls an action creator before window closes', () => {
+  it('calls an action creator before window closes', asyncTest(async () => {
     mount(
       <AutoSave beforeWindowClosesActionCreator={actionCreator} />
     );
-
     window.close();
-    setTimeout(() => {
-      expect(actionCreator.calledOnce).to.equal(true);
-    });
-  });
+    await pause();
+
+    expect(actionCreator.calledOnce).to.equal(true);
+  }));
 });
