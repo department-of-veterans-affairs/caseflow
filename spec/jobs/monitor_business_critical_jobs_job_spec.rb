@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe MonitorBusinessCriticalJobsJob do
   before do
-    Timecop.freeze(Time.utc(2017, 2, 2))
+    Timecop.freeze(Time.utc(2017, 2, 2, 20))
 
     # Loop through and set successful values for all jobs
     MonitorBusinessCriticalJobsJob::BUSINESS_CRITICAL_JOBS.each do |job_class|
@@ -53,9 +53,6 @@ describe MonitorBusinessCriticalJobsJob do
         ]
         expect(job.slack_service).to receive(:send_notification)
           .with(including(*included_values))
-
-        p job.results
-        job.send(:slack_message).split("\n").each { |m| p m }
         job.perform
       end
     end
