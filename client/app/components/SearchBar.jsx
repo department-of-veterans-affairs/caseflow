@@ -19,6 +19,18 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  onSubmit = () => {
+    if (this.props.onSubmit) {
+      this.props.onSubmit(this.props.value);
+    }
+  }
+
+  handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      this.onSubmit();
+    }
+  }
+
   clearSearchCallback() {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
@@ -52,10 +64,11 @@ export default class SearchBar extends React.Component {
       loading,
       onClearSearch,
       isSearchAhead,
-      onClick,
       size,
-      placeholder,
-      title
+      title,
+      onSubmit,
+      submitUsingEnterKey,
+      placeholder
     } = this.props;
 
     const searchTypeClasses = classnames('usa-search', {
@@ -84,6 +97,8 @@ export default class SearchBar extends React.Component {
         onBlur={this.onBlur}
         type="search"
         name="search"
+        value={value}
+        onKeyPress={submitUsingEnterKey ? this.handleKeyPress : null}
         placeholder={placeholder}
         value={value}/>
       {_.size(value) > 0 &&
@@ -94,7 +109,8 @@ export default class SearchBar extends React.Component {
           onClick={onClearSearch}>
           {closeIcon()}
         </Button>}
-      { !isSearchAhead && <Button name={`search-${id}`} onClick={onClick} type="submit" loading={loading}>
+      { !isSearchAhead && <Button name={`search-${id}`}
+        onClick={onSubmit ? this.onSubmit : null} on type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button> }
     </span>;
@@ -111,5 +127,7 @@ SearchBar.propTypes = {
   recordSearch: PropTypes.func,
   loading: PropTypes.bool,
   value: PropTypes.string,
-  analyticsCategory: PropTypes.string
+  analyticsCategory: PropTypes.string,
+  onSubmit: PropTypes.func,
+  submitUsingEnterKey: PropTypes.bool
 };
