@@ -17,7 +17,7 @@ export class AutoSave extends React.Component {
   componentDidMount = () => {
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
-        this.props.saveBeforeWindowCloses();
+        this.props.doBeforeWindowCloses();
       };
     }
   }
@@ -35,14 +35,12 @@ export class AutoSave extends React.Component {
   }
 }
 
-// If isSaving is not on the state, use whatever was passed into the component.
-// VERY convenient for unit testing.
 const mapStateToProps = (state, ownProps) => ({
-  isSaving: typeof state.isSaving === 'undefined' ? ownProps.isSaving : state.isSaving
+  isSaving: state.isSaving
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  saveBeforeWindowCloses: () => {
+  doBeforeWindowCloses: () => {
     dispatch(ownProps.beforeWindowClosesActionCreator());
   }
 });
