@@ -266,7 +266,7 @@ RSpec.feature "Reader" do
           expect(page).to have_content(appeal3.veteran_full_name + "\'s Claims Folder")
         end
 
-        context "with multiple appeals but cancle search on modal" do
+        context "with multiple appeals but cancel search on modal" do
           scenario "using cancel button" do
             visit "/reader/appeal"
             fill_in "searchBar", with: (appeal4.vbms_id + "\n")
