@@ -787,6 +787,16 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          receivedAppeals: {
+            $set: action.payload.appeals
+          }
+        }
+      }
+    });
   case Constants.CASE_SELECT_APPEAL:
     return update(state, {
       ui: {

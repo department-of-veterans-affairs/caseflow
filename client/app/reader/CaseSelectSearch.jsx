@@ -9,6 +9,9 @@ import { fetchAppealUsingVeteranId,
 } from './actions';
 
 import SearchBar from '../components/SearchBar';
+import Modal from '../components/Modal';
+import RadioField from '../components/RadioField';
+import IssuesList from './IssueList';
 
 class CaseSelectSearch extends React.PureComponent {
 
@@ -30,6 +33,25 @@ class CaseSelectSearch extends React.PureComponent {
     }
   };
 
+  handleModalClose = () => {
+    // clearing the state of the modal
+    this.setState({ selectedAppealVacolsId: null });
+    this.props.clearCaseSelectSearch();
+  }
+
+  handleSelectAppeal = () => {
+    // get the appeal selected from the modal
+    const appeal = _.find(this.props.caseSelect.receivedAppeals,
+      { vacols_id: this.state.selectedAppealVacolsId });
+
+    // set the selected appeal
+    this.props.caseSelectAppeal(appeal);
+  }
+
+  handleChangeAppealSelection = (vacolsId) => {
+    this.setState({ selectedAppealVacolsId: vacolsId });
+  }
+
   searchOnChange = (text) => {
     if (_.size(text)) {
       this.props.fetchAppealUsingVeteranId(text);
@@ -37,6 +59,24 @@ class CaseSelectSearch extends React.PureComponent {
   }
 
   render() {
+    const { caseSelect } = this.props;
+
+    const createAppealOptions = (appeals) => {
+      return appeals.map((appeal) => {
+        return {
+          displayText: <div className="folder-option">
+            <strong>Veteran</strong> {appeal.veteran_full_name} <br />
+            <strong>Veteran ID</strong> {appeal.vbms_id} <br />
+            <strong>Issues</strong><br />
+              <ol className="issues">
+                <IssuesList appeal={appeal} />
+              </ol>
+          </div>,
+          value: appeal.vacols_id
+        };
+      });
+    };
+
     return <div className="section-search">
       <SearchBar
         id="searchBar"
@@ -47,6 +87,36 @@ class CaseSelectSearch extends React.PureComponent {
         onSubmit={this.searchOnChange}
         submitUsingEnterKey
       />
+      { _.size(caseSelect.receivedAppeals) ? <Modal
+        buttons = {[
+          { classNames: ['cf-modal-link', 'cf-btn-link'],
+            name: 'Cancel',
+            onClick: this.handleModalClose
+          },
+          { classNames: ['usa-button', 'usa-button-primary'],
+            name: 'Okay',
+            onClick: this.handleSelectAppeal,
+            disabled: _.isEmpty(this.state.selectedAppealVacolsId)
+          }
+        ]}
+        closeHandler={this.handleModalClose}
+        title = "Select claims folder">
+        <RadioField
+          name="claims-folder-select"
+          options={createAppealOptions(caseSelect.receivedAppeals)}
+          value={this.state.selectedAppealVacolsId}
+          onChange={this.handleChangeAppealSelection}
+          hideLabel={true}
+        />
+        <p>
+          Not seeing what you expected? <a
+            name="feedbackUrl"
+            href={this.props.feedbackUrl}>
+            Please send us feedback.
+          </a>
+        </p>
+      </Modal> : ''
+      }
     </div>;
   }
 }
