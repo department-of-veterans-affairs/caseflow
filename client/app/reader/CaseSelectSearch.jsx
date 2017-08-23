@@ -106,7 +106,7 @@ class CaseSelectSearch extends React.PureComponent {
           options={createAppealOptions(caseSelect.receivedAppeals)}
           value={this.state.selectedAppealVacolsId}
           onChange={this.handleChangeAppealSelection}
-          hideLabel={true}
+          hideLabel
         />
         <p>
           Not seeing what you expected? <a
