@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { fetchAppealUsingVeteranId,
-  clearReceivedAppeals, onReceiveAppealDetails, setCaseSelectSearch,
-  clearCaseSelectSearch, caseSelectAppeal, clearSelectedAppeal
+  onReceiveAppealDetails, setCaseSelectSearch,
+  clearCaseSelectSearch, caseSelectAppeal
 } from './actions';
 
 import SearchBar from '../components/SearchBar';
@@ -27,8 +27,6 @@ class CaseSelectSearch extends React.PureComponent {
     if (this.props.caseSelect.selectedAppeal.vacols_id) {
       this.props.history.push(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
       this.props.clearCaseSelectSearch();
-      this.props.clearReceivedAppeals();
-      this.props.clearSelectedAppeal();
     }
   };
 
@@ -56,12 +54,10 @@ class CaseSelectSearch extends React.PureComponent {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAppealUsingVeteranId,
-  clearReceivedAppeals,
   onReceiveAppealDetails,
   setCaseSelectSearch,
   clearCaseSelectSearch,
-  caseSelectAppeal,
-  clearSelectedAppeal
+  caseSelectAppeal
 }, dispatch);
 
 const mapStateToProps = (state) => ({

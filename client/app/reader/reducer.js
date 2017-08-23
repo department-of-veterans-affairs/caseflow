@@ -335,6 +335,10 @@ export const reducer = (state = initialState, action = {}) => {
           searchQuery: {
             $set: ''
           }
+        },
+        caseSelect: {
+          receivedAppeals: { $set: {} },
+          selectedAppeal: { $set: {} }
         }
       }
     });
@@ -788,22 +792,6 @@ export const reducer = (state = initialState, action = {}) => {
       ui: {
         caseSelect: {
           selectedAppeal: { $set: action.payload.appeal }
-        }
-      }
-    });
-  case Constants.CLEAR_SELECTED_APPEAL:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          selectedAppeal: { $set: {} }
-        }
-      }
-    });
-  case Constants.CLEAR_RECEIVED_APPEALS:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          receivedAppeals: { $set: {} }
         }
       }
     });

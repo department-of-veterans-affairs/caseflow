@@ -642,17 +642,14 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
       const returnedObject = JSON.parse(response.text);
       const numOfAppeals = _.size(returnedObject.appeals);
 
-      // if the veteran only has one appeal associated
+      // if the veteran only has one appeal associated,
+      // automatically select that appeal for viewing
       if (numOfAppeals === 1) {
         dispatch(caseSelectAppeal(returnedObject.appeals[0]));
       }
     });
   }
 );
-
-export const clearReceivedAppeals = () => ({
-  type: Constants.CLEAR_RECEIVED_APPEALS
-});
 
 export const addNewTag = (doc, tags) => (
   (dispatch) => {
