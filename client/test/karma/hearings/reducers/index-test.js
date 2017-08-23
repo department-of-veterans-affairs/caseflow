@@ -139,6 +139,23 @@ describe('hearingsReducer', () => {
     });
   });
 
+  context(Constants.SET_DESCRIPTIONS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_DESCRIPTIONS,
+        payload: {
+          description: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet issue description', () => {
+      expect(state.worksheet.issue.description).to.deep.equal('filled');
+    });
+  });
+
   context(Constants.SET_CONTENTIONS, () => {
     let state;
 
