@@ -94,7 +94,7 @@ class StyleGuideSearch extends Component {
             title="Search Big"
             size="big"
             onChange={this.changeBigValue}
-            onClick={this.handleBigClick}
+            onSubmit={this.handleBigClick}
             onClearSearch={this.clearBigValue}
             loading={this.state.big}
             value={this.state.bigValue}
@@ -106,10 +106,11 @@ class StyleGuideSearch extends Component {
             title="Search Small"
             size="small"
             onChange={this.changeSmallValue}
-            onClick={this.handleSmallClick}
+            onSubmit={this.handleSmallClick}
             onClearSearch={this.clearSmallValue}
             loading={this.state.small}
             value={this.state.smallValue}
+            submitUsingEnterKey={true}
           />
        </div>
        <div className="cf-sg-searchbar-example cf-search-ahead-parent">

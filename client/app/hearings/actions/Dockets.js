@@ -74,3 +74,31 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
     date
   }
 });
+
+export const onContentionsChange = (contentions) => ({
+  type: Constants.SET_CONTENTIONS,
+  payload: {
+    contentions
+  }
+});
+
+export const onPeriodsChange = (periods) => ({
+  type: Constants.SET_PERIODS,
+  payload: {
+    periods
+  }
+});
+
+export const onEvidenceChange = (evidence) => ({
+  type: Constants.SET_EVIDENCE,
+  payload: {
+    evidence
+  }
+});
+
+export const onCommentsChange = (comments) => ({
+  type: Constants.SET_COMMENTS,
+  payload: {
+    comments
+  }
+});
