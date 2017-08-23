@@ -75,10 +75,10 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
-export const onDescriptionsChange = (descriptions) => ({
+export const onDescriptionsChange = (description) => ({
   type: Constants.SET_DESCRIPTIONS,
   payload: {
-    descriptions
+    description
   }
 });
 

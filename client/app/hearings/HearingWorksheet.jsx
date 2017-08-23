@@ -124,7 +124,7 @@ export class HearingWorksheet extends React.PureComponent {
             id={`worksheet-issue-description-${index}`}
             aria-label="Description"
             name=""
-            value=""
+             value={this.props.worksheet.description || ''}
             onChange={this.props.onDescriptionsChange}
             />
         </div>,
