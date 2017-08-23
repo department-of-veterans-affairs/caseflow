@@ -61,9 +61,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state, 'assignments'),
-  ..._.pick(state.ui, 'caseSelect'),
-  ..._.pick(state.ui, 'caseSelectCriteria')
+  caseSelect: state.ui.caseSelect,
+  caseSelectCriteria: state.ui.caseSelectCriteria
 });
 
 
