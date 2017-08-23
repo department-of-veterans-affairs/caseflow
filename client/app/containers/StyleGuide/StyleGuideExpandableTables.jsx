@@ -30,6 +30,7 @@ export default class StyleGuideExpandaleTables extends React.Component {
   }
 
 render = () => {
+  const NUMBER_OF_COLUMNS = 4;
 
   const commentIcons = this.state.expanded ? <ChevronUp /> : <ChevronDown />;
 
