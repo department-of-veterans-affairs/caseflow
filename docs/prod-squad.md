@@ -2,7 +2,7 @@
 
 ![watchers on the wall](http://i.imgur.com/7X1OBRu.png)
 
-Prod Squad is a rotating assignment with two people are responsible for daily operations of Caseflow. Our rationale is based on the following:
+Prod Squad is a rotating assignment where people are responsible for daily operations of Caseflow. Our rationale is based on the following:
 
 1. In the worst case, a single `500` can ruin a veteran's life. 
 1. We don't have enough pure DevOps people to ask them to be solely responsible for operating the site.
