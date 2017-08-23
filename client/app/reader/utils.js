@@ -101,7 +101,7 @@ export const getAppealIfItDoesNotExist = (component) => {
   }
 };
 
-export const generateIssueList = (appeal) => (
+export const GenerateIssueList = (appeal) => (
   appeal.issues.map((issue) =>
     <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
       {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}

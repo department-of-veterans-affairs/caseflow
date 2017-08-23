@@ -3,8 +3,9 @@ import _ from 'lodash';
 
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
+import IssueList from './IssueList';
 
-import { getClaimTypeDetailInfo, generateIssueList } from '../reader/utils';
+import { getClaimTypeDetailInfo } from '../reader/utils';
 
 class ClaimsFolderDetails extends React.PureComponent {
 
@@ -44,7 +45,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             <div className="usa-width-one-whole claims-folder-issues">
                 <b>Issues</b><br />
                 <ol>
-                  {generateIssueList(appeal)}
+                  {<IssueList appeal={appeal} />}
                 </ol>
             </div>
           </div>}
