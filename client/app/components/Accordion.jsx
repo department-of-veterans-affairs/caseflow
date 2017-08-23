@@ -61,10 +61,11 @@ Accordion.propTypes = {
       // It would be more satisfying to compare child.type and AccordionSection directly. However, sometimes
       // this comparison fails. I am not sure why. It will only work if it's the same function instance, so
       // perhaps that gets altered somewhere in React or the importer system. In practice, I think checking
-      // the display name will work pretty well.
-      if (child.type.displayName !== 'AccordionSection') {
+      // the display name will work pretty well. The error message shows only the child type because there
+      // might be some unexpected children that are not functions and don't have a type name.
+      if (child.type.name !== 'AccordionSection') {
         error = new Error(
-          `'${componentName}' children should be of type 'AccordionSection', but was '${child.type.displayName}'.`
+          `'${componentName}' children should be of type 'AccordionSection', but was '${child.type}'.`
         );
       }
     });
