@@ -165,10 +165,6 @@ RSpec.configure do |config|
     User.unauthenticate!
   end
 
-  config.before(:each) do
-    Time.zone = "UTC"
-  end
-
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
