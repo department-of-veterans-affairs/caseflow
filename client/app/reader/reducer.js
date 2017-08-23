@@ -150,6 +150,10 @@ export const initialState = {
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
+    caseSelect: {
+      selectedAppeal: {},
+      receivedAppeals: []
+    },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -157,6 +161,9 @@ export const initialState = {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
+    caseSelectCriteria: {
+      searchQuery: ''
+    },
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -311,6 +318,30 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
+  case Constants.SET_CASE_SELECT_SEARCH:
+    return update(state, {
+      ui: {
+        caseSelectCriteria: {
+          searchQuery: {
+            $set: action.payload.searchQuery
+          }
+        }
+      }
+    });
+  case Constants.CLEAR_CASE_SELECT_SEARCH:
+    return update(state, {
+      ui: {
+        caseSelectCriteria: {
+          searchQuery: {
+            $set: ''
+          }
+        },
+        caseSelect: {
+          receivedAppeals: { $set: {} },
+          selectedAppeal: { $set: {} }
+        }
+      }
+    });
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -753,6 +784,14 @@ export const reducer = (state = initialState, action = {}) => {
 
             ...action.payload.annotation
           }
+        }
+      }
+    });
+  case Constants.CASE_SELECT_APPEAL:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          selectedAppeal: { $set: action.payload.appeal }
         }
       }
     });

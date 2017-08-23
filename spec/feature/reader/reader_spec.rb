@@ -191,6 +191,14 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
       end
 
+      let(:appeal3) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
+      end
+
+      let(:appeal4) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, vbms_id: appeal3.vbms_id)
+      end
+
       before do
         Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
       end
@@ -223,6 +231,15 @@ RSpec.feature "Reader" do
         click_on "Continue"
 
         expect(page).to have_content("Documents")
+      end
+
+      context "search for appeals using veteran id" do
+        scenario "with one appeal" do
+          visit "/reader/appeal"
+          fill_in "searchBar", with: (appeal2.vbms_id + "\n")
+
+          expect(page).to have_content(appeal2.veteran_full_name + "\'s Claims Folder")
+        end
       end
     end
 
