@@ -8,6 +8,7 @@ import moment from 'moment';
 import Button from '../components/Button';
 import TextareaField from '../components/TextareaField';
 import {
+  onDescriptionsChange,
   onContentionsChange,
   onPeriodsChange,
   onEvidenceChange,
@@ -119,9 +120,13 @@ export class HearingWorksheet extends React.PureComponent {
           <label
             className="cf-hearings-worksheet-desc-label"
             htmlFor={`worksheet-issue-description-${index}`}>Description</label>
-          <textarea defaultValue={issue.description}
+          <TextareaField defaultValue={issue.description}
             id={`worksheet-issue-description-${index}`}
-            aria-label="Description"></textarea>
+            aria-label="Description"
+            name=""
+            value=""
+            onChange={this.props.onDescriptionsChange}
+            />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
           <Checkbox
@@ -338,6 +343,7 @@ const mapStateToProps = (state) => ({
 
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onDescriptionsChange,
   onContentionsChange,
   onPeriodsChange,
   onEvidenceChange,
