@@ -103,7 +103,8 @@ export class DecisionReviewer extends React.PureComponent {
           exact
           title="Assignments | Caseflow Reader"
           path="/"
-          render={() => <CaseSelect history={props.history} />}
+          render={() => <CaseSelect history={props.history}
+            feedbackUrl={this.props.feedbackUrl} />}
         />
     </CaseSelectLoadingScreen>;
   }
