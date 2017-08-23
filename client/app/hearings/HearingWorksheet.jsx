@@ -289,8 +289,6 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-
-            { /* TODO to move the default value to the backend */ }
             <TextareaField
               name="Contentions"
               value={this.props.worksheet.contentions || ''}
@@ -338,6 +336,7 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
+// TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onPeriodsChange,
