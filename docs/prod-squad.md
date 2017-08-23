@@ -7,6 +7,7 @@ Prod Squad is a rotating assignment with two people are responsible for daily op
 1. In the worst case, a single `500` can ruin a veteran's life. 
 1. We don't have enough pure DevOps people to ask them to be solely responsible for operating the site.
 1. Operational stability is everyone's responsibility, and having people take turns on prod squad reinforces that.
+1. Although our app is only used during business hours, we need to have slightly expanded ops responsiveness to ensure that any problems that occur are resolved by the time our users come into work. (Also, we have users who work outside of EST business hours.)
 
 We have two alert rotations, staffed by different people: "Business Hours" and "Non-Business Hours". Both receive the same alerts. Because working outside of regular business hours is more painful, that rotation has more people in it.
 
@@ -32,7 +33,9 @@ In order to have an acceptable level of uptime, our team needs to be responsive 
 * Alan
 
 ### Rotation
-Each person will take one week being the primary responder. If the primary does not respond in time, Pager Duty will escalate to everyone else at the same time. This has the benefit of being simple to implement, and provides a hilarious consequence for people who are not responsive.
+Each person will take one week being the primary responder. If the primary does not respond in time, PagerDuty will escalate to everyone else at the same time. This has the benefit of being simple to implement, and provides a hilarious consequence for people who are not responsive.
+
+If the primary responder is not able to be responsive during their shift, they are responsible for finding a backup. For instance, if you are going out to dinner, and you're on call, you should get someone else to cover you during that time.
 
 ### On Call Hours
 * Monday through Saturday: 6a - 12a EST (except business hours, as detailed below)
@@ -107,14 +110,14 @@ Glance at support tickets that come in. "Follow your heart", and if they seem re
 This procedure only needs to be done during business hours. When you start work in the morning, review errors that happened after close of business the prior day.
 
 ### Backup
-Two people are on prod squad at any given time. The primary person is responsible for following the [Sentry Errors](#sentry-errors) procedure. The secondary person takes over whenever the primary is not available. The primary is responsible for notifying the secondary when they are not available. This includes PTO, a midday appointment, or a no-laptops meeting.
+Two people are on Business Hours Prod Squad at any given time. The primary person is responsible for following the [Sentry Errors](#sentry-errors) procedure. The secondary person takes over whenever the primary is not available. The primary is responsible for notifying the secondary when they are not available. This includes PTO, a midday appointment, or a no-laptops meeting.
 
 ## Both Business Hours and Non-Business Hours
 
 ### Post Mortems
 For major outages or data corruption issues, we need to dig into the root causes of why the outage happened and take steps to prevent similar problems from happening in the future.
 
-1. Create an issue in the appropriate repo, and label it "post-mortem".
+1. Create an issue in the appropriate repo, and label it "post-mortem". Here is a [good example](https://github.com/department-of-veterans-affairs/caseflow/issues/3008) post mortem.
 1. Describe the details and the timeline of the outage and resolution in the issue.
 1. Move the issue to In Progress, announce it to the team, and call for feedback on the issue.
 1. Discuss the action items after standup with the team.
@@ -133,7 +136,7 @@ If you are on prod squad, you must have access to the following:
 
 If you don't have access to everything on this list, talk to your team lead about getting access.
 
-The Prod Squad schedule is managed via Pager Duty. See https://dsva-appeals.pagerduty.com/escalation_policies for the schedule.
+The Prod Squad schedule is managed via PagerDuty. See https://dsva-appeals.pagerduty.com/escalation_policies for the schedule.
 
 ## Responsibility for Errors
 | App | Team | Tech Lead |
