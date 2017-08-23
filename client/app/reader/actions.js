@@ -632,10 +632,6 @@ export const caseSelectAppeal = (appeal) => ({
   payload: { appeal }
 });
 
-export const clearSelectedAppeal = () => ({
-  type: Constants.CLEAR_SELECTED_APPEAL
-});
-
 export const fetchAppealUsingVeteranId = (veteranId) => (
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
