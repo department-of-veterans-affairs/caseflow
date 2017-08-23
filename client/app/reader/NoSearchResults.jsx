@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import StatusMessage from '../components/StatusMessage';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { clearSearch } from './actions';
 import _ from 'lodash';
+
+import StatusMessage from '../components/StatusMessage';
+import { clearSearch } from './actions';
 
 export class NoSearchResults extends PureComponent {
   render() {
@@ -24,11 +26,11 @@ NoSearchResults.propTypes = {
 
 const mapStateToProps = (state) => _.pick(state.ui.docFilterCriteria, 'searchQuery');
 
-const mapDispatchToProps = (dispatch) => ({
-  clearSearch() {
-    dispatch(clearSearch());
-  }
-});
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    clearSearch
+  }, dispatch)
+);
 
 export default connect(
   mapStateToProps, mapDispatchToProps
