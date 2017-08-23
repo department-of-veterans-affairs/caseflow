@@ -1,20 +1,20 @@
 import React from 'react';
 import _ from 'lodash';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-
 // components
 import Table from '../../components/Table';
+import ToggleButton from '../../components/ToggleButton';
 import Button from '../../components/Button';
-import Link from '../../components/Link';
 import { ChevronDown, ChevronUp } from '../../components/RenderFunctions';
-
+import Comment from './../../components/Comment';
 
 export default class StyleGuideExpandaleTables extends React.Component {
   constructor(props) {
     super(props);
 
     this.state ={
-     expanded: true
+     expanded: true,
+     active: 'expand1'
    };
 }
 
@@ -24,16 +24,21 @@ export default class StyleGuideExpandaleTables extends React.Component {
     });
   }
 
+
+  menuClick = (name) => {
+    this.setState({ active: name });
+  }
+
 render = () => {
 
-  const sortedIcon = <ChevronUp />;
-  const notsortedIcon = <ChevronDown />;
+  const commentIcons = this.state.expanded ? <ChevronUp /> : <ChevronDown />;
 
   // List of objects which will be used to create each row
   let rowObjects = [
     { name: 'Marian',
      dateofbirth: '07/04/1776',
-      likesIceCream: true },
+      likesIceCream: true
+      },
     { name: 'Shade',
      dateofbirth: '04/29/2015',
      likesIceCream: true },
@@ -64,10 +69,6 @@ render = () => {
     }
  ];
 
-  let rowClassNames = (rowObject) => {
-    return rowObject.likesIceCream ? 'cf-success' : '';
-  };
-
   
   let columnsWithAction = _.concat(columns, [
     {
@@ -75,14 +76,15 @@ render = () => {
       align: 'center',
       valueFunction: () => {
         return (
-          <Link 
+          <Button 
             classNames={['cf-btn-link']}
-            name="Seemore"
+            href="#"
+            name="See_more"
             onClick={this.handleClick}>See more
             <span className="cf-table-left">
-            {this.state.expanded ? sortedIcon : notsortedIcon}
+            {commentIcons}
             </span>
-          </Link>
+          </Button>
         )
       }
     }
@@ -108,12 +110,25 @@ render = () => {
     </p>
 
     <div className="cf-push-right">
-    <Button
-      name="Expand all"
-      />
-    </div>
+    <ToggleButton active={this.state.active}
+       onClick={this.menuClick}>
+      <Button
+       name="expand1">
+       Expand all
+      </Button>
+      <Button
+       name="expand2">
+       Collapse all
+      </Button>
+     </ToggleButton>
+     </div>
 
-    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk={true}/>
+    <Table 
+    columns={columnsWithAction} 
+    rowObjects={rowObjects} 
+    summary={summary} 
+    slowReRendersAreOk={true}
+    />
   </div>;
   }
 }
