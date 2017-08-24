@@ -740,3 +740,10 @@ export const handleToggleCommentOpened = (docId) => ({
     }
   }
 });
+
+export const caseSelectModalSelectVacolsId = (vacolsId) => ({
+  type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,
+  payload: {
+    vacolsId
+  }
+});
