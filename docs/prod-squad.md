@@ -17,7 +17,7 @@ During business hours, all alerts go first to the "Business Hours" rotation.
 
 In order to have an acceptable level of uptime, our team needs to be responsive to issues outside of regular working hours.
 
-### Proposed Staffing
+### Staffing
 * Nick
 * Mike
 * JD
@@ -29,29 +29,31 @@ In order to have an acceptable level of uptime, our team needs to be responsive 
 * Evan
 * Teja
 * Shane
-* Sunil (when he arrives)
+* Sunil
 * Alan
 
 ### Rotation
 Each person will take one week being the primary responder. If the primary does not respond in time, PagerDuty will escalate to everyone else at the same time. This has the benefit of being simple to implement, and provides a hilarious consequence for people who are not responsive.
 
+If multiple backup people get online to respond to an alert at the same time, then the person who was most recently on call takes the lead. When the primary person is eventually reached and gets online, they will take over.
+
 If the primary responder is not able to be responsive during their shift, they are responsible for finding a backup. For instance, if you are going out to dinner, and you're on call, you should get someone else to cover you during that time.
 
 ### On Call Hours
-* Monday through Saturday: 6a - 12a EST (except business hours, as detailed below)
-* Sunday and federal holidays: 9p - 12a EST
+* Monday through Saturday: 6a - 10p EST (except business hours, as detailed below)
+* Sunday and federal holidays: 9p - 10p EST
 
 ### Response Time SLA
-Responders should acknowledge an alert within 20 minutes. Responders should be able to be at a laptop and debugging within an hour.
+Responders should acknowledge an alert within 30 minutes. Responders should be able to be at a laptop and debugging within an hour.
 
 ### Meaningful Alerts
 As a team, we owe it to each other to have only meaningful alerts. If people get paged for no reason, it will cause pain, and will make people stop paying attention to the pager. It is better to under-alert than to over-alert, since they produce the same outcome, but over-alerting is more painful.
 
 ### Runbooks
-We must have well-documented runbooks to help people respond to issues. We will ensure that the runbooks are ready as part of this plan.
+We must have well-documented runbooks to help people respond to issues. We will ensure that the runbooks are ready as part of this plan. Some documentation lives in [appeals-deployment](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs).
 
 ### Comfort
-We recognize that being on call can be painful, particularly in a ~~godforesaken hellscape~~ unstable environment like the VA. For many issues, the on call response will be getting in touch with the right VA team, rather than fixing anything on our end.
+We recognize that being on call can be painful, particularly in an unstable environment. For many issues, the on call response will be getting in touch with the right VA team, rather than fixing anything on our end.
 
 To have an on-call rotation with minimal pain:
 * People should swap specific time to make their lives easier. ("I'm going camping this weekend – can we trade these two weekends?")
@@ -63,7 +65,7 @@ We'll have to figure out holidays when they arise. For holidays that not everyon
 
 ## Business Hours
 
-### Proposed Staffing
+### Staffing
 * Marian
 * Alexis
 * Shade
