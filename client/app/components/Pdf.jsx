@@ -467,6 +467,7 @@ export class Pdf extends React.PureComponent {
   // it will return a cached version of it.
   getDocument = (file) => {
     const pdfsToKeep = [...this.props.prefetchFiles, this.props.file];
+
     if (!pdfsToKeep.includes(file)) {
       return Promise.resolve(null);
     }
