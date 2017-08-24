@@ -2,8 +2,8 @@
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
-  attr_accessor :program, :type, :category, :description, :disposition, :levels,
-                :program_description, :note
+  vacols_attr_accessor :program, :type, :category, :description, :disposition, :levels,
+                       :program_description, :note
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
