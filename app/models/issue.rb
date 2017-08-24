@@ -60,6 +60,8 @@ class Issue < ActiveRecord::Base
   end
 
   class << self
+    attr_writer :repository
+
     def description(hash)
       description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
       description.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
@@ -92,6 +94,10 @@ class Issue < ActiveRecord::Base
         description: description(hash),
         disposition: disposition
       )
+    end
+
+    def repository
+      @repository ||= IssueRepository
     end
   end
 end
