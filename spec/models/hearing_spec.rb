@@ -137,6 +137,7 @@ describe Hearing do
           aod: :granted,
           transcript_requested: false,
           disposition: :postponed,
+          add_on: true,
           hold_open: 60
         }
       end
@@ -152,6 +153,7 @@ describe Hearing do
         expect(hearing.aod).to eq :granted
         expect(hearing.transcript_requested).to eq false
         expect(hearing.disposition).to eq :postponed
+        expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
       end
     end
