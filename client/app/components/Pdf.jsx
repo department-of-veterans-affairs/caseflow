@@ -125,6 +125,8 @@ export class Pdf extends React.PureComponent {
 
     this.initializePredrawing();
     this.initializeRefs();
+
+    this.loadingTasks = {};
   }
 
   initializeRefs = () => {
@@ -465,6 +467,12 @@ export class Pdf extends React.PureComponent {
   // specified by `file`. This method will only make the request to the server once. Afterwards
   // it will return a cached version of it.
   getDocument = (file) => {
+    const pdfsToKeep = [...this.props.prefetchFiles, this.props.file];
+    if (!pdfsToKeep.includes(file)) {
+      console.log('RETURNING NULL');
+      return Promise.resolve(null);
+    }
+
     if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
       // If the document has already been retrieved, just return it.
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
@@ -478,16 +486,19 @@ export class Pdf extends React.PureComponent {
         }, TIMEOUT_FOR_GET_DOCUMENT);
       });
     }
-
+    console.log('trying to load', file);
     // If the document has not been retrieved yet, we make a request to the server and
     // set isGettingPdf true so that we don't try to request it again, while the first
     // request is finishing.
     this.isGettingPdf[file] = true;
-
-    return PDFJS.getDocument({
+    this.loadingTasks[file] = PDFJS.getDocument({
       url: file,
       withCredentials: true
-    }).then((pdfDocument) => {
+    });
+
+    return this.loadingTasks[file].then((pdfDocument) => {
+      console.log('loaded', file);
+      this.loadingTasks[file] = null;
       this.isGettingPdf[file] = false;
 
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
@@ -676,6 +687,18 @@ export class Pdf extends React.PureComponent {
       Object.keys(this.predrawnPdfs).forEach((file) => {
         if (!pdfsToKeep.includes(file)) {
           this.cleanUpPdf(this.predrawnPdfs[file], file);
+        }
+      });
+
+      Object.keys(this.loadingTasks).forEach((file) => {
+        if (!pdfsToKeep.includes(file)) {
+          // console.log(this.loadingTasks, file);
+
+          if (this.loadingTasks[file]) {
+            console.log('Cleaning up loading task');
+            this.loadingTasks[file].destroy();
+            this.loadingTasks[file] = null;
+          }
         }
       });
 

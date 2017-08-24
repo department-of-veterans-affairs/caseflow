@@ -26,23 +26,24 @@ class Fakes::VBMSService
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
-    path =
-      case document.vbms_document_id.to_i
-      when 1
-        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
-      when 2
-        File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
-      when 3
-        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
-      when 4
-        File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
-      when 5
-        File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
-      else
-        file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
-        file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
-        file
-      end
+    path = File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
+    # path =
+    #   case document.vbms_document_id.to_i
+    #   when 1
+    #     File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
+    #   when 2
+    #     File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
+    #   when 3
+    #     File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
+    #   when 4
+    #     File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
+    #   when 5
+    #     File.join(Rails.root, "lib", "pdfs", "megadoc.pdf")
+    #   else
+    #     file = File.join(Rails.root, "lib", "pdfs", "redacted", "#{document.vbms_document_id}.pdf")
+    #     file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf") unless File.exist?(file)
+    #     file
+    #   end
     IO.binread(path)
   end
   # rubocop:enable Metrics/CyclomaticComplexity
