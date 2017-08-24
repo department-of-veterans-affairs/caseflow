@@ -13,7 +13,7 @@ export default class Example7 extends React.Component {
     };
   }
 
-  onChange = (value) => {
+  onChange = () => {
     this.setState((prevState) => ({
       value: !prevState.value,
       viewErrorMessage: !prevState.viewErrorMessage
