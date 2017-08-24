@@ -83,7 +83,7 @@ TextField.propTypes = {
   invisible: PropTypes.bool,
   label: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.bool,
+    PropTypes.bool
   ]),
   name: PropTypes.string.isRequired,
   onChange(props) {
