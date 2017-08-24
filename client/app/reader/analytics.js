@@ -2,7 +2,8 @@ import _ from 'lodash';
 
 export const CATEGORIES = {
   VIEW_DOCUMENT_PAGE: 'Document Viewer',
-  CLAIMS_FOLDER_PAGE: 'Claims Folder'
+  CLAIMS_FOLDER_PAGE: 'Claims Folder',
+  CASE_SELECTION_PAGE: 'Case Selection Page'
 };
 
 export const ACTION_NAMES = {

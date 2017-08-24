@@ -618,18 +618,20 @@ export const fetchAppealDetails = (vacolsId) => (
   }
 );
 
-export const onReceiveAppealsUsingVeteranId = (appeals) => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID,
-  payload: { appeals }
-});
-
 export const fetchAppealUsingVeteranIdFailed = () => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED
 });
 
 export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
   type: Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID,
-  payload: { appeals }
+  payload: { appeals },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CASE_SELECTION_PAGE,
+      action: 'case-select-search-receive-multiple-appeals',
+      label: appeals.length
+    }
+  }
 });
 
 export const caseSelectAppeal = (appeal) => ({
