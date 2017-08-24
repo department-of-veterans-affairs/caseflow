@@ -44,7 +44,8 @@ export default function StyleGuideLayout () {
       The content starts off with a page title and minimal instructions for what the user
       needs to do to complete their task on the page.
       It then contains any interaction that well help this to accomplish their task including forms,
-      document previews, tables, error messages, and more.</p>
+      document previews, tables, error messages, and more.
+      The canvas has a default standard width but can be adjusted according to the needs of each application.</p>
     <br/>
     <StyleGuideAction />
     <br/>
@@ -54,4 +55,3 @@ export default function StyleGuideLayout () {
 
   </div>;
 }
-
