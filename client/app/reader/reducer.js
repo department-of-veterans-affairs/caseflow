@@ -151,6 +151,7 @@ export const initialState = {
   ],
   ui: {
     caseSelect: {
+      selectedAppealVacolsId: null,
       selectedAppeal: {},
       receivedAppeals: []
     },
@@ -338,7 +339,16 @@ export const reducer = (state = initialState, action = {}) => {
         },
         caseSelect: {
           receivedAppeals: { $set: {} },
-          selectedAppeal: { $set: {} }
+          selectedAppeal: { $set: {} },
+          selectedAppealVacolsId: { $set: null }
+        }
+      }
+    });
+  case Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          selectedAppealVacolsId: { $set: action.payload.vacolsId }
         }
       }
     });

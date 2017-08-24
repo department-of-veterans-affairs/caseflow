@@ -23,7 +23,7 @@ export class PdfListView extends React.Component {
         (this.props.caseSelectedAppeal.vacols_id === this.props.match.params.vacolsId)) {
         this.props.onReceiveAppealDetails(this.props.caseSelectedAppeal);
       } else {
-        this.props.fetchAppealDetails(this.props.match.params.vacolsId);        
+        this.props.fetchAppealDetails(this.props.match.params.vacolsId);
       }
     }
   }
