@@ -678,3 +678,18 @@ export const togglePdfSidebar = () => ({
     }
   }
 });
+
+
+export const handleToggleCommentOpened = (docId) => ({
+  type: Constants.TOGGLE_COMMENT_LIST,
+  payload: {
+    docId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+      action: 'toggle-comment-list',
+      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
+    }
+  }
+});

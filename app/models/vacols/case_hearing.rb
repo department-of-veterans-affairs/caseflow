@@ -34,7 +34,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     disposition: :hearing_disp,
     hold_open: :holddays,
     aod: :aod,
-    transcript_requested: :tranreq
+    transcript_requested: :tranreq,
+    add_on: :addon
   }.freeze
 
   NOT_MASTER_RECORD = %(
@@ -74,7 +75,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
-             "staff.stafkey as user_id",
+             "staff.sdomainid as css_id",
              :hearing_disp,
              :hearing_pkseq,
              :hearing_date,
@@ -85,6 +86,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :aod,
              :holddays,
              :tranreq,
+             :addon,
              :board_member,
              :mduser,
              :mdtime,

@@ -11,7 +11,7 @@ import * as Constants from './constants/constants';
 import NotFoundIcon from '../components/NotFoundIcon';
 import * as certificationActions from './actions/Certification';
 
-class UnconnectedDocumentsCheck extends React.Component {
+export class DocumentsCheck extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
@@ -117,10 +117,10 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
-const DocumentsCheck = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UnconnectedDocumentsCheck);
+)(DocumentsCheck);
 
 DocumentsCheck.propTypes = {
   certificationStatus: PropTypes.string,
@@ -131,5 +131,3 @@ DocumentsCheck.propTypes = {
   documentsMatch: PropTypes.bool,
   match: PropTypes.object
 };
-
-export default DocumentsCheck;

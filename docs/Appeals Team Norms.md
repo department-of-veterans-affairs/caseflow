@@ -20,8 +20,7 @@
   - Practice: https://github.com/department-of-veterans-affairs/caseflow/issues/1703#issuecomment-297436941 
   - Post updates in the #appeals-engineering channel on Slack if you can't make team standup
 - **Goal: Effective engineering collaboration and code review**
-  - Practice: Read through these miscellaneous engineering norms -
- https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/misc_eng_norms.md
+  - Practice: [Misc Eng Norms](./misc_eng_norms.md)
   - Practice: Waffle column process - https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/process.md
 - **Goal: Don't ruin veterans' lives.**
   - Practice: Every pull request that involves writing data to a system we don't control (like VACOLS) must be approved by **two** reviewers. (It's ok if the second reviewer focuses on the data writing and ignores irrelevant aspects of the PR like a UI change.) The person sending the pull request is responsible for ensure that this happens.

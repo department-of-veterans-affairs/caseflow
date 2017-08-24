@@ -50,3 +50,6 @@ Performance/RedundantBlockCall:
 
 Style/NegatedIf:
   Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
