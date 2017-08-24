@@ -91,5 +91,6 @@ export default function StyleGuideTables() {
       "Assign >>," located on the far right column.
     </p>
     <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk={true}/>
+
   </div>;
 }
