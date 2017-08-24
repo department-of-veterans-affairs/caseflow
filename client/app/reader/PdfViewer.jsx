@@ -8,7 +8,7 @@ import PdfSidebar from '../components/PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from '../reader/actions';
-import { isUserEditingText, update, getAppealIfItDoesNotExist, shouldFetchAppeal } from '../reader/utils';
+import { isUserEditingText, update, shouldFetchAppeal } from '../reader/utils';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
