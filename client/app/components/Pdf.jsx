@@ -116,6 +116,7 @@ export class Pdf extends React.PureComponent {
     this.currentPage = 0;
     this.isDrawing = {};
     this.isGettingPdf = {};
+    this.loadingTasks = {};
 
     this.refFunctionGetters = {
       canvas: {},
@@ -125,8 +126,6 @@ export class Pdf extends React.PureComponent {
 
     this.initializePredrawing();
     this.initializeRefs();
-
-    this.loadingTasks = {};
   }
 
   initializeRefs = () => {
@@ -469,7 +468,6 @@ export class Pdf extends React.PureComponent {
   getDocument = (file) => {
     const pdfsToKeep = [...this.props.prefetchFiles, this.props.file];
     if (!pdfsToKeep.includes(file)) {
-      console.log('RETURNING NULL');
       return Promise.resolve(null);
     }
 
@@ -486,7 +484,7 @@ export class Pdf extends React.PureComponent {
         }, TIMEOUT_FOR_GET_DOCUMENT);
       });
     }
-    console.log('trying to load', file);
+
     // If the document has not been retrieved yet, we make a request to the server and
     // set isGettingPdf true so that we don't try to request it again, while the first
     // request is finishing.
@@ -497,7 +495,6 @@ export class Pdf extends React.PureComponent {
     });
 
     return this.loadingTasks[file].then((pdfDocument) => {
-      console.log('loaded', file);
       this.loadingTasks[file] = null;
       this.isGettingPdf[file] = false;
 
@@ -692,10 +689,7 @@ export class Pdf extends React.PureComponent {
 
       Object.keys(this.loadingTasks).forEach((file) => {
         if (!pdfsToKeep.includes(file)) {
-          // console.log(this.loadingTasks, file);
-
           if (this.loadingTasks[file]) {
-            console.log('Cleaning up loading task');
             this.loadingTasks[file].destroy();
             this.loadingTasks[file] = null;
           }
