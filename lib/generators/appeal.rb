@@ -59,6 +59,7 @@ class Generators::Appeal
           decision_date: nil,
           issues: [
             { disposition: :nil, program: :compensation,
+              vacols_sequence_id: 1,
               type: {
                 name: :service_connection,
                 label: "Service Connection"

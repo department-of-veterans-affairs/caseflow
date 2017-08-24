@@ -36,6 +36,7 @@ class HearingRepository
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
         hold_open: vacols_record.holddays,
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
+        add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
         type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       )
@@ -47,13 +48,8 @@ class HearingRepository
     # :nocov:
     def hearings_for(case_hearings)
       case_hearings.map do |vacols_record|
-        Hearing.find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
-          hearing.attributes = {
-            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(css_id: vacols_record.css_id)
-          }
-          set_vacols_values(hearing, vacols_record)
-        end
+        hearing = Hearing.create_from_vacols_record(vacols_record)
+        set_vacols_values(hearing, vacols_record)
       end
     end
     # :nocov:
