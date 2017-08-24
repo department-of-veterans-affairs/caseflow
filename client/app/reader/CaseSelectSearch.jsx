@@ -76,7 +76,7 @@ class CaseSelectSearch extends React.PureComponent {
         onSubmit={this.searchOnChange}
         submitUsingEnterKey
       />
-      { _.size(caseSelect.receivedAppeals) ? <Modal
+      { Boolean(_.size(caseSelect.receivedAppeals)) && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
@@ -104,7 +104,7 @@ class CaseSelectSearch extends React.PureComponent {
             Please send us feedback.
           </a>
         </p>
-      </Modal> : ''
+      </Modal>
       }
     </div>;
   }
