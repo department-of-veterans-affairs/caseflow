@@ -68,7 +68,7 @@ describe HearingMapper do
           transcript_requested: false,
           disposition: :postponed,
           hold_open: 60,
-          addon: false }
+          add_on: false }
       end
 
       it "should convert to Vacols values" do
@@ -78,7 +78,7 @@ describe HearingMapper do
         expect(result[:transcript_requested]).to eq :N
         expect(result[:disposition]).to eq :P
         expect(result[:hold_open]).to eq 60
-        expect(result[:addon]).to eq :N
+        expect(result[:add_on]).to eq :N
       end
     end
 
@@ -141,10 +141,10 @@ describe HearingMapper do
 
     context "when addon is not valid" do
       let(:info) do
-        { addon: :foo }
+        { add_on: :foo }
       end
       it "raises InvalidNotesError error" do
-        expect { subject }.to raise_error(HearingMapper::InvalidAddonError)
+        expect { subject }.to raise_error(HearingMapper::InvalidAddOnError)
       end
     end
 
