@@ -43,7 +43,7 @@ class HearingsController < ApplicationController
                                      :hold_open,
                                      :aod,
                                      :transcript_requested,
-                                     :addon)
+                                     :add_on)
   end
 
   def date_from_string(date_string)
