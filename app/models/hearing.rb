@@ -4,7 +4,7 @@ class Hearing < ActiveRecord::Base
   belongs_to :user
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes
+                       :aod, :hold_open, :transcript_requested, :notes, :add_on
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -56,6 +56,7 @@ class Hearing < ActiveRecord::Base
         :transcript_requested,
         :hold_open,
         :notes,
+        :add_on,
         :appellant_last_first_mi,
         :representative_name,
         :venue, :vbms_id
