@@ -4,6 +4,7 @@ module HearingMapper
   class InvalidDispositionError < StandardError; end
   class InvalidTranscriptRequestedError < StandardError; end
   class InvalidNotesError < StandardError; end
+  class InvalidAddOnError < StandardError; end
 
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
@@ -12,6 +13,7 @@ module HearingMapper
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
         aod: aod_to_vacols_format(hearing_info[:aod]),
+        add_on: add_on_to_vacols_format(hearing_info[:add_on]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested])
       }.select { |k, _v| hearing_info.keys.include? k } # only send updates to key/values that are passed
     end
@@ -58,6 +60,12 @@ module HearingMapper
     def aod_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value)
       fail(InvalidAodError) if !value.nil? && vacols_code.blank?
+      vacols_code
+    end
+
+    def add_on_to_vacols_format(value)
+      vacols_code = VACOLS::CaseHearing::BOOLEAN_MAP.key(value)
+      fail(InvalidAddOnError) if value && vacols_code.blank?
       vacols_code
     end
 
