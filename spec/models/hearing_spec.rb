@@ -21,6 +21,71 @@ describe Hearing do
     end
   end
 
+  context "#to_hash" do
+    subject { hearing.to_hash }
+
+    context "when appeal has issues" do
+      let(:appeal) { Generators::Appeal.create }
+      let(:hearing) { Generators::Hearing.create(appeal: appeal) }
+      let!(:issue1) { Generators::Issue.create(appeal: appeal) }
+      let!(:issue2) { Generators::Issue.create(appeal: appeal) }
+
+      it "should return issues through the appeal" do
+        expect(subject["issues"].size).to eq 2
+      end
+    end
+  end
+
+  context "#set_issues_from_appeal" do
+    subject { hearing.set_issues_from_appeal }
+    let(:hearing) { Hearing.create(vacols_id: "3456") }
+
+    context "when appeal is not set" do
+      it "should not create any issues" do
+        subject
+        expect(hearing.issues.size).to eq 0
+      end
+    end
+
+    context "when appeal does not have any issues" do
+      let(:appeal) { Appeal.create(vacols_id: "1234") }
+
+      it "should not create any issues" do
+        hearing.update(appeal: appeal)
+        subject
+        expect(hearing.issues.size).to eq 0
+      end
+    end
+
+    context "when appeal has issues" do
+      let(:appeal) { Appeal.create(vacols_id: "1234") }
+      let!(:issue1) { Generators::Issue.create(appeal: appeal) }
+      let!(:issue2) { Generators::Issue.create(appeal: appeal) }
+
+      it "should not create any issues" do
+        hearing.update(appeal: appeal)
+        subject
+        expect(hearing.issues.size).to eq 2
+      end
+    end
+  end
+
+  context ".create_from_vacols_record" do
+    let(:vacols_record) do
+      OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
+    end
+    let!(:user) { User.create(css_id: "1111", station_id: "123") }
+    subject { Hearing.create_from_vacols_record(vacols_record) }
+
+    it "should should create a hearing record" do
+      subject
+      hearing = Hearing.find_by(vacols_id: "1234")
+      expect(hearing.present?).to be true
+      expect(hearing.appeal.vacols_id).to eq "5678"
+      expect(hearing.user).to eq user
+    end
+  end
+
   context "#update" do
     subject { hearing.update(hearing_hash) }
     let(:hearing) { Generators::Hearing.build }
