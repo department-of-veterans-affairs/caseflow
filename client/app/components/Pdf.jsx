@@ -494,6 +494,8 @@ export class Pdf extends React.PureComponent {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
         if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+          pdfDocument.destroy();
+
           return this.predrawnPdfs[file].pdfDocument;
         }
         this.predrawnPdfs[file] = {
@@ -503,6 +505,7 @@ export class Pdf extends React.PureComponent {
 
         return pdfDocument;
       }
+      pdfDocument.destroy();
 
       return null;
     }).
