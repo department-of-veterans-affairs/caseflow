@@ -51,6 +51,7 @@ describe('DailyDocketContainer', () => {
       '2017-06-17': {
         date: '2017-06-17T17:52:09.742-04:00',
         hearings_hash: [{
+          id: 1,
           appeal_id: 68468,
           appellant_last_first_mi: 'VanBuren, James A.',
           date: '2017-06-30T14:03:42.714Z',

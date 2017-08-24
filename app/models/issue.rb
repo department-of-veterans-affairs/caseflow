@@ -54,7 +54,8 @@ class Issue < ActiveRecord::Base
       category: category,
       description: description,
       disposition: disposition,
-      program_description: program_description
+      program_description: program_description,
+      note: note
     )
   end
 

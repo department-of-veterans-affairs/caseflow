@@ -35,6 +35,7 @@ heartbeat_tasks_job:
   queue: default
   active_job: true
 
+# Disabled until we have a conversation about how to handle VBMS load
 # Retrieve all documents for active Reader users every night at midnight
 retrieve_documents_for_reader_job:
   cron: "0 21 * * * America/New_York"
@@ -43,6 +44,7 @@ retrieve_documents_for_reader_job:
     limit: 1500
   queue: default
   active_job: true
+  disabled: true
 
 # Checks dependecies every 30 seconds(BGS, VACOLS, VBMS, VBMS.FindDocumentSeriesReference)
 dependencies_check_job:

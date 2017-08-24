@@ -13,6 +13,8 @@ describe('hearingsReducer', () => {
             0: {}
           }
         }
+      },
+      worksheet: {
       }
     });
   });
@@ -134,6 +136,74 @@ describe('hearingsReducer', () => {
     it('sets transcript requested', () => {
       expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { transcript_requested: true,
         edited: true } } } });
+    });
+  });
+
+  context(Constants.SET_CONTENTIONS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_CONTENTIONS,
+        payload: {
+          contentions: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet.contentions).to.deep.equal('filled');
+    });
+  });
+
+  context(Constants.SET_PERIODS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_PERIODS,
+        payload: {
+          periods: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet periods', () => {
+      expect(state.worksheet.periods).to.deep.equal('filled');
+    });
+  });
+
+  context(Constants.SET_EVIDENCE, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_EVIDENCE,
+        payload: {
+          evidence: 'filled'
+        }
+      });
+    });
+
+    it('sets evidences', () => {
+      expect(state.worksheet.evidence).to.deep.equal('filled');
+    });
+  });
+
+  context(Constants.SET_COMMENTS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_COMMENTS,
+        payload: {
+          comments: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet comments', () => {
+      expect(state.worksheet.comments).to.deep.equal('filled');
     });
   });
 });
