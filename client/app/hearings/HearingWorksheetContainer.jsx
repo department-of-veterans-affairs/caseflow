@@ -47,7 +47,7 @@ export class HearingWorksheetContainer extends React.Component {
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
               <div className="cf-image-loader">
               </div>
-            <p className="cf-txt-c"><div>Loading worksheet, please wait...</div></p>
+            <p className="cf-txt-c">Loading worksheet, please wait...</p>
           </LoadingContainer>
         </div>
       </div>;
