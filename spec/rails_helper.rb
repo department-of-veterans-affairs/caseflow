@@ -228,3 +228,10 @@ RSpec::Matchers.define :become_truthy do |_event_name|
     end
   end
 end
+
+# Test that a string does *not* include a provided substring
+RSpec::Matchers.define :excluding do |expected|
+  match do |actual|
+    !actual.include?(expected)
+  end
+end
