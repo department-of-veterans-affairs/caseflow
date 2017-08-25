@@ -10,6 +10,7 @@ class Generators::Appeal
       }
     end
 
+    # rubocop:disable Metrics/MethodLength
     def vacols_record_default_attrs
       last_name = generate_last_name
 
@@ -29,9 +30,13 @@ class Generators::Appeal
         appellant_relationship: "Child",
         regional_office_key: "RO13",
         decision_date: 7.days.ago,
-        form9_date: 11.days.ago
+        form9_date: 11.days.ago,
+        veteran_date_of_birth: 47.years.ago,
+        appellant_city: "Huntingdon",
+        appellant_state: "TN"
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     # This is a method and not a constant because Datetime values need
     # to be evaluated lazily. Would be nice to have a better solution

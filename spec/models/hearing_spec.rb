@@ -23,15 +23,24 @@ describe Hearing do
 
   context "#to_hash" do
     subject { hearing.to_hash }
+    let(:appeal) { Generators::Appeal.create }
+    let(:hearing) { Generators::Hearing.create(appeal: appeal) }
 
     context "when appeal has issues" do
-      let(:appeal) { Generators::Appeal.create }
-      let(:hearing) { Generators::Hearing.create(appeal: appeal) }
       let!(:issue1) { Generators::Issue.create(appeal: appeal) }
       let!(:issue2) { Generators::Issue.create(appeal: appeal) }
 
       it "should return issues through the appeal" do
         expect(subject["issues"].size).to eq 2
+      end
+    end
+
+    context "when a hearing & appeal exist" do
+      it "returns expected keys" do
+        expect(subject["appellant_city"]).to eq(appeal.appellant_city)
+        expect(subject["appellant_state"]).to eq(appeal.appellant_state)
+        expect(subject["veteran_age"]).to eq(appeal.veteran_age)
+        expect(subject["veteran_full_name"]).to eq(appeal.veteran_full_name)
       end
     end
   end
