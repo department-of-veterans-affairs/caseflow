@@ -2,6 +2,8 @@
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
+  include AssociatedVacolsModel
+
   vacols_attr_accessor :program, :type, :category, :description, :disposition, :levels,
                        :program_description, :note
 
@@ -47,7 +49,11 @@ class Issue < ActiveRecord::Base
   end
 
   def attributes
-    super.merge(
+    super.merge(vacols_attributes.stringify_keys)
+  end
+
+  def vacols_attributes
+    {
       levels: levels,
       program: program,
       type: type,
@@ -56,7 +62,7 @@ class Issue < ActiveRecord::Base
       disposition: disposition,
       program_description: program_description,
       note: note
-    )
+    }
   end
 
   class << self

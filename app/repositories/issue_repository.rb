@@ -1,9 +1,9 @@
 class IssueRepository
   class << self
     def load_vacols_data(issue)
-      binding.pry
-      issue_hash = issue.appeal.issues.select{ |i| i[:vacols_sequence_id] == issue.vacols_sequence_id }
-      issue.assign_from_vacols(issue_hash)
+      return if !issue || !issue.appeal || !issue.vacols_sequence_id
+      result = issue.appeal.issue_by_sequence_id(issue.vacols_sequence_id)
+      issue.assign_from_vacols(result.vacols_attributes)
       true
     rescue ActiveRecord::RecordNotFound
       false
