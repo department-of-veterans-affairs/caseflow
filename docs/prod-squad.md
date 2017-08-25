@@ -40,7 +40,7 @@ If multiple backup people get online to respond to an alert at the same time, th
 If the primary responder is not able to be responsive during their shift, they are responsible for finding a backup. For instance, if you are going out to dinner, and you're on call, you should get someone else to cover you during that time.
 
 ### On Call Hours
-* Monday through Saturday: 6a - 10p EST (except business hours, as detailed below)
+* Monday through Saturday: 5:30a - 10p EST (except business hours, as detailed below)
 * Sunday and federal holidays: 9p - 10p EST
 
 ### Response Time SLA
@@ -151,3 +151,25 @@ The Prod Squad schedule is managed via PagerDuty. See https://dsva-appeals.pager
 | Hearings Prep | Tango | Sharon |
 
 All the tech leads need to be responsible for prioritizing triaging errors and either silencing or fixing them. We can't be complacent, like we were with the flakey tests, and wait until there's a crisis. 
+
+# Appendix: On-Call Hour Determination
+Our analysis of when to be on call is based on the following data:
+
+![caseflow traffic](https://user-images.githubusercontent.com/25331532/29720348-b1aee326-8987-11e7-9894-aca323f24d89.png)
+
+To get that data, Nick ran the following command:
+
+```
+awslogs get \
+    dsva-appeals-certification-$TARGET_ENV/opt/caseflow-certification/src/log/caseflow-certification.out ALL \
+    --start '30d ago' \
+  | grep "Started GET" \
+  | grep -v health-check \
+  | grep -v dependencies-check
+```
+
+He then processed that output using [a script](https://github.com/nickheiner-usds/log-parser). The output from that was fed into Excel, which produced the graph above.
+
+In the chart, we can see 6a EST - 5p EST is the primary internal VA usage time. Vets.gov traffic continues at a higher level after that, but falls off around midnight.
+
+We do not currently have the resources to be on call 24/7 for Vets.gov.
