@@ -13,6 +13,7 @@ import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
 import RadioField from '../components/RadioField';
 import IssuesList from './IssueList';
+import Alert from '../components/Alert';
 
 class CaseSelectSearch extends React.PureComponent {
 
