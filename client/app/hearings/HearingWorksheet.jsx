@@ -35,16 +35,6 @@ export class HearingWorksheet extends React.PureComponent {
     return index;
   }
 
-  // TODO to move the default value to the backend
-
-  onContentionsChange = (contentions) => this.props.onContentionsChange(contentions)
-
-  onPeriodsChange = (periods) => this.props.onPeriodsChange(periods)
-
-  onEvidenceChange = (evidence) => this.props.onEvidenceChange(evidence)
-
-  onCommentsChange = (comments) => this.props.onContentionsChange(comments)
-
   render() {
 
     const columns = [
@@ -346,6 +336,7 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
+// TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onPeriodsChange,

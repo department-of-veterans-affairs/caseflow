@@ -34,6 +34,7 @@ class Generators::Hearing
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal_id(hearing)
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing.update_attributes(attrs)
+      hearing.set_issues_from_appeal
 
       Fakes::HearingRepository.hearing_records ||= []
       Fakes::HearingRepository.hearing_records.push(hearing) unless Fakes::HearingRepository.find_by_id(hearing.id)

@@ -8,16 +8,16 @@ export default class Example7 extends React.Component {
     super(props);
 
     this.state = {
-      value: null,
-      errorMessage: 'You must acknowledge this.'
+      value: false,
+      viewErrorMessage: true
     };
   }
 
-  onChange = (value) => {
-    this.setState({
-      value,
-      errorMessage: null
-    });
+  onChange = () => {
+    this.setState((prevState) => ({
+      value: !prevState.value,
+      viewErrorMessage: !prevState.viewErrorMessage
+    }));
   }
 
   render = () => {
@@ -29,7 +29,7 @@ export default class Example7 extends React.Component {
       name="checkbox_example_7"
       onChange={this.onChange}
       value={this.state.value}
-      errorMessage={this.state.errorMessage}
+      errorMessage={this.state.viewErrorMessage ? 'You must acknowledge this.' : null}
     ></Checkbox>;
   }
 }

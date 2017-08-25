@@ -42,7 +42,8 @@ class HearingsController < ApplicationController
                                      :disposition,
                                      :hold_open,
                                      :aod,
-                                     :transcript_requested)
+                                     :transcript_requested,
+                                     :add_on)
   end
 
   def date_from_string(date_string)
