@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { isUserEditingText } from '../reader/utils';
-
+import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber } from '../reader/utils';
 import CommentIcon from './CommentIcon';
 import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
@@ -18,9 +17,6 @@ import { setPdfReadyToShow, setPageCoordBounds,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
-
-const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
-const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
 /**
  * We do a lot of work with coordinates to render PDFs.

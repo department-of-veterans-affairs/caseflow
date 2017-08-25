@@ -11,6 +11,8 @@ export const categoryFieldNameOfCategoryName =
 
 export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 
+export const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
+export const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 /**
  * immutability-helper takes two arguments: an object and a spec for how to change it:
  *

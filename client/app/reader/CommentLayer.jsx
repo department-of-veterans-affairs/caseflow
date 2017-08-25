@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from '../components/CommentIcon';
-import { keyOfAnnotation } from '../reader/utils';
+import { keyOfAnnotation, pageNumberOfPageIndex } from '../reader/utils';
 import _ from 'lodash';
 import { handleSelectCommentIcon } from '../reader/actions';
 
@@ -12,7 +12,7 @@ class CommentLayer extends PureComponent {
     const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
       this.props.comments.concat([{
         temporaryId: 'placing-annotation-icon',
-        page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
+        page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
         isPlacingAnnotationIcon: true,
         ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
       }]) :
@@ -37,7 +37,7 @@ class CommentLayer extends PureComponent {
       return acc;
     }, {});
 
-    return <span>{commentIcons[this.props.pageIndex+1]}</span>
+    return <div style={{width: "100%", height: "100%"}}>{commentIcons[pageNumberOfPageIndex(this.props.pageIndex)]}</div style={{width: "100%", height: "100%"}}>
   }
 }
 
@@ -49,7 +49,11 @@ CommentLayer.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   })),
-  handleSelectCommentIcon: PropTypes.func
+  handleSelectCommentIcon: PropTypes.func,
+  placingAnnotationIconPageCoords: PropTypes.object,
+  isPlacingAnnotation: PropTypes.bool,
+  scale: PropTypes.number,
+  pageIndex: PropTypes.number
 };
 
 const mapStateToProps = (state, ownProps) => ({
