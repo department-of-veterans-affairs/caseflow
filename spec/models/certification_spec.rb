@@ -364,7 +364,6 @@ describe Certification do
       it "returns representative type from vacols" do
         expect(certification.rep_type).to eq("VACOLS_TYPE")
       end
-
     end
 
     context "when the user indicates that poa does not match but bgs is correct" do
