@@ -153,7 +153,11 @@ export const initialState = {
     caseSelect: {
       selectedAppealVacolsId: null,
       selectedAppeal: {},
-      receivedAppeals: []
+      receivedAppeals: [],
+      search: {
+        showErrorMessage: false,
+        showNoAppealsInfo: false
+      }
     },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
@@ -340,7 +344,11 @@ export const reducer = (state = initialState, action = {}) => {
         caseSelect: {
           receivedAppeals: { $set: {} },
           selectedAppeal: { $set: {} },
-          selectedAppealVacolsId: { $set: null }
+          selectedAppealVacolsId: { $set: null },
+          search: {
+            showErrorMessage: { $set: false },
+            showNoAppealsInfo: { $set: false }
+          }
         }
       }
     });
@@ -803,6 +811,29 @@ export const reducer = (state = initialState, action = {}) => {
         caseSelect: {
           receivedAppeals: {
             $set: action.payload.appeals
+          },
+          search: {
+            showErrorMessage: { $set: false }
+          }
+        }
+      }
+    });
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          search: {
+            showErrorMessage: { $set: true }
+          }
+        }
+      }
+    });
+  case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          search: {
+            showNoAppealsInfo: { $set: true }
           }
         }
       }

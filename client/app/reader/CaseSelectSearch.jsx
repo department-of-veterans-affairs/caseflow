@@ -67,6 +67,16 @@ class CaseSelectSearch extends React.PureComponent {
       }));
 
     return <div className="section-search">
+      {caseSelect.search.showErrorMessage &&
+        <Alert title="Veteran ID not found" type="error">
+          Please enter the correct Veteran ID and try again.
+        </Alert>
+      }
+      {caseSelect.search.showNoAppealsInfo &&
+        <Alert title="No appeals found" type="info">
+          {`Veteran ID ${this.props.caseSelectCriteria.searchQuery} does not have any appeals.`}
+        </Alert>
+      }
       <SearchBar
         id="searchBar"
         size="small"
