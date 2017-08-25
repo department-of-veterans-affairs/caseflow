@@ -22,10 +22,20 @@ describe Certification do
   end
 
   let(:certification_completed_at) { nil }
+  let(:poa_matches) { true }
+  let(:poa_correct_in_bgs) { false }
   let(:certification) do
     Certification.new(
       vacols_id: appeal.vacols_id,
-      completed_at: certification_completed_at
+      completed_at: certification_completed_at,
+      poa_correct_in_bgs: poa_correct_in_bgs,
+      poa_matches: poa_matches,
+      vacols_representative_name: "VACOLS_NAME",
+      bgs_representative_name: "BGS_NAME",
+      vacols_representative_type: "VACOLS_TYPE",
+      bgs_representative_type: "BGS_TYPE",
+      representative_name: "NAME",
+      representative_type: "TYPE"
     )
   end
 
@@ -342,6 +352,41 @@ describe Certification do
     it "returns only v2 certifications" do
       expect(Certification.all.count).to eq 6
       expect(subject.count).to eq 5
+    end
+  end
+
+  context "#rep_name, #rep_type" do
+    context "when the user indicates that poa matches across bgs and vacols" do
+      let(:poa_matches) { true }
+      it "returns representative name from vacols" do
+        expect(certification.rep_name).to eq("VACOLS_NAME")
+      end
+      it "returns representative type from vacols" do
+        expect(certification.rep_type).to eq("VACOLS_TYPE")
+      end
+
+    end
+
+    context "when the user indicates that poa does not match but bgs is correct" do
+      let(:poa_matches) { false }
+      let(:poa_correct_in_bgs) { true }
+      it "returns representative type from bgs" do
+        expect(certification.rep_name).to eq("BGS_NAME")
+      end
+      it "returns representative name from bgs" do
+        expect(certification.rep_type).to eq("BGS_TYPE")
+      end
+    end
+
+    context "when bgs and vacols poa are both not correct" do
+      let(:poa_matches) { false }
+      let(:poa_correct_in_bgs) { false }
+      it "returns representative type from bgs" do
+        expect(certification.rep_name).to eq("NAME")
+      end
+      it "returns representative name from bgs" do
+        expect(certification.rep_type).to eq("TYPE")
+      end
     end
   end
 end
