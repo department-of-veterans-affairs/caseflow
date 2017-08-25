@@ -70,40 +70,14 @@ export class HearingWorksheet extends React.PureComponent {
       }
     ];
 
-    // temp
+    // Temp Placeholder issues
     const issues = [
       {
         program: 'Compensation',
         issue: 'Service connection',
+        issueID: 101,
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: 'Right elbow',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 5242 - Degenerative arthritis of the spine (see also diagnostic code 5003)',
-        description: 'Lower back',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 7799 - Other hemic or lymphatic system disability',
-        description: 'Chronic bronchitis',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 8100 - Migraine',
-        description: 'Frequent headaches',
         actions: [
           false, false, false, false, false, false
         ]
@@ -115,16 +89,16 @@ export class HearingWorksheet extends React.PureComponent {
         counter: <b>{index + 1}.</b>,
         program: issue.program,
         issue: issue.issue,
+        issueID: issue.issueID,
         levels: issue.levels,
         description: <div>
-          <label
-            className="cf-hearings-worksheet-desc-label"
-            htmlFor={`worksheet-issue-description-${index}`}>Description</label>
-          <TextareaField defaultValue={issue.description}
-            id={`worksheet-issue-description-${index}`}
+          <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
+          <TextareaField
+            id={`worksheet-issue-description-${issue.issueID}`}
             aria-label="Description"
+            // has no label | empty for accessibility
             name=""
-            value={issue.description}
+            value={this.props.worksheet.description || ''}
             onChange={this.props.onDescriptionsChange}
             />
         </div>,

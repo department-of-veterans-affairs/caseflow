@@ -75,10 +75,12 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
-export const onDescriptionsChange = (description) => ({
+export const onDescriptionsChange = (description, issueID, streams) => ({
   type: Constants.SET_DESCRIPTIONS,
   payload: {
-    description
+    description,
+    issueID,
+    streams
   }
 });
 

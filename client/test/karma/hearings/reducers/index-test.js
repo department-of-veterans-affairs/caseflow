@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as Hearings from '../../../../app/hearings/reducers/index';
 import * as Constants from '../../../../app/hearings/constants/constants';
 
+/* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }]*/
 describe('hearingsReducer', () => {
   let initialState;
 
@@ -152,7 +153,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue description', () => {
-      expect(state.worksheet.issue.description).to.deep.equal('filled');
+      expect(state.worksheet.description).to.deep.equal('filled');
     });
   });
 
