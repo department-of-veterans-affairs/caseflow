@@ -45,18 +45,20 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
   # Loop through the results and build an error warning for jobs that specifically
   # failed to start or complete and @here the slack channel
   def failure_message
-    @failure_message ||= results.reduce("") do |message, (job_class, result)|
-      if !result[:started] || result[:started] < ALERT_THRESHOLD_IN_HOURS.hours.ago
-        message += "| *#{job_class} failed to start in the last #{ALERT_THRESHOLD_IN_HOURS} hours.* " \
-                   "Last started: #{result[:started]}\n"
+    @failure_message ||= begin
+      message = results.reduce("") do |message, (job_class, result)|
+        if !result[:started] || result[:started] < ALERT_THRESHOLD_IN_HOURS.hours.ago
+          message += "*#{job_class} failed to start in the last #{ALERT_THRESHOLD_IN_HOURS} hours.* "
+        end
+
+        if !result[:completed] || result[:completed] < ALERT_THRESHOLD_IN_HOURS.hours.ago
+          message += "*#{job_class} failed to complete in the last #{ALERT_THRESHOLD_IN_HOURS} hours.* "
+        end
+
+        message
       end
 
-      if !result[:completed] || result[:completed] < ALERT_THRESHOLD_IN_HOURS.hours.ago
-        message += "| *#{job_class} failed to complete in the last #{ALERT_THRESHOLD_IN_HOURS} hours.* " \
-                   "Last completed: #{result[:completed]}\n"
-      end
-
-      message += "| <!here>" if !message.length.zero?
+      message += "<!here>\n" if !message.length.zero?
       message
     end
   end
