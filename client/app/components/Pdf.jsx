@@ -5,19 +5,19 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
+import { isUserEditingText } from '../reader/utils';
 
 import CommentIcon from './CommentIcon';
+import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
+import { setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
-import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 
 const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
@@ -852,38 +852,6 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
-      this.props.comments.concat([{
-        temporaryId: 'placing-annotation-icon',
-        page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
-        isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }]) :
-      this.props.comments;
-
-    const commentIcons = annotations.reduce((acc, comment) => {
-      // Only show comments on a page if it's been drawn
-      if (_.get(this.state.isDrawn, [this.props.file, comment.page - 1, 'pdfDocument']) !==
-        this.state.pdfDocument) {
-        return acc;
-      }
-      if (!acc[comment.page]) {
-        acc[comment.page] = [];
-      }
-
-      acc[comment.page].push(
-        <CommentIcon
-          comment={comment}
-          position={{
-            x: comment.x * this.props.scale,
-            y: comment.y * this.props.scale
-          }}
-          key={keyOfAnnotation(comment)}
-          onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
-
-      return acc;
-    }, {});
-
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
@@ -940,7 +908,11 @@ export class Pdf extends React.PureComponent {
                 ref={this.refFunctionGetters.canvas[file][pageIndex]}
                 className="canvasWrapper" />
               <div className="cf-pdf-annotationLayer">
-                {this.props.file === file && commentIcons[pageIndex + 1]}
+                {this.props.file === file && <CommentLayer
+                  documentId={this.props.documentId}
+                  pageIndex={pageIndex}
+                  scale={this.props.scale}
+                />}
               </div>
               <div
                 id={`textLayer${pageIndex + 1}`}
@@ -969,7 +941,6 @@ export class Pdf extends React.PureComponent {
 const mapStateToProps = (state, ownProps) => ({
   ...state.ui.pdf,
   ..._.pick(state, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
   allAnnotations: state.annotations
 });
 
@@ -984,8 +955,7 @@ const mapDispatchToProps = (dispatch) => ({
     requestMoveAnnotation,
     onScrollToComment
   }, dispatch),
-  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
-  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
+  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId))
 });
 
 export default connect(
@@ -1001,13 +971,6 @@ Pdf.defaultProps = {
 
 Pdf.propTypes = {
   selectedAnnotationId: PropTypes.number,
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    comment: PropTypes.string,
-    uuid: PropTypes.number,
-    page: PropTypes.number,
-    x: PropTypes.number,
-    y: PropTypes.number
-  })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
@@ -1020,6 +983,5 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,
-  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  handleSelectCommentIcon: PropTypes.func
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string)
 };
