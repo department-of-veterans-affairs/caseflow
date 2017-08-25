@@ -1,4 +1,3 @@
-require "prime"
 class Fakes::IssueRepository
   class << self
     def load_vacols_data(issue)
