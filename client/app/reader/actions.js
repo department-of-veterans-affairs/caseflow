@@ -67,6 +67,17 @@ export const setSearch = (searchQuery) => ({
   }
 });
 
+export const setCaseSelectSearch = (searchQuery) => ({
+  type: Constants.SET_CASE_SELECT_SEARCH,
+  payload: {
+    searchQuery
+  }
+});
+
+export const clearCaseSelectSearch = () => ({
+  type: Constants.CLEAR_CASE_SELECT_SEARCH
+});
+
 export const setDocListScrollPosition = (scrollTop) => ({
   type: Constants.SET_DOC_LIST_SCROLL_POSITION,
   payload: {
@@ -606,6 +617,49 @@ export const fetchAppealDetails = (vacolsId) => (
     }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
+
+export const onReceiveAppealsUsingVeteranId = (appeals) => ({
+  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID,
+  payload: { appeals }
+});
+
+export const fetchAppealUsingVeteranIdFailed = () => ({
+  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED
+});
+
+export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
+  type: Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID,
+  payload: { appeals }
+});
+
+export const caseSelectAppeal = (appeal) => ({
+  type: Constants.CASE_SELECT_APPEAL,
+  payload: { appeal }
+});
+
+export const clearSelectedAppeal = () => ({
+  type: Constants.CLEAR_SELECTED_APPEAL
+});
+
+export const fetchAppealUsingVeteranId = (veteranId) => (
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+      const numOfAppeals = _.size(returnedObject.appeals);
+
+      // if the veteran only has one appeal associated
+      if (numOfAppeals === 1) {
+        dispatch(caseSelectAppeal(returnedObject.appeals[0]));
+      } else if (numOfAppeals > 1) {
+        dispatch(onReceiveMultipleAppealsWithVeteranId(returnedObject.appeals));
+      }
+    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+  }
+);
+
+export const clearReceivedAppeals = () => ({
+  type: Constants.CLEAR_RECEIVED_APPEALS
+});
 
 export const addNewTag = (doc, tags) => (
   (dispatch) => {
