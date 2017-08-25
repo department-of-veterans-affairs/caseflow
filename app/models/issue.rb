@@ -49,7 +49,7 @@ class Issue < ActiveRecord::Base
   end
 
   def attributes
-    super.merge(vacols_attributes.stringify_keys)
+    super.merge(vacols_attributes)
   end
 
   def vacols_attributes
