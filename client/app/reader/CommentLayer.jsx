@@ -3,11 +3,43 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from '../components/CommentIcon';
-import { keyOfAnnotation, pageNumberOfPageIndex } from '../reader/utils';
+import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from '../reader/utils';
 import _ from 'lodash';
-import { handleSelectCommentIcon } from '../reader/actions';
+import { handleSelectCommentIcon, placeAnnotation } from '../reader/actions';
+import { bindActionCreators } from 'redux';
 
 class CommentLayer extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.commentLayer = null;
+  }
+
+  onPageClick = (event) => {
+    if (!this.props.isPlacingAnnotation) {
+      return;
+    }
+
+    const { x, y } = getPageCoordinatesOfMouseEvent(
+      event,
+      this.commentLayer.getBoundingClientRect(),
+      this.props.scale
+    );
+
+    this.props.placeAnnotation(
+      pageNumberOfPageIndex(this.props.pageIndex),
+      {
+        xPosition: x,
+        yPosition: y
+      },
+      this.props.documentId
+    );
+  };
+
+  commentLayerRef = (ref) => {
+    this.commentLayer = ref;
+  }
+
   render() {
     const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
       this.props.comments.concat([{
@@ -37,7 +69,12 @@ class CommentLayer extends PureComponent {
       return acc;
     }, {});
 
-    return <div style={{width: "100%", height: "100%"}}>{commentIcons[pageNumberOfPageIndex(this.props.pageIndex)]}</div style={{width: "100%", height: "100%"}}>
+    return <div
+      style={{width: "100%", height: "100%"}}
+      onClick={this.onPageClick}
+      ref={this.commentLayerRef}>
+      {commentIcons[pageNumberOfPageIndex(this.props.pageIndex)]}
+    </div>
   }
 }
 
@@ -63,7 +100,10 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
+  ...bindActionCreators({
+    placeAnnotation,
+    handleSelectCommentIcon
+  }, dispatch)
 });
 
 

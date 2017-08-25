@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber } from '../reader/utils';
+import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
+  getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
 import CommentIcon from './CommentIcon';
 import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
@@ -36,11 +37,6 @@ import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
  * coordinate system they belong to. All converting between coordinate systems should be done with
  * the proper helper functions.
  */
-export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
-  x: (x - pageBoundingBox.left) / scale,
-  y: (y - pageBoundingBox.top) / scale
-});
-
 export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
   const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
@@ -593,9 +589,10 @@ export class Pdf extends React.PureComponent {
       const pageIndex = _(this.pageElements[this.props.file]).
         map('pageContainer').
         indexOf(event.currentTarget);
-      const pageCoords = this.getPageCoordinatesOfMouseEvent(
+      const pageCoords = getPageCoordinatesOfMouseEvent(
         event,
-        event.currentTarget.getBoundingClientRect()
+        event.currentTarget.getBoundingClientRect(),
+        this.props.scale
       );
 
       this.props.showPlaceAnnotationIcon(pageIndex, pageCoords);
@@ -837,15 +834,6 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
-  getPageCoordinatesOfMouseEvent(event, container) {
-    const constrainedRootCoords = {
-      x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
-      y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
-    };
-
-    return pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
-  }
-
   // eslint-disable-next-line max-statements
   render() {
     const pageClassNames = classNames({
@@ -856,22 +844,6 @@ export class Pdf extends React.PureComponent {
 
     const pages = _.map(this.state.numPages, (numPages, file) => {
       return _.range(numPages).map((page, pageIndex) => {
-        const onPageClick = (event) => {
-          if (!this.props.isPlacingAnnotation) {
-            return;
-          }
-
-          const { x, y } = this.getPageCoordinatesOfMouseEvent(
-            event,
-            this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect()
-          );
-
-          this.props.placeAnnotation(pageIndex + 1, {
-            xPosition: x,
-            yPosition: y
-          }, this.props.documentId);
-        };
-
         const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], PAGE_WIDTH);
         const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], PAGE_HEIGHT);
 
@@ -894,7 +866,6 @@ export class Pdf extends React.PureComponent {
           onDragOver={this.onPageDragOver}
           onDrop={this.onCommentDrop(pageIndex + 1)}
           key={`${file}-${pageIndex + 1}`}
-          onClick={onPageClick}
           id={this.props.file === file && `pageContainer${pageIndex + 1}`}
           onMouseMove={this.mouseListener}
           ref={this.refFunctionGetters.pageContainer[file][pageIndex]}>

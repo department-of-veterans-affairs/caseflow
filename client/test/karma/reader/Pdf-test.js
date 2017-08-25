@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import { getInitialAnnotationIconPageCoords, pageCoordsOfRootCoords } from '../../../app/components/Pdf';
+import { getInitialAnnotationIconPageCoords } from '../../../app/components/Pdf';
+import { pageCoordsOfRootCoords } from '../reader/utils';
 
 describe('Pdf', () => {
   describe('pageCoordsOfRootCoords', () => {
