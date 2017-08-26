@@ -39,7 +39,10 @@ class Hearings::WorksheetsController < HearingsController
     {
       veteran: {},
       appeal: {},
-      streams: []
+      streams: {
+        ID: 101,
+        description: ''
+      }
     }
   end
 end

@@ -64,7 +64,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_DESCRIPTIONS:
     return update(state, {
-      worksheet: { description: { $set: action.payload.description } }
+      worksheet: { streams: { description: { $set: action.payload.description } } }
     });
 
   case Constants.SET_CONTENTIONS:

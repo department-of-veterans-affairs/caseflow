@@ -79,7 +79,7 @@ export class HearingWorksheet extends React.PureComponent {
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: 'Right elbow',
         actions: [
-          false, false, false, false, false, false
+          false, false, true, true, false, false
         ]
       }
     ];
@@ -98,7 +98,7 @@ export class HearingWorksheet extends React.PureComponent {
             aria-label="Description"
             // has no label | empty for accessibility
             name=""
-            value={this.props.worksheet.description || ''}
+            value={this.props.worksheet.streams.description || ''}
             onChange={this.props.onDescriptionsChange}
             />
         </div>,
