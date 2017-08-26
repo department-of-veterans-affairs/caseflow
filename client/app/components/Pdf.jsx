@@ -967,10 +967,10 @@ export class Pdf extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
-  allAnnotations: state.annotations
+  ...state.readerReducer.ui.pdf,
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+  comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.documentId),
+  allAnnotations: state.readerReducer.annotations
 });
 
 const mapDispatchToProps = (dispatch) => ({
