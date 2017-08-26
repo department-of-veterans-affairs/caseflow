@@ -153,7 +153,6 @@ describe('hearingsReducer', () => {
           streams: {
             description: 'filled'
           }
-
         }
       });
     });
@@ -162,7 +161,6 @@ describe('hearingsReducer', () => {
     it('sets worksheet issue description', () => {
       expect(state.worksheet.streams.description).to.equal();
     });
-
   });
 
   context(Constants.SET_CONTENTIONS, () => {
