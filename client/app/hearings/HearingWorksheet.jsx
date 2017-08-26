@@ -96,8 +96,7 @@ export class HearingWorksheet extends React.PureComponent {
           <TextareaField
             id={`worksheet-issue-description-${issue.issueID}`}
             aria-label="Description"
-            // has no label | empty for accessibility
-            name=""
+            name={`issue-${issue.issueID}`}
             value={this.props.worksheet.streams.description || ''}
             onChange={this.props.onDescriptionsChange}
             />

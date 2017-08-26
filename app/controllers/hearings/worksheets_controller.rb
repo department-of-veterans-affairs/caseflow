@@ -41,7 +41,7 @@ class Hearings::WorksheetsController < HearingsController
       appeal: {},
       streams: {
         ID: 101,
-        description: ''
+        description: ""
       }
     }
   end
