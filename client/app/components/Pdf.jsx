@@ -7,7 +7,6 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
-import CommentIcon from './CommentIcon';
 import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -905,7 +904,7 @@ export class Pdf extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
   ...state.ui.pdf,
   ..._.pick(state, 'placingAnnotationIconPageCoords'),
   allAnnotations: state.annotations
@@ -922,7 +921,7 @@ const mapDispatchToProps = (dispatch) => ({
     requestMoveAnnotation,
     onScrollToComment,
     setPdfReadyToShow
-  }, dispatch),
+  }, dispatch)
 });
 
 export default connect(

@@ -9,8 +9,8 @@ import { handleSelectCommentIcon, placeAnnotation } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 
 const DIV_STYLING = {
-  width: "100%",
-  height: "100%"
+  width: '100%',
+  height: '100%'
 };
 
 class CommentLayer extends PureComponent {
@@ -45,12 +45,12 @@ class CommentLayer extends PureComponent {
 
   getAnnotations = () => {
     const placingAnnotation = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
-      [{
-        temporaryId: 'placing-annotation-icon',
-        page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-        isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }] : [];
+    [{
+      temporaryId: 'placing-annotation-icon',
+      page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+      isPlacingAnnotationIcon: true,
+      ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
+    }] : [];
 
     return this.props.comments.concat(placingAnnotation);
   }
@@ -77,7 +77,7 @@ class CommentLayer extends PureComponent {
       onClick={this.onPageClick}
       ref={this.getCommentLayerRef}>
       {commentIcons[pageNumberOfPageIndex(this.props.pageIndex)]}
-    </div>
+    </div>;
   }
 }
 

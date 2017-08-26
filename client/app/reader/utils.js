@@ -15,6 +15,11 @@ export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 export const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 export const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
+export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
+  x: (x - pageBoundingBox.left) / scale,
+  y: (y - pageBoundingBox.top) / scale
+});
+
 export const getPageCoordinatesOfMouseEvent = (event, container, scale) => {
   const constrainedRootCoords = {
     x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
@@ -22,13 +27,7 @@ export const getPageCoordinatesOfMouseEvent = (event, container, scale) => {
   };
 
   return pageCoordsOfRootCoords(constrainedRootCoords, container, scale);
-}
-
-export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
-  x: (x - pageBoundingBox.left) / scale,
-  y: (y - pageBoundingBox.top) / scale
-});
-
+};
 
 /**
  * immutability-helper takes two arguments: an object and a spec for how to change it:
