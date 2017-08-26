@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from '../components/CommentIcon';
-import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from '../reader/utils';
+import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import _ from 'lodash';
 import { handleSelectCommentIcon, placeAnnotation } from '../reader/actions';
 import { bindActionCreators } from 'redux';

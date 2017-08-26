@@ -7,6 +7,10 @@ import _ from 'lodash';
 
 import PdfJsStub from '../../helpers/PdfJsStub';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
+import { createStore, applyMiddleware } from 'redux';
+import readerReducer from '../../../app/reader/reducer';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 
 import { documents } from '../../data/documents';
 
@@ -26,21 +30,24 @@ describe('Pdf', () => {
     let onPageChange;
 
     beforeEach(() => {
-      onPageChange = sinon.spy();
+      const store = createStore(readerReducer, applyMiddleware(thunk));
 
+      onPageChange = sinon.spy();
       PdfJsStub.beforeEach();
 
-      wrapper = mount(<Pdf
-        comments={[]}
-        documentId={documents[0].id}
-        file="test.pdf"
-        id={pdfId}
-        setPdfReadyToShow={_.noop}
-        setPageCoordBounds={_.noop}
-        pdfWorker="noworker"
-        scale={1}
-        onPageChange={onPageChange}
-      />, { attachTo: document.getElementById('app') });
+      wrapper = mount(<Provider store={store}>
+        <Pdf
+          comments={[]}
+          documentId={documents[0].id}
+          file="test.pdf"
+          id={pdfId}
+          setPdfReadyToShow={_.noop}
+          setPageCoordBounds={_.noop}
+          pdfWorker="noworker"
+          scale={1}
+          onPageChange={onPageChange}
+        />
+      </Provider>, { attachTo: document.getElementById('app') });
     });
 
     afterEach(() => {
@@ -50,6 +57,7 @@ describe('Pdf', () => {
 
     context('.render', () => {
       it('renders the staging div', () => {
+        console.log(wrapper.debug());
         expect(wrapper.find('.cf-pdf-pdfjs-container')).
           to.have.length(PdfJsStub.numPages);
       });
