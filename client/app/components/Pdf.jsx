@@ -920,9 +920,9 @@ const mapDispatchToProps = (dispatch) => ({
     showPlaceAnnotationIcon,
     hidePlaceAnnotationIcon,
     requestMoveAnnotation,
-    onScrollToComment
+    onScrollToComment,
+    setPdfReadyToShow
   }, dispatch),
-  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId))
 });
 
 export default connect(

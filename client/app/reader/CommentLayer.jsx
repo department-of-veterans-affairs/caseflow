@@ -8,6 +8,11 @@ import _ from 'lodash';
 import { handleSelectCommentIcon, placeAnnotation } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 
+const DIV_STYLING = {
+  width: "100%",
+  height: "100%"
+};
+
 class CommentLayer extends PureComponent {
   constructor(props) {
     super(props);
@@ -36,43 +41,41 @@ class CommentLayer extends PureComponent {
     );
   };
 
-  commentLayerRef = (ref) => {
-    this.commentLayer = ref;
-  }
+  getCommentLayerRef = (ref) => this.commentLayer = ref
 
-  render() {
-    const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
-      this.props.comments.concat([{
+  getAnnotations = () => {
+    const placingAnnotation = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
+      [{
         temporaryId: 'placing-annotation-icon',
         page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
         isPlacingAnnotationIcon: true,
         ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }]) :
-      this.props.comments;
+      }] : [];
 
-    const commentIcons = annotations.reduce((acc, comment) => {
-      // Only show comments on a page if it's been drawn
-      if (!acc[comment.page]) {
-        acc[comment.page] = [];
-      }
+    return this.props.comments.concat(placingAnnotation);
+  }
 
-      acc[comment.page].push(
-        <CommentIcon
-          comment={comment}
-          position={{
-            x: comment.x * this.props.scale,
-            y: comment.y * this.props.scale
-          }}
-          key={keyOfAnnotation(comment)}
-          onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
+  render() {
+    const commentIcons = this.getAnnotations().reduce((acc, comment) => {
+      const commentIcon = <CommentIcon
+        comment={comment}
+        position={{
+          x: comment.x * this.props.scale,
+          y: comment.y * this.props.scale
+        }}
+        key={keyOfAnnotation(comment)}
+        onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />;
 
-      return acc;
+      return {
+        ...acc,
+        [comment.page]: [...(acc[comment.page] || []), commentIcon]
+      };
     }, {});
 
     return <div
-      style={{width: "100%", height: "100%"}}
+      style={DIV_STYLING}
       onClick={this.onPageClick}
-      ref={this.commentLayerRef}>
+      ref={this.getCommentLayerRef}>
       {commentIcons[pageNumberOfPageIndex(this.props.pageIndex)]}
     </div>
   }
@@ -90,7 +93,8 @@ CommentLayer.propTypes = {
   placingAnnotationIconPageCoords: PropTypes.object,
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
-  pageIndex: PropTypes.number
+  pageIndex: PropTypes.number,
+  documentId: PropTypes.number
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -105,7 +109,6 @@ const mapDispatchToProps = (dispatch) => ({
     handleSelectCommentIcon
   }, dispatch)
 });
-
 
 export default connect(
   mapStateToProps, mapDispatchToProps
