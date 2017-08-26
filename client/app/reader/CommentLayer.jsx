@@ -43,7 +43,7 @@ class CommentLayer extends PureComponent {
 
   getCommentLayerRef = (ref) => this.commentLayer = ref
 
-  getAnnotations = () => {
+  getAnnotationsForPage = () => {
     const placingAnnotation = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
     [{
       temporaryId: 'placing-annotation-icon',
@@ -52,31 +52,25 @@ class CommentLayer extends PureComponent {
       ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
     }] : [];
 
-    return this.props.comments.concat(placingAnnotation);
+    return this.props.comments.concat(placingAnnotation).
+      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex));
   }
 
+  getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
+    comment={comment}
+    position={{
+      x: comment.x * this.props.scale,
+      y: comment.y * this.props.scale
+    }}
+    key={keyOfAnnotation(comment)}
+    onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
+
   render() {
-    const commentIcons = this.getAnnotations().reduce((acc, comment) => {
-      const commentIcon = <CommentIcon
-        comment={comment}
-        position={{
-          x: comment.x * this.props.scale,
-          y: comment.y * this.props.scale
-        }}
-        key={keyOfAnnotation(comment)}
-        onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />;
-
-      return {
-        ...acc,
-        [comment.page]: [...(acc[comment.page] || []), commentIcon]
-      };
-    }, {});
-
     return <div
       style={DIV_STYLING}
       onClick={this.onPageClick}
       ref={this.getCommentLayerRef}>
-      {commentIcons[pageNumberOfPageIndex(this.props.pageIndex)]}
+      {this.getCommentIcons()}
     </div>;
   }
 }
