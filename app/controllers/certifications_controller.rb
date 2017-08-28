@@ -1,25 +1,15 @@
 class CertificationsController < ApplicationController
   before_action :verify_access, :check_certification_out_of_service
 
+  # To begin certification, RO employees click a link in VACOLS
+  # that leads to to /certifications/new/#{VACOLS_ID}.
   def new
-    if feature_enabled?(:certification_v2)
-      certification.async_start!
-      react_routed
-      render "v2", layout: "application"
-      return
-    end
-
-    status = certification.start!
-    @form8 = certification.form8
-
-    case status
-    when :already_certified    then render "already_certified"
-    when :data_missing         then render "not_ready", status: 409
-    when :mismatched_documents then render "mismatched_documents"
-    end
+    certification.async_start!
+    react_routed
+    render "v2", layout: "application"
   end
 
-  def update_certification_from_v2_form
+  def update_certification
     permitted = params
                 .require("update")
                 .permit("representative_name",
@@ -37,13 +27,13 @@ class CertificationsController < ApplicationController
   end
 
   def update_v2
-    update_certification_from_v2_form
+    update_certification
     render json: {}
   end
 
   def certify_v2
-    update_certification_from_v2_form
-    validate_data_presence_v2
+    update_certification
+    validate_data_presence
 
     if %w(NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED).include?(certification.hearing_preference)
       hearing_requested = "No"
@@ -65,20 +55,8 @@ class CertificationsController < ApplicationController
     render json: {}
   end
 
-  def create
-    # Can't use controller params in model mass assignments without whitelisting. See:
-    # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
-    params.require(:form8).permit!
-    form8.update_from_string_params(params[:form8])
-    form8.save_pdf!
-
-    redirect_to certification_path(id: certification.form8.vacols_id)
-  end
-
   def show
-    return certification_data if feature_enabled?(:certification_v2)
-
-    render "confirm", layout: "application" if params[:confirm]
+    certification_data
   end
 
   def certification_data
@@ -96,17 +74,11 @@ class CertificationsController < ApplicationController
     pdfjs.full_path(file: form9_pdf_certification_path(id: certification.vacols_id))
   end
 
+  # This is no longer used by users since the Form 8 has been disabled,
+  # but we'll keep it here because it lets us
+  # easily check up on the
   def pdf
     send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
-  end
-
-  # TODO: remove when v2 is rolled outx`
-  def confirm
-    @certification = Certification.find_by(vacols_id: vacols_id)
-
-    @certification.complete!(current_user.id)
-
-    redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
 
   def set_application
@@ -120,7 +92,7 @@ class CertificationsController < ApplicationController
   end
 
   # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
-  def validate_data_presence_v2
+  def validate_data_presence
     fail Caseflow::Error::CertificationMissingData unless check_confirm_hearing_data
   end
 
