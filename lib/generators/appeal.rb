@@ -91,16 +91,19 @@ class Generators::Appeal
           docket_number: "13 11-263",
           issues: [
             { disposition: :remanded, program: :compensation,
+              vacols_sequence_id: 1,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :knee },
             { disposition: :allowed, program: :compensation,
+              vacols_sequence_id: 2,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :elbow },
             { disposition: :denied, program: :compensation,
+              vacols_sequence_id: 3,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
