@@ -37,6 +37,9 @@ node('deploy') {
     // since the deployment scripts are separated from the source code.
     stage ('checkout-deploy-repo') {
       sh "git clone https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
+      dir ('./appeals-deployment') {
+        sh " git checkout evan-deploy-scale-down-prod-at-night"
+      }
       // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
       if (env.APP_ENV == 'prod') {
         APP_VERSION = sh (
