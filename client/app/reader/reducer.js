@@ -152,7 +152,7 @@ export const initialState = {
   ui: {
     caseSelect: {
       selectedAppealVacolsId: null,
-      requestAppealsUsingVeteranId: false,
+      isRequestingAppealUsingVeteranId: false,
       selectedAppeal: {},
       receivedAppeals: []
     },
@@ -802,23 +802,23 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         caseSelect: {
-          requestAppealsUsingVeteranId: { $set: true }
+          isRequestingAppealUsingVeteranId: { $set: true }
         }
       }
     });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
     return update(state, {
       ui: {
         caseSelect: {
-          requestAppealsUsingVeteranId: { $set: false }
+          isRequestingAppealUsingVeteranId: { $set: false }
         }
       }
     });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID:
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
     return update(state, {
       ui: {
         caseSelect: {
-          requestAppealsUsingVeteranId: { $set: false },
+          isRequestingAppealUsingVeteranId: { $set: false },
           receivedAppeals: {
             $set: action.payload.appeals
           }

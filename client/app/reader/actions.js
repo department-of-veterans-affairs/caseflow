@@ -619,12 +619,12 @@ export const fetchAppealDetails = (vacolsId) => (
 );
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID,
+  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
   payload: { appeals }
 });
 
 export const fetchAppealUsingVeteranIdFailed = () => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED
+  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE
 });
 
 export const caseSelectAppeal = (appeal) => ({
@@ -642,8 +642,6 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
     ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      // if the veteran only has one appeal associated,
-      // automatically select that appeal for viewing
       dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
     });
   }

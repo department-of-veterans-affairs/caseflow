@@ -79,7 +79,7 @@ class CaseSelectSearch extends React.PureComponent {
         value={this.props.caseSelectCriteria.searchQuery}
         onClearSearch={this.props.clearCaseSelectSearch}
         onSubmit={this.searchOnChange}
-        loading={caseSelect.requestAppealsUsingVeteranId}
+        loading={caseSelect.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
       />
       { Boolean(_.size(caseSelect.receivedAppeals) > 1) && <Modal
