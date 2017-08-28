@@ -39,8 +39,12 @@ class Hearing < ActiveRecord::Base
   end
 
   delegate \
+    :veteran_age, \
+    :veteran_full_name, \
     :representative_name, \
     :appellant_last_first_mi, \
+    :appellant_city, \
+    :appellant_state, \
     :regional_office_name, \
     :vbms_id, \
     to: :appeal
@@ -58,7 +62,11 @@ class Hearing < ActiveRecord::Base
         :notes,
         :add_on,
         :appellant_last_first_mi,
+        :appellant_city,
+        :appellant_state,
         :representative_name,
+        :veteran_age,
+        :veteran_full_name,
         :venue, :vbms_id
       ]
     )
