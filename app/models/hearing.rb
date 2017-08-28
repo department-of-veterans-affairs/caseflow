@@ -4,7 +4,7 @@ class Hearing < ActiveRecord::Base
   belongs_to :user
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes
+                       :aod, :hold_open, :transcript_requested, :notes, :add_on
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -21,6 +21,10 @@ class Hearing < ActiveRecord::Base
 
   def scheduled_pending?
     date && !closed?
+  end
+
+  def active_appeal_streams
+    self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
   def update(hearing_hash)
@@ -43,6 +47,7 @@ class Hearing < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
+      include: :issues,
       methods: [
         :date,
         :request_type,
@@ -51,11 +56,18 @@ class Hearing < ActiveRecord::Base
         :transcript_requested,
         :hold_open,
         :notes,
+        :add_on,
         :appellant_last_first_mi,
         :representative_name,
         :venue, :vbms_id
       ]
     )
+  end
+
+  def set_issues_from_appeal
+    appeal.issues.each do |issue|
+      Issue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id)
+    end if appeal
   end
 
   class << self
@@ -67,6 +79,16 @@ class Hearing < ActiveRecord::Base
 
     def repository
       @repository ||= HearingRepository
+    end
+
+    def create_from_vacols_record(vacols_record)
+      transaction do
+        find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
+          hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+                         user: User.find_by(css_id: vacols_record.css_id))
+          hearing.set_issues_from_appeal
+        end
+      end
     end
   end
 end
