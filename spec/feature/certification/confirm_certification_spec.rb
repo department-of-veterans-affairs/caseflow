@@ -68,7 +68,7 @@ RSpec.feature "Confirm Certification" do
     # Validate help link
     find('#menu-trigger').click
     find_link("Help").click
-    expect(page).to have_content("Caseflow Certification Help")
+    expect(page).to have_content("Welcome to the Certification Help page!")
     page.driver.go_back
 
     certification = Certification.find_or_create_by_vacols_id(appeal.vacols_id)
