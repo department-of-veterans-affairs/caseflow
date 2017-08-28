@@ -238,21 +238,12 @@ class AppealRepository
     appeal.case_record.bfdcertool = certification_date
     appeal.case_record.bf41stat = certification_date
 
-    appeal.case_record.bftbind = nil
-
-    # rubocop:disable Style/IfInsideElse
-    # Certification v2 - use the hearing preference that the user confirms.
-    if FeatureToggle.enabled?(:certification_v2, user: RequestStore[:current_user])
-      preference_attrs = VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[certification.hearing_preference.to_sym]
-      appeal.case_record.bfhr = preference_attrs[:vacols_value]
-      # "Ready for hearing" checkbox
-      appeal.case_record.bftbind = preference_attrs[:ready_for_hearing] ? "X" : nil
-      # "Video hearing" checkbox
-      appeal.case_record.bfdocind = preference_attrs[:video_hearing] ? "V" : nil
-    else
-      appeal.case_record.bftbind = "X" if appeal.hearing_request_type == :travel_board
-    end
-    # rubocop:enable Style/IfInsideElse
+    preference_attrs = VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[certification.hearing_preference.to_sym]
+    appeal.case_record.bfhr = preference_attrs[:vacols_value]
+    # "Ready for hearing" checkbox
+    appeal.case_record.bftbind = preference_attrs[:ready_for_hearing] ? "X" : nil
+    # "Video hearing" checkbox
+    appeal.case_record.bfdocind = preference_attrs[:video_hearing] ? "V" : nil
 
     MetricsService.record("VACOLS: certify #{appeal.vacols_id}",
                           service: :vacols,
