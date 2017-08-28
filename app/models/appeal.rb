@@ -13,6 +13,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
+  vacols_attr_accessor :appellant_city, :appellant_state
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
@@ -26,7 +27,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc
+  vacols_attr_accessor :cavc, :veteran_date_of_birth
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -105,8 +106,15 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
+  # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
+  # Eventually we'd like to reference methods on the veteran with data from VACOLS
+  # and only "lazy load" data from BGS when necessary
   def veteran
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
+  end
+
+  def veteran_age
+    Veteran.new(date_of_birth: veteran_date_of_birth).age
   end
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
@@ -339,6 +347,10 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  def issue_by_sequence_id(sequence_id)
+    issues.find { |i| i.vacols_sequence_id == sequence_id }
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
