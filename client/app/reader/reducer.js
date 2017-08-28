@@ -157,7 +157,7 @@ export const initialState = {
       receivedAppeals: [],
       search: {
         showErrorMessage: false,
-        showNoAppealsInfo: false
+        showNoAppealsInfoMessage: false
       }
     },
     searchCategoryHighlights: {},
@@ -348,7 +348,7 @@ export const reducer = (state = initialState, action = {}) => {
           selectedAppealVacolsId: { $set: null },
           search: {
             showErrorMessage: { $set: false },
-            showNoAppealsInfo: { $set: false }
+            showNoAppealsInfoMessage: { $set: false }
           }
         }
       }
@@ -844,7 +844,7 @@ export const reducer = (state = initialState, action = {}) => {
       ui: {
         caseSelect: {
           search: {
-            showNoAppealsInfo: { $set: true }
+            showNoAppealsInfoMessage: { $set: true }
           }
         }
       }

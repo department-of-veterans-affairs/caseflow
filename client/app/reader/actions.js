@@ -608,12 +608,20 @@ export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
   payload: { failedToLoad }
 });
 
+export const fetchedNoAppealsUsingVeteranId = () => ({
+  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
+});
+
 export const fetchAppealDetails = (vacolsId) => (
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+      if (_.size(returnedObject.appeals) === 0) {
+        dispatch(fetchedNoAppealsUsingVeteranId());
+      } else {
+        dispatch(onReceiveAppealDetails(returnedObject.appeal));        
+      }
     }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
@@ -625,10 +633,6 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
 
 export const fetchAppealUsingVeteranIdFailed = () => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE
-});
-
-export const fetchedNoAppealsUsingVeteranId = () => ({
-  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
 });
 
 export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
