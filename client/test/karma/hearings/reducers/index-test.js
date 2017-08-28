@@ -2,7 +2,8 @@ import { expect } from 'chai';
 import * as Hearings from '../../../../app/hearings/reducers/index';
 import * as Constants from '../../../../app/hearings/constants/constants';
 
-describe('hearingsReducer', () => {
+/* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }]*/
+Number(describe('hearingsReducer', () => {
   let initialState;
 
   beforeEach(() => {
@@ -16,6 +17,41 @@ describe('hearingsReducer', () => {
       },
       worksheet: {
       }
+    });
+  });
+
+  context(Constants.SET_REPNAME, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_REPNAME,
+        payload: {
+          repName: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet.repName).to.deep.equal('filled');
+    });
+  });
+
+
+  context(Constants.SET_WITNESS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_WITNESS,
+        payload: {
+          witness: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet.witness).to.deep.equal('filled');
     });
   });
 
@@ -206,4 +242,4 @@ describe('hearingsReducer', () => {
       expect(state.worksheet.comments).to.deep.equal('filled');
     });
   });
-});
+}));
