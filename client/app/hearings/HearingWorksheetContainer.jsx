@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
-import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
+import LoadingContainer from '../components/LoadingContainer';
+import * as AppConstants from '../constants/AppConstants';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
 
 // TODO: method should get data to populate worksheet
 export const getWorksheet = (id, dispatch) => {
-  ApiUtil.get(`/hearings/worksheets/${id}.json`, { cache: true }).
+  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
     then((response) => {
       dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {
@@ -21,7 +22,7 @@ export class HearingWorksheetContainer extends React.Component {
   componentDidMount() {
     // TODO: if !worksheet call this.props.getWorksheet
     if (!this.props.worksheet) {
-      this.props.getWorksheet(this.props.vbms_id);
+      this.props.getWorksheet(this.props.hearingId);
     }
 
     // Since the page title does not change when react router
@@ -41,9 +42,14 @@ export class HearingWorksheetContainer extends React.Component {
     }
 
     if (!this.props.worksheet) {
-      return <div className="loading-dockets">
-        <div>{loadingSymbolHtml('', '50%', '#68bd07')}</div>
-        <div>Loading worksheet, please wait...</div>
+      return <div className="loading-hearings">
+        <div className="cf-sg-loader">
+          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
+              <div className="cf-image-loader">
+              </div>
+            <p className="cf-txt-c">Loading worksheet, please wait...</p>
+          </LoadingContainer>
+        </div>
       </div>;
     }
 
@@ -73,6 +79,5 @@ export default connect(
 
 HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  date: PropTypes.string,
-  vbms_id: PropTypes.string
+  hearingId: PropTypes.string.isRequired
 };

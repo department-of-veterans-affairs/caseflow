@@ -72,7 +72,7 @@ export class DocketHearingRow extends React.PureComponent {
         </td>
         <td className="cf-hearings-docket-appellant">
           <b>{hearing.appellant_last_first_mi}</b>
-          <Link to={`/hearings/worksheets/${hearing.vbms_id}`}>{hearing.vbms_id}</Link>
+          <Link to={`/hearings/${hearing.id}/worksheet`}>{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
@@ -122,7 +122,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
-            <label htmlFor={`${hearing.id}.notes`}>Notes:</label>
+            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
             <div>
               <textarea
                 id={`${hearing.id}.notes`}

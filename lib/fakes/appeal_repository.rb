@@ -93,6 +93,12 @@ class Fakes::AppealRepository
     true
   end
 
+  def self.appeals_ready_for_hearing(vbms_id)
+    (records || []).select do |_, a|
+      a[:vbms_id] == vbms_id && a[:decision_date].nil? && !a[:form9_date].nil?
+    end
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")
@@ -423,6 +429,32 @@ class Fakes::AppealRepository
       },
       issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: redacted_reader_documents
+    )
+    Generators::Appeal.build(
+      vacols_id: "reader_id4",
+      vbms_id: "DEMO123",
+      vacols_record: {
+        template: :ready_to_certify,
+        veteran_first_name: "Joe",
+        veteran_last_name: "Smith",
+        type: "Court Remand",
+        cavc: true,
+        date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
+        date_received: "2013-05-31 00:00:00 UTC".to_datetime,
+        signed_date: nil,
+        docket_number: "13 11-265",
+        regional_office_key: "RO13"
+      },
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+               Generators::Issue.build(disposition: "Osteomyelitis",
+                                       levels: ["Osteomyelitis"],
+                                       description: [
+                                         "15 - Compensation",
+                                         "26 - Osteomyelitis"
+                                       ],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
+      documents: static_reader_documents
     )
   end
 

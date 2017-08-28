@@ -38,7 +38,7 @@ const ERRORS = {
   fieldLength: 'Please enter less than 40 characters in the field below.'
 };
 
-class UnconnectedSignAndCertify extends React.Component {
+export class SignAndCertify extends React.Component {
   // TODO: updating state in ComponentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
@@ -247,10 +247,10 @@ const mapStateToProps = (state) => ({
   certificationStatus: state.certificationStatus
 });
 
-const SignAndCertify = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UnconnectedSignAndCertify);
+)(SignAndCertify);
 
 SignAndCertify.propTypes = {
   onSignAndCertifyFormChange: PropTypes.func,
@@ -265,5 +265,3 @@ SignAndCertify.propTypes = {
   match: PropTypes.object.isRequired,
   certificationStatus: PropTypes.string
 };
-
-export default SignAndCertify;

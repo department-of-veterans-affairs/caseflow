@@ -11,8 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724162126) do
-
+ActiveRecord::Schema.define(version: 20170815120508) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -264,9 +263,12 @@ ActiveRecord::Schema.define(version: 20170724162126) do
   create_table "issues", force: :cascade do |t|
     t.integer "appeal_id"
     t.string  "vacols_sequence_id"
-    t.integer "hearing_worksheet_status"
     t.boolean "hearing_worksheet_reopen", default: false
     t.boolean "hearing_worksheet_vha",    default: false
+    t.boolean "allow",                    default: false
+    t.boolean "deny",                     default: false
+    t.boolean "remand",                   default: false
+    t.boolean "dismiss",                  default: false
   end
 
   create_table "tags", force: :cascade do |t|
@@ -320,7 +322,6 @@ ActiveRecord::Schema.define(version: 20170724162126) do
     t.string "full_name"
     t.string "email"
     t.string "roles",                   array: true
-    t.string "vacols_id"
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree

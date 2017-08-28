@@ -61,6 +61,7 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
+    get 'appeal/veteran-id/:veteran_id', to: "appeal#find_appeals_by_veteran_id", constraints: { veteran_id: /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -71,6 +72,7 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show]
   end
+  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
   resources :hearings, only: [:update]
 

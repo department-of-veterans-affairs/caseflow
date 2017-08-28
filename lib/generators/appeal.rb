@@ -28,7 +28,8 @@ class Generators::Appeal
         appellant_last_name: last_name,
         appellant_relationship: "Child",
         regional_office_key: "RO13",
-        decision_date: 7.days.ago
+        decision_date: 7.days.ago,
+        form9_date: 11.days.ago
       }
     end
 
@@ -49,11 +50,16 @@ class Generators::Appeal
         certified: {
           certification_date: 1.day.ago
         },
+        form9_not_submitted: {
+          decision_date: nil,
+          form9_date: nil
+        },
         pending_hearing: {
           status: "Active",
           decision_date: nil,
           issues: [
             { disposition: :nil, program: :compensation,
+              vacols_sequence_id: 1,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
@@ -85,16 +91,19 @@ class Generators::Appeal
           docket_number: "13 11-263",
           issues: [
             { disposition: :remanded, program: :compensation,
+              vacols_sequence_id: 1,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :knee },
             { disposition: :allowed, program: :compensation,
+              vacols_sequence_id: 2,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :elbow },
             { disposition: :denied, program: :compensation,
+              vacols_sequence_id: 3,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
@@ -207,7 +216,6 @@ class Generators::Appeal
                                     end
 
       template = vacols_record_templates[template_key] || {}
-
       vacols_record_default_attrs.merge(template).merge(vacols_record)
     end
   end

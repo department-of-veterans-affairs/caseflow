@@ -13,6 +13,8 @@ describe('hearingsReducer', () => {
             0: {}
           }
         }
+      },
+      worksheet: {
       }
     });
   });
@@ -32,7 +34,8 @@ describe('hearingsReducer', () => {
     });
 
     it('sets notes', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { notes: 'this is my note' } } } });
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { notes: 'this is my note',
+        edited: true } } } });
     });
   });
 
@@ -51,7 +54,8 @@ describe('hearingsReducer', () => {
     });
 
     it('sets disposition', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { disposition: 'no_show' } } } });
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { disposition: 'no_show',
+        edited: true } } } });
     });
   });
 
@@ -70,7 +74,8 @@ describe('hearingsReducer', () => {
     });
 
     it('sets hold open', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { hold_open: 60 } } } });
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { hold_open: 60,
+        edited: true } } } });
     });
   });
 
@@ -89,7 +94,8 @@ describe('hearingsReducer', () => {
     });
 
     it('sets aod', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { aod: 'filed' } } } });
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { aod: 'filed',
+        edited: true } } } });
     });
   });
 
@@ -108,7 +114,8 @@ describe('hearingsReducer', () => {
     });
 
     it('sets addon', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { addon: true } } } });
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { addon: true,
+        edited: true } } } });
     });
   });
 
@@ -127,7 +134,76 @@ describe('hearingsReducer', () => {
     });
 
     it('sets transcript requested', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { transcript_requested: true } } } });
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { transcript_requested: true,
+        edited: true } } } });
+    });
+  });
+
+  context(Constants.SET_CONTENTIONS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_CONTENTIONS,
+        payload: {
+          contentions: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet.contentions).to.deep.equal('filled');
+    });
+  });
+
+  context(Constants.SET_PERIODS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_PERIODS,
+        payload: {
+          periods: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet periods', () => {
+      expect(state.worksheet.periods).to.deep.equal('filled');
+    });
+  });
+
+  context(Constants.SET_EVIDENCE, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_EVIDENCE,
+        payload: {
+          evidence: 'filled'
+        }
+      });
+    });
+
+    it('sets evidences', () => {
+      expect(state.worksheet.evidence).to.deep.equal('filled');
+    });
+  });
+
+  context(Constants.SET_COMMENTS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_COMMENTS,
+        payload: {
+          comments: 'filled'
+        }
+      });
+    });
+
+    it('sets worksheet comments', () => {
+      expect(state.worksheet.comments).to.deep.equal('filled');
     });
   });
 });

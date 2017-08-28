@@ -629,10 +629,12 @@ input[type="search"].cf-search-input-with-close {
 }
 // scss-lint:enable QualifyingElement
 
-[type="button"].cf-search-close-icon {
-  margin-left: -20px;
-  margin-top: 2px;
-  position: absolute;
+.usa-search-small {
+  [type="button"].cf-search-close-icon {
+    margin-left: -20px;
+    margin-top: 2px;
+    position: absolute;
+  }
 }
 
 .cf-pdf-page-hidden {

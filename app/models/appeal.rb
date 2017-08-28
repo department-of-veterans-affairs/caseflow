@@ -341,6 +341,10 @@ class Appeal < ActiveRecord::Base
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
+  def issue_by_sequence_id(sequence_id)
+    issues.find { |i| i.vacols_sequence_id == sequence_id }
+  end
+
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
   # VACOLS formatted veteran identifier, sanitized_vbms_id
@@ -459,6 +463,10 @@ class Appeal < ActiveRecord::Base
 
     def bgs
       BGSService.new
+    end
+
+    def fetch_appeals_by_vbms_id(vbms_id)
+      @repository.appeals_by_vbms_id(vbms_id)
     end
 
     def vbms

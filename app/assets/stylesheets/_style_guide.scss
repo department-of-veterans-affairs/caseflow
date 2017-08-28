@@ -236,6 +236,8 @@ pre {
     position: relative;
     left: auto;
   }
+
+  margin-bottom: 15px;
 }
 
 .cf-sg-loader {
@@ -253,4 +255,8 @@ pre {
   .cf-app-footer {
     margin-top: 0;
   }
+}
+
+.cf-sg-alert-lite {
+  max-width: 320px;
 }

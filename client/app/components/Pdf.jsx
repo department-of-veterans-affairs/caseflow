@@ -494,6 +494,8 @@ export class Pdf extends React.PureComponent {
         // There is a chance another async call has resolved in the time that
         // getDocument took to run. If so, again just use the cached version.
         if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
+          pdfDocument.destroy();
+
           return this.predrawnPdfs[file].pdfDocument;
         }
         this.predrawnPdfs[file] = {
@@ -503,6 +505,7 @@ export class Pdf extends React.PureComponent {
 
         return pdfDocument;
       }
+      pdfDocument.destroy();
 
       return null;
     }).
@@ -615,7 +618,7 @@ export class Pdf extends React.PureComponent {
     this.updatePageBounds();
   }
 
-  comopnentWillUnmount() {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.drawInViewPages);
     window.removeEventListener('keydown', this.keyListener);
   }
@@ -670,7 +673,11 @@ export class Pdf extends React.PureComponent {
     if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
       const pdfsToKeep = [...nextProps.prefetchFiles, nextProps.file];
 
-      _.forEach(_.omit(this.predrawnPdfs, pdfsToKeep), this.cleanUpPdf);
+      Object.keys(this.predrawnPdfs).forEach((file) => {
+        if (!pdfsToKeep.includes(file)) {
+          this.cleanUpPdf(this.predrawnPdfs[file], file);
+        }
+      });
 
       this.predrawnPdfs = _.pick(this.predrawnPdfs, pdfsToKeep);
     }
