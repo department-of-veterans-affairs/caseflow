@@ -516,7 +516,8 @@ class Appeal < ActiveRecord::Base
       if vbms_id_length == SSN_LENGTH
         sanatized_vbms_id << "S"
       elsif vbms_id_length < SSN_LENGTH
-        sanatized_vbms_id = sanatized_vbms_id.delete("/^00/")
+        # removing leading zeros
+        sanatized_vbms_id = sanatized_vbms_id.to_i.to_s
         sanatized_vbms_id << "C"
       end
       sanatized_vbms_id
