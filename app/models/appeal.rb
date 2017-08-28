@@ -502,10 +502,10 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
-    # droping all non-digit characters.
-    # If 9 digits, appending 'S' and sending to VACOLS. If <9 digits,
-    # removing leading zeros, append 'C' and send to VACOLS.
-    # If >9 digits, error.
+    # This method drops all non-digit characters intially.
+    # If vbms_id is 9 digits, appending 'S' and sending to VACOLS.
+    # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
+    # If vbms_id is > 9 digits, thrown an error.
     def sanitize_and_validate_vbms_id(vbms_id)
       # delete non-digit characters
       sanatized_vbms_id = vbms_id.delete("^0-9")
