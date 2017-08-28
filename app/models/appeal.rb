@@ -465,13 +465,13 @@ class Appeal < ActiveRecord::Base
     end
 
     def fetch_appeals_by_vbms_id(vbms_id)
-      sanatized_vbms_id = ""
+      sanitize_vbms_id = ""
       begin
-        sanatized_vbms_id = sanitize_and_validate_vbms_id(vbms_id)
+        sanitize_vbms_id = sanitize_and_validate_vbms_id(vbms_id)
       rescue Caseflow::Error::InvalidVBMSId
         raise ActiveRecord::RecordNotFound
       end
-      @repository.appeals_by_vbms_id(sanatized_vbms_id)
+      @repository.appeals_by_vbms_id(sanitize_vbms_id)
     end
 
     def vbms
@@ -508,20 +508,20 @@ class Appeal < ActiveRecord::Base
     # If vbms_id is > 9 digits, thrown an error.
     def sanitize_and_validate_vbms_id(vbms_id)
       # delete non-digit characters
-      sanatized_vbms_id = vbms_id.delete("^0-9")
-      vbms_id_length = sanatized_vbms_id.length
+      sanitize_vbms_id = vbms_id.delete("^0-9")
+      vbms_id_length = sanitize_vbms_id.length
 
       fail Caseflow::Error::InvalidVBMSId unless
         vbms_id_length >= MIN_VBMS_ID_LENGTH && vbms_id_length <= SSN_LENGTH
 
       if vbms_id_length == SSN_LENGTH
-        sanatized_vbms_id << "S"
+        sanitize_vbms_id << "S"
       elsif vbms_id_length < SSN_LENGTH
         # removing leading zeros
-        sanatized_vbms_id = sanatized_vbms_id.to_i.to_s
-        sanatized_vbms_id << "C"
+        sanitize_vbms_id = sanitize_vbms_id.to_i.to_s
+        sanitize_vbms_id << "C"
       end
-      sanatized_vbms_id
+      sanitize_vbms_id
     end
 
     private
