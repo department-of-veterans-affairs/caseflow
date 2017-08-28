@@ -116,4 +116,27 @@ describe Veteran do
       end
     end
   end
+
+  context "#age" do
+    before do
+      Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
+    end
+    subject { veteran.age }
+    let(:veteran) { Veteran.new(date_of_birth: date_of_birth) }
+
+    context "when they're born in the 1900s" do
+      let(:date_of_birth) { Time.utc(1956, 2, 2) }
+      it { is_expected.to eq(65) }
+    end
+
+    context "when they're born in the 2000s" do
+      let(:date_of_birth) { Time.utc(2001, 2, 2) }
+      it { is_expected.to eq(20) }
+    end
+
+    context "when the date has already passed this year" do
+      let(:date_of_birth) { Time.utc(1987, 1, 10) }
+      it { is_expected.to eq(35) }
+    end
+  end
 end
