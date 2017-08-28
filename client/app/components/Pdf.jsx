@@ -689,11 +689,9 @@ export class Pdf extends React.PureComponent {
       });
 
       Object.keys(this.loadingTasks).forEach((file) => {
-        if (!pdfsToKeep.includes(file)) {
-          if (this.loadingTasks[file]) {
-            this.loadingTasks[file].destroy();
-            this.loadingTasks[file] = null;
-          }
+        if (!pdfsToKeep.includes(file) && this.loadingTasks[file]) {
+          this.loadingTasks[file].destroy();
+          delete this.loadingTasks[file];
         }
       });
 
