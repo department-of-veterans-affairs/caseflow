@@ -350,6 +350,9 @@ class Appeal < ActiveRecord::Base
   # correlates to the VBMS/BGS veteran identifier, which is
   # sometimes called file_number.
   #
+  # Note: sanitize_vbms_id_to_vacols method is used for converting
+  # vbms_id for being used for querying Vacols.
+  #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
     numeric = vbms_id.gsub(/[^0-9]/, "")
@@ -465,13 +468,13 @@ class Appeal < ActiveRecord::Base
     end
 
     def fetch_appeals_by_vbms_id(vbms_id)
-      sanitize_vbms_id = ""
+      sanitized_vbms_id = ""
       begin
-        sanitize_vbms_id = sanitize_and_validate_vbms_id(vbms_id)
+        sanitized_vbms_id = sanitize_vbms_id_to_vacols(vbms_id)
       rescue Caseflow::Error::InvalidVBMSId
         raise ActiveRecord::RecordNotFound
       end
-      @repository.appeals_by_vbms_id(sanitize_vbms_id)
+      @repository.appeals_by_vbms_id(sanitized_vbms_id)
     end
 
     def vbms
@@ -502,29 +505,29 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
+    # This method is used for converting a vbms_id to be suitable for usage
+    # to query VACOLS.
     # This method drops all non-digit characters intially.
     # If vbms_id is 9 digits, appending 'S' and sending to VACOLS.
     # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
     # If vbms_id is > 9 digits, thrown an error.
-    def sanitize_and_validate_vbms_id(vbms_id)
+    def sanitize_vbms_id_to_vacols(vbms_id)
       # delete non-digit characters
-      sanitize_vbms_id = vbms_id.delete("^0-9")
-      vbms_id_length = sanitize_vbms_id.length
+      sanitized_vbms_id = vbms_id.delete("^0-9")
+      vbms_id_length = sanitized_vbms_id.length
 
       fail Caseflow::Error::InvalidVBMSId unless
         vbms_id_length >= MIN_VBMS_ID_LENGTH && vbms_id_length <= SSN_LENGTH
 
       if vbms_id_length == SSN_LENGTH
-        sanitize_vbms_id << "S"
+        sanitized_vbms_id << "S"
       elsif vbms_id_length < SSN_LENGTH
         # removing leading zeros
-        sanitize_vbms_id = sanitize_vbms_id.to_i.to_s
-        sanitize_vbms_id << "C"
+        sanitized_vbms_id = sanitized_vbms_id.to_i.to_s
+        sanitized_vbms_id << "C"
       end
-      sanitize_vbms_id
+      sanitized_vbms_id
     end
-
-    private
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals

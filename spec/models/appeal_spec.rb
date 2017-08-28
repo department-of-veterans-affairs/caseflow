@@ -492,7 +492,7 @@ describe Appeal do
   context "#fetch_appeals_by_vbms_id" do
     subject { Appeal.fetch_appeals_by_vbms_id(vbms_id) }
     let!(:appeal) do
-      Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789")
+      Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789S")
     end
 
     context "when passed with valid vbms id" do
@@ -500,7 +500,7 @@ describe Appeal do
 
       it "returns an appeal" do
         expect(subject.length).to eq(1)
-        expect(subject[0].vbms_id).to eq("123456789")
+        expect(subject[0].vbms_id).to eq("123456789S")
       end
     end
 
@@ -523,8 +523,8 @@ describe Appeal do
     end
   end
 
-  context "#sanitize_and_validate_vbms_id" do
-    subject { Appeal.sanitize_and_validate_vbms_id(vbms_id) }
+  context "#sanitize_vbms_id_to_vacols" do
+    subject { Appeal.sanitize_vbms_id_to_vacols(vbms_id) }
 
     context "when passed a vbms id with a valid ssn" do
       let(:vbms_id) { "123456789" }
