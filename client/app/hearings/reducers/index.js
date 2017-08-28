@@ -44,6 +44,16 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       serverError: { $set: action.payload.err }
     });
 
+  case Constants.SET_REPNAME:
+    return update(state, {
+      worksheet: { repName: { $set: action.payload.repName } }
+    });
+
+  case Constants.SET_WITNESS:
+    return update(state, {
+      worksheet: { witness: { $set: action.payload.witness } }
+    });
+
   case Constants.SET_NOTES:
     return newHearingState(state, action, { notes: { $set: action.payload.notes } });
 
