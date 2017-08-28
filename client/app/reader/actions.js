@@ -617,11 +617,7 @@ export const fetchAppealDetails = (vacolsId) => (
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      if (_.size(returnedObject.appeals) === 0) {
-        dispatch(fetchedNoAppealsUsingVeteranId());
-      } else {
-        dispatch(onReceiveAppealDetails(returnedObject.appeal));        
-      }
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => dispatch(onAppealDetailsLoadingFail()));
   }
 );
@@ -633,11 +629,6 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => ({
 
 export const fetchAppealUsingVeteranIdFailed = () => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE
-});
-
-export const onReceiveMultipleAppealsWithVeteranId = (appeals) => ({
-  type: Constants.RECEIVE_MULTIPLE_APPEALS_USING_VETERAN_ID,
-  payload: { appeals }
 });
 
 export const caseSelectAppeal = (appeal) => ({
@@ -655,7 +646,11 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
     ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+      if (_.size(returnedObject.appeals) === 0) {
+        dispatch(fetchedNoAppealsUsingVeteranId());
+      } else {
+        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+      }
     }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
 );
