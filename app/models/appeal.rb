@@ -474,6 +474,7 @@ class Appeal < ActiveRecord::Base
     end
 
     def certify(appeal)
+      
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       certification = Certification.find_by_vacols_id(appeal.vacols_id)
 
