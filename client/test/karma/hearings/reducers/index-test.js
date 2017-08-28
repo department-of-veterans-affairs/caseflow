@@ -27,13 +27,13 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REPNAME,
         payload: {
-          repName: 'filled'
+          repName: 'John Smith'
         }
       });
     });
 
     it('sets worksheet contentions', () => {
-      expect(state.worksheet.repName).to.deep.equal('filled');
+      expect(state.worksheet.repName).to.deep.equal('John Smith');
     });
   });
 
@@ -45,13 +45,13 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_WITNESS,
         payload: {
-          witness: 'filled'
+          witness: 'Jane Doe'
         }
       });
     });
 
     it('sets worksheet contentions', () => {
-      expect(state.worksheet.witness).to.deep.equal('filled');
+      expect(state.worksheet.witness).to.deep.equal('Jane Doe');
     });
   });
 
