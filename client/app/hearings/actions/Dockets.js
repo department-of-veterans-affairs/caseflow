@@ -21,6 +21,20 @@ export const handleServerError = (err) => ({
   }
 });
 
+export const onRepNameChange = (repName) => ({
+  type: Constants.SET_REPNAME,
+  payload: {
+    repName
+  }
+});
+
+export const onWitnessChange = (witness) => ({
+  type: Constants.SET_WITNESS,
+  payload: {
+    witness
+  }
+});
+
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {

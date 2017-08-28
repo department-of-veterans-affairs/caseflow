@@ -104,7 +104,7 @@ class Certification < ActiveRecord::Base
   end
 
   def rep_name
-    if poa_correct_in_vacols
+    if poa_correct_in_vacols || poa_matches
       vacols_representative_name
     elsif poa_correct_in_bgs
       bgs_representative_name
@@ -114,7 +114,7 @@ class Certification < ActiveRecord::Base
   end
 
   def rep_type
-    if poa_correct_in_vacols
+    if poa_correct_in_vacols || poa_matches
       vacols_representative_type
     elsif poa_correct_in_bgs
       bgs_representative_type

@@ -4,6 +4,9 @@ export const HANDLE_SERVER_ERROR = 'HANDLE_SERVER_ERROR';
 
 export const POPULATE_DOCKETS = 'POPULATE_DOCKETS';
 
+export const SET_REPNAME = 'SET_REPNAME';
+export const SET_WITNESS = 'SET_WITNESS';
+
 export const SET_NOTES = 'SET_NOTES';
 export const SET_DISPOSITION = 'SET_DISPOSITION';
 export const SET_HOLD_OPEN = 'SET_HOLD_OPEN';
