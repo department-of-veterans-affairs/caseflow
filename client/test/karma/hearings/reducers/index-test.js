@@ -17,7 +17,6 @@ describe('hearingsReducer', () => {
       },
       worksheet: {
         streams: {
-          description: ''
         }
       }
     });
@@ -150,16 +149,15 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DESCRIPTIONS,
         payload: {
-          streams: {
-            description: 'filled'
-          }
+
+          description: 'filled'
+
         }
       });
     });
 
-    // TODO
     it('sets worksheet issue description', () => {
-      expect(state.worksheet.streams.description).to.equal();
+      expect(state.worksheet.streams).to.deep.equal({ description: 'filled' });
     });
   });
 
