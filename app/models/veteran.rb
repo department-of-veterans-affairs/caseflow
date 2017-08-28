@@ -13,6 +13,7 @@ class Veteran
   ).freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
+  attr_accessor :date_of_birth
 
   COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
 
@@ -46,6 +47,14 @@ class Veteran
 
   def self.bgs
     BGSService.new
+  end
+
+  def age
+    return unless date_of_birth
+    dob = date_of_birth
+    # Age calc copied from https://stackoverflow.com/a/2357790
+    now = Time.now.utc.to_date
+    now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
   private
