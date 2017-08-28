@@ -11,7 +11,7 @@ import { asyncTest, pause } from '../../helpers/AsyncTests';
 import { documents } from '../../data/documents';
 
 /* eslint-disable no-unused-expressions */
-describe('Pdf', () => {
+describe.only('Pdf', () => {
   let pdfId = 'pdf';
 
   // Note, these tests use shallow rather than shallow.
