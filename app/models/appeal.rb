@@ -66,6 +66,9 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
+  SSN_LENGTH = 9
+  MIN_VBMS_ID_LENGTH = 3
+
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
   TYPE_CODES = {
@@ -462,6 +465,11 @@ class Appeal < ActiveRecord::Base
     end
 
     def fetch_appeals_by_vbms_id(vbms_id)
+      begin
+        sanitize_and_validate_vbms_id(vbms_id)
+      rescue Caseflow::Error::InvalidVBMSId
+        raise ActiveRecord::RecordNotFound
+      end
       @repository.appeals_by_vbms_id(vbms_id)
     end
 
@@ -493,7 +501,26 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
-    private
+    # droping all non-digit characters.
+    # If 9 digits, appending 'S' and sending to VACOLS. If <9 digits,
+    # removing leading zeros, append 'C' and send to VACOLS.
+    # If >9 digits, error.
+    def sanitize_and_validate_vbms_id(vbms_id)
+      # delete non-digit characters
+      sanatized_vbms_id = vbms_id.delete("^0-9")
+      vbms_id_length = sanatized_vbms_id.length
+
+      fail Caseflow::Error::InvalidVBMSId unless
+        vbms_id_length >= MIN_VBMS_ID_LENGTH && vbms_id_length <= SSN_LENGTH
+
+      if vbms_id_length == SSN_LENGTH
+        sanatized_vbms_id << "S"
+      elsif vbms_id_length < SSN_LENGTH
+        sanatized_vbms_id = sanatized_vbms_id.delete("/^00/")
+        sanatized_vbms_id << "C"
+      end
+      sanatized_vbms_id
+    end
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
