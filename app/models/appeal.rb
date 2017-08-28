@@ -524,6 +524,8 @@ class Appeal < ActiveRecord::Base
       sanatized_vbms_id
     end
 
+    private
+
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
     # up in VACOLS
