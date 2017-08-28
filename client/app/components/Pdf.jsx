@@ -528,7 +528,6 @@ export class Pdf extends React.PureComponent {
       [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight']) / this.props.scale);
 
     this.currentPage = currentPage;
-    console.log(this.scrollWindow);
     this.props.onPageChange(
       currentPage,
       this.state.numPages[this.props.file],
