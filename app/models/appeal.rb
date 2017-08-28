@@ -465,12 +465,13 @@ class Appeal < ActiveRecord::Base
     end
 
     def fetch_appeals_by_vbms_id(vbms_id)
+      sanatized_vbms_id = ""
       begin
-        sanitize_and_validate_vbms_id(vbms_id)
+        sanatized_vbms_id = sanitize_and_validate_vbms_id(vbms_id)
       rescue Caseflow::Error::InvalidVBMSId
         raise ActiveRecord::RecordNotFound
       end
-      @repository.appeals_by_vbms_id(vbms_id)
+      @repository.appeals_by_vbms_id(sanatized_vbms_id)
     end
 
     def vbms
