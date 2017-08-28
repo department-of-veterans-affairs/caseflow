@@ -3,7 +3,7 @@ import * as Hearings from '../../../../app/hearings/reducers/index';
 import * as Constants from '../../../../app/hearings/constants/constants';
 
 /* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }]*/
-Number(describe('hearingsReducer', () => {
+describe('hearingsReducer', () => {
   let initialState;
 
   beforeEach(() => {
@@ -242,4 +242,4 @@ Number(describe('hearingsReducer', () => {
       expect(state.worksheet.comments).to.deep.equal('filled');
     });
   });
-}));
+});
