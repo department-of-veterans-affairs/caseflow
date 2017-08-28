@@ -127,6 +127,7 @@ class PrometheusService
       metrics = Prometheus::Client.registry
       url = Rails.application.secrets.prometheus_push_gateway_url
 
+      return unless url
       Prometheus::Client::Push.new("push-gateway", nil, url).add(metrics)
     end
 

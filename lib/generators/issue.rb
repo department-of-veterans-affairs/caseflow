@@ -14,7 +14,8 @@ class Generators::Issue
         program_description: "02 - Compensation",
         program: :compensation,
         type: { name: :service_connection, label: "Service Connection" },
-        category: :knee
+        category: :knee,
+        note: "low back condition"
       }
     end
 
