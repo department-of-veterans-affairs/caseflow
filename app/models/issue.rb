@@ -2,8 +2,10 @@
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue < ActiveRecord::Base
-  attr_accessor :program, :type, :category, :description, :disposition, :levels,
-                :program_description, :note
+  include AssociatedVacolsModel
+
+  vacols_attr_accessor :program, :type, :category, :description, :disposition, :levels,
+                       :program_description, :note
 
   belongs_to :appeal
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
@@ -47,18 +49,25 @@ class Issue < ActiveRecord::Base
   end
 
   def attributes
-    super.merge(
+    super.merge(vacols_attributes)
+  end
+
+  def vacols_attributes
+    {
       levels: levels,
       program: program,
       type: type,
       category: category,
       description: description,
       disposition: disposition,
-      program_description: program_description
-    )
+      program_description: program_description,
+      note: note
+    }
   end
 
   class << self
+    attr_writer :repository
+
     def description(hash)
       description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
       description.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
@@ -91,6 +100,10 @@ class Issue < ActiveRecord::Base
         description: description(hash),
         disposition: disposition
       )
+    end
+
+    def repository
+      @repository ||= IssueRepository
     end
   end
 end
