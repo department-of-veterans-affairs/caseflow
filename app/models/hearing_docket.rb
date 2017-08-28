@@ -7,7 +7,7 @@ class HearingDocket
 
   def to_hash
     serializable_hash(
-      methods: [:regional_office_name, :hearings_hash]
+      methods: [:regional_office_name, :hearings_array]
     )
   end
 
@@ -18,8 +18,9 @@ class HearingDocket
     }
   end
 
-  def hearings_hash
-    hearings.map(&:to_hash)
+  def hearings_array
+    # TODO(Anya): add conditional statement here whether to call to_hash or to_hash_with_all_information
+    hearings.map(&:to_hash_with_all_information)
   end
 
   class << self

@@ -19,7 +19,7 @@ export const newHearingState = (state, action, spec) => {
   return update(state, {
     dockets: {
       [action.payload.date]: {
-        hearings_hash: {
+        hearings_array: {
           [action.payload.hearingIndex]: spec
         }
       }
