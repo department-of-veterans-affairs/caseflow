@@ -17,6 +17,11 @@ import IssuesList from './IssueList';
 class CaseSelectSearch extends React.PureComponent {
 
   componentDidUpdate = () => {
+    // if only one appeal is received for the veteran id
+    // select that appeal's case.
+    if (_.size(this.props.caseSelect.receivedAppeals) === 1) {
+      this.props.caseSelectAppeal(this.props.caseSelect.receivedAppeals[0]);
+    }
 
     // when an appeal is selected using claim search,
     // this method redirects to the claim folder page
@@ -74,9 +79,10 @@ class CaseSelectSearch extends React.PureComponent {
         value={this.props.caseSelectCriteria.searchQuery}
         onClearSearch={this.props.clearCaseSelectSearch}
         onSubmit={this.searchOnChange}
+        loading={caseSelect.requestAppealsUsingVeteranId}
         submitUsingEnterKey
       />
-      { Boolean(_.size(caseSelect.receivedAppeals)) && <Modal
+      { Boolean(_.size(caseSelect.receivedAppeals) > 1) && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
