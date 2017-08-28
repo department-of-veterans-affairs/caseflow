@@ -142,20 +142,19 @@ $color-hearings-saving: #777;
       }
 
       label {
+        position: absolute;
         display: inline-block;
         vertical-align: top;
-        text-align: right;
-        width: 15%;
+        width: 3em;
 
         + div {
-          display: inline-block;
-          vertical-align: top;
-          padding-left: .5em;
-          width: 85%;
+          padding-left: 3em;
         }
       }
 
       textarea {
+        padding-top: 0;
+        padding-bottom: 0;
         height: 4em;
         resize: vertical;
       }
