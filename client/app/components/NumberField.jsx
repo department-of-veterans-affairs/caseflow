@@ -32,10 +32,10 @@ NumberField.propTypes = {
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   invisible: PropTypes.bool,
-  label: PropTypes.oneOfType(
+  label: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.bool,
-  ),
+    PropTypes.bool
+  ]),
   name: PropTypes.string.isRequired,
   onChange(props) {
     if (!props.readOnly) {
@@ -49,8 +49,8 @@ NumberField.propTypes = {
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.oneOfType(
+  value: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.number,
-  )
+    PropTypes.number
+  ])
 };
