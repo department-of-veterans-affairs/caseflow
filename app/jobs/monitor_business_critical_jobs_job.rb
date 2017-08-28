@@ -56,7 +56,7 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
         if !result[:completed] || result[:completed] < alert_threshold.hours.ago
           message += "*#{job_class} failed to complete in the last #{alert_threshold} hours.*\n"
         end
-
+        message
       end
 
       failure_message += "<!here>\n" if !failure_message.length.zero?
