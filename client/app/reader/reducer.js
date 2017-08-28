@@ -834,7 +834,8 @@ export const reducer = (state = initialState, action = {}) => {
         caseSelect: {
           isRequestingAppealsUsingVeteranId: { $set: false },
           search: {
-            showErrorMessage: { $set: true }
+            showErrorMessage: { $set: true },
+            showNoAppealsInfoMessage: { $set: false }
           }
         }
       }
@@ -844,7 +845,8 @@ export const reducer = (state = initialState, action = {}) => {
       ui: {
         caseSelect: {
           search: {
-            showNoAppealsInfoMessage: { $set: true }
+            showNoAppealsInfoMessage: { $set: true },
+            showErrorMessage: { $set: false }
           }
         }
       }
