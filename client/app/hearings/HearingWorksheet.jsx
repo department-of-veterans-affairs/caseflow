@@ -6,8 +6,11 @@ import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
+import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import {
+  onRepNameChange,
+  onWitnessChange,
   onContentionsChange,
   onPeriodsChange,
   onEvidenceChange,
@@ -210,8 +213,13 @@ export class HearingWorksheet extends React.PureComponent {
             <div>Veterans of Foreign Wars</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
-            <label htmlFor="appellant-vet-rep-name">Rep. Name:</label>
-            <input id="appellant-vet-rep-name" aria-label="Representative Name" type="text" />
+            <TextField
+              name="Rep. Name:"
+              id="appellant-vet-rep-name"
+              aria-label="Representative Name"
+              value={this.props.worksheet.repName || ''}
+              onChange={this.props.onRepNameChange}
+             />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
@@ -230,8 +238,13 @@ export class HearingWorksheet extends React.PureComponent {
             <div>32</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
-            <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-            <input id="appellant-vet-witness" aria-label="Witness/Observer" type="text" />
+             <TextField
+                name="Witness (W)/Observer (O):"
+                id="appellant-vet-witness"
+                aria-label="Representative Name"
+                value={this.props.worksheet.witness || ''}
+                onChange={this.props.onWitnessChange}
+             />
           </div>
         </div>
 
@@ -338,6 +351,8 @@ const mapStateToProps = (state) => ({
 
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onRepNameChange,
+  onWitnessChange,
   onContentionsChange,
   onPeriodsChange,
   onEvidenceChange,
