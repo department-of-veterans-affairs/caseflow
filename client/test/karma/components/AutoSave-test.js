@@ -47,7 +47,7 @@ describe('AutoSave', () => {
     });
   });
 
-  it('calls an action creator before window closes', asyncTest(async () => {
+  xit('calls an action creator before window closes', asyncTest(async () => {
     mount(
       <AutoSave beforeWindowClosesActionCreator={actionCreator} />
     );
