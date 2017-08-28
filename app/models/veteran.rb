@@ -50,8 +50,8 @@ class Veteran
   end
 
   def age
+    return unless date_of_birth
     dob = date_of_birth
-    return unless dob
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)

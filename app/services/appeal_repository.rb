@@ -97,7 +97,7 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
-      veteran_date_of_birth: normalize_vacols_date(correspondent_record.try(:sdob)),
+      veteran_date_of_birth: normalize_vacols_date(correspondent_record.sdob),
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
