@@ -152,7 +152,7 @@ export const initialState = {
   ui: {
     caseSelect: {
       selectedAppealVacolsId: null,
-      isRequestingAppealUsingVeteranId: false,
+      isRequestingAppealsUsingVeteranId: false,
       selectedAppeal: {},
       receivedAppeals: []
     },
@@ -802,7 +802,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         caseSelect: {
-          isRequestingAppealUsingVeteranId: { $set: true }
+          isRequestingAppealsUsingVeteranId: { $set: true }
         }
       }
     });
@@ -810,7 +810,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         caseSelect: {
-          isRequestingAppealUsingVeteranId: { $set: false }
+          isRequestingAppealsUsingVeteranId: { $set: false }
         }
       }
     });
@@ -818,7 +818,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         caseSelect: {
-          isRequestingAppealUsingVeteranId: { $set: false },
+          isRequestingAppealsUsingVeteranId: { $set: false },
           receivedAppeals: {
             $set: action.payload.appeals
           }
