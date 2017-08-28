@@ -814,14 +814,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false }
-        }
-      }
-    });
   case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
     return update(state, {
       ui: {
@@ -836,10 +828,11 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILED:
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
     return update(state, {
       ui: {
         caseSelect: {
+          isRequestingAppealsUsingVeteranId: { $set: false },
           search: {
             showErrorMessage: { $set: true }
           }
