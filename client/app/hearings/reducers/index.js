@@ -82,6 +82,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { comments: { $set: action.payload.comments } }
     });
 
+  case Constants.TOGGLE_SAVING:
+    return update(state, {
+      isSaving: { $set: !state.isSaving }
+    });
+
   default: return state;
   }
 };

@@ -11,6 +11,26 @@ $color-hearings-saving: #777;
   color: $color-hearings-saving;
 }
 
+.cf-hearings-daily-docket-container {
+  position: relative;
+
+  > .saving {
+    display: inline-block;
+    width: 12em;
+    text-align: right;
+    position: absolute;
+    top: 8.9em;
+    right: 1.8em;
+
+    .loadingSymbol {
+      height: 1em;
+      width: 1em;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+}
+
 .cf-hearings,
 .cf-hearings-schedule,
 .cf-hearings-worksheet {
@@ -94,17 +114,6 @@ $color-hearings-saving: #777;
 
       &:last-child {
         padding-right: 0;
-      }
-
-      // TODO: get rule into a SaveData component
-      > span {
-        display: inline-block;
-        width: 25%;
-
-        &:last-child {
-          width: 75%;
-          text-align: right;
-        }
       }
     }
 

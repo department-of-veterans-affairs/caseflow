@@ -17,3 +17,5 @@ export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_PERIODS = 'SET_PERIODS';
 export const SET_EVIDENCE = 'SET_EVIDENCE';
 export const SET_COMMENTS = 'SET_COMMENTS';
+
+export const TOGGLE_SAVING = 'TOGGLE_SAVING';
