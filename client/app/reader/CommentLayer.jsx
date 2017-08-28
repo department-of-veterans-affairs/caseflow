@@ -67,6 +67,7 @@ class CommentLayer extends PureComponent {
 
   render() {
     return <div
+      id={`comment-layer-${this.props.pageIndex}`}
       style={DIV_STYLING}
       onClick={this.onPageClick}
       ref={this.getCommentLayerRef}>
