@@ -523,8 +523,8 @@ describe Appeal do
     end
   end
 
-  context "#sanitize_vbms_id_to_vacols" do
-    subject { Appeal.sanitize_vbms_id_to_vacols(vbms_id) }
+  context "#convert_vbms_id_for_vacols_query" do
+    subject { Appeal.convert_vbms_id_for_vacols_query(vbms_id) }
 
     context "when passed a vbms id with a valid ssn" do
       let(:vbms_id) { "123456789" }

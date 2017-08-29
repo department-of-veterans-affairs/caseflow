@@ -354,8 +354,8 @@ class Appeal < ActiveRecord::Base
   # correlates to the VBMS/BGS veteran identifier, which is
   # sometimes called file_number.
   #
-  # Note: sanitize_vbms_id_to_vacols method is used for converting
-  # vbms_id for being used for querying Vacols.
+  # sanitized_vbms_id converts the vbms_id stored in VACOLS to
+  # the format used by VBMS and BGS.
   #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
@@ -474,7 +474,7 @@ class Appeal < ActiveRecord::Base
     def fetch_appeals_by_vbms_id(vbms_id)
       sanitized_vbms_id = ""
       begin
-        sanitized_vbms_id = sanitize_vbms_id_to_vacols(vbms_id)
+        sanitized_vbms_id = convert_vbms_id_for_vacols_query(vbms_id)
       rescue Caseflow::Error::InvalidVBMSId
         raise ActiveRecord::RecordNotFound
       end
@@ -515,7 +515,7 @@ class Appeal < ActiveRecord::Base
     # If vbms_id is 9 digits, appending 'S' and sending to VACOLS.
     # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
     # If vbms_id is > 9 digits, thrown an error.
-    def sanitize_vbms_id_to_vacols(vbms_id)
+    def convert_vbms_id_for_vacols_query(vbms_id)
       # delete non-digit characters
       sanitized_vbms_id = vbms_id.delete("^0-9")
       vbms_id_length = sanitized_vbms_id.length
