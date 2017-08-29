@@ -83,6 +83,8 @@ export class DecisionReviewer extends React.PureComponent {
   routedPdfListViewCaseSummary = (props) => {
     const { vacolsId } = props.match.params;
 
+    this.props.setCategoryFilter('case_summary', true);
+
     return <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
         sortBy={this.state.sortBy}
