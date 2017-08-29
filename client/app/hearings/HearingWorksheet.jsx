@@ -17,25 +17,15 @@ import {
   onCommentsChange
        } from './actions/Dockets';
 
-import _ from 'lodash';
-
 export class HearingWorksheet extends React.PureComponent {
-
-
-  getType = (type) => {
-    return (type === 'central_office') ? 'CO' : type;
-  }
-
-  getStartTime = () => {
-    const startTime = `${moment().
-      add(_.random(0, 120), 'minutes').
-      format('LT')} EST`;
-
-    return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
-  }
 
   getKeyForRow = (index) => {
     return index;
+  }
+
+  redirectToReader = () => {
+    //TODO(sharon): Once this page is hooked up to real data, we need to update this to link to the appeal's vacols_id.
+    window.location.href = `/reader/appeal/reader_id1/documents/case-summary`;
   }
 
   render() {
@@ -339,7 +329,11 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
-        <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
+        <Button
+          name="signup-1"
+          className="cf-push-right"
+          onClick={this.redirectToReader}
+        >Review eFolder</Button>
       </div>
     </div>;
   }
