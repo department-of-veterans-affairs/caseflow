@@ -845,6 +845,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         caseSelect: {
+          isRequestingAppealsUsingVeteranId: { $set: false },
           search: {
             showNoAppealsInfoMessage: { $set: true },
             showErrorMessage: { $set: false }
