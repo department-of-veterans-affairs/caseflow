@@ -1,11 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from './Link';
+
+// Lots of this class are taken from
+// https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
 
 export default class DropdownMenu extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.wrapperRef = null;
+  }
+
+  componentDidMount = () => document.addEventListener('mousedown', this.handleClickOutside);
+
+  componentWillUnmount = () => document.removeEventListener('mousedown', this.handleClickOutside);
+
+  setWrapperRef = (node) => this.wrapperRef = node
+
+  handleClickOutside = (event) => {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.props.onBlur();
+    }
+  }
+
   render() {
     let {
       label,
-      onBlur,
       onClick,
       options,
       menu
@@ -17,16 +38,15 @@ export default class DropdownMenu extends React.Component {
         {options.map((option, index) =>
           <li key={index}>
             {options.length - 1 === index && <div className="dropdown-border"></div>}
-            <a href={option.link}>{option.title}</a>
+            <Link href={option.link}>{option.title}</Link>
           </li>)}
       </ul>;
     };
 
-    return <div className="cf-dropdown">
+    return <div ref={this.setWrapperRef} className="cf-dropdown">
       <a href="#dropdown-menu"
         className="cf-dropdown-trigger"
-        onClick={onClick}
-        onBlur={onBlur}>
+        onClick={onClick}>
         {label}
       </a>
       {menu && dropdownMenuList() }

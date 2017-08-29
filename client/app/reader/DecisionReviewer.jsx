@@ -140,7 +140,7 @@ export class DecisionReviewer extends React.PureComponent {
         <div className="cf-content">
         <div className="cf-content-inside full-page">
           <header className="cf-app-header">
-            <NavigationBar appName="Reader" user="Mark"/>
+            <NavigationBar appName="Reader" user={this.props.user} menuOptions={this.props.dropdown}/>
           </header>
         </div>
         </div>
@@ -162,6 +162,8 @@ export class DecisionReviewer extends React.PureComponent {
 
 DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
+  user: PropTypes.string,
+  dropdown: PropTypes.array,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
