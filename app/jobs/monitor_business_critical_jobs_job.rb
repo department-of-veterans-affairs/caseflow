@@ -9,11 +9,13 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
     PrepareEstablishClaimTasksJob
   ).freeze
 
-  ALERT_THRESHOLD_IN_HOURS = 5 # in hours
+  DEFAULT_ALERT_THRESHOLD_IN_HOURS = 5 # in hours
 
   MESSAGE_BASE = "Business critical job monitor results:\n".freeze
 
-  def perform
+  def perform(alert_threshold: nil)
+    @alert_threshold = alert_threshold
+
     # Log monitoring information to both logs & slack
     Rails.logger.info(results_message)
     slack_service.send_notification(slack_message)
@@ -47,14 +49,13 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
   def failure_message
     @failure_message ||= begin
       failure_message = results.reduce("") do |message, (job_class, result)|
-        if !result[:started] || result[:started] < ALERT_THRESHOLD_IN_HOURS.hours.ago
-          message += "*#{job_class} failed to start in the last #{ALERT_THRESHOLD_IN_HOURS} hours.*\n"
+        if !result[:started] || result[:started] < alert_threshold.hours.ago
+          message += "*#{job_class} failed to start in the last #{alert_threshold} hours.*\n"
         end
 
-        if !result[:completed] || result[:completed] < ALERT_THRESHOLD_IN_HOURS.hours.ago
-          message += "*#{job_class} failed to complete in the last #{ALERT_THRESHOLD_IN_HOURS} hours.*\n"
+        if !result[:completed] || result[:completed] < alert_threshold.hours.ago
+          message += "*#{job_class} failed to complete in the last #{alert_threshold} hours.*\n"
         end
-
         message
       end
 
@@ -65,5 +66,9 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
 
   def slack_message
     MESSAGE_BASE + results_message + failure_message
+  end
+
+  def alert_threshold
+    @alert_threshold ||= DEFAULT_ALERT_THRESHOLD_IN_HOURS
   end
 end
