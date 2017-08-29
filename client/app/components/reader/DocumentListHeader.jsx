@@ -55,9 +55,10 @@ DocumentListHeader.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  numberOfDocuments: state.ui.filteredDocIds ? state.ui.filteredDocIds.length : _.size(state.documents),
-  docFilterCriteria: state.ui.docFilterCriteria,
-  vacolsId: state.loadedAppealId
+  numberOfDocuments: state.readerReducer.ui.filteredDocIds ?
+    state.readerReducer.ui.filteredDocIds.length : _.size(state.readerReducer.documents),
+  docFilterCriteria: state.readerReducer.ui.docFilterCriteria,
+  vacolsId: state.readerReducer.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => ({

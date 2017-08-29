@@ -303,13 +303,13 @@ PdfSidebar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ..._.pick(state.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
-    scrollToSidebarComment: state.ui.pdf.scrollToSidebarComment,
-    hidePdfSidebar: state.ui.pdf.hidePdfSidebar,
-    showErrorMessage: state.ui.pdfSidebar.showErrorMessage,
-    appeal: state.loadedAppeal,
-    ..._.pick(state, 'documents', 'tagOptions', 'openedAccordionSections')
+    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
+    comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.doc.id),
+    scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
+    hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
+    appeal: state.readerReducer.loadedAppeal,
+    ..._.pick(state.readerReducer, 'documents', 'tagOptions', 'openedAccordionSections')
   };
 };
 const mapDispatchToProps = (dispatch) => ({
