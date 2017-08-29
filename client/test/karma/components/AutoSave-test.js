@@ -36,12 +36,12 @@ describe('AutoSave', () => {
       const wrapper = mount(
         <AutoSave
           isSaving
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP}
+          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
           beforeWindowClosesActionCreator={actionCreator}
         />
       );
 
-      const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_HEARING_PREP}"]`).first();
+      const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}"]`).first();
 
       expect(spinner).to.have.length(1);
     });
