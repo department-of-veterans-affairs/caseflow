@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as Hearings from '../../../../app/hearings/reducers/index';
 import * as Constants from '../../../../app/hearings/constants/constants';
 
+/* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }]*/
 describe('hearingsReducer', () => {
   let initialState;
 
@@ -16,6 +17,41 @@ describe('hearingsReducer', () => {
       },
       worksheet: {
       }
+    });
+  });
+
+  context(Constants.SET_REPNAME, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_REPNAME,
+        payload: {
+          repName: 'John Smith'
+        }
+      });
+    });
+
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet.repName).to.deep.equal('John Smith');
+    });
+  });
+
+
+  context(Constants.SET_WITNESS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_WITNESS,
+        payload: {
+          witness: 'Jane Doe'
+        }
+      });
+    });
+
+    it('sets worksheet contentions', () => {
+      expect(state.worksheet.witness).to.deep.equal('Jane Doe');
     });
   });
 
