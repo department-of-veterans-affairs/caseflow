@@ -13,6 +13,7 @@ import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import { CATEGORIES } from './analytics';
 import _ from 'lodash';
+import NavigationBar from '../components/NavigationBar';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -135,16 +136,25 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div className="section--document-list">
-        <Route
-          path="/:vacolsId/documents"
-          render={this.documentsRoute}
-        />
-        <Route
-          exact
-          path="/"
-          render={this.routedCaseSelect}
-        />
+      <div>
+        <div className="cf-content">
+        <div className="cf-content-inside full-page">
+          <header className="cf-app-header">
+            <NavigationBar appName="Reader" user="Mark"/>
+          </header>
+        </div>
+        </div>
+        <div className="section--document-list">
+          <Route
+            path="/:vacolsId/documents"
+            render={this.documentsRoute}
+          />
+          <Route
+            exact
+            path="/"
+            render={this.routedCaseSelect}
+          />
+        </div>
       </div>
     </Router>;
   }
