@@ -62,6 +62,9 @@ class Generators::Appeal
         pending_hearing: {
           status: "Active",
           decision_date: nil,
+          nod_date: 1.month.ago,
+          soc_date: 15.days.ago,
+          ssoc_dates: [8.days.ago, 9.days.ago],
           issues: [
             { disposition: :nil, program: :compensation,
               vacols_sequence_id: 1,

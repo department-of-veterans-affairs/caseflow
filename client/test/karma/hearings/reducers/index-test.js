@@ -10,7 +10,7 @@ describe('hearingsReducer', () => {
     initialState = Hearings.mapDataToInitialState({
       dockets: {
         '2017-08-10': {
-          hearings_hash: {
+          hearings_array: {
             0: {}
           }
         }
@@ -70,7 +70,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets notes', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { notes: 'this is my note',
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { notes: 'this is my note',
         edited: true } } } });
     });
   });
@@ -90,7 +90,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets disposition', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { disposition: 'no_show',
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { disposition: 'no_show',
         edited: true } } } });
     });
   });
@@ -110,7 +110,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets hold open', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { hold_open: 60,
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { hold_open: 60,
         edited: true } } } });
     });
   });
@@ -130,7 +130,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets aod', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { aod: 'filed',
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { aod: 'filed',
         edited: true } } } });
     });
   });
@@ -150,7 +150,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets addon', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { addon: true,
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { addon: true,
         edited: true } } } });
     });
   });
@@ -170,7 +170,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets transcript requested', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_hash: { 0: { transcript_requested: true,
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { transcript_requested: true,
         edited: true } } } });
     });
   });
