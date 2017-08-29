@@ -25,7 +25,7 @@ export class HearingWorksheet extends React.PureComponent {
 
   redirectToReader = () => {
     //TODO(sharon): Once this page is hooked up to real data, we need to update this to link to the appeal's vacols_id.
-    window.location.href = `/reader/appeal/reader_id1/documents/case-summary`;
+    window.location.href = `/reader/appeal`;
   }
 
   render() {
