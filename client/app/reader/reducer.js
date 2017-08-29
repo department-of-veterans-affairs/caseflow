@@ -823,7 +823,8 @@ export const reducer = (state = initialState, action = {}) => {
             $set: action.payload.appeals
           },
           search: {
-            showErrorMessage: { $set: false }
+            showErrorMessage: { $set: false },
+            showNoAppealsInfoMessage: { $set: false }
           }
         }
       }
