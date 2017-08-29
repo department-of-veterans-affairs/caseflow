@@ -67,6 +67,9 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
+  SSN_LENGTH = 9
+  MIN_VBMS_ID_LENGTH = 3
+
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
   TYPE_CODES = {
@@ -359,6 +362,9 @@ class Appeal < ActiveRecord::Base
   # correlates to the VBMS/BGS veteran identifier, which is
   # sometimes called file_number.
   #
+  # sanitized_vbms_id converts the vbms_id stored in VACOLS to
+  # the format used by VBMS and BGS.
+  #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
     numeric = vbms_id.gsub(/[^0-9]/, "")
@@ -474,7 +480,13 @@ class Appeal < ActiveRecord::Base
     end
 
     def fetch_appeals_by_vbms_id(vbms_id)
-      @repository.appeals_by_vbms_id(vbms_id)
+      sanitized_vbms_id = ""
+      begin
+        sanitized_vbms_id = convert_vbms_id_for_vacols_query(vbms_id)
+      rescue Caseflow::Error::InvalidVBMSId
+        raise ActiveRecord::RecordNotFound
+      end
+      @repository.appeals_by_vbms_id(sanitized_vbms_id)
     end
 
     def vbms
@@ -503,6 +515,30 @@ class Appeal < ActiveRecord::Base
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
 
       fail Caseflow::Error::InvalidFileNumber
+    end
+
+    # This method is used for converting a vbms_id to be suitable for usage
+    # to query VACOLS.
+    # This method drops all non-digit characters intially.
+    # If vbms_id is 9 digits, appending 'S' and sending to VACOLS.
+    # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
+    # If vbms_id is > 9 digits, thrown an error.
+    def convert_vbms_id_for_vacols_query(vbms_id)
+      # delete non-digit characters
+      sanitized_vbms_id = vbms_id.delete("^0-9")
+      vbms_id_length = sanitized_vbms_id.length
+
+      fail Caseflow::Error::InvalidVBMSId unless
+        vbms_id_length >= MIN_VBMS_ID_LENGTH && vbms_id_length <= SSN_LENGTH
+
+      if vbms_id_length == SSN_LENGTH
+        sanitized_vbms_id << "S"
+      elsif vbms_id_length < SSN_LENGTH
+        # removing leading zeros
+        sanitized_vbms_id = sanitized_vbms_id.to_i.to_s
+        sanitized_vbms_id << "C"
+      end
+      sanitized_vbms_id
     end
 
     private

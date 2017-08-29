@@ -107,6 +107,7 @@ export class Pdf extends React.PureComponent {
     this.currentPage = 0;
     this.isDrawing = {};
     this.isGettingPdf = {};
+    this.loadingTasks = {};
 
     this.refFunctionGetters = {
       canvas: {},
@@ -456,6 +457,12 @@ export class Pdf extends React.PureComponent {
   // specified by `file`. This method will only make the request to the server once. Afterwards
   // it will return a cached version of it.
   getDocument = (file) => {
+    const pdfsToKeep = [...this.props.prefetchFiles, this.props.file];
+
+    if (!pdfsToKeep.includes(file)) {
+      return Promise.resolve(null);
+    }
+
     if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
       // If the document has already been retrieved, just return it.
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
@@ -474,11 +481,13 @@ export class Pdf extends React.PureComponent {
     // set isGettingPdf true so that we don't try to request it again, while the first
     // request is finishing.
     this.isGettingPdf[file] = true;
-
-    return PDFJS.getDocument({
+    this.loadingTasks[file] = PDFJS.getDocument({
       url: file,
       withCredentials: true
-    }).then((pdfDocument) => {
+    });
+
+    return this.loadingTasks[file].then((pdfDocument) => {
+      this.loadingTasks[file] = null;
       this.isGettingPdf[file] = false;
 
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
@@ -668,6 +677,13 @@ export class Pdf extends React.PureComponent {
       Object.keys(this.predrawnPdfs).forEach((file) => {
         if (!pdfsToKeep.includes(file)) {
           this.cleanUpPdf(this.predrawnPdfs[file], file);
+        }
+      });
+
+      Object.keys(this.loadingTasks).forEach((file) => {
+        if (!pdfsToKeep.includes(file) && this.loadingTasks[file]) {
+          this.loadingTasks[file].destroy();
+          delete this.loadingTasks[file];
         }
       });
 
@@ -905,9 +921,9 @@ export class Pdf extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconPageCoords'),
-  allAnnotations: state.annotations
+  ...state.readerReducer.ui.pdf,
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+  allAnnotations: state.readerReducer.annotations
 });
 
 const mapDispatchToProps = (dispatch) => ({

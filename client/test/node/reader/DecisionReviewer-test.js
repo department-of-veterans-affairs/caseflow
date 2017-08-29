@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
@@ -37,7 +37,9 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
-    const store = createStore(readerReducer, applyMiddleware(thunk));
+    const store = createStore(combineReducers({
+      readerReducer
+    }), applyMiddleware(thunk));
 
     setUpDocuments = () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
