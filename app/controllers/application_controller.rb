@@ -93,6 +93,35 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_path
 
+  def dropdown_urls
+    urls = [
+      {
+        title: "Help",
+        link: help_url
+      },
+      {
+        title: "Send Feedback",
+        link: feedback_url
+      }
+    ]
+
+    urls.append({
+      title: "Switch User",
+      link: url_for(controller: '/test/users', action: 'index')
+    }) if ApplicationController.dependencies_faked?
+    urls.append({
+      title: "Change Functions",
+      link: url_for(controller: '/functions', action: 'index')
+    }) if current_user.admin?
+    urls.append({
+      title: "Sign Out",
+      link: url_for(controller: '/sessions', action: 'destroy')
+    })
+
+    urls
+  end
+  helper_method :dropdown_urls
+
   def certification_header(title)
     "&nbsp &gt &nbsp".html_safe + title
   end
