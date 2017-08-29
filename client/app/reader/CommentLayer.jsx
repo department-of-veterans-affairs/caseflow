@@ -101,9 +101,9 @@ CommentLayer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId)
+  ...state.readerReducer.ui.pdf,
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+  comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.documentId)
 });
 
 const mapDispatchToProps = (dispatch) => ({
