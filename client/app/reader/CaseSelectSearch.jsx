@@ -13,6 +13,7 @@ import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
 import RadioField from '../components/RadioField';
 import IssuesList from './IssueList';
+import Alert from '../components/Alert';
 
 class CaseSelectSearch extends React.PureComponent {
 
@@ -72,6 +73,16 @@ class CaseSelectSearch extends React.PureComponent {
       }));
 
     return <div className="section-search">
+      {caseSelect.search.showErrorMessage &&
+        <Alert title="Veteran ID not found" type="error">
+          Please enter a valid Veteran ID and try again.
+        </Alert>
+      }
+      {caseSelect.search.showNoAppealsInfoMessage &&
+        <Alert title="No appeals found" type="info">
+          {`Veteran ID ${this.props.caseSelectCriteria.searchQuery} does not have any appeals.`}
+        </Alert>
+      }
       <SearchBar
         id="searchBar"
         size="small"

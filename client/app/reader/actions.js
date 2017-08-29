@@ -608,6 +608,10 @@ export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
   payload: { failedToLoad }
 });
 
+export const fetchedNoAppealsUsingVeteranId = () => ({
+  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
+});
+
 export const fetchAppealDetails = (vacolsId) => (
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
@@ -642,8 +646,12 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
     ApiUtil.get(`/reader/appeal/veteran-id/${veteranId}?json`).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
-      dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-    });
+      if (_.size(returnedObject.appeals) === 0) {
+        dispatch(fetchedNoAppealsUsingVeteranId());
+      } else {
+        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+      }
+    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
 );
 

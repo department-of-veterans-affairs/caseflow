@@ -154,7 +154,11 @@ export const initialState = {
       selectedAppealVacolsId: null,
       isRequestingAppealsUsingVeteranId: false,
       selectedAppeal: {},
-      receivedAppeals: []
+      receivedAppeals: [],
+      search: {
+        showErrorMessage: false,
+        showNoAppealsInfoMessage: false
+      }
     },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
@@ -341,7 +345,11 @@ export const reducer = (state = initialState, action = {}) => {
         caseSelect: {
           receivedAppeals: { $set: {} },
           selectedAppeal: { $set: {} },
-          selectedAppealVacolsId: { $set: null }
+          selectedAppealVacolsId: { $set: null },
+          search: {
+            showErrorMessage: { $set: false },
+            showNoAppealsInfoMessage: { $set: false }
+          }
         }
       }
     });
@@ -806,14 +814,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false }
-        }
-      }
-    });
   case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
     return update(state, {
       ui: {
@@ -821,6 +821,34 @@ export const reducer = (state = initialState, action = {}) => {
           isRequestingAppealsUsingVeteranId: { $set: false },
           receivedAppeals: {
             $set: action.payload.appeals
+          },
+          search: {
+            showErrorMessage: { $set: false },
+            showNoAppealsInfoMessage: { $set: false }
+          }
+        }
+      }
+    });
+  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          isRequestingAppealsUsingVeteranId: { $set: false },
+          search: {
+            showErrorMessage: { $set: true },
+            showNoAppealsInfoMessage: { $set: false }
+          }
+        }
+      }
+    });
+  case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
+    return update(state, {
+      ui: {
+        caseSelect: {
+          isRequestingAppealsUsingVeteranId: { $set: false },
+          search: {
+            showNoAppealsInfoMessage: { $set: true },
+            showErrorMessage: { $set: false }
           }
         }
       }
