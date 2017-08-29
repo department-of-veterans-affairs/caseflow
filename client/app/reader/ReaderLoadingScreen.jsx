@@ -73,8 +73,8 @@ export class ReaderLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state, 'initialDataLoadingFail'),
-  loadedAppealId: state.loadedAppealId
+  ..._.pick(state.readerReducer, 'initialDataLoadingFail'),
+  loadedAppealId: state.readerReducer.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (
