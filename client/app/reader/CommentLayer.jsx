@@ -13,11 +13,14 @@ const DIV_STYLING = {
   height: '100%'
 };
 
+// The comment layer is a div on top of a page that draws the comment
+// icons on the page. It is also the div that receives the onClick
+// events when placing new comments.
 class CommentLayer extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.commentLayer = null;
+    this.commentLayerDiv = null;
   }
 
   onPageClick = (event) => {
@@ -27,7 +30,7 @@ class CommentLayer extends PureComponent {
 
     const { x, y } = getPageCoordinatesOfMouseEvent(
       event,
-      this.commentLayer.getBoundingClientRect(),
+      this.commentLayerDiv.getBoundingClientRect(),
       this.props.scale
     );
 
@@ -41,18 +44,23 @@ class CommentLayer extends PureComponent {
     );
   };
 
-  getCommentLayerRef = (ref) => this.commentLayer = ref
+  getCommentLayerDivRef = (ref) => this.commentLayerDiv = ref
+
+  getPlacingAnnotation = () => {
+    if (this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation) {
+      return [{
+        temporaryId: 'placing-annotation-icon',
+        page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+        isPlacingAnnotationIcon: true,
+        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
+      }]
+    } else {
+      return [];
+    }
+  }
 
   getAnnotationsForPage = () => {
-    const placingAnnotation = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
-    [{
-      temporaryId: 'placing-annotation-icon',
-      page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-      isPlacingAnnotationIcon: true,
-      ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-    }] : [];
-
-    return this.props.comments.concat(placingAnnotation).
+    return this.props.comments.concat(this.getPlacingAnnotation()).
       filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex));
   }
 
@@ -70,7 +78,7 @@ class CommentLayer extends PureComponent {
       id={`comment-layer-${this.props.pageIndex}`}
       style={DIV_STYLING}
       onClick={this.onPageClick}
-      ref={this.getCommentLayerRef}>
+      ref={this.getCommentLayerDivRef}>
       {this.getCommentIcons()}
     </div>;
   }
