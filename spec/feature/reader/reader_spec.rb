@@ -265,6 +265,12 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Reader Help")
     end
 
+    scenario "User visits case_summary page" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/case-summary"
+      expect(page).to have_content("Filtering by:")
+      expect(page).to have_content("Categories (1)")
+    end
+
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       add_comment_without_clicking_save("text")
