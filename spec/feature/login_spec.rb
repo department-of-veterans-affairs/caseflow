@@ -9,15 +9,6 @@ RSpec.feature "Login" do
     }
   end
 
-  before(:all) do
-    FeatureToggle.enable!(:certification_v2)
-  end
-
-  after(:all) do
-    FeatureToggle.disable!(:certification_v2)
-    Rails.application.config.sso_service_disabled = false
-  end
-
   scenario "User whose station ID has one RO doesn't require login" do
     user = User.create(css_id: "ANNE MERICA", station_id: "314")
     Fakes::AuthenticationService.user_session = {
