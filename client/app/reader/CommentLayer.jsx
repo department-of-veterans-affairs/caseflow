@@ -53,10 +53,11 @@ class CommentLayer extends PureComponent {
         page: pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
         isPlacingAnnotationIcon: true,
         ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }]
-    } else {
-      return [];
+      }];
     }
+
+    return [];
+
   }
 
   getAnnotationsForPage = () => {
