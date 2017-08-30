@@ -70,7 +70,7 @@ export class DecisionReviewer extends React.PureComponent {
     const search = new URLSearchParams(props.location.search);
     const category = search.get('category');
 
-    if (documentCategories.hasOwnProperty(category)) {
+    if (Object.prototype.hasOwnProperty.call(documentCategories, category)) {
       this.props.setCategoryFilter(category, true);
     }
   };
