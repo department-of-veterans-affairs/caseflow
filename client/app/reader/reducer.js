@@ -150,6 +150,7 @@ export const initialState = {
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
+    tagOptions: [],
     searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -184,7 +185,6 @@ export const initialState = {
       }
     }
   },
-  tagOptions: [],
 
   /**
    * `editingAnnotations` is an object of annotations that are currently being edited.
@@ -214,8 +214,10 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        tagOptions: {
-          $set: uniqueTags
+        ui: {
+          tagOptions: {
+            $set: uniqueTags
+          }
         }
       }
     );
