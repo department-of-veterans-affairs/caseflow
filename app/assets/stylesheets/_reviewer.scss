@@ -691,3 +691,28 @@ input[type="search"].cf-search-input-with-close {
 .cf-table-borderless + .cf-keyboard-modal-table thead th {
   width: 23%;
 }
+
+.section--case-select {
+  .welcome-header {
+    margin-bottom: 10px;
+  }
+
+  .section-search {
+    .usa-alert {
+      margin-top: 0;
+      margin-bottom: 20px;
+      padding: .5em;
+    }
+  }
+
+  .folder-option {
+    padding-left: 15px;
+
+    .issues {
+      padding-left: 1em;
+      margin-top: .5em;
+    }
+
+  }
+
+}
