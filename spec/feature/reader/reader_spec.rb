@@ -192,11 +192,18 @@ RSpec.feature "Reader" do
       end
 
       let(:appeal3) do
-        Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
+        Generators::Appeal.build(
+          vbms_id: "123456789S",
+          vacols_record: vacols_record,
+          documents: documents)
       end
 
       let(:appeal4) do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents, vbms_id: appeal3.vbms_id)
+      end
+
+      let(:appeal5) do
+        Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
       end
 
       before do
@@ -236,9 +243,9 @@ RSpec.feature "Reader" do
       context "search for appeals using veteran id" do
         scenario "with one appeal" do
           visit "/reader/appeal"
-          fill_in "searchBar", with: (appeal2.vbms_id + "\n")
+          fill_in "searchBar", with: (appeal5.vbms_id + "\n")
 
-          expect(page).to have_content(appeal2.veteran_full_name + "\'s Claims Folder")
+          expect(page).to have_content(appeal5.veteran_full_name + "\'s Claims Folder")
         end
       end
 
@@ -260,8 +267,7 @@ RSpec.feature "Reader" do
         expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
         expect(appeal_options[1]).to have_content("Issues")
         expect(appeal_options[1].find_all("li").count).to eq(1)
-
-        find("button", text: "Okay").should be_disabled
+        expect(find("button", text: "Okay")).to be_disabled
 
         appeal_options[0].click
         click_on "Okay"
