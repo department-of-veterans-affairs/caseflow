@@ -251,40 +251,6 @@ RSpec.feature "Start Certification" do
       expect(page).to have_content("Appeal is not ready for certification.")
     end
 
-    scenario "Clicking the refresh button" do
-      visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
-
-      # Overwrite AppealRepository data with an appeal with matching documents
-      Generators::Appeal.build(
-        vacols_id: appeal_mismatched_documents.vacols_id,
-        vbms_id: appeal_mismatched_documents.vbms_id,
-        vacols_record: vacols_record,
-        documents: documents
-      )
-
-      click_on "Refresh page"
-      expect(page).to have_content "Complete Electronic Form 8"
-    end
-
-    scenario "Starting a certifications with all documents matching" do
-      visit "certifications/new/#{appeal_ready.vacols_id}"
-
-      expect(page).to have_content "Complete Electronic Form 8"
-
-      expect(page).to have_field "Name of Appellant", with: "Susie, Crockett"
-      expect(page).to have_field "Relationship to Veteran", with: "Daughter"
-      expect(page).to have_field "File Number", with: appeal_ready.vbms_id
-      expect(page).to have_field "Full Veteran Name", with: "Crockett, Davy, X"
-      expect(page).to have_selector("#question5B.hidden-field", visible: false)
-      expect(page).to have_selector("#question6B.hidden-field", visible: false)
-      expect(page).to have_selector("#question7B.hidden-field", visible: false)
-
-      expect(Certification.last).to have_attributes(
-        vacols_id: appeal_ready.vacols_id,
-        form8_started_at: Time.zone.now
-      )
-    end
-
     scenario "Appeal is already certified" do
       visit "certifications/new/#{appeal_already_certified.vacols_id}"
       expect(page).to have_content "Appeal has already been Certified"
