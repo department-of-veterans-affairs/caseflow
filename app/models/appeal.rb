@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   has_many :tasks
@@ -567,3 +568,4 @@ class Appeal < ActiveRecord::Base
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
