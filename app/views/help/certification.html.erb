@@ -108,9 +108,7 @@
       <p class="cf-help-image-wrapper">
 	<%= image_tag 'help/caseflow-login.png', {class: "cf-help-image", alt: 'VACOLS Login dialog'} %>
       </p>
-      <% if FeatureToggle.enabled?(:certification_v2, user: current_user) %>
 
-	
 	<h2 id="cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
 	  eFolder?</h2>
 
@@ -146,39 +144,8 @@
 	    of acceptable dates for SOCs and SSOCs because SOCs and SSOCs may be uploaded to VBMS one or more days before they
 	    are mailed, causing VBMS dates to be earlier than VACOLS dates.
 	  </p>
-	  
-      <% else %>
-	  
-	  <h2 id="cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
-	    eFolder?</h2>
 
-	  <p>
-	    Once you're logged in, Caseflow will check to see if documents in the VBMS
-	    eFolder (such as the NOD, SOC, and Form 9) match the dates entered in VACOLS.
-	    Caseflow will tell you it cannot find documents in VBMS if it cannot detect
-	    these documents.
-	  </p>
-
-	  <p class="cf-help-image-wrapper">
-	    <%= image_tag 'help/caseflow-mismatched.png', {class: "cf-help-image", alt: 'Caseflow mismatched documents dialog'} %>
-	  </p>
-
-	  <h2 id="mismatched-documents">6. What are the reasons Caseflow may not be
-	    able to find documents in VBMS?</h2>
-
-	  <p>
-	    There are usually three reasons Caseflow wouldn't be able to find a document:
-
-	    <h3>1. The dates of the document in question are inconsistent
-	      between VACOLS and VBMS.</h3>
-
-	    <p>
-	      If the dates are inconsistent you can change the date in either VACOLS or VBMS
-	      to match the other then click the Refresh button in Caseflow. If the date cannot be changed in VBMS, change the date in VACOLS.
-	    </p>
-      <% end %>
-      
-      <h3>2. The label of the document in question is missing or incorrect in VBMS</h3>
+    <h3>2. The label of the document in question is missing or incorrect in VBMS</h3>
 
       <p>
 	If a document is missing a label or uses something other than one of the labels
@@ -210,8 +177,8 @@
       <p class="cf-help-image-wrapper">
 	<%= image_tag 'help/vbms-documentproperties.png', {class: "cf-help-image", alt: 'VBMS document properties dialog'} %>
       </p>
-      
-      
+
+
       <h2 id="multiple-document-types">7. What should I do if an eFolder document contains multiple
 	types of information?</h2>
 
