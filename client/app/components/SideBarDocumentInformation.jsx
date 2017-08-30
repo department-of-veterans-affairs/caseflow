@@ -78,7 +78,7 @@ SideBarDocumentInformation.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  didLoadAppealFail: state.didLoadAppealFail
+  didLoadAppealFail: state.readerReducer.didLoadAppealFail
 });
 
 export default connect(

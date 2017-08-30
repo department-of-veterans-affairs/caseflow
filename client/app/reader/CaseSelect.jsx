@@ -100,7 +100,7 @@ class CaseSelect extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state, 'assignments');
+const mapStateToProps = (state) => _.pick(state.readerReducer, 'assignments');
 
 export default connect(
   mapStateToProps

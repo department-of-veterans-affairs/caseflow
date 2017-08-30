@@ -19,7 +19,7 @@ export const newHearingState = (state, action, spec) => {
   return update(state, {
     dockets: {
       [action.payload.date]: {
-        hearings_hash: {
+        hearings_array: {
           [action.payload.hearingIndex]: spec
         }
       }
@@ -42,6 +42,16 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.HANDLE_SERVER_ERROR:
     return update(state, {
       serverError: { $set: action.payload.err }
+    });
+
+  case Constants.SET_REPNAME:
+    return update(state, {
+      worksheet: { repName: { $set: action.payload.repName } }
+    });
+
+  case Constants.SET_WITNESS:
+    return update(state, {
+      worksheet: { witness: { $set: action.payload.witness } }
     });
 
   case Constants.SET_NOTES:

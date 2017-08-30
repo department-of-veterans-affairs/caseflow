@@ -21,17 +21,41 @@ describe Hearing do
     end
   end
 
-  context "#to_hash" do
-    subject { hearing.to_hash }
+  context "#to_hash_with_all_information" do
+    subject { hearing.to_hash_with_all_information }
+
+    let(:appeal) do
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+    end
+    let!(:additional_appeal) do
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+    end
+    let(:hearing) { Generators::Hearing.create(appeal: appeal) }
 
     context "when appeal has issues" do
-      let(:appeal) { Generators::Appeal.create }
-      let(:hearing) { Generators::Hearing.create(appeal: appeal) }
       let!(:issue1) { Generators::Issue.create(appeal: appeal) }
       let!(:issue2) { Generators::Issue.create(appeal: appeal) }
 
       it "should return issues through the appeal" do
-        expect(subject["issues"].size).to eq 2
+        # there are 3 issues associated with the appeal
+        # 1 issue is created in Generators::Appeal pending_hearing template
+        # 2 issues are created above
+        expect(subject["issues"].size).to eq 3
+      end
+    end
+
+    context "when hearing has appeals ready for hearing" do
+      it "should contain appeals" do
+        expect(subject["appeals"].size).to eq 2
+      end
+    end
+
+    context "when a hearing & appeal exist" do
+      it "returns expected keys" do
+        expect(subject["appellant_city"]).to eq(appeal.appellant_city)
+        expect(subject["appellant_state"]).to eq(appeal.appellant_state)
+        expect(subject["veteran_age"]).to eq(appeal.veteran_age)
+        expect(subject["veteran_full_name"]).to eq(appeal.veteran_full_name)
       end
     end
   end

@@ -58,7 +58,7 @@ DocumentCategoryIcons.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  searchCategoryHighlights: state.ui.searchCategoryHighlights
+  searchCategoryHighlights: state.readerReducer.ui.searchCategoryHighlights
 });
 
 export { DocumentCategoryIcons };
