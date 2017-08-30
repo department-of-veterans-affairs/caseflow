@@ -50,7 +50,7 @@ describe('DailyDocketContainer', () => {
     store.dispatch(populateDockets({
       '2017-06-17': {
         date: '2017-06-17T17:52:09.742-04:00',
-        hearings_hash: [{
+        hearings_array: [{
           id: 1,
           appeal_id: 68468,
           appellant_last_first_mi: 'VanBuren, James A.',

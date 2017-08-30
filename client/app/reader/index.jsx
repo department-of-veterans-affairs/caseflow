@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
@@ -10,7 +10,9 @@ import { reduxAnalyticsMiddleware } from './analytics';
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
-  readerReducer,
+  combineReducers({
+    readerReducer
+  }),
   composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
 );
 

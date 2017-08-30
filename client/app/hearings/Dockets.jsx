@@ -69,7 +69,7 @@ export class Dockets extends React.Component {
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: _.random(8, 12),
-        scheduled: docket.hearings_hash.length
+        scheduled: docket.hearings_array.length
       };
     });
 

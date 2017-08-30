@@ -51,7 +51,6 @@ class Hearing < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      include: :issues,
       methods: [
         :date,
         :request_type,
@@ -72,10 +71,30 @@ class Hearing < ActiveRecord::Base
     )
   end
 
+  def to_hash_with_all_information
+    serializable_hash(
+      include: [:issues, appeals: {
+        methods: [
+          :nod_date,
+          :form9_date,
+          :soc_date,
+          :certification_date,
+          :prior_decision_date,
+          :ssoc_dates
+        ] }]
+    ).merge(to_hash)
+  end
+
   def set_issues_from_appeal
     appeal.issues.each do |issue|
       Issue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id)
     end if appeal
+  end
+
+  private
+
+  def appeals
+    active_appeal_streams
   end
 
   class << self
