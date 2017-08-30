@@ -36,12 +36,12 @@ class CommentIndicator extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const doc = state.documents[ownProps.docId];
+  const doc = state.readerReducer.documents[ownProps.docId];
 
   return {
     docId: doc.id,
     expanded: doc.listComments,
-    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state)(ownProps.docId))
+    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.docId))
   };
 };
 
