@@ -485,7 +485,7 @@ export const removeTagRequestSuccess = (docId, tagId) => (
         tagId
       }
     });
-    const { documents } = getState();
+    const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
   }
