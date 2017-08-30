@@ -887,58 +887,60 @@ RSpec.feature "Reader" do
     end
 
     scenario "Tags" do
-      TAG1 = "Medical".freeze
-      TAG2 = "Law document".freeze
+      scenario "adding and deleting tags" do
+        TAG1 = "Medical".freeze
+        TAG2 = "Law document".freeze
 
-      DOC2_TAG1 = "Appeal Document".freeze
+        DOC2_TAG1 = "Appeal Document".freeze
 
-      SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
+        SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
 
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      click_on documents[0].type
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        click_on documents[0].type
 
-      fill_in "tags", with: TAG1
+        fill_in "tags", with: TAG1
 
-      # making sure there is a dropdown showing up when text is entered
-      expect(page).to have_css(".Select-menu-outer")
+        # making sure there is a dropdown showing up when text is entered
+        expect(page).to have_css(".Select-menu-outer")
 
-      # submit entering the tag
-      fill_in "tags", with: (TAG1 + "\n")
+        # submit entering the tag
+        fill_in "tags", with: (TAG1 + "\n")
 
-      fill_in "tags", with: (TAG2 + "\n")
+        fill_in "tags", with: (TAG2 + "\n")
 
-      # expecting the multi-selct to have the two new fields
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
+        # expecting the multi-selct to have the two new fields
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
 
-      # adding new tags to 2nd document
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      click_on documents[1].type
+        # adding new tags to 2nd document
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        click_on documents[1].type
+        fill_in "tags", with: (DOC2_TAG1 + "\n")
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
 
-      fill_in "tags", with: (DOC2_TAG1 + "\n")
+        # getting remove buttons of all tags
+        cancel_icons = page.all(".Select-value-icon", count: 1)
 
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
+        # rubocop:disable all
+        # delete all tags
+        for i in (cancel_icons.length - 1).downto(0)
+          cancel_icons[i].click
+        end
+        # rubocop:enable all
+        # expecting the page not to have any tags
+        expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
 
-      # getting remove buttons of all tags
-      cancel_icons = page.all(".Select-value-icon", count: 1)
 
-      # rubocop:disable all
-      # delete all tags
-      for i in (cancel_icons.length - 1).downto(0)
-        cancel_icons[i].click
+        click_on documents[0].type
+        # verify that the tags on the previous document still exist
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
-      # rubocop:enable all
 
-      # expecting the page not to have any tags
-      expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-      click_on documents[0].type
 
-      # verify that the tags on the previous document still exist
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
     end
 
     scenario "Search and Filter" do
