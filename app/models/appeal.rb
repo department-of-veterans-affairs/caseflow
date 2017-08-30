@@ -217,6 +217,18 @@ class Appeal < ActiveRecord::Base
     "#{regional_office[:city]}, #{regional_office[:state]}"
   end
 
+  def attributes_for_hearing
+    {
+      "id" => id,
+      "vbms_id" => vbms_id,
+      "nod_date" => nod_date,
+      "soc_date" => soc_date,
+      "certification_date" => certification_date,
+      "prior_decision_date" => prior_decision_date,
+      "ssoc_dates" => ssoc_dates
+    }
+  end
+
   def station_key
     result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
     result && result.first
