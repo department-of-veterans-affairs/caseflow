@@ -256,9 +256,9 @@ export class PdfUI extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'filteredDocIds'),
-  docListIsFiltered: docListIsFiltered(state),
-  ...state.ui.pdf
+  ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
+  docListIsFiltered: docListIsFiltered(state.readerReducer),
+  ...state.readerReducer.ui.pdf
 });
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

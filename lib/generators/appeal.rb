@@ -10,6 +10,7 @@ class Generators::Appeal
       }
     end
 
+    # rubocop:disable Metrics/MethodLength
     def vacols_record_default_attrs
       last_name = generate_last_name
 
@@ -29,9 +30,13 @@ class Generators::Appeal
         appellant_relationship: "Child",
         regional_office_key: "RO13",
         decision_date: 7.days.ago,
-        form9_date: 11.days.ago
+        form9_date: 11.days.ago,
+        veteran_date_of_birth: 47.years.ago,
+        appellant_city: "Huntingdon",
+        appellant_state: "TN"
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     # This is a method and not a constant because Datetime values need
     # to be evaluated lazily. Would be nice to have a better solution
@@ -57,6 +62,9 @@ class Generators::Appeal
         pending_hearing: {
           status: "Active",
           decision_date: nil,
+          nod_date: 1.month.ago,
+          soc_date: 15.days.ago,
+          ssoc_dates: [8.days.ago, 9.days.ago],
           issues: [
             { disposition: :nil, program: :compensation,
               vacols_sequence_id: 1,
@@ -91,16 +99,19 @@ class Generators::Appeal
           docket_number: "13 11-263",
           issues: [
             { disposition: :remanded, program: :compensation,
+              vacols_sequence_id: 1,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :knee },
             { disposition: :allowed, program: :compensation,
+              vacols_sequence_id: 2,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :elbow },
             { disposition: :denied, program: :compensation,
+              vacols_sequence_id: 3,
               type: {
                 name: :service_connection,
                 label: "Service Connection"

@@ -489,6 +489,95 @@ describe Appeal do
     end
   end
 
+  context "#fetch_appeals_by_vbms_id" do
+    subject { Appeal.fetch_appeals_by_vbms_id(vbms_id) }
+    let!(:appeal) do
+      Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789S")
+    end
+
+    context "when passed with valid vbms id" do
+      let(:vbms_id) { "123456789" }
+
+      it "returns an appeal" do
+        expect(subject.length).to eq(1)
+        expect(subject[0].vbms_id).to eq("123456789S")
+      end
+    end
+
+    context "when passed an invalid vbms id" do
+      context "length greater than 9" do
+        let(:vbms_id) { "1234567890" }
+
+        it "raises ActiveRecord::RecordNotFound error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context "length less than 3" do
+        let(:vbms_id) { "12" }
+
+        it "raises ActiveRecord::RecordNotFound error" do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+    end
+  end
+
+  context "#convert_vbms_id_for_vacols_query" do
+    subject { Appeal.convert_vbms_id_for_vacols_query(vbms_id) }
+
+    context "when passed a vbms id with a valid ssn" do
+      let(:vbms_id) { "123456789" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "when passed a vbms id with a valid ssn and appended alphabets" do
+      let(:vbms_id) { "123456789S" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "when passed a vbms id with a less than 9 digits" do
+      let(:vbms_id) { "1234567" }
+      it { is_expected.to eq("1234567C") }
+    end
+
+    context "when passed a vbms id less than 9 digits with leading zeros" do
+      let(:vbms_id) { "0012347" }
+      it { is_expected.to eq("12347C") }
+    end
+
+    context "when passed a vbms id less than 9 digits with leading zeros and alphabets" do
+      let(:vbms_id) { "00123C00S9S" }
+      it { is_expected.to eq("123009C") }
+    end
+
+    context "invalid vbms id" do
+      context "when passed a vbms_id greater than 9 digits" do
+        let(:vbms_id) { "1234567890" }
+
+        it "raises RecordNotFound error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
+        end
+      end
+
+      context "when passed a vbms_id less than 3 digits" do
+        let(:vbms_id) { "12" }
+
+        it "raises RecordNotFound error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
+        end
+      end
+
+      context "when passed no vbms id" do
+        let(:vbms_id) { "" }
+
+        it "raises RecordNotFound error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
+        end
+      end
+    end
+  end
+
   context ".convert_file_number_to_vacols" do
     subject { Appeal.convert_file_number_to_vacols(file_number) }
 
@@ -515,6 +604,26 @@ describe Appeal do
       it "raises InvalidFileNumber error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
       end
+    end
+  end
+
+  context "#issue_by_sequence_id" do
+    let(:appeal) { Generators::Appeal.build(vacols_record: { template: :partial_grant_decided }) }
+    subject { appeal.issue_by_sequence_id(id) }
+
+    context "when appeal has an issue with the sequence id" do
+      let(:id) { "2" }
+
+      it "returns the issue" do
+        expect(subject).to_not be_nil
+        expect(subject.vacols_sequence_id).to eq "2"
+      end
+    end
+
+    context "when appeal does not have an issue with the sequence id" do
+      let(:id) { "5" }
+
+      it { is_expected.to be_nil }
     end
   end
 
