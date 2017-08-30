@@ -27,7 +27,6 @@ export class DecisionReviewer extends React.PureComponent {
     };
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
-    this.routedPdfListViewCaseSummary.displayName = 'RoutedPdfListViewCaseSummary';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
     this.documentsRoute.displayName = 'DocumentsRoute';
   }
@@ -66,8 +65,18 @@ export class DecisionReviewer extends React.PureComponent {
     this.props.onScrollToComment(comment);
   }
 
+  determineCategoryFilter = (props) => {
+    const search = new URLSearchParams(props.location.search);
+
+    if (search.get('category')) {
+      this.props.setCategoryFilter(search.get('category'), true);
+    }
+  };
+
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
+
+    this.determineCategoryFilter(props);
 
     return <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
@@ -78,22 +87,6 @@ export class DecisionReviewer extends React.PureComponent {
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         {...props}
       />;
-  }
-
-  routedPdfListViewCaseSummary = (props) => {
-    const { vacolsId } = props.match.params;
-
-    this.props.setCategoryFilter('case_summary', true);
-
-    return <PdfListView
-        showPdf={this.showPdf(props.history, vacolsId)}
-        sortBy={this.state.sortBy}
-        selectedLabels={this.state.selectedLabels}
-        isCommentLabelSelected={this.state.isCommentLabelSelected}
-        documentPathBase={`/${vacolsId}/documents`}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        {...props}
-    />;
   }
 
   routedPdfViewer = (props) => {
@@ -138,12 +131,6 @@ export class DecisionReviewer extends React.PureComponent {
           title="Claims Folder | Caseflow Reader"
           path="/:vacolsId/documents"
           render={this.routedPdfListView}
-        />
-        <PageRoute
-          exact
-          title="Claims Folder | Caseflow Reader"
-          path="/:vacolsId/documents/case-summary"
-          render={this.routedPdfListViewCaseSummary}
         />
         <PageRoute
           title ="Document Viewer | Caseflow Reader"

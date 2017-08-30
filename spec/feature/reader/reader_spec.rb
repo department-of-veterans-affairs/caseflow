@@ -266,7 +266,7 @@ RSpec.feature "Reader" do
     end
 
     scenario "User visits case_summary page" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/case-summary"
+      visit "/reader/appeal/#{appeal.vacols_id}/documents?category=case_summary"
       expect(page).to have_content("Filtering by:")
       expect(page).to have_content("Categories (1)")
     end
