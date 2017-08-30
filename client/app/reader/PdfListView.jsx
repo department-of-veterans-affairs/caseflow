@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import DocumentListHeader from '../components/reader/DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import { fetchAppealDetails } from './actions';
-import { getAppealIfItDoesNotExist } from '../reader/utils';
+import { shouldFetchAppeal } from '../reader/utils';
 
 import _ from 'lodash';
 import DocumentsTable from './DocumentsTable';
@@ -15,7 +15,17 @@ import NoSearchResults from './NoSearchResults';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-    getAppealIfItDoesNotExist(this);
+
+    if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
+      // if the appeal is fetched through case selected appeals, re-use that existing appeal
+      // information.
+      if (this.props.caseSelectedAppeal &&
+        (this.props.caseSelectedAppeal.vacols_id === this.props.match.params.vacolsId)) {
+        this.props.onReceiveAppealDetails(this.props.caseSelectedAppeal);
+      } else {
+        this.props.fetchAppealDetails(this.props.match.params.vacolsId);
+      }
+    }
   }
 
   render() {
@@ -49,7 +59,8 @@ const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state.readerReducer),
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
-      state.readerReducer.loadedAppeal
+      state.readerReducer.loadedAppeal,
+    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal
   };
 };
 
