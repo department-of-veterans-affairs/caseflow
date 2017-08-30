@@ -983,7 +983,7 @@ RSpec.feature "Reader" do
           select_control = find(".cf-issue-tag-sidebar").find(".Select-control")
           removed_value_text = select_control.find_all(".Select-value")[0].text
           select_control.find_all(".Select-value-icon")[0].click
-          expect(page).not_to have_css(".Select-value-label", text: removed_value_text)          
+          expect(page).not_to have_css(".Select-value-label", text: removed_value_text)
 
           find(".Select-control").click
 
