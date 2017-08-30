@@ -12,6 +12,7 @@ import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import * as ReaderActions from './actions';
 import { CATEGORIES } from './analytics';
+import { documentCategories } from './constants';
 import _ from 'lodash';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
@@ -65,18 +66,19 @@ export class DecisionReviewer extends React.PureComponent {
     this.props.onScrollToComment(comment);
   }
 
-  determineCategoryFilter = (props) => {
+  determineInitialCategoryFilter = (props) => {
     const search = new URLSearchParams(props.location.search);
+    const category = search.get('category');
 
-    if (search.get('category')) {
-      this.props.setCategoryFilter(search.get('category'), true);
+    if (documentCategories.hasOwnProperty(category)) {
+      this.props.setCategoryFilter(category, true);
     }
   };
 
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
 
-    this.determineCategoryFilter(props);
+    this.determineInitialCategoryFilter(props);
 
     return <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
