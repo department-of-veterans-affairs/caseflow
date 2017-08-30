@@ -236,7 +236,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_current_path("/certifications/#{appeal_mismatched_documents.vacols_id}/check_documents")
     end
 
-    scenario "loading a certification and having it error" do
+    scenario "When loading a certification and having it error" do
       allow(StartCertificationJob).to receive(:perform_now).and_return(true)
       visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
       expect(page).to have_content("Loading")
@@ -245,61 +245,18 @@ RSpec.feature "Start Certification" do
       page.execute_script("window.reloadCertification()")
       expect(page).to have_content("Technical Difficulties")
     end
-  end
-
-  context "As an authorized user to Certify Appeal" do
-    let!(:current_user) { User.authenticate!(roles: ["Certify Appeal"]) }
-
-    scenario "When some documents aren't matching shows missing documents page" do
-      visit "certifications/new/#{appeal_mismatched_documents.vacols_id}"
-
-      expect(find("#correspondent-name")).to have_content("Crockett, Davy")
-      expect(find("#appeal-type-header")).to have_content("Original")
-      expect(find("#file-type-header")).to have_content("VVA")
-      expect(find("#vso-header")).to have_content("The American Legion")
-
-      expect(find("#page-title")).to have_content "Mismatched Documents"
-      expect(find("#nod-match")).to have_content "Not found"
-      expect(find("#soc-match")).to_not have_content "Not found"
-      expect(find("#soc-match")).to have_content "09/06/1987"
-      expect(find("#form-9-match")).to have_content "Not found"
-      expect(find("#ssoc-1-match")).to have_content "Not found"
-      expect(find("#ssoc-2-match")).to have_content "SSOC 2"
-      expect(find("#ssoc-2-match")).to have_content "Not found"
-
-      expect(Certification.last).to have_attributes(
-        vacols_id: appeal_mismatched_documents.vacols_id,
-        nod_matching_at: nil,
-        soc_matching_at: Time.zone.now,
-        form9_matching_at: nil,
-        ssocs_required: true,
-        ssocs_matching_at: nil,
-        form8_started_at: nil
-      )
-    end
 
     scenario "When appeal is not ready for certification" do
       visit "certifications/new/#{appeal_not_ready.vacols_id}"
       expect(page).to have_content("Appeal is not ready for certification.")
     end
 
-    scenario "VBMS-specific 500 on vbms error" do
-      visit "certifications/new/#{appeal_vbms_error.vacols_id}"
-      expect(page).to have_content("Unable to communicate with the VBMS system at this time.")
-    end
-
-    scenario "404's if appeal doesn't exist in VACOLS" do
-      visit "certifications/new/4444NNNN"
-      expect(page).to have_content("Page not found")
-    end
-
-    scenario "Appeal is already certified" do
+    scenario "When appeal is already certified" do
       visit "certifications/new/#{appeal_already_certified.vacols_id}"
-      expect(find("#page-title")).to have_content "Already Certified"
       expect(page).to have_content "Appeal has already been Certified"
     end
 
-    scenario "There is a dependency outage" do
+    scenario "When a dependency is experiencing an outage" do
       allow(DependenciesReportService).to receive(:outage_present?).and_return(true)
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content "We've detected technical issues in our system"
