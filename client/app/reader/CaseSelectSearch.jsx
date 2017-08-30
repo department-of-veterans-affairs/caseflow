@@ -138,8 +138,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  caseSelect: state.ui.caseSelect,
-  caseSelectCriteria: state.ui.caseSelectCriteria
+  caseSelect: state.readerReducer.ui.caseSelect,
+  caseSelectCriteria: state.readerReducer.ui.caseSelectCriteria
 });
 
 
