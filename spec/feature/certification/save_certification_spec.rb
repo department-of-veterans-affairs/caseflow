@@ -31,7 +31,7 @@ RSpec.feature "Save Certification" do
     Generators::Appeal.build(vacols_record: vacols_record, documents: [nod, soc, form9])
   end
 
-  context "As an authorized user for certification v2" do
+  context "As an authorized user" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal"]) }
 
     let(:vbms_error) do
