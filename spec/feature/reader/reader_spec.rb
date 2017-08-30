@@ -886,7 +886,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Tags" do
+    context "Tags" do
       scenario "adding and deleting tags" do
         TAG1 = "Medical".freeze
         TAG2 = "Law document".freeze
@@ -915,7 +915,9 @@ RSpec.feature "Reader" do
         # adding new tags to 2nd document
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[1].type
+
         fill_in "tags", with: (DOC2_TAG1 + "\n")
+
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
 
         # getting remove buttons of all tags
@@ -927,20 +929,71 @@ RSpec.feature "Reader" do
           cancel_icons[i].click
         end
         # rubocop:enable all
+
         # expecting the page not to have any tags
         expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
 
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
+
         # verify that the tags on the previous document still exist
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
 
+      context "Share tags among all documents in a case" do
+        scenario "Shouldn't show auto suggestions" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          click_on documents[0].type
+          find("#tags").click
+          expect(page).not_to have_css(".Select-menu-outer")
+        end
 
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        scenario "Shoud show correct auto suggestions" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          click_on documents[1].type
+          find(".Select-control").click
+          expect(page).to have_css(".Select-menu-outer")
 
+          tag_options = find_all(".Select-option")
+          expect(tag_options.count).to eq(2)
 
+          documents[0].tags.each_with_index do |tag, index|
+            expect(tag_options[index]).to have_content(tag.text)
+          end
+
+          NEW_TAG_TEXT = "New Tag".freeze
+
+          # going back the document[1] and
+          # adding a new tag
+          fill_in "tags", with: (NEW_TAG_TEXT + "\n")
+
+          # going to the document[0] page
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+          find(".Select-control").click
+          expect(page).to have_css(".Select-menu-outer")
+
+          # making sure correct tag options exist
+          tag_options = find_all(".Select-option")
+          expect(tag_options.count).to eq(1)
+          expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
+
+          # removing an existing tag
+          select_control = find(".cf-issue-tag-sidebar").find(".Select-control")
+          removed_value_text = select_control.find_all(".Select-value")[0].text
+          select_control.find_all(".Select-value-icon")[0].click
+          expect(page).not_to have_css(".Select-value-label", text: removed_value_text)          
+
+          find(".Select-control").click
+
+          # again making sure the correct tag options exist
+          expect(page).to have_css(".Select-menu-outer")
+          tag_options = find_all(".Select-option")
+          expect(tag_options.count).to eq(1)
+          expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
+        end
+      end
     end
 
     scenario "Search and Filter" do
