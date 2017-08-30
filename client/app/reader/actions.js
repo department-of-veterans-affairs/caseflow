@@ -624,14 +624,7 @@ export const fetchAppealDetails = (vacolsId) => (
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
-  payload: { appeals },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CASE_SELECTION_PAGE,
-      action: 'case-select-search-receive-appeals',
-      label: appeals.length
-    }
-  }
+  payload: { appeals }
 });
 
 export const fetchAppealUsingVeteranIdFailed = () => ({
@@ -644,7 +637,13 @@ export const caseSelectAppeal = (appeal) => ({
 });
 
 export const requestAppealUsingVeteranId = () => ({
-  type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
+  type: Constants.REQUEST_APPEAL_USING_VETERAN_ID,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CASE_SELECTION_PAGE,
+      action: 'case-search'
+    }
+  }
 });
 
 export const fetchAppealUsingVeteranId = (veteranId) => (
