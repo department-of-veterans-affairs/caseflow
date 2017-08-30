@@ -624,7 +624,14 @@ export const fetchAppealDetails = (vacolsId) => (
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
-  payload: { appeals }
+  payload: { appeals },
+  meta: {
+    analytics: {
+      category: CATEGORIES.CASE_SELECTION_PAGE,
+      action: 'case-select-search-receive-appeals',
+      label: appeals.length
+    }
+  }
 });
 
 export const fetchAppealUsingVeteranIdFailed = () => ({
