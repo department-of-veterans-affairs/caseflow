@@ -20,47 +20,44 @@ const PAGE_HEIGHT = 1056;
 
 export class PdfPage extends React.Component {
   getPageContainerRef = (pageContainer) => {
-    this.pageContainer = pageContainer;
     this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
   }
   getCanvasRef = (canvas) => {
-    this.canvas = canvas;
     this.props.getCanvasRef(this.props.pageIndex, this.props.file, canvas);
   }
   getTextLayerRef = (textLayer) => {
-    this.textLayer = textLayer;
     this.props.getTextLayerRef(this.props.pageIndex, this.props.file, textLayer);
   }
 
   render() {
+    const divPageStyle =  {
+      marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
+      width: `${this.props.scale * currentWidth}px`,
+      height: `${this.props.scale * currentHeight}px`,
+      verticalAlign: 'top',
+      display: this.props.isVisible ? '' : 'none'
+    };
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
     const currentWidth = _.get(this.props.pageDimensions,
-      [this.props.currentFile, this.props.pageIndex, 'width'], PAGE_WIDTH);
+      [this.props.file, this.props.pageIndex, 'width'], PAGE_WIDTH);
     const currentHeight = _.get(this.props.pageDimensions,
-      [this.props.currentFile, this.props.pageIndex, 'height'], PAGE_HEIGHT);
+      [this.props.file, this.props.pageIndex, 'height'], PAGE_HEIGHT);
 
     // Only pages that are the correct scale should be visible
     const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
     const pageContentsVisibleClass = classNames({
       'cf-pdf-page-hidden': !(Math.abs(this.props.scale - _.get(this.props.isDrawn,
-          [this.props.currentFile, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
+          [this.props.file, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
     });
 
     return <div
       id={`${this.props.file}-${this.props.pageIndex}`}
       className={pageClassNames}
-      style={ {
-        marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-        width: `${this.props.scale * currentWidth}px`,
-        height: `${this.props.scale * currentHeight}px`,
-        verticalAlign: 'top',
-        display: this.props.isVisible ? '' : 'none'
-      } }
-      key={`${this.props.file}-${this.props.pageIndex + 1}`}
+      style={divPageStyle}
       ref={this.getPageContainerRef}>
         <div className={pageContentsVisibleClass}>
           <canvas
@@ -82,10 +79,10 @@ export class PdfPage extends React.Component {
 }
 
 PdfPage.propTypes = {
-  currentFile: PropTypes.string,
   file: PropTypes.string,
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
+  scale: PropTypes.number,
   pageDimensions: PropTypes.object,
   isDrawn: PropTypes.object,
   getPageContainerRef: PropTypes.func,
