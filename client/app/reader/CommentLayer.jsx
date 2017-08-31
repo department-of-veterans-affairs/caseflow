@@ -7,8 +7,7 @@ import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent,
   isUserEditingText } from './utils';
 import _ from 'lodash';
 import { handleSelectCommentIcon, placeAnnotation,
-  requestMoveAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon, } from '../reader/actions';
+  requestMoveAnnotation, showPlaceAnnotationIcon } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
 
@@ -105,63 +104,6 @@ class CommentLayer extends PureComponent {
     this.props.requestMoveAnnotation(droppedAnnotation);
   }
 
-  handleAltC = () => {
-    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
-
-    const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
-    const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
-
-    const iconPageBoundingBox =
-      this.pageElements[this.props.file][firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
-
-    const pageCoords = getInitialAnnotationIconPageCoords(
-      iconPageBoundingBox,
-      scrollWindowBoundingRect,
-      this.props.scale
-    );
-
-    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
-  }
-
-  handleAltEnter = () => {
-    this.props.placeAnnotation(
-      pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-      {
-        xPosition: this.props.placingAnnotationIconPageCoords.x,
-        yPosition: this.props.placingAnnotationIconPageCoords.y
-      },
-      this.props.documentId
-    );
-  }
-
-  keyListener = (event) => {
-    if (isUserEditingText()) {
-      return;
-    }
-
-    if (event.altKey) {
-      if (event.code === 'KeyC') {
-        this.handleAltC();
-      }
-
-      if (event.code === 'Enter') {
-        this.handleAltEnter();
-      }
-    }
-
-    if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
-      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
-    }
-  }
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.keyListener);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.keyListener);
-  }
-
   mouseListener = (event) => {
     if (this.props.isPlacingAnnotation) {
       const pageCoords = getPageCoordinatesOfMouseEvent(
@@ -208,6 +150,7 @@ class CommentLayer extends PureComponent {
 }
 
 CommentLayer.propTypes = {
+  isCurrentPage: PropTypes.bool,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,
@@ -235,8 +178,6 @@ const mapDispatchToProps = (dispatch) => ({
     placeAnnotation,
     handleSelectCommentIcon,
     requestMoveAnnotation,
-    startPlacingAnnotation,
-    stopPlacingAnnotation,
     showPlaceAnnotationIcon
   }, dispatch)
 });

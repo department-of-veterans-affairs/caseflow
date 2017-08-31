@@ -5,16 +5,18 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { pageNumberOfPageIndex, pageIndexOfPageNumber,
+import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
 import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { setPdfReadyToShow, setPageCoordBounds,
-  placeAnnotation,
+  placeAnnotation, startPlacingAnnotation,
+  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
+import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -541,6 +543,55 @@ export class Pdf extends React.PureComponent {
       this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
+  handleAltC = () => {
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
+
+    const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
+    const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
+
+    const iconPageBoundingBox =
+      this.pageElements[this.props.file][firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
+
+    const pageCoords = getInitialAnnotationIconPageCoords(
+      iconPageBoundingBox,
+      scrollWindowBoundingRect,
+      this.props.scale
+    );
+
+    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
+  }
+
+  handleAltEnter = () => {
+    this.props.placeAnnotation(
+      pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+      {
+        xPosition: this.props.placingAnnotationIconPageCoords.x,
+        yPosition: this.props.placingAnnotationIconPageCoords.y
+      },
+      this.props.documentId
+    );
+  }
+
+  keyListener = (event) => {
+    if (isUserEditingText()) {
+      return;
+    }
+
+    if (event.altKey) {
+      if (event.code === 'KeyC') {
+        this.handleAltC();
+      }
+
+      if (event.code === 'Enter') {
+        this.handleAltEnter();
+      }
+    }
+
+    if (event.code === 'Escape' && this.props.isPlacingAnnotation) {
+      this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
+    }
+  }
+
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.drawInViewPages);
@@ -764,6 +815,7 @@ export class Pdf extends React.PureComponent {
           } }
           key={`${file}-${pageIndex + 1}`}
           id={this.props.file === file && `pageContainer${pageIndex + 1}`}
+          onMouseMove={this.mouseListener}
           ref={this.refFunctionGetters.pageContainer[file][pageIndex]}>
             <div className={pageContentsVisibleClass}>
               <canvas
@@ -810,6 +862,10 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
     setPageCoordBounds,
+    startPlacingAnnotation,
+    stopPlacingAnnotation,
+    showPlaceAnnotationIcon,
+    hidePlaceAnnotationIcon,
     onScrollToComment,
     setPdfReadyToShow
   }, dispatch)
