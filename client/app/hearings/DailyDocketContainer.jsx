@@ -43,15 +43,15 @@ export class DailyDocketContainer extends React.Component {
     // AutoSave.mapDispatchToProps().  save() calls this function and passes a
     // ref to dispatch(), enabling this function to fire actions as needed.
 
+    const hearingsToSave = this.docket().filter((hearing) => hearing.edited);
+
     let hearingsToSaveIndeces = [];
 
-    const hearingsToSave = this.docket().filter((hearing, index) => {
-      if (hearing.edited) {
+    for (let index = 0; index < this.docket().length; index++) {
+      if (this.docket()[index].edited) {
         hearingsToSaveIndeces.push(index);
       }
-
-      return hearing.edited;
-    });
+    }
 
     if (hearingsToSave.length) {
       // temporarily disable console ban so QA can see things will get saved
