@@ -446,7 +446,7 @@ export const newTagRequestSuccess = (docId, createdTags) => (
         createdTags
       }
     });
-    const { documents } = getState();
+    const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
   }
@@ -496,7 +496,7 @@ export const removeTagRequestSuccess = (docId, tagId) => (
         tagId
       }
     });
-    const { documents } = getState();
+    const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
   }
