@@ -166,7 +166,8 @@ export class Pdf extends React.PureComponent {
         if (!canvas || !container || !page) {
           this.isDrawing[file][index] = false;
 
-          console.log('exiting here');
+          console.log('exiting here', file, index);
+          console.log(this.pageElements);
 
           return reject();
         }
@@ -408,8 +409,9 @@ export class Pdf extends React.PureComponent {
   }
 
   setUpPdfObjects = (file, pdfDocument) => {
-    this.pageElements[file] = {};
-
+    if (!this.pageElements[file]) {
+      this.pageElements[file] = {};
+    }
     if (!this.isDrawing[file]) {
       this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
     }
@@ -824,36 +826,33 @@ export class Pdf extends React.PureComponent {
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   getPageContainerRef = (index, file, elem) => {
-    console.log('getting page', index, file);
-    _.set(this.pageElements[file], [index, 'pageContainer'], elem);  
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'pageContainer'], elem);
+    } else {    
+      delete this.pageElements[file][index];
+    }
   }
+
   getCanvasRef = (index, file, elem) => {
-    _.set(this.pageElements[file], [index, 'canvas'], elem);
+    if (elem) {    
+      _.set(this.pageElements[file], [index, 'canvas'], elem);
+    } else {    
+      delete this.pageElements[file][index];
+    }
   }
+
   getTextLayerRef = (index, file, elem) => {
-    _.set(this.pageElements[file], [index, 'textLayer'], elem);
+    if (elem) {    
+      _.set(this.pageElements[file], [index, 'textLayer'], elem);
+    } else {    
+      delete this.pageElements[file][index];
+    }
   }
 
   // eslint-disable-next-line max-statements
   render() {
-    const pageClassNames = classNames({
-      'cf-pdf-pdfjs-container': true,
-      page: true,
-      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
-    });
-
     const pages = _.map(this.state.numPages, (numPages, file) => {
       return _.range(numPages).map((page, pageIndex) => {
-        const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], PAGE_WIDTH);
-        const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], PAGE_HEIGHT);
-
-        // Only pages that are the correct scale should be visible
-        const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
-        const pageContentsVisibleClass = classNames({
-          'cf-pdf-page-hidden': !(Math.abs(this.props.scale -
-            _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
-        });
-
         return <PdfPage
             currentFile={this.props.file}
             file={file}
