@@ -66,22 +66,16 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :veteran_age,
         :veteran_full_name,
-        :venue, :vbms_id
+        :venue,
+        :vbms_id
       ]
     )
   end
 
   def to_hash_with_all_information
     serializable_hash(
-      include: [:issues, appeals: {
-        methods: [
-          :nod_date,
-          :form9_date,
-          :soc_date,
-          :certification_date,
-          :prior_decision_date,
-          :ssoc_dates
-        ] }]
+      methods: :appeals,
+      include: :issues
     ).merge(to_hash)
   end
 
@@ -91,10 +85,8 @@ class Hearing < ActiveRecord::Base
     end if appeal
   end
 
-  private
-
   def appeals
-    active_appeal_streams
+    active_appeal_streams.map(&:attributes_for_hearing)
   end
 
   class << self
