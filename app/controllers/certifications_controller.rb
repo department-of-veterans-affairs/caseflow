@@ -2,21 +2,9 @@ class CertificationsController < ApplicationController
   before_action :verify_access, :check_certification_out_of_service
 
   def new
-    if feature_enabled?(:certification_v2)
-      certification.async_start!
-      react_routed
-      render "v2", layout: "application"
-      return
-    end
-
-    status = certification.start!
-    @form8 = certification.form8
-
-    case status
-    when :already_certified    then render "already_certified"
-    when :data_missing         then render "not_ready", status: 409
-    when :mismatched_documents then render "mismatched_documents"
-    end
+    certification.async_start!
+    react_routed
+    render "v2", layout: "application"
   end
 
   def update_certification_from_v2_form
@@ -65,20 +53,8 @@ class CertificationsController < ApplicationController
     render json: {}
   end
 
-  def create
-    # Can't use controller params in model mass assignments without whitelisting. See:
-    # http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters
-    params.require(:form8).permit!
-    form8.update_from_string_params(params[:form8])
-    form8.save_pdf!
-
-    redirect_to certification_path(id: certification.form8.vacols_id)
-  end
-
   def show
-    return certification_data if feature_enabled?(:certification_v2)
-
-    render "confirm", layout: "application" if params[:confirm]
+    certification_data
   end
 
   def certification_data
@@ -98,15 +74,6 @@ class CertificationsController < ApplicationController
 
   def pdf
     send_file(form8.pdf_location, type: "application/pdf", disposition: "inline")
-  end
-
-  # TODO: remove when v2 is rolled outx`
-  def confirm
-    @certification = Certification.find_by(vacols_id: vacols_id)
-
-    @certification.complete!(current_user.id)
-
-    redirect_to certification_path(id: appeal.vacols_id, confirm: true)
   end
 
   def set_application
