@@ -46,13 +46,13 @@ class Hearings::WorksheetsController < HearingsController
 
                   }
               },
-              nod: 99,
-              soc: 10,
-              docs_in_efolder: 88,
+              nod: 99
+              soc: 10
+              docs_in_efolder: 88
           },
 
-      contentions: '',
-      periods: '',
+      contentions: ''
+      periods: ''
        }
     }
   end
