@@ -143,7 +143,6 @@ export class Pdf extends React.PureComponent {
   // This method is the worst. It is our main interaction with PDFJS, so it will
   // likey remain complicated.
   drawPage = (file, index) => {
-    console.log('drawing page', file, index);
     if (this.isDrawing[file][index] ||
       _.get(this.state.isDrawn, [file, index, 'scale']) === this.props.scale) {
 
@@ -165,9 +164,6 @@ export class Pdf extends React.PureComponent {
 
         if (!canvas || !container || !page) {
           this.isDrawing[file][index] = false;
-
-          console.log('exiting here', file, index);
-          console.log(this.pageElements);
 
           return reject();
         }
