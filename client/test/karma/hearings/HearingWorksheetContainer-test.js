@@ -49,7 +49,14 @@ describe('HearingWorksheetContainer', () => {
     store.dispatch(populateWorksheet({
       veteran: {},
       appeal: {},
-      streams: {}
+      streams: {
+        appeal_0: {
+          issues: {
+            issue_0: {
+            }
+          }
+        }
+      }
     }));
     expect(wrapper.text()).to.include('Hearing Worksheet');
   });
