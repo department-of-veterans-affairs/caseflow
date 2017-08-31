@@ -190,9 +190,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DESCRIPTIONS,
         payload: {
-
           description: 'Elbow Arthritis'
-
         }
       });
     });
@@ -208,10 +206,8 @@ describe('hearingsReducer', () => {
             }
           }
         }
-
       }
      );
-
     });
   });
 
