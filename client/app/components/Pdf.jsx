@@ -13,7 +13,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import { setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
+  stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
@@ -865,7 +865,6 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    hidePlaceAnnotationIcon,
     onScrollToComment,
     setPdfReadyToShow
   }, dispatch)

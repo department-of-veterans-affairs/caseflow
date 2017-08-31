@@ -117,7 +117,7 @@ class CommentLayer extends PureComponent {
   }
 
   // To specify the component as droppable, we need to preventDefault on the event.
-  onPageDragOver = (event) => {event.preventDefault()}
+  onPageDragOver = (event) => event.preventDefault()
 
   getCommentLayerDivRef = (ref) => this.commentLayerDiv = ref
 
