@@ -40,20 +40,20 @@ class Hearings::WorksheetsController < HearingsController
       veteran: {},
       appeal: {},
       streams: {
-          appeal_0: {
-              issues: {
-                  issue_0: {
+        appeal_0: {
+          issues: {
+            issue_0: {
 
-                  }
-              },
-              nod: 99
-              soc: 10
-              docs_in_efolder: 88
+            }
           },
+          nod: 99,
+          soc: 10,
+          docs_in_efolder: 88
+        },
 
-      contentions: ''
-      periods: ''
-       }
+        contentions: "",
+        periods: ""
+      }
     }
   end
 end
