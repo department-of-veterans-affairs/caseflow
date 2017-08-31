@@ -17,9 +17,13 @@ export class AutoSave extends React.Component {
   componentDidMount = () => {
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
-        this.props.doBeforeWindowCloses();
+        this.props.save(this.props.saveFunction);
       };
     }
+
+    setInterval(() => {
+      this.props.save(this.props.saveFunction);
+    }, this.props.intervalInMs || 30000);
   }
 
   render() {
@@ -42,6 +46,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   doBeforeWindowCloses: () => {
     dispatch(this.props.beforeWindowClosesActionCreator());
+  },
+  save: (saveFunction) => {
+    saveFunction(dispatch);
   }
 });
 
@@ -53,5 +60,6 @@ export default connect(
 AutoSave.propTypes = {
   isSaving: PropTypes.bool,
   spinnerColor: PropTypes.string,
-  beforeWindowClosesActionCreator: PropTypes.func.isRequired
+  intervalInMs: PropTypes.number,
+  saveFunction: PropTypes.func.isRequired
 };

@@ -87,6 +87,17 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       isSaving: { $set: !state.isSaving }
     });
 
+  case Constants.SET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      dockets: {
+        [action.payload.date]: {
+          hearings_hash: {
+            [action.payload.index]: { edited: { $set: false } }
+          }
+        }
+      }
+    });
+
   default: return state;
   }
 };

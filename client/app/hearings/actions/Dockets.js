@@ -1,43 +1,5 @@
 import * as Constants from '../constants/constants';
 
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-eval */
-export let lastChangeTimestamp = null;
-
-export const updateHearing = (action, milliseconds = 1000) =>
-  (dispatch, getState) => {
-
-    dispatch(action);
-
-    lastChangeTimestamp = Number(new Date());
-
-    // create a function that, after a moment (default 1000ms),
-    // checks if there haven't been any more calls to updateHearing().
-    // If true (meaning the time at which the function runs matches
-    // the time at which it was created), save the new data.
-
-    eval(`
-      setTimeout(() => {
-        if (${lastChangeTimestamp} === lastChangeTimestamp) {
-          dispatch({type:'TOGGLE_SAVING'});
-          saveData(getState().dockets, dispatch);
-        }
-      }, ${milliseconds});`
-    );
-
-    // filter out edited:true + send only those to server?
-  };
-/* eslint-enable no-unused-vars */
-/* eslint-enable no-eval */
-
-export const saveData = (data, dispatch) => {
-  setTimeout(() => {
-    dispatch({
-      type: 'TOGGLE_SAVING'
-    });
-  }, 1000);
-};
-
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,
   payload: {
@@ -73,7 +35,7 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const setNotes = (hearingIndex, notes, date) => updateHearing({
+export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
     hearingIndex,
@@ -82,7 +44,7 @@ export const setNotes = (hearingIndex, notes, date) => updateHearing({
   }
 });
 
-export const setDisposition = (hearingIndex, disposition, date) => updateHearing({
+export const setDisposition = (hearingIndex, disposition, date) => ({
   type: Constants.SET_DISPOSITION,
   payload: {
     hearingIndex,
@@ -91,7 +53,7 @@ export const setDisposition = (hearingIndex, disposition, date) => updateHearing
   }
 });
 
-export const setHoldOpen = (hearingIndex, holdOpen, date) => updateHearing({
+export const setHoldOpen = (hearingIndex, holdOpen, date) => ({
   type: Constants.SET_HOLD_OPEN,
   payload: {
     hearingIndex,
@@ -100,7 +62,7 @@ export const setHoldOpen = (hearingIndex, holdOpen, date) => updateHearing({
   }
 });
 
-export const setAod = (hearingIndex, aod, date) => updateHearing({
+export const setAod = (hearingIndex, aod, date) => ({
   type: Constants.SET_AOD,
   payload: {
     hearingIndex,
@@ -109,7 +71,7 @@ export const setAod = (hearingIndex, aod, date) => updateHearing({
   }
 });
 
-export const setAddOn = (hearingIndex, addOn, date) => updateHearing({
+export const setAddOn = (hearingIndex, addOn, date) => ({
   type: Constants.SET_ADD_ON,
   payload: {
     hearingIndex,
@@ -118,7 +80,7 @@ export const setAddOn = (hearingIndex, addOn, date) => updateHearing({
   }
 });
 
-export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => updateHearing({
+export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => ({
   type: Constants.SET_TRANSCRIPT_REQUESTED,
   payload: {
     hearingIndex,
@@ -154,9 +116,3 @@ export const onCommentsChange = (comments) => ({
     comments
   }
 });
-
-/* eslint-disable no-unused-vars */
-export const saveHearingsBeforeWindowCloses = () => (dispatch, getState) => {
-  const dockets = getState().dockets;
-};
-/* eslint-enable no-unused-vars */
