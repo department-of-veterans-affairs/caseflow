@@ -40,6 +40,7 @@ class Hearings::WorksheetsController < HearingsController
       veteran: {},
       appeal: {},
       streams: {
+<<<<<<< HEAD
           appeal_0: {
               issues: {
                   issue_0: {
@@ -52,6 +53,10 @@ class Hearings::WorksheetsController < HearingsController
       contentions: '',
       periods: '',
        }
+=======
+        ID: 101
+      }
+>>>>>>> bb892ade553d5a7195e6d9f26815e6d9b7bc99ab
     }
   end
 end

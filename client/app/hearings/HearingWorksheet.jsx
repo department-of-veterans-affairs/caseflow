@@ -78,6 +78,7 @@ export class HearingWorksheet extends React.PureComponent {
       {
         program: 'Compensation',
         issue: 'Service connection',
+        issueID: 101,
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: 'Right elbow',
         actions: [

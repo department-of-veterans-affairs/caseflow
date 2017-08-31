@@ -190,12 +190,15 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DESCRIPTIONS,
         payload: {
+
           description: 'Elbow Arthritis'
+
         }
       });
     });
 
     it('sets worksheet issue description', () => {
+
       // TODO Make reusable
       expect(state.worksheet.streams).to.deep.equal({
         appeal_0: {
@@ -208,6 +211,7 @@ describe('hearingsReducer', () => {
 
       }
      );
+
     });
   });
 
