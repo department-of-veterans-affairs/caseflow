@@ -1,4 +1,5 @@
 class Hearing < ActiveRecord::Base
+  include CachedAttributes
   include AssociatedVacolsModel
   belongs_to :appeal
   belongs_to :user
@@ -38,6 +39,14 @@ class Hearing < ActiveRecord::Base
     type != :central_office ? type.to_s.capitalize : "CO"
   end
 
+  cache_attribute :cached_number_of_documents do
+    number_of_documents
+  end
+
+  cache_attribute :cached_number_of_documents_after_certification do
+    number_of_documents_after_certification
+  end
+
   delegate \
     :veteran_age, \
     :veteran_full_name, \
@@ -47,8 +56,11 @@ class Hearing < ActiveRecord::Base
     :appellant_state, \
     :regional_office_name, \
     :vbms_id, \
+    :number_of_documents, \
+    :number_of_documents_after_certification, \
     to: :appeal
 
+  # rubocop:disable Metrics/MethodLength
   def to_hash
     serializable_hash(
       methods: [
@@ -67,10 +79,13 @@ class Hearing < ActiveRecord::Base
         :veteran_age,
         :veteran_full_name,
         :venue,
+        :cached_number_of_documents,
+        :cached_number_of_documents_after_certification,
         :vbms_id
       ]
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def to_hash_with_all_information
     serializable_hash(

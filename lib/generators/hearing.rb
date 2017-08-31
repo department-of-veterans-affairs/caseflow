@@ -44,14 +44,21 @@ class Generators::Hearing
     private
 
     def default_appeal
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing })
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, documents: documents)
+    end
+
+    def documents
+      [Generators::Document.build(type: "NOD", received_at: 4.days.ago),
+       Generators::Document.build(type: "SOC", received_at: 1.day.ago),
+       Generators::Document.build(type: "SSOC", received_at: 5.days.ago)]
     end
 
     def default_appeal_id(hearing)
       if hearing.appeal_id
         Generators::Appeal.build(
           vacols_record: { template: :pending_hearing },
-          vacols_id: hearing.appeal.vacols_id
+          vacols_id: hearing.appeal.vacols_id,
+          documents: documents
         )
         return hearing.appeal_id
       end
