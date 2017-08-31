@@ -1048,9 +1048,6 @@ RSpec.feature "Reader" do
           end
 
           NEW_TAG_TEXT = "New Tag".freeze
-
-          # going back the document[1] and
-          # adding a new tag
           fill_in "tags", with: (NEW_TAG_TEXT + "\n")
 
           # going to the document[0] page
