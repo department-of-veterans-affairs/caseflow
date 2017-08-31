@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { commentIcon } from '../components/RenderFunctions';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -28,8 +27,7 @@ export class PdfPage extends React.Component {
     this.canvas = canvas;
     this.props.getCanvasRef(this.props.pageIndex, this.props.file, canvas);
   }
-  getTextLayerRef = (textLayer) =>
-  {
+  getTextLayerRef = (textLayer) => {
     this.textLayer = textLayer;
     this.props.getTextLayerRef(this.props.pageIndex, this.props.file, textLayer);
   }
@@ -40,14 +38,16 @@ export class PdfPage extends React.Component {
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
-    const currentWidth = _.get(this.props.pageDimensions, [this.props.currentFile, this.props.pageIndex, 'width'], PAGE_WIDTH);
-    const currentHeight = _.get(this.props.pageDimensions, [this.props.currentFile, this.props.pageIndex, 'height'], PAGE_HEIGHT);
+    const currentWidth = _.get(this.props.pageDimensions,
+      [this.props.currentFile, this.props.pageIndex, 'width'], PAGE_WIDTH);
+    const currentHeight = _.get(this.props.pageDimensions,
+      [this.props.currentFile, this.props.pageIndex, 'height'], PAGE_HEIGHT);
 
     // Only pages that are the correct scale should be visible
     const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
     const pageContentsVisibleClass = classNames({
-      'cf-pdf-page-hidden': !(Math.abs(this.props.scale -
-        _.get(this.props.isDrawn, [this.props.currentFile, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
+      'cf-pdf-page-hidden': !(Math.abs(this.props.scale - _.get(this.props.isDrawn,
+          [this.props.currentFile, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
     });
 
     return <div

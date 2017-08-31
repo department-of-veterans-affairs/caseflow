@@ -7,11 +7,9 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
-import CommentLayer from '../reader/CommentLayer';
 import PdfPage from '../reader/PdfPage';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import classNames from 'classnames';
 import { setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
@@ -57,11 +55,6 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
     y: pageCoords.y - annotationIconOffset
   };
 };
-
-// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
-// We need it defined here to be able to expand/contract margin between pages
-// as we zoom.
-const PAGE_MARGIN_BOTTOM = 25;
 
 // These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
@@ -824,23 +817,23 @@ export class Pdf extends React.PureComponent {
   getPageContainerRef = (index, file, elem) => {
     if (elem) {
       _.set(this.pageElements[file], [index, 'pageContainer'], elem);
-    } else {    
+    } else {
       delete this.pageElements[file][index];
     }
   }
 
   getCanvasRef = (index, file, elem) => {
-    if (elem) {    
+    if (elem) {
       _.set(this.pageElements[file], [index, 'canvas'], elem);
-    } else {    
+    } else {
       delete this.pageElements[file][index];
     }
   }
 
   getTextLayerRef = (index, file, elem) => {
-    if (elem) {    
+    if (elem) {
       _.set(this.pageElements[file], [index, 'textLayer'], elem);
-    } else {    
+    } else {
       delete this.pageElements[file][index];
     }
   }
