@@ -3,13 +3,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from '../components/CommentIcon';
-import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent,
-  isUserEditingText } from './utils';
+import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import _ from 'lodash';
 import { handleSelectCommentIcon, placeAnnotation,
   requestMoveAnnotation, showPlaceAnnotationIcon } from '../reader/actions';
 import { bindActionCreators } from 'redux';
-import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
+import { CATEGORIES } from '../reader/analytics';
 
 const DIV_STYLING = {
   width: '100%',
@@ -121,10 +120,8 @@ class CommentLayer extends PureComponent {
 
   getCommentLayerDivRef = (ref) => this.commentLayerDiv = ref
 
-  getAnnotationsForPage = () => {
-    return this.props.comments.concat(this.getPlacingAnnotation()).
-      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex));
-  }
+  getAnnotationsForPage = () => this.props.comments.concat(this.getPlacingAnnotation()).
+      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex))
 
   getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
     comment={comment}
@@ -150,7 +147,6 @@ class CommentLayer extends PureComponent {
 }
 
 CommentLayer.propTypes = {
-  isCurrentPage: PropTypes.bool,
   comments: PropTypes.arrayOf(PropTypes.shape({
     comment: PropTypes.string,
     uuid: PropTypes.number,

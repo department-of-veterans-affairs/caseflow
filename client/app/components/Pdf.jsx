@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
+  pageCoordsOfRootCoords } from '../reader/utils';
 import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -16,7 +16,7 @@ import { setPdfReadyToShow, setPageCoordBounds,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
+import { INTERACTION_TYPES } from '../reader/analytics';
 
 /**
  * We do a lot of work with coordinates to render PDFs.
