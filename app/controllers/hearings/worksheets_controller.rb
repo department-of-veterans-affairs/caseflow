@@ -36,10 +36,22 @@ class Hearings::WorksheetsController < HearingsController
   def hearing_worksheet(_vbms_id)
     # Appeal.where(vmbs_id: _vbms_id)??? TBD
     # possible API
-    {
+   {
       veteran: {},
       appeal: {},
-      streams: []
+      streams: {
+          appeal_0: {
+              issues: {
+                  issue_0: {
+                  }
+              },
+              nod: 99,
+              soc: 10,
+              docs_in_efolder: 88,
+          },
+      contentions: '',
+      periods: '',
+       }
     }
   end
 end

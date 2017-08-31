@@ -42,7 +42,6 @@ export const onDescriptionsChange = (description) => ({
   }
 });
 
-
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
