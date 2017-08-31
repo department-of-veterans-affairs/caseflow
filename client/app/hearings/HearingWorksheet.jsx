@@ -8,6 +8,8 @@ import moment from 'moment';
 import Button from '../components/Button';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
+import HearingWorksheetIssues from './components/HearingWorksheetIssues';
+
 import {
   onDescriptionsChange,
   onRepNameChange,
@@ -318,6 +320,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </form>
       </div>
+      <HearingWorksheetIssues />
       <div className="cf-push-right">
         <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
       </div>
