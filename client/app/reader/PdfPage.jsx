@@ -23,13 +23,13 @@ const PAGE_HEIGHT = 1056;
 
 export class PdfPage extends React.Component {
   getPageContainerRef = (pageContainer) => {
-    this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
+    this.props.getPageContainerRef(this.props.pageIndex, this.props.docId, pageContainer);
   }
   getCanvasRef = (canvas) => {
-    this.props.getCanvasRef(this.props.pageIndex, this.props.file, canvas);
+    this.props.getCanvasRef(this.props.pageIndex, this.props.docId, canvas);
   }
   getTextLayerRef = (textLayer) => {
-    this.props.getTextLayerRef(this.props.pageIndex, this.props.file, textLayer);
+    this.props.getTextLayerRef(this.props.pageIndex, this.props.docId, textLayer);
   }
 
   getDimensions = () => {
@@ -38,14 +38,14 @@ export class PdfPage extends React.Component {
       const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
       const pageDimensions = _.pick(viewport, ['width', 'height']);
 
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+      this.props.setPdfPageDimensions(this.props.docId, this.props.pageIndex, pageDimensions);
     }).
     catch(() => {
       const pageDimensions = {
         width: PAGE_WIDTH,
         height: PAGE_HEIGHT
       };
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+      this.props.setPdfPageDimensions(this.props.docId, this.props.pageIndex, pageDimensions);
     });
   }
 
@@ -74,11 +74,11 @@ export class PdfPage extends React.Component {
     const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
     const pageContentsVisibleClass = classNames({
       'cf-pdf-page-hidden': !(Math.abs(this.props.scale - _.get(this.props.isDrawn,
-          [this.props.file, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
+          [this.props.docId, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
     });
 
     return <div
-      id={`${this.props.file}-${this.props.pageIndex}`}
+      id={`${this.props.docId}-${this.props.pageIndex}`}
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
@@ -88,7 +88,7 @@ export class PdfPage extends React.Component {
             className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
             {this.props.isVisible && <CommentLayer
-              documentId={this.props.documentId}
+              documentId={this.props.docId}
               pageIndex={this.props.pageIndex}
               scale={this.props.scale}
             />}
@@ -102,8 +102,7 @@ export class PdfPage extends React.Component {
 }
 
 PdfPage.propTypes = {
-  documentId: PropTypes.number,
-  file: PropTypes.string,
+  docId: PropTypes.string,
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
@@ -121,7 +120,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => ({
-  pageDimensions: _.get(state.readerReducer, ['documentsByFile', props.file, 'pages', props.pageIndex]),
+  pageDimensions: _.get(state.readerReducer, ['documents', props.docId, 'pages', props.pageIndex]),
   isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
 });
 

@@ -207,8 +207,7 @@ export const initialState = {
    */
   editingAnnotations: {},
   annotations: {},
-  documents: {},
-  documentsByFile: {}
+  documents: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1052,8 +1051,8 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        documentsByFile: {
-          [action.payload.file]: {
+        documents: {
+          [action.payload.docId]: {
             $apply: (file) => ({
               pages: {
                 ..._.get(file, ['pages'], {}),

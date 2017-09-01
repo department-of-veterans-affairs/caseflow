@@ -239,14 +239,14 @@ export class PdfUI extends React.Component {
       </div>
       <div>
         <Pdf
-          documentId={this.props.doc.id}
-          file={this.props.doc.content_url}
+          docId={this.props.doc.id}
+          file={this.props.doc.id}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}
-          prefetchFiles={this.props.prefetchFiles}
+          prefetchDocIds={this.props.prefetchDocIds}
           resetJumpToPage={this.props.resetJumpToPage}
         />
       </div>
@@ -292,6 +292,6 @@ PdfUI.propTypes = {
   prevDocId: PropTypes.number,
   selectCurrentPdf: PropTypes.func,
   showClaimsFolderNavigation: PropTypes.bool.isRequired,
-  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
+  prefetchDocIds: PropTypes.arrayOf(PropTypes.number),
   hidePdfSidebar: PropTypes.bool
 };
