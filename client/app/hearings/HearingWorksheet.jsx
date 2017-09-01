@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
-import Button from '../components/Button';
+import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import {
@@ -21,11 +21,6 @@ export class HearingWorksheet extends React.PureComponent {
 
   getKeyForRow = (index) => {
     return index;
-  }
-
-  redirectToReader = () => {
-    // TODO(sharon): Once this page is hooked up to real data, we need to update this to link to the appeal's vacols_id.
-    window.location.href = '/reader/appeal';
   }
 
   render() {
@@ -168,6 +163,8 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
       };
     });
+
+    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
@@ -329,11 +326,12 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
-        <Button
+        <Link
           name="signup-1"
           className="cf-push-right"
-          onClick={this.redirectToReader}
-        >Review eFolder</Button>
+          href="/reader/appeal"
+          button="primary"
+        >Review eFolder</Link>
       </div>
     </div>;
   }
