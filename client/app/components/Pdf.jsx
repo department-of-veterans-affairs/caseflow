@@ -740,6 +740,7 @@ export class Pdf extends React.PureComponent {
       return _.range(numPages).map((page, pageIndex) => {
         if (this.state.pdfDocument[file]) {
           return <PdfPage
+            documentId={this.props.documentId}
             key={`${file}-${pageIndex + 1}`}
             file={file}
             pageIndex={pageIndex}
