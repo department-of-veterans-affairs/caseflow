@@ -152,7 +152,6 @@ class Document < ActiveRecord::Base
   end
 
   def to_hash
-    byebug
     serializable_hash
   end
 
