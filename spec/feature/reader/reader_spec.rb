@@ -349,10 +349,18 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Reader Help")
     end
 
-    scenario "User visits case_summary page" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents?category=case_summary"
-      expect(page).to have_content("Filtering by:")
-      expect(page).to have_content("Categories (1)")
+    context "Query params in documents URL" do
+      scenario "User enters valid category" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents?category=case_summary"
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (1)")
+      end
+
+      scenario "User enters invalid category" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents?category=thisisfake"
+        expect(page).to_not have_content("Filtering by:")
+        expect(page).to_not have_content("Categories (1)")
+      end
     end
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
