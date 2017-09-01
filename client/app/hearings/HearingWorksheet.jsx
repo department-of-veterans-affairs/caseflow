@@ -308,7 +308,6 @@ export class HearingWorksheet extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="signup-1"
-          className="cf-push-right"
           href="/reader/appeal"
           button="primary"
         >Review eFolder</Link>

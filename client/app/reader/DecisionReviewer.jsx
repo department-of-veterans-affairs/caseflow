@@ -70,7 +70,7 @@ export class DecisionReviewer extends React.PureComponent {
   determineInitialCategoryFilter = () => {
     const category = queryParams.category;
 
-    if (Object.prototype.hasOwnProperty.call(documentCategories, category)) {
+    if (documentCategories[category]) {
       this.props.setCategoryFilter(category, true);
     }
   };
