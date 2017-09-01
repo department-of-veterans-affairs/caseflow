@@ -91,7 +91,8 @@ PdfPage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId')
+  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId'),
+  isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
 });
 
 export default connect(mapStateToProps)(PdfPage);
