@@ -527,7 +527,6 @@ export class Pdf extends React.PureComponent {
 
     // focus the scroll window when the component initially loads.
     this.scrollWindow.focus();
-    this.updatePageBounds();
   }
 
   componentWillUnmount() {
@@ -662,49 +661,6 @@ export class Pdf extends React.PureComponent {
     if (this.scrollLocation.page) {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
         this.pageElements[this.props.file][this.scrollLocation.page - 1].pageContainer.offsetTop;
-    }
-
-    const getPropsAffectingPageBounds = (props) => _.omit(props, 'placingAnnotationIconPageCoords', 'scale');
-
-    if (!_.isEqual(
-      getPropsAffectingPageBounds(this.props),
-      getPropsAffectingPageBounds(prevProps))
-    ) {
-      this.updatePageBounds();
-    }
-  }
-
-  /**
-   * The page bounds are the upper bounds of the page in the page coordinate system.
-   */
-  updatePageBounds = () => {
-    // The first time this method fires, it sets the page bounds to be the PAGE_WIDTH and PAGE_HEIGHT,
-    // because that's what the page bounds are before drawing completes. Somehow, this does not
-    // cause a problem, so I'm not going to figure out now how to make it fire with the right values.
-    // But if you are seeing issues, that could be why.
-
-    // If we knew that all pages would be the same size, then we could just look
-    // at the first page, and know that all pages were the same. That would simplify
-    // the code, but it is not an assumption we're making at this time.
-    const newPageBounds = _(this.pageElements[this.props.file]).
-      map((pageElem, pageIndex) => {
-        const { right, bottom } = pageElem.pageContainer.getBoundingClientRect();
-        const pageCoords = pageCoordsOfRootCoords({
-          x: right,
-          y: bottom
-        }, pageElem.pageContainer.getBoundingClientRect(), this.props.scale);
-
-        return {
-          pageIndex: Number(pageIndex),
-          width: pageCoords.x,
-          height: pageCoords.y
-        };
-      }).
-      keyBy('pageIndex').
-      value();
-
-    if (_.size(newPageBounds)) {
-      this.props.setPageCoordBounds(newPageBounds);
     }
   }
 

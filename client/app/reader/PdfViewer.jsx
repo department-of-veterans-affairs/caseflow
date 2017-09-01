@@ -221,10 +221,11 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   documents: getFilteredDocuments(state.readerReducer),
   appeal: state.readerReducer.appeal,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
+  pageCoordsBounds: _.get(state.readerReducer, ['documentsByFile', state.readerReducer.documents[props.match.params.docId].content_url, 'pages']),
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
   ..._.pick(state.readerReducer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });
