@@ -44,7 +44,7 @@ class CommentLayer extends PureComponent {
         xPosition: x,
         yPosition: y
       },
-      this.props.docId
+      this.props.documentId
     );
   };
 
@@ -159,13 +159,13 @@ CommentLayer.propTypes = {
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
   pageIndex: PropTypes.number,
-  docId: PropTypes.number
+  documentId: PropTypes.number
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.readerReducer.ui.pdf,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.docId),
+  comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.documentId),
   allAnnotations: state.readerReducer.annotations
 });
 

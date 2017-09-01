@@ -753,10 +753,10 @@ export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   }
 });
 
-export const setPdfPageDimensions = (docId, pageIndex, dimensions) => ({
+export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
   type: Constants.SET_PDF_PAGE_DIMENSIONS,
   payload: {
-    docId,
+    file,
     pageIndex,
     dimensions
   }
