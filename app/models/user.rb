@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "CertificationV2", "Reader", "Hearing Prep"].freeze
+               "Reader", "Hearing Prep"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -86,13 +86,6 @@ class User < ActiveRecord::Base
     return if role == "System Admin"
     # TODO: remove once we launch certification v2
     # or once we move it out of the feature list.
-    if role == "CertificationV2"
-      if enable
-        FeatureToggle.enable!(:certification_v2, users: [username])
-      else
-        FeatureToggle.disable!(:certification_v2, users: [username])
-      end
-    end
     enable ? admin_roles << role : admin_roles.delete(role)
   end
 
