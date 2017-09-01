@@ -16,6 +16,14 @@ describe('hearingsReducer', () => {
         }
       },
       worksheet: {
+        streams: {
+          appeal_0: {
+            issues: {
+              issue_0: {
+              }
+            }
+          }
+        }
       }
     });
   });
@@ -172,6 +180,34 @@ describe('hearingsReducer', () => {
     it('sets transcript requested', () => {
       expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { transcript_requested: true,
         edited: true } } } });
+    });
+  });
+
+  context(Constants.SET_DESCRIPTIONS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_DESCRIPTIONS,
+        payload: {
+          description: 'Elbow Arthritis'
+        }
+      });
+    });
+
+    it('sets worksheet issue description', () => {
+
+      // TODO Make reusable
+      expect(state.worksheet.streams).to.deep.equal({
+        appeal_0: {
+          issues: {
+            issue_0: {
+              description: 'Elbow Arthritis'
+            }
+          }
+        }
+      }
+     );
     });
   });
 
