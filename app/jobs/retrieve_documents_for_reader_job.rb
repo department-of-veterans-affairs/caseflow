@@ -43,6 +43,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   #
   # Returns a boolean if the content has been cached without errors
   def cache_document(doc)
+    # TODO: fix this job, it'll be broken when the efolder API is turned on
     if !FeatureToggle.enabled?(:efolder_docs_api) && !S3Service.exists?(doc.file_name)
       doc.fetch_content
       @counts[:docs_cached] += 1
