@@ -35,7 +35,7 @@ export class DailyDocketContainer extends React.Component {
   }
 
   docket = () => {
-    return this.props.dockets[this.props.date].hearings_hash;
+    return this.props.dockets[this.props.date].hearings_array;
   }
 
   saveFunction = (dispatch) => {
@@ -81,9 +81,13 @@ export class DailyDocketContainer extends React.Component {
         dispatch({ type: TOGGLE_SAVING });
 
         hearingsToSaveIndeces.forEach((index) => {
-          dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
-            payload: { date: this.props.date,
-              index } });
+          dispatch({
+            type: SET_EDITED_FLAG_TO_FALSE,
+            payload: {
+              date: this.props.date,
+              index
+            }
+          });
         });
       }, 1000);
     }

@@ -39,7 +39,9 @@ class Document < ActiveRecord::Base
     "SSOC",
     "Supplemental Statement of Case (SSOC)",
     "DD 214 Certified Original - Certificate of Release or Discharge From Active Duty",
-    "Rating Decision - Codesheet"
+    "Rating Decision - Codesheet",
+    "VA 21-526EZ, Fully Developed Claim (Compensation)",
+    "VA 21-527EZ, Fully Developed Claim (Pension)"
   ].freeze
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze

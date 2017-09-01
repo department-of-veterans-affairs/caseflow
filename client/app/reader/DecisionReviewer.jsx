@@ -96,14 +96,15 @@ export class DecisionReviewer extends React.PureComponent {
     ;
   }
 
-  routedCaseSelect = () => {
+  routedCaseSelect = (props) => {
     return <CaseSelectLoadingScreen
       assignments={this.props.assignments}>
         <PageRoute
           exact
           title="Assignments | Caseflow Reader"
           path="/"
-          render={() => <CaseSelect />}
+          render={() => <CaseSelect history={props.history}
+            feedbackUrl={this.props.feedbackUrl} />}
         />
     </CaseSelectLoadingScreen>;
   }
@@ -164,9 +165,9 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    documentFilters: state.ui.pdfList.filters,
-    storeDocuments: state.documents,
-    pdf: state.ui.pdf
+    documentFilters: state.readerReducer.ui.pdfList.filters,
+    storeDocuments: state.readerReducer.documents,
+    pdf: state.readerReducer.ui.pdf
   };
 };
 

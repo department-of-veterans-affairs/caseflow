@@ -4,6 +4,9 @@ export const HANDLE_SERVER_ERROR = 'HANDLE_SERVER_ERROR';
 
 export const POPULATE_DOCKETS = 'POPULATE_DOCKETS';
 
+export const SET_REPNAME = 'SET_REPNAME';
+export const SET_WITNESS = 'SET_WITNESS';
+
 export const SET_NOTES = 'SET_NOTES';
 export const SET_DISPOSITION = 'SET_DISPOSITION';
 export const SET_HOLD_OPEN = 'SET_HOLD_OPEN';
@@ -12,6 +15,9 @@ export const SET_ADD_ON = 'SET_ADD_ON';
 export const SET_TRANSCRIPT_REQUESTED = 'SET_TRANSCRIPT_REQUESTED';
 
 export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
+
+// issues
+export const SET_DESCRIPTIONS = 'SET_DESCRIPTIONS';
 
 export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_PERIODS = 'SET_PERIODS';

@@ -5,22 +5,18 @@ import PropTypes from 'prop-types';
 
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
-import { keyOfAnnotation, isUserEditingText } from '../reader/utils';
-
-import CommentIcon from './CommentIcon';
+import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
+  getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
+import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { handleSelectCommentIcon, setPdfReadyToShow, setPageCoordBounds,
+import { setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
-import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-
-const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
-const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -40,11 +36,6 @@ const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
  * coordinate system they belong to. All converting between coordinate systems should be done with
  * the proper helper functions.
  */
-export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
-  x: (x - pageBoundingBox.left) / scale,
-  y: (y - pageBoundingBox.top) / scale
-});
-
 export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
   const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
   const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
@@ -116,6 +107,7 @@ export class Pdf extends React.PureComponent {
     this.currentPage = 0;
     this.isDrawing = {};
     this.isGettingPdf = {};
+    this.loadingTasks = {};
 
     this.refFunctionGetters = {
       canvas: {},
@@ -465,6 +457,12 @@ export class Pdf extends React.PureComponent {
   // specified by `file`. This method will only make the request to the server once. Afterwards
   // it will return a cached version of it.
   getDocument = (file) => {
+    const pdfsToKeep = [...this.props.prefetchFiles, this.props.file];
+
+    if (!pdfsToKeep.includes(file)) {
+      return Promise.resolve(null);
+    }
+
     if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
       // If the document has already been retrieved, just return it.
       return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
@@ -483,11 +481,13 @@ export class Pdf extends React.PureComponent {
     // set isGettingPdf true so that we don't try to request it again, while the first
     // request is finishing.
     this.isGettingPdf[file] = true;
-
-    return PDFJS.getDocument({
+    this.loadingTasks[file] = PDFJS.getDocument({
       url: file,
       withCredentials: true
-    }).then((pdfDocument) => {
+    });
+
+    return this.loadingTasks[file].then((pdfDocument) => {
+      this.loadingTasks[file] = null;
       this.isGettingPdf[file] = false;
 
       if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
@@ -597,9 +597,10 @@ export class Pdf extends React.PureComponent {
       const pageIndex = _(this.pageElements[this.props.file]).
         map('pageContainer').
         indexOf(event.currentTarget);
-      const pageCoords = this.getPageCoordinatesOfMouseEvent(
+      const pageCoords = getPageCoordinatesOfMouseEvent(
         event,
-        event.currentTarget.getBoundingClientRect()
+        event.currentTarget.getBoundingClientRect(),
+        this.props.scale
       );
 
       this.props.showPlaceAnnotationIcon(pageIndex, pageCoords);
@@ -676,6 +677,13 @@ export class Pdf extends React.PureComponent {
       Object.keys(this.predrawnPdfs).forEach((file) => {
         if (!pdfsToKeep.includes(file)) {
           this.cleanUpPdf(this.predrawnPdfs[file], file);
+        }
+      });
+
+      Object.keys(this.loadingTasks).forEach((file) => {
+        if (!pdfsToKeep.includes(file) && this.loadingTasks[file]) {
+          this.loadingTasks[file].destroy();
+          delete this.loadingTasks[file];
         }
       });
 
@@ -841,49 +849,8 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
-  getPageCoordinatesOfMouseEvent(event, container) {
-    const constrainedRootCoords = {
-      x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
-      y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
-    };
-
-    return pageCoordsOfRootCoords(constrainedRootCoords, container, this.props.scale);
-  }
-
   // eslint-disable-next-line max-statements
   render() {
-    const annotations = this.props.placingAnnotationIconPageCoords && this.props.isPlacingAnnotation ?
-      this.props.comments.concat([{
-        temporaryId: 'placing-annotation-icon',
-        page: this.props.placingAnnotationIconPageCoords.pageIndex + 1,
-        isPlacingAnnotationIcon: true,
-        ..._.pick(this.props.placingAnnotationIconPageCoords, 'x', 'y')
-      }]) :
-      this.props.comments;
-
-    const commentIcons = annotations.reduce((acc, comment) => {
-      // Only show comments on a page if it's been drawn
-      if (_.get(this.state.isDrawn, [this.props.file, comment.page - 1, 'pdfDocument']) !==
-        this.state.pdfDocument) {
-        return acc;
-      }
-      if (!acc[comment.page]) {
-        acc[comment.page] = [];
-      }
-
-      acc[comment.page].push(
-        <CommentIcon
-          comment={comment}
-          position={{
-            x: comment.x * this.props.scale,
-            y: comment.y * this.props.scale
-          }}
-          key={keyOfAnnotation(comment)}
-          onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />);
-
-      return acc;
-    }, {});
-
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
@@ -892,22 +859,6 @@ export class Pdf extends React.PureComponent {
 
     const pages = _.map(this.state.numPages, (numPages, file) => {
       return _.range(numPages).map((page, pageIndex) => {
-        const onPageClick = (event) => {
-          if (!this.props.isPlacingAnnotation) {
-            return;
-          }
-
-          const { x, y } = this.getPageCoordinatesOfMouseEvent(
-            event,
-            this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect()
-          );
-
-          this.props.placeAnnotation(pageIndex + 1, {
-            xPosition: x,
-            yPosition: y
-          }, this.props.documentId);
-        };
-
         const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], PAGE_WIDTH);
         const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], PAGE_HEIGHT);
 
@@ -930,7 +881,6 @@ export class Pdf extends React.PureComponent {
           onDragOver={this.onPageDragOver}
           onDrop={this.onCommentDrop(pageIndex + 1)}
           key={`${file}-${pageIndex + 1}`}
-          onClick={onPageClick}
           id={this.props.file === file && `pageContainer${pageIndex + 1}`}
           onMouseMove={this.mouseListener}
           ref={this.refFunctionGetters.pageContainer[file][pageIndex]}>
@@ -940,7 +890,11 @@ export class Pdf extends React.PureComponent {
                 ref={this.refFunctionGetters.canvas[file][pageIndex]}
                 className="canvasWrapper" />
               <div className="cf-pdf-annotationLayer">
-                {this.props.file === file && commentIcons[pageIndex + 1]}
+                {this.props.file === file && <CommentLayer
+                  documentId={this.props.documentId}
+                  pageIndex={pageIndex}
+                  scale={this.props.scale}
+                />}
               </div>
               <div
                 id={`textLayer${pageIndex + 1}`}
@@ -966,11 +920,10 @@ export class Pdf extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  ...state.ui.pdf,
-  ..._.pick(state, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
-  allAnnotations: state.annotations
+const mapStateToProps = (state) => ({
+  ...state.readerReducer.ui.pdf,
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+  allAnnotations: state.readerReducer.annotations
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -982,10 +935,9 @@ const mapDispatchToProps = (dispatch) => ({
     showPlaceAnnotationIcon,
     hidePlaceAnnotationIcon,
     requestMoveAnnotation,
-    onScrollToComment
-  }, dispatch),
-  setPdfReadyToShow: (docId) => dispatch(setPdfReadyToShow(docId)),
-  handleSelectCommentIcon: (comment) => dispatch(handleSelectCommentIcon(comment))
+    onScrollToComment,
+    setPdfReadyToShow
+  }, dispatch)
 });
 
 export default connect(
@@ -1001,13 +953,6 @@ Pdf.defaultProps = {
 
 Pdf.propTypes = {
   selectedAnnotationId: PropTypes.number,
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    comment: PropTypes.string,
-    uuid: PropTypes.number,
-    page: PropTypes.number,
-    x: PropTypes.number,
-    y: PropTypes.number
-  })),
   documentId: PropTypes.number.isRequired,
   file: PropTypes.string.isRequired,
   pdfWorker: PropTypes.string.isRequired,
@@ -1020,6 +965,5 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,
-  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  handleSelectCommentIcon: PropTypes.func
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string)
 };

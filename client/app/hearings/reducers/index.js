@@ -19,7 +19,7 @@ export const newHearingState = (state, action, spec) => {
   return update(state, {
     dockets: {
       [action.payload.date]: {
-        hearings_hash: {
+        hearings_array: {
           [action.payload.hearingIndex]: spec
         }
       }
@@ -44,6 +44,16 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       serverError: { $set: action.payload.err }
     });
 
+  case Constants.SET_REPNAME:
+    return update(state, {
+      worksheet: { repName: { $set: action.payload.repName } }
+    });
+
+  case Constants.SET_WITNESS:
+    return update(state, {
+      worksheet: { witness: { $set: action.payload.witness } }
+    });
+
   case Constants.SET_NOTES:
     return newHearingState(state, action, { notes: { $set: action.payload.notes } });
 
@@ -61,6 +71,24 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
+
+  case Constants.SET_DESCRIPTIONS:
+    return update(state, {
+      // TODO make reusable for all issues fields
+      worksheet: {
+        streams: {
+          appeal_0: {
+            issues: {
+              issue_0: {
+                description: {
+                  $set: action.payload.description
+                }
+              }
+            }
+          }
+        }
+      }
+    });
 
   case Constants.SET_CONTENTIONS:
     return update(state, {
@@ -91,7 +119,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, {
       dockets: {
         [action.payload.date]: {
-          hearings_hash: {
+          hearings_array: {
             [action.payload.index]: { edited: { $set: false } }
           }
         }

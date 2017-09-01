@@ -6,8 +6,12 @@ import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
+import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import {
+  onDescriptionsChange,
+  onRepNameChange,
+  onWitnessChange,
   onContentionsChange,
   onPeriodsChange,
   onEvidenceChange,
@@ -69,42 +73,16 @@ export class HearingWorksheet extends React.PureComponent {
       }
     ];
 
-    // temp
+    // Temp Placeholder issues
     const issues = [
       {
         program: 'Compensation',
         issue: 'Service connection',
+        issueID: 101,
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: 'Right elbow',
         actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 5242 - Degenerative arthritis of the spine (see also diagnostic code 5003)',
-        description: 'Lower back',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 7799 - Other hemic or lymphatic system disability',
-        description: 'Chronic bronchitis',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 8100 - Migraine',
-        description: 'Frequent headaches',
-        actions: [
-          false, false, false, false, false, false
+          false, false, false, true, false, false
         ]
       }
     ];
@@ -114,14 +92,19 @@ export class HearingWorksheet extends React.PureComponent {
         counter: <b>{index + 1}.</b>,
         program: issue.program,
         issue: issue.issue,
+        issueID: issue.issueID,
         levels: issue.levels,
         description: <div>
-          <label
-            className="cf-hearings-worksheet-desc-label"
-            htmlFor={`worksheet-issue-description-${index}`}>Description</label>
-          <textarea defaultValue={issue.description}
-            id={`worksheet-issue-description-${index}`}
-            aria-label="Description"></textarea>
+          <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
+          <TextareaField
+            aria-label="Description"
+            // TODO Remove placeholder loop | new structure
+            // TODO add logic to find specific issue
+            name={`issue-${issue.issueID}`}
+            id={`worksheet-issue-description-${issue.issueID}`}
+            value={this.props.worksheet.streams.appeal_0.issues.issue_0.description || ''}
+            onChange={this.props.onDescriptionsChange}
+            />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
           <Checkbox
@@ -210,8 +193,13 @@ export class HearingWorksheet extends React.PureComponent {
             <div>Veterans of Foreign Wars</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
-            <label htmlFor="appellant-vet-rep-name">Rep. Name:</label>
-            <input id="appellant-vet-rep-name" aria-label="Representative Name" type="text" />
+            <TextField
+              name="Rep. Name:"
+              id="appellant-vet-rep-name"
+              aria-label="Representative Name"
+              value={this.props.worksheet.repName || ''}
+              onChange={this.props.onRepNameChange}
+             />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
@@ -230,8 +218,13 @@ export class HearingWorksheet extends React.PureComponent {
             <div>32</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
-            <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-            <input id="appellant-vet-witness" aria-label="Witness/Observer" type="text" />
+             <TextField
+                name="Witness (W)/Observer (O):"
+                id="appellant-vet-witness"
+                aria-label="Representative Name"
+                value={this.props.worksheet.witness || ''}
+                onChange={this.props.onWitnessChange}
+             />
           </div>
         </div>
 
@@ -338,6 +331,9 @@ const mapStateToProps = (state) => ({
 
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onDescriptionsChange,
+  onRepNameChange,
+  onWitnessChange,
   onContentionsChange,
   onPeriodsChange,
   onEvidenceChange,

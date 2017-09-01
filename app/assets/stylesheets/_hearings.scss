@@ -271,7 +271,6 @@ $color-hearings-saving: #777;
   }
 
 
-
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
     width: 20%;
@@ -308,9 +307,16 @@ $color-hearings-saving: #777;
 }
 
 
-
 .cf-hearings-worksheet-issues {
   margin: 0;
+
+  .cf-form-textarea {
+
+    .question-label {
+      position: absolute;
+      left: -99999px;
+    }
+  }
 
   .cf-txt-l {
     padding-left: .4em;
