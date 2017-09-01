@@ -1054,13 +1054,14 @@ export const reducer = (state = initialState, action = {}) => {
       {
         documentsByFile: {
           [action.payload.file]: {
-            $set: {
+            $apply: (file) => ({
               pages: {
+                ..._.get(file, ['pages'], {}),
                 [action.payload.pageIndex]: {
-                  dimensions: action.payload.dimensions
+                  ...action.payload.dimensions
                 }
               }
-            }
+            })
           }
         }
       }

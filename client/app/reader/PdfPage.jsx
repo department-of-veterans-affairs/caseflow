@@ -34,9 +34,10 @@ export class PdfPage extends React.Component {
 
   getDimensions = () => {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
+      const PAGE_DIMENSION_SCALE = 1;
       const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
-
       const pageDimensions = _.pick(viewport, ['width', 'height']);
+
       this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
     }).
     catch(() => {
@@ -115,10 +116,11 @@ PdfPage.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfPageDimensions
-}, dispatch);
+  }, dispatch)
+});
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId'),
+const mapStateToProps = (state, props) => ({
+  pageDimensions: _.get(state.readerReducer, ['documentsByFile', props.file, 'pages', props.pageIndex]),
   isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
 });
 
