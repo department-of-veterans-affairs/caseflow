@@ -39,7 +39,21 @@ class Hearings::WorksheetsController < HearingsController
     {
       veteran: {},
       appeal: {},
-      streams: []
+      streams: {
+        appeal_0: {
+          issues: {
+            issue_0: {
+
+            }
+          },
+          nod: 99,
+          soc: 10,
+          docs_in_efolder: 88
+        },
+
+        contentions: "",
+        periods: ""
+      }
     }
   end
 end

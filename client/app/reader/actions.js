@@ -346,8 +346,6 @@ export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   }
 });
 
-export const hidePlaceAnnotationIcon = () => ({ type: Constants.HIDE_PLACE_ANNOTATION_ICON });
-
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {

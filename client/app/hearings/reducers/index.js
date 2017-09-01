@@ -72,6 +72,24 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
+  case Constants.SET_DESCRIPTIONS:
+    return update(state, {
+      // TODO make reusable for all issues fields
+      worksheet: {
+        streams: {
+          appeal_0: {
+            issues: {
+              issue_0: {
+                description: {
+                  $set: action.payload.description
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
   case Constants.SET_CONTENTIONS:
     return update(state, {
       worksheet: { contentions: { $set: action.payload.contentions } }
@@ -97,3 +115,5 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 };
 
 export default hearingsReducers;
+
+

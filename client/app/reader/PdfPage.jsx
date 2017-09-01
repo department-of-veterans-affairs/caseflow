@@ -112,14 +112,14 @@ PdfPage.propTypes = {
   pdfDocument: PropTypes.object
 };
 
-const mapStateToProps = (state, props) => ({
-  pageDimensions: _.get(state.readerReducer, ['documentsByFile', props.file, 'pages', props.pageIndex, 'dimensions'])
-});
-
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfPageDimensions
-  }, dispatch)
+}, dispatch);
+
+const mapStateToProps = (state) => ({
+  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId'),
+  isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfPage);
