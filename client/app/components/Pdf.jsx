@@ -89,8 +89,7 @@ export class Pdf extends React.PureComponent {
     this.state = {
       numPages: {},
       pdfDocument: {},
-      isDrawn: {},
-      pageDimensions: {}
+      isDrawn: {}
     };
 
     this.scrollLocation = {
@@ -320,45 +319,6 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  setPageDimensions = (pdfDocument, file) => {
-    // This is the scale we calculate the page dimensions at. This way we can calculate the
-    // page sizes at any scale by multiplying by the value passed in to this.props.scale.
-    const PAGE_DIMENSION_SCALE = 1;
-
-    let pageDimensions = [];
-    const setStateWithDimensions = () => {
-      // Since these promises will finish asynchronously, we need to check if this
-      // iteration is the last. If so, then we should set the state with the page
-      // dimensions just calculated.
-      const numDimensionsFound = pageDimensions.reduce((acc, page) => acc + (page ? 1 : 0), 0);
-
-      if (numDimensionsFound === pdfDocument.pdfInfo.numPages) {
-        this.setState({
-          pageDimensions: {
-            ...this.state.pageDimensions,
-            [file]: pageDimensions
-          }
-        });
-      }
-    };
-
-    _.range(pdfDocument.pdfInfo.numPages).forEach((pageIndex) => {
-      pdfDocument.getPage(pageNumberOfPageIndex(pageIndex)).then((pdfPage) => {
-        const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
-
-        pageDimensions[pageIndex] = _.pick(viewport, ['width', 'height']);
-        setStateWithDimensions();
-      }).
-      catch(() => {
-        pageDimensions[pageIndex] = {
-          width: PAGE_WIDTH,
-          height: PAGE_HEIGHT
-        };
-        setStateWithDimensions();
-      });
-    });
-  }
-
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to draw it.
   setUpPdf = (file) => {
@@ -371,8 +331,6 @@ export class Pdf extends React.PureComponent {
         if (!pdfDocument || pdfDocument === this.state.pdfDocument[file]) {
           return resolve();
         }
-
-        this.setPageDimensions(pdfDocument, file);
 
         this.setState({
           numPages: {
@@ -690,7 +648,7 @@ export class Pdf extends React.PureComponent {
 
     // Wait until the page dimensions have been calculated, then it is
     // safe to jump to the pages since their positioning won't change.
-    if (this.state.pageDimensions[this.props.file]) {
+    if (_.size(this.props.pageDimensions[this.props.file]) === this.state.numPages[this.props.file]) {
       if (this.props.jumpToPageNumber) {
         this.scrollToPage(this.props.jumpToPageNumber);
         this.onPageChange(this.props.jumpToPageNumber);
@@ -814,6 +772,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   ...state.readerReducer.ui.pdf,
+  pageDimensions: _.get(state.readerReducer, ['documentsByFile']),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 
