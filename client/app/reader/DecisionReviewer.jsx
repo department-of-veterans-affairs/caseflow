@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
+import { queryParams } from '../util/QueryParamsUtil';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -66,9 +67,8 @@ export class DecisionReviewer extends React.PureComponent {
     this.props.onScrollToComment(comment);
   }
 
-  determineInitialCategoryFilter = (props) => {
-    const search = new URLSearchParams(props.location.search);
-    const category = search.get('category');
+  determineInitialCategoryFilter = () => {
+    const category = queryParams.category;
 
     if (Object.prototype.hasOwnProperty.call(documentCategories, category)) {
       this.props.setCategoryFilter(category, true);
@@ -78,7 +78,7 @@ export class DecisionReviewer extends React.PureComponent {
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
 
-    this.determineInitialCategoryFilter(props);
+    this.determineInitialCategoryFilter();
 
     return <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
