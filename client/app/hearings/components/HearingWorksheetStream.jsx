@@ -8,9 +8,8 @@ export default class HearingWorksheetStream extends Component {
     return <div>
          <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Issues</h2>
-  
           <p className="cf-appeal-stream-label">APPEAL STREAM XX</p>
-                  <HearingWorksheetIssues />
+            <HearingWorksheetIssues />
         </div>
     </div>;
   }

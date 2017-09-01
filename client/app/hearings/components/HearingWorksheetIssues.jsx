@@ -11,11 +11,8 @@ export default class HearingWorksheetIssues extends Component {
     return index;
   }
 
-  render()
-
-
-   {
-        const columns = [
+  render() {
+    const columns = [
       {
         header: '',
         valueName: 'counter'
@@ -46,23 +43,25 @@ export default class HearingWorksheetIssues extends Component {
         valueName: 'actions'
       }
     ];
-        // Temp Placeholder issues
+    // Temp Placeholder issues
     const issues = [
       {
         program: 'Compensation',
         issue: 'Service connection',
-        issueID: 101,
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: 'Right elbow',
-        actions: [
-          false, false, false, true, false, false
-        ]
+        reopen: true,
+        remand: true,
+        allow: true,
+        dismiss: true,
+        deny: true,
+        vha: true
       }
     ];
 
     const rowObjects = issues.map((issue, index) => {
       return {
-        counter: <b>{index + 1}.</b>,
+        counter: <b>1.</b>,
         program: issue.program,
         issue: issue.issue,
         issueID: issue.issueID,
@@ -73,70 +72,74 @@ export default class HearingWorksheetIssues extends Component {
             aria-label="Description"
             // TODO Remove placeholder loop | new structure
             // TODO add logic to find specific issue
-            name={`issue-${issue.issueID}`}
-         //   id={`worksheet-issue-description-${issue.issueID}`}
+            name="Description"
+            id={`worksheet-issue-description-${issue.issueID}`}
             value={''}
-            onChange={this.props}
+            onChange={() => {
+              return true;
+            }}
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
           <Checkbox
             label="Re-Open"
-            name={`chk_reopen_${index}`}
+            name={'chk_reopen'}
             onChange={() => {
               return true;
             }}
-            value={issue.actions[0]}
+            value={issues.reopen}
           ></Checkbox>
           <Checkbox
             label="Allow"
-            name={`chk_allow_${index}`}
+            name={'chk_allow'}
             onChange={() => {
               return true;
             }}
-            value={issue.actions[1]}
+            value={issues.allow}
           ></Checkbox>
           <Checkbox
             label="Deny"
-            name={`chk_deny_${index}`}
+            name={'chk_deny'}
             onChange={() => {
               return true;
             }}
-            value={issue.actions[2]}
+            value={issues.deny}
           ></Checkbox>
           <Checkbox
             label="Remand"
-            name={`chk_remand_${index}`}
+            name={'chk_remand'}
             onChange={() => {
               return true;
             }}
-            value={issue.actions[3]}
+            value={issues.remand}
           ></Checkbox>
           <Checkbox
             label="Dismiss"
-            name={`chk_dismiss_${index}`}
+            name={'chk_dismiss'}
             onChange={() => {
               return true;
             }}
-            value={issue.actions[4]}
+            value={issues.dismiss}
           ></Checkbox>
           <Checkbox
             label="VHA"
-            name={`chk_vha_${index}`}
+            name={'chk_vha'}
             onChange={() => {
               return true;
             }}
-            value={issue.actions[5]}
+            value={issues.vha}
           ></Checkbox>
         </div>
       };
     });
+
+
     return <Table
             className="cf-hearings-worksheet-issues"
             columns={columns}
             rowObjects={rowObjects}
             summary={'Worksheet Issues'}
             getKeyForRow={this.getKeyForRow}
-          />
+          />;
   }
 }

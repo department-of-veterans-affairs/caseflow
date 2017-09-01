@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Table from '../components/Table';
-import Checkbox from '../components/Checkbox';
 import moment from 'moment';
 import Button from '../components/Button';
 import TextField from '../components/TextField';
@@ -39,8 +37,6 @@ export class HearingWorksheet extends React.PureComponent {
 
 
   render() {
-   // TODO <HearingWorksheetStream />
-
 
 
     return <div>
@@ -152,7 +148,44 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-<HearingWorksheetStream />
+     <HearingWorksheetStream />
+        <form className="cf-hearings-worksheet-form">
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Contentions"
+              value={this.props.worksheet.contentions || ''}
+              onChange={this.props.onContentionsChange}
+              id="worksheet-contentions"
+              />
+          </div>
+
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Periods and circumstances of service"
+              value={this.props.worksheet.periods || ''}
+              onChange={this.props.onPeriodsChange}
+              id="worksheet-periods"
+              />
+          </div>
+
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Evidence"
+              value={this.props.worksheet.evidence || ''}
+              onChange={this.props.onEvidenceChange}
+              id="worksheet-evidence"
+              />
+          </div>
+
+          <div className="cf-hearings-worksheet-data">
+            <TextareaField
+              name="Comments and special instructions to attorneys"
+              value={this.props.worksheet.comments || ''}
+              id="worksheet-comments"
+              onChange={this.props.onCommentsChange}
+              />
+          </div>
+        </form>
       </div>
       <div className="cf-push-right">
         <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
