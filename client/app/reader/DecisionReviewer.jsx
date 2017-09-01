@@ -68,10 +68,6 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   determineInitialCategoryFilter = (props) => {
-    if (!props.location.search) {
-      return;
-    }
-
     const queryParams = getQueryParams(props.location.search);
     const category = queryParams.category;
 
