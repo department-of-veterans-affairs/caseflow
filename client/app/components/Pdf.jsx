@@ -327,8 +327,10 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve) => {
       this.getDocument(this.latestFile).then((pdfDocument) => {
 
-        // Don't continue seting up the pdf if it's already been set up.
-        if (!pdfDocument || pdfDocument === this.state.pdfDocument[file]) {
+        // Don't continue setting up the pdf if it's already been set up.
+        if (!pdfDocument || pdfDocument === this.state.pdfDocument[this.latestFile]) {
+          this.onPageChange(1);
+          this.props.setPdfReadyToShow(this.props.documentId);
           return resolve();
         }
 
@@ -349,8 +351,6 @@ export class Pdf extends React.PureComponent {
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
           this.setUpPdf(this.latestFile).then(() => {
-            this.onPageChange(1);
-            this.props.setPdfReadyToShow(this.props.documentId);
             resolve();
           });
         });
@@ -648,7 +648,7 @@ export class Pdf extends React.PureComponent {
 
     // Wait until the page dimensions have been calculated, then it is
     // safe to jump to the pages since their positioning won't change.
-    if (_.size(this.props.pageDimensions[this.props.file]) === this.state.numPages[this.props.file]) {
+    if (this.props.numberPagesSized === this.state.numPages[this.props.file]) {
       if (this.props.jumpToPageNumber) {
         this.scrollToPage(this.props.jumpToPageNumber);
         this.onPageChange(this.props.jumpToPageNumber);
@@ -771,9 +771,9 @@ export class Pdf extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
-  pageDimensions: _.get(state.readerReducer, ['documentsByFile']),
+  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file])),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 
