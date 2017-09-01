@@ -116,7 +116,6 @@ export class DailyDocketContainer extends React.Component {
       return <div>You have no upcoming hearings.</div>;
     }
 
-    // temporarily use 5 second interval for quicker validation
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
         saveFunction={this.saveFunction}
