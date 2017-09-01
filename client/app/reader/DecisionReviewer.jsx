@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter } from 'react-router-dom';
-import { queryParams } from '../util/QueryParamsUtil';
+import { getQueryParams } from '../util/QueryParamsUtil';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -68,6 +68,11 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   determineInitialCategoryFilter = () => {
+    if (!window.location.search) {
+      return;
+    }
+
+    const queryParams = getQueryParams(window.location.search);
     const category = queryParams.category;
 
     if (documentCategories[category]) {
