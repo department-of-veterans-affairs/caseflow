@@ -79,6 +79,7 @@ export class PdfPage extends React.Component {
 }
 
 PdfPage.propTypes = {
+  documentId: PropTypes.documentId,
   file: PropTypes.string,
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
