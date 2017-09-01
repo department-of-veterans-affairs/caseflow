@@ -68,7 +68,7 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   determineInitialCategoryFilter = (props) => {
-    if (!window.location.search) {
+    if (!props.location.search) {
       return;
     }
 
