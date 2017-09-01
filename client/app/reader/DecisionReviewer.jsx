@@ -67,12 +67,12 @@ export class DecisionReviewer extends React.PureComponent {
     this.props.onScrollToComment(comment);
   }
 
-  determineInitialCategoryFilter = () => {
+  determineInitialCategoryFilter = (props) => {
     if (!window.location.search) {
       return;
     }
 
-    const queryParams = getQueryParams(window.location.search);
+    const queryParams = getQueryParams(props.location.search);
     const category = queryParams.category;
 
     if (documentCategories[category]) {
@@ -83,7 +83,7 @@ export class DecisionReviewer extends React.PureComponent {
   routedPdfListView = (props) => {
     const { vacolsId } = props.match.params;
 
-    this.determineInitialCategoryFilter();
+    this.determineInitialCategoryFilter(props);
 
     return <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
