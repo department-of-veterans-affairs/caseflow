@@ -6,17 +6,17 @@ import PropTypes from 'prop-types';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
+  pageCoordsOfRootCoords } from '../reader/utils';
 import CommentLayer from '../reader/CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { setPdfReadyToShow, setPageCoordBounds,
-  placeAnnotation, requestMoveAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon, hidePlaceAnnotationIcon,
+  placeAnnotation, startPlacingAnnotation,
+  stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-import { CATEGORIES, INTERACTION_TYPES } from '../reader/analytics';
+import { INTERACTION_TYPES } from '../reader/analytics';
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -592,21 +592,6 @@ export class Pdf extends React.PureComponent {
     }
   }
 
-  mouseListener = (event) => {
-    if (this.props.isPlacingAnnotation) {
-      const pageIndex = _(this.pageElements[this.props.file]).
-        map('pageContainer').
-        indexOf(event.currentTarget);
-      const pageCoords = getPageCoordinatesOfMouseEvent(
-        event,
-        event.currentTarget.getBoundingClientRect(),
-        this.props.scale
-      );
-
-      this.props.showPlaceAnnotationIcon(pageIndex, pageCoords);
-    }
-  }
-
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('resize', this.drawInViewPages);
@@ -797,56 +782,6 @@ export class Pdf extends React.PureComponent {
     }
   }
 
-  // Move the comment when it's dropped on a page
-  // eslint-disable-next-line max-statements
-  onCommentDrop = (pageNumber) => (event) => {
-    const dragAndDropPayload = event.dataTransfer.getData('text');
-    let dragAndDropData;
-
-    // Anything can be dragged and dropped. If the item that was
-    // dropped doesn't match what we expect, we just silently ignore it.
-    const logInvalidDragAndDrop = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'invalid-drag-and-drop');
-
-    try {
-      dragAndDropData = JSON.parse(dragAndDropPayload);
-
-      if (!dragAndDropData.iconCoordinates || !dragAndDropData.uuid) {
-        logInvalidDragAndDrop();
-
-        return;
-      }
-    } catch (err) {
-      if (err instanceof SyntaxError) {
-        logInvalidDragAndDrop();
-
-        return;
-      }
-      throw err;
-    }
-
-    let pageBox = document.getElementById(`pageContainer${pageNumber}`).
-      getBoundingClientRect();
-
-    let coordinates = {
-      x: (event.pageX - pageBox.left - dragAndDropData.iconCoordinates.x) / this.props.scale,
-      y: (event.pageY - pageBox.top - dragAndDropData.iconCoordinates.y) / this.props.scale
-    };
-
-    const droppedAnnotation = {
-      ...this.props.allAnnotations[dragAndDropData.uuid],
-      ...coordinates
-    };
-
-    this.props.requestMoveAnnotation(droppedAnnotation);
-  }
-
-  onPageDragOver = (event) => {
-    // The cursor will display a + icon over droppable components.
-    // To specify the component as droppable, we need to preventDefault
-    // on the event.
-    event.preventDefault();
-  }
-
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
   // eslint-disable-next-line max-statements
@@ -878,8 +813,6 @@ export class Pdf extends React.PureComponent {
             verticalAlign: 'top',
             display: file === this.props.file ? '' : 'none'
           } }
-          onDragOver={this.onPageDragOver}
-          onDrop={this.onCommentDrop(pageIndex + 1)}
           key={`${file}-${pageIndex + 1}`}
           id={this.props.file === file && `pageContainer${pageIndex + 1}`}
           onMouseMove={this.mouseListener}
@@ -922,8 +855,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   ...state.readerReducer.ui.pdf,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-  allAnnotations: state.readerReducer.annotations
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -933,8 +865,6 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    hidePlaceAnnotationIcon,
-    requestMoveAnnotation,
     onScrollToComment,
     setPdfReadyToShow
   }, dispatch)
