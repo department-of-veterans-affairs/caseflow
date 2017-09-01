@@ -309,7 +309,8 @@ const mapStateToProps = (state, ownProps) => {
     hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
     appeal: state.readerReducer.loadedAppeal,
-    ..._.pick(state.readerReducer, 'documents', 'tagOptions', 'openedAccordionSections')
+    tagOptions: state.readerReducer.ui.tagOptions,
+    ..._.pick(state.readerReducer, 'documents', 'openedAccordionSections')
   };
 };
 const mapDispatchToProps = (dispatch) => ({

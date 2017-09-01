@@ -446,7 +446,7 @@ export const newTagRequestSuccess = (docId, createdTags) => (
         createdTags
       }
     });
-    const { documents } = getState();
+    const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
   }
@@ -496,7 +496,7 @@ export const removeTagRequestSuccess = (docId, tagId) => (
         tagId
       }
     });
-    const { documents } = getState();
+    const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
   }
@@ -637,7 +637,13 @@ export const caseSelectAppeal = (appeal) => ({
 });
 
 export const requestAppealUsingVeteranId = () => ({
-  type: Constants.REQUEST_APPEAL_USING_VETERAN_ID
+  type: Constants.REQUEST_APPEAL_USING_VETERAN_ID,
+  meta: {
+    analytics: {
+      category: CATEGORIES.CASE_SELECTION_PAGE,
+      action: 'case-search'
+    }
+  }
 });
 
 export const fetchAppealUsingVeteranId = (veteranId) => (
