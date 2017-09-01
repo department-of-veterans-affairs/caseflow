@@ -234,6 +234,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:task) do
       Generators::EstablishClaim.create(
         created_at: 3.days.ago,
+        prepared_at: Date.yesterday,
         appeal_id: appeal.id,
         aasm_state: "unassigned"
       )
