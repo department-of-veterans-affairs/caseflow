@@ -6,7 +6,7 @@ import Table from '../../components/Table';
 import { Component } from 'react';
 
 export default class HearingWorksheetIssues extends Component {
-  
+
   getKeyForRow = (index) => {
     return index;
   }
@@ -75,7 +75,7 @@ export default class HearingWorksheetIssues extends Component {
             // TODO add logic to find specific issue
             name={`issue-${issue.issueID}`}
          //   id={`worksheet-issue-description-${issue.issueID}`}
-            value={ ''}
+            value={''}
             onChange={this.props}
             />
         </div>,
@@ -131,15 +131,12 @@ export default class HearingWorksheetIssues extends Component {
         </div>
       };
     });
-    return <div className="sub-page">
-      <p>lksjd</p>
-       <Table
+    return <Table
             className="cf-hearings-worksheet-issues"
             columns={columns}
             rowObjects={rowObjects}
             summary={'Worksheet Issues'}
             getKeyForRow={this.getKeyForRow}
           />
-    </div>;
   }
 }
