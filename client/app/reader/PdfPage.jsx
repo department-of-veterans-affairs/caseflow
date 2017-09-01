@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { setPdfPageDimensions } from '../reader/actions';
+import { bindActionCreators } from 'redux';
+import { pageNumberOfPageIndex } from './utils';
 
 import classNames from 'classnames';
 
@@ -29,7 +32,35 @@ export class PdfPage extends React.Component {
     this.props.getTextLayerRef(this.props.pageIndex, this.props.file, textLayer);
   }
 
+  getDimensions = () => {
+    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
+      const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
+
+      const pageDimensions = _.pick(viewport, ['width', 'height']);
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    }).
+    catch(() => {
+      const pageDimensions = {
+        width: PAGE_WIDTH,
+        height: PAGE_HEIGHT
+      };
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    });
+  }
+
+  componentDidMount = () => {
+    this.getDimensions();
+  }
+
   render() {
+    const pageClassNames = classNames({
+      'cf-pdf-pdfjs-container': true,
+      page: true,
+      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
+    });
+    const currentWidth = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
+    const currentHeight = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
+
     const divPageStyle =  {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${this.props.scale * currentWidth}px`,
@@ -37,15 +68,6 @@ export class PdfPage extends React.Component {
       verticalAlign: 'top',
       display: this.props.isVisible ? '' : 'none'
     };
-    const pageClassNames = classNames({
-      'cf-pdf-pdfjs-container': true,
-      page: true,
-      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
-    });
-    const currentWidth = _.get(this.props.pageDimensions,
-      [this.props.file, this.props.pageIndex, 'width'], PAGE_WIDTH);
-    const currentHeight = _.get(this.props.pageDimensions,
-      [this.props.file, this.props.pageIndex, 'height'], PAGE_HEIGHT);
 
     // Only pages that are the correct scale should be visible
     const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
@@ -83,15 +105,21 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
-  pageDimensions: PropTypes.object,
   isDrawn: PropTypes.object,
   getPageContainerRef: PropTypes.func,
   getCanvasRef: PropTypes.func,
-  getTextLayerRef: PropTypes.func
+  getTextLayerRef: PropTypes.func,
+  pdfDocument: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId')
+const mapStateToProps = (state, props) => ({
+  pageDimensions: _.get(state.readerReducer, ['documentsByFile', props.file, 'pages', props.pageIndex, 'dimensions'])
 });
 
-export default connect(mapStateToProps)(PdfPage);
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    setPdfPageDimensions
+  }, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PdfPage);

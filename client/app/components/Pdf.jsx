@@ -368,7 +368,7 @@ export class Pdf extends React.PureComponent {
       this.getDocument(this.latestFile).then((pdfDocument) => {
 
         // Don't continue seting up the pdf if it's already been set up.
-        if (!pdfDocument || pdfDocument === this.state.pdfDocument) {
+        if (!pdfDocument || pdfDocument === this.state.pdfDocument[file]) {
           return resolve();
         }
 
@@ -379,7 +379,10 @@ export class Pdf extends React.PureComponent {
             ...this.state.numPages,
             [file]: pdfDocument.pdfInfo.numPages
           },
-          pdfDocument,
+          pdfDocument: {
+            ...this.state.pdfDocument,
+            [file]: pdfDocument
+          },
           isDrawn: {
             [file]: [],
             ...this.state.isDrawn
@@ -842,7 +845,8 @@ export class Pdf extends React.PureComponent {
   render() {
     const pages = _.map(this.state.numPages, (numPages, file) => {
       return _.range(numPages).map((page, pageIndex) => {
-        return <PdfPage
+        if (this.state.pdfDocument[file]) {
+          return <PdfPage
             key={`${file}-${pageIndex + 1}`}
             file={file}
             pageIndex={pageIndex}
@@ -852,8 +856,9 @@ export class Pdf extends React.PureComponent {
             getCanvasRef={this.getCanvasRef}
             getTextLayerRef={this.getTextLayerRef}
             isDrawn={this.state.isDrawn}
-            pageDimensions={this.state.pageDimensions}
+            pdfDocument={this.state.pdfDocument[file]}
           />;
+        }
       });
     });
 

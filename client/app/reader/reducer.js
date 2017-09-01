@@ -207,7 +207,8 @@ export const initialState = {
    */
   editingAnnotations: {},
   annotations: {},
-  documents: {}
+  documents: {},
+  documentsByFile: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1044,6 +1045,23 @@ export const reducer = (state = initialState, action = {}) => {
               ...doc,
               listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
             }))
+        }
+      }
+    );
+  case Constants.SET_PDF_PAGE_DIMENSIONS:
+    return update(
+      state,
+      {
+        documentsByFile: {
+          [action.payload.file]: {
+            $set: {
+              pages: {
+                [action.payload.pageIndex]: {
+                  dimensions: action.payload.dimensions
+                }
+              }
+            }
+          }
         }
       }
     );
