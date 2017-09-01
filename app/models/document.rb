@@ -152,6 +152,7 @@ class Document < ActiveRecord::Base
   end
 
   def to_hash
+    byebug
     serializable_hash
   end
 
@@ -183,7 +184,7 @@ class Document < ActiveRecord::Base
   def content_url
     if EFolderService == ExternalApi::EfolderService &&
        RequestStore.store[:application] == "reader" &&
-       FeatureToggle.enabled?(:efolder_docs_api, RequestStore.store[:current_user])
+       FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
       URI(ExternalApi::EfolderService.efolder_base_url + "/api/v1/documents/#{efolder_id}").to_s
     else
       "/document/#{id}/pdf"
