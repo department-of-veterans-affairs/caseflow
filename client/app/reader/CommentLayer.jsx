@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { makeGetAnnotationsBydocId } from '../reader/selectors';
+import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from '../components/CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import _ from 'lodash';
@@ -165,7 +165,7 @@ CommentLayer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   ...state.readerReducer.ui.pdf,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsBydocId(state.readerReducer)(ownProps.docId),
+  comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.docId),
   allAnnotations: state.readerReducer.annotations
 });
 
