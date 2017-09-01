@@ -119,7 +119,6 @@ export class DailyDocketContainer extends React.Component {
     // temporarily use 5 second interval for quicker validation
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        intervalInMs={5000}
         saveFunction={this.saveFunction}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
       />
