@@ -8,7 +8,7 @@ import moment from 'moment';
 import Button from '../components/Button';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
-// import HearingWorksheetStream from './components/HearingWorksheetStream';
+import HearingWorksheetStream from './components/HearingWorksheetStream';
 
 import {
   onDescriptionsChange,
@@ -37,129 +37,11 @@ export class HearingWorksheet extends React.PureComponent {
     return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
   }
 
-  getKeyForRow = (index) => {
-    return index;
-  }
 
   render() {
    // TODO <HearingWorksheetStream />
-    const columns = [
-      {
-        header: '',
-        valueName: 'counter'
-      },
-      {
-        header: 'Program',
-        align: 'left',
-        valueName: 'program'
-      },
-      {
-        header: 'Issue',
-        align: 'left',
-        valueName: 'issue'
-      },
-      {
-        header: 'Levels 1-3',
-        align: 'left',
-        valueName: 'levels'
-      },
-      {
-        header: 'Description',
-        align: 'left',
-        valueName: 'description'
-      },
-      {
-        header: 'Preliminary Impressions',
-        align: 'left',
-        valueName: 'actions'
-      }
-    ];
 
-    // Temp Placeholder issues
-    const issues = [
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        issueID: 101,
-        levels: 'All Others, 5010 - Arthritis, due to trauma',
-        description: 'Right elbow',
-        actions: [
-          false, false, false, true, false, false
-        ]
-      }
-    ];
 
-    const rowObjects = issues.map((issue, index) => {
-      return {
-        counter: <b>{index + 1}.</b>,
-        program: issue.program,
-        issue: issue.issue,
-        issueID: issue.issueID,
-        levels: issue.levels,
-        description: <div>
-          <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
-          <TextareaField
-            aria-label="Description"
-            // TODO Remove placeholder loop | new structure
-            // TODO add logic to find specific issue
-            name={`issue-${issue.issueID}`}
-            id={`worksheet-issue-description-${issue.issueID}`}
-            value={this.props.worksheet.streams.appeal_0.issues.issue_0.description || ''}
-            onChange={this.props.onDescriptionsChange}
-            />
-        </div>,
-        actions: <div className="cf-hearings-worksheet-actions">
-          <Checkbox
-            label="Re-Open"
-            name={`chk_reopen_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[0]}
-          ></Checkbox>
-          <Checkbox
-            label="Allow"
-            name={`chk_allow_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[1]}
-          ></Checkbox>
-          <Checkbox
-            label="Deny"
-            name={`chk_deny_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[2]}
-          ></Checkbox>
-          <Checkbox
-            label="Remand"
-            name={`chk_remand_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[3]}
-          ></Checkbox>
-          <Checkbox
-            label="Dismiss"
-            name={`chk_dismiss_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[4]}
-          ></Checkbox>
-          <Checkbox
-            label="VHA"
-            name={`chk_vha_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[5]}
-          ></Checkbox>
-        </div>
-      };
-    });
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
@@ -270,59 +152,13 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Issues</h2>
-          <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
-          <Table
-            className="cf-hearings-worksheet-issues"
-            columns={columns}
-            rowObjects={rowObjects}
-            summary={'Worksheet Issues'}
-            getKeyForRow={this.getKeyForRow}
-          />
-        </div>
-
-        <form className="cf-hearings-worksheet-form">
-          <div className="cf-hearings-worksheet-data">
-            <TextareaField
-              name="Contentions"
-              value={this.props.worksheet.contentions || ''}
-              onChange={this.props.onContentionsChange}
-              id="worksheet-contentions"
-              />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <TextareaField
-              name="Periods and circumstances of service"
-              value={this.props.worksheet.periods || ''}
-              onChange={this.props.onPeriodsChange}
-              id="worksheet-periods"
-              />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <TextareaField
-              name="Evidence"
-              value={this.props.worksheet.evidence || ''}
-              onChange={this.props.onEvidenceChange}
-              id="worksheet-evidence"
-              />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <TextareaField
-              name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments || ''}
-              id="worksheet-comments"
-              onChange={this.props.onCommentsChange}
-              />
-          </div>
-        </form>
+<HearingWorksheetStream />
       </div>
       <div className="cf-push-right">
         <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
       </div>
+
+
     </div>;
   }
 }
