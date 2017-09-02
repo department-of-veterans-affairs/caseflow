@@ -10,7 +10,7 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfPage from '../reader/PdfPage';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfReadyToShow, setPageCoordBounds,
+import { setPdfReadyToShow,
   placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
@@ -736,7 +736,6 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
-    setPageCoordBounds,
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,

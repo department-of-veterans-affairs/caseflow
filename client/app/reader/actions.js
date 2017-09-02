@@ -356,13 +356,6 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   }
 });
 
-export const setPageCoordBounds = (coordBounds) => ({
-  type: Constants.SET_PAGE_COORD_BOUNDS,
-  payload: {
-    coordBounds
-  }
-});
-
 export const stopPlacingAnnotation = (interactionType) => ({
   type: Constants.STOP_PLACING_ANNOTATION,
   meta: {

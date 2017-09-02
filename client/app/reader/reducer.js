@@ -144,7 +144,6 @@ export const initialState = {
   didLoadAppealFail: false,
   initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
-  pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
@@ -723,12 +722,6 @@ export const reducer = (state = initialState, action = {}) => {
         pendingEditingAnnotations: {
           $unset: action.payload.annotationId
         }
-      }
-    });
-  case Constants.SET_PAGE_COORD_BOUNDS:
-    return update(state, {
-      pageCoordsBounds: {
-        $set: action.payload.coordBounds
       }
     });
   case Constants.PLACE_ANNOTATION:
