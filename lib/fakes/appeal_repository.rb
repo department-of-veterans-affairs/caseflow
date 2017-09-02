@@ -94,9 +94,7 @@ class Fakes::AppealRepository
   end
 
   def self.appeals_ready_for_hearing(vbms_id)
-    (records || []).select do |_, a|
-      a[:vbms_id] == vbms_id && a[:decision_date].nil? && !a[:form9_date].nil?
-    end
+    Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)

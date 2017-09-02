@@ -53,7 +53,7 @@ CommentIcon.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'selectedAnnotationId')
+  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId')
 });
 
 export default connect(mapStateToProps)(CommentIcon);

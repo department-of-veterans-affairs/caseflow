@@ -1,4 +1,5 @@
 class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
+  # :nocov:
   def text_field(attribute, options = {})
     options[:maxlength] ||= 45
     options["aria-disabled"] = true if options[:readonly]
@@ -116,4 +117,5 @@ class CaseflowFormBuilder < ActionView::Helpers::FormBuilder
   def error_container
     @template.content_tag(:span, class: "usa-input-error-message") {}
   end
+  # :nocov:
 end

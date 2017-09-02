@@ -39,7 +39,9 @@ class Document < ActiveRecord::Base
     "SSOC",
     "Supplemental Statement of Case (SSOC)",
     "DD 214 Certified Original - Certificate of Release or Discharge From Active Duty",
-    "Rating Decision - Codesheet"
+    "Rating Decision - Codesheet",
+    "VA 21-526EZ, Fully Developed Claim (Compensation)",
+    "VA 21-527EZ, Fully Developed Claim (Pension)"
   ].freeze
 
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
@@ -181,7 +183,7 @@ class Document < ActiveRecord::Base
   def content_url
     if EFolderService == ExternalApi::EfolderService &&
        RequestStore.store[:application] == "reader" &&
-       FeatureToggle.enabled?(:efolder_docs_api)
+       FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
       URI(ExternalApi::EfolderService.efolder_base_url + "/api/v1/documents/#{efolder_id}").to_s
     else
       "/document/#{id}/pdf"
