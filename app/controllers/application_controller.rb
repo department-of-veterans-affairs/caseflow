@@ -101,7 +101,8 @@ class ApplicationController < ActionController::Base
       },
       {
         title: "Send Feedback",
-        link: feedback_url
+        link: feedback_url,
+        target: "_blank"
       }
     ]
 

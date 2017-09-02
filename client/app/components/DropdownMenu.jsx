@@ -24,6 +24,10 @@ export default class DropdownMenu extends React.Component {
     }
   }
 
+  onClick = (title) => () => {
+    window.analyticsEvent('Navbar', title.toLowerCase());
+  }
+
   render() {
     let {
       label,
@@ -38,7 +42,10 @@ export default class DropdownMenu extends React.Component {
         {options.map((option, index) =>
           <li key={index}>
             {options.length - 1 === index && <div className="dropdown-border"></div>}
-            <Link href={option.link}>{option.title}</Link>
+            <Link
+              href={option.link}
+              target={option.target}
+              onClick={this.onClick(option.title)}>{option.title}</Link>
           </li>)}
       </ul>;
     };
@@ -57,7 +64,8 @@ export default class DropdownMenu extends React.Component {
 DropdownMenu.propTypes = {
   options: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired
+    link: PropTypes.string.isRequired,
+    target: PropTypes.string
   })),
   label: PropTypes.string.isRequired,
   onBlur: PropTypes.func,

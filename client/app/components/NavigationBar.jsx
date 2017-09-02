@@ -12,6 +12,8 @@ export default class NavigationBar extends React.Component {
   }
 
   handleMenuClick = () => {
+    window.analyticsEvent('Navbar', 'menu', this.state.menu ? 'close' : 'open');
+
     this.setState((prevState) => ({
       menu: !prevState.menu
     }));
@@ -50,7 +52,8 @@ export default class NavigationBar extends React.Component {
 NavigationBar.propTypes = {
   menuOptions: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
-    link: PropTypes.string.isRequired
+    link: PropTypes.string.isRequired,
+    target: PropTypes.string
   })),
   user: PropTypes.string.isRequired,
   appName: PropTypes.string.isRequired
