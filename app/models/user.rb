@@ -54,17 +54,13 @@ class User < ActiveRecord::Base
   end
 
   def can?(thing)
-    return true if admin? && admin_roles.include?(thing)
-    roles.include? thing
+    return true if admin?
+    # Ignore CSUM/CSEM users with “System Admin” function
+    thing.include?("System Admin") ? false : roles.include?(thing)
   end
 
   def admin?
-    # In prod, as of 05/08/2017, we had 133 users with the System Admin
-    # role, most of which are unknown to us. We'll let those users
-    # keep their privileges in lower environments, but let's
-    # restrict prod system admin access to just the CSFLOW user.
-    return false if Rails.deploy_env?(:prod) && username != "CSFLOW"
-    roles.include? "System Admin"
+    Caseflow::Functions.granted?("System Admin", css_id)
   end
 
   def authenticated?
@@ -151,7 +147,7 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      user["admin_roles"] ||= user["roles"] && user["roles"].include?("System Admin") ? ["System Admin"] : []
+      user["admin_roles"] ||= Caseflow::Functions.granted?("System Admin", user["id"]) ? ["System Admin"] : []
 
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.full_name = user["name"]
