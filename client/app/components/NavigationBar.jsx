@@ -23,7 +23,6 @@ export default class NavigationBar extends React.Component {
   render() {
     let {
       appName,
-      color,
       menuOptions,
       user
     } = this.props;

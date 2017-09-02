@@ -137,11 +137,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div>
-        <div className="cf-content">
-        <div className="cf-content-inside full-page">
-          <NavigationBar appName="Reader" user={this.props.user} menuOptions={this.props.dropdown}/>
-        </div>
-        </div>
+        <NavigationBar appName="Reader" user={this.props.user} menuOptions={this.props.dropdown}/>
         <div className="section--document-list">
           <Route
             path="/:vacolsId/documents"
