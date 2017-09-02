@@ -139,9 +139,7 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <div className="cf-content">
         <div className="cf-content-inside full-page">
-          <header className="cf-app-header">
-            <NavigationBar appName="Reader" user={this.props.user} menuOptions={this.props.dropdown}/>
-          </header>
+          <NavigationBar appName="Reader" user={this.props.user} menuOptions={this.props.dropdown}/>
         </div>
         </div>
         <div className="section--document-list">
