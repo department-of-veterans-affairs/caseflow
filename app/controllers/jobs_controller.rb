@@ -3,11 +3,15 @@ class JobsController < ApplicationController
   before_action :authenticate
 
   def start_async
-    # start job asynchronously as given by the class_name post param
-    klass = Object.const_get params.require(:class_name)
+    # start job asynchronously as given by the job_type post param
+    job_type = params.require(:job_type)
+    klass = Object.const_get job_type
     job = klass.perform_later
     Rails.logger.info("Starting job #{job.job_id}")
     render json: { success: true, job_id: job.job_id }, status: 200
+  rescue NameError
+    Rails.logger.error("Unrecognized job #{job_type}")
+    render json: { error_code: "Unable to start unrecognized job" }, status: 422
   end
 
   protected
