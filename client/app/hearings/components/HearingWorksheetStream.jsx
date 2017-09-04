@@ -13,6 +13,7 @@ class HearingWorksheetStream extends Component {
      worksheetStreams
     } = this.props;
 
+
     return <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Issues</h2>
           <p className="cf-appeal-stream-label">APPEAL STREAM 01</p>

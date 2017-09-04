@@ -3,7 +3,7 @@ import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import TextareaField from '../../components/TextareaField';
 import Table from '../../components/Table';
-
+import PropTypes from 'prop-types';
 
 class HearingWorksheetIssues extends Component {
 
@@ -12,6 +12,7 @@ class HearingWorksheetIssues extends Component {
      worksheetStreamsIssues
     } = this.props;
 
+      console.log(worksheetStreamsIssues)
     const columns = [
       {
         header: '',
@@ -49,7 +50,7 @@ class HearingWorksheetIssues extends Component {
         program: 'Compensation',
         issue: 'Service connection',
         levels: 'All Others, 5010 - Arthritis, due to trauma',
-        description: 'Right elbow',
+        description: worksheetStreamsIssues.description,
         reopen: true,
         remand: true,
         allow: true,
@@ -73,9 +74,7 @@ class HearingWorksheetIssues extends Component {
             // TODO Update placeholder loop | new structure
             name="Description"
             id={'issue-description'}
-
             value={worksheetStreamsIssues.description | ''}
-
             onChange={this.props.onDescriptionChange}
             />
         </div>,
@@ -83,7 +82,7 @@ class HearingWorksheetIssues extends Component {
           <Checkbox
             label="Re-Open"
             name={'chk_reopen'}
-             onChange={() => {
+             onChange={() => { 
                return true;
              }}
 
@@ -142,6 +141,13 @@ class HearingWorksheetIssues extends Component {
           />;
   }
 }
+const mapStateToProps = (state) => ({
+  worksheetStreamsIssues: state.worksheet.streams.appeal_0.issues.issue_0
+});
+
+HearingWorksheetIssues.propTypes = {
+  worksheetStreamsIssues: PropTypes.object.isRequired
+};
 
 export default HearingWorksheetIssues;
 
