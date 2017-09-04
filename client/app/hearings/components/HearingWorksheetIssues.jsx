@@ -73,7 +73,7 @@ class HearingWorksheetIssues extends Component {
             // TODO Update placeholder loop | new structure
             name="Description"
             id={'issue-description'}
-            value={worksheetStreamsIssues.description}
+            value={worksheetStreamsIssues.description | ''}
             onChange={this.props.onDescriptionChange}
             />
         </div>,
