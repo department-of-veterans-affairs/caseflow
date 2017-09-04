@@ -32,13 +32,8 @@ export class HearingWorksheet extends React.PureComponent {
     return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
   }
 
-
-
   render() {
 
-  let {
-     worksheetStreams
-    } = this.props;
     // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
 
     return <div>
@@ -151,7 +146,7 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
 
            <HearingWorksheetStream
-              worksheetStreams={worksheetStreams}
+              worksheetStreams={this.props.worksheetStreams}
               {...this.props}
             />
 
@@ -200,8 +195,6 @@ export class HearingWorksheet extends React.PureComponent {
           button="primary"
         >Review eFolder</Link>
       </div>
-
-
     </div>;
   }
 }
