@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
-import Button from '../components/Button';
+import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
@@ -18,10 +18,7 @@ import {
   onCommentsChange
        } from './actions/Dockets';
 
-import _ from 'lodash';
-
 export class HearingWorksheet extends React.PureComponent {
-
 
   getType = (type) => {
     return (type === 'central_office') ? 'CO' : type;
@@ -35,9 +32,10 @@ export class HearingWorksheet extends React.PureComponent {
     return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
   }
 
-
   render() {
 
+
+    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
@@ -188,7 +186,11 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
-        <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
+        <Link
+          name="signup-1"
+          href="/reader/appeal"
+          button="primary"
+        >Review eFolder</Link>
       </div>
 
 
