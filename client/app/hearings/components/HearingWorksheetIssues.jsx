@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Checkbox from '../../components/Checkbox';
-import TextField from '../../components/TextField';
 import TextareaField from '../../components/TextareaField';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
@@ -12,7 +11,6 @@ class HearingWorksheetIssues extends Component {
      worksheetStreamsIssues
     } = this.props;
 
-      console.log(worksheetStreamsIssues)
     const columns = [
       {
         header: '',
@@ -47,7 +45,7 @@ class HearingWorksheetIssues extends Component {
     // Temp Placeholder issues
     const issues = [
       {
-        program: 'Compensation',
+        program: worksheetStreamsIssues.program,
         issue: 'Service connection',
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: worksheetStreamsIssues.description,
@@ -60,7 +58,8 @@ class HearingWorksheetIssues extends Component {
       }
     ];
 
-    const rowObjects = issues.map((issue, index) => {
+    const rowObjects = issues.map((issue) => {
+
       return {
         counter: <b>1.</b>,
         program: issue.program,
@@ -74,7 +73,7 @@ class HearingWorksheetIssues extends Component {
             // TODO Update placeholder loop | new structure
             name="Description"
             id={'issue-description'}
-            value={worksheetStreamsIssues.description | ''}
+            value={issue.description}
             onChange={this.props.onDescriptionChange}
             />
         </div>,
@@ -82,7 +81,7 @@ class HearingWorksheetIssues extends Component {
           <Checkbox
             label="Re-Open"
             name={'chk_reopen'}
-             onChange={() => { 
+             onChange={() => {
                return true;
              }}
 
@@ -141,6 +140,8 @@ class HearingWorksheetIssues extends Component {
           />;
   }
 }
+
+// Todo get right issue
 const mapStateToProps = (state) => ({
   worksheetStreamsIssues: state.worksheet.streams.appeal_0.issues.issue_0
 });

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
@@ -9,10 +8,8 @@ class HearingWorksheetStream extends Component {
   render() {
 
     let {
-     worksheetStreamsIssues,
-     worksheetStreams
+     worksheetStreamsIssues
     } = this.props;
-
 
     return <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Issues</h2>
@@ -24,11 +21,6 @@ class HearingWorksheetStream extends Component {
     </div>;
   }
 }
-
-// Todo make all issues
-const mapStateToProps = (state) => ({
-  worksheetStreamsIssues: state.worksheet.streams.appeal_0.issues.issue_0
-});
 
 HearingWorksheetStream.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired

@@ -43,7 +43,8 @@ class Hearings::WorksheetsController < HearingsController
         appeal_0: {
           issues: {
             issue_0: {
-
+              program: 'Compensation',
+              description: 'Left Elbow',
             }
           },
           nod: 99,

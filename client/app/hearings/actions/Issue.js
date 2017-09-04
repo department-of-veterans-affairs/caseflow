@@ -1,4 +1,4 @@
-//ToDo Move all issue actions
+// ToDo Move all issue actions
 // import * as Constants from '../constants/constants';
 
 // export const onDescriptionChange = (description) => ({
