@@ -151,8 +151,7 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
 
            <HearingWorksheetStream
-            // Todo Add Stream
-             
+              worksheetStreams={worksheetStreams}
               {...this.props}
             />
 

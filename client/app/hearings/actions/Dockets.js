@@ -42,6 +42,7 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
+
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
