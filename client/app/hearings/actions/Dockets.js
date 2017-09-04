@@ -28,17 +28,17 @@ export const onRepNameChange = (repName) => ({
   }
 });
 
+export const onDescriptionChange = (description) => ({
+  type: Constants.SET_DESCRIPTIONS,
+  payload: {
+    description
+  }
+});
+
 export const onWitnessChange = (witness) => ({
   type: Constants.SET_WITNESS,
   payload: {
     witness
-  }
-});
-
-export const onDescriptionsChange = (description) => ({
-  type: Constants.SET_DESCRIPTIONS,
-  payload: {
-    description
   }
 });
 

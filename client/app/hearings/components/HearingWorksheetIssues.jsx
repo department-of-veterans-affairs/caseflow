@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import TextareaField from '../../components/TextareaField';
 import Table from '../../components/Table';
-import { Component } from 'react';
 
-export default class HearingWorksheetIssues extends Component {
 
-  getKeyForRow = (index) => {
-    return index;
-  }
+class HearingWorksheetIssues extends Component {
 
   render() {
+    let {
+     worksheetStreamsIssues
+    } = this.props;
+
     const columns = [
       {
         header: '',
@@ -70,14 +70,11 @@ export default class HearingWorksheetIssues extends Component {
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
             aria-label="Description"
-            // TODO Remove placeholder loop | new structure
-            // TODO add logic to find specific issue
+            // TODO Update placeholder loop | new structure
             name="Description"
-            id={`worksheet-issue-description-${issue.issueID}`}
-            value={''}
-            onChange={() => {
-              return true;
-            }}
+            id={'issue-description'}
+            value={worksheetStreamsIssues.description}
+            onChange={this.props.onDescriptionChange}
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
@@ -133,7 +130,6 @@ export default class HearingWorksheetIssues extends Component {
       };
     });
 
-
     return <Table
             className="cf-hearings-worksheet-issues"
             columns={columns}
@@ -143,3 +139,7 @@ export default class HearingWorksheetIssues extends Component {
           />;
   }
 }
+
+
+export default HearingWorksheetIssues;
+

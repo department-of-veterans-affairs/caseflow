@@ -75,19 +75,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_DESCRIPTIONS:
     return update(state, {
       // TODO make reusable for all issues fields
-      worksheet: {
-        streams: {
-          appeal_0: {
-            issues: {
-              issue_0: {
-                description: {
-                  $set: action.payload.description
-                }
-              }
-            }
-          }
-        }
+
+      description: {
+        $set: action.payload.description
+
       }
+
     });
 
   case Constants.SET_CONTENTIONS:

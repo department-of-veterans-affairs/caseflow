@@ -9,7 +9,7 @@ import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 
 import {
-  onDescriptionsChange,
+  onDescriptionChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
@@ -146,7 +146,12 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-     <HearingWorksheetStream />
+           <HearingWorksheetStream
+            // Todo Add Stream
+              worksheetStreams={worksheetStreams}
+              {...this.props}
+            />
+
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
             <TextareaField
@@ -204,7 +209,7 @@ const mapStateToProps = (state) => ({
 
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onDescriptionsChange,
+  onDescriptionChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
