@@ -88,7 +88,6 @@ class HearingWorksheetIssues extends Component {
              onChange={() => {
                return true;
              }}
-
             value={issues.reopen}
           ></Checkbox>
           <Checkbox
@@ -145,10 +144,8 @@ class HearingWorksheetIssues extends Component {
   }
 }
 
-
 HearingWorksheetIssues.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired
 };
 
 export default HearingWorksheetIssues;
-
