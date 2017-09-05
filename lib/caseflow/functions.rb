@@ -1,5 +1,6 @@
 # This class used FeatureToggle as a reference
 class Caseflow::Functions
+  # :nocov:
   # Keeps track of all enabled functions
   FUNCTIONS_LIST_KEY = :function_list_key
 
@@ -33,14 +34,13 @@ class Caseflow::Functions
     return false unless functions.include?(function)
 
     data = function_enabled_hash(function)
-    return data[:users].include?(user)
+    data[:users].include?(user)
   end
 
   # Returns a hash result for a given function
   def self.details_for(function)
     function_enabled_hash(function) if functions.include?(function)
   end
-
 
   def self.client
     # Use separate Redis namespace for test to avoid conflicts between test and dev environments
@@ -93,4 +93,5 @@ class Caseflow::Functions
       client.set(function, data.to_json)
     end
   end
+  # :nocov:
 end
