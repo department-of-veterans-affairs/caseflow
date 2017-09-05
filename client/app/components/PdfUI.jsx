@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from '../components/Pdf';
-import DocumentCategoryIcons from '../components/DocumentCategoryIcons';
+import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
