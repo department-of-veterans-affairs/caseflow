@@ -258,9 +258,10 @@ RSpec.feature "Reader" do
       expect(page).to have_selector(".doc-list-progress-indicator .filter-icon")
     end
 
-    scenario "User visits help page" do
+    scenario "User visits help page", focus: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      find('#menu-trigger').click
+      binding.pry
+      find('.cf-dropdown-menu').click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
     end
