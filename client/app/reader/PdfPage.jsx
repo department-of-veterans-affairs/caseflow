@@ -31,7 +31,11 @@ export class PdfPage extends React.Component {
   }
 
   render() {
-    const divPageStyle =  {
+    const currentWidth = _.get(this.props.pageDimensions,
+      [this.props.file, this.props.pageIndex, 'width'], PAGE_WIDTH);
+    const currentHeight = _.get(this.props.pageDimensions,
+      [this.props.file, this.props.pageIndex, 'height'], PAGE_HEIGHT);
+    const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${this.props.scale * currentWidth}px`,
       height: `${this.props.scale * currentHeight}px`,
@@ -43,10 +47,6 @@ export class PdfPage extends React.Component {
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
-    const currentWidth = _.get(this.props.pageDimensions,
-      [this.props.file, this.props.pageIndex, 'width'], PAGE_WIDTH);
-    const currentHeight = _.get(this.props.pageDimensions,
-      [this.props.file, this.props.pageIndex, 'height'], PAGE_HEIGHT);
 
     // Only pages that are the correct scale should be visible
     const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;

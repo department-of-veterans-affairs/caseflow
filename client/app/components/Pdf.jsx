@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  getPageCoordinatesOfMouseEvent, pageCoordsOfRootCoords } from '../reader/utils';
+  pageCoordsOfRootCoords } from '../reader/utils';
 import PdfPage from '../reader/PdfPage';
 import { connect } from 'react-redux';
 import _ from 'lodash';

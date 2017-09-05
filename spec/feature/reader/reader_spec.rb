@@ -120,7 +120,7 @@ RSpec.feature "Reader" do
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
-          vbms_document_id: 3,
+          vbms_document_id: 4,
           category_medical: true,
           category_other: true
         ),
@@ -128,7 +128,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 4
+          vbms_document_id: 3
         )
       ]
     end
@@ -739,25 +739,57 @@ RSpec.feature "Reader" do
         expect(find_field("page-progress-indicator-input").value).to eq "3"
       end
 
-      scenario "Switch between pages to ensure rendering" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      context "Switch between pages to ensure rendering" do
+        let(:documents) do
+          [
+            Generators::Document.create(
+              filename: "My BVA Decision",
+              type: "BVA Decision",
+              received_at: 7.days.ago,
+              vbms_document_id: 6,
+              category_procedural: true,
+              tags: [
+                Generators::Tag.create(text: "New Tag1"),
+                Generators::Tag.create(text: "New Tag2")
+              ]
+            ),
+            Generators::Document.create(
+              filename: "My Form 9",
+              type: "Form 9",
+              received_at: 5.days.ago,
+              vbms_document_id: 5,
+              category_medical: true,
+              category_other: true
+            ),
+            Generators::Document.create(
+              filename: "My NOD",
+              type: "NOD",
+              received_at: 1.day.ago,
+              vbms_document_id: 3
+            )
+          ]
+        end
 
-        click_on documents[1].type
+        scenario do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        # Expect the 23 page to only be rendered once scrolled to.
-        expect(find("#pageContainer23")).to_not have_content("Rating Decision")
+          click_on documents[1].type
 
-        fill_in "page-progress-indicator-input", with: "23\n"
+          # Expect the 23 page to only be rendered once scrolled to.
+          expect(find("#pageContainer23")).to_not have_content("Rating Decision")
 
-        expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+          fill_in "page-progress-indicator-input", with: "23\n"
 
-        expect(in_viewport("pageContainer23")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
 
-        # Entering invalid values leaves the viewer on the same page.
-        fill_in "page-progress-indicator-input", with: "abcd\n"
-        expect(in_viewport("pageContainer23")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(in_viewport("pageContainer23")).to be true
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+
+          # Entering invalid values leaves the viewer on the same page.
+          fill_in "page-progress-indicator-input", with: "abcd\n"
+          expect(in_viewport("pageContainer23")).to be true
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+        end
       end
     end
 
