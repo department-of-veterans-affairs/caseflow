@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { commentIcon } from './RenderFunctions';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+
+import { commentIcon } from '../components/RenderFunctions';
 
 export class CommentIcon extends React.Component {
   onClick = () => {
