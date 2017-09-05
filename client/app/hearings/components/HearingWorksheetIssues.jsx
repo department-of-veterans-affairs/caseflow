@@ -6,10 +6,15 @@ import PropTypes from 'prop-types';
 
 class HearingWorksheetIssues extends Component {
 
+  getKeyForRow = (index) => {
+    return index;
+  }
+
   render() {
     let {
      worksheetStreamsIssues
     } = this.props;
+
 
     const columns = [
       {
@@ -141,10 +146,6 @@ class HearingWorksheetIssues extends Component {
   }
 }
 
-// Todo get right issue
-const mapStateToProps = (state) => ({
-  worksheetStreamsIssues: state.worksheet.streams.appeal_0.issues.issue_0
-});
 
 HearingWorksheetIssues.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired

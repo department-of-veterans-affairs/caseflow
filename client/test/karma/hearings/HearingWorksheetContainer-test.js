@@ -53,8 +53,13 @@ describe('HearingWorksheetContainer', () => {
         appeal_0: {
           issues: {
             issue_0: {
+              program: 'Compensation',
+              description: 'Left Elbow',
             }
-          }
+          },
+          nod: 99,
+          soc: 10,
+          docs_in_efolder: 88
         }
       }
     }));

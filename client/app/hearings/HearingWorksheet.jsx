@@ -20,18 +20,6 @@ import {
 
 export class HearingWorksheet extends React.PureComponent {
 
-  getType = (type) => {
-    return (type === 'central_office') ? 'CO' : type;
-  }
-
-  getStartTime = () => {
-    const startTime = `${moment().
-      add(_.random(0, 120), 'minutes').
-      format('LT')} EST`;
-
-    return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
-  }
-
   render() {
 
     // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
