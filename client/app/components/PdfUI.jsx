@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import Button from '../components/Button';
 import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
-import Pdf from '../components/Pdf';
+import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
