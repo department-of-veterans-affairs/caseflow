@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import PdfUI from '../components/PdfUI';
-import PdfSidebar from '../components/PdfSidebar';
+import PdfUI from './PdfUI';
+import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from '../reader/actions';
