@@ -363,10 +363,10 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Clicking outside pdf or next pdf removes annotation mode", focus: true do
+    scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       expect(page).to have_content("Caseflow Reader")
-      
+
       add_comment_without_clicking_save("text")
       page.find("body").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")
@@ -392,6 +392,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
       click_on "Edit"
