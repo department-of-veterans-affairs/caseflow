@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
   end
 
   def can?(thing)
-    return true if admin?
+    return true if admin? && admin_roles.include?(thing)
     # Ignore CSUM/CSEM users with “System Admin” function
     thing.include?("System Admin") ? false : roles.include?(thing)
   end
