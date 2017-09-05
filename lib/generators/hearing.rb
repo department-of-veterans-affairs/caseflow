@@ -49,7 +49,7 @@ class Generators::Hearing
 
     def documents
       documents = []
-      types = ["NOD", "SOC", "SSOC"]
+      types = %w(NOD SOC SSOC)
       rand(5).times do
         documents << Generators::Document.build(type: types.sample, received_at: 4.days.ago)
       end
