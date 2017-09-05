@@ -10,7 +10,7 @@ class Fakes::AuthenticationService
     user = User.find(user_id)
     # Take the roles from the User's css_id
     roles = user.css_id.split(",").map(&:strip)
-    admin_roles = roles.include?("System Admin") ? ["System Admin"] : []
+    admin_roles = Caseflow::Functions.granted?("System Admin", user.css_id) ? ["System Admin"] : []
     {
       "id" => user.css_id,
       "css_id" => user.css_id,
