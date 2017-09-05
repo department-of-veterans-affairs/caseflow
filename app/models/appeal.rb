@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   has_many :tasks
@@ -215,6 +216,18 @@ class Appeal < ActiveRecord::Base
 
   def regional_office_name
     "#{regional_office[:city]}, #{regional_office[:state]}"
+  end
+
+  def attributes_for_hearing
+    {
+      "id" => id,
+      "vbms_id" => vbms_id,
+      "nod_date" => nod_date,
+      "soc_date" => soc_date,
+      "certification_date" => certification_date,
+      "prior_decision_date" => prior_decision_date,
+      "ssoc_dates" => ssoc_dates
+    }
   end
 
   def station_key
@@ -443,7 +456,8 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
+      if RequestStore.store[:application] == "reader" &&
+         FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
         EFolderService
       else
         VBMSService
@@ -555,3 +569,4 @@ class Appeal < ActiveRecord::Base
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

@@ -5,18 +5,21 @@ describe ReassignOldTasksJob do
   let!(:appeal2) { Appeal.create(vacols_id: "2") }
   let!(:user1) { User.create(station_id: "123", css_id: "abc") }
   let!(:user2) { User.create(station_id: "123", css_id: "def") }
-  let!(:unfinished_task) { EstablishClaim.create(appeal_id: appeal1.id) }
+  let!(:unfinished_task) do
+    EstablishClaim.create(
+      appeal_id: appeal1.id,
+      prepared_at: Date.yesterday,
+      aasm_state: :unassigned)
+  end
   let!(:status_code) { :expired }
 
   let!(:finished_task) do
-    EstablishClaim.create(appeal_id: appeal2.id)
+    EstablishClaim.create(appeal_id: appeal2.id, prepared_at: Date.yesterday, aasm_state: :unassigned)
   end
 
   before do
-    unfinished_task.prepare!
     unfinished_task.assign!(:assigned, user1)
     unfinished_task.start!
-    finished_task.prepare!
     finished_task.assign!(:assigned, user2)
     finished_task.start!
     finished_task.review!

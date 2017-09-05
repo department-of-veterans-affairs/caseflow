@@ -41,7 +41,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     scenario "View quotas and update employee count" do
       # Create 4 incomplete tasks and one completed today
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
+      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
       Generators::EstablishClaim.create(appeal_id: appeal.id, user: case_worker, aasm_state: :assigned).tap do |task|
         task.start!
@@ -90,7 +90,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Edit individual user quotas" do
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
+      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
       appeal_id = {
         "Janet" => appeal.id,
@@ -137,7 +137,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Editing won't work if there's only one user" do
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned) }
+      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
       appeal_id = {
         "Janet" => appeal.id
@@ -234,6 +234,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:task) do
       Generators::EstablishClaim.create(
         created_at: 3.days.ago,
+        prepared_at: Date.yesterday,
         appeal_id: appeal.id,
         aasm_state: "unassigned"
       )
@@ -268,6 +269,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # Create an older task with an inaccessible appeal
       Generators::EstablishClaim.create(
         created_at: 4.days.ago,
+        prepared_at: Date.yesterday,
         aasm_state: :unassigned,
         appeal: inaccessible_appeal
       )
@@ -275,6 +277,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # Create a task already assigned to another user
       Generators::EstablishClaim.create(
         created_at: 4.days.ago,
+        prepared_at: Date.yesterday,
         user_id: case_worker.id,
         aasm_state: :started
       )
@@ -282,6 +285,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # Create a task already completed by me
       completed_task = Generators::EstablishClaim.create(
         created_at: 4.days.ago,
+        prepared_at: Date.yesterday,
         user_id: current_user.id,
         aasm_state: :completed,
         completion_status: :special_issue_vacols_routed
@@ -290,6 +294,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # Create an invalid task, this should be invalidated and skipped
       invalid_task = Generators::EstablishClaim.create(
         created_at: 4.days.ago,
+        prepared_at: Date.yesterday,
         aasm_state: :unassigned,
         appeal: invalid_appeal
       )

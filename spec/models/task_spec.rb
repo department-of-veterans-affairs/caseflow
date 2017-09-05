@@ -39,13 +39,21 @@ describe Task do
     it { is_expected.to eq([oldest_task, newest_task]) }
   end
 
+  context ".prepared_before_today" do
+    subject { Task.prepared_before_today }
+    let!(:task_prepared_yesterday) { FakeTask.create!(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+    let!(:task_prepared_today) { FakeTask.create!(aasm_state: :unassigned) }
+
+    it { is_expected.to eq([task_prepared_yesterday]) }
+  end
+
   context ".to_complete" do
     subject { Task.to_complete }
 
     let!(:unprepared_task) { FakeTask.create!(aasm_state: :unprepared) }
     let!(:completed_task) { FakeTask.create!(aasm_state: :completed) }
-    let!(:unassigned_task) { FakeTask.create!(aasm_state: :unassigned) }
-    let!(:reviewed_task) { FakeTask.create!(aasm_state: :reviewed) }
+    let!(:unassigned_task) { FakeTask.create!(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+    let!(:reviewed_task) { FakeTask.create!(aasm_state: :reviewed, prepared_at: Date.yesterday) }
 
     it { is_expected.to eq([unassigned_task, reviewed_task]) }
   end
@@ -86,9 +94,19 @@ describe Task do
   context "#assigned_not_completed" do
     subject { Task.assigned_not_completed }
 
-    let!(:unassigned_task) { FakeTask.create! }
-    let!(:assigned_task) { FakeTask.create!(assigned_at: Time.zone.now, aasm_state: :assigned) }
-    let!(:completed_task) { FakeTask.create!(assigned_at: Time.zone.now, aasm_state: :completed) }
+    let!(:unassigned_task) { FakeTask.create!(prepared_at: Date.yesterday) }
+    let!(:assigned_task) do
+      FakeTask.create!(
+        assigned_at: Time.zone.now,
+        prepared_at: Date.yesterday,
+        aasm_state: :assigned)
+    end
+    let!(:completed_task) do
+      FakeTask.create!(
+        assigned_at: Time.zone.now,
+        prepared_at: Date.yesterday,
+        aasm_state: :completed)
+    end
 
     it { is_expected.to eq([assigned_task]) }
   end
@@ -311,7 +329,12 @@ describe Task do
 
     context "when user already has an assigned task" do
       let!(:assigned_task) do
-        FakeTask.create!(aasm_state: :started, user: user, appeal: Generators::Appeal.create)
+        FakeTask.create!(
+          aasm_state: :started,
+          user: user,
+          prepared_at: Date.yesterday,
+          appeal: Generators::Appeal.create
+        )
       end
 
       it { is_expected.to eq(true) }
@@ -360,6 +383,7 @@ describe Task do
       let!(:assigned_task) do
         FakeTask.create!(
           aasm_state: :reviewed,
+          prepared_at: Date.yesterday,
           created_at: 40.seconds.ago,
           user: user,
           appeal: Generators::Appeal.create
@@ -370,6 +394,7 @@ describe Task do
         FakeTask.create!(
           aasm_state: :unassigned,
           created_at: 39.seconds.ago,
+          prepared_at: Date.yesterday,
           appeal: Generators::Appeal.create
         )
       end
