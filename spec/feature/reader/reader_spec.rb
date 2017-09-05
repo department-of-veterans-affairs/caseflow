@@ -58,7 +58,7 @@ def add_comment_without_clicking_save(text)
   find("#pageContainer1").click
 
   expect(page).to_not have_css(".cf-pdf-placing-comment")
-  fill_in "addComment", with: text
+  fill_in "addComment", with: text, wait: 3
 end
 
 def add_comment(text)
@@ -120,7 +120,7 @@ RSpec.feature "Reader" do
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
-          vbms_document_id: 5,
+          vbms_document_id: 4,
           category_medical: true,
           category_other: true
         ),
@@ -128,7 +128,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 4
+          vbms_document_id: 3
         )
       ]
     end
@@ -365,6 +365,8 @@ RSpec.feature "Reader" do
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      expect(page).to have_content("Caseflow Reader")
+
       add_comment_without_clicking_save("text")
       page.find("body").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")
@@ -390,6 +392,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
       click_on "Edit"
@@ -739,25 +742,40 @@ RSpec.feature "Reader" do
         expect(find_field("page-progress-indicator-input").value).to eq "3"
       end
 
-      scenario "Switch between pages to ensure rendering" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      context "When document 3 is a 147 page document" do
+        before do
+          documents.push(
+            Generators::Document.create(
+              filename: "My SOC",
+              type: "SOC",
+              received_at: 5.days.ago,
+              vbms_document_id: 5,
+              category_medical: true,
+              category_other: true
+            )
+          )
+        end
 
-        click_on documents[1].type
+        scenario "Switch between pages to ensure rendering" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        # Expect the 23 page to only be rendered once scrolled to.
-        expect(find("#pageContainer23")).to_not have_content("Rating Decision")
+          click_on documents[3].type
 
-        fill_in "page-progress-indicator-input", with: "23\n"
+          # Expect the 23 page to only be rendered once scrolled to.
+          expect(find("#pageContainer23")).to_not have_content("Rating Decision")
 
-        expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+          fill_in "page-progress-indicator-input", with: "23\n"
 
-        expect(in_viewport("pageContainer23")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
 
-        # Entering invalid values leaves the viewer on the same page.
-        fill_in "page-progress-indicator-input", with: "abcd\n"
-        expect(in_viewport("pageContainer23")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(in_viewport("pageContainer23")).to be true
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+
+          # Entering invalid values leaves the viewer on the same page.
+          fill_in "page-progress-indicator-input", with: "abcd\n"
+          expect(in_viewport("pageContainer23")).to be true
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+        end
       end
     end
 

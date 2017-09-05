@@ -7,10 +7,9 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   pageCoordsOfRootCoords } from '../reader/utils';
-import CommentLayer from '../reader/CommentLayer';
+import PdfPage from '../reader/PdfPage';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import classNames from 'classnames';
 import { setPdfReadyToShow, setPageCoordBounds,
   placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
@@ -56,11 +55,6 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
     y: pageCoords.y - annotationIconOffset
   };
 };
-
-// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
-// We need it defined here to be able to expand/contract margin between pages
-// as we zoom.
-const PAGE_MARGIN_BOTTOM = 25;
 
 // These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
@@ -108,12 +102,6 @@ export class Pdf extends React.PureComponent {
     this.isDrawing = {};
     this.isGettingPdf = {};
     this.loadingTasks = {};
-
-    this.refFunctionGetters = {
-      canvas: {},
-      textLayer: {},
-      pageContainer: {}
-    };
 
     this.initializePredrawing();
     this.initializeRefs();
@@ -317,7 +305,9 @@ export class Pdf extends React.PureComponent {
       this.drawInViewPages();
       this.preDrawPages();
     }).
-    catch();
+    catch(() => {
+      this.drawInViewPages();
+    });
   }
 
   performFunctionOnEachPage = (func) => {
@@ -408,37 +398,12 @@ export class Pdf extends React.PureComponent {
   }
 
   setUpPdfObjects = (file, pdfDocument) => {
-    this.pageElements[file] = {};
-
+    if (!this.pageElements[file]) {
+      this.pageElements[file] = {};
+    }
     if (!this.isDrawing[file]) {
       this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
     }
-
-    this.refFunctionGetters.canvas[file] = [];
-    this.refFunctionGetters.textLayer[file] = [];
-    this.refFunctionGetters.pageContainer[file] = [];
-
-    _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
-      const makeSetRef = (elemKey) => (elem) => {
-        // We only want to save the element if it actually exists.
-        // When the node unmounts, React will call the ref function
-        // with null. When this happens, we want to delete the
-        // entire pageElements object for this index, instead of
-        // setting it as a null value. This makes code that reads
-        // this.pageElements much simpler, because it does not need
-        // to account for the possibility that some pageElements are
-        // nulled out because they refer to pages that are no longer rendered.
-        if (elem) {
-          _.set(this.pageElements[file], [index, elemKey], elem);
-        } else {
-          delete this.pageElements[file][index];
-        }
-      };
-
-      this.refFunctionGetters.canvas[file][index] = makeSetRef('canvas');
-      this.refFunctionGetters.textLayer[file][index] = makeSetRef('textLayer');
-      this.refFunctionGetters.pageContainer[file][index] = makeSetRef('pageContainer');
-    });
 
     this.setState({
       numPages: {
@@ -784,57 +749,47 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
 
+  getPageContainerRef = (index, file, elem) => {
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'pageContainer'], elem);
+    } else {
+      delete this.pageElements[file][index];
+    }
+  }
+
+  getCanvasRef = (index, file, elem) => {
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'canvas'], elem);
+    } else {
+      delete this.pageElements[file][index];
+    }
+  }
+
+  getTextLayerRef = (index, file, elem) => {
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'textLayer'], elem);
+    } else {
+      delete this.pageElements[file][index];
+    }
+  }
+
   // eslint-disable-next-line max-statements
   render() {
-    const pageClassNames = classNames({
-      'cf-pdf-pdfjs-container': true,
-      page: true,
-      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
-    });
-
     const pages = _.map(this.state.numPages, (numPages, file) => {
       return _.range(numPages).map((page, pageIndex) => {
-        const currentWidth = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'width'], PAGE_WIDTH);
-        const currentHeight = _.get(this.state.pageDimensions, [this.props.file, pageIndex, 'height'], PAGE_HEIGHT);
-
-        // Only pages that are the correct scale should be visible
-        const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
-        const pageContentsVisibleClass = classNames({
-          'cf-pdf-page-hidden': !(Math.abs(this.props.scale -
-            _.get(this.state.isDrawn, [this.props.file, pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
-        });
-
-        return <div
-          className={this.props.file === file && pageClassNames}
-          style={ {
-            marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-            width: `${this.props.scale * currentWidth}px`,
-            height: `${this.props.scale * currentHeight}px`,
-            verticalAlign: 'top',
-            display: file === this.props.file ? '' : 'none'
-          } }
-          key={`${file}-${pageIndex + 1}`}
-          id={this.props.file === file && `pageContainer${pageIndex + 1}`}
-          onMouseMove={this.mouseListener}
-          ref={this.refFunctionGetters.pageContainer[file][pageIndex]}>
-            <div className={pageContentsVisibleClass}>
-              <canvas
-                id={`canvas${pageIndex + 1}-${file}`}
-                ref={this.refFunctionGetters.canvas[file][pageIndex]}
-                className="canvasWrapper" />
-              <div className="cf-pdf-annotationLayer">
-                {this.props.file === file && <CommentLayer
-                  documentId={this.props.documentId}
-                  pageIndex={pageIndex}
-                  scale={this.props.scale}
-                />}
-              </div>
-              <div
-                id={`textLayer${pageIndex + 1}`}
-                ref={this.refFunctionGetters.textLayer[file][pageIndex]}
-                className="textLayer"/>
-            </div>
-          </div>;
+        return <PdfPage
+            documentId={this.props.documentId}
+            key={`${file}-${pageIndex + 1}`}
+            file={file}
+            pageIndex={pageIndex}
+            isVisible={this.props.file === file}
+            scale={this.props.scale}
+            getPageContainerRef={this.getPageContainerRef}
+            getCanvasRef={this.getCanvasRef}
+            getTextLayerRef={this.getTextLayerRef}
+            isDrawn={this.state.isDrawn}
+            pageDimensions={this.state.pageDimensions}
+          />;
       });
     });
 
