@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from './Link';
-import Button from './Button';
 
 // Lots of this class are taken from
 // https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
@@ -24,7 +23,7 @@ export default class DropdownMenu extends React.Component {
 
   onClickOutside = (event) => {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      window.analyticsEvent('Navbar', 'menu', 'close', 'blur');
+      window.analyticsEvent(this.props.analyticsTitle, 'menu', 'blur');
 
       this.setState({
         menu: false
@@ -33,11 +32,11 @@ export default class DropdownMenu extends React.Component {
   }
 
   onClick = (title) => () => {
-    window.analyticsEvent('Navbar', title.toLowerCase());
+    window.analyticsEvent(this.props.analyticsTitle, title.toLowerCase());
   }
 
   onMenuClick = () => {
-    window.analyticsEvent('Navbar', 'menu', this.state.menu ? 'close' : 'open');
+    window.analyticsEvent(this.props.analyticsTitle, 'menu', this.state.menu ? 'close' : 'open');
 
     this.setState((prevState) => ({
       menu: !prevState.menu
@@ -46,7 +45,6 @@ export default class DropdownMenu extends React.Component {
 
   render() {
     let {
-      analyticsTitle,
       label,
       options
     } = this.props;
@@ -77,6 +75,7 @@ export default class DropdownMenu extends React.Component {
 }
 
 DropdownMenu.propTypes = {
+  analyticsTitle: PropTypes.string,
   options: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
     link: PropTypes.string.isRequired,
