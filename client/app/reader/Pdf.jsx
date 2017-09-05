@@ -729,7 +729,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
-  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file])),
+  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 
