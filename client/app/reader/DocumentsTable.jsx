@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+
 import { formatDateStr } from '../util/DateUtil';
 import Comment from './Comment';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
@@ -15,7 +16,6 @@ import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
 import Highlight from '../components/Highlight';
-
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
   setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility } from './actions';
 import { getAnnotationsPerDocument } from './selectors';
