@@ -42,13 +42,13 @@ class SeedDB
 
   def create_tasks(number)
     num_appeals = @appeals.length
-    num_users = @users.length
 
     tasks = number.times.map do |i|
       establish_claim = EstablishClaim.create(
-        appeal: @appeals[i % num_appeals]
+        appeal: @appeals[i % num_appeals],
+        aasm_state: :unassigned,
+        prepared_at: rand(3).days.ago
         )
-      establish_claim.prepare!
       establish_claim
     end
 

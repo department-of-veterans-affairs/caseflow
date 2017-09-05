@@ -74,6 +74,6 @@ RSpec.feature "Admin" do
     expect(Task.count).to eq(3)
 
     # ensure that the task is unassigned
-    expect(Task.to_complete.count).to eq(2)
+    expect(Task.where(aasm_state: :unassigned).count).to eq(2)
   end
 end
