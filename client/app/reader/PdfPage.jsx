@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import classNames from 'classnames';
+import { pageNumberOfPageIndex } from './utils';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
@@ -55,7 +56,7 @@ export class PdfPage extends React.Component {
     });
 
     return <div
-      id={`${this.props.file}-${this.props.pageIndex}`}
+      id={`pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`}
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
@@ -79,7 +80,7 @@ export class PdfPage extends React.Component {
 }
 
 PdfPage.propTypes = {
-  documentId: PropTypes.documentId,
+  documentId: PropTypes.number,
   file: PropTypes.string,
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,

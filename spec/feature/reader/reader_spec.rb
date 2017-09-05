@@ -120,7 +120,7 @@ RSpec.feature "Reader" do
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
-          vbms_document_id: 5,
+          vbms_document_id: 3,
           category_medical: true,
           category_other: true
         ),
