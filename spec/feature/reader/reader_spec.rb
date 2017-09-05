@@ -58,7 +58,7 @@ def add_comment_without_clicking_save(text)
   find("#pageContainer1").click
 
   expect(page).to_not have_css(".cf-pdf-placing-comment")
-  fill_in "addComment", with: text
+  fill_in "addComment", with: text, wait: 3
 end
 
 def add_comment(text)
@@ -363,17 +363,14 @@ RSpec.feature "Reader" do
       end
     end
 
-    ensure_stable do
-
-      scenario "Clicking outside pdf or next pdf removes annotation mode", focus: true do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-        add_comment_without_clicking_save("text")
-        page.find("body").click
-        expect(page).to_not have_css(".cf-pdf-placing-comment")
-        add_comment_without_clicking_save("text")
-        find("#button-next").click
-        expect(page).to_not have_css(".cf-pdf-placing-comment")
-      end
+    scenario "Clicking outside pdf or next pdf removes annotation mode" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      add_comment_without_clicking_save("text")
+      page.find("body").click
+      expect(page).to_not have_css(".cf-pdf-placing-comment")
+      add_comment_without_clicking_save("text")
+      find("#button-next").click
+      expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
     scenario "Next and Previous buttons move between docs" do
