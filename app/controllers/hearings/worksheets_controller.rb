@@ -44,7 +44,7 @@ class Hearings::WorksheetsController < HearingsController
           issues: {
             issue_0: {
               program: "Compensation",
-              description: "Left Elbow",
+              description: "Left Elbow"
             }
           },
           nod: 99,
