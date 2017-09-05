@@ -54,7 +54,7 @@ describe('HearingWorksheetContainer', () => {
           issues: {
             issue_0: {
               program: 'Compensation',
-              description: 'Left Elbow',
+              description: 'Left Elbow'
             }
           },
           nod: 99,
