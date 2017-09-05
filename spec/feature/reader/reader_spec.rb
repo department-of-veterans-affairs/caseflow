@@ -191,6 +191,21 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
       end
 
+      let(:appeal3) do
+        Generators::Appeal.build(
+          vbms_id: "123456789S",
+          vacols_record: vacols_record,
+          documents: documents)
+      end
+
+      let(:appeal4) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, vbms_id: appeal3.vbms_id)
+      end
+
+      let(:appeal5) do
+        Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
+      end
+
       before do
         Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
       end
@@ -223,6 +238,75 @@ RSpec.feature "Reader" do
         click_on "Continue"
 
         expect(page).to have_content("Documents")
+      end
+
+      context "search for appeals using veteran id" do
+        scenario "with one appeal" do
+          visit "/reader/appeal"
+          fill_in "searchBar", with: (appeal5.vbms_id + "\n")
+
+          expect(page).to have_content(appeal5.veteran_full_name + "\'s Claims Folder")
+        end
+      end
+
+      scenario "with mutiple appeals" do
+        visit "/reader/appeal"
+        fill_in "searchBar", with: (appeal4.vbms_id + "\n")
+
+        expect(page).to have_content("Select claims folder")
+        expect(page).to have_content("Not seeing what you expected? Please send us feedback.")
+        appeal_options = find_all(".cf-form-radio-option")
+        expect(appeal_options.count).to eq(2)
+
+        expect(appeal_options[0]).to have_content("Veteran " + appeal3.veteran_full_name)
+        expect(appeal_options[0]).to have_content("Veteran ID " + appeal3.vbms_id)
+        expect(appeal_options[0]).to have_content("Issues")
+        expect(appeal_options[0].find_all("li").count).to eq(1)
+
+        expect(appeal_options[1]).to have_content("Veteran " + appeal4.veteran_full_name)
+        expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
+        expect(appeal_options[1]).to have_content("Issues")
+        expect(appeal_options[1].find_all("li").count).to eq(1)
+        expect(find("button", text: "Okay")).to be_disabled
+
+        appeal_options[0].click
+        click_on "Okay"
+        expect(page).to have_content(appeal3.veteran_full_name + "\'s Claims Folder")
+      end
+
+      context "with multiple appeals but cancel search on modal" do
+        scenario "using cancel button" do
+          visit "/reader/appeal"
+          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
+
+          click_on "Cancel"
+          expect(find("#searchBar")).to have_content("")
+        end
+
+        scenario "using X button" do
+          visit "/reader/appeal"
+          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
+
+          click_button("Select-claims-folder-button-id-close")
+          expect(find("#searchBar")).to have_content("")
+        end
+
+        scenario "and search again" do
+          visit "/reader/appeal"
+          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
+
+          click_button("Select-claims-folder-button-id-close")
+          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
+          expect(find("button", text: "Okay")).to be_disabled
+        end
+      end
+
+      scenario "search for invalid veteran id" do
+        visit "/reader/appeal"
+        fill_in "searchBar", with: "does not exist"
+        click_button("submit-search-searchBar")
+
+        expect(page).to have_content("Veteran ID not found")
       end
     end
 
@@ -264,6 +348,20 @@ RSpec.feature "Reader" do
       find('.cf-dropdown-menu').click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
+    end
+
+    context "Query params in documents URL" do
+      scenario "User enters valid category" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents?category=case_summary"
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (1)")
+      end
+
+      scenario "User enters invalid category" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents?category=thisisfake"
+        expect(page).to_not have_content("Filtering by:")
+        expect(page).to_not have_content("Categories (1)")
+      end
     end
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
@@ -887,59 +985,111 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Tags" do
-      TAG1 = "Medical".freeze
-      TAG2 = "Law document".freeze
+    context "Tags" do
+      scenario "adding and deleting tags" do
+        TAG1 = "Medical".freeze
+        TAG2 = "Law document".freeze
 
-      DOC2_TAG1 = "Appeal Document".freeze
+        DOC2_TAG1 = "Appeal Document".freeze
 
-      SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
+        SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
 
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      click_on documents[0].type
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        click_on documents[0].type
 
-      fill_in "tags", with: TAG1
+        fill_in "tags", with: TAG1
 
-      # making sure there is a dropdown showing up when text is entered
-      expect(page).to have_css(".Select-menu-outer")
+        # making sure there is a dropdown showing up when text is entered
+        expect(page).to have_css(".Select-menu-outer")
 
-      # submit entering the tag
-      fill_in "tags", with: (TAG1 + "\n")
+        # submit entering the tag
+        fill_in "tags", with: (TAG1 + "\n")
 
-      fill_in "tags", with: (TAG2 + "\n")
+        fill_in "tags", with: (TAG2 + "\n")
 
-      # expecting the multi-selct to have the two new fields
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
+        # expecting the multi-selct to have the two new fields
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG1)
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: TAG2)
 
-      # adding new tags to 2nd document
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      click_on documents[1].type
+        # adding new tags to 2nd document
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        click_on documents[1].type
 
-      fill_in "tags", with: (DOC2_TAG1 + "\n")
+        fill_in "tags", with: (DOC2_TAG1 + "\n")
 
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
 
-      # getting remove buttons of all tags
-      cancel_icons = page.all(".Select-value-icon", count: 1)
+        # getting remove buttons of all tags
+        cancel_icons = page.all(".Select-value-icon", count: 1)
 
-      # rubocop:disable all
-      # delete all tags
-      for i in (cancel_icons.length - 1).downto(0)
-        cancel_icons[i].click
+        # rubocop:disable all
+        # delete all tags
+        for i in (cancel_icons.length - 1).downto(0)
+          cancel_icons[i].click
+        end
+        # rubocop:enable all
+
+        # expecting the page not to have any tags
+        expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
+
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+        click_on documents[0].type
+
+        # verify that the tags on the previous document still exist
+        expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
-      # rubocop:enable all
 
-      # expecting the page not to have any tags
-      expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 0)
+      context "Share tags among all documents in a case" do
+        scenario "Shouldn't show auto suggestions" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          click_on documents[0].type
+          find("#tags").click
+          expect(page).not_to have_css(".Select-menu-outer")
+        end
 
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        scenario "Shoud show correct auto suggestions" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          click_on documents[1].type
+          find(".Select-control").click
+          expect(page).to have_css(".Select-menu-outer")
 
-      click_on documents[0].type
+          tag_options = find_all(".Select-option")
+          expect(tag_options.count).to eq(2)
 
-      # verify that the tags on the previous document still exist
-      expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+          documents[0].tags.each_with_index do |tag, index|
+            expect(tag_options[index]).to have_content(tag.text)
+          end
+
+          NEW_TAG_TEXT = "New Tag".freeze
+          fill_in "tags", with: (NEW_TAG_TEXT + "\n")
+
+          # going to the document[0] page
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+          find(".Select-control").click
+          expect(page).to have_css(".Select-menu-outer")
+
+          # making sure correct tag options exist
+          tag_options = find_all(".Select-option")
+          expect(tag_options.count).to eq(1)
+          expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
+
+          # removing an existing tag
+          select_control = find(".cf-issue-tag-sidebar").find(".Select-control")
+          removed_value_text = select_control.find_all(".Select-value")[0].text
+          select_control.find_all(".Select-value-icon")[0].click
+          expect(page).not_to have_css(".Select-value-label", text: removed_value_text)
+
+          find(".Select-control").click
+
+          # again making sure the correct tag options exist
+          expect(page).to have_css(".Select-menu-outer")
+          tag_options = find_all(".Select-option")
+          expect(tag_options.count).to eq(1)
+          expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
+        end
+      end
     end
 
     scenario "Search and Filter" do

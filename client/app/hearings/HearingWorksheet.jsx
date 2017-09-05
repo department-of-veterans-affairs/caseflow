@@ -5,10 +5,11 @@ import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Checkbox from '../components/Checkbox';
 import moment from 'moment';
-import Button from '../components/Button';
+import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import {
+  onDescriptionsChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
@@ -17,22 +18,7 @@ import {
   onCommentsChange
        } from './actions/Dockets';
 
-import _ from 'lodash';
-
 export class HearingWorksheet extends React.PureComponent {
-
-
-  getType = (type) => {
-    return (type === 'central_office') ? 'CO' : type;
-  }
-
-  getStartTime = () => {
-    const startTime = `${moment().
-      add(_.random(0, 120), 'minutes').
-      format('LT')} EST`;
-
-    return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
-  }
 
   getKeyForRow = (index) => {
     return index;
@@ -72,42 +58,16 @@ export class HearingWorksheet extends React.PureComponent {
       }
     ];
 
-    // temp
+    // Temp Placeholder issues
     const issues = [
       {
         program: 'Compensation',
         issue: 'Service connection',
+        issueID: 101,
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: 'Right elbow',
         actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 5242 - Degenerative arthritis of the spine (see also diagnostic code 5003)',
-        description: 'Lower back',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 7799 - Other hemic or lymphatic system disability',
-        description: 'Chronic bronchitis',
-        actions: [
-          false, false, false, false, false, false
-        ]
-      },
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 8100 - Migraine',
-        description: 'Frequent headaches',
-        actions: [
-          false, false, false, false, false, false
+          false, false, false, true, false, false
         ]
       }
     ];
@@ -117,14 +77,19 @@ export class HearingWorksheet extends React.PureComponent {
         counter: <b>{index + 1}.</b>,
         program: issue.program,
         issue: issue.issue,
+        issueID: issue.issueID,
         levels: issue.levels,
         description: <div>
-          <label
-            className="cf-hearings-worksheet-desc-label"
-            htmlFor={`worksheet-issue-description-${index}`}>Description</label>
-          <textarea defaultValue={issue.description}
-            id={`worksheet-issue-description-${index}`}
-            aria-label="Description"></textarea>
+          <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
+          <TextareaField
+            aria-label="Description"
+            // TODO Remove placeholder loop | new structure
+            // TODO add logic to find specific issue
+            name={`issue-${issue.issueID}`}
+            id={`worksheet-issue-description-${issue.issueID}`}
+            value={this.props.worksheet.streams.appeal_0.issues.issue_0.description || ''}
+            onChange={this.props.onDescriptionsChange}
+            />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
           <Checkbox
@@ -178,6 +143,8 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
       };
     });
+
+    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
@@ -339,7 +306,11 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
-        <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
+        <Link
+          name="signup-1"
+          href="/reader/appeal"
+          button="primary"
+        >Review eFolder</Link>
       </div>
     </div>;
   }
@@ -351,6 +322,7 @@ const mapStateToProps = (state) => ({
 
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onDescriptionsChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,

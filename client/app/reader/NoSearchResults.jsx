@@ -24,7 +24,7 @@ NoSearchResults.propTypes = {
   searchQuery: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.ui.docFilterCriteria, 'searchQuery');
+const mapStateToProps = (state) => _.pick(state.readerReducer.ui.docFilterCriteria, 'searchQuery');
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

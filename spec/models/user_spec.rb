@@ -320,7 +320,8 @@ describe User do
         FakeTask.create!(
           user: user,
           aasm_state: :started,
-          appeal: Generators::Appeal.create
+          appeal: Generators::Appeal.create,
+          prepared_at: Date.yesterday
         )
       end
 

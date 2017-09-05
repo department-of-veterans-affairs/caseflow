@@ -85,7 +85,7 @@ class LastReadIndicator extends React.PureComponent {
 }
 
 const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
-  shouldShow: state.ui.pdfList.lastReadDocId === ownProps.docId
+  shouldShow: state.readerReducer.ui.pdfList.lastReadDocId === ownProps.docId
 });
 const ConnectedLastReadIndicator = connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
 
@@ -433,10 +433,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state, 'tagOptions', 'viewingDocumentsOrComments'),
-  ..._.pick(state.ui, 'pdfList'),
-  ..._.pick(state.ui, 'docFilterCriteria')
+  annotationsPerDocument: getAnnotationsPerDocument(state.readerReducer),
+  ..._.pick(state.readerReducer, 'viewingDocumentsOrComments'),
+  ..._.pick(state.readerReducer.ui, 'tagOptions', 'pdfList'),
+  ..._.pick(state.readerReducer.ui, 'docFilterCriteria')
 });
 
 export default connect(
