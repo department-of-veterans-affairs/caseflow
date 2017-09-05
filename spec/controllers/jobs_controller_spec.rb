@@ -30,7 +30,6 @@ RSpec.describe JobsController, type: :controller do
     it "should successfully run a job" do
       expect(HeartbeatTasksJob.perform_now).to eq true
     end
-
   end
 
   def response_body
