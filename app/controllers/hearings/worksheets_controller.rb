@@ -43,16 +43,16 @@ class Hearings::WorksheetsController < HearingsController
         appeal_0: {
           issues: {
             issue_0: {
-
+              program: "Compensation",
+              description: "Left Elbow"
             }
           },
           nod: 99,
           soc: 10,
-          docs_in_efolder: 88
-        },
-
-        contentions: "",
-        periods: ""
+          docs_in_efolder: 88,
+          contentions: "This is a contentions comment",
+          periods: "This is a periods comment"
+        }
       }
     }
   end
