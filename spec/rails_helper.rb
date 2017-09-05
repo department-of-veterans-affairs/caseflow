@@ -78,6 +78,7 @@ ActiveRecord::Migration.maintain_test_schema!
 module StubbableUser
   module ClassMethods
     def clear_stub!
+      Caseflow::Functions.redis.flushall
       @stub = nil
     end
 
@@ -86,7 +87,12 @@ module StubbableUser
     end
 
     def authenticate!(roles: nil)
-      admin_roles = roles && roles.include?("System Admin") ? ["System Admin"] : []
+      if roles && roles.include?("System Admin")
+        Caseflow::Functions.grant("System Admin", users: ["DSUSER"])
+        admin_roles = ["System Admin"]
+      else
+        admin_roles = []
+      end
       self.stub = User.from_session(
         { "user" =>
           { "id" => "DSUSER",
@@ -117,6 +123,7 @@ module StubbableUser
     end
 
     def unauthenticate!
+      Caseflow::Functions.redis.flushall
       self.stub = nil
     end
 
