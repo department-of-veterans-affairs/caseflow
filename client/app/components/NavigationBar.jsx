@@ -7,18 +7,7 @@ import PerformanceDegradationBanner from './PerformanceDegradationBanner';
 export default class NavigationBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      menu: false
-    };
   }
-
-  handleMenuClick = () => {
-    window.analyticsEvent('Navbar', 'menu', this.state.menu ? 'close' : 'open');
-
-    this.setState((prevState) => ({
-      menu: !prevState.menu
-    }));
-  };
 
   render() {
     let {
@@ -40,9 +29,8 @@ export default class NavigationBar extends React.Component {
               <DropdownMenu
                 options={menuOptions}
                 onClick={this.handleMenuClick}
-                onBlur={this.handleMenuClick}
+                onBlur={this.handleOnBlur}
                 label={user}
-                menu={this.state.menu}
                 />
             </span>
           </div>

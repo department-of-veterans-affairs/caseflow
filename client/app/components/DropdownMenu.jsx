@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from './Link';
+import Button from './Button';
 
 // Lots of this class are taken from
 // https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
@@ -10,17 +11,24 @@ export default class DropdownMenu extends React.Component {
     super(props);
 
     this.wrapperRef = null;
+    this.state = {
+      menu: false
+    };
   }
 
-  componentDidMount = () => document.addEventListener('mousedown', this.handleClickOutside);
+  componentDidMount = () => document.addEventListener('mousedown', this.onClickOutside);
 
-  componentWillUnmount = () => document.removeEventListener('mousedown', this.handleClickOutside);
+  componentWillUnmount = () => document.removeEventListener('mousedown', this.onClickOutside);
 
   setWrapperRef = (node) => this.wrapperRef = node
 
-  handleClickOutside = (event) => {
+  onClickOutside = (event) => {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.props.onBlur();
+      window.analyticsEvent('Navbar', 'menu', 'close', 'blur');
+
+      this.setState({
+        menu: false
+      });
     }
   }
 
@@ -28,12 +36,19 @@ export default class DropdownMenu extends React.Component {
     window.analyticsEvent('Navbar', title.toLowerCase());
   }
 
+  onMenuClick = () => {
+    window.analyticsEvent('Navbar', 'menu', this.state.menu ? 'close' : 'open');
+
+    this.setState((prevState) => ({
+      menu: !prevState.menu
+    }));
+  };
+
   render() {
     let {
+      analyticsTitle,
       label,
-      onClick,
-      options,
-      menu
+      options
     } = this.props;
 
     let dropdownMenuList = () => {
@@ -53,10 +68,10 @@ export default class DropdownMenu extends React.Component {
     return <div ref={this.setWrapperRef} className="cf-dropdown">
       <a href="#dropdown-menu"
         className="cf-dropdown-trigger"
-        onClick={onClick}>
+        onClick={this.onMenuClick}>
         {label}
       </a>
-      {menu && dropdownMenuList() }
+      {this.state.menu && dropdownMenuList() }
     </div>;
   }
 }
@@ -67,7 +82,5 @@ DropdownMenu.propTypes = {
     link: PropTypes.string.isRequired,
     target: PropTypes.string
   })),
-  label: PropTypes.string.isRequired,
-  onBlur: PropTypes.func,
-  onClick: PropTypes.func
+  label: PropTypes.string.isRequired
 };
