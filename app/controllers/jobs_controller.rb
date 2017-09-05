@@ -15,11 +15,12 @@ class JobsController < ApplicationController
   end
 
   protected
+
   def authenticate
     # for secret http endpoints, require an auth token to be checked
     # ideally this should be using an hmac approach rather than checking
     # against a static token
-    authenticate_or_request_with_http_token do |token, options|
+    authenticate_or_request_with_http_token do |token, _options|
       return true if Rails.application.secrets.jobs_auth_token == token
       render json: { error_code: "Unauthorized to make this request" }, status: 401
     end
