@@ -26,7 +26,6 @@ const mapStateToProps = (state) => ({
   worksheetStreamsIssues: state.worksheet.streams.appeal_0.issues.issue_0
 });
 
-
 HearingWorksheetStream.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired
 };

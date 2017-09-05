@@ -23,7 +23,6 @@ export class HearingWorksheet extends React.PureComponent {
   render() {
 
     // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
-
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 

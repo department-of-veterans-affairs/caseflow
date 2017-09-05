@@ -15,7 +15,6 @@ class HearingWorksheetIssues extends Component {
      worksheetStreamsIssues
     } = this.props;
 
-
     const columns = [
       {
         header: '',
