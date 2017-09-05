@@ -239,6 +239,15 @@ $color-hearings-saving: #777;
     border: 1px solid $color-gray-medium;
   }
 
+  .cf-hearings-worksheet-witness-cell {
+
+    textarea {
+      height: 44px;
+      min-height: 44px;
+      min-width: 100%;
+    }
+  }
+
   table {
     margin: .5em 0 0;
   }
