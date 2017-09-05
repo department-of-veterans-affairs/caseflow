@@ -739,41 +739,24 @@ RSpec.feature "Reader" do
         expect(find_field("page-progress-indicator-input").value).to eq "3"
       end
 
-      context "Switch between pages to ensure rendering" do
-        let(:documents) do
-          [
+      context "When document 3 is a 147 page document" do
+        before do
+          documents.push(
             Generators::Document.create(
-              filename: "My BVA Decision",
-              type: "BVA Decision",
-              received_at: 7.days.ago,
-              vbms_document_id: 6,
-              category_procedural: true,
-              tags: [
-                Generators::Tag.create(text: "New Tag1"),
-                Generators::Tag.create(text: "New Tag2")
-              ]
-            ),
-            Generators::Document.create(
-              filename: "My Form 9",
-              type: "Form 9",
+              filename: "My SOC",
+              type: "SOC",
               received_at: 5.days.ago,
               vbms_document_id: 5,
               category_medical: true,
               category_other: true
-            ),
-            Generators::Document.create(
-              filename: "My NOD",
-              type: "NOD",
-              received_at: 1.day.ago,
-              vbms_document_id: 3
             )
-          ]
+          )
         end
 
-        scenario do
+        scenario "Switch between pages to ensure rendering" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-          click_on documents[1].type
+          click_on documents[3].type
 
           # Expect the 23 page to only be rendered once scrolled to.
           expect(find("#pageContainer23")).to_not have_content("Rating Decision")
