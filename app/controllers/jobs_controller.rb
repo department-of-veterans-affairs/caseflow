@@ -27,7 +27,7 @@ class JobsController < ApplicationController
     # ideally this should be using an hmac approach rather than checking
     # against a static token
     authenticate_or_request_with_http_token do |token, _options|
-      return true if Rails.application.secrets.jobs_auth_token == token
+      return true if token.present? && Rails.application.secrets.jobs_auth_token == token
       render json: { error_code: "Unauthorized to make this request" }, status: 401
     end
   end
