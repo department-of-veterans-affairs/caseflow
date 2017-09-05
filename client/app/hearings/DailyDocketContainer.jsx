@@ -38,10 +38,8 @@ export class DailyDocketContainer extends React.Component {
     return this.props.dockets[this.props.date].hearings_array;
   }
 
-  saveFunction = (dispatch) => {
-    // This function is expcted to be passed to the "save" property defined in
-    // AutoSave.mapDispatchToProps().  save() calls this function and passes a
-    // ref to dispatch(), enabling this function to fire actions as needed.
+  save = () => {
+    const dispatch = this.props.getDispatch();
 
     const hearingsToSave = this.docket().filter((hearing) => hearing.edited);
 
@@ -54,11 +52,6 @@ export class DailyDocketContainer extends React.Component {
     }
 
     if (hearingsToSave.length) {
-      // temporarily disable console ban so QA can see things will get saved
-      /* eslint-disable no-console */
-      console.log('Saving', hearingsToSave, new Date());
-      /* eslint-enable no-console */
-
       dispatch({ type: TOGGLE_SAVING });
 
       // ApiUtil.put('/hearings/save_data', { data: { hearings: hearingsToSave} }).
@@ -118,7 +111,7 @@ export class DailyDocketContainer extends React.Component {
 
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        saveFunction={this.saveFunction}
+        save={this.save}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
       />
       <DailyDocket
@@ -138,7 +131,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getDockets: () => {
     getDockets(dispatch);
-  }
+  },
+  getDispatch: () => dispatch
 });
 
 export default connect(

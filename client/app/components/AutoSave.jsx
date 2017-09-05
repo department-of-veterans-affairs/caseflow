@@ -12,18 +12,18 @@ const now = () => {
     replace(/(p|a)m/, '$1.m.');
 };
 
+const autoSaveInterval = { id: 0 };
+
 export class AutoSave extends React.Component {
 
   componentDidMount = () => {
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
-        this.props.save(this.props.saveFunction);
+        this.props.save();
       };
     }
 
-    setInterval(() => {
-      this.props.save(this.props.saveFunction);
-    }, this.props.intervalInMs || 30000);
+    autoSaveInterval.id = setInterval(() => this.props.save(), this.props.intervalInMs);
   }
 
   render() {
@@ -43,23 +43,17 @@ const mapStateToProps = (state) => ({
   isSaving: state.isSaving
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  doBeforeWindowCloses: () => {
-    dispatch(this.props.beforeWindowClosesActionCreator());
-  },
-  save: (saveFunction) => {
-    saveFunction(dispatch);
-  }
-});
-
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(AutoSave);
 
 AutoSave.propTypes = {
   isSaving: PropTypes.bool,
   spinnerColor: PropTypes.string,
   intervalInMs: PropTypes.number,
-  saveFunction: PropTypes.func.isRequired
+  save: PropTypes.func.isRequired
+};
+
+AutoSave.defaultProps = {
+  intervalInMs: 30000
 };
