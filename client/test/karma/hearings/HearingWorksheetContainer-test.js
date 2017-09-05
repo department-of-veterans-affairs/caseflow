@@ -59,7 +59,9 @@ describe('HearingWorksheetContainer', () => {
           },
           nod: 99,
           soc: 10,
-          docs_in_efolder: 88
+          docs_in_efolder: 88,
+          contentions: '',
+          periods: ''
         }
       }
     }));

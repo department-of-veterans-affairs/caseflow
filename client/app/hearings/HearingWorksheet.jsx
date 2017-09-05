@@ -133,7 +133,7 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
 
            <HearingWorksheetStream
-              worksheetStreams={this.props.worksheetStreams}
+              worksheetStreams={this.props.worksheet.streams}
               {...this.props}
             />
 
@@ -187,8 +187,7 @@ export class HearingWorksheet extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet,
-  worksheetStreams: state.worksheet.streams
+  worksheet: state.worksheet
 });
 
 // TODO to move the default value to the backend

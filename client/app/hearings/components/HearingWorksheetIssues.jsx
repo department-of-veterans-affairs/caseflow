@@ -49,7 +49,7 @@ class HearingWorksheetIssues extends Component {
     // Temp Placeholder issues
     const issues = [
       {
-        program: worksheetStreamsIssues.program,
+        program: 'Compensation',
         issue: 'Service connection',
         levels: 'All Others, 5010 - Arthritis, due to trauma',
         description: worksheetStreamsIssues.description,
