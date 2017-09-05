@@ -9,7 +9,6 @@ import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 
 import classNames from 'classnames';
-import { pageNumberOfPageIndex } from './utils';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages

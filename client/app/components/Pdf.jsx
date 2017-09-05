@@ -690,6 +690,30 @@ export class Pdf extends React.PureComponent {
     }
   }
 
+  getPageContainerRef = (index, file, elem) => {
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'pageContainer'], elem);
+    } else {
+      delete this.pageElements[file][index];
+    }
+  }
+
+  getCanvasRef = (index, file, elem) => {
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'canvas'], elem);
+    } else {
+      delete this.pageElements[file][index];
+    }
+  }
+
+  getTextLayerRef = (index, file, elem) => {
+    if (elem) {
+      _.set(this.pageElements[file], [index, 'textLayer'], elem);
+    } else {
+      delete this.pageElements[file][index];
+    }
+  }
+
   // eslint-disable-next-line max-statements
   render() {
     const pages = _.map(this.state.numPages, (numPages, file) => {
