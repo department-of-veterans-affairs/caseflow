@@ -25,6 +25,12 @@ RSpec.describe JobsController, type: :controller do
       expect(response.status).to eq 200
       expect(response_body["job_id"]).not_to be_empty
     end
+
+    # needed to reach 90% test coverage
+    it "should successfully run a job" do
+      expect(HeartbeatTasksJob.perform_now).to eq true
+    end
+
   end
 
   def response_body
