@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-import CommentIcon from '../components/CommentIcon';
+import CommentIcon from './CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import _ from 'lodash';
 import { handleSelectCommentIcon, placeAnnotation,

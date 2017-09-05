@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import Comment from '../components/Comment';
+import Comment from './Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from '../components/EditComment';
 import _ from 'lodash';
