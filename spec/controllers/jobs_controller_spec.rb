@@ -21,7 +21,7 @@ RSpec.describe JobsController, type: :controller do
     end
 
     it "should successfully start HeartbeatTasksJob asynchronously" do
-      post :start_async, "job_type": "HeartbeatTasksJob"
+      post :start_async, "job_type": "heartbeat"
       expect(response.status).to eq 200
       expect(response_body["job_id"]).not_to be_empty
     end

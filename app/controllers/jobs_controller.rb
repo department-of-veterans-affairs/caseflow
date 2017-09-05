@@ -3,13 +3,19 @@ class JobsController < ApplicationController
   before_action :authenticate
 
   def start_async
+    # available jobs supported by this endpoint
+    @jobs = {
+      "heartbeat": HeartbeatTasksJob,
+      "create_establish_claim": CreateEstablishClaimTasksJob,
+      "prepare_establish_claim": PrepareEstablishClaimTasksJob
+    }
+
     # start job asynchronously as given by the job_type post param
     job_type = params.require(:job_type)
-    klass = Object.const_get job_type
-    job = klass.perform_later
+    job = @jobs[:"#{job_type}"].perform_later
     Rails.logger.info("Starting job #{job.job_id}")
     render json: { success: true, job_id: job.job_id }, status: 200
-  rescue NameError
+  rescue NameError, TypeError
     Rails.logger.error("Unrecognized job #{job_type}")
     render json: { error_code: "Unable to start unrecognized job" }, status: 422
   end
