@@ -45,6 +45,7 @@ export class PdfPage extends React.Component {
         width: PAGE_WIDTH,
         height: PAGE_HEIGHT
       };
+
       this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
     });
   }
@@ -62,7 +63,7 @@ export class PdfPage extends React.Component {
     const currentWidth = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
     const currentHeight = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
 
-    const divPageStyle =  {
+    const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${this.props.scale * currentWidth}px`,
       height: `${this.props.scale * currentHeight}px`,

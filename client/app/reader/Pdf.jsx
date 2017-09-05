@@ -56,12 +56,6 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
   };
 };
 
-// These both come from _pdf_viewer.css and is the default height
-// of the pages in the PDF. We need it defined here to be
-// able to expand/contract the height of the pages as we zoom.
-const PAGE_WIDTH = 816;
-const PAGE_HEIGHT = 1056;
-
 const NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
@@ -331,6 +325,7 @@ export class Pdf extends React.PureComponent {
         if (!pdfDocument || pdfDocument === this.state.pdfDocument[this.latestFile]) {
           this.onPageChange(1);
           this.props.setPdfReadyToShow(this.props.documentId);
+
           return resolve();
         }
 
@@ -641,7 +636,7 @@ export class Pdf extends React.PureComponent {
   }
 
   // eslint-disable-next-line max-statements
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     this.drawInViewPages();
     this.preDrawPages();
 
@@ -692,10 +687,9 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const pages = _.map(this.state.numPages, (numPages, file) => {
-      return _.range(numPages).map((page, pageIndex) => {
-        if (this.state.pdfDocument[file]) {
-          return <PdfPage
+    const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
+      if (this.state.pdfDocument[file]) {
+        return <PdfPage
             documentId={this.props.documentId}
             key={`${file}-${pageIndex + 1}`}
             file={file}
@@ -708,9 +702,10 @@ export class Pdf extends React.PureComponent {
             isDrawn={this.state.isDrawn}
             pdfDocument={this.state.pdfDocument[file]}
           />;
-        }
-      });
-    });
+      }
+
+      return <div />;
+    }));
 
     return <div
       id="scrollWindow"
