@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import Comment from './Comment';
 import SearchableDropdown from '../components/SearchableDropdown';
-import EditComment from '../components/EditComment';
+import EditComment from './EditComment';
 import _ from 'lodash';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
