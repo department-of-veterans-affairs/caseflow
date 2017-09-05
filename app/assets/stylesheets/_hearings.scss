@@ -230,6 +230,12 @@ $color-hearings-saving: #777;
     border: 1px solid $color-gray-medium;
   }
 
+  #appellant-vet-witness {
+    height: 42px;
+    min-height: 42px;
+    min-width: 100%;
+  }
+
   table {
     margin: .5em 0 0;
   }
