@@ -356,13 +356,6 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   }
 });
 
-export const setPageCoordBounds = (coordBounds) => ({
-  type: Constants.SET_PAGE_COORD_BOUNDS,
-  payload: {
-    coordBounds
-  }
-});
-
 export const stopPlacingAnnotation = (interactionType) => ({
   type: Constants.STOP_PLACING_ANNOTATION,
   meta: {
@@ -750,5 +743,14 @@ export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,
   payload: {
     vacolsId
+  }
+});
+
+export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
+  type: Constants.SET_PDF_PAGE_DIMENSIONS,
+  payload: {
+    file,
+    pageIndex,
+    dimensions
   }
 });
