@@ -48,9 +48,12 @@ class Generators::Hearing
     end
 
     def documents
-      [Generators::Document.build(type: "NOD", received_at: 4.days.ago),
-       Generators::Document.build(type: "SOC", received_at: 1.day.ago),
-       Generators::Document.build(type: "SSOC", received_at: 5.days.ago)]
+      documents = []
+      types = ["NOD", "SOC", "SSOC"]
+      rand(5).times do
+        documents << Generators::Document.build(type: types.sample, received_at: 4.days.ago)
+      end
+      documents
     end
 
     def default_appeal_id(hearing)
