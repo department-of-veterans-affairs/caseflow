@@ -96,6 +96,15 @@ class Appeal < ActiveRecord::Base
     @saved_documents ||= fetch_documents!(save: true)
   end
 
+  def number_of_documents
+    documents.size
+  end
+
+  def number_of_documents_after_certification
+    return 0 unless certification_date
+    documents.count { |d| d.received_at > certification_date }
+  end
+
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def vbms_id
