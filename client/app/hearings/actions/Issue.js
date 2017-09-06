@@ -8,7 +8,7 @@ export const onDescriptionChange = (description) => ({
 });
 
 export const onToggleReopen = (reopen) => ({
-  type: Constants.SET_REPNAME,
+  type: Constants.SET_REOPEN,
   payload: {
     reopen
   }

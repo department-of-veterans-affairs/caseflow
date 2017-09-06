@@ -90,6 +90,25 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
+  case Constants.SET_REOPEN:
+    return update(state, {
+      // TODO make reusable for all issues fields
+      worksheet: {
+        streams: {
+          appeal_0: {
+            issues: {
+              issue_0: {
+                description: {
+                  $set: action.payload.reopen
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+
   case Constants.SET_CONTENTIONS:
     return update(state, {
       worksheet: { contentions: { $set: action.payload.contentions } }
