@@ -10,7 +10,7 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfPage from '../reader/PdfPage';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfReadyToShow, setPageCoordBounds,
+import { setPdfReadyToShow,
   placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
@@ -56,12 +56,6 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
   };
 };
 
-// These both come from _pdf_viewer.css and is the default height
-// of the pages in the PDF. We need it defined here to be
-// able to expand/contract the height of the pages as we zoom.
-const PAGE_WIDTH = 816;
-const PAGE_HEIGHT = 1056;
-
 const NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
@@ -89,8 +83,7 @@ export class Pdf extends React.PureComponent {
     this.state = {
       numPages: {},
       pdfDocument: {},
-      isDrawn: {},
-      pageDimensions: {}
+      isDrawn: {}
     };
 
     this.scrollLocation = {
@@ -320,45 +313,6 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  setPageDimensions = (pdfDocument, file) => {
-    // This is the scale we calculate the page dimensions at. This way we can calculate the
-    // page sizes at any scale by multiplying by the value passed in to this.props.scale.
-    const PAGE_DIMENSION_SCALE = 1;
-
-    let pageDimensions = [];
-    const setStateWithDimensions = () => {
-      // Since these promises will finish asynchronously, we need to check if this
-      // iteration is the last. If so, then we should set the state with the page
-      // dimensions just calculated.
-      const numDimensionsFound = pageDimensions.reduce((acc, page) => acc + (page ? 1 : 0), 0);
-
-      if (numDimensionsFound === pdfDocument.pdfInfo.numPages) {
-        this.setState({
-          pageDimensions: {
-            ...this.state.pageDimensions,
-            [file]: pageDimensions
-          }
-        });
-      }
-    };
-
-    _.range(pdfDocument.pdfInfo.numPages).forEach((pageIndex) => {
-      pdfDocument.getPage(pageNumberOfPageIndex(pageIndex)).then((pdfPage) => {
-        const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
-
-        pageDimensions[pageIndex] = _.pick(viewport, ['width', 'height']);
-        setStateWithDimensions();
-      }).
-      catch(() => {
-        pageDimensions[pageIndex] = {
-          width: PAGE_WIDTH,
-          height: PAGE_HEIGHT
-        };
-        setStateWithDimensions();
-      });
-    });
-  }
-
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to draw it.
   setUpPdf = (file) => {
@@ -367,19 +321,23 @@ export class Pdf extends React.PureComponent {
     return new Promise((resolve) => {
       this.getDocument(this.latestFile).then((pdfDocument) => {
 
-        // Don't continue seting up the pdf if it's already been set up.
-        if (!pdfDocument || pdfDocument === this.state.pdfDocument) {
+        // Don't continue setting up the pdf if it's already been set up.
+        if (!pdfDocument || pdfDocument === this.state.pdfDocument[this.latestFile]) {
+          this.onPageChange(1);
+          this.props.setPdfReadyToShow(this.props.documentId);
+
           return resolve();
         }
-
-        this.setPageDimensions(pdfDocument, file);
 
         this.setState({
           numPages: {
             ...this.state.numPages,
             [file]: pdfDocument.pdfInfo.numPages
           },
-          pdfDocument,
+          pdfDocument: {
+            ...this.state.pdfDocument,
+            [file]: pdfDocument
+          },
           isDrawn: {
             [file]: [],
             ...this.state.isDrawn
@@ -388,8 +346,6 @@ export class Pdf extends React.PureComponent {
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
           this.setUpPdf(this.latestFile).then(() => {
-            this.onPageChange(1);
-            this.props.setPdfReadyToShow(this.props.documentId);
             resolve();
           });
         });
@@ -566,7 +522,6 @@ export class Pdf extends React.PureComponent {
 
     // focus the scroll window when the component initially loads.
     this.scrollWindow.focus();
-    this.updatePageBounds();
   }
 
   componentWillUnmount() {
@@ -681,13 +636,13 @@ export class Pdf extends React.PureComponent {
   }
 
   // eslint-disable-next-line max-statements
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     this.drawInViewPages();
     this.preDrawPages();
 
     // Wait until the page dimensions have been calculated, then it is
     // safe to jump to the pages since their positioning won't change.
-    if (this.state.pageDimensions[this.props.file]) {
+    if (this.props.numberPagesSized === this.state.numPages[this.props.file]) {
       if (this.props.jumpToPageNumber) {
         this.scrollToPage(this.props.jumpToPageNumber);
         this.onPageChange(this.props.jumpToPageNumber);
@@ -701,49 +656,6 @@ export class Pdf extends React.PureComponent {
     if (this.scrollLocation.page) {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
         this.pageElements[this.props.file][this.scrollLocation.page - 1].pageContainer.offsetTop;
-    }
-
-    const getPropsAffectingPageBounds = (props) => _.omit(props, 'placingAnnotationIconPageCoords', 'scale');
-
-    if (!_.isEqual(
-      getPropsAffectingPageBounds(this.props),
-      getPropsAffectingPageBounds(prevProps))
-    ) {
-      this.updatePageBounds();
-    }
-  }
-
-  /**
-   * The page bounds are the upper bounds of the page in the page coordinate system.
-   */
-  updatePageBounds = () => {
-    // The first time this method fires, it sets the page bounds to be the PAGE_WIDTH and PAGE_HEIGHT,
-    // because that's what the page bounds are before drawing completes. Somehow, this does not
-    // cause a problem, so I'm not going to figure out now how to make it fire with the right values.
-    // But if you are seeing issues, that could be why.
-
-    // If we knew that all pages would be the same size, then we could just look
-    // at the first page, and know that all pages were the same. That would simplify
-    // the code, but it is not an assumption we're making at this time.
-    const newPageBounds = _(this.pageElements[this.props.file]).
-      map((pageElem, pageIndex) => {
-        const { right, bottom } = pageElem.pageContainer.getBoundingClientRect();
-        const pageCoords = pageCoordsOfRootCoords({
-          x: right,
-          y: bottom
-        }, pageElem.pageContainer.getBoundingClientRect(), this.props.scale);
-
-        return {
-          pageIndex: Number(pageIndex),
-          width: pageCoords.x,
-          height: pageCoords.y
-        };
-      }).
-      keyBy('pageIndex').
-      value();
-
-    if (_.size(newPageBounds)) {
-      this.props.setPageCoordBounds(newPageBounds);
     }
   }
 
@@ -775,8 +687,8 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const pages = _.map(this.state.numPages, (numPages, file) => {
-      return _.range(numPages).map((page, pageIndex) => {
+    const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
+      if (this.state.pdfDocument[file]) {
         return <PdfPage
             documentId={this.props.documentId}
             key={`${file}-${pageIndex + 1}`}
@@ -788,10 +700,12 @@ export class Pdf extends React.PureComponent {
             getCanvasRef={this.getCanvasRef}
             getTextLayerRef={this.getTextLayerRef}
             isDrawn={this.state.isDrawn}
-            pageDimensions={this.state.pageDimensions}
+            pdfDocument={this.state.pdfDocument[file]}
           />;
-      });
-    });
+      }
+
+      return <div />;
+    }));
 
     return <div
       id="scrollWindow"
@@ -808,15 +722,15 @@ export class Pdf extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
+  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     placeAnnotation,
-    setPageCoordBounds,
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,

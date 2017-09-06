@@ -144,7 +144,6 @@ export const initialState = {
   didLoadAppealFail: false,
   initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
-  pageCoordsBounds: {},
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
@@ -207,7 +206,8 @@ export const initialState = {
    */
   editingAnnotations: {},
   annotations: {},
-  documents: {}
+  documents: {},
+  documentsByFile: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -724,12 +724,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SET_PAGE_COORD_BOUNDS:
-    return update(state, {
-      pageCoordsBounds: {
-        $set: action.payload.coordBounds
-      }
-    });
   case Constants.PLACE_ANNOTATION:
     return update(state, {
       ui: {
@@ -1044,6 +1038,24 @@ export const reducer = (state = initialState, action = {}) => {
               ...doc,
               listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
             }))
+        }
+      }
+    );
+  case Constants.SET_PDF_PAGE_DIMENSIONS:
+    return update(
+      state,
+      {
+        documentsByFile: {
+          [action.payload.file]: {
+            $apply: (file) => ({
+              pages: {
+                ..._.get(file, ['pages'], {}),
+                [action.payload.pageIndex]: {
+                  ...action.payload.dimensions
+                }
+              }
+            })
+          }
         }
       }
     );
