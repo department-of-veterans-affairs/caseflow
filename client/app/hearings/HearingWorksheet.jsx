@@ -81,8 +81,8 @@ export class HearingWorksheet extends React.PureComponent {
             <div>Veteran's Age:</div>
             <div>32</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-             <TextField
+          <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
+             <TextareaField
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
                 aria-label="Representative Name"

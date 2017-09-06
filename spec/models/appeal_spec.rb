@@ -245,6 +245,50 @@ describe Appeal do
     end
   end
 
+  context "#number_of_documents" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD"),
+       Generators::Document.build(type: "SOC"),
+       Generators::Document.build(type: "SSOC")]
+    end
+
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents)
+    end
+
+    subject { appeal.number_of_documents }
+
+    it "should return number of documents" do
+      expect(subject).to eq 3
+    end
+  end
+
+  context "#number_of_documents_after_certification" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD", received_at: 4.days.ago),
+       Generators::Document.build(type: "SOC", received_at: 1.day.ago),
+       Generators::Document.build(type: "SSOC", received_at: 5.days.ago)]
+    end
+
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents, certification_date: certification_date)
+    end
+
+    subject { appeal.number_of_documents_after_certification }
+
+    context "when certification_date is nil" do
+      let(:certification_date) { nil }
+
+      it { is_expected.to eq 0 }
+    end
+
+    context "when certification_date is set" do
+      let(:certification_date) { 2.days.ago }
+
+      it { is_expected.to eq 1 }
+    end
+  end
+
   context "#fetch_documents!" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]

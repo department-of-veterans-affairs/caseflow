@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Highlight from '../Highlight';
+import Highlight from '../components/Highlight';
 
 class TagTableColumn extends PureComponent {
   render() {
