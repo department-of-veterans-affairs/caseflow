@@ -27,6 +27,24 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
+export const newHearingIssueState = (state) => {
+
+
+  return update(state, {
+     worksheet: {
+        streams: {
+          appeal_0: {
+            issues: {
+              issue_0: {
+              
+              }
+            }
+          }
+        }
+      }
+    });
+};
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
   case Constants.POPULATE_DOCKETS:
@@ -98,7 +116,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
           appeal_0: {
             issues: {
               issue_0: {
-                description: {
+                reopen: {
                   $set: action.payload.reopen
                 }
               }
@@ -107,7 +125,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
         }
       }
     });
-
 
   case Constants.SET_CONTENTIONS:
     return update(state, {
