@@ -79,6 +79,36 @@ class HearingWorksheetIssues extends PureComponent {
             onChange={this.props.onToggleReopen}
             value={worksheetStreamsIssues.reopen}
           ></Checkbox>
+          <Checkbox
+            label="Allow"
+            name={'chk_allow'}
+            onChange={this.props.onToggleAllow}
+            value={worksheetStreamsIssues.allow}
+          ></Checkbox>
+          <Checkbox
+            label="Deny"
+            name={'chk_deny'}
+            onChange={this.props.onToggleDeny}
+            value={worksheetStreamsIssues.deny}
+          ></Checkbox>
+          <Checkbox
+            label="Remand"
+            name={'chk_remand'}
+            onChange={this.props.onToggleRemand}
+            value={worksheetStreamsIssues.remand}
+          ></Checkbox>
+          <Checkbox
+            label="Dismiss"
+            name={'chk_dismiss'}
+            onChange={this.props.onToggleDismiss}
+            value={worksheetStreamsIssues.dismiss}
+          ></Checkbox>
+          <Checkbox
+            label="VHA"
+            name={'chk_vha'}
+            onChange={this.props.onToggleVHA}
+            value={worksheetStreamsIssues.vha}
+          ></Checkbox>
 
         </div>
       };

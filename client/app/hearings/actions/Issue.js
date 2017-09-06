@@ -13,3 +13,39 @@ export const onToggleReopen = (reopen) => ({
     reopen
   }
 });
+
+export const onToggleAllow = (allow) => ({
+  type: Constants.SET_ALLOW,
+  payload: {
+    allow
+  }
+});
+
+export const onToggleDeny = (deny) => ({
+  type: Constants.SET_DENY,
+  payload: {
+    deny
+  }
+});
+
+export const onToggleRemand = (remand) => ({
+  type: Constants.SET_REMAND,
+  payload: {
+    remand
+  }
+});
+
+export const onToggleDismiss = (dismiss) => ({
+  type: Constants.SET_DISMISS,
+  payload: {
+    dismiss
+  }
+});
+
+export const onToggleVHA = (vha) => ({
+  type: Constants.SET_VHA,
+  payload: {
+    vha
+  }
+});
+
