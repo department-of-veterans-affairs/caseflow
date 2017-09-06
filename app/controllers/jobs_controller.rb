@@ -1,6 +1,6 @@
 class JobsController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :authenticate
+  before_action :verify_authentication_token
 
   def start_async
     # available jobs supported by this endpoint
@@ -22,13 +22,19 @@ class JobsController < ApplicationController
 
   protected
 
-  def authenticate
-    # for secret http endpoints, require an auth token to be checked
-    # ideally this should be using an hmac approach rather than checking
-    # against a static token
-    authenticate_or_request_with_http_token do |token, _options|
-      return true if token.present? && Rails.application.secrets.jobs_auth_token == token
-      render json: { error_code: "Unauthorized to make this request" }, status: 401
-    end
+  def verify_authentication_token
+    # TODO: should we limit access to only lambda API clients?
+    return unauthorized unless api_key
+
+    Rails.logger.info("API authenticated by #{api_key.consumer_name}")
+  end
+
+  def api_key
+    # Check if the provided token matches with our API
+    @api_key ||= authenticate_with_http_token { |token, _options| ApiKey.authorize(token) }
+  end
+
+  def unauthorized
+    render json: { status: "unauthorized" }, status: 401
   end
 end

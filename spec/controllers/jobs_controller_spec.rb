@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe JobsController, type: :controller do
   let!(:current_user) { User.authenticate! }
+  let(:api_key) { ApiKey.create!(consumer_name: "Jobs Tester") }
 
   before(:each) do
-    request.headers["Authorization"] = "Token #{Rails.application.secrets.jobs_auth_token}"
+    request.headers["Authorization"] = "Token #{api_key.key_string}"
   end
 
   describe "POST job async_start" do
