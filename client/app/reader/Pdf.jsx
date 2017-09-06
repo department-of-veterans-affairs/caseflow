@@ -258,6 +258,7 @@ export class Pdf extends React.PureComponent {
   }
 
   drawInViewPages = () => {
+    return false;
     // If we're already drawn a page, delay this calculation.
     const numberOfPagesDrawing = _.reduce(this.isDrawing, (total, drawingArray) => {
       return total + drawingArray.reduce((acc, drawing) => {
@@ -692,6 +693,7 @@ export class Pdf extends React.PureComponent {
         return <PdfPage
             documentId={this.props.documentId}
             key={`${file}-${pageIndex + 1}`}
+            draw={true}
             file={file}
             pageIndex={pageIndex}
             isVisible={this.props.file === file}

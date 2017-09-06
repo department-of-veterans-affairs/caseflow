@@ -754,3 +754,21 @@ export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
     dimensions
   }
 });
+
+export const setIfPdfPageIsDrawn = (file, pageIndex, isDrawn) => ({
+  type: Constants.SET_IF_PDF_PAGE_IS_DRAWN,
+  payload: {
+    file,
+    pageIndex,
+    isDrawn
+  }
+});
+
+export const setIfPdfPageIsDrawing = (file, pageIndex, isDrawing) => ({
+  type: Constants.SET_IF_PDF_PAGE_IS_DRAWING,
+  payload: {
+    file,
+    pageIndex,
+    isDrawing
+  }
+});
