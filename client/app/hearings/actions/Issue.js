@@ -7,3 +7,9 @@ export const onDescriptionChange = (description) => ({
   }
 });
 
+export const onToggleCheckBox = (description) => ({
+  type: Constants.SET_DESCRIPTION,
+  payload: {
+    description
+  }
+});

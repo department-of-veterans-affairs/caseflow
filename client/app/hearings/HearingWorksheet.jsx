@@ -7,9 +7,10 @@ import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-//Todo Move Issues/Combine Reducer
+// Todo Move Issues/Combine Reducer
 import {
-  onDescriptionChange
+  onDescriptionChange,
+  onToggleCheckBox
        } from './actions/Issue';
 
 import {

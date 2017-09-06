@@ -47,19 +47,10 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'actions'
       }
     ];
-    // Temp Placeholder issues
+    // Leaving this in place.
     const issues = [
       {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 5010 - Arthritis, due to trauma',
-        description: worksheetStreamsIssues.description,
-        reopen: true,
-        remand: true,
-        allow: true,
-        dismiss: false,
-        deny: true,
-        vha: true
+
       }
     ];
 
@@ -67,10 +58,9 @@ class HearingWorksheetIssues extends PureComponent {
 
       return {
         counter: <b>1.</b>,
-        program: issue.program,
-        issue: issue.issue,
-        issueID: issue.issueID,
-        levels: issue.levels,
+        program: worksheetStreamsIssues.program,
+        issue: worksheetStreamsIssues.issue,
+        levels: worksheetStreamsIssues.levels,
         description: <div>
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
@@ -78,7 +68,7 @@ class HearingWorksheetIssues extends PureComponent {
             // TODO Update placeholder loop | new structure
             name="Description"
             id={'issue-description'}
-            value={issue.description}
+            value={worksheetStreamsIssues.description}
             onChange={this.props.onDescriptionChange}
             />
         </div>,
@@ -86,8 +76,10 @@ class HearingWorksheetIssues extends PureComponent {
           <Checkbox
             label="Re-Open"
             name={'chk_reopen'}
-            onChange={this.props.toggleCheck}
-            value={worksheetStreamsIssues.description}
+            onChange={() => {
+              return true;
+            }}
+            value={worksheetStreamsIssues.reopen}
           ></Checkbox>
           <Checkbox
             label="Allow"
