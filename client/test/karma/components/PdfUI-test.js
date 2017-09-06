@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import { PdfUI } from '../../../app/components/PdfUI';
+import { PdfUI } from '../../../app/reader/PdfUI';
 
 const DOCUMENT_PATH_BASE = '/reader/appeal/reader_id1';
 
