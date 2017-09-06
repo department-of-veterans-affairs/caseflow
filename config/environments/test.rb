@@ -62,6 +62,8 @@ Rails.application.configure do
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
 
+  ENV["AWS_REGION"] ||= "us-gov-west-1"
+
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "TEST_USER_ID"
   ENV["TEST_APPEAL_IDS"] = "123C,456D,678E"

@@ -36,7 +36,8 @@ module CaseflowCertification
 
     config.google_analytics_account = nil
 
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :shoryuken
+    config.active_job.queue_name_prefix = Rails.env
 
     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
 

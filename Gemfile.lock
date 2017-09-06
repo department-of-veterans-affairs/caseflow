@@ -379,6 +379,10 @@ GEM
       websocket (~> 1.0)
     sentry-raven (2.4.0)
       faraday (>= 0.7.6, < 1.0)
+    shoryuken (3.1.11)
+      aws-sdk-core (>= 2)
+      concurrent-ruby
+      thor
     sidekiq (5.0.3)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
@@ -492,6 +496,7 @@ DEPENDENCIES
   scss_lint
   sdoc (~> 0.4.0)
   sentry-raven
+  shoryuken (= 3.1.11)
   sidekiq
   sidekiq-cron (~> 0.4.0)
   simplecov!
@@ -508,4 +513,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.15.3
+   1.15.4

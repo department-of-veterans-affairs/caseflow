@@ -52,6 +52,7 @@ Rails.application.configure do
   ENV["METRICS_PASSWORD"] ||= "caseflow"
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
+  ENV["AWS_REGION"] ||= "us-gov-west-1"
   # Uncomment to enable certification v2.
   # TODO: remove this when we set it up with roles/featureflag
   # ENV["ENABLE_CERTIFICATION_V2"] = "true"
