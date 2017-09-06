@@ -148,7 +148,8 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      # System Admin users are permitted to grant their own functions. We store the list of functions that a System Admin user currently has in "admin_roles"
+      # System Admin users are permitted to grant their own functions. We store the list of functions
+      # that a System Admin user currently has in "admin_roles"
       user["admin_roles"] ||= []
 
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
