@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { clearAllFilters } from '../../reader/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+
+import { clearAllFilters } from './actions';
 
 class HeaderFilterMessage extends React.PureComponent {
   render() {
