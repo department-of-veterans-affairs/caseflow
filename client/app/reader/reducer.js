@@ -1051,6 +1051,7 @@ export const reducer = (state = initialState, action = {}) => {
               pages: {
                 ..._.get(file, ['pages'], {}),
                 [action.payload.pageIndex]: {
+                  ..._.get(file, ['pages', action.payload.pageIndex], {}),
                   ...action.payload.dimensions
                 }
               }
@@ -1069,6 +1070,7 @@ export const reducer = (state = initialState, action = {}) => {
               pages: {
                 ..._.get(file, ['pages'], {}),
                 [action.payload.pageIndex]: {
+                  ..._.get(file, ['pages', action.payload.pageIndex], {}),
                   drawn: action.payload.isDrawn
                 }
               }
@@ -1087,6 +1089,7 @@ export const reducer = (state = initialState, action = {}) => {
               pages: {
                 ..._.get(file, ['pages'], {}),
                 [action.payload.pageIndex]: {
+                  ..._.get(file, ['pages', action.payload.pageIndex], {}),
                   drawing: action.payload.isDrawing
                 }
               }

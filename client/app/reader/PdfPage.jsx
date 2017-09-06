@@ -27,19 +27,19 @@ export class PdfPage extends React.Component {
     this.pageContainer = pageContainer;
     this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
   }
+
   getCanvasRef = (canvas) => {
     this.canvas = canvas;
-    this.props.getCanvasRef(this.props.pageIndex, this.props.file, canvas);
   }
+
   getTextLayerRef = (textLayer) => {
     this.textLayer = textLayer;
-    this.props.getTextLayerRef(this.props.pageIndex, this.props.file, textLayer);
   }
 
   // This method is the worst. It is our main interaction with PDFJS, so it will
   // likey remain complicated.
   drawPage = () => {
-    if (this.props.isDrawing || this.props.isDrawn) {
+    if (this.props.isDrawing) {
       return Promise.reject();
     }
 
@@ -117,7 +117,19 @@ export class PdfPage extends React.Component {
 
   componentDidMount = () => {
     this.getDimensions();
-    this.drawPage();
+    if (this.props.shouldDraw) {
+      this.drawPage();
+    }
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (this.props.shouldDraw) {
+      if (!prevProps.shouldDraw) {
+        this.drawPage();
+      } else if (prevProps.scale !== this.props.scale) {
+        this.drawPage();
+      }
+    }
   }
 
   render() {
@@ -157,7 +169,6 @@ export class PdfPage extends React.Component {
         <div>
           <canvas
             ref={this.getCanvasRef}
-            style={otherComponentStyle}
             className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
             {this.props.isVisible && <CommentLayer
@@ -183,8 +194,6 @@ PdfPage.propTypes = {
   scale: PropTypes.number,
   isDrawn: PropTypes.object,
   getPageContainerRef: PropTypes.func,
-  getCanvasRef: PropTypes.func,
-  getTextLayerRef: PropTypes.func,
   pdfDocument: PropTypes.object
 };
 

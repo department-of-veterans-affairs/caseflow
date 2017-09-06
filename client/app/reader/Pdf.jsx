@@ -82,8 +82,7 @@ export class Pdf extends React.PureComponent {
     // we know which pages are stale.
     this.state = {
       numPages: {},
-      pdfDocument: {},
-      isDrawn: {}
+      pdfDocument: {}
     };
 
     this.scrollLocation = {
@@ -92,9 +91,9 @@ export class Pdf extends React.PureComponent {
     };
 
     this.currentPage = 0;
-    this.isDrawing = {};
     this.isGettingPdf = {};
     this.loadingTasks = {};
+    this.shouldDraw = {};
 
     this.initializePredrawing();
     this.initializeRefs();
@@ -108,124 +107,6 @@ export class Pdf extends React.PureComponent {
   initializePredrawing = () => {
     this.predrawnPdfs = {};
     this.isPrerdrawing = false;
-  }
-
-  setisDrawn = (file, index, value) => {
-    this.isDrawing[file][index] = false;
-    let isDrawn = { ...this.state.isDrawn };
-
-    _.set(isDrawn, [file, index], value);
-
-    this.setState({
-      isDrawn
-    });
-  }
-
-  setElementDimensions = (element, dimensions) => {
-    element.style.width = `${dimensions.width}px`;
-    element.style.height = `${dimensions.height}px`;
-  }
-
-  // This method is the worst. It is our main interaction with PDFJS, so it will
-  // likey remain complicated.
-  drawPage = (file, index) => {
-    if (this.isDrawing[file][index] ||
-      _.get(this.state.isDrawn, [file, index, 'scale']) === this.props.scale) {
-
-      return Promise.reject();
-    }
-
-    const { scale } = this.props;
-
-    // Mark that we are drawing this page.
-    this.isDrawing[file][index] = true;
-
-    return new Promise((resolve, reject) => {
-      return this.getDocument(file).then((pdfDocument) => {
-        // Page numbers are one-indexed
-        const pageNumber = index + 1;
-        const canvas = _.get(this.pageElements, [file, index, 'canvas'], null);
-        const container = _.get(this.pageElements, [file, index, 'textLayer'], null);
-        const page = _.get(this.pageElements, [file, index, 'pageContainer'], null);
-
-        if (!canvas || !container || !page) {
-          this.isDrawing[file][index] = false;
-
-          return reject();
-        }
-
-        return pdfDocument.getPage(pageNumber).then((pdfPage) => {
-          // The viewport is a PDFJS concept that combines the size of the
-          // PDF pages with the scale go get the dimensions of the divs.
-          const viewport = pdfPage.getViewport(this.props.scale);
-
-          // We need to set the width and heights of everything based on
-          // the width and height of the viewport.
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          this.setElementDimensions(container, viewport);
-          this.setElementDimensions(page, viewport);
-          container.innerHTML = '';
-
-          // Call PDFJS to actually draw the page.
-          return pdfPage.render({
-            canvasContext: canvas.getContext('2d', { alpha: false }),
-            viewport
-          }).
-          then(() => {
-            return Promise.resolve({
-              pdfPage,
-              viewport
-            });
-          });
-        }).
-        then(({ pdfPage, viewport }) => {
-          // Get the text from the PDF and write it.
-          return pdfPage.getTextContent().then((textContent) => {
-            return Promise.resolve({
-              textContent,
-              viewport
-            });
-          });
-        }).
-        then(({ textContent, viewport }) => {
-          PDFJS.renderTextLayer({
-            textContent,
-            container,
-            viewport,
-            textDivs: []
-          });
-
-          this.postDraw(
-            resolve,
-            reject,
-            {
-              pdfDocument,
-              scale,
-              index,
-              file
-            });
-        }).
-        catch(() => {
-          this.isDrawing[file][index] = false;
-          reject();
-        });
-      }).
-      catch(() => {
-        this.isDrawing[file][index] = false;
-        reject();
-      });
-    });
-  }
-
-  postDraw = (resolve, reject, { pdfDocument, scale, index, file }) => {
-    this.setisDrawn(file, index, {
-      pdfDocument,
-      scale
-    });
-
-    resolve();
   }
 
   scrollEvent = () => {
@@ -258,9 +139,8 @@ export class Pdf extends React.PureComponent {
   }
 
   drawInViewPages = () => {
-    return false;
     // If we're already drawn a page, delay this calculation.
-    const numberOfPagesDrawing = _.reduce(this.isDrawing, (total, drawingArray) => {
+    const numberOfPagesDrawing = _.reduce(this.props.isDrawing, (total, drawingArray) => {
       return total + drawingArray.reduce((acc, drawing) => {
         return acc + (drawing ? 1 : 0);
       }, 0);
@@ -280,8 +160,7 @@ export class Pdf extends React.PureComponent {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
-        if (!_.get(this.state, ['isDrawn', this.props.file, index], false) ||
-          this.state.isDrawn[this.props.file][index].scale !== this.props.scale) {
+        if (!_.get(this.props.pageStates, [this.props.file, 'pages', index, 'drawn'], false)) {
           if (distanceToCenter < minPageDistance) {
             prioritzedPage = index;
             minPageDistance = distanceToCenter;
@@ -295,13 +174,7 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
-    this.drawPage(this.props.file, prioritzedPage).then(() => {
-      this.drawInViewPages();
-      this.preDrawPages();
-    }).
-    catch(() => {
-      this.drawInViewPages();
-    });
+    _.set(this.props.shouldDraw, [this.props.file, prioritzedPage], true);
   }
 
   performFunctionOnEachPage = (func) => {
@@ -338,10 +211,6 @@ export class Pdf extends React.PureComponent {
           pdfDocument: {
             ...this.state.pdfDocument,
             [file]: pdfDocument
-          },
-          isDrawn: {
-            [file]: [],
-            ...this.state.isDrawn
           }
         }, () => {
           // If the user moves between pages quickly we want to make sure that we just
@@ -366,10 +235,6 @@ export class Pdf extends React.PureComponent {
       numPages: {
         ...this.state.numPages,
         [file]: pdfDocument.pdfInfo.numPages
-      },
-      isDrawn: {
-        [file]: [],
-        ...this.state.isDrawn
       }
     });
   }
@@ -539,18 +404,13 @@ export class Pdf extends React.PureComponent {
       this.isDrawing[file] = this.isDrawing[file].map(() => false);
     }
 
-    _.forEach(_.get(this.pageElements, [file], []), (pageElement) => {
-      const canvas = pageElement.canvas;
-
-      pageElement.textLayer.innerHTML = '';
-      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-    });
-    this.setState({
-      isDrawn: {
-        ...this.state.isDrawn,
-        [file]: _.get(this.state.isDrawn, ['file'], []).map(() => null)
-      }
-    });
+    // TODO: COME BACK
+    // this.setState({
+    //   isDrawn: {
+    //     ...this.state.isDrawn,
+    //     [file]: _.get(this.state.isDrawn, ['file'], []).map(() => null)
+    //   }
+    // });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -599,6 +459,7 @@ export class Pdf extends React.PureComponent {
   }
 
   preDrawPages = () => {
+    return;
     const finishPredraw = () => {
       this.isPrerdrawing = false;
       this.preDrawPages();
@@ -617,7 +478,7 @@ export class Pdf extends React.PureComponent {
         if (pdfDocument) {
           _.range(NUM_PAGES_TO_PREDRAW).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
-              !_.get(this.state, ['isDrawn', file, pageIndex]) &&
+              !_.get(this.props.pageStates, [file, 'pages', index, 'drawn'], false) &&
               !this.isPrerdrawing) {
               this.isPrerdrawing = true;
 
@@ -670,22 +531,6 @@ export class Pdf extends React.PureComponent {
     }
   }
 
-  getCanvasRef = (index, file, elem) => {
-    if (elem) {
-      _.set(this.pageElements[file], [index, 'canvas'], elem);
-    } else {
-      delete this.pageElements[file][index];
-    }
-  }
-
-  getTextLayerRef = (index, file, elem) => {
-    if (elem) {
-      _.set(this.pageElements[file], [index, 'textLayer'], elem);
-    } else {
-      delete this.pageElements[file][index];
-    }
-  }
-
   // eslint-disable-next-line max-statements
   render() {
     const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
@@ -698,10 +543,8 @@ export class Pdf extends React.PureComponent {
             pageIndex={pageIndex}
             isVisible={this.props.file === file}
             scale={this.props.scale}
+            shouldDraw={this.props.shouldDraw[file, pageIndex]}
             getPageContainerRef={this.getPageContainerRef}
-            getCanvasRef={this.getCanvasRef}
-            getTextLayerRef={this.getTextLayerRef}
-            isDrawn={this.state.isDrawn}
             pdfDocument={this.state.pdfDocument[file]}
           />;
       }
@@ -726,6 +569,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
+  pageStates: _.get(state.readerReducer, ['documentsByFile'], {}),
   numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
