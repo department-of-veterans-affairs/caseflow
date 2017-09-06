@@ -35,7 +35,7 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const onDescriptionsChange = (description) => ({
+export const onDescriptionChange = (description) => ({
   type: Constants.SET_DESCRIPTIONS,
   payload: {
     description
