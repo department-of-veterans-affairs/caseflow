@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 
-class HearingWorksheetIssues extends Component {
+class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => {
     return index;
   }
+
 
   render() {
     let {
@@ -56,7 +57,7 @@ class HearingWorksheetIssues extends Component {
         reopen: true,
         remand: true,
         allow: true,
-        dismiss: true,
+        dismiss: false,
         deny: true,
         vha: true
       }
@@ -85,10 +86,8 @@ class HearingWorksheetIssues extends Component {
           <Checkbox
             label="Re-Open"
             name={'chk_reopen'}
-             onChange={() => {
-               return true;
-             }}
-            value={issues.reopen}
+            onChange={this.props.toggleCheck}
+            value={worksheetStreamsIssues.description}
           ></Checkbox>
           <Checkbox
             label="Allow"
