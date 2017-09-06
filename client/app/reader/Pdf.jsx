@@ -197,7 +197,6 @@ export class Pdf extends React.PureComponent {
 
         // Don't continue setting up the pdf if it's already been set up.
         if (!pdfDocument || pdfDocument === this.state.pdfDocument[this.latestFile]) {
-          console.log('leaving setuppdf early', pdfDocument, this.state.pdfDocument[this.latestFile]);
           this.onPageChange(1);
           this.props.setPdfReadyToShow(this.props.documentId);
 

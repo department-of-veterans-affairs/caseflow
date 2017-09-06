@@ -132,6 +132,28 @@ export class PdfPage extends React.Component {
     }
   }
 
+  getDimensions = () => {
+    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
+      const PAGE_DIMENSION_SCALE = 1;
+      const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
+      const pageDimensions = _.pick(viewport, ['width', 'height']);
+
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    }).
+    catch(() => {
+      const pageDimensions = {
+        width: PAGE_WIDTH,
+        height: PAGE_HEIGHT
+      };
+
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    });
+  }
+
+  componentDidMount = () => {
+    this.getDimensions();
+  }
+
   render() {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
