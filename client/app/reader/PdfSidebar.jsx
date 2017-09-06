@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import Comment from '../components/Comment';
-import SearchableDropdown from '../components/SearchableDropdown';
-import EditComment from '../components/EditComment';
+import { connect } from 'react-redux';
 import _ from 'lodash';
+
+import Comment from './Comment';
+import SearchableDropdown from '../components/SearchableDropdown';
+import EditComment from './EditComment';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
+import { plusIcon, Keyboard } from '../components/RenderFunctions';
 import SideBarDocumentInformation from './SideBarDocumentInformation';
-import { connect } from 'react-redux';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
@@ -20,14 +22,13 @@ import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, u
   } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
-  from '../reader/utils';
+  from './utils';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
-import { plusIcon, Keyboard } from './RenderFunctions';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
-import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
+import { makeGetAnnotationsByDocumentId } from './selectors';
+import { INTERACTION_TYPES, CATEGORIES } from './analytics';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 

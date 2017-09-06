@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
-import CommentIcon from '../components/CommentIcon';
-import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import _ from 'lodash';
+
+import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
+import CommentIcon from './CommentIcon';
+import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import { handleSelectCommentIcon, placeAnnotation,
   requestMoveAnnotation, showPlaceAnnotationIcon } from '../reader/actions';
-import { bindActionCreators } from 'redux';
 import { CATEGORIES } from '../reader/analytics';
 
 const DIV_STYLING = {

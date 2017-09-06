@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from './RenderFunctions';
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 
 export const scrollInstructions = [
   { scrollInstruction: 'Page up',
