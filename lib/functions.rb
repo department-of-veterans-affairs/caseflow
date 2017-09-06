@@ -8,8 +8,8 @@ class Functions
     client.smembers(FUNCTIONS_LIST_KEY)
   end
 
-  # Functions.grant("Reader", users: ["CSS_ID_1", "CSS_ID_2"])
-  def self.grant(function, users:)
+  # Functions.grant!("Reader", users: ["CSS_ID_1", "CSS_ID_2"])
+  def self.grant!(function, users:)
     # redis method: sadd (add item to a set)
     client.sadd FUNCTIONS_LIST_KEY, function unless functions.include?(function)
 

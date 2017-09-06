@@ -78,7 +78,7 @@ describe User do
     subject { user.functions }
 
     context "user has only system admin role" do
-      before { Functions.grant("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: ["123"]) }
 
       before { session["user"]["admin_roles"] = [] }
       it "disables other roles" do
@@ -89,7 +89,7 @@ describe User do
     end
 
     context "user has more than a system admin role" do
-      before { Functions.grant("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: ["123"]) }
       before { session["user"]["admin_roles"] = ["Manage Claim Establishment"] }
 
       it "enables only selected roles" do
@@ -135,7 +135,7 @@ describe User do
 
   context "#can?" do
     subject { user.can?("Do the thing") }
-    before { Functions.grant("System Admin", users: ["123"]) }
+    before { Functions.grant!("System Admin", users: ["123"]) }
 
     context "when roles are nil" do
       before { session["user"]["roles"] = nil }
@@ -178,7 +178,7 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Functions.grant("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: ["123"]) }
       it { is_expected.to be_truthy }
     end
   end
