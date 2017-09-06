@@ -88,7 +88,7 @@ module StubbableUser
 
     def authenticate!(roles: nil)
       if roles && roles.include?("System Admin")
-        Functions.grant("System Admin", users: ["DSUSER"])
+        Functions.grant!("System Admin", users: ["DSUSER"])
       end
 
       self.stub = User.from_session(

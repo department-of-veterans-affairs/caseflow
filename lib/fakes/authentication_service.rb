@@ -11,7 +11,7 @@ class Fakes::AuthenticationService
     # Take the roles from the User's css_id
     roles = user.css_id.split(",").map(&:strip)
     if roles.include?("System Admin")
-      Functions.grant("System Admin", users: [user.css_id])
+      Functions.grant!("System Admin", users: [user.css_id])
     end
     admin_roles = []
     {
