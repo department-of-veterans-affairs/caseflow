@@ -108,6 +108,7 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
 
+  post 'jobs/start_async' => 'jobs#start_async'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
