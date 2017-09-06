@@ -53,14 +53,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  # We should not use user.can?("System Admin"), but user.admin? instead
   def can?(thing)
     return true if admin? && admin_roles.include?(thing)
-    # Ignore CSUM/CSEM users with "System Admin" function
+    # Ignore "System Admin" function from CSUM/CSEM users
     thing.include?("System Admin") ? false : roles.include?(thing)
   end
 
   def admin?
-    Caseflow::Functions.granted?("System Admin", css_id)
+    Functions.granted?("System Admin", css_id)
   end
 
   def authenticated?
@@ -147,7 +148,8 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      user["admin_roles"] ||= Caseflow::Functions.granted?("System Admin", user["id"]) ? ["System Admin"] : []
+      # System Admin users are permitted to grant their own functions. We store the list of functions that a System Admin user currently has in "admin_roles"
+      user["admin_roles"] ||= []
 
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.full_name = user["name"]

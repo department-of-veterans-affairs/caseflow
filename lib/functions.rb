@@ -1,8 +1,8 @@
 # This class used FeatureToggle as a reference
-class Caseflow::Functions
+class Functions
   # :nocov:
   # Keeps track of all enabled functions
-  FUNCTIONS_LIST_KEY = :function_list_key
+  FUNCTIONS_LIST_KEY = :functions_list_key
 
   def self.functions
     client.smembers(FUNCTIONS_LIST_KEY)
@@ -18,18 +18,8 @@ class Caseflow::Functions
     true
   end
 
-  # Functions.deny!("Reader", users: ["CSS_ID_1"])
-  def self.deny(function, users:)
-    disable(function: function, value: users)
-
-    # This is if we want to remove function when there are no users with that function
-    # disable the function completely if users become empty
-    remove_function(function) if function_enabled_hash(function).empty?
-    true
-  end
-
   # Method to check if a given function is granted for a user
-  # Functions.granted!("Reader", "CSS_ID_1")
+  # Functions.granted?("Reader", "CSS_ID_1")
   def self.granted?(function, user)
     return false unless functions.include?(function)
 
@@ -62,31 +52,9 @@ class Caseflow::Functions
       set_data(function, data)
     end
 
-    def disable(function:, value:)
-      return unless value
-
-      data = function_enabled_hash(function)
-      return unless data[:users]
-
-      data[:users] = data[:users] - value
-
-      # Delete :users if empty
-      data.delete(:users) if data[:users].empty?
-
-      set_data(function, data)
-    end
-
     def function_enabled_hash(function)
       data = client.get(function)
       data && JSON.parse(data).symbolize_keys || {}
-    end
-
-    def remove_function(function)
-      client.multi do
-        # redis method: srem (remove item from a set)
-        client.srem FUNCTIONS_LIST_KEY, function
-        client.del function
-      end
     end
 
     def set_data(function, data)

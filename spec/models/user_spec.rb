@@ -11,7 +11,7 @@ describe User do
   end
 
   after(:all) do
-    Caseflow::Functions.redis.flushall
+    Functions.redis.flushall
   end
 
   before do
@@ -78,9 +78,9 @@ describe User do
     subject { user.functions }
 
     context "user has only system admin role" do
-      before { session["user"]["roles"] = ["System Admin"] }
+      before { Functions.grant("System Admin", users: ["123"]) }
 
-      before { session["user"]["admin_roles"] = ["System Admin"] }
+      before { session["user"]["admin_roles"] = [] }
       it "disables other roles" do
         expect(subject["Reader"][:enabled]).to be_falsey
         expect(subject["Establish Claim"][:enabled]).to be_falsey
@@ -89,13 +89,21 @@ describe User do
     end
 
     context "user has more than a system admin role" do
-      before { session["user"]["roles"] = ["System Admin"] }
-      before { session["user"]["admin_roles"] = ["System Admin", "Manage Claim Establishment"] }
+      before { Functions.grant("System Admin", users: ["123"]) }
+      before { session["user"]["admin_roles"] = ["Manage Claim Establishment"] }
 
       it "enables only selected roles" do
         expect(subject["Manage Claim Establishment"][:enabled]).to be_truthy
         expect(subject["Reader"][:enabled]).to be_falsey
       end
+    end
+  end
+
+  context "CSUM/CSEM users with 'System Admin' function" do
+    before { user.roles = ["System Admin"] }
+
+    it "are not admins" do
+      expect(user.admin?).to be_falsey
     end
   end
 
@@ -127,7 +135,7 @@ describe User do
 
   context "#can?" do
     subject { user.can?("Do the thing") }
-    before { Caseflow::Functions.grant("System Admin", users: ["123"]) }
+    before { Functions.grant("System Admin", users: ["123"]) }
 
     context "when roles are nil" do
       before { session["user"]["roles"] = nil }
@@ -158,7 +166,7 @@ describe User do
   context "#admin?" do
     subject { user.admin? }
     before { session["user"]["roles"] = nil }
-    before { Caseflow::Functions.redis.flushall }
+    before { Functions.redis.flushall }
 
     context "when user with roles that are nil" do
       it { is_expected.to be_falsey }
@@ -170,7 +178,7 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Caseflow::Functions.grant("System Admin", users: ["123"]) }
+      before { Functions.grant("System Admin", users: ["123"]) }
       it { is_expected.to be_truthy }
     end
   end
