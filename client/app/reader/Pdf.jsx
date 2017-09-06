@@ -140,9 +140,9 @@ export class Pdf extends React.PureComponent {
 
   drawInViewPages = () => {
     // If we're already drawn a page, delay this calculation.
-    const numberOfPagesDrawing = _.reduce(this.props.isDrawing, (total, drawingArray) => {
-      return total + drawingArray.reduce((acc, drawing) => {
-        return acc + (drawing ? 1 : 0);
+    const numberOfPagesDrawing = _.reduce(this.props.pageStates, (total, drawingArray) => {
+      return total + _.reduce(_.get(drawingArray, ['pages'], []), (acc, page) => {
+        return acc + (page.drawing ? 1 : 0);
       }, 0);
     }, 0);
 
@@ -156,7 +156,7 @@ export class Pdf extends React.PureComponent {
     this.performFunctionOnEachPage((boundingRect, index) => {
       // This draws the next "closest" page. Where closest is defined as how
       // far the page is from the viewport.
-      if (!this.isDrawing[this.props.file][index]) {
+      if (!_.get(this.props.pageStates, [this.props.file, 'pages', index, 'drawn'], false)) {
         const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
           Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
 
@@ -174,7 +174,7 @@ export class Pdf extends React.PureComponent {
       return;
     }
 
-    _.set(this.props.shouldDraw, [this.props.file, prioritzedPage], true);
+    _.set(this.shouldDraw, [this.props.file, prioritzedPage], true);
   }
 
   performFunctionOnEachPage = (func) => {
@@ -197,6 +197,7 @@ export class Pdf extends React.PureComponent {
 
         // Don't continue setting up the pdf if it's already been set up.
         if (!pdfDocument || pdfDocument === this.state.pdfDocument[this.latestFile]) {
+          console.log('leaving setuppdf early', pdfDocument, this.state.pdfDocument[this.latestFile]);
           this.onPageChange(1);
           this.props.setPdfReadyToShow(this.props.documentId);
 
@@ -213,6 +214,7 @@ export class Pdf extends React.PureComponent {
             [file]: pdfDocument
           }
         }, () => {
+          console.log('leaving setuppdf after setting state');
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
           this.setUpPdf(this.latestFile).then(() => {
@@ -227,9 +229,10 @@ export class Pdf extends React.PureComponent {
     if (!this.pageElements[file]) {
       this.pageElements[file] = {};
     }
-    if (!this.isDrawing[file]) {
-      this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
-    }
+    // TODO
+    // if (!this.isDrawing[file]) {
+    //   this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
+    // }
 
     this.setState({
       numPages: {
@@ -399,12 +402,12 @@ export class Pdf extends React.PureComponent {
     if (pdf.pdfDocument) {
       pdf.pdfDocument.destroy();
     }
-
-    if (this.isDrawing[file]) {
-      this.isDrawing[file] = this.isDrawing[file].map(() => false);
-    }
-
     // TODO: COME BACK
+
+    // if (this.isDrawing[file]) {
+    //   this.isDrawing[file] = this.isDrawing[file].map(() => false);
+    // }
+
     // this.setState({
     //   isDrawn: {
     //     ...this.state.isDrawn,
@@ -543,7 +546,7 @@ export class Pdf extends React.PureComponent {
             pageIndex={pageIndex}
             isVisible={this.props.file === file}
             scale={this.props.scale}
-            shouldDraw={this.props.shouldDraw[file, pageIndex]}
+            shouldDraw={_.get(this.shouldDraw, [file, pageIndex])}
             getPageContainerRef={this.getPageContainerRef}
             pdfDocument={this.state.pdfDocument[file]}
           />;
