@@ -7,9 +7,9 @@ export const onDescriptionChange = (description) => ({
   }
 });
 
-export const onToggleCheckBox = (description) => ({
-  type: Constants.SET_DESCRIPTION,
+export const onToggleReopen = (reopen) => ({
+  type: Constants.SET_REPNAME,
   payload: {
-    description
+    reopen
   }
 });

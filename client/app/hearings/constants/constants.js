@@ -18,6 +18,7 @@ export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
 
 // issues
 export const SET_DESCRIPTION = 'SET_DESCRIPTION';
+export const SET_REOPEN = 'SET_REOPEN';
 
 export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_PERIODS = 'SET_PERIODS';

@@ -10,7 +10,6 @@ class HearingWorksheetIssues extends PureComponent {
     return index;
   }
 
-
   render() {
     let {
      worksheetStreamsIssues
@@ -47,14 +46,15 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'actions'
       }
     ];
-    // Leaving this in place.
+    // Todo, we still need to loop
+    // through issues in a single stream
     const issues = [
       {
 
       }
     ];
 
-    const rowObjects = issues.map((issue) => {
+    const rowObjects = issues.map(() => {
 
       return {
         counter: <b>1.</b>,
@@ -76,51 +76,10 @@ class HearingWorksheetIssues extends PureComponent {
           <Checkbox
             label="Re-Open"
             name={'chk_reopen'}
-            onChange={() => {
-              return true;
-            }}
+            onChange={this.props.onToggleReopen}
             value={worksheetStreamsIssues.reopen}
           ></Checkbox>
-          <Checkbox
-            label="Allow"
-            name={'chk_allow'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.allow}
-          ></Checkbox>
-          <Checkbox
-            label="Deny"
-            name={'chk_deny'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.deny}
-          ></Checkbox>
-          <Checkbox
-            label="Remand"
-            name={'chk_remand'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.remand}
-          ></Checkbox>
-          <Checkbox
-            label="Dismiss"
-            name={'chk_dismiss'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.dismiss}
-          ></Checkbox>
-          <Checkbox
-            label="VHA"
-            name={'chk_vha'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.vha}
-          ></Checkbox>
+
         </div>
       };
     });

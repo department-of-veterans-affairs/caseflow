@@ -10,7 +10,7 @@ import HearingWorksheetStream from './components/HearingWorksheetStream';
 // Todo Move Issues/Combine Reducer
 import {
   onDescriptionChange,
-  onToggleCheckBox
+  onToggleReopen
        } from './actions/Issue';
 
 import {
@@ -197,6 +197,7 @@ const mapStateToProps = (state) => ({
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDescriptionChange,
+  onToggleReopen,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
