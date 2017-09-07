@@ -16,7 +16,7 @@ class Functions
     enable(function: function, value: users)
 
     # Remove the function completely if users become empty
-    remove_function(function) if is_empty?(function)
+    remove_function(function) if empty?(function)
 
     true
   end
@@ -27,7 +27,7 @@ class Functions
 
     disable(function: function, value: users)
 
-    remove_function(function) if is_empty?(function)
+    remove_function(function) if empty?(function)
 
     true
   end
@@ -41,7 +41,7 @@ class Functions
     data[:granted].include?(user)
   end
 
-    # Method to check if a given function is denied to a user
+  # Method to check if a given function is denied to a user
   # Functions.denied?("Reader", "CSS_ID_1")
   def self.denied?(function, user)
     return false unless functions.include?(function)
@@ -93,7 +93,7 @@ class Functions
 
     def function_enabled_hash(function)
       data = client.get(function)
-      data && JSON.parse(data).symbolize_keys || {:granted => [], :denied => []}
+      data && JSON.parse(data).symbolize_keys || { granted: [], denied: [] }
     end
 
     def remove_function(function)
@@ -104,7 +104,7 @@ class Functions
       end
     end
 
-    def is_empty?(function)
+    def empty?(function)
       function_enabled_hash(function)[:granted].empty? && function_enabled_hash(function)[:denied].empty?
     end
 
