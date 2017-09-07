@@ -14,7 +14,8 @@ describe HearingRepository do
         aod: "Y",
         tranreq: nil,
         holddays: 90,
-        notes1: "test notes"
+        notes1: "test notes",
+        repname: "test rep name"
       )
     end
 
@@ -28,6 +29,7 @@ describe HearingRepository do
       expect(subject.transcript_requested).to eq nil
       expect(subject.hold_open).to eq 90
       expect(subject.notes).to eq "test notes"
+      expect(subject.representative_name).to eq "test rep name"
     end
   end
 end
