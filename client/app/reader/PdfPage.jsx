@@ -23,6 +23,11 @@ const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
 export class PdfPage extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.isDrawing = false;
+  }
   getPageContainerRef = (pageContainer) => {
     this.pageContainer = pageContainer;
     this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
@@ -36,14 +41,21 @@ export class PdfPage extends React.Component {
     this.textLayer = textLayer;
   }
 
+  setIsDrawing = (value) => {
+    this.props.setIfPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
+    this.isDrawing = value;
+  }
+
   // This method is the interaction between our component and PDFJS
   drawPage = () => {
-    if (this.props.isDrawing) {
+    console.log('trying to draw page', this.props.file, this.props.pageIndex);
+    if (this.isDrawing) {
       return Promise.reject();
     }
+    const currentScale = this.props.scale;
 
-    this.props.setIfPdfPageIsDrawing(this.props.file, this.props.pageIndex, true);
-
+    this.setIsDrawing(true);
+    console.log('actuallying drawing page', this.props.file, this.props.pageIndex);
     return this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
       // The viewport is a PDFJS concept that combines the size of the
       // PDF pages with the scale go get the dimensions of the divs.
@@ -78,7 +90,6 @@ export class PdfPage extends React.Component {
       });
     }).
     then(({ textContent, viewport }) => {
-      console.log(this.textLayer);
       PDFJS.renderTextLayer({
         textContent,
         container: this.textLayer,
@@ -86,19 +97,36 @@ export class PdfPage extends React.Component {
         textDivs: []
       });
       this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, true);
-      this.props.setIfPdfPageIsDrawing(this.props.file, this.props.pageIndex, false);
+      this.setIsDrawing(false);
+      console.log('drew page', this.props.file, this.props.pageIndex, this.isDrawing);
+      if (currentScale !== this.props.scale) {
+        console.log('scale was unequal', this.props.file, this.props.pageIndex);
+        return this.drawPage();
+      } else {
+        return Promise.resolve();
+      }
     }).
     catch(() => {
-      this.props.setIfPdfPageIsDrawing(this.props.file, this.props.pageIndex, false);
-      return Promise.reject();
+      this.setIsDrawing(false);
+      if (currentScale !== this.props.scale) {
+        return this.drawPage();
+      } else {
+        return Promise.reject();
+      }
     });
   }
 
   componentDidMount = () => {
     this.getDimensions();
+
     if (this.props.shouldDraw) {
       this.drawPage();
     }
+  }
+
+  componentWillUnmount = () => {
+    this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
+    this.setIsDrawing(false);
   }
 
   componentDidUpdate = (prevProps) => {
@@ -106,7 +134,7 @@ export class PdfPage extends React.Component {
       this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
       this.drawPage();
     }
-
+    console.log('inUpdate', this.props.shouldDraw, this.props.scale, prevProps.scale, this.isDrawing);
     if (this.props.shouldDraw) {
       if (!prevProps.shouldDraw) {
         drawAndUpdateState();
@@ -135,6 +163,8 @@ export class PdfPage extends React.Component {
   }
 
   render() {
+    console.log('rendering');
+
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,

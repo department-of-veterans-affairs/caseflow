@@ -213,7 +213,6 @@ export class Pdf extends React.PureComponent {
             [file]: pdfDocument
           }
         }, () => {
-          console.log('leaving setuppdf after setting state');
           // If the user moves between pages quickly we want to make sure that we just
           // set up the most recent file, so we call this function recursively.
           this.setUpPdf(this.latestFile).then(() => {
@@ -228,10 +227,6 @@ export class Pdf extends React.PureComponent {
     if (!this.pageElements[file]) {
       this.pageElements[file] = {};
     }
-    // TODO: Mark the new variable in the redux state to false.
-    // if (!this.isDrawing[file]) {
-    //   this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
-    // }
 
     this.setState({
       numPages: {
@@ -403,18 +398,6 @@ export class Pdf extends React.PureComponent {
     }
 
     this.shouldDraw[file] = {};
-    // TODO: Mark the new variables in the redux state to false
-
-    // if (this.isDrawing[file]) {
-    //   this.isDrawing[file] = this.isDrawing[file].map(() => false);
-    // }
-
-    // this.setState({
-    //   isDrawn: {
-    //     ...this.state.isDrawn,
-    //     [file]: _.get(this.state.isDrawn, ['file'], []).map(() => null)
-    //   }
-    // });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -537,6 +520,7 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
+    console.log('shoulddraw', this.shouldDraw);
     const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
       if (this.state.pdfDocument[file]) {
         return <PdfPage
