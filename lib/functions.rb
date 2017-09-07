@@ -10,21 +10,25 @@ class Functions
 
   # Functions.grant!("Reader", users: ["CSS_ID_1", "CSS_ID_2"])
   def self.grant!(function, users:)
-    # redis method: sadd (add item to a set)
-    client.sadd FUNCTIONS_LIST_KEY, function unless functions.include?(function)
+    # redis method: sadd (add item to a set, ignore existing members)
+    client.sadd FUNCTIONS_LIST_KEY, function
 
     enable(function: function, value: users)
+
+    # Remove the function completely if users become empty
+    remove_function(function) if is_empty?(function)
 
     true
   end
 
   # Functions.deny!("Reader", users: ["CSS_ID_1"])
   def self.deny!(function, users:)
+    client.sadd FUNCTIONS_LIST_KEY, function
+
     disable(function: function, value: users)
 
-    # This is if we want to remove function when there are no users with that function
-    # disable the function completely if users become empty
-    remove_function(function) if function_enabled_hash(function).empty?
+    remove_function(function) if is_empty?(function)
+
     true
   end
 
@@ -61,6 +65,11 @@ class Functions
     @redis ||= Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 
+  # Removes all the keys for this namespace
+  def self.delete_all_keys!
+    client.del(*client.keys) unless client.keys.empty?
+  end
+
   class << self
     private
 
@@ -85,6 +94,18 @@ class Functions
     def function_enabled_hash(function)
       data = client.get(function)
       data && JSON.parse(data).symbolize_keys || {:granted => [], :denied => []}
+    end
+
+    def remove_function(function)
+      client.multi do
+        # redis method: srem (remove item from a set)
+        client.srem FUNCTIONS_LIST_KEY, function
+        client.del function
+      end
+    end
+
+    def is_empty?(function)
+      function_enabled_hash(function)[:granted].empty? && function_enabled_hash(function)[:denied].empty?
     end
 
     def set_data(function, data)

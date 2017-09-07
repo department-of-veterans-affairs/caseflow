@@ -56,10 +56,10 @@ class User < ActiveRecord::Base
   # We should not use user.can?("System Admin"), but user.admin? instead
   def can?(thing)
     return true if admin? && admin_roles.include?(thing)
-    # Check if user was denied Reader function
-    return false if thing.include?("Reader") && denied_reader?
     # Ignore "System Admin" function from CSUM/CSEM users
     return false if thing.include?("System Admin")
+    # Check if user is denied the function
+    return false if is_denied?(thing)
     roles.include?(thing)
   end
 
@@ -67,8 +67,8 @@ class User < ActiveRecord::Base
     Functions.granted?("System Admin", css_id)
   end
 
-  def denied_reader?
-    Functions.denied?("Reader", css_id)
+  def is_denied?(thing)
+    Functions.denied?(thing, css_id)
   end
 
   def authenticated?

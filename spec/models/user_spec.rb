@@ -8,10 +8,7 @@ describe User do
 
   before(:all) do
     User.case_assignment_repository = Fakes::CaseAssignmentRepository
-  end
-
-  after(:all) do
-    Functions.redis.flushall
+    Functions.redis.del("System Admin")
   end
 
   before do
@@ -79,8 +76,9 @@ describe User do
 
     context "user has only system admin role" do
       before { Functions.grant!("System Admin", users: ["123"]) }
-
       before { session["user"]["admin_roles"] = [] }
+
+
       it "disables other roles" do
         expect(subject["Reader"][:enabled]).to be_falsey
         expect(subject["Establish Claim"][:enabled]).to be_falsey
@@ -135,7 +133,6 @@ describe User do
 
   context "#can?" do
     subject { user.can?("Do the thing") }
-    before { Functions.grant!("System Admin", users: ["123"]) }
 
     context "when roles are nil" do
       before { session["user"]["roles"] = nil }
@@ -152,13 +149,21 @@ describe User do
       it { is_expected.to be_truthy }
     end
 
+    context "when roles contains the thing but user is denied" do
+      before { session["user"]["roles"] = ["Do the thing"] }
+      before { Functions.deny!("Do the thing", users: ["123"]) }
+      it { is_expected.to be_falsey }
+    end
+
     context "when system admin roles don't contain the thing" do
-      before { session["user"]["admin_roles"] = ["System Admin"] }
+      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { session["user"]["admin_roles"] = [] }
       it { is_expected.to be_falsey }
     end
 
     context "when system admin roles contain the thing" do
-      before { session["user"]["admin_roles"] = ["System Admin", "Do the thing"] }
+      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { session["user"]["admin_roles"] = ["Do the thing"] }
       it { is_expected.to be_truthy }
     end
   end
@@ -166,7 +171,6 @@ describe User do
   context "#admin?" do
     subject { user.admin? }
     before { session["user"]["roles"] = nil }
-    before { Functions.redis.flushall }
 
     context "when user with roles that are nil" do
       it { is_expected.to be_falsey }
