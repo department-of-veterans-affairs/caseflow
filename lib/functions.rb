@@ -13,8 +13,18 @@ class Functions
     # redis method: sadd (add item to a set)
     client.sadd FUNCTIONS_LIST_KEY, function unless functions.include?(function)
 
-    enable(function: function, value: users) if users.present?
+    enable(function: function, value: users)
 
+    true
+  end
+
+  # Functions.deny!("Reader", users: ["CSS_ID_1"])
+  def self.deny!(function, users:)
+    disable(function: function, value: users)
+
+    # This is if we want to remove function when there are no users with that function
+    # disable the function completely if users become empty
+    remove_function(function) if function_enabled_hash(function).empty?
     true
   end
 
@@ -24,7 +34,16 @@ class Functions
     return false unless functions.include?(function)
 
     data = function_enabled_hash(function)
-    data[:users].include?(user)
+    data[:granted].include?(user)
+  end
+
+    # Method to check if a given function is denied to a user
+  # Functions.denied?("Reader", "CSS_ID_1")
+  def self.denied?(function, user)
+    return false unless functions.include?(function)
+
+    data = function_enabled_hash(function)
+    data[:denied].include?(user)
   end
 
   # Returns a hash result for a given function
@@ -46,15 +65,26 @@ class Functions
     private
 
     def enable(function:, value:)
-      return unless value
-      data = Hash[:users, value.compact.uniq]
+      value = value.compact.uniq
+      data = function_enabled_hash(function)
+      data[:denied] = data[:denied] - value
+      data[:granted] = value
+
+      set_data(function, data)
+    end
+
+    def disable(function:, value:)
+      value = value.compact.uniq
+      data = function_enabled_hash(function)
+      data[:granted] = data[:granted] - value
+      data[:denied] = value
 
       set_data(function, data)
     end
 
     def function_enabled_hash(function)
       data = client.get(function)
-      data && JSON.parse(data).symbolize_keys || {}
+      data && JSON.parse(data).symbolize_keys || {:granted => [], :denied => []}
     end
 
     def set_data(function, data)
