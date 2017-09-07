@@ -137,6 +137,7 @@ export default connect(
 
 DailyDocketContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
+  dockets: PropTypes.object,
   date: PropTypes.string.isRequired,
   serverError: PropTypes.object
 };
