@@ -46,8 +46,7 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'actions'
       }
     ];
-    // Todo, we still need to loop
-    // through issues in a single stream
+    // Todo through issues in a single stream
     const issues = [
       {
 

@@ -13,6 +13,8 @@ export const mapDataToInitialState = function(state = {}) {
   return state;
 };
 
+
+
 export const newHearingState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
 
@@ -27,24 +29,8 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
-export const newHearingIssueState = (state) => {
 
-  return update(state, {
-    worksheet: {
-      streams: {
-        appeal_0: {
-          issues: {
-            issue_0: {
-
-            }
-          }
-        }
-      }
-    }
-  });
-};
-
-export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
+export const hearingsReducers = function(state = mapDataToInitialState(), action = {}, foo) {
   switch (action.type) {
   case Constants.POPULATE_DOCKETS:
     return update(state, {
@@ -90,7 +76,10 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
   case Constants.SET_DESCRIPTION:
+  
     return update(state, {
+
+
       // TODO Combine Issue Reducer
       worksheet: {
         streams: {
@@ -108,7 +97,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_REOPEN:
-    return update(state, {
+    return update(state,  {
       worksheet: {
         streams: {
           appeal_0: {
