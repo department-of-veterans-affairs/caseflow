@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe JobsController, type: :controller do
+RSpec.describe Api::V1::JobsController, type: :controller do
   let!(:current_user) { User.authenticate! }
   let(:api_key) { ApiKey.create!(consumer_name: "Jobs Tester") }
 
