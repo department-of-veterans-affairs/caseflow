@@ -47,12 +47,8 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    // Todo map issues in a unique issue inside stream
-    const issues = [
-      {
-
-      }
-    ];
+    // Todo | after real data map issues in a unique issue
+    const issues = [{}];
 
     const rowObjects = issues.map(() => {
 
@@ -78,38 +74,37 @@ class HearingWorksheetIssues extends PureComponent {
             name={'chk_reopen'}
             onChange={this.props.onToggleReopen}
             value={worksheetStreamsIssues.reopen}
-          ></Checkbox>
+            ></Checkbox>
           <Checkbox
             label="Allow"
             name={'chk_allow'}
             onChange={this.props.onToggleAllow}
             value={worksheetStreamsIssues.allow}
-          ></Checkbox>
+            ></Checkbox>
           <Checkbox
             label="Deny"
             name={'chk_deny'}
             onChange={this.props.onToggleDeny}
             value={worksheetStreamsIssues.deny}
-          ></Checkbox>
+            ></Checkbox>
           <Checkbox
             label="Remand"
             name={'chk_remand'}
             onChange={this.props.onToggleRemand}
             value={worksheetStreamsIssues.remand}
-          ></Checkbox>
+            ></Checkbox>
           <Checkbox
             label="Dismiss"
             name={'chk_dismiss'}
             onChange={this.props.onToggleDismiss}
             value={worksheetStreamsIssues.dismiss}
-          ></Checkbox>
+            ></Checkbox>
           <Checkbox
             label="VHA"
             name={'chk_vha'}
             onChange={this.props.onToggleVHA}
             value={worksheetStreamsIssues.vha}
-          ></Checkbox>
-
+            ></Checkbox>
         </div>
       };
     });

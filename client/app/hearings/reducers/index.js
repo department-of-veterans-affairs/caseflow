@@ -13,7 +13,6 @@ export const mapDataToInitialState = function(state = {}) {
   return state;
 };
 
-
 export const newHearingState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
 
@@ -99,7 +98,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingIssueState(state, action, { allow: { $set: action.payload.allow } });
 
   case Constants.SET_DENY:
-    return newHearingIssueState(state, action, { denu: { $set: action.payload.deny } });
+    return newHearingIssueState(state, action, { deny: { $set: action.payload.deny } });
 
   case Constants.SET_REMAND:
     return newHearingIssueState(state, action, { remand: { $set: action.payload.remand } });

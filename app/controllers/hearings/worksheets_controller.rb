@@ -33,7 +33,7 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_worksheet(_vbms_id)
+  def hearing_worksheet(_vbms_id) # rubocop:disable Metrics/MethodLength
     # Appeal.where(vmbs_id: _vbms_id)??? TBD
     # possible API
     {
