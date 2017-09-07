@@ -1,6 +1,8 @@
 # Note: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
+# Columns: reopen, vha, allow, deny, remand, dismiss represent worksheet data entered
+# by the judge, it is not an official determination on the issue
 class Issue < ActiveRecord::Base
   include AssociatedVacolsModel
 
