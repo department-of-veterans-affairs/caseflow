@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import PdfUI from '../components/PdfUI';
-import PdfSidebar from '../components/PdfSidebar';
+import PdfUI from './PdfUI';
+import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
   selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from '../reader/actions';
@@ -178,6 +178,7 @@ export class PdfViewer extends React.Component {
           <PdfUI
             doc={doc}
             prefetchFiles={this.getPrefetchFiles()}
+            prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
@@ -220,10 +221,12 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   documents: getFilteredDocuments(state.readerReducer),
   appeal: state.readerReducer.appeal,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords', 'pageCoordsBounds'),
+  pageCoordsBounds: _.get(state.readerReducer, ['documentsByFile',
+    state.readerReducer.documents[props.match.params.docId].content_url, 'pages']),
+  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
   ..._.pick(state.readerReducer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
 });

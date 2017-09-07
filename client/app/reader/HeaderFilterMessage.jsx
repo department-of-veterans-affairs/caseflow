@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { clearAllFilters } from '../../reader/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+
+import { clearAllFilters } from './actions';
+import Button from '../components/Button';
 
 class HeaderFilterMessage extends React.PureComponent {
   render() {
@@ -28,11 +30,12 @@ class HeaderFilterMessage extends React.PureComponent {
       return null;
     }
 
-    return <p className="document-list-filter-message">Filtering by: {filteredCategories}. <a
-      href="#"
+    return <p className="document-list-filter-message">Filtering by: {filteredCategories}.<Button
       id="clear-filters"
+      name="clear-filters"
+      classNames={['cf-btn-link']}
       onClick={props.clearAllFilters}>
-      Clear all filters.</a></p>;
+      Clear all filters.</Button></p>;
   }
 }
 

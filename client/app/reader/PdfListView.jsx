@@ -2,16 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import DocumentListHeader from '../components/reader/DocumentListHeader';
-import ClaimsFolderDetails from './ClaimsFolderDetails';
-import { fetchAppealDetails } from './actions';
-import { shouldFetchAppeal } from '../reader/utils';
-
 import _ from 'lodash';
-import DocumentsTable from './DocumentsTable';
 
+import DocumentListHeader from './DocumentListHeader';
+import ClaimsFolderDetails from './ClaimsFolderDetails';
+import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
+import { fetchAppealDetails } from './actions';
+import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
