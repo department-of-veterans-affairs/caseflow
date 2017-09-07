@@ -33,9 +33,7 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_worksheet(_vbms_id)
-    # Appeal.where(vmbs_id: _vbms_id)??? TBD
-    # possible API
+  def hearing_worksheet(hearing_id)
     {
       veteran: {},
       appeal: {},
@@ -49,11 +47,9 @@ class Hearings::WorksheetsController < HearingsController
           },
           nod: 99,
           soc: 10,
-          docs_in_efolder: 88,
-          contentions: "This is a contentions comment",
-          periods: "This is a periods comment"
+          docs_in_efolder: 88
         }
       }
-    }
+    }.merge(Hearing.find(hearing_id).to_hash_with_appeals_and_issues)
   end
 end

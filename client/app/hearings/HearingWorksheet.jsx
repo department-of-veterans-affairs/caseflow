@@ -13,9 +13,9 @@ import {
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
@@ -141,7 +141,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value={this.props.worksheet.contentions || ''}
+              value={this.props.worksheet.contentions}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -150,8 +150,8 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheet.periods || ''}
-              onChange={this.props.onPeriodsChange}
+              value={this.props.worksheet.military_service}
+              onChange={this.props.onMilitaryServiceChange}
               id="worksheet-periods"
               />
           </div>
@@ -159,7 +159,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value={this.props.worksheet.evidence || ''}
+              value={this.props.worksheet.evidence}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -168,9 +168,9 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments || ''}
+              value={this.props.worksheet.comments_for_attorney}
               id="worksheet-comments"
-              onChange={this.props.onCommentsChange}
+              onChange={this.props.onCommentsForAttorneyChange}
               />
           </div>
         </form>
@@ -190,15 +190,14 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
-// TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDescriptionChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange
 }, dispatch);
 
 export default connect(
