@@ -14,7 +14,6 @@ export const mapDataToInitialState = function(state = {}) {
 };
 
 
-
 export const newHearingState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
 
@@ -29,8 +28,23 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
+// TODO move to issue reducer
+export const newHearingIssueState = (state, action, spec) => {
 
-export const hearingsReducers = function(state = mapDataToInitialState(), action = {}, foo) {
+  return update(state, {
+    worksheet: {
+      streams: {
+        appeal_0: {
+          issues: {
+            issue_0: spec
+          }
+        }
+      }
+    }
+  });
+};
+
+export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
   case Constants.POPULATE_DOCKETS:
     return update(state, {
@@ -76,42 +90,25 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
   case Constants.SET_DESCRIPTION:
-  
-    return update(state, {
-
-
-      // TODO Combine Issue Reducer
-      worksheet: {
-        streams: {
-          appeal_0: {
-            issues: {
-              issue_0: {
-                description: {
-                  $set: action.payload.description
-                }
-              }
-            }
-          }
-        }
-      }
-    });
+    return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
 
   case Constants.SET_REOPEN:
-    return update(state,  {
-      worksheet: {
-        streams: {
-          appeal_0: {
-            issues: {
-              issue_0: {
-                reopen: {
-                  $set: action.payload.reopen
-                }
-              }
-            }
-          }
-        }
-      }
-    });
+    return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
+
+  case Constants.SET_ALLOW:
+    return newHearingIssueState(state, action, { allow: { $set: action.payload.allow } });
+
+  case Constants.SET_DENY:
+    return newHearingIssueState(state, action, { denu: { $set: action.payload.deny } });
+
+  case Constants.SET_REMAND:
+    return newHearingIssueState(state, action, { remand: { $set: action.payload.remand } });
+
+  case Constants.SET_DISMISS:
+    return newHearingIssueState(state, action, { dismiss: { $set: action.payload.dismiss } });
+
+  case Constants.SET_VHA:
+    return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
 
   case Constants.SET_CONTENTIONS:
     return update(state, {
