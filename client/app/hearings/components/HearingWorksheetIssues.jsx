@@ -69,42 +69,30 @@ class HearingWorksheetIssues extends PureComponent {
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
-          <Checkbox
-            label="Re-Open"
-            name={'chk_reopen'}
+          <Checkbox label="Re-Open" name={ 'chk_reopen'}
             onChange={this.props.onToggleReopen}
-            value={worksheetStreamsIssues.reopen}
-            ></Checkbox>
-          <Checkbox
-            label="Allow"
-            name={'chk_allow'}
+            value={worksheetStreamsIssues.reopen}>
+          </Checkbox>
+          <Checkbox label="Allow" name={ 'chk_allow'}
             onChange={this.props.onToggleAllow}
-            value={worksheetStreamsIssues.allow}
-            ></Checkbox>
-          <Checkbox
-            label="Deny"
-            name={'chk_deny'}
+            value={worksheetStreamsIssues.allow}>
+          </Checkbox>
+          <Checkbox label="Deny" name={ 'chk_deny'}
             onChange={this.props.onToggleDeny}
-            value={worksheetStreamsIssues.deny}
-            ></Checkbox>
-          <Checkbox
-            label="Remand"
-            name={'chk_remand'}
+            value={worksheetStreamsIssues.deny}>
+          </Checkbox>
+          <Checkbox label="Remand" name={ 'chk_remand'}
             onChange={this.props.onToggleRemand}
-            value={worksheetStreamsIssues.remand}
-            ></Checkbox>
-          <Checkbox
-            label="Dismiss"
-            name={'chk_dismiss'}
+            value={worksheetStreamsIssues.remand}>
+          </Checkbox>
+          <Checkbox label="Dismiss" name={ 'chk_dismiss'}
             onChange={this.props.onToggleDismiss}
-            value={worksheetStreamsIssues.dismiss}
-            ></Checkbox>
-          <Checkbox
-            label="VHA"
-            name={'chk_vha'}
+            value={worksheetStreamsIssues.dismiss}>
+          </Checkbox>
+          <Checkbox label="VHA" name={ 'chk_vha'}
             onChange={this.props.onToggleVHA}
-            value={worksheetStreamsIssues.vha}
-            ></Checkbox>
+            value={worksheetStreamsIssues.vha}>
+          </Checkbox>
         </div>
       };
     });
