@@ -12,9 +12,12 @@ const now = () => {
     replace(/(p|a)m/, '$1.m.');
 };
 
-const autoSaveInterval = { id: 0 };
-
 export class AutoSave extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.setIntervalId = 0;
+  }
 
   componentDidMount = () => {
     if (!window.onbeforeunload) {
@@ -23,7 +26,7 @@ export class AutoSave extends React.Component {
       };
     }
 
-    autoSaveInterval.id = setInterval(() => this.props.save(), this.props.intervalInMs);
+    this.setIntervalId = setInterval(() => this.props.save(), this.props.intervalInMs);
   }
 
   render() {
