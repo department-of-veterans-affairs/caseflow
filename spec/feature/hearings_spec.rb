@@ -24,7 +24,7 @@ RSpec.feature "Hearings" do
           user: current_user,
           date: 5.days.from_now,
           type: "video"
-        )
+        ).save
       end
 
       Generators::Hearing.build(
@@ -88,20 +88,15 @@ RSpec.feature "Hearings" do
 
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
       link_href = link[:href]
-      # bring this test back once hearings worksheet is populated from server
-      # link_text = link.text
 
       link.click
-      expect(page).to have_content("Hearing Worksheet")
-      expect(page).to have_content("Hearing Type: Video")
-      # bring this test back once hearings worksheet is populated from server
-      # expect(page).to have_content("Veteran ID: #{link_text}")
+      expect(page).to have_content("The veteran believes their knee is hurt")
+      expect(page).to have_content("Veteran was in the Vietnam War")
+      expect(page).to have_content("Medical exam occurred on 10/10/2008")
+      expect(page).to have_content("Look for knee-related medical records")
 
       visit link_href
       expect(page).to have_content("Hearing Worksheet")
-      expect(page).to have_content("Hearing Type: Video")
-      # bring this test back once hearings worksheet is populated from server
-      # expect(page).to have_content("Veteran ID: #{link_text}")
 
       # There's no functionality yet, but you should be able to...
       click_on "Review eFolder"

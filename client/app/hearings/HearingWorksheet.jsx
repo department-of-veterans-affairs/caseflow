@@ -152,7 +152,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Periods and circumstances of service"
               value={this.props.worksheet.military_service}
               onChange={this.props.onMilitaryServiceChange}
-              id="worksheet-periods"
+              id="worksheet-military-service"
               />
           </div>
 
@@ -169,7 +169,7 @@ export class HearingWorksheet extends React.PureComponent {
             <TextareaField
               name="Comments and special instructions to attorneys"
               value={this.props.worksheet.comments_for_attorney}
-              id="worksheet-comments"
+              id="worksheet-comments-for-attorney"
               onChange={this.props.onCommentsForAttorneyChange}
               />
           </div>
