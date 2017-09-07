@@ -196,16 +196,8 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue description', () => {
-
-      // TODO Make reusable
-      expect(state.worksheet.streams).to.deep.equal({
-        appeal_0: {
-          issues: {
-            issue_0: {
-              description: 'Elbow Arthritis'
-            }
-          }
-        }
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { description: 'Elbow Arthritis' }
       }
      );
     });
@@ -224,7 +216,6 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue reopen', () => {
-
       expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
         issue_0: { reopen: true }
       }
@@ -245,7 +236,6 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue allow', () => {
-
       expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
         issue_0: { allow: true }
       }
@@ -266,7 +256,6 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue deny', () => {
-
       expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
         issue_0: { deny: true }
       }
@@ -287,7 +276,6 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue remand', () => {
-
       expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
         issue_0: { remand: true }
       }
@@ -308,7 +296,6 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue dismiss', () => {
-
       expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
         issue_0: { dismiss: true }
       }
@@ -329,7 +316,6 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue vha', () => {
-
       expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
         issue_0: { vha: true }
       }
