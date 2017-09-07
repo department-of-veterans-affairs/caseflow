@@ -46,7 +46,8 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'actions'
       }
     ];
-    // Todo through issues in a single stream
+
+    // Todo map issues in a unique issue inside stream
     const issues = [
       {
 
