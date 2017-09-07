@@ -617,6 +617,16 @@ export class Pdf extends React.PureComponent {
 
     this.props.prefetchFiles.forEach((file) => {
       this.getDocument(file).then((pdfDocument) => {
+        if (!this.state.pdfDocument[file]) {
+          console.log('adding pdfDocument')
+          this.setState({
+            pdfDocument: {
+              ...this.state.pdfDocument,
+              [file]: pdfDocument
+            }
+          });
+        }
+
         if (pdfDocument) {
           _.range(NUM_PAGES_TO_PREDRAW).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
