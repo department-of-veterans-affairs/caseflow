@@ -548,6 +548,10 @@ export class Pdf extends React.PureComponent {
       isDrawn: {
         ...this.state.isDrawn,
         [file]: _.get(this.state.isDrawn, ['file'], []).map(() => null)
+      },
+      pdfDocument: {
+        ...this.state.pdfDocument,
+        [file]: null
       }
     });
   }
@@ -704,7 +708,7 @@ export class Pdf extends React.PureComponent {
           />;
       }
 
-      return <div />;
+      return null;
     }));
 
     return <div
