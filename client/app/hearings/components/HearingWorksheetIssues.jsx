@@ -61,7 +61,6 @@ class HearingWorksheetIssues extends PureComponent {
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
             aria-label="Description"
-            // TODO Update placeholder loop | new structure
             name="Description"
             id={'issue-description'}
             value={worksheetStreamsIssues.description}
