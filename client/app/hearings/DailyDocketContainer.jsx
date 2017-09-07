@@ -38,56 +38,7 @@ export class DailyDocketContainer extends React.Component {
     return this.props.dockets[this.props.date].hearings_array;
   }
 
-  save = () => {
-    const dispatch = this.props.getDispatch();
-
-    const hearingsToSave = this.docket().filter((hearing) => hearing.edited);
-
-    let hearingsToSaveIndeces = [];
-
-    for (let index = 0; index < this.docket().length; index++) {
-      if (this.docket()[index].edited) {
-        hearingsToSaveIndeces.push(index);
-      }
-    }
-
-    if (hearingsToSave.length) {
-      dispatch({ type: TOGGLE_SAVING });
-
-      // ApiUtil.put('/hearings/save_data', { data: { hearings: hearingsToSave} }).
-      //   then(
-      //     () => {
-      //       dispatch({ type: TOGGLE_SAVING });
-      //
-      //       hearingsToSaveIndeces.forEach((index) => {
-      //         dispatch({ type: SET_EDITED_FLAG_TO_FALSE, payload: { date: this.props.date, index}})
-      //       });
-      //     },
-      //     (err) => {
-      //       dispatch({ type: TOGGLE_SAVING });
-      //       dispatch(handleServerError(err));
-      //     }
-      //   );
-
-      // instead of mocking ApiUtil somehow, assume a PUT request succeeds after 1 second
-      setTimeout(() => {
-        dispatch({ type: TOGGLE_SAVING });
-
-        hearingsToSaveIndeces.forEach((index) => {
-          dispatch({
-            type: SET_EDITED_FLAG_TO_FALSE,
-            payload: {
-              date: this.props.date,
-              index
-            }
-          });
-        });
-      }, 1000);
-    }
-  }
-
   render() {
-
     if (this.props.serverError) {
       return <div style={{ textAlign: 'center' }}>
         An error occurred while retrieving your hearings.</div>;
@@ -111,7 +62,7 @@ export class DailyDocketContainer extends React.Component {
 
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        save={this.save}
+        save={this.props.save(this.docket(), this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
       />
       <DailyDocket
@@ -132,7 +83,51 @@ const mapDispatchToProps = (dispatch) => ({
   getDockets: () => {
     getDockets(dispatch);
   },
-  getDispatch: () => dispatch
+  save: (docket, date) => () => {
+    const hearingsToSave = docket.filter((hearing) => hearing.edited);
+
+    let hearingsToSaveIndeces = [];
+
+    for (let index = 0; index < docket.length; index++) {
+      if (docket[index].edited) {
+        hearingsToSaveIndeces.push(index);
+      }
+    }
+
+    if (hearingsToSave.length) {
+      dispatch({ type: TOGGLE_SAVING });
+
+      // ApiUtil.put('/hearings/save_data', { data: { hearings: hearingsToSave} }).
+      //   then(
+      //     () => {
+      //       dispatch({ type: TOGGLE_SAVING });
+      //
+      //       hearingsToSaveIndeces.forEach((index) => {
+      //         dispatch({ type: SET_EDITED_FLAG_TO_FALSE, payload: { date, index }})
+      //       });
+      //     },
+      //     (err) => {
+      //       dispatch({ type: TOGGLE_SAVING });
+      //       dispatch(handleServerError(err));
+      //     }
+      //   );
+
+      // instead of mocking ApiUtil somehow, assume a PUT request succeeds after 1 second
+      setTimeout(() => {
+        dispatch({ type: TOGGLE_SAVING });
+
+        hearingsToSaveIndeces.forEach((index) => {
+          dispatch({
+            type: SET_EDITED_FLAG_TO_FALSE,
+            payload: {
+              date,
+              index
+            }
+          });
+        });
+      }, 1000);
+    }
+  }
 });
 
 export default connect(
