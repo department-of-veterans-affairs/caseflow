@@ -617,8 +617,10 @@ export class Pdf extends React.PureComponent {
 
     this.props.prefetchFiles.forEach((file) => {
       this.getDocument(file).then((pdfDocument) => {
+        // If this document is not in the state yet, we need to add it
+        // since we use its presence in the state to determine if we should
+        // draw the PdfPage component.
         if (!this.state.pdfDocument[file]) {
-          console.log('adding pdfDocument')
           this.setState({
             pdfDocument: {
               ...this.state.pdfDocument,
