@@ -16,7 +16,7 @@ export class AutoSave extends React.Component {
 
   constructor(props) {
     super(props);
-    this.setIntervalId = 0;
+    this.setIntervalId = null;
   }
 
   componentDidMount = () => {
