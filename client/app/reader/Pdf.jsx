@@ -228,7 +228,7 @@ export class Pdf extends React.PureComponent {
     if (!this.pageElements[file]) {
       this.pageElements[file] = {};
     }
-    // TODO
+    // TODO: Mark the new variable in the redux state to false.
     // if (!this.isDrawing[file]) {
     //   this.isDrawing[file] = _.range(pdfDocument.pdfInfo.numPages).map(() => false);
     // }
@@ -401,7 +401,9 @@ export class Pdf extends React.PureComponent {
     if (pdf.pdfDocument) {
       pdf.pdfDocument.destroy();
     }
-    // TODO: COME BACK
+
+    this.shouldDraw[file] = {};
+    // TODO: Mark the new variables in the redux state to false
 
     // if (this.isDrawing[file]) {
     //   this.isDrawing[file] = this.isDrawing[file].map(() => false);
@@ -540,7 +542,6 @@ export class Pdf extends React.PureComponent {
         return <PdfPage
             documentId={this.props.documentId}
             key={`${file}-${pageIndex + 1}`}
-            draw={true}
             file={file}
             pageIndex={pageIndex}
             isVisible={this.props.file === file}

@@ -36,8 +36,7 @@ export class PdfPage extends React.Component {
     this.textLayer = textLayer;
   }
 
-  // This method is the worst. It is our main interaction with PDFJS, so it will
-  // likey remain complicated.
+  // This method is the interaction between our component and PDFJS
   drawPage = () => {
     if (this.props.isDrawing) {
       return Promise.reject();
@@ -55,8 +54,6 @@ export class PdfPage extends React.Component {
       this.canvas.height = viewport.height;
       this.canvas.width = viewport.width;
 
-      // this.setElementDimensions(this.textLayer, viewport);
-      // this.setElementDimensions(this.props.pageContainer, viewport);
       this.textLayer.innerHTML = '';
 
       // Call PDFJS to actually draw the page.
@@ -97,24 +94,6 @@ export class PdfPage extends React.Component {
     });
   }
 
-  getDimensions = () => {
-    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
-      const PAGE_DIMENSION_SCALE = 1;
-      const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
-      const pageDimensions = _.pick(viewport, ['width', 'height']);
-
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
-    }).
-    catch(() => {
-      const pageDimensions = {
-        width: PAGE_WIDTH,
-        height: PAGE_HEIGHT
-      };
-
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
-    });
-  }
-
   componentDidMount = () => {
     this.getDimensions();
     if (this.props.shouldDraw) {
@@ -123,11 +102,16 @@ export class PdfPage extends React.Component {
   }
 
   componentDidUpdate = (prevProps) => {
+    const drawAndUpdateState = () => {
+      this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
+      this.drawPage();
+    }
+
     if (this.props.shouldDraw) {
       if (!prevProps.shouldDraw) {
-        this.drawPage();
+        drawAndUpdateState();
       } else if (prevProps.scale !== this.props.scale) {
-        this.drawPage();
+        drawAndUpdateState();
       }
     }
   }
@@ -150,10 +134,6 @@ export class PdfPage extends React.Component {
     });
   }
 
-  componentDidMount = () => {
-    this.getDimensions();
-  }
-
   render() {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
@@ -162,7 +142,6 @@ export class PdfPage extends React.Component {
     });
     const currentWidth = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
     const currentHeight = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
-
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${this.props.scale * currentWidth}px`,
@@ -170,25 +149,22 @@ export class PdfPage extends React.Component {
       verticalAlign: 'top',
       display: this.props.isVisible ? '' : 'none'
     };
-
-    const otherComponentStyle = {
+    const textLayerStyle = {
       width: `${this.props.scale * currentWidth}px`,
       height: `${this.props.scale * currentHeight}px`
     }
-
-    // Only pages that are the correct scale should be visible
-    // const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
-    // const pageContentsVisibleClass = classNames({
-    //   'cf-pdf-page-hidden': !(Math.abs(this.props.scale - _.get(this.props.isDrawn,
-    //       [this.props.file, this.props.pageIndex, 'scale'])) < CORRECT_SCALE_DELTA_THRESHOLD)
-    // });
+    // Pages that are currently drawing should not be visible since they may be currently rendered
+    // at the wrong scale.
+    const pageContentsVisibleClass = classNames({
+      'cf-pdf-page-hidden': this.props.isDrawing
+    });
 
     return <div
       id={`pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`}
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div>
+        <div className={pageContentsVisibleClass}>
           <canvas
             ref={this.getCanvasRef}
             className="canvasWrapper" />
@@ -201,7 +177,7 @@ export class PdfPage extends React.Component {
           </div>
           <div
             ref={this.getTextLayerRef}
-            style={otherComponentStyle}
+            style={textLayerStyle}
             className="textLayer"/>
         </div>
       </div>;
