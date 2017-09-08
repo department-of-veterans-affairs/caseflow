@@ -9,6 +9,7 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import hearingsReducers from '../../../app/hearings/reducers/index';
 import { populateWorksheet } from '../../../app/hearings/actions/Dockets';
 import HearingWorksheetContainer from '../../../app/hearings/HearingWorksheetContainer';
+import Link from '../../../app/components/Link';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
 
@@ -46,7 +47,8 @@ describe('HearingWorksheetContainer', () => {
   });
 
   it('renders loaded worksheet', () => {
-    store.dispatch(populateWorksheet({
+    const worksheet = {
+      vacols_id: '123456789',
       veteran: {},
       appeal: {},
       streams: {
@@ -64,7 +66,12 @@ describe('HearingWorksheetContainer', () => {
           periods: ''
         }
       }
-    }));
+    };
+
+    store.dispatch(populateWorksheet(worksheet));
     expect(wrapper.text()).to.include('Hearing Worksheet');
+    expect(
+      wrapper.find(Link).props().href
+    ).to.equal(`/reader/appeal/${worksheet.vacols_id}/documents?category=case_summary`);
   });
 });

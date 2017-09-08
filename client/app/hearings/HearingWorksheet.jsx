@@ -178,7 +178,7 @@ export class HearingWorksheet extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="signup-1"
-          href="/reader/appeal"
+          href={this.props.readerUrl}
           button="primary"
         >Review eFolder</Link>
       </div>
@@ -187,7 +187,8 @@ export class HearingWorksheet extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet
+  worksheet: state.worksheet,
+  readerUrl: `/reader/appeal/${state.worksheet.vacols_id}/documents?category=case_summary`
 });
 
 // TODO to move the default value to the backend

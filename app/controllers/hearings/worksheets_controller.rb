@@ -37,6 +37,7 @@ class Hearings::WorksheetsController < HearingsController
     # Appeal.where(vmbs_id: _vbms_id)??? TBD
     # possible API
     {
+      vacols_id: "123456789",
       veteran: {},
       appeal: {},
       streams: {
