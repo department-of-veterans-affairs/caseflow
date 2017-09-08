@@ -47,50 +47,48 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    // Todo | after real data map issues in a unique issue
-    const issues = [{}];
-
-    const rowObjects = issues.map(() => {
+    // Maps over all issues inside stream
+    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue) => {
 
       return {
         counter: <b>1.</b>,
-        program: worksheetStreamsIssues.program,
-        issue: worksheetStreamsIssues.issue,
-        levels: worksheetStreamsIssues.levels,
+        program: worksheetStreamsIssues[issue].program,
+        issue: worksheetStreamsIssues[issue].issue,
+        levels: worksheetStreamsIssues[issue].levels,
         description: <div>
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
             aria-label="Description"
             name="Description"
             id={'issue-description'}
-            value={worksheetStreamsIssues.description}
+            value={worksheetStreamsIssues[issue].description}
             onChange={this.props.onDescriptionChange}
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
           <Checkbox label="Re-Open" name={ 'chk_reopen'}
             onChange={this.props.onToggleReopen}
-            value={worksheetStreamsIssues.reopen}>
+            value={worksheetStreamsIssues[issue].reopen}>
           </Checkbox>
           <Checkbox label="Allow" name={ 'chk_allow'}
             onChange={this.props.onToggleAllow}
-            value={worksheetStreamsIssues.allow}>
+            value={worksheetStreamsIssues[issue].allow}>
           </Checkbox>
           <Checkbox label="Deny" name={ 'chk_deny'}
             onChange={this.props.onToggleDeny}
-            value={worksheetStreamsIssues.deny}>
+            value={worksheetStreamsIssues[issue].deny}>
           </Checkbox>
           <Checkbox label="Remand" name={ 'chk_remand'}
             onChange={this.props.onToggleRemand}
-            value={worksheetStreamsIssues.remand}>
+            value={worksheetStreamsIssues[issue].remand}>
           </Checkbox>
           <Checkbox label="Dismiss" name={ 'chk_dismiss'}
             onChange={this.props.onToggleDismiss}
-            value={worksheetStreamsIssues.dismiss}>
+            value={worksheetStreamsIssues[issue].dismiss}>
           </Checkbox>
           <Checkbox label="VHA" name={ 'chk_vha'}
             onChange={this.props.onToggleVHA}
-            value={worksheetStreamsIssues.vha}>
+            value={worksheetStreamsIssues[issue].vha}>
           </Checkbox>
         </div>
       };
