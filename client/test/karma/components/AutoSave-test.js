@@ -84,5 +84,16 @@ describe('AutoSave', () => {
         expect(saveFunction.calledOnce).to.equal(true);
       });
     });
+
+    it('before it unmounts', () => {
+      const saveFunc = sinon.spy(saveFunction);
+
+      const wrapper = mount(
+        <AutoSave save={saveFunc} />
+      );
+
+      wrapper.unmount();
+      expect(saveFunc.calledOnce).to.equal(true);
+    });
   });
 });
