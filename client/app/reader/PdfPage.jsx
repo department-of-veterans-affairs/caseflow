@@ -93,6 +93,7 @@ export class PdfPage extends React.Component {
               pageIndex={this.props.pageIndex}
               scale={this.props.scale}
               getTextLayerRef={this.getTextLayerRef}
+              file={this.props.file}
             />
           </div>
         </div>

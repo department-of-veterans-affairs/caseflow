@@ -138,7 +138,7 @@ class CommentLayer extends PureComponent {
 
   render() {
     return <div
-      id={`comment-layer-${this.props.pageIndex}`}
+      id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
       style={DIV_STYLING}
       onDragOver={this.onPageDragOver}
       onDrop={this.onCommentDrop}
@@ -167,6 +167,7 @@ CommentLayer.propTypes = {
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
   pageIndex: PropTypes.number,
+  file: PropTypes.string,
   documentId: PropTypes.number
 };
 
