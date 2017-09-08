@@ -12,7 +12,7 @@ import ApiUtil from '../util/ApiUtil';
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    this.props.getDockets(this.props.dockets);
+    this.props.getDockets();
 
     // Since the page title does not change when react router
     // renders this component...
@@ -69,7 +69,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDockets: (dockets) => {
+  getDockets: (dockets) => () => {
     if (!dockets) {
       ApiUtil.get('/hearings/dockets.json', { cache: true }).
         then((response) => {
@@ -130,7 +130,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   return {
     ...stateProps,
     ...dispatchProps,
-    ...ownProps
+    ...ownProps,
+    getDockets: dispatchProps.getDockets(stateProps.docket)
   };
 };
 
