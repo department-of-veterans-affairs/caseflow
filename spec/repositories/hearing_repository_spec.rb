@@ -1,46 +1,33 @@
 describe HearingRepository do
-  before do
-    @old_repo = Hearing.repository
-    Hearing.repository = HearingRepository
-    allow(HearingRepository).to receive(:load_vacols_data).and_return(nil)
-  end
-
-  after { Hearing.repository = @old_repo }
-
-  let(:vacols_record) do
-    OpenStruct.new(
-      hearing_venue: "RO17",
-      hearing_date: 10.days.ago,
-      hearing_disp: "H",
-      notes1: "Veteran will bring witness",
-      hearing_type: "V",
-      folder_nr: "1235839",
-      vdkey: "12334",
-      aod: "G",
-      holddays: "30",
-      tranreq: "N",
-      addon: "Y",
-      board_member: "1234",
-      mduser: "1234",
-      mdtime: 10.days.ago,
-      sattyid: "123"
-    )
-  end
-
-  let(:hearing) { Hearing.new }
-
   context ".set_vacols_values" do
-    subject { HearingRepository.set_vacols_values(hearing, vacols_record) }
+    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
+    let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
+    let(:hearing) { Generators::Hearing.create }
 
-    it "sets vacols attr accessors" do
-      expect(subject.vacols_record).to eq(vacols_record)
-      expect(subject.disposition).to eq(:held)
-      expect(subject.aod).to eq(:granted)
-      expect(subject.hold_open).to eq("30")
-      expect(subject.transcript_requested).to eq(false)
-      expect(subject.add_on).to eq(true)
-      expect(subject.notes).to eq(vacols_record.notes1)
+    let(:hearing_hash) do
+      OpenStruct.new(
+        hearing_venue: "SO62",
+        hearing_date: date,
+        hearing_type: "V",
+        hearing_pkseq: "12345678",
+        hearing_disp: "N",
+        aod: "Y",
+        tranreq: nil,
+        holddays: 90,
+        notes1: "test notes"
+      )
+    end
+
+    it "assigns values properly" do
+      expect(subject.venue[:city]).to eq("San Antonio")
       expect(subject.type).to eq(:video)
+      expect(subject.vacols_record).to eq(hearing_hash)
+      expect(subject.date).to eq(date)
+      expect(subject.disposition).to eq(:no_show)
+      expect(subject.aod).to eq :filed
+      expect(subject.transcript_requested).to eq nil
+      expect(subject.hold_open).to eq 90
+      expect(subject.notes).to eq "test notes"
     end
   end
 end
