@@ -539,7 +539,6 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    console.log('shoulddraw', this.shouldDraw);
     const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
       if (this.state.pdfDocument[file]) {
         return <PdfPage

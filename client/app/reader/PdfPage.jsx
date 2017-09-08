@@ -46,16 +46,17 @@ export class PdfPage extends React.Component {
     this.isDrawing = value;
   }
 
-  // This method is the interaction between our component and PDFJS
+  // This method is the interaction between our component and PDFJS.
+  // When this method resolves the returned promise it means the PDF
+  // has been drawn with the most up to date scale passed in as a prop.
+  // We may execute multiple draws to ensure this property.
   drawPage = () => {
-    console.log('trying to draw page', this.props.file, this.props.pageIndex);
     if (this.isDrawing) {
       return Promise.reject();
     }
     const currentScale = this.props.scale;
 
     this.setIsDrawing(true);
-    console.log('actuallying drawing page', this.props.file, this.props.pageIndex);
     return this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
       // The viewport is a PDFJS concept that combines the size of the
       // PDF pages with the scale go get the dimensions of the divs.
@@ -98,9 +99,9 @@ export class PdfPage extends React.Component {
       });
       this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, true);
       this.setIsDrawing(false);
-      console.log('drew page', this.props.file, this.props.pageIndex, this.isDrawing);
+
+      // If the scale has changed, draw the page again at the latest scale.
       if (currentScale !== this.props.scale) {
-        console.log('scale was unequal', this.props.file, this.props.pageIndex);
         return this.drawPage();
       } else {
         return Promise.resolve();
