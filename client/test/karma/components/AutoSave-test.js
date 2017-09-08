@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { mount, unmount } from 'enzyme';
 import { AutoSave } from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
@@ -83,6 +83,16 @@ describe('AutoSave', () => {
       setTimeout(() => {
         expect(saveFunction.calledOnce).to.equal(true);
       });
+    });
+
+    it('before it unmounts', () => {
+      const saveFunc = sinon.spy(saveFunction);
+
+      const wrapper = mount(
+        <AutoSave save={saveFunc} />
+      );
+      wrapper.unmount();
+      expect(saveFunc.calledOnce).to.equal(true);
     });
   });
 });
