@@ -88,15 +88,12 @@ export class PdfPage extends React.Component {
             ref={this.getCanvasRef}
             className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
-            {this.props.isVisible && <CommentLayer
+            <CommentLayer
               documentId={this.props.documentId}
               pageIndex={this.props.pageIndex}
               scale={this.props.scale}
-            />}
+            />
           </div>
-          <div
-            ref={this.getTextLayerRef}
-            className="textLayer"/>
         </div>
       </div>;
   }

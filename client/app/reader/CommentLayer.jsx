@@ -20,7 +20,9 @@ const DIV_STYLING = {
 
 // The comment layer is a div on top of a page that draws the comment
 // icons on the page. It is also the div that receives the onClick
-// events when placing new comments.
+// events when placing new comments. It is also the div that displays
+// the text elements. We need text elements in this div since they
+// need to be click-able so you can highlight/copy/paste them.
 class CommentLayer extends PureComponent {
   constructor(props) {
     super(props);
@@ -143,6 +145,9 @@ class CommentLayer extends PureComponent {
       onMouseMove={this.mouseListener}
       ref={this.getCommentLayerDivRef}>
       {this.getCommentIcons()}
+      <div
+        ref={this.getTextLayerRef}
+        className="textLayer"/>
     </div>;
   }
 }
@@ -160,6 +165,7 @@ CommentLayer.propTypes = {
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
   pageIndex: PropTypes.number,
+  isVisible: PropTypes.bool,
   documentId: PropTypes.number
 };
 
