@@ -131,7 +131,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    getDockets: dispatchProps.getDockets(stateProps.docket)
+    getDockets: dispatchProps.getDockets(stateProps.dockets)
   };
 };
 
