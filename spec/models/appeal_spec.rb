@@ -762,7 +762,7 @@ describe Appeal do
 
   context "#disposition_remand_priority" do
     subject { appeal.disposition_remand_priority }
-    context "when disposition is allowed and one of the issues is remanded" do
+    context "when disposition is allowed and one of the issues is remanded", focus: true do
       let(:issues) do
         [
           Generators::Issue.build(disposition: :allowed),
