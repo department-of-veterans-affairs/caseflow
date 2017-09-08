@@ -9,11 +9,12 @@ class Functions
   end
 
   # Functions.grant!("Reader", users: ["CSS_ID_1", "CSS_ID_2"])
+  # Caution: Functions.grant!("Reader", users: []) will remove all users who were granted the function.
   def self.grant!(function, users:)
     # redis method: sadd (add item to a set, ignore existing members)
     client.sadd FUNCTIONS_LIST_KEY, function
 
-    enable(function: function, value: users)
+    set_granted_users(function: function, value: users)
 
     # Remove the function completely if there are no granted or denied users
     remove_function(function) if empty?(function)
@@ -22,10 +23,10 @@ class Functions
   end
 
   # Functions.deny!("Reader", users: ["CSS_ID_1"])
-  def self.deny!(function, users:)
+  def self.deny!(function, users: [])
     client.sadd FUNCTIONS_LIST_KEY, function
 
-    disable(function: function, value: users)
+    set_denied_users(function: function, value: users)
 
     remove_function(function) if empty?(function)
 
@@ -81,7 +82,7 @@ class Functions
   class << self
     private
 
-    def enable(function:, value:)
+    def set_granted_users(function:, value:)
       value = value.compact.uniq
       data = function_enabled_hash(function)
       data[:denied] = data[:denied] - value if data.key?(:denied)
@@ -92,7 +93,7 @@ class Functions
       set_data(function, data)
     end
 
-    def disable(function:, value:)
+    def set_denied_users(function:, value:)
       value = value.compact.uniq
       data = function_enabled_hash(function)
       data[:granted] = data[:granted] - value if data.key?(:granted)
