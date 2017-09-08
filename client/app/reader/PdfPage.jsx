@@ -92,6 +92,7 @@ export class PdfPage extends React.Component {
               documentId={this.props.documentId}
               pageIndex={this.props.pageIndex}
               scale={this.props.scale}
+              getTextLayerRef={this.getTextLayerRef}
             />
           </div>
         </div>
