@@ -21,16 +21,22 @@ describe Hearing do
     end
   end
 
-  context "#to_hash_with_all_information" do
-    subject { hearing.to_hash_with_all_information }
+  context "#to_hash_with_appeals_and_issues" do
+    subject { hearing.to_hash_with_appeals_and_issues }
 
     let(:appeal) do
-      Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
+      Generators::Appeal.create(vacols_record: { template: :pending_hearing },
+                                vbms_id: "123C",
+                                documents: documents)
     end
     let!(:additional_appeal) do
       Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C")
     end
     let(:hearing) { Generators::Hearing.create(appeal: appeal) }
+    let(:documents) do
+      [Generators::Document.build(type: "NOD", received_at: 4.days.ago),
+       Generators::Document.build(type: "SOC", received_at: 1.day.ago)]
+    end
 
     context "when appeal has issues" do
       let!(:issue1) { Generators::Issue.create(appeal: appeal) }
@@ -45,8 +51,8 @@ describe Hearing do
     end
 
     context "when hearing has appeals ready for hearing" do
-      it "should contain appeals" do
-        expect(subject["appeals"].size).to eq 2
+      it "should contain appeal streams" do
+        expect(subject["appeals_ready_for_hearing"].size).to eq 2
       end
     end
 
@@ -56,6 +62,8 @@ describe Hearing do
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
         expect(subject["veteran_full_name"]).to eq(appeal.veteran_full_name)
+        expect(subject["cached_number_of_documents"]).to eq 2
+        expect(subject["cached_number_of_documents_after_certification"]).to eq 0
       end
     end
   end
@@ -118,11 +126,11 @@ describe Hearing do
       let(:issue) { hearing.appeal.issues.first }
       let(:hearing_hash) do
         {
-          worksheet_military_service: "Vietnam 1968 - 1970",
+          military_service: "Vietnam 1968 - 1970",
           issues_attributes: [
             {
               remand: true,
-              hearing_worksheet_vha: true
+              vha: true
             }
           ]
         }
@@ -137,7 +145,7 @@ describe Hearing do
         expect(hearing.issues.first.allow).to eq(false)
         expect(hearing.issues.first.deny).to eq(false)
         expect(hearing.issues.first.dismiss).to eq(false)
-        expect(hearing.issues.first.hearing_worksheet_vha).to be_truthy
+        expect(hearing.issues.first.vha).to be_truthy
 
         # test that a 2nd save updates the same record, rather than create new one
         hearing_issue_id = hearing.issues.first.id
@@ -162,7 +170,8 @@ describe Hearing do
           transcript_requested: false,
           disposition: :postponed,
           add_on: true,
-          hold_open: 60
+          hold_open: 60,
+          representative_name: "DAV - DON REED"
         }
       end
 
@@ -179,6 +188,7 @@ describe Hearing do
         expect(hearing.disposition).to eq :postponed
         expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
+        expect(hearing.representative_name).to eq "DAV - DON REED"
       end
     end
   end

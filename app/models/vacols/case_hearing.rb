@@ -35,7 +35,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     hold_open: :holddays,
     aod: :aod,
     transcript_requested: :tranreq,
-    add_on: :addon
+    add_on: :addon,
+    representative_name: :repname
   }.freeze
 
   NOT_MASTER_RECORD = %(
@@ -86,6 +87,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :aod,
              :holddays,
              :tranreq,
+             :repname,
              :addon,
              :board_member,
              :mduser,
