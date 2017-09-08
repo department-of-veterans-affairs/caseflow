@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { mount, unmount } from 'enzyme';
+import { mount } from 'enzyme';
 import { AutoSave } from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
@@ -91,6 +91,7 @@ describe('AutoSave', () => {
       const wrapper = mount(
         <AutoSave save={saveFunc} />
       );
+
       wrapper.unmount();
       expect(saveFunc.calledOnce).to.equal(true);
     });
