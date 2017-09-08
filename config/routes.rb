@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :appeals, only: :index
-      post 'jobs/start_async' => 'jobs#start_async'
+      resources :jobs, only: :create
     end
   end
 

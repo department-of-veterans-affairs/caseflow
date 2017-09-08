@@ -1,14 +1,12 @@
 class Api::V1::JobsController < Api::V1::ApplicationController
-
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
     "heartbeat" => HeartbeatTasksJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob
-  }
+  }.freeze
 
-
-  def start_async
+  def create
     # start job asynchronously as given by the job_type post param
     job = SUPPORTED_JOBS[params.require(:job_type)]
     return unrecognized_job unless job
