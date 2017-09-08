@@ -33,7 +33,7 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_worksheet(_vbms_id)
+  def hearing_worksheet(_vbms_id) # rubocop:disable Metrics/MethodLength
     # Appeal.where(vmbs_id: _vbms_id)??? TBD
     # possible API
     {
@@ -44,7 +44,15 @@ class Hearings::WorksheetsController < HearingsController
           issues: {
             issue_0: {
               program: "Compensation",
-              description: "Left Elbow"
+              issue: "Service connection",
+              levels: "All Others, 5010 - Arthritis, due to trauma",
+              description: "Left Elbow",
+              reopen: true,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: false
             }
           },
           nod: 99,
