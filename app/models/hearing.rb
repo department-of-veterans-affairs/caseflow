@@ -6,7 +6,8 @@ class Hearing < ActiveRecord::Base
   belongs_to :user
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes, :add_on
+                       :aod, :hold_open, :transcript_requested, :notes, :add_on,
+                       :representative_name
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -51,7 +52,6 @@ class Hearing < ActiveRecord::Base
   delegate \
     :veteran_age, \
     :veteran_full_name, \
-    :representative_name, \
     :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
