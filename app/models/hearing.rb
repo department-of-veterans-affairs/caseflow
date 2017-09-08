@@ -1,6 +1,7 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
+
   belongs_to :appeal
   belongs_to :user
 
@@ -87,9 +88,9 @@ class Hearing < ActiveRecord::Base
   end
   # rubocop:enable Metrics/MethodLength
 
-  def to_hash_with_all_information
+  def to_hash_with_appeals_and_issues
     serializable_hash(
-      methods: :appeals,
+      methods: :appeals_ready_for_hearing,
       include: :issues
     ).merge(to_hash)
   end
@@ -100,7 +101,7 @@ class Hearing < ActiveRecord::Base
     end if appeal
   end
 
-  def appeals
+  def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
   end
 
