@@ -19,7 +19,7 @@ export class AutoSave extends React.Component {
     this.setIntervalId = null;
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
         this.props.save();
@@ -27,6 +27,11 @@ export class AutoSave extends React.Component {
     }
 
     this.setIntervalId = setInterval(() => this.props.save(), this.props.intervalInMs);
+  }
+
+  componentWillUnmount() {
+    this.props.save();
+    clearInterval(this.setIntervalId);
   }
 
   render() {
