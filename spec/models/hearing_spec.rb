@@ -170,7 +170,8 @@ describe Hearing do
           transcript_requested: false,
           disposition: :postponed,
           add_on: true,
-          hold_open: 60
+          hold_open: 60,
+          representative_name: "DAV - DON REED"
         }
       end
 
@@ -187,6 +188,7 @@ describe Hearing do
         expect(hearing.disposition).to eq :postponed
         expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
+        expect(hearing.representative_name).to eq "DAV - DON REED"
       end
     end
   end

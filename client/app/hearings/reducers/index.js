@@ -129,10 +129,24 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { comments: { $set: action.payload.comments } }
     });
 
+  case Constants.TOGGLE_SAVING:
+    return update(state, {
+      isSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.SET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      dockets: {
+        [action.payload.date]: {
+          hearings_array: {
+            [action.payload.index]: { edited: { $set: false } }
+          }
+        }
+      }
+    });
+
   default: return state;
   }
 };
 
 export default hearingsReducers;
-
-
