@@ -184,7 +184,6 @@ describe User do
     before { session["user"]["roles"] = nil }
     before { Functions.client.del("System Admin") }
 
-
     context "when user with roles that are nil" do
       it { is_expected.to be_falsey }
     end

@@ -15,7 +15,7 @@ class Functions
 
     enable(function: function, value: users)
 
-    # Remove the function completely if users become empty
+    # Remove the function completely if there are no granted or denied users
     remove_function(function) if empty?(function)
 
     true
@@ -35,7 +35,7 @@ class Functions
   # Method to check if a given function is granted for a user
   # Functions.granted?("Reader", "CSS_ID_1")
   def self.granted?(function, user)
-    return false unless functions.include?(function)
+    return false unless functions.include?(function) && function_enabled_hash(function).key?(:granted)
 
     data = function_enabled_hash(function)
     data[:granted].include?(user)
@@ -44,7 +44,7 @@ class Functions
   # Method to check if a given function is denied to a user
   # Functions.denied?("Reader", "CSS_ID_1")
   def self.denied?(function, user)
-    return false unless functions.include?(function)
+    return false unless functions.include?(function) && function_enabled_hash(function).key?(:denied)
 
     data = function_enabled_hash(function)
     data[:denied].include?(user)
@@ -53,6 +53,14 @@ class Functions
   # Returns a hash result for a given function
   def self.details_for(function)
     function_enabled_hash(function) if functions.include?(function)
+  end
+
+  # Returns a hash result for all functions with granted and denied users
+  # { "System Admin" : { granted: ["CSS_ID"], denied: ["CSS_ID2"]  }, "Reader" : { granted: ["CSS_ID"] } }
+  def self.list_all
+    functions.inject({}) do |result, function|
+      result.merge(function => details_for(function))
+    end
   end
 
   def self.client
@@ -76,8 +84,10 @@ class Functions
     def enable(function:, value:)
       value = value.compact.uniq
       data = function_enabled_hash(function)
-      data[:denied] = data[:denied] - value
+      data[:denied] = data[:denied] - value if data.key?(:denied)
+      data.delete(:denied) if data.key?(:denied) && data[:denied].empty?
       data[:granted] = value
+      data.delete(:granted) if data[:granted].empty?
 
       set_data(function, data)
     end
@@ -85,8 +95,10 @@ class Functions
     def disable(function:, value:)
       value = value.compact.uniq
       data = function_enabled_hash(function)
-      data[:granted] = data[:granted] - value
+      data[:granted] = data[:granted] - value if data.key?(:granted)
+      data.delete(:granted) if data.key?(:granted) && data[:granted].empty?
       data[:denied] = value
+      data.delete(:denied) if data[:denied].empty?
 
       set_data(function, data)
     end
@@ -105,7 +117,7 @@ class Functions
     end
 
     def empty?(function)
-      function_enabled_hash(function)[:granted].empty? && function_enabled_hash(function)[:denied].empty?
+      !function_enabled_hash(function).key?(:granted) && !function_enabled_hash(function).key?(:denied)
     end
 
     def set_data(function, data)
