@@ -1,11 +1,13 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
+
   belongs_to :appeal
   belongs_to :user
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes, :add_on
+                       :aod, :hold_open, :transcript_requested, :notes, :add_on,
+                       :representative_name
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -50,7 +52,6 @@ class Hearing < ActiveRecord::Base
   delegate \
     :veteran_age, \
     :veteran_full_name, \
-    :representative_name, \
     :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
@@ -87,9 +88,9 @@ class Hearing < ActiveRecord::Base
   end
   # rubocop:enable Metrics/MethodLength
 
-  def to_hash_with_all_information
+  def to_hash_with_appeals_and_issues
     serializable_hash(
-      methods: :appeals,
+      methods: :appeals_ready_for_hearing,
       include: :issues
     ).merge(to_hash)
   end
@@ -100,7 +101,7 @@ class Hearing < ActiveRecord::Base
     end if appeal
   end
 
-  def appeals
+  def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
   end
 

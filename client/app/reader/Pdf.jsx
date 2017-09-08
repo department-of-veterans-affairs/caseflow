@@ -398,6 +398,13 @@ export class Pdf extends React.PureComponent {
     }
 
     this.shouldDraw[file] = {};
+
+    this.setState({
+      pdfDocument: {
+        ...this.state.pdfDocument,
+        [file]: null
+      }
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -462,6 +469,18 @@ export class Pdf extends React.PureComponent {
 
     this.props.prefetchFiles.forEach((file) => {
       this.getDocument(file).then((pdfDocument) => {
+        // If this document is not in the state yet, we need to add it
+        // since we use its presence in the state to determine if we should
+        // draw the PdfPage component.
+        if (!this.state.pdfDocument[file]) {
+          this.setState({
+            pdfDocument: {
+              ...this.state.pdfDocument,
+              [file]: pdfDocument
+            }
+          });
+        }
+
         if (pdfDocument) {
           _.range(NUM_PAGES_TO_PREDRAW).forEach((pageIndex) => {
             if (pageIndex < pdfDocument.pdfInfo.numPages &&
@@ -536,7 +555,7 @@ export class Pdf extends React.PureComponent {
           />;
       }
 
-      return <div />;
+      return null;
     }));
 
     return <div

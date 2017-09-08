@@ -19,8 +19,7 @@ class HearingDocket
   end
 
   def hearings_array
-    # TODO(Anya): add conditional statement here whether to call to_hash or to_hash_with_all_information
-    hearings.map(&:to_hash_with_all_information)
+    hearings.map(&:to_hash)
   end
 
   class << self
