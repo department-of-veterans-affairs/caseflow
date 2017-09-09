@@ -172,9 +172,9 @@ class Generators::Appeal
       inaccessible = attrs.delete(:inaccessible)
 
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
-      appeal.attributes = attrs
 
-      vacols_record[:vbms_id] = appeal.vbms_id
+      vacols_record[:vbms_id] = attrs[:vbms_id]
+      vacols_record = vacols_record.merge(attrs)
 
       issues_from_template = vacols_record.delete(:issues)
       set_vacols_issues(appeal: appeal,

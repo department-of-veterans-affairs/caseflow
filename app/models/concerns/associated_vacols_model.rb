@@ -13,13 +13,13 @@ module AssociatedVacolsModel
     def vacols_attr_accessor(*fields)
       fields.each do |field|
         define_method field do
-          check_and_load_vacols_data! # unless is_field_set(field)
+          check_and_load_vacols_data! unless is_field_set(field)
           instance_variable_get("@#{field}".to_sym)
         end
 
         define_method "#{field}=" do |value|
-          # @vacols_load_status = :disabled
-          # mark_field_is_set(field)
+          @vacols_load_status = :disabled
+          mark_field_is_set(field)
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
@@ -45,7 +45,7 @@ module AssociatedVacolsModel
   end
 
   def check_and_load_vacols_data!
-    # raise LazyLoadingDisabledError if @vacols_load_status == :disabled
+    raise LazyLoadingDisabledError if @vacols_load_status == :disabled
     perform_vacols_request unless @vacols_load_status
 
     vacols_success?
