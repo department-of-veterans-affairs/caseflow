@@ -25,7 +25,7 @@ export default class NavigationBar extends React.Component {
             </span>
             <span className="cf-dropdown cf-push-right">
               <DropdownMenu
-                analyticsTitle="Navbar"
+                analyticsTitle={`${appName} Navbar`}
                 options={menuOptions}
                 onClick={this.handleMenuClick}
                 onBlur={this.handleOnBlur}
