@@ -27,6 +27,22 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
+// TODO move to issue reducer
+export const newHearingIssueState = (state, action, spec) => {
+
+  return update(state, {
+    worksheet: {
+      streams: {
+        appeal_0: {
+          issues: {
+            issue_0: spec
+          }
+        }
+      }
+    }
+  });
+};
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
   case Constants.POPULATE_DOCKETS:
@@ -72,23 +88,26 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
-  case Constants.SET_DESCRIPTIONS:
-    return update(state, {
-      // TODO make reusable for all issues fields
-      worksheet: {
-        streams: {
-          appeal_0: {
-            issues: {
-              issue_0: {
-                description: {
-                  $set: action.payload.description
-                }
-              }
-            }
-          }
-        }
-      }
-    });
+  case Constants.SET_DESCRIPTION:
+    return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
+
+  case Constants.SET_REOPEN:
+    return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
+
+  case Constants.SET_ALLOW:
+    return newHearingIssueState(state, action, { allow: { $set: action.payload.allow } });
+
+  case Constants.SET_DENY:
+    return newHearingIssueState(state, action, { deny: { $set: action.payload.deny } });
+
+  case Constants.SET_REMAND:
+    return newHearingIssueState(state, action, { remand: { $set: action.payload.remand } });
+
+  case Constants.SET_DISMISS:
+    return newHearingIssueState(state, action, { dismiss: { $set: action.payload.dismiss } });
+
+  case Constants.SET_VHA:
+    return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
 
   case Constants.SET_CONTENTIONS:
     return update(state, {
