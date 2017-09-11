@@ -5,7 +5,7 @@ class Hearings::WorksheetsController < HearingsController
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
-        render json: hearing_worksheet(params[:id])
+        render json: hearing_worksheet
       end
     end
   end
@@ -33,7 +33,12 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_worksheet(hearing_id)
+  def hearing_with_appeals_and_issues
+    Hearing.find(params[:hearing_id]).to_hash_with_appeals_and_issues
+  end
+  helper_method :hearing_with_appeals_and_issues
+
+  def hearing_worksheet
     {
       veteran: {},
       appeal: {},
@@ -50,6 +55,6 @@ class Hearings::WorksheetsController < HearingsController
           docs_in_efolder: 88
         }
       }
-    }.merge(Hearing.find(hearing_id).to_hash_with_appeals_and_issues)
+    }.merge(hearing_with_appeals_and_issues)
   end
 end
