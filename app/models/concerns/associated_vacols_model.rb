@@ -18,7 +18,7 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
-          @vacols_load_status = :disabled
+          # @vacols_load_status = :disabled
           mark_field_is_set(field)
           instance_variable_set("@#{field}".to_sym, value)
         end

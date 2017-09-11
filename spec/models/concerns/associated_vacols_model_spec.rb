@@ -33,7 +33,10 @@ describe AssociatedVacolsModel do
     context "call setter before first get" do
       before { model.foo = "hello" }
       subject { model.foo }
-      it { is_expected.to eq("hello") }
+      it do
+        expect(model).to_not receive(:check_and_load_vacols_data!)
+        is_expected.to eq("hello")
+      end
     end
 
     context "ensure setter sets value" do
@@ -41,6 +44,13 @@ describe AssociatedVacolsModel do
         expect(model.foo).to eq("bar")
         model.foo = "hello"
         expect(model.foo).to eq("hello")
+      end
+    end
+
+    context "fields not set trigger a call to load data" do
+      it do
+        model.bar = "hello"
+        expect(model.foo).to eq("bar")
       end
     end
   end
@@ -79,6 +89,42 @@ describe AssociatedVacolsModel do
         expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(0).times
         expect(model.check_and_load_vacols_data!).to eq(false)
       end
+    end
+  end
+  
+  context "#field_set?" do
+    subject { model.field_set?(:foo) }
+
+    it "returns false when nothing is set" do
+      is_expected.to be_falsy
+    end
+
+    context "when a different field hasn't been set" do
+      before do
+        model.bar = "value"
+      end
+
+      it "returns false" do
+        is_expected.to be_falsy
+      end
+    end
+
+    context "when field has been set" do
+      before do
+        model.foo = "value"
+      end
+
+      it "returns true" do
+        is_expected.to be_truthy
+      end
+    end
+  end
+  
+  context "#mark_field_is_set" do
+    it "field_set? returns true after running mark_field_is_set" do
+      expect(model.field_set?(:foo)).to be_falsy
+      model.mark_field_is_set(:foo)
+      expect(model.field_set?(:foo)).to be_truthy
     end
   end
 end

@@ -37,7 +37,7 @@ describe ExternalApi::EfolderService do
     context "metrics" do
       let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
 
-      it "are recorded using MetricsService", focus: true do
+      it "are recorded using MetricsService" do
         # Triggering a load of vacols data, before expecting MetricsService to receive :record
         # since loading vacols data also goes through MetricsService.
         appeal.check_and_load_vacols_data!
