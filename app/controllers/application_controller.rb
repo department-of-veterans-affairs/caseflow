@@ -93,6 +93,30 @@ class ApplicationController < ActionController::Base
   end
   helper_method :logo_path
 
+  def dropdown_urls
+    urls = [
+      {
+        title: "Help",
+        link: help_url
+      },
+      {
+        title: "Send Feedback",
+        link: feedback_url,
+        target: "_blank"
+      }
+    ]
+
+    urls.append(title: "Switch User",
+                link: url_for(controller: "/test/users", action: "index")) if ApplicationController.dependencies_faked?
+    urls.append(title: "Change Functions",
+                link: url_for(controller: "/functions", action: "index")) if current_user.admin?
+    urls.append(title: "Sign Out",
+                link: url_for(controller: "/sessions", action: "destroy"))
+
+    urls
+  end
+  helper_method :dropdown_urls
+
   def certification_header(title)
     "&nbsp &gt &nbsp".html_safe + title
   end
@@ -146,14 +170,6 @@ class ApplicationController < ActionController::Base
     "&nbsp &#124 &nbsp".html_safe + title
   end
   helper_method :page_title
-
-  def verify_feature_enabled(feature)
-    return true if FeatureToggle.enabled?(feature, user: current_user)
-    Rails.logger.info("User id #{current_user.id} attempted to access #{feature} "\
-                      " feature but it was not enabled for them #{request.original_url}")
-    session["return_to"] = request.original_url
-    redirect_to "/unauthorized"
-  end
 
   def verify_authorized_roles(*roles)
     return true if current_user && roles.all? { |r| current_user.can?(r) }
