@@ -153,8 +153,8 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <NavigationBar
           appName="Reader"
-          user={this.props.userDisplayName}
-          menuOptions={this.props.dropdownUrls}/>
+          userDisplayName={this.props.userDisplayName}
+          dropdownUrls={this.props.dropdownUrls}/>
         <div className="section--document-list">
           <Route
             path="/:vacolsId/documents"
@@ -173,8 +173,8 @@ export class DecisionReviewer extends React.PureComponent {
 
 DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
-  user: PropTypes.string,
-  dropdown: PropTypes.array,
+  userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,

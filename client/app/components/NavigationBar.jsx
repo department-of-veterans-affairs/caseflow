@@ -8,8 +8,8 @@ export default class NavigationBar extends React.Component {
   render() {
     let {
       appName,
-      menuOptions,
-      user
+      dropdownUrls,
+      userDisplayName
     } = this.props;
 
     return <header className="cf-app-header">
@@ -26,10 +26,10 @@ export default class NavigationBar extends React.Component {
             <span className="cf-dropdown cf-push-right">
               <DropdownMenu
                 analyticsTitle={`${appName} Navbar`}
-                options={menuOptions}
+                options={dropdownUrls}
                 onClick={this.handleMenuClick}
                 onBlur={this.handleOnBlur}
-                label={user}
+                label={userDisplayName}
                 />
             </span>
           </div>
@@ -40,11 +40,11 @@ export default class NavigationBar extends React.Component {
 }
 
 NavigationBar.propTypes = {
-  menuOptions: PropTypes.arrayOf(PropTypes.shape({
+  dropdownUrls: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
     link: PropTypes.string.isRequired,
     target: PropTypes.string
   })),
-  user: PropTypes.string.isRequired,
+  userDisplayName: PropTypes.string.isRequired,
   appName: PropTypes.string.isRequired
 };
