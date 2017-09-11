@@ -119,7 +119,6 @@ class SeedDB
     create_tags
     create_hearings
     create_api_key
-    set_up_feature_toggles
   end
 end
 
