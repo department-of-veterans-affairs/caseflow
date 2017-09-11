@@ -48,10 +48,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     -- an older hearing still awaiting a disposition
   ).freeze
 
-  VIDEO_MASTER_RECORD = %(
-    folder_nr LIKE '%VIDEO%'
-  )
-
   after_update :update_hearing_action, if: :hearing_disp_changed?
   after_update :create_or_update_diaries
 
@@ -60,10 +56,14 @@ class VACOLS::CaseHearing < VACOLS::Record
     def upcoming_for_judge(css_id)
       id = connection.quote(css_id)
 
-      hearings = select_hearings
-        .where("staff.sdomainid = #{id}")
-        .where(WITHOUT_DISPOSITION)
-      hearings.where(NOT_MASTER_RECORD) + video_empty_dockets(hearings.where(VIDEO_MASTER_RECORD))
+      hearings = select_hearings.where("staff.sdomainid = #{id}")
+                                .where("hearing_date > ?", 1.week.ago)
+
+      # For a video master record, the hearing_pkseq number becomes the VDKEY that links all
+      # the child records (veterans scheduled for that video) to the parent record
+      children_ids = hearings.map(&:vdkey).compact.map(&:to_i)
+      # Filter out video master records with children
+      hearings.reject { |hearing| hearing.folder_nr =~ /VIDEO/ && children_ids.include?(hearing.hearing_pkseq) }
     end
 
     def for_appeal(appeal_vacols_id)
@@ -75,23 +75,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     private
-
-    # An empty docket is a master record with no children
-    # For a video master record, the hearing_pkseq number becomes the VDKEY that links all
-    # the child records (veterans scheduled for that video) to the parent record
-    def video_empty_dockets(records)
-      ids_with_no_children = master_record_ids_with_no_children(records)
-      records.select { |p| ids_with_no_children.include?(p.hearing_pkseq) }
-    end
-
-    def master_record_ids_with_no_children(records)
-      ids = records.map(&:hearing_pkseq)
-      ids - children_vdkeys_by_parent_id(ids)
-    end
-
-    def children_vdkeys_by_parent_id(ids)
-      where(vdkey: ids).map(&:vdkey).uniq.map(&:to_i)
-    end
 
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
