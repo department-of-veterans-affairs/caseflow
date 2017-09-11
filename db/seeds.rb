@@ -109,11 +109,6 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
   end
 
-   def set_up_feature_toggles
-     FeatureToggle.disable!(:reader)
-     FeatureToggle.enable!(:reader, users: ["Reader"])
-   end
-
   def seed
     clean_db
     create_default_users
