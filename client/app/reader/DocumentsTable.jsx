@@ -264,7 +264,7 @@ class DocumentsTable extends React.Component {
 
       return [{
         valueFunction: (doc) => {
-          const comments = this.props.annotationsPerDocument[doc.id];
+          const comments = _.sortBy(this.props.annotationsPerDocument[doc.id], 'page');
           const commentNodes = comments.map((comment, commentIndex) => {
             return <Comment
               key={comment.uuid}
