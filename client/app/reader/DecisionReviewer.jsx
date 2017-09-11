@@ -15,6 +15,7 @@ import * as ReaderActions from './actions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
+import NavigationBar from '../components/NavigationBar';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -149,16 +150,22 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div className="section--document-list">
-        <Route
-          path="/:vacolsId/documents"
-          render={this.documentsRoute}
-        />
-        <Route
-          exact
-          path="/"
-          render={this.routedCaseSelect}
-        />
+      <div>
+        <NavigationBar
+          appName="Reader"
+          userDisplayName={this.props.userDisplayName}
+          dropdownUrls={this.props.dropdownUrls}/>
+        <div className="section--document-list">
+          <Route
+            path="/:vacolsId/documents"
+            render={this.documentsRoute}
+          />
+          <Route
+            exact
+            path="/"
+            render={this.routedCaseSelect}
+          />
+        </div>
       </div>
     </Router>;
   }
@@ -166,6 +173,8 @@ export class DecisionReviewer extends React.PureComponent {
 
 DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
+  userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array,
   onScrollToComment: PropTypes.func,
   onCommentScrolledTo: PropTypes.func,
   handleSetLastRead: PropTypes.func.isRequired,
