@@ -68,9 +68,6 @@ end
 
 RSpec.feature "Reader" do
   before do
-    FeatureToggle.disable!(:reader)
-    FeatureToggle.enable!(:reader)
-
     Fakes::Initializer.load!
   end
 
