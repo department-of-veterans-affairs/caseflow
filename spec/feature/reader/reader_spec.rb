@@ -1188,15 +1188,4 @@ RSpec.feature "Reader" do
       expect(in_viewport("read-indicator")).to be true
     end
   end
-
-  context "When user is not whitelisted" do
-    before do
-      FeatureToggle.enable!(:reader, users: ["FAKE_CSS_ID"])
-    end
-
-    scenario "it redirects to unauthorized" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Unauthorized")
-    end
-  end
 end
