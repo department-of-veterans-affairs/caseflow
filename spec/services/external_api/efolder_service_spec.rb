@@ -38,8 +38,11 @@ describe ExternalApi::EfolderService do
       let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
 
       it "are recorded using MetricsService", focus: true do
+        # Triggering a load of vacols data, before expecting MetricsService to receive :record
+        # since loading vacols data also goes through MetricsService.
+        appeal.check_and_load_vacols_data!
         expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-        expect(MetricsService).to receive(:record).and_return(expected_response).once
+        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).once
         ExternalApi::EfolderService.fetch_documents_for(appeal, user)
       end
     end
