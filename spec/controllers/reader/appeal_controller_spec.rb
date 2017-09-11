@@ -8,7 +8,6 @@ RSpec.describe Reader::AppealController, type: :controller do
   let(:appeal) { Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
   describe "GET fetch appeal by VBMS Id" do
     it "should be succesful" do
-
       request.headers["HTTP_VETERAN_ID"] = appeal[:vbms_id]
       get :find_appeals_by_veteran_id
 
