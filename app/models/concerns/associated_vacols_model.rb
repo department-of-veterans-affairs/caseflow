@@ -45,7 +45,7 @@ module AssociatedVacolsModel
   end
 
   def check_and_load_vacols_data!
-    raise LazyLoadingDisabledError if @vacols_load_status == :disabled
+    # raise LazyLoadingDisabledError if @vacols_load_status == :disabled
     perform_vacols_request unless @vacols_load_status
 
     vacols_success?
@@ -68,6 +68,6 @@ module AssociatedVacolsModel
   end
 
   def vacols_success?
-    @vacols_load_status == :success
+    @vacols_load_status == :success || @vacols_load_status == :disabled
   end
 end

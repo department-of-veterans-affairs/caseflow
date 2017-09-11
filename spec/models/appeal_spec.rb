@@ -14,7 +14,8 @@ describe Appeal do
       video_hearing_requested: video_hearing_requested,
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
-      appellant_last_name: "Tester"
+      appellant_last_name: "Tester",
+      decision_date: nil
     )
   end
 
@@ -26,7 +27,10 @@ describe Appeal do
       ssoc_dates: ssoc_dates,
       documents: documents,
       hearing_request_type: hearing_request_type,
-      video_hearing_requested: video_hearing_requested
+      video_hearing_requested: video_hearing_requested,
+      appellant_first_name: nil,
+      appellant_middle_initial: nil,
+      appellant_last_name: nil
     )
   end
 
