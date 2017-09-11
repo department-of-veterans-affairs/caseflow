@@ -33,10 +33,10 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_with_appeals_and_issues
-    Hearing.find(params[:hearing_id]).to_hash_with_appeals_and_issues
+  def find_hearing
+    Hearing.find(params[:hearing_id])
   end
-  helper_method :hearing_with_appeals_and_issues
+  helper_method :find_hearing
 
   def hearing_worksheet
     {
@@ -55,6 +55,6 @@ class Hearings::WorksheetsController < HearingsController
           docs_in_efolder: 88
         }
       }
-    }.merge(hearing_with_appeals_and_issues)
+    }.merge(find_hearing.to_hash_with_appeals_and_issues)
   end
 end
