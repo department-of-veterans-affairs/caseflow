@@ -78,7 +78,7 @@ ActiveRecord::Migration.maintain_test_schema!
 module StubbableUser
   module ClassMethods
     def clear_stub!
-      Functions.redis.flushall
+      Functions.delete_all_keys!
       @stub = nil
     end
 
@@ -121,7 +121,7 @@ module StubbableUser
     end
 
     def unauthenticate!
-      Functions.redis.flushall
+      Functions.delete_all_keys!
       self.stub = nil
     end
 

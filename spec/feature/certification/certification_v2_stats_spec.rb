@@ -116,6 +116,14 @@ RSpec.feature "CertificationV2 Stats Dashboard" do
     expect(page).not_to have_content("Certification Rate")
     expect(page).not_to have_content("Time to Certify")
 
+    # Authenticated access with System Admin CSS role
+    User.tester!(roles: ["System Admin"])
+    visit "/certification/stats"
+    expect(page).not_to have_content("Activity for")
+    expect(page).not_to have_content("Certification Rate")
+    expect(page).not_to have_content("Time to Certify")
+    expect(page).not_to have_content("Missing Documents")
+
     # Authenticated access without System Admin role
     User.authenticate!
     visit "/certification_v2/stats"
