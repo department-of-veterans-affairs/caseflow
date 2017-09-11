@@ -13,7 +13,7 @@ module AssociatedVacolsModel
     def vacols_attr_accessor(*fields)
       fields.each do |field|
         define_method field do
-          check_and_load_vacols_data! unless is_field_set(field)
+          check_and_load_vacols_data! unless field_set?(field)
           instance_variable_get("@#{field}".to_sym)
         end
 
@@ -26,7 +26,7 @@ module AssociatedVacolsModel
     end
   end
 
-  def is_field_set(field)
+  def field_set?(field)
     @set_fields && @set_fields[field.to_sym]
   end
 

@@ -37,7 +37,7 @@ describe ExternalApi::EfolderService do
     context "metrics" do
       let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
 
-      it "are recorded using MetricsService" do
+      it "are recorded using MetricsService", focus: true do
         expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         expect(MetricsService).to receive(:record).and_return(expected_response).once
         ExternalApi::EfolderService.fetch_documents_for(appeal, user)
