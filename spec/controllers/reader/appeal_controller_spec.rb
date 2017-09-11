@@ -8,7 +8,9 @@ RSpec.describe Reader::AppealController, type: :controller do
   let(:appeal) { Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
   describe "GET fetch appeal by VBMS Id" do
     it "should be succesful" do
-      get :find_appeals_by_veteran_id, veteran_id: appeal[:vbms_id]
+
+      request.headers["HTTP_VETERAN_ID"] = appeal[:vbms_id]
+      get :find_appeals_by_veteran_id
 
       expect(response.status).to eq 200
       hashed_appeal = appeal.to_hash(issues: appeal.issues)
@@ -41,7 +43,8 @@ RSpec.describe Reader::AppealController, type: :controller do
     end
 
     it "fails routing validation" do
-      expect { get :find_appeals_by_veteran_id, veteran_id: "03023232S!" }
+      request.headers["HTTP_VETERAN_ID"] = "03023232S!"
+      expect { get :find_appeals_by_veteran_id }
         .to raise_error(ActionController::UrlGenerationError)
       expect { get :find_appeals_by_veteran_id, veteran_id: nil }.to raise_error(ActionController::UrlGenerationError)
       expect { get :find_appeals_by_veteran_id, veteran_id: "2" }.to raise_error(ActionController::UrlGenerationError)
@@ -50,7 +53,8 @@ RSpec.describe Reader::AppealController, type: :controller do
     end
 
     it "should return not found" do
-      get :find_appeals_by_veteran_id, veteran_id: "doesnotexist"
+      request.headers["HTTP_VETERAN_ID"] = "doesnotexist!"
+      get :find_appeals_by_veteran_id
       expect(response.status).to eq 404
     end
   end
