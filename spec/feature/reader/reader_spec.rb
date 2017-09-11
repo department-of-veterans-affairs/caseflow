@@ -231,8 +231,8 @@ RSpec.feature "Reader" do
         # Test that the title changed. Functionality in PageRoute.jsx
         expect(page).to have_title("Claims Folder | Caseflow Reader")
 
-        click_on "Caseflow Reader"
-        expect(page).to have_current_path("/reader/appeal")
+        click_on "Caseflow"
+        expect(page).to have_current_path("/reader/appeal/")
         expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "Continue"
@@ -344,7 +344,7 @@ RSpec.feature "Reader" do
 
     scenario "User visits help page" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      find('#menu-trigger').click
+      find_link("DSUSER (DSUSER)").click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
     end
