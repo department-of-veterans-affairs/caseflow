@@ -1060,7 +1060,7 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_IF_PDF_PAGE_IS_DRAWN:
+  case Constants.SET_PDF_PAGE_IS_DRAWN:
     return update(
       state,
       {
@@ -1079,7 +1079,7 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_IF_PDF_PAGE_IS_DRAWING:
+  case Constants.SET_PDF_PAGE_IS_DRAWING:
     return update(
       state,
       {

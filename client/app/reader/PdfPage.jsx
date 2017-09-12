@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfPageDimensions, setIfPdfPageIsDrawn, setIfPdfPageIsDrawing } from '../reader/actions';
+import { setPdfPageDimensions, setPdfPageIsDrawn, setPdfPageIsDrawing } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -38,7 +38,7 @@ export class PdfPage extends React.Component {
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
   setIsDrawing = (value) => {
-    this.props.setIfPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
+    this.props.setPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
     this.isDrawing = value;
   }
 
@@ -91,7 +91,7 @@ export class PdfPage extends React.Component {
         viewport,
         textDivs: []
       });
-      this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, true);
+      this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, true);
       this.setIsDrawing(false);
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -126,20 +126,18 @@ export class PdfPage extends React.Component {
   }
 
   componentWillUnmount = () => {
-    this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
+    this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
     this.setIsDrawing(false);
   }
 
   componentDidUpdate = (prevProps) => {
     const drawAndUpdateState = () => {
-      this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
+      this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
       this.drawPage();
     };
 
     if (this.props.shouldDraw) {
-      if (!prevProps.shouldDraw) {
-        drawAndUpdateState();
-      } else if (prevProps.scale !== this.props.scale) {
+      if (!prevProps.shouldDraw || prevProps.scale !== this.props.scale) {
         drawAndUpdateState();
       }
     }
@@ -223,8 +221,8 @@ PdfPage.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfPageDimensions,
-    setIfPdfPageIsDrawn,
-    setIfPdfPageIsDrawing
+    setPdfPageIsDrawn,
+    setPdfPageIsDrawing
   }, dispatch)
 });
 
