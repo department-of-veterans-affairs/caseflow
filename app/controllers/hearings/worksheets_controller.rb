@@ -18,10 +18,10 @@ class Hearings::WorksheetsController < HearingsController
 
   private
 
-  # Until the frontend makes a PUT request, code coverage is at risk, so...
-  # def worksheet
-  #  @worksheet ||= hearing
-  # end
+  def worksheet
+    Hearing.find(params[:hearing_id])
+  end
+  helper_method :worksheet
 
   # Until the frontend makes a PUT request, code coverage is at risk, so...
   # def worksheet_params
@@ -33,36 +33,25 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def find_hearing
-    Hearing.find(params[:hearing_id])
-  end
-  helper_method :find_hearing
-
   def hearing_worksheet
     {
       veteran: {},
       appeal: {},
-      streams: {
-        appeal_0: {
-          issues: {
-            issue_0: {
-              program: "Compensation",
-              issue: "Service connection",
-              levels: "All Others, 5010 - Arthritis, due to trauma",
-              description: "Left Elbow",
-              reopen: true,
-              remand: true,
-              allow: true,
-              dismiss: false,
-              deny: false,
-              vha: false
-            }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88
-        }
-      }
-    }.merge(find_hearing.to_hash_with_appeals_and_issues)
+      streams: { appeal_0: {
+        issues: { issue_0: {
+          program: "Compensation",
+          issue: "Service connection",
+          levels: "All Others, 5010 - Arthritis, due to trauma",
+          description: "Left Elbow",
+          reopen: true,
+          remand: true,
+          allow: true,
+          dismiss: false,
+          deny: false,
+          vha: false } },
+        nod: 99,
+        soc: 10,
+        docs_in_efolder: 88 } }
+    }.merge(worksheet.to_hash_with_appeals_and_issues)
   end
 end

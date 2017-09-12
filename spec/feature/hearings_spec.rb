@@ -18,12 +18,12 @@ RSpec.feature "Hearings" do
 
     before do
       2.times do |id|
-        Generators::Hearing.build(
+        Generators::Hearing.create(
           id: id,
           user: current_user,
           date: 5.days.from_now,
           type: "video"
-        ).save
+        )
       end
 
       Generators::Hearing.build(
