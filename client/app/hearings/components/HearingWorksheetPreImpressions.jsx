@@ -12,7 +12,7 @@ import {
   onToggleVHA
        } from '../actions/Issue';
 
-class HearingWorksheetSingleIssue extends PureComponent {
+class HearingWorksheetPreImpressions extends PureComponent {
 
   onToggleReopen = (reopen) => this.props.onToggleReopen(reopen, this.props.issue.id);
   onToggleAllow = (allow) => this.props.onToggleAllow(allow, this.props.issue.id);
@@ -29,19 +29,19 @@ class HearingWorksheetSingleIssue extends PureComponent {
               onChange={this.onToggleReopen} value={issue.reopen}>
             </Checkbox>
             <Checkbox label="Allow" name={`${issue.id}-chk_allow`}
-              onChange={this.props.onToggleAllow} value={issue.allow}>
+              onChange={this.onToggleAllow} value={issue.allow}>
             </Checkbox>
             <Checkbox label="Deny" name={`${issue.id}-chk_deny`}
-              onChange={this.props.onToggleDeny} value={issue.deny}>
+              onChange={this.onToggleDeny} value={issue.deny}>
             </Checkbox>
             <Checkbox label="Remand" name={`${issue.id}-chk_remand`}
-              onChange={this.props.onToggleRemand} value={issue.remand}>
+              onChange={this.onToggleRemand} value={issue.remand}>
             </Checkbox>
             <Checkbox label="Dismiss" name={`${issue.id}-chk_dismiss`}
-              onChange={this.props.onToggleDismiss} value={issue.dismiss}>
+              onChange={this.onToggleDismiss} value={issue.dismiss}>
             </Checkbox>
             <Checkbox label="VHA" name={`${issue.id}-chk_vha`}
-              onChange={this.props.onToggleVHA} value={issue.vha}>
+              onChange={this.onToggleVHA} value={issue.vha}>
             </Checkbox>
         </div>;
   }
@@ -57,15 +57,15 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  HearingWorksheetSingleIssue: state
+  HearingWorksheetPreImpressions: state
 });
 
-HearingWorksheetSingleIssue.propTypes = {
+HearingWorksheetPreImpressions.propTypes = {
   issue: PropTypes.object.isRequired
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HearingWorksheetSingleIssue);
+)(HearingWorksheetPreImpressions);
 

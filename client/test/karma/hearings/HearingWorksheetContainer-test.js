@@ -53,6 +53,7 @@ describe('HearingWorksheetContainer', () => {
         appeal_0: {
           issues: {
             issue_0: {
+              id: 'issue_0',
               program: 'Compensation',
               issue: 'Service connection',
               levels: 'All Others, 5010 - Arthritis, due to trauma',
@@ -65,6 +66,7 @@ describe('HearingWorksheetContainer', () => {
               vha: false
             },
             issue_1: {
+              id: 'issue_1',
               program: 'Compensation',
               issue: 'Service connection',
               levels: 'All Others, 5010 - Migrane',

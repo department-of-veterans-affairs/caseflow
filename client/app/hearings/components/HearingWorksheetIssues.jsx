@@ -4,7 +4,7 @@ import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import HearingWorksheetSingleIssue from './HearingWorksheetPreImpressions';
+import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 
 import {
   onDescriptionChange
@@ -57,12 +57,14 @@ class HearingWorksheetIssues extends PureComponent {
 
     // Maps over all issues inside stream
     const rowObjects = Object.keys(worksheetStreamsIssues).map((issue, key) => {
-        let issueRow = worksheetStreamsIssues[issue];
+
+      let issueRow = worksheetStreamsIssues[issue];
+
+      // TODO Counter
       return {
         counter: <b>{key + 1}.</b>,
-        program: worksheetStreamsIssues[issue].program,
-        issue: worksheetStreamsIssues[issue].issue,
-        levels: worksheetStreamsIssues[issue].levels,
+        program: issueRow.program,
+        levels: issueRow.levels,
         description: <div>
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
@@ -74,7 +76,7 @@ class HearingWorksheetIssues extends PureComponent {
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
-                  <HearingWorksheetSingleIssue
+                  <HearingWorksheetPreImpressions
                     issue={worksheetStreamsIssues[issue]}
                     />
                   </div>
@@ -107,4 +109,3 @@ export default connect(
 HearingWorksheetIssues.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired
 };
-
