@@ -37,62 +37,37 @@ class Hearings::WorksheetsController < HearingsController
     {
       veteran: {},
       appeal: {},
-<<<<<<< HEAD
-      streams: {
-        appeal_0: {
-          issues: {
-            issue_0: {
-              id: "issue_0",
-              program: "Compensation",
-              issue: "Service connection",
-              levels: "All Others, 5010 - Arthritis, due to trauma",
-              description: "Left Elbow",
-              reopen: true,
-              remand: true,
-              allow: true,
-              dismiss: false,
-              deny: false,
-              vha: false
-            },
-            issue_1: {
-              id: "issue_1",
-              program: "Compensation",
-              issue: "Service connection",
-              levels: "All Others, 5010 - Migrane",
-              description: "Frequent headaches, caused by concussion",
-              reopen: false,
-              remand: true,
-              allow: true,
-              dismiss: false,
-              deny: false,
-              vha: true
-            }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88,
-          contentions: "This is a contentions comment",
-          periods: "This is a periods comment"
-        }
-      }
-    }
-=======
       streams: { appeal_0: {
-        issues: { issue_0: {
-          program: "Compensation",
-          issue: "Service connection",
-          levels: "All Others, 5010 - Arthritis, due to trauma",
-          description: "Left Elbow",
-          reopen: true,
-          remand: true,
-          allow: true,
-          dismiss: false,
-          deny: false,
-          vha: false } },
+        issues: {
+          issue_0: {
+            id: "issue_0",
+            program: "Compensation",
+            issue: "Service connection",
+            levels: "All Others, 5010 - Arthritis, due to trauma",
+            description: "Left Elbow",
+            reopen: true,
+            remand: true,
+            allow: true,
+            dismiss: false,
+            deny: false,
+            vha: false },
+          issue_1: {
+            id: "issue_1",
+            program: "Compensation",
+            issue: "Service connection",
+            levels: "All Others, 5010 - Migrane",
+            description: "Frequent headaches, caused by concussion",
+            reopen: false,
+            remand: true,
+            allow: true,
+            dismiss: false,
+            deny: false,
+            vha: true
+             }
+            },
         nod: 99,
         soc: 10,
         docs_in_efolder: 88 } }
     }.merge(worksheet.to_hash_with_appeals_and_issues)
->>>>>>> 86d11b2127774154361f188a9ba4000743337d76
   end
 end
