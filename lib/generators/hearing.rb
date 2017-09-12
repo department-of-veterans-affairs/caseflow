@@ -13,6 +13,7 @@ class Generators::Hearing
         witness: "Jane Doe attended",
         contentions: "The veteran believes their knee is hurt",
         evidence: "Medical exam occurred on 10/10/2008",
+        military_service: "Veteran was in the Vietnam War",
         comments_for_attorney: "Look for knee-related medical records"
       }
     end
