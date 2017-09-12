@@ -7,13 +7,7 @@ import { connect } from 'react-redux';
 import HearingWorksheetSingleIssue from './HearingWorksheetPreImpressions';
 
 import {
-  onDescriptionChange,
-  onToggleReopen,
-  onToggleAllow,
-  onToggleDeny,
-  onToggleRemand,
-  onToggleDismiss,
-  onToggleVHA
+  onDescriptionChange
        } from '../actions/Issue';
 
 class HearingWorksheetIssues extends PureComponent {
@@ -104,13 +98,7 @@ const mapStateToProps = (state) => ({
 
 // TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onDescriptionChange,
-  onToggleReopen,
-  onToggleAllow,
-  onToggleDeny,
-  onToggleRemand,
-  onToggleDismiss,
-  onToggleVHA
+  onDescriptionChange
 }, dispatch);
 
 export default connect(
