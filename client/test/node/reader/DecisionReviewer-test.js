@@ -159,7 +159,7 @@ describe('DecisionReviewer', () => {
         wrapper.find('#button-AddComment').simulate('click');
 
         // Click on the pdf at the location specified by event
-        wrapper.find('#comment-layer-0').simulate('click', event);
+        wrapper.find('#comment-layer-0-/document/1/pdf').simulate('click', event);
 
         // Add text to the comment text box.
         wrapper.find('#addComment').simulate('change',

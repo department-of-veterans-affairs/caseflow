@@ -13,6 +13,7 @@ export default class Checkbox extends React.Component {
       required,
       value,
       disabled,
+      id,
       errorMessage
     } = this.props;
 
@@ -34,7 +35,7 @@ export default class Checkbox extends React.Component {
           name={name}
           onChange={this.onChange}
           type="checkbox"
-          id={name}
+          id={id || name}
           checked={value}
           disabled={disabled}
         />

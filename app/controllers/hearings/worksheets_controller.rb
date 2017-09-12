@@ -47,7 +47,15 @@ class Hearings::WorksheetsController < HearingsController
           issues: {
             issue_0: {
               program: "Compensation",
-              description: "Left Elbow"
+              issue: "Service connection",
+              levels: "All Others, 5010 - Arthritis, due to trauma",
+              description: "Left Elbow",
+              reopen: true,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: false
             }
           },
           nod: 99,

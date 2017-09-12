@@ -5,7 +5,6 @@ RSpec.feature "Hearings" do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1, 13))
-    FeatureToggle.enable!(:reader)
   end
 
   let(:appeal) do

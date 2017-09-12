@@ -7,9 +7,18 @@ import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-
+// Todo Move Issue Actions to Component
 import {
   onDescriptionChange,
+  onToggleReopen,
+  onToggleAllow,
+  onToggleDeny,
+  onToggleRemand,
+  onToggleDismiss,
+  onToggleVHA
+       } from './actions/Issue';
+
+import {
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
@@ -192,6 +201,12 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDescriptionChange,
+  onToggleReopen,
+  onToggleAllow,
+  onToggleDeny,
+  onToggleRemand,
+  onToggleDismiss,
+  onToggleVHA,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,

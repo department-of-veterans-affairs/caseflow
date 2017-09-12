@@ -17,7 +17,13 @@ export const SET_TRANSCRIPT_REQUESTED = 'SET_TRANSCRIPT_REQUESTED';
 export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
 
 // issues
-export const SET_DESCRIPTIONS = 'SET_DESCRIPTIONS';
+export const SET_DESCRIPTION = 'SET_DESCRIPTION';
+export const SET_REOPEN = 'SET_REOPEN';
+export const SET_ALLOW = 'SET_ALLOW';
+export const SET_DENY = 'SET_DENY';
+export const SET_REMAND = 'SET_REMAND';
+export const SET_DISMISS = 'SET_DISMISS';
+export const SET_VHA = 'SET_VHA';
 
 export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_MILITARY_SERVICE = 'SET_MILITARY_SERVICE';

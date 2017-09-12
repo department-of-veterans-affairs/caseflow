@@ -183,12 +183,12 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_DESCRIPTIONS, () => {
+  context(Constants.SET_DESCRIPTION, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_DESCRIPTIONS,
+        type: Constants.SET_DESCRIPTION,
         payload: {
           description: 'Elbow Arthritis'
         }
@@ -196,20 +196,121 @@ describe('hearingsReducer', () => {
     });
 
     it('sets worksheet issue description', () => {
-
-      // TODO Make reusable
-      expect(state.worksheet.streams).to.deep.equal({
-        appeal_0: {
-          issues: {
-            issue_0: {
-              description: 'Elbow Arthritis'
-            }
-          }
-        }
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { description: 'Elbow Arthritis' }
       }
      );
     });
   });
+
+  context(Constants.SET_REOPEN, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_REOPEN,
+        payload: { reopen: true }
+      });
+    });
+
+    it('sets worksheet issue reopen', () => {
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { reopen: true }
+      }
+     );
+    });
+  });
+
+  context(Constants.SET_ALLOW, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_ALLOW,
+        payload: { allow: true }
+      });
+    });
+
+    it('sets worksheet issue allow', () => {
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { allow: true }
+      }
+     );
+    });
+  });
+
+  context(Constants.SET_DENY, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_DENY,
+        payload: { deny: true }
+      });
+    });
+
+    it('sets worksheet issue deny', () => {
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { deny: true }
+      }
+     );
+    });
+  });
+
+  context(Constants.SET_REMAND, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_REMAND,
+        payload: { remand: true }
+      });
+    });
+
+    it('sets worksheet issue remand', () => {
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { remand: true }
+      }
+     );
+    });
+  });
+
+  context(Constants.SET_DISMISS, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_DISMISS,
+        payload: { dismiss: true }
+      });
+    });
+
+    it('sets worksheet issue dismiss', () => {
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { dismiss: true }
+      }
+     );
+    });
+  });
+
+  context(Constants.SET_VHA, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.SET_VHA,
+        payload: { vha: true }
+      });
+    });
+
+    it('sets worksheet issue vha', () => {
+      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
+        issue_0: { vha: true }
+      }
+     );
+    });
+  });
+
 
   context(Constants.SET_CONTENTIONS, () => {
     let state;
