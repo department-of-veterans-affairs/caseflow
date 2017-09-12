@@ -24,7 +24,7 @@ class HearingWorksheetIssueDescription extends PureComponent {
         </div>;
   }
 }
-// TODO to move the default value to the backend
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDescriptionChange
 }, dispatch);

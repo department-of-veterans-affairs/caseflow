@@ -24,7 +24,7 @@ class HearingWorksheetPreImpressions extends PureComponent {
   render() {
     let { issue } = this.props;
 
-    return <div>
+    return <div className="cf-hearings-worksheet-actions">
             <Checkbox label="Re-Open" name={`${issue.id}-chk_reopen`}
               onChange={this.onToggleReopen} value={issue.reopen}>
             </Checkbox>
