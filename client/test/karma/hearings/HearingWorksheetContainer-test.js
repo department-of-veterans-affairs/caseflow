@@ -59,11 +59,13 @@ describe('HearingWorksheetContainer', () => {
           },
           nod: 99,
           soc: 10,
-          docs_in_efolder: 88,
-          contentions: '',
-          periods: ''
+          docs_in_efolder: 88
         }
-      }
+      },
+      contentions: '',
+      military_service: '',
+      evidence: '',
+      comments_for_attorney: ''
     }));
     expect(wrapper.text()).to.include('Hearing Worksheet');
   });
