@@ -43,6 +43,7 @@ class Hearings::WorksheetsController < HearingsController
         appeal_0: {
           issues: {
             issue_0: {
+              id: "issue_0",
               program: "Compensation",
               issue: "Service connection",
               levels: "All Others, 5010 - Arthritis, due to trauma",
@@ -53,6 +54,19 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: false,
               vha: false
+            },
+            issue_1: {
+              id: "issue_1",
+              program: "Compensation",
+              issue: "Service connection",
+              levels: "All Others, 5010 - Migrane",
+              description: "Frequent headaches, caused by concussion",
+              reopen: false,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: true
             }
           },
           nod: 99,
