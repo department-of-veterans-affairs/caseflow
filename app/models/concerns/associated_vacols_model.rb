@@ -12,6 +12,9 @@ module AssociatedVacolsModel
     # do subsequent VACOLS DB lookups
     def vacols_attr_accessor(*fields)
       fields.each do |field|
+        @vacols_fields = {} if !@vacols_fields
+        @vacols_fields[field] = true
+
         define_method field do
           check_and_load_vacols_data! unless field_set?(field)
           instance_variable_get("@#{field}".to_sym)
@@ -24,15 +27,19 @@ module AssociatedVacolsModel
         end
       end
     end
+
+    def vacols_field?(field)
+      @vacols_fields && @vacols_fields[field]
+    end
   end
 
   def field_set?(field)
-    @set_fields && @set_fields[field.to_sym]
+    @set_fields && @set_fields[field]
   end
 
   def mark_field_is_set(field)
     @set_fields = {} if !@set_fields
-    @set_fields[field.to_sym] = true
+    @set_fields[field] = true
   end
 
   # Setter method for assigning a hash of values
