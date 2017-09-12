@@ -33,7 +33,7 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_worksheet
+  def hearing_worksheet # rubocop:disable Metrics/MethodLength
     {
       veteran: {},
       appeal: {},
@@ -62,9 +62,8 @@ class Hearings::WorksheetsController < HearingsController
             allow: true,
             dismiss: false,
             deny: false,
-            vha: true
-             }
-            },
+            vha: true }
+        },
         nod: 99,
         soc: 10,
         docs_in_efolder: 88 } }
