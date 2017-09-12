@@ -99,12 +99,12 @@ describe AssociatedVacolsModel do
       is_expected.to be_falsy
     end
 
-    context "when a different field hasn't been set" do
+    context "when a different field has been set" do
       before do
         model.bar = "value"
       end
 
-      it "returns false" do
+      it "returns false for the current field" do
         is_expected.to be_falsy
       end
     end
