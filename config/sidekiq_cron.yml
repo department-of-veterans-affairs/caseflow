@@ -7,11 +7,12 @@
 # | | | | |
 
 # Create establish claim task runs every day at 4:30pm
-create_establish_claim_tasks_job:
-  cron: "30 16 * * * America/New_York"
-  class: "CreateEstablishClaimTasksJob"
-  queue: default
-  active_job: true
+# TODO (sunil) officially remove this from the config
+#create_establish_claim_tasks_job:
+#  cron: "30 16 * * * America/New_York"
+#  class: "CreateEstablishClaimTasksJob"
+#  queue: default
+#  active_job: true
 
 reassign_old_tasks:
   cron: "1 0 * * * America/New_York"
@@ -20,11 +21,12 @@ reassign_old_tasks:
   active_job: true
 
 # This runs 30 min after the create_establish_claim_tasks_job
-prepare_establish_claim_tasks_job:
-  cron: "0 17 * * * America/New_York"
-  class: "PrepareEstablishClaimTasksJob"
-  queue: default
-  active_job: true
+# TODO (sunil) officially remove this from the config
+#prepare_establish_claim_tasks_job:
+#  cron: "0 17 * * * America/New_York"
+#  class: "PrepareEstablishClaimTasksJob"
+#  queue: default
+#  active_job: true
 
 # This job is used to debug https://github.com/department-of-veterans-affairs/caseflow/issues/1814
 # It is scheduled to run every 5 minute to make sure Sidekiq and Sidekiq Cron
