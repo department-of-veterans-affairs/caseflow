@@ -91,7 +91,7 @@ describe AssociatedVacolsModel do
       end
     end
   end
-  
+
   context "#field_set?" do
     subject { model.field_set?(:foo) }
 
@@ -119,7 +119,7 @@ describe AssociatedVacolsModel do
       end
     end
   end
-  
+
   context "#mark_field_is_set" do
     it "field_set? returns true after running mark_field_is_set" do
       expect(model.field_set?(:foo)).to be_falsy
