@@ -114,9 +114,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { contentions: { $set: action.payload.contentions } }
     });
 
-  case Constants.SET_PERIODS:
+  case Constants.SET_MILITARY_SERVICE:
     return update(state, {
-      worksheet: { periods: { $set: action.payload.periods } }
+      worksheet: { military_service: { $set: action.payload.militaryService } }
     });
 
   case Constants.SET_EVIDENCE:
@@ -124,9 +124,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { evidence: { $set: action.payload.evidence } }
     });
 
-  case Constants.SET_COMMENTS:
+  case Constants.SET_COMMENTS_FOR_ATTORNEY:
     return update(state, {
-      worksheet: { comments: { $set: action.payload.comments } }
+      worksheet: { comments_for_attorney: { $set: action.payload.commentsForAttorney } }
     });
 
   case Constants.TOGGLE_SAVING:

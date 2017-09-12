@@ -56,10 +56,14 @@ class VACOLS::CaseHearing < VACOLS::Record
     def upcoming_for_judge(css_id)
       id = connection.quote(css_id)
 
-      select_hearings
-        .where("staff.sdomainid = #{id}")
-        .where(WITHOUT_DISPOSITION)
-        .where(NOT_MASTER_RECORD)
+      hearings = select_hearings.where("staff.sdomainid = #{id}")
+                                .where("hearing_date > ?", 1.week.ago)
+
+      # For a video master record, the hearing_pkseq number becomes the VDKEY that links all
+      # the child records (veterans scheduled for that video) to the parent record
+      children_ids = hearings.map(&:vdkey).compact.map(&:to_i)
+      # Filter out video master records with children
+      hearings.reject { |hearing| hearing.folder_nr =~ /VIDEO/ && children_ids.include?(hearing.hearing_pkseq) }
     end
 
     def for_appeal(appeal_vacols_id)
