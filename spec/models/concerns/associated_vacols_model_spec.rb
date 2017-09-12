@@ -16,6 +16,7 @@ describe AssociatedVacolsModel do
     include AssociatedVacolsModel
 
     vacols_attr_accessor :foo, :bar, :foobar
+    attr_accessor :attr
 
     def self.repository
       TestVacolsModelRepository
@@ -50,8 +51,19 @@ describe AssociatedVacolsModel do
     context "fields not set trigger a call to load data" do
       it do
         model.bar = "hello"
+        expect { model.foo }.to output(/Future Error/).to_stdout
         expect(model.foo).to eq("bar")
       end
+    end
+  end
+
+  context ".vacols_field?" do
+    it "returns true for variables set with vacols_attr_accessor" do
+      expect(TestVacolsModel.vacols_field?(:foo)).to be_truthy
+    end
+
+    it "returns false for variables set with attr_accessor" do
+      expect(TestVacolsModel.vacols_field?(:attr)).to be_falsy
     end
   end
 

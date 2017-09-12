@@ -21,25 +21,28 @@ module AssociatedVacolsModel
         end
 
         define_method "#{field}=" do |value|
-          # @vacols_load_status = :disabled
+          @vacols_load_status = :disabled
           mark_field_is_set(field)
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
     end
 
+    def vacols_fields
+      @vacols_fields ||= {}
+    end
+
     def vacols_field?(field)
-      @vacols_fields && @vacols_fields[field]
+      vacols_fields[field]
     end
   end
 
   def field_set?(field)
-    @set_fields && @set_fields[field]
+    set_fields[field]
   end
 
   def mark_field_is_set(field)
-    @set_fields = {} if !@set_fields
-    @set_fields[field] = true
+    set_fields[field] = true
   end
 
   # Setter method for assigning a hash of values
@@ -53,6 +56,11 @@ module AssociatedVacolsModel
 
   def check_and_load_vacols_data!
     # raise LazyLoadingDisabledError if @vacols_load_status == :disabled
+    if @vacols_load_status == :disabled
+      puts "Future Error: Lazy Load triggered after VACOLS values are set."
+      @vacols_load_status = nil
+    end
+
     perform_vacols_request unless @vacols_load_status
 
     vacols_success?
@@ -63,6 +71,10 @@ module AssociatedVacolsModel
   end
 
   private
+
+  def set_fields
+    @set_fields ||= {}
+  end
 
   def perform_vacols_request
     # Use :loading status to prevent infinite loop
