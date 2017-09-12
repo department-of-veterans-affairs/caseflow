@@ -55,6 +55,8 @@ module AssociatedVacolsModel
   end
 
   def check_and_load_vacols_data!
+    # When we're ready to turn the error on, replace the if below with the
+    # commented out error.
     # raise LazyLoadingDisabledError if @vacols_load_status == :disabled
     if @vacols_load_status == :disabled
       puts "Future Error: Lazy Load triggered after VACOLS values are set."
