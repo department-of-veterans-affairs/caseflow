@@ -329,20 +329,20 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_PERIODS, () => {
+  context(Constants.SET_MILITARY_SERVICE, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_PERIODS,
+        type: Constants.SET_MILITARY_SERVICE,
         payload: {
-          periods: 'filled'
+          militaryService: 'filled'
         }
       });
     });
 
-    it('sets worksheet periods', () => {
-      expect(state.worksheet.periods).to.deep.equal('filled');
+    it('sets worksheet military service', () => {
+      expect(state.worksheet.military_service).to.deep.equal('filled');
     });
   });
 
@@ -363,20 +363,20 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_COMMENTS, () => {
+  context(Constants.SET_COMMENTS_FOR_ATTORNEY, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_COMMENTS,
+        type: Constants.SET_COMMENTS_FOR_ATTORNEY,
         payload: {
-          comments: 'filled'
+          commentsForAttorney: 'filled'
         }
       });
     });
 
-    it('sets worksheet comments', () => {
-      expect(state.worksheet.comments).to.deep.equal('filled');
+    it('sets worksheet comments for attorney', () => {
+      expect(state.worksheet.comments_for_attorney).to.deep.equal('filled');
     });
   });
 });

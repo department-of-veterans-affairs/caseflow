@@ -24,7 +24,6 @@ class HearingWorksheetIssues extends PureComponent {
 
   onDescriptionChange = (description, id) => this.props.onDescriptionChange(id, description)
 
-
   render() {
     let {
      worksheetStreamsIssues
@@ -62,10 +61,8 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-
     // Maps over all issues inside stream
     const rowObjects = Object.keys(worksheetStreamsIssues).map((issue) => {
-
 
       let issueRow = worksheetStreamsIssues[issue];
 

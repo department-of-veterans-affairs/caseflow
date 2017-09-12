@@ -5,7 +5,7 @@ class Hearings::WorksheetsController < HearingsController
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
-        render json: hearing_worksheet(params[:id])
+        render json: hearing_worksheet
       end
     end
   end
@@ -18,10 +18,10 @@ class Hearings::WorksheetsController < HearingsController
 
   private
 
-  # Until the frontend makes a PUT request, code coverage is at risk, so...
-  # def worksheet
-  #  @worksheet ||= hearing
-  # end
+  def worksheet
+    Hearing.find(params[:hearing_id])
+  end
+  helper_method :worksheet
 
   # Until the frontend makes a PUT request, code coverage is at risk, so...
   # def worksheet_params
@@ -33,12 +33,11 @@ class Hearings::WorksheetsController < HearingsController
   #                                    ])
   # end
 
-  def hearing_worksheet(_vbms_id) # rubocop:disable Metrics/MethodLength
-    # Appeal.where(vmbs_id: _vbms_id)??? TBD
-    # possible API
+  def hearing_worksheet
     {
       veteran: {},
       appeal: {},
+<<<<<<< HEAD
       streams: {
         appeal_0: {
           issues: {
@@ -77,5 +76,23 @@ class Hearings::WorksheetsController < HearingsController
         }
       }
     }
+=======
+      streams: { appeal_0: {
+        issues: { issue_0: {
+          program: "Compensation",
+          issue: "Service connection",
+          levels: "All Others, 5010 - Arthritis, due to trauma",
+          description: "Left Elbow",
+          reopen: true,
+          remand: true,
+          allow: true,
+          dismiss: false,
+          deny: false,
+          vha: false } },
+        nod: 99,
+        soc: 10,
+        docs_in_efolder: 88 } }
+    }.merge(worksheet.to_hash_with_appeals_and_issues)
+>>>>>>> 86d11b2127774154361f188a9ba4000743337d76
   end
 end
