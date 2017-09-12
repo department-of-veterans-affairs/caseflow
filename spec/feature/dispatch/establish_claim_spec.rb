@@ -820,4 +820,15 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
     end
   end
+
+  context "As another employee" do
+    let!(:current_user) do
+      User.authenticate!(roles: ["Some non-Dispatch role"])
+    end
+
+    scenario "Attempts to view establish claim pages" do
+      visit "/dispatch/establish-claim"
+      expect(page).to have_content("You aren't authorized")
+    end
+  end
 end
