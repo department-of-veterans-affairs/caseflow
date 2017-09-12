@@ -35,7 +35,7 @@ export const newHearingIssueState = (state, action, spec) => {
       streams: {
         appeal_0: {
           issues: {
-            issue_0: spec
+            [action.payload.issue_id]: spec
           }
         }
       }
