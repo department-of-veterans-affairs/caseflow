@@ -1,14 +1,29 @@
 import React, { PureComponent } from 'react';
-import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import HearingWorksheetSingleIssue from './HearingWorksheetPreImpressions';
+
+import {
+  onDescriptionChange,
+  onToggleReopen,
+  onToggleAllow,
+  onToggleDeny,
+  onToggleRemand,
+  onToggleDismiss,
+  onToggleVHA
+       } from '../actions/Issue';
 
 class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => {
     return index;
   }
+
+  onDescriptionChange = (description, id) => this.props.onDescriptionChange(id, description)
+
 
   render() {
     let {
@@ -47,50 +62,33 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
+
     // Maps over all issues inside stream
     const rowObjects = Object.keys(worksheetStreamsIssues).map((issue) => {
 
+
+      let issueRow = worksheetStreamsIssues[issue];
+
+
       return {
         counter: <b>1.</b>,
-        program: worksheetStreamsIssues[issue].program,
-        issue: worksheetStreamsIssues[issue].issue,
-        levels: worksheetStreamsIssues[issue].levels,
+        program: issueRow.program,
+        levels: issueRow.levels,
         description: <div>
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
             aria-label="Description"
             name="Description"
-            id={'issue-description'}
-            value={worksheetStreamsIssues[issue].description}
-            onChange={this.props.onDescriptionChange}
+            id={issueRow.id}
+            value={issueRow.description}
+            onChange={this.onDescriptionChange.bind(issueRow.description, issueRow.id)}
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
-          <Checkbox label="Re-Open" name={ 'chk_reopen'}
-            onChange={this.props.onToggleReopen}
-            value={worksheetStreamsIssues[issue].reopen}>
-          </Checkbox>
-          <Checkbox label="Allow" name={ 'chk_allow'}
-            onChange={this.props.onToggleAllow}
-            value={worksheetStreamsIssues[issue].allow}>
-          </Checkbox>
-          <Checkbox label="Deny" name={ 'chk_deny'}
-            onChange={this.props.onToggleDeny}
-            value={worksheetStreamsIssues[issue].deny}>
-          </Checkbox>
-          <Checkbox label="Remand" name={ 'chk_remand'}
-            onChange={this.props.onToggleRemand}
-            value={worksheetStreamsIssues[issue].remand}>
-          </Checkbox>
-          <Checkbox label="Dismiss" name={ 'chk_dismiss'}
-            onChange={this.props.onToggleDismiss}
-            value={worksheetStreamsIssues[issue].dismiss}>
-          </Checkbox>
-          <Checkbox label="VHA" name={ 'chk_vha'}
-            onChange={this.props.onToggleVHA}
-            value={worksheetStreamsIssues[issue].vha}>
-          </Checkbox>
-        </div>
+                  <HearingWorksheetSingleIssue
+                    issue={worksheetStreamsIssues[issue]}
+                    />
+                  </div>
       };
     });
 
@@ -103,9 +101,27 @@ class HearingWorksheetIssues extends PureComponent {
           />;
   }
 }
+const mapStateToProps = (state) => ({
+  HearingWorksheetIssues: state
+});
+
+// TODO to move the default value to the backend
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onDescriptionChange,
+  onToggleReopen,
+  onToggleAllow,
+  onToggleDeny,
+  onToggleRemand,
+  onToggleDismiss,
+  onToggleVHA
+}, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HearingWorksheetIssues);
 
 HearingWorksheetIssues.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired
 };
 
-export default HearingWorksheetIssues;
