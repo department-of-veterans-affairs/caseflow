@@ -69,7 +69,7 @@ class HearingWorksheetIssues extends PureComponent {
 
       let issueRow = worksheetStreamsIssues[issue];
 
-
+      // TODO Counter
       return {
         counter: <b>1.</b>,
         program: issueRow.program,
