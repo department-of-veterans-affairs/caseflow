@@ -33,13 +33,9 @@ export class PdfPage extends React.Component {
     this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
   }
 
-  getCanvasRef = (canvas) => {
-    this.canvas = canvas;
-  }
+  getCanvasRef = (canvas) => this.canvas = canvas
 
-  getTextLayerRef = (textLayer) => {
-    this.textLayer = textLayer;
-  }
+  getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
   setIsDrawing = (value) => {
     this.props.setIfPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
@@ -55,9 +51,7 @@ export class PdfPage extends React.Component {
       return Promise.reject();
     }
     const currentScale = this.props.scale;
-
-    this.setIsDrawing(true);
-    return this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
+    const renderCanvas = (pdfPage) => {
       // The viewport is a PDFJS concept that combines the size of the
       // PDF pages with the scale go get the dimensions of the divs.
       const viewport = pdfPage.getViewport(this.props.scale);
@@ -80,8 +74,8 @@ export class PdfPage extends React.Component {
           viewport
         });
       });
-    }).
-    then(({ pdfPage, viewport }) => {
+    };
+    const getText = ({ pdfPage, viewport }) => {
       // Get the text from the PDF and write it.
       return pdfPage.getTextContent().then((textContent) => {
         return Promise.resolve({
@@ -89,8 +83,8 @@ export class PdfPage extends React.Component {
           viewport
         });
       });
-    }).
-    then(({ textContent, viewport }) => {
+    };
+    const drawText = ({ textContent, viewport }) => {
       PDFJS.renderTextLayer({
         textContent,
         container: this.textLayer,
@@ -103,18 +97,24 @@ export class PdfPage extends React.Component {
       // If the scale has changed, draw the page again at the latest scale.
       if (currentScale !== this.props.scale) {
         return this.drawPage();
-      } else {
-        return Promise.resolve();
       }
-    }).
-    catch(() => {
+
+      return Promise.resolve();
+
+    };
+    const handleError = () => {
       this.setIsDrawing(false);
-      if (currentScale !== this.props.scale) {
-        return this.drawPage();
-      } else {
-        return Promise.reject();
-      }
-    });
+
+      return Promise.reject();
+    };
+
+    this.setIsDrawing(true);
+
+    return this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).
+      then(renderCanvas).
+      then(getText).
+      then(drawText).
+      catch(handleError);
   }
 
   componentDidMount = () => {
@@ -134,8 +134,8 @@ export class PdfPage extends React.Component {
     const drawAndUpdateState = () => {
       this.props.setIfPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
       this.drawPage();
-    }
-    console.log('inUpdate', this.props.shouldDraw, this.props.scale, prevProps.scale, this.isDrawing);
+    };
+
     if (this.props.shouldDraw) {
       if (!prevProps.shouldDraw) {
         drawAndUpdateState();
@@ -164,26 +164,20 @@ export class PdfPage extends React.Component {
   }
 
   render() {
-    console.log('rendering');
-
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
-    const currentWidth = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
-    const currentHeight = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
+    const currentWidth = this.props.scale * _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
+    const currentHeight = this.props.scale * _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-      width: `${this.props.scale * currentWidth}px`,
-      height: `${this.props.scale * currentHeight}px`,
+      width: `${currentWidth}px`,
+      height: `${currentHeight}px`,
       verticalAlign: 'top',
       display: this.props.isVisible ? '' : 'none'
     };
-    const textLayerStyle = {
-      width: `${this.props.scale * currentWidth}px`,
-      height: `${this.props.scale * currentHeight}px`
-    }
     // Pages that are currently drawing should not be visible since they may be currently rendered
     // at the wrong scale.
     const pageContentsVisibleClass = classNames({
@@ -200,16 +194,16 @@ export class PdfPage extends React.Component {
             ref={this.getCanvasRef}
             className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
-            {this.props.isVisible && <CommentLayer
+            <CommentLayer
               documentId={this.props.documentId}
               pageIndex={this.props.pageIndex}
               scale={this.props.scale}
-            />}
+              getTextLayerRef={this.getTextLayerRef}
+              file={this.props.file}
+              dimensions={{ currentWidth,
+                currentHeight }}
+            />
           </div>
-          <div
-            ref={this.getTextLayerRef}
-            style={textLayerStyle}
-            className="textLayer"/>
         </div>
       </div>;
   }
@@ -242,7 +236,7 @@ const mapStateToProps = (state, props) => {
     isDrawn: page.isDrawn,
     isDrawing: page.isDrawing,
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
-  }
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfPage);

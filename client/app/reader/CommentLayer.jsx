@@ -19,8 +19,11 @@ const DIV_STYLING = {
 };
 
 // The comment layer is a div on top of a page that draws the comment
-// icons on the page. It is also the div that receives the onClick
-// events when placing new comments.
+// icons on the page. It is the div that receives the onClick
+// events when placing new comments. It is also the div that displays
+// the PDF text elements. We need text elements in this div since it
+// is the largest zIndex div, and blocks lower divs from receiving click events.
+// The text layer needs to be click-able so users can highlight/copy/paste them.
 class CommentLayer extends PureComponent {
   constructor(props) {
     super(props);
@@ -134,8 +137,13 @@ class CommentLayer extends PureComponent {
     onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
 
   render() {
+    const TEXT_LAYER_STYLING = {
+      width: `${this.props.currentWidth}px`,
+      height: `${this.props.currentHeight}px`
+    };
+
     return <div
-      id={`comment-layer-${this.props.pageIndex}`}
+      id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
       style={DIV_STYLING}
       onDragOver={this.onPageDragOver}
       onDrop={this.onCommentDrop}
@@ -143,6 +151,10 @@ class CommentLayer extends PureComponent {
       onMouseMove={this.mouseListener}
       ref={this.getCommentLayerDivRef}>
       {this.getCommentIcons()}
+      <div
+        style={TEXT_LAYER_STYLING}
+        ref={this.props.getTextLayerRef}
+        className="textLayer"/>
     </div>;
   }
 }
@@ -155,11 +167,17 @@ CommentLayer.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   })),
+  dimensions: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number
+  }),
+  getTextLayerRef: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   placingAnnotationIconPageCoords: PropTypes.object,
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
   pageIndex: PropTypes.number,
+  file: PropTypes.string,
   documentId: PropTypes.number
 };
 

@@ -7,15 +7,24 @@ import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-
+// Todo Move Issue Actions to Component
 import {
   onDescriptionChange,
+  onToggleReopen,
+  onToggleAllow,
+  onToggleDeny,
+  onToggleRemand,
+  onToggleDismiss,
+  onToggleVHA
+       } from './actions/Issue';
+
+import {
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
@@ -141,7 +150,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value={this.props.worksheet.contentions || ''}
+              value={this.props.worksheet.contentions}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -150,16 +159,16 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheet.periods || ''}
-              onChange={this.props.onPeriodsChange}
-              id="worksheet-periods"
+              value={this.props.worksheet.military_service}
+              onChange={this.props.onMilitaryServiceChange}
+              id="worksheet-military-service"
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value={this.props.worksheet.evidence || ''}
+              value={this.props.worksheet.evidence}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -168,9 +177,9 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments || ''}
-              id="worksheet-comments"
-              onChange={this.props.onCommentsChange}
+              value={this.props.worksheet.comments_for_attorney}
+              id="worksheet-comments-for-attorney"
+              onChange={this.props.onCommentsForAttorneyChange}
               />
           </div>
         </form>
@@ -190,15 +199,20 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
-// TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDescriptionChange,
+  onToggleReopen,
+  onToggleAllow,
+  onToggleDeny,
+  onToggleRemand,
+  onToggleDismiss,
+  onToggleVHA,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange
 }, dispatch);
 
 export default connect(

@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 
-class HearingWorksheetIssues extends Component {
+class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => {
     return index;
@@ -46,90 +46,50 @@ class HearingWorksheetIssues extends Component {
         valueName: 'actions'
       }
     ];
-    // Temp Placeholder issues
-    const issues = [
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 5010 - Arthritis, due to trauma',
-        description: worksheetStreamsIssues.description,
-        reopen: true,
-        remand: true,
-        allow: true,
-        dismiss: true,
-        deny: true,
-        vha: true
-      }
-    ];
 
-    const rowObjects = issues.map((issue) => {
+    // Maps over all issues inside stream
+    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue, key) => {
 
       return {
-        counter: <b>1.</b>,
-        program: issue.program,
-        issue: issue.issue,
-        issueID: issue.issueID,
-        levels: issue.levels,
+        counter: <b>{key + 1}.</b>,
+        program: worksheetStreamsIssues[issue].program,
+        issue: worksheetStreamsIssues[issue].issue,
+        levels: worksheetStreamsIssues[issue].levels,
         description: <div>
           <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
           <TextareaField
             aria-label="Description"
-            // TODO Update placeholder loop | new structure
             name="Description"
             id={'issue-description'}
-            value={issue.description}
+            value={worksheetStreamsIssues[issue].description}
             onChange={this.props.onDescriptionChange}
             />
         </div>,
         actions: <div className="cf-hearings-worksheet-actions">
-          <Checkbox
-            label="Re-Open"
-            name={'chk_reopen'}
-             onChange={() => {
-               return true;
-             }}
-            value={issues.reopen}
-          ></Checkbox>
-          <Checkbox
-            label="Allow"
-            name={'chk_allow'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.allow}
-          ></Checkbox>
-          <Checkbox
-            label="Deny"
-            name={'chk_deny'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.deny}
-          ></Checkbox>
-          <Checkbox
-            label="Remand"
-            name={'chk_remand'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.remand}
-          ></Checkbox>
-          <Checkbox
-            label="Dismiss"
-            name={'chk_dismiss'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.dismiss}
-          ></Checkbox>
-          <Checkbox
-            label="VHA"
-            name={'chk_vha'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.vha}
-          ></Checkbox>
+          <Checkbox label="Re-Open" name={ 'chk_reopen'}
+            onChange={this.props.onToggleReopen}
+            value={worksheetStreamsIssues[issue].reopen}>
+          </Checkbox>
+          <Checkbox label="Allow" name={ 'chk_allow'}
+            onChange={this.props.onToggleAllow}
+            value={worksheetStreamsIssues[issue].allow}>
+          </Checkbox>
+          <Checkbox label="Deny" name={ 'chk_deny'}
+            onChange={this.props.onToggleDeny}
+            value={worksheetStreamsIssues[issue].deny}>
+          </Checkbox>
+          <Checkbox label="Remand" name={ 'chk_remand'}
+            onChange={this.props.onToggleRemand}
+            value={worksheetStreamsIssues[issue].remand}>
+          </Checkbox>
+          <Checkbox label="Dismiss" name={ 'chk_dismiss'}
+            onChange={this.props.onToggleDismiss}
+            value={worksheetStreamsIssues[issue].dismiss}>
+          </Checkbox>
+          <Checkbox label="VHA" name={ 'chk_vha'}
+            onChange={this.props.onToggleVHA}
+            value={worksheetStreamsIssues[issue].vha}>
+          </Checkbox>
         </div>
       };
     });

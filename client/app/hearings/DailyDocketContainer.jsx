@@ -9,21 +9,10 @@ import AutoSave from '../components/AutoSave.jsx';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
 
-export const getDockets = (dispatch) => {
-  ApiUtil.get('/hearings/dockets.json', { cache: true }).
-    then((response) => {
-      dispatch(Actions.populateDockets(response.body));
-    }, (err) => {
-      dispatch(Actions.handleServerError(err));
-    });
-};
-
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    if (!this.props.dockets) {
-      this.props.getDockets();
-    }
+    this.props.getDockets();
 
     // Since the page title does not change when react router
     // renders this component...
@@ -80,8 +69,15 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDockets: () => {
-    getDockets(dispatch);
+  getDockets: (dockets) => () => {
+    if (!dockets) {
+      ApiUtil.get('/hearings/dockets.json', { cache: true }).
+        then((response) => {
+          dispatch(Actions.populateDockets(response.body));
+        }, (err) => {
+          dispatch(Actions.handleServerError(err));
+        });
+    }
   },
   save: (docket, date) => () => {
     const hearingsToSave = docket.filter((hearing) => hearing.edited);
@@ -130,9 +126,19 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    getDockets: dispatchProps.getDockets(stateProps.dockets)
+  };
+};
+
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  mergeProps
 )(DailyDocketContainer);
 
 DailyDocketContainer.propTypes = {
