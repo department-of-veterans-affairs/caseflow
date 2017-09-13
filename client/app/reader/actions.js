@@ -109,7 +109,7 @@ export const changeSortState = (sortBy) => ({
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'change-sort-by',
       label: (nextState) => {
-        const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+        const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
 
         return `${sortBy}-${direction}`;
       }
@@ -721,7 +721,7 @@ export const togglePdfSidebar = () => ({
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'toggle-pdf-sidebar',
-      label: (nextState) => nextState.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+      label: (nextState) => nextState.readerReducer.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
     }
   }
 });
@@ -736,7 +736,7 @@ export const handleToggleCommentOpened = (docId) => ({
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
-      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
+      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

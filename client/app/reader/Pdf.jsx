@@ -658,7 +658,8 @@ export class Pdf extends React.PureComponent {
 
     // Wait until the page dimensions have been calculated, then it is
     // safe to jump to the pages since their positioning won't change.
-    if (this.props.numberPagesSized === this.state.numPages[this.props.file]) {
+    if (this.props.numberPagesSized === this.state.numPages[this.props.file] &&
+      _.size(this.pageElements[this.props.file]) === this.state.numPages[this.props.file]) {
       if (this.props.jumpToPageNumber) {
         this.scrollToPage(this.props.jumpToPageNumber);
         this.onPageChange(this.props.jumpToPageNumber);

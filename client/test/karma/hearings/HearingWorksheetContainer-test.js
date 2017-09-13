@@ -54,16 +54,37 @@ describe('HearingWorksheetContainer', () => {
           issues: {
             issue_0: {
               program: 'Compensation',
-              description: 'Left Elbow'
-            }
+              issue: 'Service connection',
+              levels: 'All Others, 5010 - Arthritis, due to trauma',
+              description: 'Left Elbow',
+              reopen: true,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: false
+            },
+            issue_1: {
+              program: 'Compensation',
+              issue: 'Service connection',
+              levels: 'All Others, 5010 - Migrane',
+              description: 'Frequent headaches, caused by concussion',
+              reopen: false,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: true }
           },
           nod: 99,
           soc: 10,
-          docs_in_efolder: 88,
-          contentions: '',
-          periods: ''
+          docs_in_efolder: 88
         }
-      }
+      },
+      contentions: '',
+      military_service: '',
+      evidence: '',
+      comments_for_attorney: ''
     }));
     expect(wrapper.text()).to.include('Hearing Worksheet');
   });

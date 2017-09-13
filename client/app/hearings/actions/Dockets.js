@@ -97,10 +97,10 @@ export const onContentionsChange = (contentions) => ({
   }
 });
 
-export const onPeriodsChange = (periods) => ({
-  type: Constants.SET_PERIODS,
+export const onMilitaryServiceChange = (militaryService) => ({
+  type: Constants.SET_MILITARY_SERVICE,
   payload: {
-    periods
+    militaryService
   }
 });
 
@@ -111,9 +111,9 @@ export const onEvidenceChange = (evidence) => ({
   }
 });
 
-export const onCommentsChange = (comments) => ({
-  type: Constants.SET_COMMENTS,
+export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
+  type: Constants.SET_COMMENTS_FOR_ATTORNEY,
   payload: {
-    comments
+    commentsForAttorney
   }
 });

@@ -48,10 +48,10 @@ class HearingWorksheetIssues extends PureComponent {
     ];
 
     // Maps over all issues inside stream
-    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue) => {
+    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue, key) => {
 
       return {
-        counter: <b>1.</b>,
+        counter: <b>{key + 1}.</b>,
         program: worksheetStreamsIssues[issue].program,
         issue: worksheetStreamsIssues[issue].issue,
         levels: worksheetStreamsIssues[issue].levels,
