@@ -236,8 +236,7 @@ class Appeal < ActiveRecord::Base
       "certification_date" => certification_date,
       "prior_decision_date" => prior_decision_date,
       "ssoc_dates" => ssoc_dates,
-      "docket_number" => docket_number,
-      "regional_office_name" => regional_office_name
+      "docket_number" => docket_number
     }
   end
 

@@ -54,7 +54,7 @@ export class HearingWorksheet extends React.PureComponent {
           <span className="saving">Saving...</span>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
-            <div>{worksheet.appellant_last_first_mi}</div>
+            <div>{worksheet.appellant_name}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
@@ -62,11 +62,11 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Regional Office:</div>
-            <div>Detroit, MI</div>
+            <div>{worksheet.regional_office_name}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Representative Org:</div>
-            <div>Veterans of Foreign Wars</div>
+            <div>{worksheet.representative_name}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
             <TextField

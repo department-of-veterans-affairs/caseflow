@@ -52,7 +52,7 @@ class Hearing < ActiveRecord::Base
   delegate \
     :veteran_age, \
     :veteran_full_name, \
-    :appellant_last_first_mi, \
+    :appellant_name, \
     :appellant_city, \
     :appellant_state, \
     :regional_office_name, \
@@ -73,7 +73,7 @@ class Hearing < ActiveRecord::Base
         :hold_open,
         :notes,
         :add_on,
-        :appellant_last_first_mi,
+        :appellant_name,
         :appellant_city,
         :appellant_state,
         :representative_name,
@@ -90,7 +90,7 @@ class Hearing < ActiveRecord::Base
 
   def to_hash_with_appeals_and_issues
     serializable_hash(
-      methods: [:appeal_id, :appeals_ready_for_hearing],
+      methods: [:appeal_id, :regional_office_name, :appeals_ready_for_hearing],
       include: :issues
     ).merge(to_hash)
   end
