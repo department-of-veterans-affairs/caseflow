@@ -77,7 +77,6 @@ class Hearing < ActiveRecord::Base
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
-        :representative,
         :veteran_age,
         :veteran_name,
         :venue,
@@ -91,7 +90,10 @@ class Hearing < ActiveRecord::Base
 
   def to_hash_with_appeals_and_issues
     serializable_hash(
-      methods: [:appeal_id, :regional_office_name, :appeals_ready_for_hearing],
+      methods: [:appeal_id,
+                :regional_office_name,
+                :representative,
+                :appeals_ready_for_hearing],
       include: :issues
     ).merge(to_hash)
   end
