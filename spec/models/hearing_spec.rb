@@ -61,7 +61,7 @@ describe Hearing do
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
-        expect(subject["veteran_full_name"]).to eq(appeal.veteran_full_name)
+        expect(subject["veteran_name"]).to eq(appeal.veteran_name)
         expect(subject["cached_number_of_documents"]).to eq 2
         expect(subject["cached_number_of_documents_after_certification"]).to eq 0
       end
