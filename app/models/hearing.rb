@@ -50,6 +50,10 @@ class Hearing < ActiveRecord::Base
     number_of_documents_after_certification
   end
 
+  cache_attribute :cached_periods_of_service do
+    veteran.periods_of_service
+  end
+
   delegate \
     :veteran_age, \
     :veteran_name, \
@@ -61,6 +65,7 @@ class Hearing < ActiveRecord::Base
     :number_of_documents_after_certification, \
     :representative, \
     to: :appeal, allow_nil: true
+
 
   # rubocop:disable Metrics/MethodLength
   def to_hash
@@ -95,7 +100,8 @@ class Hearing < ActiveRecord::Base
       methods: [:appeal_id,
                 :regional_office_name,
                 :representative,
-                :appeals_ready_for_hearing],
+                :appeals_ready_for_hearing,
+                cached_periods_of_service],
       include: :issues
     ).merge(to_hash)
   end
