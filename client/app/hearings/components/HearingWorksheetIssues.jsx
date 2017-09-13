@@ -58,11 +58,9 @@ class HearingWorksheetIssues extends PureComponent {
         program: issueRow.program,
         levels: issueRow.levels,
         description: <HearingWorksheetIssueDescription
-                      issue={issueRow}
-                      />,
+                      issue={issueRow} />,
         actions: <HearingWorksheetPreImpressions
-                    issue={issueRow}
-                    />
+                    issue={issueRow}/>
       };
     });
 

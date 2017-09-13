@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import TextareaField from '../../components/TextareaField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import TextareaField from '../../components/TextareaField';
 import { onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueDescription extends PureComponent {
@@ -14,14 +14,10 @@ class HearingWorksheetIssueDescription extends PureComponent {
 
     return <div>
             <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
-            <TextareaField
-              aria-label="Description"
-              name="Description"
-              id={issue.id}
-              value={issue.description}
-              onChange={this.onDescriptionChange}
-              />
-        </div>;
+            <TextareaField aria-label="Description" name="Description"
+              id={issue.id} value={issue.description}
+              onChange={this.onDescriptionChange} />
+          </div>;
   }
 }
 

@@ -4,12 +4,8 @@ import Checkbox from '../../components/Checkbox';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
-  onToggleReopen,
-  onToggleAllow,
-  onToggleDeny,
-  onToggleRemand,
-  onToggleDismiss,
-  onToggleVHA
+  onToggleReopen, onToggleAllow, onToggleDeny,
+  onToggleRemand, onToggleDismiss, onToggleVHA
        } from '../actions/Issue';
 
 class HearingWorksheetPreImpressions extends PureComponent {
@@ -46,7 +42,7 @@ class HearingWorksheetPreImpressions extends PureComponent {
         </div>;
   }
 }
-// TODO to move the default value to the backend
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onToggleReopen,
   onToggleAllow,

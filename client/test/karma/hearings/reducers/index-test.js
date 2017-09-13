@@ -190,7 +190,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DESCRIPTION,
         payload: {
-          description: 'Elbow Arthritis'
+          description: 'Elbow Arthritis',
+          issueId: 'issue_0'
         }
       });
     });
@@ -209,7 +210,8 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REOPEN,
-        payload: { reopen: true }
+        payload: { reopen: true,
+          issueId: 'issue_0' }
       });
     });
 
@@ -227,7 +229,8 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_ALLOW,
-        payload: { allow: true }
+        payload: { allow: true,
+          issueId: 'issue_0' }
       });
     });
 
@@ -245,7 +248,8 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DENY,
-        payload: { deny: true }
+        payload: { deny: true,
+          issueId: 'issue_0' }
       });
     });
 
@@ -263,7 +267,8 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REMAND,
-        payload: { remand: true }
+        payload: { remand: true,
+          issueId: 'issue_0' }
       });
     });
 
@@ -281,7 +286,8 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DISMISS,
-        payload: { dismiss: true }
+        payload: { dismiss: true,
+          issueId: 'issue_0' }
       });
     });
 
@@ -299,7 +305,8 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_VHA,
-        payload: { vha: true }
+        payload: { vha: true,
+          issueId: 'issue_0' }
       });
     });
 

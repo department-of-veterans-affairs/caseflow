@@ -53,30 +53,9 @@ describe('HearingWorksheetContainer', () => {
         appeal_0: {
           issues: {
             issue_0: {
-              id: 'issue_0',
               program: 'Compensation',
-              issue: 'Service connection',
-              levels: 'All Others, 5010 - Arthritis, due to trauma',
-              description: 'Left Elbow',
-              reopen: true,
-              remand: true,
-              allow: true,
-              dismiss: false,
-              deny: false,
-              vha: false
-            },
-            issue_1: {
-              id: 'issue_1',
-              program: 'Compensation',
-              issue: 'Service connection',
-              levels: 'All Others, 5010 - Migrane',
-              description: 'Frequent headaches, caused by concussion',
-              reopen: false,
-              remand: true,
-              allow: true,
-              dismiss: false,
-              deny: false,
-              vha: true }
+              description: 'Left Elbow'
+            }
           },
           nod: 99,
           soc: 10,
