@@ -37,7 +37,8 @@ class Hearings::WorksheetsController < HearingsController
     {
       streams: { appeal_0: {
         issues: {
-          issue_0: {
+          "66": {
+            id: 66,
             program: "Compensation",
             issue: "Service connection",
             levels: "All Others, 5010 - Arthritis, due to trauma",
@@ -48,7 +49,8 @@ class Hearings::WorksheetsController < HearingsController
             dismiss: false,
             deny: false,
             vha: false },
-          issue_1: {
+          "17": {
+            id: 17,
             program: "Compensation",
             issue: "Service connection",
             levels: "All Others, 5010 - Migrane",
