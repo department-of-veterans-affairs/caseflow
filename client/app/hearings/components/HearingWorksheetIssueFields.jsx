@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import TextareaField from '../../components/TextareaField';
 import { onDescriptionChange } from '../actions/Issue';
 
-class HearingWorksheetIssueDescription extends PureComponent {
+class HearingWorksheetIssueFields extends PureComponent {
 
   onDescriptionChange = (description) => this.props.onDescriptionChange(description, this.props.issue.id)
 
@@ -26,15 +26,15 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  HearingWorksheetIssueDescription: state
+  HearingWorksheetIssueFields: state
 });
 
-HearingWorksheetIssueDescription.propTypes = {
+HearingWorksheetIssueFields.propTypes = {
   issue: PropTypes.object.isRequired
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HearingWorksheetIssueDescription);
+)(HearingWorksheetIssueFields);
 

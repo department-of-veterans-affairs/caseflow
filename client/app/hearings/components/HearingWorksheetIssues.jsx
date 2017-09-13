@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import HearingWorksheetIssueDescription from './HearingWorksheetIssueDescription';
+import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 
 class HearingWorksheetIssues extends PureComponent {
@@ -57,7 +57,7 @@ class HearingWorksheetIssues extends PureComponent {
         counter: <b>{key + 1}.</b>,
         program: issueRow.program,
         levels: issueRow.levels,
-        description: <HearingWorksheetIssueDescription
+        description: <HearingWorksheetIssueFields
                       issue={issueRow} />,
         actions: <HearingWorksheetPreImpressions
                     issue={issueRow} />
