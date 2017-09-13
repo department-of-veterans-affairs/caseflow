@@ -60,7 +60,7 @@ class HearingWorksheetIssues extends PureComponent {
         description: <HearingWorksheetIssueDescription
                       issue={issueRow} />,
         actions: <HearingWorksheetPreImpressions
-                    issue={issueRow}/>
+                    issue={issueRow} />
       };
     });
 
