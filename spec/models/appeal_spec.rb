@@ -102,7 +102,7 @@ describe Appeal do
   end
 
   context "#aod" do
-    subject { appeal.aod }
+    subject { appeal.aod? }
 
     it { is_expected.to be_truthy }
   end
