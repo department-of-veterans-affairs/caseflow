@@ -90,7 +90,7 @@ class Hearing < ActiveRecord::Base
 
   def to_hash_with_appeals_and_issues
     serializable_hash(
-      methods: :appeals_ready_for_hearing,
+      methods: [:appeal_id, :appeals_ready_for_hearing],
       include: :issues
     ).merge(to_hash)
   end
