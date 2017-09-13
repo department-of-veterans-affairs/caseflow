@@ -1184,7 +1184,7 @@ describe Appeal do
       end
 
       it "aod to be populated in the Appeal model" do
-        #expect(subject["aod"]).to be_truthy
+        expect(subject["aod"]).to be_truthy
         expect(appeal.aod).to be_truthy
       end
     end
