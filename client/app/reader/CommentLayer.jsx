@@ -137,6 +137,11 @@ class CommentLayer extends PureComponent {
     onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
 
   render() {
+    const TEXT_LAYER_STYLING = {
+      width: `${this.props.currentWidth}px`,
+      height: `${this.props.currentHeight}px`
+    };
+
     return <div
       id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
       style={DIV_STYLING}
@@ -147,6 +152,7 @@ class CommentLayer extends PureComponent {
       ref={this.getCommentLayerDivRef}>
       {this.getCommentIcons()}
       <div
+        style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
         className="textLayer"/>
     </div>;
@@ -161,6 +167,10 @@ CommentLayer.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   })),
+  dimensions: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number
+  }),
   getTextLayerRef: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   placingAnnotationIconPageCoords: PropTypes.object,
