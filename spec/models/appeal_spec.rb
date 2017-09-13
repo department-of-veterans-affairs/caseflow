@@ -1182,6 +1182,11 @@ describe Appeal do
         expect(subject["regional_office"][:key]).to eq("RO13")
         expect(subject["docket_number"]).to eq("13 11-265")
       end
+
+      it "aod to be populated in the Appeal model" do
+        #expect(subject["aod"]).to be_truthy
+        expect(appeal.aod).to be_truthy
+      end
     end
 
     context "when issues and viewed attributes are provided" do
