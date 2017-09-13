@@ -30,6 +30,9 @@ import {
 export class HearingWorksheet extends React.PureComponent {
 
   render() {
+    let {
+      worksheet,
+    } = this.props;
 
     // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
     return <div>
@@ -51,11 +54,11 @@ export class HearingWorksheet extends React.PureComponent {
           <span className="saving">Saving...</span>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
-            <div><b>Somebody Mad</b></div>
+            <div><b>{worksheet.appellant_last_first_mi}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
-            <div>Lansing, MI</div>
+            <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Regional Office:</div>
@@ -76,7 +79,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
-            <div><b>Somebody Madder</b></div>
+            <div><b>{worksheet.veteran_full_name}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Veteran ID:</div>
@@ -88,7 +91,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Veteran's Age:</div>
-            <div>32</div>
+            <div>{worksheet.veteran_age}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
              <TextareaField

@@ -35,8 +35,6 @@ class Hearings::WorksheetsController < HearingsController
 
   def hearing_worksheet # rubocop:disable Metrics/MethodLength
     {
-      veteran: {},
-      appeal: {},
       streams: { appeal_0: {
         issues: {
           issue_0: {
