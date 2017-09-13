@@ -51,14 +51,15 @@ class Hearing < ActiveRecord::Base
 
   delegate \
     :veteran_age, \
-    :veteran_full_name, \
-    :appellant_name, \
+    :veteran_name, \
+    :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
     :regional_office_name, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
+    :representative, \
     to: :appeal
 
   # rubocop:disable Metrics/MethodLength
@@ -73,12 +74,12 @@ class Hearing < ActiveRecord::Base
         :hold_open,
         :notes,
         :add_on,
-        :appellant_name,
+        :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
-        :representative_name,
+        :representative,
         :veteran_age,
-        :veteran_full_name,
+        :veteran_name,
         :venue,
         :cached_number_of_documents,
         :cached_number_of_documents_after_certification,
