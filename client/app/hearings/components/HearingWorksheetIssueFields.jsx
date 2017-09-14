@@ -12,7 +12,7 @@ class HearingWorksheetIssueFields extends PureComponent {
   render() {
     let { issue } = this.props;
 
-    return <div className="cf-hearings-worksheet-desc">
+    return <div>
             <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
             <TextareaField aria-label="Description" name="Description"
               id={`${issue.id}-issue`}value={issue.description}
