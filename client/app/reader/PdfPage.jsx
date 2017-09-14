@@ -23,7 +23,7 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
-const MAXIMUM_DISTANCE = 1000000;
+const MAXIMUM_DISTANCE = 10000000;
 // const MAXIMUM_DISTANCE = 10000000000000;
 
 export class PdfPage extends React.PureComponent {
@@ -99,8 +99,8 @@ export class PdfPage extends React.PureComponent {
   clearPage = () => {
     if (this.isDrawn) {
       this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
-      // this.props.page.cleanup();
-      console.log('cleaning up page', this.canvas.width, this.canvas.height);
+      this.props.page.cleanup();
+      // console.log('cleaning up page', this.canvas.width, this.canvas.height);
     }
 
     this.setIsDrawn(false);
@@ -113,22 +113,36 @@ export class PdfPage extends React.PureComponent {
   componentWillUnmount = () => {
     this.setIsDrawn(false);
     this.setIsDrawing(false);
+    // this.props.page.cleanup();
   }
 
-  getSquaredDistanceToCenter = () => {
+  getSquaredDistanceToCenter = (props) => {
+    if (!this.props.isVisible) {
+      if (this.props.pageIndex < 2) {
+        return MAXIMUM_DISTANCE - 1;
+      } else {
+        return MAXIMUM_DISTANCE + 1;
+      }
+    }
+
     const boundingRect = this.pageContainer.getBoundingClientRect();
     const pageCenter = {
       x: (boundingRect.left + boundingRect.right) / 2,
       y: (boundingRect.top + boundingRect.bottom) / 2
     };
 
-    return (Math.pow(pageCenter.x - this.props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - this.props.scrollWindowCenter.y, 2));
+    return (Math.pow(pageCenter.x - props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - props.scrollWindowCenter.y, 2));
   }
 
   componentDidUpdate = (prevProps) => {
+    console.log('calling update');
     if (prevProps.page !== this.props.page) {
-      this.getDimensions();
-      this.getText();
+      if (!this.props.pageDimensions) {
+        this.getDimensions();
+      }
+      if (!this.props.text) {
+        this.getText();
+      }
     }
 
     if (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale) {
@@ -139,7 +153,7 @@ export class PdfPage extends React.PureComponent {
       this.drawPage();
     };
 
-    const distance = this.getSquaredDistanceToCenter();
+    const distance = this.getSquaredDistanceToCenter(this.props);
 
     if (distance < MAXIMUM_DISTANCE) {
       if (this.props.page) {
