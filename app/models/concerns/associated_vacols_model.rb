@@ -12,8 +12,7 @@ module AssociatedVacolsModel
     # do subsequent VACOLS DB lookups
     def vacols_attr_accessor(*fields)
       fields.each do |field|
-        @vacols_fields = {} if !@vacols_fields
-        @vacols_fields[field] = true
+        vacols_fields[field] = true
 
         define_method field do
           check_and_load_vacols_data! unless field_set?(field)
@@ -22,7 +21,7 @@ module AssociatedVacolsModel
 
         define_method "#{field}=" do |value|
           @vacols_load_status = :disabled
-          mark_field_is_set(field)
+          mark_field_as_set(field)
           instance_variable_set("@#{field}".to_sym, value)
         end
       end
@@ -41,7 +40,7 @@ module AssociatedVacolsModel
     set_fields[field]
   end
 
-  def mark_field_is_set(field)
+  def mark_field_as_set(field)
     set_fields[field] = true
   end
 
@@ -88,6 +87,16 @@ module AssociatedVacolsModel
     @vacols_load_status = self.class.repository.load_vacols_data(self) ? :success : :failed
   end
 
+  # There are four possible vacols_load_statuses:
+  # 1) success: This means the data has successfully been loaded from VACOLS
+  # 2) failed: This means the data was not successfully loaded from VACOLS, but a load was tried.
+  # 3) loading: This means we are currently running the call to load VACOLS data
+  # 4) disabled: This means code has called the setter method for at least one field.
+  #      The user is expected to set all needed values themselves rather than relying
+  #      on lazy loading. Otherwise we make unnecessary calls to VACOLS. First, to get
+  #      the values we're setting, and another on lazy loading. In the future
+  #      this status means we will raise an error when you try to lazy load VACOLS data.
+  #      For now it prints an error. A disabled status is still defined as success in the method below.
   def vacols_success?
     @vacols_load_status == :success || @vacols_load_status == :disabled
   end
