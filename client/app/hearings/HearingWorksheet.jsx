@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -35,8 +34,8 @@ export class HearingWorksheet extends React.PureComponent {
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
           <div className="meta">
-            <div>{moment(this.props.date).format('ddd l')}</div>
-            <div>Hearing Type: {this.props.hearingType}</div>
+            <div>{moment(worksheet.date).format('ddd l')}</div>
+            <div>Hearing Type: {worksheet.request_type}</div>
           </div>
         </div>
 
@@ -64,7 +63,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={this.props.worksheet.repName || ''}
+              value={worksheet.repName || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
@@ -89,7 +88,7 @@ export class HearingWorksheet extends React.PureComponent {
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
                 aria-label="Representative Name"
-                value={this.props.worksheet.witness || ''}
+                value={worksheet.witness || ''}
                 onChange={this.props.onWitnessChange}
              />
           </div>
@@ -136,7 +135,7 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
 
            <HearingWorksheetStream
-              worksheetStreams={this.props.worksheet.streams}
+              worksheetStreams={worksheet.streams}
               {...this.props}
             />
 
@@ -144,7 +143,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value={this.props.worksheet.contentions}
+              value={worksheet.contentions}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -153,7 +152,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheet.military_service}
+              value={worksheet.military_service}
               onChange={this.props.onMilitaryServiceChange}
               id="worksheet-military-service"
               />
@@ -162,7 +161,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value={this.props.worksheet.evidence}
+              value={worksheet.evidence}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -171,7 +170,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments_for_attorney}
+              value={worksheet.comments_for_attorney}
               id="worksheet-comments-for-attorney"
               onChange={this.props.onCommentsForAttorneyChange}
               />
@@ -206,9 +205,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheet);
-
-HearingWorksheet.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
-  date: PropTypes.string,
-  vbms_id: PropTypes.string
-};
