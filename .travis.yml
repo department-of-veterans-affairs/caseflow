@@ -34,6 +34,8 @@ before_install:
   - npm -v
   - cd ./client && npm install --no-optional
   - cd ..
+  - echo $TRAVIS_BUILD_NUMBER
+  - echo $TRAVIS_JOB_NUMBER
 
 
 jobs:
