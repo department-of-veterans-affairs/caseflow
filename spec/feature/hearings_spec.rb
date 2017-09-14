@@ -89,16 +89,19 @@ RSpec.feature "Hearings" do
       link_href = link[:href]
 
       link.click
-      expect(page).to have_content("The veteran believes their knee is hurt")
-      expect(page).to have_content("Veteran was in the Vietnam War")
-      expect(page).to have_content("Medical exam occurred on 10/10/2008")
-      expect(page).to have_content("Look for knee-related medical records")
+      new_window = windows.last
+      page.within_window new_window do
+        expect(page).to have_content("The veteran believes their knee is hurt")
+        expect(page).to have_content("Veteran was in the Vietnam War")
+        expect(page).to have_content("Medical exam occurred on 10/10/2008")
+        expect(page).to have_content("Look for knee-related medical records")
 
-      visit link_href
-      expect(page).to have_content("Hearing Worksheet")
+        visit link_href
+        expect(page).to have_content("Hearing Worksheet")
 
-      # There's no functionality yet, but you should be able to...
-      click_on "Review eFolder"
+        # There's no functionality yet, but you should be able to...
+        click_on "Review eFolder"
+      end
     end
   end
 end
