@@ -23,7 +23,7 @@ class HearingWorksheetStream extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  worksheetStreamsIssues: state.worksheet.streams.appeal_0.issues
+  worksheetStreamsIssues: state.worksheet.streams[8873].issues
 });
 
 HearingWorksheetStream.propTypes = {

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { setPdfPageDimensions, setPdfPageIsDrawn, setPdfPageIsDrawing } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex, drawPdfPage, updatePriority } from './utils';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
 import classNames from 'classnames';
 
@@ -53,6 +54,7 @@ export class PdfPage extends React.PureComponent {
     if (this.isDrawing) {
       return Promise.reject();
     }
+
     let t0;
     const currentScale = this.props.scale;
     const renderCanvas = (pdfPage) => {
@@ -68,6 +70,7 @@ export class PdfPage extends React.PureComponent {
       this.textLayer.innerHTML = '';
 
       // Call PDFJS to actually draw the page.
+
       return drawPdfPage(
         pdfPage,
         this.priority,
@@ -108,8 +111,8 @@ export class PdfPage extends React.PureComponent {
         return this.drawPage();
       }
       console.log('drawing text', performance.now() - t0);
-      return Promise.resolve();
 
+      return Promise.resolve();
     };
     const handleError = () => {
       this.setIsDrawing(false);
@@ -262,6 +265,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
+
   const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
 
   return {

@@ -37,34 +37,69 @@ class Hearings::WorksheetsController < HearingsController
     {
       veteran: {},
       appeal: {},
-      streams: { appeal_0: {
-        issues: {
-          issue_0: {
-            program: "Compensation",
-            issue: "Service connection",
-            levels: "All Others, 5010 - Arthritis, due to trauma",
-            description: "Left Elbow",
-            reopen: true,
-            remand: true,
-            allow: true,
-            dismiss: false,
-            deny: false,
-            vha: false },
-          issue_1: {
-            program: "Compensation",
-            issue: "Service connection",
-            levels: "All Others, 5010 - Migrane",
-            description: "Frequent headaches, caused by concussion",
-            reopen: false,
-            remand: true,
-            allow: true,
-            dismiss: false,
-            deny: false,
-            vha: true }
-        },
-        nod: 99,
-        soc: 10,
-        docs_in_efolder: 88 } }
+      streams: {
+        "8873": {
+          id: 8873,
+          issues: {
+            "66": {
+              id: 66,
+              program: "Compensation",
+              issue: "Service connection",
+              levels: "All Others, 5010 - Arthritis, due to trauma",
+              description: "Left Elbow",
+              reopen: true,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: false },
+            "17": {
+              id: 17,
+              program: "Compensation",
+              issue: "Service connection",
+              levels: "All Others, 5010 - Migrane",
+              description: "Frequent headaches, caused by concussion",
+              reopen: false,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: true }
+          },
+          nod: 99,
+          soc: 10,
+          docs_in_efolder: 88 },
+        "9092": {
+          id: 9092,
+          issues: {
+            "7654": {
+              id: 7654,
+              program: "Compensation",
+              issue: "Service connection",
+              levels: "All Others, 5010 - Arthritis, due to trauma",
+              description: "Right Leg",
+              reopen: false,
+              remand: true,
+              allow: false,
+              dismiss: false,
+              deny: false,
+              vha: false },
+            "1754": {
+              id: 1754,
+              program: "Compensation",
+              issue: "Service connection",
+              levels: "All Others, 4664 - Lyphatic system disability",
+              description: "Needs additional examination",
+              reopen: false,
+              remand: true,
+              allow: false,
+              dismiss: false,
+              deny: true,
+              vha: true }
+          },
+          nod: 99,
+          soc: 10,
+          docs_in_efolder: 88 } }
     }.merge(worksheet.to_hash_with_appeals_and_issues)
   end
 end
