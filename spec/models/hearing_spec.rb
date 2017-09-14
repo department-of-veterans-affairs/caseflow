@@ -21,8 +21,8 @@ describe Hearing do
     end
   end
 
-  context "#to_hash_with_appeals_and_issues" do
-    subject { hearing.to_hash_with_appeals_and_issues }
+  context "#to_hash_for_worksheet" do
+    subject { hearing.to_hash_for_worksheet }
 
     let(:appeal) do
       Generators::Appeal.create(vacols_record: { template: :pending_hearing },
