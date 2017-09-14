@@ -51,7 +51,7 @@ class Hearing < ActiveRecord::Base
 
   delegate \
     :veteran_age, \
-    :veteran_full_name, \
+    :veteran_name, \
     :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
@@ -59,6 +59,7 @@ class Hearing < ActiveRecord::Base
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
+    :representative, \
     to: :appeal
 
   # rubocop:disable Metrics/MethodLength
@@ -78,7 +79,7 @@ class Hearing < ActiveRecord::Base
         :appellant_state,
         :representative_name,
         :veteran_age,
-        :veteran_full_name,
+        :veteran_name,
         :venue,
         :cached_number_of_documents,
         :cached_number_of_documents_after_certification,
@@ -88,9 +89,12 @@ class Hearing < ActiveRecord::Base
   end
   # rubocop:enable Metrics/MethodLength
 
-  def to_hash_with_appeals_and_issues
+  def to_hash_for_worksheet
     serializable_hash(
-      methods: :appeals_ready_for_hearing,
+      methods: [:appeal_id,
+                :regional_office_name,
+                :representative,
+                :appeals_ready_for_hearing],
       include: :issues
     ).merge(to_hash)
   end
