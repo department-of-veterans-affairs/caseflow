@@ -366,8 +366,6 @@ export class Pdf extends React.PureComponent {
       pdf.pdfDocument.destroy();
     }
 
-    this.shouldDraw[file] = {};
-
     this.setState({
       pdfDocument: {
         ...this.state.pdfDocument,
@@ -481,7 +479,6 @@ export class Pdf extends React.PureComponent {
             pageIndex={pageIndex}
             isVisible={this.props.file === file}
             scale={this.props.scale}
-            shouldDraw={pageIndex < 10}
             getPageContainerRef={this.getPageContainerRef}
             pdfDocument={this.state.pdfDocument[file]}
           />;
@@ -507,8 +504,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
-  // pageStates: _.get(state.readerReducer, ['documentsByFile'], {}),
-  // numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
+  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 

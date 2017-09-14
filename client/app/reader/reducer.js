@@ -1055,34 +1055,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_PDF_PAGE_IS_DRAWN:
-    return update(
-      state,
-      {
-        pages: {
-          [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $apply: (page) => ({
-              ...(page || {}),
-              drawn: action.payload.isDrawn
-            })
-          }
-        }
-      }
-    );
-  case Constants.SET_PDF_PAGE_IS_DRAWING:
-    return update(
-      state,
-      {
-        pages: {
-          [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $apply: (page) => ({
-              ...(page || {}),
-              drawing: action.payload.isDrawing
-            })
-          }
-        }
-      }
-    );
   case Constants.SET_PDF_PAGE:
     return update(
       state,

@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfPageDimensions, setPdfPageIsDrawn, setPdfPageIsDrawing,
-  setPdfPage, setPdfPageText } from '../reader/actions';
+import { setPdfPageDimensions, setPdfPage, setPdfPageText } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -47,7 +46,6 @@ export class PdfPage extends React.PureComponent {
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
   setIsDrawing = (value) => {
-    // this.props.setPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
     this.isDrawing = value;
   }
 
@@ -268,8 +266,6 @@ PdfPage.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfPageDimensions,
-    setPdfPageIsDrawn,
-    setPdfPageIsDrawing,
     setPdfPage,
     setPdfPageText
   }, dispatch)
