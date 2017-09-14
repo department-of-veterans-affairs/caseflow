@@ -16,7 +16,7 @@ class HearingWorksheetIssueFields extends PureComponent {
             <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
             <TextareaField aria-label="Description" name="Description"
               id={`${issue.id}-issue`}value={issue.description}
-              onChange={this.onDescriptionChange} maxlength={50} />
+              onChange={this.onDescriptionChange} maxlength={120} />
           </div>;
   }
 }
