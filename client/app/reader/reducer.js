@@ -207,7 +207,7 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  documentsByFile: {}
+  pages: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1045,17 +1045,11 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        documentsByFile: {
-          [action.payload.file]: {
-            $apply: (file) => ({
-              pages: {
-                ..._.get(file, ['pages'], {}),
-                [action.payload.pageIndex]: {
-                  ..._.get(file, ['pages', action.payload.pageIndex], {}),
-                  ...action.payload.dimensions
-                }
-              }
-            })
+        pages: {
+          $merge: {
+            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+              dimensions: action.payload.dimensions
+            }
           }
         }
       }
@@ -1064,17 +1058,11 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        documentsByFile: {
-          [action.payload.file]: {
-            $apply: (file) => ({
-              pages: {
-                ..._.get(file, ['pages'], {}),
-                [action.payload.pageIndex]: {
-                  ..._.get(file, ['pages', action.payload.pageIndex], {}),
-                  drawn: action.payload.isDrawn
-                }
-              }
-            })
+        pages: {
+          $merge: {
+            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+              drawn: action.payload.isDrawn
+            }
           }
         }
       }
@@ -1083,17 +1071,11 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        documentsByFile: {
-          [action.payload.file]: {
-            $apply: (file) => ({
-              pages: {
-                ..._.get(file, ['pages'], {}),
-                [action.payload.pageIndex]: {
-                  ..._.get(file, ['pages', action.payload.pageIndex], {}),
-                  drawing: action.payload.isDrawing
-                }
-              }
-            })
+        pages: {
+          $merge: {
+            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+              drawing: action.payload.isDrawing
+            }
           }
         }
       }

@@ -6,8 +6,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { setPdfPageDimensions, setPdfPageIsDrawn, setPdfPageIsDrawing } from '../reader/actions';
 import { bindActionCreators } from 'redux';
-import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { pageNumberOfPageIndex, drawPdfPage, updatePriority } from './utils';
 
 import classNames from 'classnames';
 
@@ -22,12 +21,16 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
-export class PdfPage extends React.Component {
+export class PdfPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.isDrawing = false;
+    this.priority = 0;
   }
+
+  getUniqueId = () => `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`
+
   getPageContainerRef = (pageContainer) => {
     this.pageContainer = pageContainer;
     this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
@@ -38,7 +41,7 @@ export class PdfPage extends React.Component {
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
   setIsDrawing = (value) => {
-    this.props.setPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
+    // this.props.setPdfPageIsDrawing(this.props.file, this.props.pageIndex, value);
     this.isDrawing = value;
   }
 
@@ -50,6 +53,7 @@ export class PdfPage extends React.Component {
     if (this.isDrawing) {
       return Promise.reject();
     }
+    let t0;
     const currentScale = this.props.scale;
     const renderCanvas = (pdfPage) => {
       // The viewport is a PDFJS concept that combines the size of the
@@ -64,18 +68,23 @@ export class PdfPage extends React.Component {
       this.textLayer.innerHTML = '';
 
       // Call PDFJS to actually draw the page.
-      return pdfPage.render({
-        canvasContext: this.canvas.getContext('2d', { alpha: false }),
-        viewport
-      }).
-      then(() => {
-        return Promise.resolve({
-          pdfPage,
+      return drawPdfPage(
+        pdfPage,
+        this.priority,
+        this.getUniqueId(),
+        {
+          canvasContext: this.canvas.getContext('2d', { alpha: false }),
           viewport
+        }).
+        then(() => {
+          return Promise.resolve({
+            pdfPage,
+            viewport
+          });
         });
-      });
     };
     const getText = ({ pdfPage, viewport }) => {
+      t0 = performance.now();
       // Get the text from the PDF and write it.
       return pdfPage.getTextContent().then((textContent) => {
         return Promise.resolve({
@@ -98,7 +107,7 @@ export class PdfPage extends React.Component {
       if (currentScale !== this.props.scale) {
         return this.drawPage();
       }
-
+      console.log('drawing text', performance.now() - t0);
       return Promise.resolve();
 
     };
@@ -130,6 +139,20 @@ export class PdfPage extends React.Component {
     this.setIsDrawing(false);
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    if (this.props.scrollTop !== nextProps.scrollTop && this.isDrawing) {
+      const boundingRect = this.pageContainer.getBoundingClientRect();
+      const pageCenter = {
+        x: (boundingRect.left + boundingRect.right) / 2,
+        y: (boundingRect.top + boundingRect.bottom) / 2
+      };
+
+      this.priority = (Math.pow(pageCenter.x - nextProps.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - nextProps.scrollWindowCenter.y, 2));
+
+      updatePriority(this.getUniqueId(), this.priority);
+    }
+  }
+
   componentDidUpdate = (prevProps) => {
     const drawAndUpdateState = () => {
       this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
@@ -138,6 +161,14 @@ export class PdfPage extends React.Component {
 
     if (this.props.shouldDraw) {
       if (!prevProps.shouldDraw || prevProps.scale !== this.props.scale) {
+        const boundingRect = this.pageContainer.getBoundingClientRect();
+        const pageCenter = {
+          x: (boundingRect.left + boundingRect.right) / 2,
+          y: (boundingRect.top + boundingRect.bottom) / 2
+        };
+
+        this.priority = (Math.pow(pageCenter.x - this.props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - this.props.scrollWindowCenter.y, 2));
+        console.log('page priority before drawing', this.priority);
         drawAndUpdateState();
       }
     }
@@ -208,6 +239,10 @@ export class PdfPage extends React.Component {
 }
 
 PdfPage.propTypes = {
+  scrollWindowCenter: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number
+  }),
   documentId: PropTypes.number,
   file: PropTypes.string,
   pageIndex: PropTypes.number,
@@ -227,12 +262,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-  const page = _.get(state.readerReducer, ['documentsByFile', props.file, 'pages', props.pageIndex], {});
+  const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
 
   return {
-    pageDimensions: _.pick(page, ['width', 'height']),
-    isDrawn: page.isDrawn,
-    isDrawing: page.isDrawing,
+    pageDimensions: _.get(page, ['dimensions']),
+    isDrawn: _.get(page, ['isDrawn']),
+    isDrawing: _.get(page, ['isDrawing']),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
   };
 };

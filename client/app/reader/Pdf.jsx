@@ -82,7 +82,12 @@ export class Pdf extends React.PureComponent {
     // we know which pages are stale.
     this.state = {
       numPages: {},
-      pdfDocument: {}
+      pdfDocument: {},
+      scrollTop: 0,
+      scrollWindowCenter: {
+        x: 0,
+        y: 0
+      }
     };
 
     this.scrollLocation = {
@@ -110,6 +115,10 @@ export class Pdf extends React.PureComponent {
   }
 
   scrollEvent = () => {
+    this.setState({
+      scrollTop: this.scrollWindow.scrollTop
+    });
+
     // Now that the user is scrolling we reset the scroll location
     // so that we do not keep scrolling the user back.
     this.scrollLocation = {
@@ -135,46 +144,6 @@ export class Pdf extends React.PureComponent {
     if (this.props.jumpToPageNumber) {
       this.props.resetJumpToPage();
     }
-    this.drawInViewPages();
-  }
-
-  drawInViewPages = () => {
-    // If we're already drawn a page, delay this calculation.
-    const numberOfPagesDrawing = _.reduce(this.props.pageStates, (total, drawingArray) => {
-      return total + _.reduce(_.get(drawingArray, ['pages'], []), (acc, page) => {
-        return acc + (page.drawing ? 1 : 0);
-      }, 0);
-    }, 0);
-
-    if (numberOfPagesDrawing >= MAX_PAGES_TO_DRAW_AT_ONCE) {
-      return;
-    }
-
-    let prioritzedPage = null;
-    let minPageDistance = Number.MAX_SAFE_INTEGER;
-
-    this.performFunctionOnEachPage((boundingRect, index) => {
-      // This draws the next "closest" page. Where closest is defined as how
-      // far the page is from the viewport.
-      if (!_.get(this.props.pageStates, [this.props.file, 'pages', index, 'drawn'], false)) {
-        const distanceToCenter = (boundingRect.bottom > 0 && boundingRect.top < this.scrollWindow.clientHeight) ? 0 :
-          Math.abs(boundingRect.bottom + boundingRect.top - this.scrollWindow.clientHeight);
-
-        if (!_.get(this.props.pageStates, [this.props.file, 'pages', index, 'drawn'], false)) {
-          if (distanceToCenter < minPageDistance) {
-            prioritzedPage = index;
-            minPageDistance = distanceToCenter;
-          }
-        }
-      }
-    });
-
-    // Have to explicitly check for null since prioritizedPage can be zero.
-    if (prioritzedPage === null) {
-      return;
-    }
-
-    _.set(this.shouldDraw, [this.props.file, prioritzedPage], true);
   }
 
   performFunctionOnEachPage = (func) => {
@@ -378,7 +347,7 @@ export class Pdf extends React.PureComponent {
 
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
-    window.addEventListener('resize', this.drawInViewPages);
+    // window.addEventListener('resize', this.drawInViewPages);
     window.addEventListener('keydown', this.keyListener);
 
     this.setUpPdf(this.props.file);
@@ -388,7 +357,7 @@ export class Pdf extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.drawInViewPages);
+    // window.removeEventListener('resize', this.drawInViewPages);
     window.removeEventListener('keydown', this.keyListener);
   }
 
@@ -452,51 +421,6 @@ export class Pdf extends React.PureComponent {
     /* eslint-enable no-negated-condition */
   }
 
-  preDrawPages = () => {
-    return;
-    const finishPredraw = () => {
-      this.isPrerdrawing = false;
-      this.preDrawPages();
-    };
-
-    // We want the first few pages of the current document to take precedence over pages
-    // on non-visible documents. At the end of drawing pages from this document we always
-    // call preDrawPages again in case there are still pages to predraw.
-    if (this.isDrawing[this.props.file] &&
-      _.some(this.isDrawing[this.props.file].slice(0, NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING))) {
-
-    }
-
-    this.props.prefetchFiles.forEach((file) => {
-      this.getDocument(file).then((pdfDocument) => {
-        // If this document is not in the state yet, we need to add it
-        // since we use its presence in the state to determine if we should
-        // draw the PdfPage component.
-        if (!this.state.pdfDocument[file]) {
-          this.setState({
-            pdfDocument: {
-              ...this.state.pdfDocument,
-              [file]: pdfDocument
-            }
-          });
-        }
-
-        if (pdfDocument) {
-          _.range(NUM_PAGES_TO_PREDRAW).forEach((pageIndex) => {
-            if (pageIndex < pdfDocument.pdfInfo.numPages &&
-              !_.get(this.props.pageStates, [file, 'pages', index, 'drawn'], false) &&
-              !this.isPrerdrawing) {
-              this.isPrerdrawing = true;
-
-              this.drawPage(file, pageIndex).then(finishPredraw).
-                catch(() => this.isPrerdrawing = false);
-            }
-          });
-        }
-      });
-    });
-  }
-
   scrollToPage(pageNumber) {
     this.scrollWindow.scrollTop =
       this.pageElements[this.props.file][pageNumber - 1].pageContainer.getBoundingClientRect().top +
@@ -505,9 +429,6 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   componentDidUpdate() {
-    this.drawInViewPages();
-    this.preDrawPages();
-
     // Wait until the page dimensions have been calculated, then it is
     // safe to jump to the pages since their positioning won't change.
     if (this.props.numberPagesSized === this.state.numPages[this.props.file] &&
@@ -528,7 +449,16 @@ export class Pdf extends React.PureComponent {
     }
   }
 
-  getScrollWindowRef = (scrollWindow) => this.scrollWindow = scrollWindow
+  getScrollWindowRef = (scrollWindow) => {
+    this.scrollWindow = scrollWindow;
+    const rect = scrollWindow.getBoundingClientRect();
+    this.setState({
+      scrollWindowCenter: {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      }
+    });
+  }
 
   getPageContainerRef = (index, file, elem) => {
     if (elem) {
@@ -543,13 +473,15 @@ export class Pdf extends React.PureComponent {
     const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
       if (this.state.pdfDocument[file]) {
         return <PdfPage
+            scrollTop={this.scrollWindow.scrollTop}
+            scrollWindowCenter={this.state.scrollWindowCenter}
             documentId={this.props.documentId}
             key={`${file}-${pageIndex + 1}`}
             file={file}
             pageIndex={pageIndex}
             isVisible={this.props.file === file}
             scale={this.props.scale}
-            shouldDraw={_.get(this.shouldDraw, [file, pageIndex])}
+            shouldDraw={true}
             getPageContainerRef={this.getPageContainerRef}
             pdfDocument={this.state.pdfDocument[file]}
           />;
@@ -575,8 +507,8 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
-  pageStates: _.get(state.readerReducer, ['documentsByFile'], {}),
-  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
+  // pageStates: _.get(state.readerReducer, ['documentsByFile'], {}),
+  // numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 
