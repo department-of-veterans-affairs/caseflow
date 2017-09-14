@@ -56,6 +56,7 @@ class HearingWorksheetIssues extends PureComponent {
       return {
         counter: <b>{key + 1}.</b>,
         program: issueRow.program,
+        issue: issueRow.issue,
         levels: issueRow.levels,
         description: <HearingWorksheetIssueFields
                       issue={issueRow} />,
