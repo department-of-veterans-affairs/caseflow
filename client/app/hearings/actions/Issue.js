@@ -1,51 +1,58 @@
 import * as Constants from '../constants/constants';
 
-export const onDescriptionChange = (description) => ({
+export const onDescriptionChange = (description, issueId) => ({
   type: Constants.SET_DESCRIPTION,
   payload: {
-    description
+    description,
+    issueId
   }
 });
 
-export const onToggleReopen = (reopen) => ({
+export const onToggleReopen = (reopen, issueId) => ({
   type: Constants.SET_REOPEN,
   payload: {
-    reopen
+    reopen,
+    issueId
   }
 });
 
-export const onToggleAllow = (allow) => ({
+export const onToggleAllow = (allow, issueId) => ({
   type: Constants.SET_ALLOW,
   payload: {
-    allow
+    allow,
+    issueId
   }
 });
 
-export const onToggleDeny = (deny) => ({
+export const onToggleDeny = (deny, issueId) => ({
   type: Constants.SET_DENY,
   payload: {
-    deny
+    deny,
+    issueId
   }
 });
 
-export const onToggleRemand = (remand) => ({
+export const onToggleRemand = (remand, issueId) => ({
   type: Constants.SET_REMAND,
   payload: {
-    remand
+    remand,
+    issueId
   }
 });
 
-export const onToggleDismiss = (dismiss) => ({
+export const onToggleDismiss = (dismiss, issueId) => ({
   type: Constants.SET_DISMISS,
   payload: {
-    dismiss
+    dismiss,
+    issueId
   }
 });
 
-export const onToggleVHA = (vha) => ({
+export const onToggleVHA = (vha, issueId) => ({
   type: Constants.SET_VHA,
   payload: {
-    vha
+    vha,
+    issueId
   }
 });
 
