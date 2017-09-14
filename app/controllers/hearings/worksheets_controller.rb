@@ -65,6 +65,6 @@ class Hearings::WorksheetsController < HearingsController
         nod: 99,
         soc: 10,
         docs_in_efolder: 88 } }
-    }.merge(worksheet.to_hash_with_appeals_and_issues)
+    }.merge(worksheet.to_hash_for_worksheet)
   end
 end

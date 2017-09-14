@@ -77,6 +77,7 @@ class Hearing < ActiveRecord::Base
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
+        :representative_name,
         :veteran_age,
         :veteran_name,
         :venue,
@@ -88,7 +89,7 @@ class Hearing < ActiveRecord::Base
   end
   # rubocop:enable Metrics/MethodLength
 
-  def to_hash_with_appeals_and_issues
+  def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
                 :regional_office_name,
