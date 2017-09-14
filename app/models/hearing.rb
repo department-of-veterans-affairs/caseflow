@@ -50,9 +50,6 @@ class Hearing < ActiveRecord::Base
     number_of_documents_after_certification
   end
 
-  cache_attribute :cached_periods_of_service do
-    veteran.periods_of_service
-  end
 
   delegate \
     :veteran_age, \
@@ -65,7 +62,6 @@ class Hearing < ActiveRecord::Base
     :number_of_documents_after_certification, \
     :representative, \
     to: :appeal, allow_nil: true
-
 
   # rubocop:disable Metrics/MethodLength
   def to_hash
@@ -101,7 +97,7 @@ class Hearing < ActiveRecord::Base
                 :regional_office_name,
                 :representative,
                 :appeals_ready_for_hearing,
-                cached_periods_of_service],
+                :cached_periods_of_service],
       include: :issues
     ).merge(to_hash)
   end
@@ -114,6 +110,15 @@ class Hearing < ActiveRecord::Base
 
   def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
+  end
+
+  private
+
+  def set_initial_values(appeal_vacols_id, css_id)
+    appeal = Appeal.find_or_create_by(vacols_id: appeal_vacols_id)
+    user = User.find_by(css_id: css_id)
+    military_service = appeal.veteran.periods_of_service.join("\n") if appeal.veteran
+    save!
   end
 
   class << self
@@ -129,12 +134,8 @@ class Hearing < ActiveRecord::Base
 
     def create_from_vacols_record(vacols_record)
       transaction do
-        find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
-          # If it is a master record, do not create a record in the hearings table
-          return hearing if vacols_record.master_record?
-
-          hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-                         user: User.find_by(css_id: vacols_record.css_id))
+        find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
+          hearing.set_initial_values(vacols_record.folder_nr, vacols_record.css_id) if hearing.new_record?
           hearing.set_issues_from_appeal
         end
       end

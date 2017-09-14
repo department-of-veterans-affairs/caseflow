@@ -39,15 +39,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     representative_name: :repname
   }.freeze
 
-  NOT_MASTER_RECORD = %(
-    vdkey is NOT NULL
-  ).freeze
-
-  WITHOUT_DISPOSITION = %(
-    hearing_disp IS NULL
-    -- an older hearing still awaiting a disposition
-  ).freeze
-
   after_update :update_hearing_action, if: :hearing_disp_changed?
   after_update :create_or_update_diaries
 
