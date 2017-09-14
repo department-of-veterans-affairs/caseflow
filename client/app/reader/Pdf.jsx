@@ -481,7 +481,7 @@ export class Pdf extends React.PureComponent {
             pageIndex={pageIndex}
             isVisible={this.props.file === file}
             scale={this.props.scale}
-            shouldDraw={true}
+            shouldDraw={pageIndex < 10}
             getPageContainerRef={this.getPageContainerRef}
             pdfDocument={this.state.pdfDocument[file]}
           />;

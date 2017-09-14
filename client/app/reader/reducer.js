@@ -1083,6 +1083,34 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_PDF_PAGE:
+    return update(
+      state,
+      {
+        pages: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $apply: (page) => ({
+              ...(page || {}),
+              page: action.payload.page
+            })
+          }
+        }
+      }
+    );
+  case Constants.SET_PDF_PAGE_TEXT:
+    return update(
+      state,
+      {
+        pages: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $apply: (page) => ({
+              ...(page || {}),
+              text: action.payload.text
+            })
+          }
+        }
+      }
+    );
   default:
     return state;
   }

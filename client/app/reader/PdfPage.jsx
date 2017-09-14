@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfPageDimensions, setPdfPageIsDrawn, setPdfPageIsDrawing } from '../reader/actions';
+import { setPdfPageDimensions, setPdfPageIsDrawn, setPdfPageIsDrawing,
+  setPdfPage, setPdfPageText } from '../reader/actions';
 import { bindActionCreators } from 'redux';
-import { pageNumberOfPageIndex, drawPdfPage, updatePriority } from './utils';
+import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
 import classNames from 'classnames';
@@ -22,14 +23,16 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
-const MINIMUM_PRIORITY = 100000;
+const MAXIMUM_DISTANCE = 1000000;
+// const MAXIMUM_DISTANCE = 10000000000000;
 
 export class PdfPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.isDrawing = false;
-    this.priority = 0;
+    this.isDrawn = false;
+    this.distance = 0;
   }
 
   getUniqueId = () => `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`
@@ -48,6 +51,10 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = value;
   }
 
+  setIsDrawn = (value) => {
+    this.isDrawn = value;
+  }
+
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
@@ -56,154 +63,131 @@ export class PdfPage extends React.PureComponent {
     if (this.isDrawing) {
       return Promise.reject();
     }
+    this.setIsDrawing(true);
 
     let t0;
     const currentScale = this.props.scale;
-    const renderCanvas = (pdfPage) => {
-      // The viewport is a PDFJS concept that combines the size of the
-      // PDF pages with the scale go get the dimensions of the divs.
-      const viewport = pdfPage.getViewport(this.props.scale);
+    // The viewport is a PDFJS concept that combines the size of the
+    // PDF pages with the scale go get the dimensions of the divs.
+    const viewport = this.props.page.getViewport(this.props.scale);
 
-      // We need to set the width and heights of everything based on
-      // the width and height of the viewport.
-      this.canvas.height = viewport.height;
-      this.canvas.width = viewport.width;
+    // We need to set the width and heights of everything based on
+    // the width and height of the viewport.
+    this.canvas.height = viewport.height;
+    this.canvas.width = viewport.width;
 
-      this.textLayer.innerHTML = '';
+    console.log('drawing page');
+    // Call PDFJS to actually draw the page.
+    return this.props.page.render({
+        canvasContext: this.canvas.getContext('2d', { alpha: false }),
+        viewport
+      }).
+      then(() => {
+        this.setIsDrawn(true);
+        this.setIsDrawing(false);
 
-      // Call PDFJS to actually draw the page.
-      return drawPdfPage(
-        pdfPage,
-        this.priority,
-        this.getUniqueId(),
-        {
-          canvasContext: this.canvas.getContext('2d', { alpha: false }),
-          viewport
-        }).
-        then(() => {
-          return Promise.resolve({
-            pdfPage,
-            viewport
-          });
-        });
-    };
-    const getText = (pdfPage) => {
-            const viewport = pdfPage.getViewport(this.props.scale);
-
-      t0 = performance.now();
-      // Get the text from the PDF and write it.
-      return pdfPage.getTextContent().then((textContent) => {
-        console.log('getting text', performance.now() - t0);
-
-        return Promise.resolve({
-          textContent,
-          viewport
-        });
+        // If the scale has changed, draw the page again at the latest scale.
+        if (currentScale !== this.props.scale) {
+          return this.drawPage();
+        }
+      }).
+      catch(() => {
+        this.setIsDrawing(false);
       });
-    };
-    const drawText = ({ textContent, viewport }) => {
-      t0 = performance.now();
-      PDFJS.renderTextLayer({
-        textContent,
-        container: this.textLayer,
-        viewport,
-        textDivs: []
-      });
-      this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, true);
-      this.setIsDrawing(false);
+  }
 
-      // If the scale has changed, draw the page again at the latest scale.
-      if (currentScale !== this.props.scale) {
-        return this.drawPage();
-      }
-      console.log('drawing text', performance.now() - t0);
+  clearPage = () => {
+    if (this.isDrawn) {
+      this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
+      // this.props.page.cleanup();
+      console.log('cleaning up page', this.canvas.width, this.canvas.height);
+    }
 
-      return Promise.resolve();
-    };
-    const handleError = () => {
-      this.setIsDrawing(false);
-
-      return Promise.reject();
-    };
-
-    this.setIsDrawing(true);
-
-    return this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).
-      // then(renderCanvas).
-      then(getText).
-      then(drawText).
-      catch(handleError);
+    this.setIsDrawn(false);
   }
 
   componentDidMount = () => {
-    this.getDimensions();
-
-    if (this.props.shouldDraw) {
-      this.drawPage();
-    }
+    this.getPage();
   }
 
   componentWillUnmount = () => {
-    this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
+    this.setIsDrawn(false);
     this.setIsDrawing(false);
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    if (this.props.scrollTop !== nextProps.scrollTop && this.isDrawing) {
-      const boundingRect = this.pageContainer.getBoundingClientRect();
-      const pageCenter = {
-        x: (boundingRect.left + boundingRect.right) / 2,
-        y: (boundingRect.top + boundingRect.bottom) / 2
-      };
-
-      this.priority = (Math.pow(pageCenter.x - nextProps.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - nextProps.scrollWindowCenter.y, 2));
-
-      updatePriority(this.getUniqueId(), this.priority);
-    }
-  }
-
-  calculatePriority = () => {
+  getSquaredDistanceToCenter = () => {
     const boundingRect = this.pageContainer.getBoundingClientRect();
     const pageCenter = {
       x: (boundingRect.left + boundingRect.right) / 2,
       y: (boundingRect.top + boundingRect.bottom) / 2
     };
-    this.priority = (Math.pow(pageCenter.x - this.props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - this.props.scrollWindowCenter.y, 2));
+
+    return (Math.pow(pageCenter.x - this.props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - this.props.scrollWindowCenter.y, 2));
   }
 
   componentDidUpdate = (prevProps) => {
+    if (prevProps.page !== this.props.page) {
+      this.getDimensions();
+      this.getText();
+    }
+
+    if (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale) {
+      this.drawText();
+    }
+
     const drawAndUpdateState = () => {
-      this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
       this.drawPage();
     };
-    this.calculatePriority();
 
-    if (this.props.shouldDraw) {
-      if (!prevProps.shouldDraw || prevProps.scale !== this.props.scale) {
+    const distance = this.getSquaredDistanceToCenter();
 
-
-        console.log('page priority before drawing', this.priority);
-        drawAndUpdateState();
+    if (distance < MAXIMUM_DISTANCE) {
+      if (this.props.page) {
+        if (this.distance >= MAXIMUM_DISTANCE || prevProps.scale !== this.props.scale || !prevProps.page) {
+          drawAndUpdateState();
+        }
+      }
+    } else {
+      if (this.distance < MAXIMUM_DISTANCE) {
+        this.clearPage();
       }
     }
+    this.distance = distance;
+  }
+
+  drawText = () => {
+    const viewport = this.props.page.getViewport(this.props.scale);
+
+    this.textLayer.innerHTML = '';
+
+    PDFJS.renderTextLayer({
+      textContent: this.props.text,
+      container: this.textLayer,
+      viewport,
+      textDivs: []
+    });
+    this.setIsDrawing(false);
+  }
+
+  getText = () => {
+    // Get the text from the PDF and write it.
+    return this.props.page.getTextContent().then((textContent) => {
+      this.props.setPdfPageText(this.props.file, this.props.pageIndex, textContent);
+    });
+  }
+
+  getPage = () => {
+    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
+      this.props.setPdfPage(this.props.file, this.props.pageIndex, page);
+    });
   }
 
   getDimensions = () => {
-    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
-      const PAGE_DIMENSION_SCALE = 1;
-      const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
-      const pageDimensions = _.pick(viewport, ['width', 'height']);
+    const PAGE_DIMENSION_SCALE = 1;
+    const viewport = this.props.page.getViewport(PAGE_DIMENSION_SCALE);
+    const pageDimensions = _.pick(viewport, ['width', 'height']);
 
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
-    }).
-    catch(() => {
-      const pageDimensions = {
-        width: PAGE_WIDTH,
-        height: PAGE_HEIGHT
-      };
-
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
-    });
+    this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
   }
 
   render() {
@@ -271,7 +255,9 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfPageDimensions,
     setPdfPageIsDrawn,
-    setPdfPageIsDrawing
+    setPdfPageIsDrawing,
+    setPdfPage,
+    setPdfPageText
   }, dispatch)
 });
 
@@ -283,6 +269,8 @@ const mapStateToProps = (state, props) => {
     pageDimensions: _.get(page, ['dimensions']),
     isDrawn: _.get(page, ['isDrawn']),
     isDrawing: _.get(page, ['isDrawing']),
+    page: _.get(page, ['page']),
+    text: _.get(page, ['text']),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
   };
 };
