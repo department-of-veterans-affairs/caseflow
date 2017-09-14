@@ -1,6 +1,4 @@
-class HealthChecksController < ApplicationController
-  skip_before_action :verify_authentication
-
+class HealthChecksController < ActionController::Base
   def show
     healthcheck = HealthCheck.new
     status = healthcheck.healthy? ? :ok : :bad_request
