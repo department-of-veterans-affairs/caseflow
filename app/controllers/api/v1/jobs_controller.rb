@@ -17,7 +17,7 @@ class Api::V1::JobsController < Api::V1::ApplicationController
     return unrecognized_job unless job
 
     job = job.perform_later
-    Rails.logger.info("Pushing job #{job.job_id} to queue: #{job.queue_name}")
+    Rails.logger.info("Pushing #{job} job #{job.job_id} to queue: #{job.queue_name}")
     render json: { success: true, job_id: job.job_id }, status: 200
   end
 
