@@ -1046,10 +1046,11 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         pages: {
-          $merge: {
-            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $apply: (page) => ({
+              ...(page || {}),
               dimensions: action.payload.dimensions
-            }
+            })
           }
         }
       }
@@ -1059,10 +1060,11 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         pages: {
-          $merge: {
-            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $apply: (page) => ({
+              ...(page || {}),
               drawn: action.payload.isDrawn
-            }
+            })
           }
         }
       }
@@ -1072,10 +1074,11 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         pages: {
-          $merge: {
-            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $apply: (page) => ({
+              ...(page || {}),
               drawing: action.payload.isDrawing
-            }
+            })
           }
         }
       }

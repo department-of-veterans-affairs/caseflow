@@ -142,7 +142,9 @@ export const drawPdfPage = (pdfPage, priority, id, parameters, promiseCallback) 
     isDrawing = true;
     console.log('Actually drawing', id);
 
+    const t0 = performance.now();
     return pdfPage.render(parameters).then(() => {
+      console.log('drawing page', performance.now() - t0);
       finishDrawing();
 
       if (promiseCallback) {

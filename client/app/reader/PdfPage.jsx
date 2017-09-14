@@ -22,6 +22,8 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
+const MINIMUM_PRIORITY = 100000;
+
 export class PdfPage extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -70,7 +72,6 @@ export class PdfPage extends React.PureComponent {
       this.textLayer.innerHTML = '';
 
       // Call PDFJS to actually draw the page.
-
       return drawPdfPage(
         pdfPage,
         this.priority,
@@ -86,10 +87,14 @@ export class PdfPage extends React.PureComponent {
           });
         });
     };
-    const getText = ({ pdfPage, viewport }) => {
+    const getText = (pdfPage) => {
+            const viewport = pdfPage.getViewport(this.props.scale);
+
       t0 = performance.now();
       // Get the text from the PDF and write it.
       return pdfPage.getTextContent().then((textContent) => {
+        console.log('getting text', performance.now() - t0);
+
         return Promise.resolve({
           textContent,
           viewport
@@ -97,6 +102,7 @@ export class PdfPage extends React.PureComponent {
       });
     };
     const drawText = ({ textContent, viewport }) => {
+      t0 = performance.now();
       PDFJS.renderTextLayer({
         textContent,
         container: this.textLayer,
@@ -123,7 +129,7 @@ export class PdfPage extends React.PureComponent {
     this.setIsDrawing(true);
 
     return this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).
-      then(renderCanvas).
+      // then(renderCanvas).
       then(getText).
       then(drawText).
       catch(handleError);
@@ -156,21 +162,26 @@ export class PdfPage extends React.PureComponent {
     }
   }
 
+  calculatePriority = () => {
+    const boundingRect = this.pageContainer.getBoundingClientRect();
+    const pageCenter = {
+      x: (boundingRect.left + boundingRect.right) / 2,
+      y: (boundingRect.top + boundingRect.bottom) / 2
+    };
+    this.priority = (Math.pow(pageCenter.x - this.props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - this.props.scrollWindowCenter.y, 2));
+  }
+
   componentDidUpdate = (prevProps) => {
     const drawAndUpdateState = () => {
       this.props.setPdfPageIsDrawn(this.props.file, this.props.pageIndex, false);
       this.drawPage();
     };
+    this.calculatePriority();
 
     if (this.props.shouldDraw) {
       if (!prevProps.shouldDraw || prevProps.scale !== this.props.scale) {
-        const boundingRect = this.pageContainer.getBoundingClientRect();
-        const pageCenter = {
-          x: (boundingRect.left + boundingRect.right) / 2,
-          y: (boundingRect.top + boundingRect.bottom) / 2
-        };
 
-        this.priority = (Math.pow(pageCenter.x - this.props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - this.props.scrollWindowCenter.y, 2));
+
         console.log('page priority before drawing', this.priority);
         drawAndUpdateState();
       }
