@@ -1,5 +1,5 @@
-class HealthChecksController < ApplicationController
-  skip_before_action :verify_authentication
+class HealthChecksController < ActionController::Base
+  protect_from_forgery with: :exception
 
   def show
     healthcheck = HealthCheck.new
