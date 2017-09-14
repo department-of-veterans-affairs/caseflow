@@ -385,7 +385,12 @@ $color-hearings-saving: #777;
   }
 }
 
-.cf-hearings-worksheet-desc-label {
-  position: absolute;
-  left: -99999px;
+.cf-hearings-worksheet-desc {
+
+  .cf-hearings-worksheet-desc-label,
+   i {
+    position: absolute;
+    left: -99999px;
+  }
 }
+
