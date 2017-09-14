@@ -1,4 +1,6 @@
 class HealthChecksController < ActionController::Base
+  protect_from_forgery with: :exception
+
   def show
     healthcheck = HealthCheck.new
     status = healthcheck.healthy? ? :ok : :bad_request
