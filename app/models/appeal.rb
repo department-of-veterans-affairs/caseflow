@@ -250,7 +250,9 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetch_and_save_aod
-    self.aod = self.class.repository.aod(vacols_id)
+    aod = self.class.repository.aod(vacols_id)
+    self.update_attribute(:aod, aod)
+    aod
   end
 
   def nod
