@@ -11,6 +11,7 @@ import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
+import NavigationBar from '../components/NavigationBar';
 
 const configureStore = (data) => {
 
@@ -48,6 +49,10 @@ const Hearings = ({ hearings }) => {
     <div>
       <BrowserRouter>
         <div>
+          <NavigationBar
+            appName="Hearings Prep"
+            userDisplayName={hearings.userDisplayName}
+            dropdownUrls={hearings.dropdownUrls}/>
          <ScrollToTop />
           <Route exact path="/hearings/dockets"
             component={() => (
