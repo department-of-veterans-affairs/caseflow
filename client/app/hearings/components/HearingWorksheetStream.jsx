@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Button from '../../components/Button';
+
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
@@ -13,7 +15,6 @@ class HearingWorksheetStream extends Component {
 
     return <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Issues</h2>
-
             {Object.keys(worksheetStreams).map((appeal, key) => {
                 // Iterates over all apeals to create appeal streams inside worksheet
               let appealId = appeal;
@@ -25,6 +26,12 @@ class HearingWorksheetStream extends Component {
                 worksheetStreamsAppealId={this.props.worksheet.streams[appealId]}
                 worksheetStreamsIssues={this.props.worksheet.streams[appealId].issues}
                 {...this.props}
+              />
+              <Button
+              classNames={['usa-button-outline', 'hearings-add-issue']}
+              name="+ Add Issue"
+              id={`button-addIssue-${appealId}`}
+              onClick={this.addIssue}
               />
               <hr />
               </div>;
@@ -44,4 +51,3 @@ HearingWorksheetStream.propTypes = {
 export default connect(
   mapStateToProps
 )(HearingWorksheetStream);
-
