@@ -95,8 +95,7 @@ class Hearing < ActiveRecord::Base
       methods: [:appeal_id,
                 :regional_office_name,
                 :representative,
-                :appeals_ready_for_hearing,
-                :cached_periods_of_service],
+                :appeals_ready_for_hearing],
       include: :issues
     ).merge(to_hash)
   end
