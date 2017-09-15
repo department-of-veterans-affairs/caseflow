@@ -35,12 +35,12 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    PDFJS.workerSrc = this.props.pdfWorker;
+
     this.loadingTask = PDFJS.getDocument({
       url: this.props.file,
       withCredentials: true
     });
-
-    console.log('loading PDF');
 
     return this.loadingTask.then((pdfDocument) => {
       this.loadingTask = null;
@@ -52,6 +52,9 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentWillUnmount = () => {
+    if (this.loadingTask) {
+      this.loadingTask.destroy();
+    }
     if (this.props.pdfDocument) {
       this.props.pdfDocument.destroy();
       this.props.setPdfDocument(this.props.file, null);

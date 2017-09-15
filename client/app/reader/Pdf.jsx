@@ -152,43 +152,6 @@ export class Pdf extends React.PureComponent {
     });
   }
 
-  // This method sets up the PDF. It sends a web request for the file
-  // and when it receives it, starts to draw it.
-  setUpPdf = (file) => {
-    return;
-    this.latestFile = file;
-
-    return new Promise((resolve) => {
-      this.getDocument(this.latestFile).then((pdfDocument) => {
-
-        // Don't continue setting up the pdf if it's already been set up.
-        if (!pdfDocument || pdfDocument === this.state.pdfDocument[this.latestFile]) {
-          this.onPageChange(1);
-          this.props.setPdfReadyToShow(this.props.documentId);
-
-          return resolve();
-        }
-
-        this.setState({
-          numPages: {
-            ...this.state.numPages,
-            [file]: pdfDocument.pdfInfo.numPages
-          },
-          pdfDocument: {
-            ...this.state.pdfDocument,
-            [file]: pdfDocument
-          }
-        }, () => {
-          // If the user moves between pages quickly we want to make sure that we just
-          // set up the most recent file, so we call this function recursively.
-          this.setUpPdf(this.latestFile).then(() => {
-            resolve();
-          });
-        });
-      });
-    });
-  }
-
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
     if (this.pageElements[this.props.file]) {
       const boundingBox = this.scrollWindow.getBoundingClientRect();
@@ -266,10 +229,7 @@ export class Pdf extends React.PureComponent {
   }
 
   componentDidMount() {
-    PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('keydown', this.keyListener);
-
-    this.setUpPdf(this.props.file);
 
     // focus the scroll window when the component initially loads.
     this.scrollWindow.focus();
@@ -279,19 +239,6 @@ export class Pdf extends React.PureComponent {
     window.removeEventListener('keydown', this.keyListener);
   }
 
-  cleanUpPdf = (pdf, file) => {
-    if (pdf.pdfDocument) {
-      pdf.pdfDocument.destroy();
-    }
-
-    this.setState({
-      pdfDocument: {
-        ...this.state.pdfDocument,
-        [file]: null
-      }
-    });
-  }
-
   componentWillReceiveProps(nextProps) {
     // In general I think this is a good lint rule. However,
     // I think the below statements are clearer
@@ -299,7 +246,6 @@ export class Pdf extends React.PureComponent {
     /* eslint-disable no-negated-condition */
     if (nextProps.file !== this.props.file) {
       this.scrollWindow.scrollTop = 0;
-      this.setUpPdf(nextProps.file);
 
       // focus the scroll window when the document changes.
       this.scrollWindow.focus();
@@ -314,25 +260,6 @@ export class Pdf extends React.PureComponent {
         page: this.currentPage,
         locationOnPage: nonZoomedLocation * zoomFactor
       };
-    }
-
-    if (nextProps.prefetchFiles !== this.props.prefetchFiles) {
-      const pdfsToKeep = [...nextProps.prefetchFiles, nextProps.file];
-
-      Object.keys(this.predrawnPdfs).forEach((file) => {
-        if (!pdfsToKeep.includes(file)) {
-          this.cleanUpPdf(this.predrawnPdfs[file], file);
-        }
-      });
-
-      Object.keys(this.loadingTasks).forEach((file) => {
-        if (!pdfsToKeep.includes(file) && this.loadingTasks[file]) {
-          this.loadingTasks[file].destroy();
-          delete this.loadingTasks[file];
-        }
-      });
-
-      this.predrawnPdfs = _.pick(this.predrawnPdfs, pdfsToKeep);
     }
     /* eslint-enable no-negated-condition */
   }
@@ -395,6 +322,7 @@ export class Pdf extends React.PureComponent {
 
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
+          pdfWorker={this.props.pdfWorker}
           scrollTop={scrollTop}
           scrollWindowCenter={this.state.scrollWindowCenter}
           documentId={this.props.documentId}

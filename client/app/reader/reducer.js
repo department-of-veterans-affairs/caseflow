@@ -392,18 +392,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.SET_PDF_READY_TO_SHOW:
-    return update(state, {
-      ui: {
-        pdf: {
-          pdfsReadyToShow: {
-            $set: {
-              [action.payload.docId]: true
-            }
-          }
-        }
-      }
-    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
       hideErrorMessage(state, 'category'),

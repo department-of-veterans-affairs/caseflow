@@ -139,11 +139,14 @@ export class PdfPage extends React.PureComponent {
     // the page was just loaded.
     if (shouldDraw) {
       if (this.props.page) {
-        if (!this.previousShouldDraw || prevProps.scale !== this.props.scale || !prevProps.page) {
+        if (!this.previousShouldDraw ||
+            prevProps.scale !== this.props.scale ||
+            !prevProps.page ||
+            (this.props.isVisible && !prevProps.isVisible)) {
           this.drawPage();
         }
       }
-    } else if (this.shouldDrawPage(prevProps)) {
+    } else if (this.previousShouldDraw) {
       this.clearPage();
     }
     this.previousShouldDraw = shouldDraw;

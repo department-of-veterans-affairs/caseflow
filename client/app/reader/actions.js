@@ -493,13 +493,6 @@ export const removeTagRequestSuccess = (docId, tagId) => (
   }
 );
 
-export const setPdfReadyToShow = (docId) => ({
-  type: Constants.SET_PDF_READY_TO_SHOW,
-  payload: {
-    docId
-  }
-});
-
 export const setTagFilter = (text, checked, tagId) => ({
   type: Constants.SET_TAG_FILTER,
   payload: {
