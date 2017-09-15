@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 
+import { TrashCan } from '../../components/RenderFunctions';
+
 class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => {
@@ -67,9 +69,8 @@ class HearingWorksheetIssues extends PureComponent {
                       issue={issueRow} />,
         actions: <HearingWorksheetPreImpressions
                     issue={issueRow} />,
-      // add trash icon here
-        deleteIssue: <div>X</div>
-    };
+        deleteIssue: <div><TrashCan /></div>
+      };
     });
 
     return <Table

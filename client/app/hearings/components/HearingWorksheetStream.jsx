@@ -21,9 +21,9 @@ class HearingWorksheetStream extends Component {
               {...this.props}
             />
                 <Button
-                className="usa-button-outline"
-                name="Add Issue"
-                //onClick={this.addIssue}
+                classNames={['usa-button-outline']}
+                name="+ Add Issue"
+                onClick={this.addIssue}
               />
     </div>;
   }
@@ -40,4 +40,3 @@ HearingWorksheetStream.propTypes = {
 export default connect(
   mapStateToProps
 )(HearingWorksheetStream);
-
