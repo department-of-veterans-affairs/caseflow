@@ -50,7 +50,6 @@ class Hearing < ActiveRecord::Base
     number_of_documents_after_certification
   end
 
-
   delegate \
     :veteran_age, \
     :veteran_name, \
