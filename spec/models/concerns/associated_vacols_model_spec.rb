@@ -132,10 +132,10 @@ describe AssociatedVacolsModel do
     end
   end
 
-  context "#mark_field_is_set" do
-    it "field_set? returns true after running mark_field_is_set" do
+  context "#mark_field_as_set" do
+    it "field_set? returns true after running mark_field_as_set" do
       expect(model.field_set?(:foo)).to be_falsy
-      model.mark_field_is_set(:foo)
+      model.mark_field_as_set(:foo)
       expect(model.field_set?(:foo)).to be_truthy
     end
   end
