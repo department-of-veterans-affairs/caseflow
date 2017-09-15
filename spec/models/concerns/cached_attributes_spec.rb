@@ -40,6 +40,18 @@ describe CachedAttributes do
       it { is_expected.to eq(9) }
     end
 
+    context "caches false boolean values" do
+      before {
+        model.clear_cached_attr!(:rating)
+        model.not_cached_rating = false
+      }
+      it "reads from cache" do
+        expect(model.rating).to eq(false)
+        model.not_cached_rating = true
+        expect(model.rating).to eq(false) 
+      end
+    end
+
     context "when cached value" do
       before do
         model.rating
