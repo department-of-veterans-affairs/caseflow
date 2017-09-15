@@ -56,11 +56,8 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
   };
 };
 
-const NUM_PAGES_TO_DRAW_BEFORE_PREDRAWING = 5;
 const COVER_SCROLL_HEIGHT = 120;
 
-const NUM_PAGES_TO_PREDRAW = 2;
-const MAX_PAGES_TO_DRAW_AT_ONCE = 2;
 const TIMEOUT_FOR_GET_DOCUMENT = 100;
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
@@ -450,10 +447,11 @@ export class Pdf extends React.PureComponent {
   getScrollWindowRef = (scrollWindow) => {
     this.scrollWindow = scrollWindow;
     const rect = scrollWindow.getBoundingClientRect();
+
     this.setState({
       scrollWindowCenter: {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
+        x: rect.left + (rect.width / 2),
+        y: rect.top + (rect.height / 2)
       }
     });
   }
@@ -504,7 +502,7 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => ({
   ...state.readerReducer.ui.pdf,
-  numberPagesSized: _.size(_.get(state.readerReducer, ['documentsByFile', props.file, 'pages'])),
+  numberPagesSized: Object.keys(state.readerReducer.pages).filter((pageName) => pageName.includes(props.file)).length,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
 });
 

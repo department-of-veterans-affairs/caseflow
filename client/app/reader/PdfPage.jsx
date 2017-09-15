@@ -23,7 +23,6 @@ const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
 const MAXIMUM_DISTANCE = 10000000;
-// const MAXIMUM_DISTANCE = 10000000000000;
 
 export class PdfPage extends React.PureComponent {
   constructor(props) {
@@ -63,7 +62,6 @@ export class PdfPage extends React.PureComponent {
     }
     this.setIsDrawing(true);
 
-    let t0;
     const currentScale = this.props.scale;
     // The viewport is a PDFJS concept that combines the size of the
     // PDF pages with the scale go get the dimensions of the divs.
@@ -74,12 +72,11 @@ export class PdfPage extends React.PureComponent {
     this.canvas.height = viewport.height;
     this.canvas.width = viewport.width;
 
-    console.log('drawing page');
     // Call PDFJS to actually draw the page.
     return this.props.page.render({
-        canvasContext: this.canvas.getContext('2d', { alpha: false }),
-        viewport
-      }).
+      canvasContext: this.canvas.getContext('2d', { alpha: false }),
+      viewport
+    }).
       then(() => {
         this.setIsDrawn(true);
         this.setIsDrawing(false);
@@ -98,7 +95,6 @@ export class PdfPage extends React.PureComponent {
     if (this.isDrawn) {
       this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.props.page.cleanup();
-      // console.log('cleaning up page', this.canvas.width, this.canvas.height);
     }
 
     this.setIsDrawn(false);
@@ -119,9 +115,10 @@ export class PdfPage extends React.PureComponent {
     if (!this.props.isVisible) {
       if (this.props.pageIndex < 2) {
         return MAXIMUM_DISTANCE - 1;
-      } else {
-        return MAXIMUM_DISTANCE + 1;
       }
+
+      return MAXIMUM_DISTANCE + 1;
+
     }
 
     const boundingRect = this.pageContainer.getBoundingClientRect();
@@ -130,7 +127,8 @@ export class PdfPage extends React.PureComponent {
       y: (boundingRect.top + boundingRect.bottom) / 2
     };
 
-    return (Math.pow(pageCenter.x - props.scrollWindowCenter.x, 2) + Math.pow(pageCenter.y - props.scrollWindowCenter.y, 2));
+    return (Math.pow(pageCenter.x - props.scrollWindowCenter.x, 2) +
+      Math.pow(pageCenter.y - props.scrollWindowCenter.y, 2));
   }
 
   componentDidUpdate = (prevProps) => {
@@ -150,10 +148,8 @@ export class PdfPage extends React.PureComponent {
           drawAndUpdateState();
         }
       }
-    } else {
-      if (this.distance < MAXIMUM_DISTANCE) {
-        this.clearPage();
-      }
+    } else if (this.distance < MAXIMUM_DISTANCE) {
+      this.clearPage();
     }
     this.distance = distance;
   }
@@ -180,35 +176,25 @@ export class PdfPage extends React.PureComponent {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
       this.getText(page).then((text) => {
         const pageData = {
-            text,
-            dimensions: this.getDimensions(page),
-            page
-          };
+          text,
+          dimensions: this.getDimensions(page),
+          page
+        };
+
         this.props.setUpPdfPage(
           this.props.file,
           this.props.pageIndex,
           pageData
         );
-      })
-      
-      // console.log('calling update');
-      // if (!this.props.pageDimensions) {
-      //   this.getDimensions(page);
-      // }
-      // if (!this.props.text) {
-      //   this.getText(page);
-      // }
+      });
     });
   }
 
   getDimensions = (page) => {
-    // new Promise((resolve) => {
-      const PAGE_DIMENSION_SCALE = 1;
-      const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
-      const pageDimensions = _.pick(viewport, ['width', 'height']);
-      return pageDimensions;
-    //   resolve(pageDimensions);
-    // })
+    const PAGE_DIMENSION_SCALE = 1;
+    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
+
+    return _.pick(viewport, ['width', 'height']);
   }
 
   render() {
@@ -267,14 +253,13 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
-  isDrawn: PropTypes.object,
   getPageContainerRef: PropTypes.func,
   pdfDocument: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setUpPdfPage,
+    setUpPdfPage
   }, dispatch)
 });
 

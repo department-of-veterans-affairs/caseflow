@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { newContext } from 'immutability-helper';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
 export const update = newContext();
 
