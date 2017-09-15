@@ -21,8 +21,8 @@ describe Hearing do
     end
   end
 
-  context "#to_hash_with_appeals_and_issues" do
-    subject { hearing.to_hash_with_appeals_and_issues }
+  context "#to_hash_for_worksheet" do
+    subject { hearing.to_hash_for_worksheet }
 
     let(:appeal) do
       Generators::Appeal.create(vacols_record: { template: :pending_hearing },
@@ -61,7 +61,7 @@ describe Hearing do
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
-        expect(subject["veteran_full_name"]).to eq(appeal.veteran_full_name)
+        expect(subject["veteran_name"]).to eq(appeal.veteran_name)
         expect(subject["cached_number_of_documents"]).to eq 2
         expect(subject["cached_number_of_documents_after_certification"]).to eq 0
       end
