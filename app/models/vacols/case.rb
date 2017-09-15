@@ -236,6 +236,9 @@ class VACOLS::Case < VACOLS::Record
     end
   end
 
+  ##
+  # This method takes an array of vacols ids and fetches their aod status.
+  #
   def self.aod(vacols_ids)
     conn = connection
     vacols_ids = vacols_ids.map { |vacols_id| conn.quote(vacols_id) }
@@ -263,7 +266,6 @@ class VACOLS::Case < VACOLS::Record
         WHERE BRIEFF.BFKEY IN (#{vacols_ids.to_csv(row_sep: nil)})
       SQL
 
-      puts query
       aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
                                                                               service: :vacols) do
       conn.exec_query(query)
