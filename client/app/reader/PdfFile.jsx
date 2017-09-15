@@ -40,6 +40,8 @@ export class PdfFile extends React.PureComponent {
       withCredentials: true
     });
 
+    console.log('loading PDF');
+
     return this.loadingTask.then((pdfDocument) => {
       this.loadingTask = null;
       this.props.setPdfDocument(this.props.file, pdfDocument);

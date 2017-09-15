@@ -378,6 +378,7 @@ export class Pdf extends React.PureComponent {
   }
 
   getPageContainerRef = (index, file, elem) => {
+    return;
     if (elem) {
       _.set(this.pageElements[file], [index, 'pageContainer'], elem);
     } else {
