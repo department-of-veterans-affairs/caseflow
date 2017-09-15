@@ -70,7 +70,8 @@ describe Veteran do
         country: country,
         zip_code: "94117",
         military_post_office_type_code: military_post_office_type_code,
-        military_postal_type_code: military_postal_type_code
+        military_postal_type_code: military_postal_type_code,
+        service: [ { branch_of_service: "army" } ]
       }
     end
 
@@ -84,6 +85,7 @@ describe Veteran do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
+        service: [ { branch_of_service: "army" } ],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
