@@ -45,6 +45,11 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
+      },
+      {
+        header: '',
+        align: 'left',
+        valueName: 'deleteIssue'
       }
     ];
 
@@ -61,8 +66,10 @@ class HearingWorksheetIssues extends PureComponent {
         description: <HearingWorksheetIssueFields
                       issue={issueRow} />,
         actions: <HearingWorksheetPreImpressions
-                    issue={issueRow} />
-      };
+                    issue={issueRow} />,
+      // add trash icon here
+        deleteIssue: <div>X</div>
+    };
     });
 
     return <Table

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Button from '../../components/Button';
+
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
@@ -18,6 +20,11 @@ class HearingWorksheetStream extends Component {
               worksheetStreamsIssues={worksheetStreamsIssues}
               {...this.props}
             />
+                <Button
+                className="usa-button-outline"
+                name="Add Issue"
+                //onClick={this.addIssue}
+              />
     </div>;
   }
 }
