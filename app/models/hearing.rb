@@ -126,6 +126,7 @@ class Hearing < ActiveRecord::Base
         find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
           # If it is a master record, do not create a record in the hearings table
           return hearing if vacols_record.master_record?
+
           hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
                          user: User.find_by(css_id: vacols_record.css_id))
           hearing.set_issues_from_appeal
