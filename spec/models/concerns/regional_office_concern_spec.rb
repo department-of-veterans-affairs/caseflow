@@ -1,7 +1,7 @@
-describe RegionalOffice do
+describe RegionalOfficeConcern do
   class TestThing
     include ActiveModel::Model
-    include RegionalOffice
+    include RegionalOfficeConcern
     attr_accessor :regional_office_key
   end
 
