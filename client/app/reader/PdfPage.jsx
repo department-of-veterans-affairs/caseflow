@@ -111,7 +111,8 @@ export class PdfPage extends React.PureComponent {
   componentWillUnmount = () => {
     this.setIsDrawn(false);
     this.setIsDrawing(false);
-    // this.props.page.cleanup();
+    this.props.page.cleanup();
+    this.props.setPdfPage(this.props.file, this.props.pageIndex, page);
   }
 
   getSquaredDistanceToCenter = (props) => {
@@ -133,16 +134,6 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
-    console.log('calling update');
-    if (prevProps.page !== this.props.page) {
-      if (!this.props.pageDimensions) {
-        this.getDimensions();
-      }
-      if (!this.props.text) {
-        this.getText();
-      }
-    }
-
     if (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale) {
       this.drawText();
     }
@@ -181,9 +172,9 @@ export class PdfPage extends React.PureComponent {
     this.setIsDrawing(false);
   }
 
-  getText = () => {
+  getText = (page) => {
     // Get the text from the PDF and write it.
-    return this.props.page.getTextContent().then((textContent) => {
+    return page.getTextContent().then((textContent) => {
       this.props.setPdfPageText(this.props.file, this.props.pageIndex, textContent);
     });
   }
@@ -191,15 +182,24 @@ export class PdfPage extends React.PureComponent {
   getPage = () => {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
       this.props.setPdfPage(this.props.file, this.props.pageIndex, page);
+      console.log('calling update');
+      if (!this.props.pageDimensions) {
+        this.getDimensions(page);
+      }
+      if (!this.props.text) {
+        this.getText(page);
+      }
     });
   }
 
-  getDimensions = () => {
-    const PAGE_DIMENSION_SCALE = 1;
-    const viewport = this.props.page.getViewport(PAGE_DIMENSION_SCALE);
-    const pageDimensions = _.pick(viewport, ['width', 'height']);
+  getDimensions = (page) => {
+    new Promise(() => {
+      const PAGE_DIMENSION_SCALE = 1;
+      const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
+      const pageDimensions = _.pick(viewport, ['width', 'height']);
 
-    this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    })
   }
 
   render() {
@@ -277,8 +277,6 @@ const mapStateToProps = (state, props) => {
 
   return {
     pageDimensions: _.get(page, ['dimensions']),
-    isDrawn: _.get(page, ['isDrawn']),
-    isDrawing: _.get(page, ['isDrawing']),
     page: _.get(page, ['page']),
     text: _.get(page, ['text']),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
