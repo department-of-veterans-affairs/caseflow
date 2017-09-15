@@ -746,29 +746,11 @@ export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   }
 });
 
-export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
-  type: Constants.SET_PDF_PAGE_DIMENSIONS,
-  payload: {
-    file,
-    pageIndex,
-    dimensions
-  }
-});
-
-export const setPdfPage = (file, pageIndex, page) => ({
-  type: Constants.SET_PDF_PAGE,
+export const setUpPdfPage = (file, pageIndex, page) => ({
+  type: Constants.SET_UP_PDF_PAGE,
   payload: {
     file,
     pageIndex,
     page
-  }
-});
-
-export const setPdfPageText = (file, pageIndex, text) => ({
-  type: Constants.SET_PDF_PAGE_TEXT,
-  payload: {
-    file,
-    pageIndex,
-    text
   }
 });

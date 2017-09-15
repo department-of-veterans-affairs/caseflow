@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfPageDimensions, setPdfPage, setPdfPageText } from '../reader/actions';
+import { setUpPdfPage } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -112,7 +112,7 @@ export class PdfPage extends React.PureComponent {
     this.setIsDrawn(false);
     this.setIsDrawing(false);
     this.props.page.cleanup();
-    this.props.setPdfPage(this.props.file, this.props.pageIndex, page);
+    this.props.setUpPdfPage(this.props.file, this.props.pageIndex, null);
   }
 
   getSquaredDistanceToCenter = (props) => {
@@ -173,33 +173,42 @@ export class PdfPage extends React.PureComponent {
   }
 
   getText = (page) => {
-    // Get the text from the PDF and write it.
-    return page.getTextContent().then((textContent) => {
-      this.props.setPdfPageText(this.props.file, this.props.pageIndex, textContent);
-    });
+    return page.getTextContent();
   }
 
   getPage = () => {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-      this.props.setPdfPage(this.props.file, this.props.pageIndex, page);
-      console.log('calling update');
-      if (!this.props.pageDimensions) {
-        this.getDimensions(page);
-      }
-      if (!this.props.text) {
-        this.getText(page);
-      }
+      this.getText(page).then((text) => {
+        const pageData = {
+            text,
+            dimensions: this.getDimensions(page),
+            page
+          };
+        this.props.setUpPdfPage(
+          this.props.file,
+          this.props.pageIndex,
+          pageData
+        );
+      })
+      
+      // console.log('calling update');
+      // if (!this.props.pageDimensions) {
+      //   this.getDimensions(page);
+      // }
+      // if (!this.props.text) {
+      //   this.getText(page);
+      // }
     });
   }
 
   getDimensions = (page) => {
-    new Promise(() => {
+    // new Promise((resolve) => {
       const PAGE_DIMENSION_SCALE = 1;
       const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
       const pageDimensions = _.pick(viewport, ['width', 'height']);
-
-      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
-    })
+      return pageDimensions;
+    //   resolve(pageDimensions);
+    // })
   }
 
   render() {
@@ -265,9 +274,7 @@ PdfPage.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setPdfPageDimensions,
-    setPdfPage,
-    setPdfPageText
+    setUpPdfPage,
   }, dispatch)
 });
 
