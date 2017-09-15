@@ -266,9 +266,9 @@ class VACOLS::Case < VACOLS::Record
       puts query
       aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
                                                                               service: :vacols) do
-        #conn.exec_query(query)
+      conn.exec_query(query)
       end
-      aod_result.to_hash.first["aod"]
+      aod_result.to_hash.map { |result| result["aod"] }
     end
   end
 
