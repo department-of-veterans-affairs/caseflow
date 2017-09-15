@@ -14,7 +14,7 @@ class HearingWorksheetIssues extends PureComponent {
   render() {
     let {
      worksheetStreamsIssues,
-     worksheetStreamsAppealId
+     worksheetStreamsAppeal
     } = this.props;
 
     const columns = [
@@ -60,11 +60,11 @@ class HearingWorksheetIssues extends PureComponent {
         issue: issueRow.issue,
         levels: issueRow.levels,
         description: <HearingWorksheetIssueFields
-                      appealId={worksheetStreamsAppealId}
+                      appealId={worksheetStreamsAppeal}
                       issue={issueRow}
                        />,
         actions: <HearingWorksheetPreImpressions
-                    appealId={worksheetStreamsAppealId}
+                    appealId={worksheetStreamsAppeal}
                     issue={issueRow} />
       };
     });
@@ -89,7 +89,7 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired,
-  worksheetStreamsAppealId: PropTypes.object.isRequired
+  worksheetStreamsAppeal: PropTypes.object.isRequired
 };
 
 
