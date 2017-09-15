@@ -30,6 +30,7 @@ class HearingWorksheetStream extends Component {
               <Button
               classNames={['usa-button-outline', 'hearings-add-issue']}
               name="+ Add Issue"
+              id={`button-addIssue-${appealId}`}
               onClick={this.addIssue}
               />
               <hr />
