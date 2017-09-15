@@ -7,7 +7,7 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   pageCoordsOfRootCoords } from '../reader/utils';
-import PdfPage from '../reader/PdfPage';
+import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { setPdfReadyToShow,
@@ -464,13 +464,14 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const pages = _.map(this.state.numPages, (numPages, file) => _.range(numPages).map((page, pageIndex) => {
+    const pages = _.map(this.state.numPages, (numPages, file) => {
       if (this.state.pdfDocument[file]) {
-        return <PdfPage
+        return <PdfFile
+            numPages={numPages}
             scrollTop={this.scrollWindow.scrollTop}
             scrollWindowCenter={this.state.scrollWindowCenter}
             documentId={this.props.documentId}
-            key={`${file}-${pageIndex + 1}`}
+            key={`${file}`}
             file={file}
             pageIndex={pageIndex}
             isVisible={this.props.file === file}
@@ -479,7 +480,6 @@ export class Pdf extends React.PureComponent {
             pdfDocument={this.state.pdfDocument[file]}
           />;
       }
-
       return null;
     }));
 
