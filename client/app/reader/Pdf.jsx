@@ -79,7 +79,6 @@ export class Pdf extends React.PureComponent {
     // we know which pages are stale.
     this.state = {
       numPages: {},
-      pdfDocument: {},
       scrollTop: 0,
       scrollWindowCenter: {
         x: 0,
@@ -156,6 +155,7 @@ export class Pdf extends React.PureComponent {
   // This method sets up the PDF. It sends a web request for the file
   // and when it receives it, starts to draw it.
   setUpPdf = (file) => {
+    return;
     this.latestFile = file;
 
     return new Promise((resolve) => {
@@ -186,83 +186,6 @@ export class Pdf extends React.PureComponent {
           });
         });
       });
-    });
-  }
-
-  setUpPdfObjects = (file, pdfDocument) => {
-    if (!this.pageElements[file]) {
-      this.pageElements[file] = {};
-    }
-
-    this.setState({
-      numPages: {
-        ...this.state.numPages,
-        [file]: pdfDocument.pdfInfo.numPages
-      }
-    });
-  }
-
-  // This method is a wrapper around PDFJS's getDocument function. We wrap that function
-  // so that we can call this whenever we need a reference to the document at the location
-  // specified by `file`. This method will only make the request to the server once. Afterwards
-  // it will return a cached version of it.
-  getDocument = (file) => {
-    const pdfsToKeep = [...this.props.prefetchFiles, this.props.file];
-
-    if (!pdfsToKeep.includes(file)) {
-      return Promise.resolve(null);
-    }
-
-    if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-      // If the document has already been retrieved, just return it.
-      return Promise.resolve(this.predrawnPdfs[file].pdfDocument);
-    } else if (this.isGettingPdf[file]) {
-      // If the document is currently being retrieved we wait until it is, then return it.
-      return new Promise((resolve) => {
-        return setTimeout(() => {
-          this.getDocument(file).then((pdfDocument) => {
-            resolve(pdfDocument);
-          });
-        }, TIMEOUT_FOR_GET_DOCUMENT);
-      });
-    }
-
-    // If the document has not been retrieved yet, we make a request to the server and
-    // set isGettingPdf true so that we don't try to request it again, while the first
-    // request is finishing.
-    this.isGettingPdf[file] = true;
-    this.loadingTasks[file] = PDFJS.getDocument({
-      url: file,
-      withCredentials: true
-    });
-
-    return this.loadingTasks[file].then((pdfDocument) => {
-      this.loadingTasks[file] = null;
-      this.isGettingPdf[file] = false;
-
-      if ([...this.props.prefetchFiles, this.props.file].includes(file)) {
-        // There is a chance another async call has resolved in the time that
-        // getDocument took to run. If so, again just use the cached version.
-        if (_.get(this.predrawnPdfs, [file, 'pdfDocument'])) {
-          pdfDocument.destroy();
-
-          return this.predrawnPdfs[file].pdfDocument;
-        }
-        this.predrawnPdfs[file] = {
-          pdfDocument
-        };
-        this.setUpPdfObjects(file, pdfDocument);
-
-        return pdfDocument;
-      }
-      pdfDocument.destroy();
-
-      return null;
-    }).
-    catch(() => {
-      this.isGettingPdf[file] = false;
-
-      return null;
     });
   }
 
@@ -464,24 +387,23 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const pages = _.map(this.state.numPages, (numPages, file) => {
-      if (this.state.pdfDocument[file]) {
-        return <PdfFile
-            numPages={numPages}
-            scrollTop={this.scrollWindow.scrollTop}
-            scrollWindowCenter={this.state.scrollWindowCenter}
-            documentId={this.props.documentId}
-            key={`${file}`}
-            file={file}
-            pageIndex={pageIndex}
-            isVisible={this.props.file === file}
-            scale={this.props.scale}
-            getPageContainerRef={this.getPageContainerRef}
-            pdfDocument={this.state.pdfDocument[file]}
-          />;
-      }
-      return null;
-    }));
+    let scrollTop = 0;
+    if (this.scrollWindow) {
+      scrollTop = this.scrollWindow.scrollTop;
+    }
+
+    const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
+      return <PdfFile
+          scrollTop={scrollTop}
+          scrollWindowCenter={this.state.scrollWindowCenter}
+          documentId={this.props.documentId}
+          key={`${file}`}
+          file={file}
+          isVisible={this.props.file === file}
+          scale={this.props.scale}
+          getPageContainerRef={this.getPageContainerRef}
+        />;
+      });
 
     return <div
       id="scrollWindow"

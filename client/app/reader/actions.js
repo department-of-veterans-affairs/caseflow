@@ -754,3 +754,11 @@ export const setUpPdfPage = (file, pageIndex, page) => ({
     page
   }
 });
+
+export const setPdfDocument = (file, doc) => ({
+  type: Constants.SET_PDF_DOCUMENT,
+  payload: {
+    file,
+    doc
+  }
+});

@@ -207,7 +207,8 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  pages: {}
+  pages: {},
+  pdfDocuments: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1048,6 +1049,17 @@ export const reducer = (state = initialState, action = {}) => {
         pages: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
             $set: action.payload.page
+          }
+        }
+      }
+    );
+  case Constants.SET_PDF_DOCUMENT:
+    return update(
+      state,
+      {
+        pdfDocuments: {
+          [action.payload.file]: {
+            $set: action.payload.doc
           }
         }
       }

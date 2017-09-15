@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
+import { setPdfDocument } from '../reader/actions';
 import PdfPage from './PdfPage';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
@@ -29,36 +31,69 @@ export class PdfFile extends React.PureComponent {
     this.isDrawing = false;
     this.isDrawn = false;
     this.previousShouldDraw = 0;
+    this.loadingTask = null;
   }
 
-  render() {
-    return _.range(this.props.numPages).map((page, pageIndex) => <PdfPage
+  componentDidMount = () => {
+    this.loadingTask = PDFJS.getDocument({
+      url: this.props.file,
+      withCredentials: true
+    });
+
+    return this.loadingTask.then((pdfDocument) => {
+      this.loadingTask = null;
+      this.props.setPdfDocument(this.props.file, pdfDocument);
+    }).
+    catch(() => {
+      this.loadingTask = null;
+    });
+  }
+
+  componentWillUnmount = () => {
+    if (this.props.pdfDocument) {
+      this.props.pdfDocument.destroy();
+      this.props.setPdfDocument(this.props.file, null);
+    }
+  }
+
+  getPages = () => {
+    if (this.props.pdfDocument) {
+      return _.range(this.props.pdfDocument.pdfInfo.numPages).map((pageIndex) => <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
-        key={`${file}-${pageIndex + 1}`}
+        key={pageIndex}
         file={this.props.file}
         pageIndex={pageIndex}
         isVisible={this.props.isVisible}
         scale={this.props.scale}
         getPageContainerRef={this.props.getPageContainerRef}
         pdfDocument={this.props.pdfDocument}
-      />;
+      />);
+    } else {
+      return null;
+    }
+  }
+
+  render() {
+    return <div>
+      {this.getPages()}
+      </div>;
   }
 }
 
 PdfFile.propTypes = {
-  file:
   pdfDocument: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setUpPdfPage
+    setPdfDocument
   }, dispatch)
 });
 
-const mapStateToProps = (state, props) => {
-};
+const mapStateToProps = (state, props) => ({
+  pdfDocument: state.readerReducer.pdfDocuments[props.file]
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);
