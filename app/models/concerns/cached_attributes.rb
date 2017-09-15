@@ -26,15 +26,13 @@ module CachedAttributes
 
   module ClassMethods
     def cache_attribute(attr_name, &get_value)
-      define_method attr_name do
+      define_method attr_name do |value=nil|
         cached_value = get_cached_value(attr_name)
-
-        if cached_value
+        if !cached_value.nil?
           Rails.logger.info("Retrieving cached value for #{self.class.name}##{attr_name}")
           return cached_value
         end
-
-        value = instance_eval(&get_value)
+        value = value.nil? ? instance_eval(&get_value) : value
         set_cached_value(attr_name, value)
       end
     end

@@ -80,6 +80,8 @@ class AppealRepository
   # TODO: consider persisting these records
   def self.build_appeal(case_record)
     appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+    # fetching aod
+    appeal.aod
     set_vacols_values(appeal: appeal, case_record: case_record)
   end
 
@@ -265,7 +267,7 @@ class AppealRepository
   end
 
   def self.aod(vacols_id)
-    VACOLS::Case.aod(vacols_id) == 1
+    VACOLS::Case.aod([vacols_id])[0] == 1
   end
 
   # :nocov:
