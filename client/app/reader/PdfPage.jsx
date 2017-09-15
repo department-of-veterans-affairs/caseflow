@@ -57,9 +57,9 @@ export class PdfPage extends React.PureComponent {
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
-  drawPage = (page) => {
+  drawPage = () => {
     if (this.isDrawing) {
-      return Promise.resolve();
+      return Promise.reject();
     }
     this.setIsDrawing(true);
 
@@ -67,7 +67,7 @@ export class PdfPage extends React.PureComponent {
     const currentScale = this.props.scale;
     // The viewport is a PDFJS concept that combines the size of the
     // PDF pages with the scale go get the dimensions of the divs.
-    const viewport = page.getViewport(this.props.scale);
+    const viewport = this.props.page.getViewport(this.props.scale);
 
     // We need to set the width and heights of everything based on
     // the width and height of the viewport.
@@ -76,7 +76,7 @@ export class PdfPage extends React.PureComponent {
 
     console.log('drawing page');
     // Call PDFJS to actually draw the page.
-    return page.render({
+    return this.props.page.render({
         canvasContext: this.canvas.getContext('2d', { alpha: false }),
         viewport
       }).
@@ -86,7 +86,7 @@ export class PdfPage extends React.PureComponent {
 
         // If the scale has changed, draw the page again at the latest scale.
         if (currentScale !== this.props.scale) {
-          return this.drawPage(page);
+          return this.drawPage();
         }
       }).
       catch(() => {
@@ -94,11 +94,10 @@ export class PdfPage extends React.PureComponent {
       });
   }
 
-  clearPage = (page) => {
+  clearPage = () => {
     if (this.isDrawn) {
       this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
-      // this.props.setPdfPage(this.props.file, this.props.pageIndex, null);
-
+      this.props.page.cleanup();
       // console.log('cleaning up page', this.canvas.width, this.canvas.height);
     }
 
@@ -135,22 +134,30 @@ export class PdfPage extends React.PureComponent {
 
   componentDidUpdate = (prevProps) => {
     console.log('calling update');
+    if (prevProps.page !== this.props.page) {
+      if (!this.props.pageDimensions) {
+        this.getDimensions();
+      }
+      if (!this.props.text) {
+        this.getText();
+      }
+    }
 
     if (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale) {
       this.drawText();
     }
 
+    const drawAndUpdateState = () => {
+      this.drawPage();
+    };
+
     const distance = this.getSquaredDistanceToCenter(this.props);
 
     if (distance < MAXIMUM_DISTANCE) {
-      if (this.distance >= MAXIMUM_DISTANCE || prevProps.scale !== this.props.scale) {
-        this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-          this.drawPage(page).then(() => {
-            page.cleanup();
-          }).catch(() => {
-            page.cleanup();
-          });
-        });
+      if (this.props.page) {
+        if (this.distance >= MAXIMUM_DISTANCE || prevProps.scale !== this.props.scale || !prevProps.page) {
+          drawAndUpdateState();
+        }
       }
     } else {
       if (this.distance < MAXIMUM_DISTANCE) {
@@ -161,7 +168,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   drawText = () => {
-    const viewport = this.page.getViewport(this.props.scale);
+    const viewport = this.props.page.getViewport(this.props.scale);
 
     this.textLayer.innerHTML = '';
 
@@ -174,37 +181,22 @@ export class PdfPage extends React.PureComponent {
     this.setIsDrawing(false);
   }
 
-  getText = (page) => {
+  getText = () => {
     // Get the text from the PDF and write it.
-    return page.getTextContent().then((textContent) => {
+    return this.props.page.getTextContent().then((textContent) => {
       this.props.setPdfPageText(this.props.file, this.props.pageIndex, textContent);
     });
   }
 
   getPage = () => {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-      this.props.setPdfPage(this.props.file, this.props.pageIndex, true);
-      this.page = page;
-      const distance = this.getSquaredDistanceToCenter(this.props);
-
-      this.getText(page);
-      this.getDimensions(page);
-
-      if (distance < MAXIMUM_DISTANCE) {
-        this.drawPage(page).then(() => {
-          page.cleanup();
-        }).catch(() => {
-          page.cleanup();
-        });
-      } else {
-        page.cleanup();
-      }
+      this.props.setPdfPage(this.props.file, this.props.pageIndex, page);
     });
   }
 
-  getDimensions = (page) => {
+  getDimensions = () => {
     const PAGE_DIMENSION_SCALE = 1;
-    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
+    const viewport = this.props.page.getViewport(PAGE_DIMENSION_SCALE);
     const pageDimensions = _.pick(viewport, ['width', 'height']);
 
     this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
