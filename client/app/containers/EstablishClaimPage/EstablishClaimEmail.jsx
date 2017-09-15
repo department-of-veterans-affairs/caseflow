@@ -110,7 +110,7 @@ export class EstablishClaimEmail extends BaseForm {
             </div>
           </div>
 
-          <div className="required-wrapper">
+          <div className="route-claim-confirmNote-wrapper">
           <Checkbox
               label="I confirm that I have sent an email to route this claim."
               name="confirmEmail"

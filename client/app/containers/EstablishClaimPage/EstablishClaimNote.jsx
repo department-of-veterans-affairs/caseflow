@@ -151,7 +151,7 @@ export class EstablishClaimNote extends BaseForm {
         </div>
       </div>
 
-      <div className="required-wrapper">
+      <div className="route-claim-confirmNote-wrapper">
         <Checkbox
           label="I confirm that I have created a VBMS note to help route this claim."
           fullWidth={true}
