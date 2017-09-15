@@ -239,8 +239,15 @@ class Appeal < ActiveRecord::Base
     result && result.first
   end
 
-  def aod
-    @aod ||= self.class.repository.aod(vacols_id)
+  def aod?
+    return aod if aod
+    fetch_and_save_aod
+  end
+
+  def fetch_and_save_aod
+    aod = self.class.repository.aod(vacols_id)
+    self.update_attribute(:aod, aod)
+    aod
   end
 
   def nod
@@ -416,9 +423,10 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
+      hash["aod"] = aod?
       hash["viewed"] = viewed
       hash["issues"] = issues
     end

@@ -102,7 +102,7 @@ describe Appeal do
   end
 
   context "#aod" do
-    subject { appeal.aod }
+    subject { appeal.aod? }
 
     it { is_expected.to be_truthy }
   end
@@ -1181,6 +1181,11 @@ describe Appeal do
         expect(subject["cavc"]).to be_truthy
         expect(subject["regional_office"][:key]).to eq("RO13")
         expect(subject["docket_number"]).to eq("13 11-265")
+      end
+
+      it "aod to be populated in the Appeal model" do
+        expect(appeal.aod?).to be_truthy
+        expect(appeal.aod).to be_truthy
       end
     end
 
