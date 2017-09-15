@@ -33,7 +33,8 @@ class Generators::Appeal
         form9_date: 11.days.ago,
         veteran_date_of_birth: 47.years.ago,
         appellant_city: "Huntingdon",
-        appellant_state: "TN"
+        appellant_state: "TN",
+        docket_number: 4198
       }
     end
     # rubocop:enable Metrics/MethodLength

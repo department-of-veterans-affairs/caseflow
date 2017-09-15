@@ -1,6 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
+  include RegionalOffice
+
   has_many :tasks
   has_many :appeal_views
 
@@ -219,14 +221,6 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
-  def regional_office
-    { key: regional_office_key }.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
-  end
-
-  def regional_office_name
-    "#{regional_office[:city]}, #{regional_office[:state]}"
-  end
-
   def attributes_for_hearing
     {
       "id" => id,
@@ -235,7 +229,8 @@ class Appeal < ActiveRecord::Base
       "soc_date" => soc_date,
       "certification_date" => certification_date,
       "prior_decision_date" => prior_decision_date,
-      "ssoc_dates" => ssoc_dates
+      "ssoc_dates" => ssoc_dates,
+      "docket_number" => docket_number
     }
   end
 
