@@ -27,14 +27,14 @@ class HearingWorksheetStream extends Component {
                 worksheetStreamsIssues={this.props.worksheet.streams[appealId].issues}
                 {...this.props}
               />
+              <Button
+              classNames={['usa-button-outline', 'hearings-add-issue']}
+              name="+ Add Issue"
+              onClick={this.addIssue}
+              />
               <hr />
               </div>;
             })}
-            <Button
-            classNames={['usa-button-outline', 'hearings-add-issue']}
-            name="+ Add Issue"
-            onClick={this.addIssue}
-            />
         </div>;
   }
 }
