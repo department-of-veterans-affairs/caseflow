@@ -63,7 +63,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       # the child records (veterans scheduled for that video) to the parent record
       children_ids = hearings.map(&:vdkey).compact.map(&:to_i)
       # Filter out video master records with children
-      hearings.reject { |hearing| hearing.folder_nr =~ /VIDEO/ && children_ids.include?(hearing.hearing_pkseq) }
+      hearings.reject { |hearing| hearing.master_record? && children_ids.include?(hearing.hearing_pkseq) }
     end
 
     def for_appeal(appeal_vacols_id)
@@ -100,6 +100,15 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+  end
+
+  def master_record_type
+    return :video if folder_nr =~ /VIDEO/
+    # TODO: return :travel_board if a record is from tb_sched
+  end
+
+  def master_record?
+    master_record_type.present?
   end
 
   def update_hearing!(hearing_info)

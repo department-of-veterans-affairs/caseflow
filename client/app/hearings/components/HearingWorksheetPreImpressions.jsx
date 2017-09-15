@@ -10,12 +10,18 @@ import {
 
 class HearingWorksheetPreImpressions extends PureComponent {
 
-  onToggleReopen = (reopen) => this.props.onToggleReopen(reopen, this.props.issue.id);
-  onToggleAllow = (allow) => this.props.onToggleAllow(allow, this.props.issue.id);
-  onToggleDeny = (deny) => this.props.onToggleDeny(deny, this.props.issue.id);
-  onToggleRemand = (remand) => this.props.onToggleRemand(remand, this.props.issue.id);
-  onToggleDismiss = (dismiss) => this.props.onToggleDismiss(dismiss, this.props.issue.id);
-  onToggleVHA = (vha) => this.props.onToggleVHA(vha, this.props.issue.id);
+  onToggleReopen = (reopen) =>
+    this.props.onToggleReopen(reopen, this.props.issue.id, this.props.appealId.id);
+  onToggleAllow = (allow) =>
+    this.props.onToggleAllow(allow, this.props.issue.id, this.props.appealId.id);
+  onToggleDeny = (deny) =>
+    this.props.onToggleDeny(deny, this.props.issue.id, this.props.appealId.id);
+  onToggleRemand = (remand) =>
+    this.props.onToggleRemand(remand, this.props.issue.id, this.props.appealId.id);
+  onToggleDismiss = (dismiss) =>
+    this.props.onToggleDismiss(dismiss, this.props.issue.id, this.props.appealId.id);
+  onToggleVHA = (vha) =>
+    this.props.onToggleVHA(vha, this.props.issue.id, this.props.appealId.id);
 
   render() {
     let { issue } = this.props;
@@ -57,7 +63,8 @@ const mapStateToProps = (state) => ({
 });
 
 HearingWorksheetPreImpressions.propTypes = {
-  issue: PropTypes.object.isRequired
+  issue: PropTypes.object.isRequired,
+  appealId: PropTypes.object.isRequired
 };
 
 export default connect(

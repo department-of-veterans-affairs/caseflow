@@ -33,7 +33,8 @@ class Generators::Appeal
         form9_date: 11.days.ago,
         veteran_date_of_birth: 47.years.ago,
         appellant_city: "Huntingdon",
-        appellant_state: "TN"
+        appellant_state: "TN",
+        docket_number: 4198
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -172,9 +173,9 @@ class Generators::Appeal
       inaccessible = attrs.delete(:inaccessible)
 
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
-      appeal.attributes = attrs
 
-      vacols_record[:vbms_id] = appeal.vbms_id
+      vacols_record[:vbms_id] = attrs[:vbms_id]
+      vacols_record = vacols_record.merge(attrs.select { |attr| Appeal.vacols_field?(attr) })
 
       issues_from_template = vacols_record.delete(:issues)
       set_vacols_issues(appeal: appeal,
@@ -184,7 +185,10 @@ class Generators::Appeal
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
 
       Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[appeal.vbms_id] = documents
+      Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
+
+      non_vacols_attrs = attrs.reject { |attr| Appeal.vacols_field?(attr) }
+      appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible
 
