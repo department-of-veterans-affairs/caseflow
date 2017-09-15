@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
-  include RegionalOffice
+  include RegionalOfficeConcern
 
   has_many :tasks
   has_many :appeal_views
