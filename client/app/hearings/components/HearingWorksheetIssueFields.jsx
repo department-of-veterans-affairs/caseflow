@@ -7,7 +7,8 @@ import { onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
-  onDescriptionChange = (description) => this.props.onDescriptionChange(description, this.props.issue.id)
+  onDescriptionChange = (description) =>
+    this.props.onDescriptionChange(description, this.props.issue.id, this.props.appealId.id)
 
   render() {
     let { issue } = this.props;
@@ -30,7 +31,8 @@ const mapStateToProps = (state) => ({
 });
 
 HearingWorksheetIssueFields.propTypes = {
-  issue: PropTypes.object.isRequired
+  issue: PropTypes.object.isRequired,
+  appealId: PropTypes.object.isRequired
 };
 
 export default connect(

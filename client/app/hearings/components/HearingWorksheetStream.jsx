@@ -16,15 +16,17 @@ class HearingWorksheetStream extends Component {
 
             {Object.keys(worksheetStreams).map((appeal, key) => {
                 // Iterates over all apeals to create appeal streams inside worksheet
-                // TODO line between appeals
               let appealId = appeal;
 
-              return <div key={appealId} id={key + 1}>
+
+              return <div key={appealId} id={appealId}>
               <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
               <HearingWorksheetIssues
+                worksheetStreamsAppealId={this.props.worksheet.streams[appealId]}
                 worksheetStreamsIssues={this.props.worksheet.streams[appealId].issues}
                 {...this.props}
               />
+              <hr />
               </div>;
             })}
         </div>;
