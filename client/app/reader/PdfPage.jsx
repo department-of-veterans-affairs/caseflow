@@ -22,7 +22,9 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
-const MAXIMUM_DISTANCE = 10000000;
+// Under this maximum squared distance pages are drawn, beyond it they are not.
+const MAX_SQUARED_DISTANCE = 10000000;
+const NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER = 2;
 
 export class PdfPage extends React.PureComponent {
   constructor(props) {
@@ -30,10 +32,8 @@ export class PdfPage extends React.PureComponent {
 
     this.isDrawing = false;
     this.isDrawn = false;
-    this.distance = 0;
+    this.previousShouldDraw = 0;
   }
-
-  getUniqueId = () => `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`
 
   getPageContainerRef = (pageContainer) => {
     this.pageContainer = pageContainer;
@@ -44,14 +44,6 @@ export class PdfPage extends React.PureComponent {
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
-  setIsDrawing = (value) => {
-    this.isDrawing = value;
-  }
-
-  setIsDrawn = (value) => {
-    this.isDrawn = value;
-  }
-
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
@@ -60,11 +52,9 @@ export class PdfPage extends React.PureComponent {
     if (this.isDrawing) {
       return Promise.reject();
     }
-    this.setIsDrawing(true);
+    this.isDrawing = true;
 
     const currentScale = this.props.scale;
-    // The viewport is a PDFJS concept that combines the size of the
-    // PDF pages with the scale go get the dimensions of the divs.
     const viewport = this.props.page.getViewport(this.props.scale);
 
     // We need to set the width and heights of everything based on
@@ -78,8 +68,8 @@ export class PdfPage extends React.PureComponent {
       viewport
     }).
       then(() => {
-        this.setIsDrawn(true);
-        this.setIsDrawing(false);
+        this.isDrawing = false;
+        this.isDrawn = true;
 
         // If the scale has changed, draw the page again at the latest scale.
         if (currentScale !== this.props.scale) {
@@ -87,7 +77,7 @@ export class PdfPage extends React.PureComponent {
         }
       }).
       catch(() => {
-        this.setIsDrawing(false);
+        this.isDrawing = false;
       });
   }
 
@@ -97,30 +87,23 @@ export class PdfPage extends React.PureComponent {
       this.props.page.cleanup();
     }
 
-    this.setIsDrawn(false);
+    this.isDrawn = false;
   }
 
   componentDidMount = () => {
-    this.getPage();
+    this.setUpPage();
   }
 
   componentWillUnmount = () => {
-    this.setIsDrawn(false);
-    this.setIsDrawing(false);
+    this.isDrawing = false;
+    this.isDrawn = false;
     this.props.page.cleanup();
     this.props.setUpPdfPage(this.props.file, this.props.pageIndex, null);
   }
 
+  // This function gets the square of the distance to the center of the scroll window.
+  // We don't calculate linear distance since taking square roots is expensive.
   getSquaredDistanceToCenter = (props) => {
-    if (!this.props.isVisible) {
-      if (this.props.pageIndex < 2) {
-        return MAXIMUM_DISTANCE - 1;
-      }
-
-      return MAXIMUM_DISTANCE + 1;
-
-    }
-
     const boundingRect = this.pageContainer.getBoundingClientRect();
     const pageCenter = {
       x: (boundingRect.left + boundingRect.right) / 2,
@@ -131,27 +114,39 @@ export class PdfPage extends React.PureComponent {
       Math.pow(pageCenter.y - props.scrollWindowCenter.y, 2));
   }
 
+  // This function determines whether or not it should draw the page based on its distance
+  // from the center of the scroll window, or if it's not visible, then if it's page index
+  // is less than NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER
+  shouldDrawPage = (props) => {
+    if (!props.isVisible) {
+      if (props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
+        return true;
+      }
+      return false;
+    }
+
+    return this.getSquaredDistanceToCenter(props) < MAX_SQUARED_DISTANCE;
+  }
+
   componentDidUpdate = (prevProps) => {
     if (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale) {
       this.drawText();
     }
 
-    const drawAndUpdateState = () => {
-      this.drawPage();
-    };
+    const shouldDraw = this.shouldDrawPage(this.props);
 
-    const distance = this.getSquaredDistanceToCenter(this.props);
-
-    if (distance < MAXIMUM_DISTANCE) {
+    // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
+    // the page was just loaded.
+    if (shouldDraw) {
       if (this.props.page) {
-        if (this.distance >= MAXIMUM_DISTANCE || prevProps.scale !== this.props.scale || !prevProps.page) {
-          drawAndUpdateState();
+        if (!this.previousShouldDraw || prevProps.scale !== this.props.scale || !prevProps.page) {
+          this.drawPage();
         }
       }
-    } else if (this.distance < MAXIMUM_DISTANCE) {
+    } else if (this.shouldDrawPage(prevProps)) {
       this.clearPage();
     }
-    this.distance = distance;
+    this.previousShouldDraw = shouldDraw;
   }
 
   drawText = () => {
@@ -165,14 +160,15 @@ export class PdfPage extends React.PureComponent {
       viewport,
       textDivs: []
     });
-    this.setIsDrawing(false);
   }
 
   getText = (page) => {
     return page.getTextContent();
   }
 
-  getPage = () => {
+  // Set up the page component in the Redux store. This includes the page dimensions, text,
+  // and PDFJS page object.
+  setUpPage = () => {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
       this.getText(page).then((text) => {
         const pageData = {

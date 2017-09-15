@@ -344,7 +344,6 @@ export class Pdf extends React.PureComponent {
 
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
-    // window.addEventListener('resize', this.drawInViewPages);
     window.addEventListener('keydown', this.keyListener);
 
     this.setUpPdf(this.props.file);
@@ -354,7 +353,6 @@ export class Pdf extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    // window.removeEventListener('resize', this.drawInViewPages);
     window.removeEventListener('keydown', this.keyListener);
   }
 
