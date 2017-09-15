@@ -28,6 +28,14 @@ describe CachedAttributes do
     end
   end
 
+  context "assign cache value" do
+    it "saves assigned cache value" do
+      model.rating = true
+      model.not_cached_rating = false
+      expect(model.rating).to eq(true)
+    end
+  end
+
   context ".cache_attribute" do
     subject { model.rating }
     before do
