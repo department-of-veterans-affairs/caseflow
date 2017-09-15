@@ -1,13 +1,14 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
+  include RegionalOfficeConcern
 
   belongs_to :appeal
   belongs_to :user
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
                        :aod, :hold_open, :transcript_requested, :notes, :add_on,
-                       :representative_name
+                       :representative_name, :regional_office_key, :master_record
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -55,12 +56,11 @@ class Hearing < ActiveRecord::Base
     :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
-    :regional_office_name, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :representative, \
-    to: :appeal
+    to: :appeal, allow_nil: true
 
   # rubocop:disable Metrics/MethodLength
   def to_hash
@@ -74,6 +74,7 @@ class Hearing < ActiveRecord::Base
         :hold_open,
         :notes,
         :add_on,
+        :master_record,
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
@@ -122,7 +123,10 @@ class Hearing < ActiveRecord::Base
 
     def create_from_vacols_record(vacols_record)
       transaction do
-        find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
+        find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
+          # If it is a master record, do not create a record in the hearings table
+          return hearing if vacols_record.master_record?
+
           hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
                          user: User.find_by(css_id: vacols_record.css_id))
           hearing.set_issues_from_appeal
