@@ -9,7 +9,7 @@ class Veteran
   BGS_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
     address_line3 city state country zip_code military_postal_type_code
-    military_post_office_type_code
+    military_post_office_type_code service
   ).freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
@@ -45,6 +45,14 @@ class Veteran
     self
   end
 
+  def periods_of_service
+    return [] unless service
+    service.inject([]) do |result, s|
+      result << period_of_service(s) if s[:branch_of_service] && s[:entered_on_duty_date]
+      result
+    end
+  end
+
   def self.bgs
     BGSService.new
   end
@@ -58,6 +66,19 @@ class Veteran
   end
 
   private
+
+  def period_of_service(s)
+    s[:branch_of_service].strip + " " +
+      service_date(s[:entered_on_duty_date]) + " - " +
+      service_date(s[:released_active_duty_date])
+  end
+
+  def service_date(date)
+    return "" unless date
+    Date.strptime(date, "%m%d%Y").strftime("%m/%d/%Y")
+  rescue ArgumentError
+    ""
+  end
 
   def address_type
     return "OVR" if military_address?
