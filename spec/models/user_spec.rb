@@ -75,20 +75,6 @@ describe User do
     end
   end
 
-  context "#admin functions" do
-    subject { user.functions }
-
-    context "user has only system admin role" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
-
-      it "disables other roles" do
-        expect(subject["Reader"][:enabled]).to be_falsey
-        expect(subject["Establish Claim"][:enabled]).to be_falsey
-        expect(subject["Certify Appeal"][:enabled]).to be_falsey
-      end
-    end
-  end
-
   context "CSUM/CSEM users with 'System Admin' function" do
     before { user.roles = ["System Admin"] }
     before { Functions.client.del("System Admin") }
