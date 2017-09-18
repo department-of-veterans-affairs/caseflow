@@ -156,7 +156,7 @@ export class DecisionReviewer extends React.PureComponent {
           defaultUrl="/"
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}/>
-        <div className="section--document-list">
+        <div className="cf-wide-app">
           <Route
             path="/:vacolsId/documents"
             render={this.documentsRoute}

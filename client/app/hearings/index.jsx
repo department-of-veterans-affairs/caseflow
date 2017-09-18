@@ -54,29 +54,33 @@ const Hearings = ({ hearings }) => {
             defaultUrl="/hearings/dockets"
             userDisplayName={hearings.userDisplayName}
             dropdownUrls={hearings.dropdownUrls}/>
-         <ScrollToTop />
-          <Route exact path="/hearings/dockets"
-            component={() => (
-              <DocketsContainer
-                veteran_law_judge={hearings.veteran_law_judge} />
-            )}
-          />
+          <div className="cf-wide-app">
+            <div className="usa-grid">
+              <ScrollToTop />
+               <Route exact path="/hearings/dockets"
+                 component={() => (
+                   <DocketsContainer
+                     veteran_law_judge={hearings.veteran_law_judge} />
+                 )}
+               />
 
-          <Route exact path="/hearings/dockets/:date"
-            component={(props) => (
-              <DailyDocketContainer
-                veteran_law_judge={hearings.veteran_law_judge}
-                date={props.match.params.date} />
-            )}
-          />
+               <Route exact path="/hearings/dockets/:date"
+                 component={(props) => (
+                   <DailyDocketContainer
+                     veteran_law_judge={hearings.veteran_law_judge}
+                     date={props.match.params.date} />
+                 )}
+               />
 
-        <Route exact path="/hearings/:hearingId/worksheet"
-            component={(props) => (
-              <HearingWorksheetContainer
-                veteran_law_judge={hearings.veteran_law_judge}
-                hearingId={props.match.params.hearingId} />
-            )}
-          />
+             <Route exact path="/hearings/:hearingId/worksheet"
+                 component={(props) => (
+                   <HearingWorksheetContainer
+                     veteran_law_judge={hearings.veteran_law_judge}
+                     hearingId={props.match.params.hearingId} />
+                 )}
+               />
+            </div>
+          </div>
         </div>
 
       </BrowserRouter>
