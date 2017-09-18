@@ -5,7 +5,6 @@ end %>
 <% content_for :full_page_content do %>
 <%= react_component("Hearings", props: {
   hearings: {
-    appName: "Hearing Prep",
     veteran_law_judge: current_user.to_hash,
     userDisplayName: current_user.display_name,
     dropdownUrls: dropdown_urls
