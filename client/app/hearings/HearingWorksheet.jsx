@@ -64,7 +64,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={this.props.worksheet.repName || ''}
+              value={worksheet.repName || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
@@ -89,7 +89,7 @@ export class HearingWorksheet extends React.PureComponent {
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
                 aria-label="Representative Name"
-                value={this.props.worksheet.witness || ''}
+                value={worksheet.witness || ''}
                 onChange={this.props.onWitnessChange}
              />
           </div>
@@ -144,7 +144,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value={this.props.worksheet.contentions}
+              value={worksheet.contentions || ''}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -153,7 +153,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheet.military_service}
+              value={worksheet.military_service || ''}
               onChange={this.props.onMilitaryServiceChange}
               id="worksheet-military-service"
               />
@@ -162,7 +162,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value={this.props.worksheet.evidence}
+              value={worksheet.evidence || ''}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -171,7 +171,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments_for_attorney}
+              value={worksheet.comments_for_attorney || ''}
               id="worksheet-comments-for-attorney"
               onChange={this.props.onCommentsForAttorneyChange}
               />

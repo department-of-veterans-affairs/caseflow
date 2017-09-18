@@ -1,4 +1,4 @@
-module RegionalOffice
+module RegionalOfficeConcern
   extend ActiveSupport::Concern
 
   def regional_office

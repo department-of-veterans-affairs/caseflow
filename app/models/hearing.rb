@@ -1,7 +1,7 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
-  include RegionalOffice
+  include RegionalOfficeConcern
 
   belongs_to :appeal
   belongs_to :user
