@@ -1,3 +1,5 @@
+require "csv"
+
 class VACOLS::Case < VACOLS::Record
   self.table_name = "vacols.brieff"
   self.sequence_name = "vacols.bfkeyseq"
@@ -234,9 +236,12 @@ class VACOLS::Case < VACOLS::Record
     end
   end
 
-  def self.aod(vacols_id)
+  ##
+  # This method takes an array of vacols ids and fetches their aod status.
+  #
+  def self.aod(vacols_ids)
     conn = connection
-    vacols_id = conn.quote(vacols_id)
+    vacols_ids = vacols_ids.map { |vacols_id| conn.quote(vacols_id) }
 
     conn.transaction do
       query = <<-SQL
@@ -258,14 +263,14 @@ class VACOLS::Case < VACOLS::Record
           GROUP BY FOLDER_NR
         ) AOD_HEARINGS
         ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-        WHERE BRIEFF.BFKEY = #{vacols_id}
+        WHERE BRIEFF.BFKEY IN (#{vacols_ids.to_csv(row_sep: nil)})
       SQL
 
-      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_id}", name: "Case.aod",
+      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
                                                                               service: :vacols) do
-        conn.exec_query(query)
+      conn.exec_query(query)
       end
-      aod_result.to_hash.first["aod"]
+      aod_result.to_hash.map { |result| result["aod"] }
     end
   end
 
