@@ -64,7 +64,7 @@ const mapStateToProps = (state) => ({
 
 HearingWorksheetPreImpressions.propTypes = {
   issue: PropTypes.object.isRequired,
-  appeal:PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired
 };
 
 export default connect(
