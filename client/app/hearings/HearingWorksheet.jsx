@@ -22,6 +22,8 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet } = this.props;
+
+
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -178,16 +180,16 @@ export class HearingWorksheet extends React.PureComponent {
         <Link
           name="signup-1"
           href={this.props.readerLink}
-          button="primary"
-        >Review eFolder</Link>
+          button="primary">
+            Review eFolder</Link>
       </div>
     </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  readerLink:`/reader/appeal/${state.worksheet.vacols_id}/documents?category=case_summary`,
-  worksheet: state.worksheet
+  worksheet: state.worksheet,
+  readerLink: `/reader/appeal/${state.worksheet.vacols_id}/documents?category=case_summary`
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
