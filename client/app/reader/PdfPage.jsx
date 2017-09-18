@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setUpPdfPage } from '../reader/actions';
+import { setUpPdfPage, clearPdfPage } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -26,7 +26,7 @@ const PAGE_HEIGHT = 1056;
 const MAX_SQUARED_DISTANCE = 10000000;
 const NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER = 2;
 
-export class PdfPage extends React.Component {
+export class PdfPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -44,13 +44,13 @@ export class PdfPage extends React.Component {
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
-  shouldComponentUpdate = (nextProps) => {
-    const shallowEqual = Object.keys(nextProps).filter((prop) => prop !== 'scrollTop').some((prop) => nextProps[prop] !== this.props[prop]);
-    const result = shallowEqual || Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop) > _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale;
-    // console.log('shallowEqual', shallowEqual, Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop), _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale, result);
-    console.log('shouldupdate', result);
-    return result;
-  }
+  // shouldComponentUpdate = (nextProps) => {
+  //   const shallowEqual = Object.keys(nextProps).filter((prop) => prop !== 'scrollTop').some((prop) => nextProps[prop] !== this.props[prop]);
+  //   const result = shallowEqual || Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop) > _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale;
+  //   // console.log('shallowEqual', shallowEqual, Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop), _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale, result);
+  //   console.log('shouldupdate', result);
+  //   return result;
+  // }
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.scrollTop !== this.props.scrollTop) {
@@ -115,7 +115,7 @@ export class PdfPage extends React.Component {
     if (this.props.page) {
       this.props.page.cleanup();
     }
-    this.props.setUpPdfPage(this.props.file, this.props.pageIndex, null);
+    this.props.clearPdfPage(this.props.file, this.props.pageIndex);
   }
 
   // This function gets the square of the distance to the center of the scroll window.
@@ -191,21 +191,34 @@ export class PdfPage extends React.Component {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
-    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-      this.getText(page).then((text) => {
-        const pageData = {
-          text,
-          dimensions: this.getDimensions(page),
-          page,
-          container: this.pageContainer
-        };
+    const getPageDataObject = (text, )
 
+    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
+      let pageData = {
+        dimensions: this.props.pageDimensions || this.getDimensions(page),
+        page,
+        container: this.pageContainer
+      };
+
+      if (this.props.text) {
+        pageData.text = this.props.text;
+        
         this.props.setUpPdfPage(
           this.props.file,
           this.props.pageIndex,
           pageData
         );
-      });
+      } else {
+        this.getText(page).then((text) => {
+          pageData.text = text;
+
+          this.props.setUpPdfPage(
+            this.props.file,
+            this.props.pageIndex,
+            pageData
+          );
+        });
+      }
     });
   }
 
@@ -283,6 +296,15 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
+  // const pageKeys = Object.keys(state.readerReducer.pages).filter((pageName) => pageName.includes(props.file));
+  // const numPagesDefined = pageKeys.length;
+  // const pdfDocument = state.readerReducer.pdfDocuments[props.file];
+  // const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;
+  // let pageContainers = null;
+
+  // if (numPagesDefined !== numPages) {
+  //   return {};
+  // }
   const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
 
   return {

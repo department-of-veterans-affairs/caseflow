@@ -307,6 +307,8 @@ export class Pdf extends React.PureComponent {
       scrollTop = this.scrollWindow.scrollTop;
     }
 
+    // console.log('PDF Component rendered');
+
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
           pdfWorker={this.props.pdfWorker}

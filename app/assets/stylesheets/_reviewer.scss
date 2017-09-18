@@ -96,6 +96,7 @@ $bookmark-yellow: #efdf1a;
   text-align: center;
   float: left;
   z-index: 5;
+  will-change: transform;
 
   @include focus;
 }

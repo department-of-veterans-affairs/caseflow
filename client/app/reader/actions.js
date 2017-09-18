@@ -748,6 +748,14 @@ export const setUpPdfPage = (file, pageIndex, page) => ({
   }
 });
 
+export const clearPdfPage = (file, pageIndex) => ({
+  type: Constants.CLEAR_PDF_PAGE,
+  payload: {
+    file,
+    pageIndex
+  }
+});
+
 export const setPdfDocument = (file, doc) => ({
   type: Constants.SET_PDF_DOCUMENT,
   payload: {
