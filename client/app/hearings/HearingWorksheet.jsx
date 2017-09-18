@@ -21,9 +21,7 @@ import {
 export class HearingWorksheet extends React.PureComponent {
 
   render() {
-    let {
-      worksheet
-    } = this.props;
+    let { worksheet } = this.props;
 
     // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
     return <div>
@@ -181,7 +179,7 @@ export class HearingWorksheet extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="signup-1"
-          href="/reader/appeal"
+          href={this.props.readerLink}
           button="primary"
         >Review eFolder</Link>
       </div>
@@ -190,6 +188,7 @@ export class HearingWorksheet extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
+  readerLink:`/reader/appeal/${state.worksheet.vacols_id}/documents?category=case_summary`,
   worksheet: state.worksheet
 });
 
