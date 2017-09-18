@@ -225,14 +225,31 @@ export class Pdf extends React.PureComponent {
     }
   }
 
+  updateScrollWindowCenter = () => {
+    if (!this.scrollWindow) {
+      return;
+    }
+
+    const rect = this.scrollWindow.getBoundingClientRect();
+
+    this.setState({
+      scrollWindowCenter: {
+        x: rect.left + (rect.width / 2),
+        y: rect.top + (rect.height / 2)
+      }
+    });
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', this.keyListener);
+    window.addEventListener('resize', this.updateScrollWindowCenter);
 
     // focus the scroll window when the component initially loads.
     this.scrollWindow.focus();
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this.updateScrollWindowCenter);
     window.removeEventListener('keydown', this.keyListener);
   }
 
@@ -290,14 +307,7 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => {
     this.scrollWindow = scrollWindow;
-    const rect = scrollWindow.getBoundingClientRect();
-
-    this.setState({
-      scrollWindowCenter: {
-        x: rect.left + (rect.width / 2),
-        y: rect.top + (rect.height / 2)
-      }
-    });
+    this.updateScrollWindowCenter();
   }
 
   // eslint-disable-next-line max-statements

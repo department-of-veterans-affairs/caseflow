@@ -7,7 +7,8 @@ import { onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
-  onDescriptionChange = (description) => this.props.onDescriptionChange(description, this.props.issue.id)
+  onDescriptionChange = (description) =>
+    this.props.onDescriptionChange(description, this.props.issue.id, this.props.appealId.id)
 
   render() {
     let { issue } = this.props;
@@ -16,7 +17,7 @@ class HearingWorksheetIssueFields extends PureComponent {
             <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
             <TextareaField aria-label="Description" name="Description"
               id={`${issue.id}-issue`}value={issue.description}
-              onChange={this.onDescriptionChange} />
+              onChange={this.onDescriptionChange} maxlength={120} />
           </div>;
   }
 }
@@ -30,7 +31,8 @@ const mapStateToProps = (state) => ({
 });
 
 HearingWorksheetIssueFields.propTypes = {
-  issue: PropTypes.object.isRequired
+  issue: PropTypes.object.isRequired,
+  appealId: PropTypes.object.isRequired
 };
 
 export default connect(

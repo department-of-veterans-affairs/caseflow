@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 
+import { TrashCan } from '../../components/RenderFunctions';
+
 class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => {
@@ -13,7 +15,8 @@ class HearingWorksheetIssues extends PureComponent {
 
   render() {
     let {
-     worksheetStreamsIssues
+     worksheetStreamsIssues,
+     worksheetStreamsAppealId
     } = this.props;
 
     const columns = [
@@ -45,6 +48,11 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
+      },
+      {
+        header: '',
+        align: 'left',
+        valueName: 'deleteIssue'
       }
     ];
 
@@ -59,9 +67,13 @@ class HearingWorksheetIssues extends PureComponent {
         issue: issueRow.issue,
         levels: issueRow.levels,
         description: <HearingWorksheetIssueFields
-                      issue={issueRow} />,
+                      appealId={worksheetStreamsAppealId}
+                      issue={issueRow}
+                       />,
         actions: <HearingWorksheetPreImpressions
-                    issue={issueRow} />
+                    appealId={worksheetStreamsAppealId}
+                    issue={issueRow} />,
+        deleteIssue: <div><TrashCan /></div>
       };
     });
 
@@ -84,5 +96,6 @@ export default connect(
 )(HearingWorksheetIssues);
 
 HearingWorksheetIssues.propTypes = {
-  worksheetStreamsIssues: PropTypes.object.isRequired
+  worksheetStreamsIssues: PropTypes.object.isRequired,
+  worksheetStreamsAppealId: PropTypes.object.isRequired
 };
