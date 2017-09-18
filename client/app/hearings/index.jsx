@@ -50,7 +50,8 @@ const Hearings = ({ hearings }) => {
       <BrowserRouter>
         <div>
           <NavigationBar
-            appName="Hearings Prep"
+            appName="Hearing Prep"
+            defaultUrl="/hearings/dockets"
             userDisplayName={hearings.userDisplayName}
             dropdownUrls={hearings.dropdownUrls}/>
          <ScrollToTop />
