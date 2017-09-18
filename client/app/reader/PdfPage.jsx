@@ -26,23 +26,37 @@ const PAGE_HEIGHT = 1056;
 const MAX_SQUARED_DISTANCE = 10000000;
 const NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER = 2;
 
-export class PdfPage extends React.PureComponent {
+export class PdfPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.isDrawing = false;
     this.isDrawn = false;
     this.previousShouldDraw = 0;
+    this.scrollTopAtLastUpdate = 0;
   }
 
   getPageContainerRef = (pageContainer) => {
     this.pageContainer = pageContainer;
-    this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
   }
 
   getCanvasRef = (canvas) => this.canvas = canvas
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
+
+  shouldComponentUpdate = (nextProps) => {
+    const shallowEqual = Object.keys(nextProps).filter((prop) => prop !== 'scrollTop').some((prop) => nextProps[prop] !== this.props[prop]);
+    const result = shallowEqual || Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop) > _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale;
+    // console.log('shallowEqual', shallowEqual, Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop), _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale, result);
+    console.log('shouldupdate', result);
+    return result;
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.scrollTop !== this.props.scrollTop) {
+      // console.log('scrolling', nextProps.scrollTop - this.props.scrollTop);
+    }
+  }
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
@@ -92,12 +106,15 @@ export class PdfPage extends React.PureComponent {
 
   componentDidMount = () => {
     this.setUpPage();
+    this.scrollTopAtLastUpdate = this.props.scrollTop;
   }
 
   componentWillUnmount = () => {
     this.isDrawing = false;
     this.isDrawn = false;
-    this.props.page.cleanup();
+    if (this.props.page) {
+      this.props.page.cleanup();
+    }
     this.props.setUpPdfPage(this.props.file, this.props.pageIndex, null);
   }
 
@@ -134,6 +151,8 @@ export class PdfPage extends React.PureComponent {
     }
 
     const shouldDraw = this.shouldDrawPage(this.props);
+    this.scrollTopAtLastUpdate = this.props.scrollTop;
+
 
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
@@ -177,7 +196,8 @@ export class PdfPage extends React.PureComponent {
         const pageData = {
           text,
           dimensions: this.getDimensions(page),
-          page
+          page,
+          container: this.pageContainer
         };
 
         this.props.setUpPdfPage(
@@ -235,6 +255,7 @@ export class PdfPage extends React.PureComponent {
               file={this.props.file}
               dimensions={{ currentWidth,
                 currentHeight }}
+              isVisible={this.props.isVisible}
             />
           </div>
         </div>
@@ -252,7 +273,6 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
-  getPageContainerRef: PropTypes.func,
   pdfDocument: PropTypes.object
 };
 
@@ -263,7 +283,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-
   const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
 
   return {

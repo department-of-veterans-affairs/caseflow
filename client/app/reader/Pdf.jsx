@@ -91,7 +91,7 @@ export class Pdf extends React.PureComponent {
       locationOnPage: 0
     };
 
-    this.currentPage = 0;
+    this.currentPage = 1;
     this.isGettingPdf = {};
     this.loadingTasks = {};
     this.shouldDraw = {};
@@ -101,7 +101,6 @@ export class Pdf extends React.PureComponent {
   }
 
   initializeRefs = () => {
-    this.pageElements = {};
     this.scrollWindow = null;
   }
 
@@ -143,9 +142,9 @@ export class Pdf extends React.PureComponent {
   }
 
   performFunctionOnEachPage = (func) => {
-    _.forEach(this.pageElements[this.props.file], (ele, index) => {
-      if (ele.pageContainer) {
-        const boundingRect = ele.pageContainer.getBoundingClientRect();
+    _.forEach(this.props.pageContainers, (ele, index) => {
+      if (ele) {
+        const boundingRect = ele.getBoundingClientRect();
 
         func(boundingRect, Number(index));
       }
@@ -153,13 +152,13 @@ export class Pdf extends React.PureComponent {
   }
 
   scrollToPageLocation = (pageIndex, yPosition = 0) => {
-    if (this.pageElements[this.props.file]) {
+    if (this.props.pageContainers) {
       const boundingBox = this.scrollWindow.getBoundingClientRect();
       const height = (boundingBox.bottom - boundingBox.top);
       const halfHeight = height / 2;
 
       this.scrollWindow.scrollTop =
-        this.pageElements[this.props.file][pageIndex].pageContainer.getBoundingClientRect().top +
+        this.props.pageContainers[pageIndex].getBoundingClientRect().top +
         yPosition + this.scrollWindow.scrollTop - halfHeight;
 
       return true;
@@ -169,13 +168,11 @@ export class Pdf extends React.PureComponent {
   }
 
   onPageChange = (currentPage) => {
-    const unscaledHeight = (_.get(this.pageElements,
-      [this.props.file, currentPage - 1, 'pageContainer', 'offsetHeight']) / this.props.scale);
+    const unscaledHeight = (_.get(this.props.pageContainers, [currentPage - 1, 'offsetHeight']) / this.props.scale);
 
     this.currentPage = currentPage;
     this.props.onPageChange(
       currentPage,
-      this.state.numPages[this.props.file],
       this.scrollWindow.offsetHeight / unscaledHeight);
   }
 
@@ -186,7 +183,7 @@ export class Pdf extends React.PureComponent {
     const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
 
     const iconPageBoundingBox =
-      this.pageElements[this.props.file][firstPageWithRoomForIconIndex].pageContainer.getBoundingClientRect();
+      this.props.pageContainers[firstPageWithRoomForIconIndex].getBoundingClientRect();
 
     const pageCoords = getInitialAnnotationIconPageCoords(
       iconPageBoundingBox,
@@ -249,12 +246,12 @@ export class Pdf extends React.PureComponent {
 
       // focus the scroll window when the document changes.
       this.scrollWindow.focus();
-    } else if (nextProps.scale !== this.props.scale) {
+    } else if (nextProps.scale !== this.props.scale && this.props.pageContainers) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
       const nonZoomedLocation = (this.scrollWindow.scrollTop -
-        this.pageElements[this.props.file][this.currentPage - 1].pageContainer.offsetTop);
+        this.props.pageContainers[this.currentPage - 1].offsetTop);
 
       this.scrollLocation = {
         page: this.currentPage,
@@ -266,7 +263,7 @@ export class Pdf extends React.PureComponent {
 
   scrollToPage(pageNumber) {
     this.scrollWindow.scrollTop =
-      this.pageElements[this.props.file][pageNumber - 1].pageContainer.getBoundingClientRect().top +
+      this.props.pageContainers[pageNumber - 1].getBoundingClientRect().top +
       this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
   }
 
@@ -274,8 +271,7 @@ export class Pdf extends React.PureComponent {
   componentDidUpdate() {
     // Wait until the page dimensions have been calculated, then it is
     // safe to jump to the pages since their positioning won't change.
-    if (this.props.numberPagesSized === this.state.numPages[this.props.file] &&
-      _.size(this.pageElements[this.props.file]) === this.state.numPages[this.props.file]) {
+    if (this.props.arePageDimensionsSet) {
       if (this.props.jumpToPageNumber) {
         this.scrollToPage(this.props.jumpToPageNumber);
         this.onPageChange(this.props.jumpToPageNumber);
@@ -288,7 +284,7 @@ export class Pdf extends React.PureComponent {
 
     if (this.scrollLocation.page) {
       this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
-        this.pageElements[this.props.file][this.scrollLocation.page - 1].pageContainer.offsetTop;
+        this.props.pageContainers[this.scrollLocation.page - 1].offsetTop;
     }
   }
 
@@ -302,15 +298,6 @@ export class Pdf extends React.PureComponent {
         y: rect.top + (rect.height / 2)
       }
     });
-  }
-
-  getPageContainerRef = (index, file, elem) => {
-    return;
-    if (elem) {
-      _.set(this.pageElements[file], [index, 'pageContainer'], elem);
-    } else {
-      delete this.pageElements[file][index];
-    }
   }
 
   // eslint-disable-next-line max-statements
@@ -330,7 +317,6 @@ export class Pdf extends React.PureComponent {
           file={file}
           isVisible={this.props.file === file}
           scale={this.props.scale}
-          getPageContainerRef={this.getPageContainerRef}
         />;
       });
 
@@ -349,11 +335,29 @@ export class Pdf extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, props) => ({
-  ...state.readerReducer.ui.pdf,
-  numberPagesSized: Object.keys(state.readerReducer.pages).filter((pageName) => pageName.includes(props.file)).length,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
-});
+const mapStateToProps = (state, props) => {
+  const pageKeys = Object.keys(state.readerReducer.pages).filter((pageName) => pageName.includes(props.file));
+  const numPagesDefined = pageKeys.length;
+  const pdfDocument = state.readerReducer.pdfDocuments[props.file];
+  const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;
+  let pageContainers = null;
+
+  if (numPagesDefined === numPages) {
+    pageContainers = pageKeys.reduce((acc, key) => {
+      const pageIndex = key.split('-')[1];
+      acc[pageIndex] = state.readerReducer.pages[key] ? state.readerReducer.pages[key].container : null;
+
+      return acc;
+    }, {});
+  }
+
+  return {
+    ...state.readerReducer.ui.pdf,
+    arePageDimensionsSet: numPagesDefined === numPages,
+    pageContainers,
+    ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
