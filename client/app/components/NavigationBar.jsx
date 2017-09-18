@@ -17,10 +17,10 @@ export default class NavigationBar extends React.Component {
         <div>
           <div className="cf-app-width">
             <span className="cf-push-left">
-              <h1 className={`cf-logo cf-logo-image-${appName
-                  .split(' ')
-                  .join('-')
-                  .toLowerCase()}`}>
+              <h1 className={`cf-logo cf-logo-image-${appName.
+                  split(' ').
+                  join('-').
+                  toLowerCase()}`}>
                 <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
                   <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
