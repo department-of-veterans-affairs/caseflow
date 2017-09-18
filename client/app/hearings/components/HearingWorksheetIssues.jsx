@@ -67,13 +67,11 @@ class HearingWorksheetIssues extends PureComponent {
         issue: issueRow.issue,
         levels: issueRow.levels,
         description: <HearingWorksheetIssueFields
-                      appealId={worksheetStreamsAppeal}
+                      appeal={worksheetStreamsAppeal}
                       issue={issueRow}
                        />,
         actions: <HearingWorksheetPreImpressions
-                    appealId={worksheetStreamsAppeal}
-                    issue={issueRow}
-                    appealId={worksheetStreamsAppealId}
+                    appeal={worksheetStreamsAppeal}
                     issue={issueRow} />,
         deleteIssue: <TrashCan />
 
