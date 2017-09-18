@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170906191428) do
+ActiveRecord::Schema.define(version: 20170915195705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -270,6 +270,11 @@ ActiveRecord::Schema.define(version: 20170906191428) do
     t.boolean "deny",               default: false
     t.boolean "remand",             default: false
     t.boolean "dismiss",            default: false
+    t.string  "program"
+    t.string  "name"
+    t.string  "levels"
+    t.string  "description"
+    t.boolean "from_vacols"
   end
 
   create_table "tags", force: :cascade do |t|
