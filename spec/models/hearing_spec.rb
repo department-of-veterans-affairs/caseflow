@@ -107,6 +107,8 @@ describe Hearing do
       OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
     end
     let!(:user) { User.create(css_id: "1111", station_id: "123") }
+    let!(:appeal) { Generators::Appeal.build(vacols_id: "5678") }
+
     subject { Hearing.create_from_vacols_record(vacols_record) }
 
     it "should should create a hearing record" do

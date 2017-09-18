@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 
+import { TrashCan } from '../../components/RenderFunctions';
+
 class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => {
@@ -46,6 +48,11 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
+      },
+      {
+        header: '',
+        align: 'left',
+        valueName: 'deleteIssue'
       }
     ];
 
@@ -65,7 +72,11 @@ class HearingWorksheetIssues extends PureComponent {
                        />,
         actions: <HearingWorksheetPreImpressions
                     appealId={worksheetStreamsAppeal}
-                    issue={issueRow} />
+                    issue={issueRow}
+                    appealId={worksheetStreamsAppealId}
+                    issue={issueRow} />,
+        deleteIssue: <TrashCan />
+
       };
     });
 
@@ -91,5 +102,3 @@ HearingWorksheetIssues.propTypes = {
   worksheetStreamsIssues: PropTypes.object.isRequired,
   worksheetStreamsAppeal: PropTypes.object.isRequired
 };
-
-

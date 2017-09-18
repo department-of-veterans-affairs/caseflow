@@ -11,6 +11,7 @@ reassign_old_tasks:
   class: "ReassignOldTasksJob"
   queue: default
   active_job: true
+  disabled: true
 
 # This job is used to debug https://github.com/department-of-veterans-affairs/caseflow/issues/1814
 # It is scheduled to run every 5 minute to make sure Sidekiq and Sidekiq Cron
@@ -20,6 +21,7 @@ heartbeat_tasks_job:
   class: "HeartbeatTasksJob"
   queue: default
   active_job: true
+  disabled: true
 
 # Disabled until we have a conversation about how to handle VBMS load
 # Retrieve all documents for active Reader users every night at midnight
@@ -38,6 +40,7 @@ dependencies_check_job:
   class: "DependenciesCheckJob"
   queue: default
   active_job: true
+  disabled: true
 
 # This is created to log DependenciesReportService (and to avoid flooding the logs with each browser window request)
 dependencies_report_service_log_job:
@@ -45,6 +48,7 @@ dependencies_report_service_log_job:
   class: "DependenciesReportServiceLogJob"
   queue: default
   active_job: true
+  disabled: true
 
 # Check which apps are out of service and post a reminder to slack, if any, every 3 hours
 out_of_service_reminder_job:
@@ -52,4 +56,5 @@ out_of_service_reminder_job:
   class: "OutOfServiceReminderJob"
   queue: default
   active_job: true
+  disabled: true
 
