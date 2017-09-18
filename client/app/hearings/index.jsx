@@ -50,7 +50,7 @@ const Hearings = ({ hearings }) => {
       <BrowserRouter>
         <div>
           <NavigationBar
-            appName="Hearing Prep"
+            appName={hearings.appName}
             defaultUrl="/hearings/dockets"
             userDisplayName={hearings.userDisplayName}
             dropdownUrls={hearings.dropdownUrls}/>
