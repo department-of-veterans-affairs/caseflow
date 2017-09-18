@@ -52,9 +52,6 @@ Rails.application.configure do
   ENV["METRICS_PASSWORD"] ||= "caseflow"
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
-  # Uncomment to enable certification v2.
-  # TODO: remove this when we set it up with roles/featureflag
-  # ENV["ENABLE_CERTIFICATION_V2"] = "true"
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
