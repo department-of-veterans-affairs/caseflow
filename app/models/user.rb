@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :annotations
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
-  attr_accessor :ip_address, :admin_roles
+  attr_accessor :ip_address
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
 
   # We should not use user.can?("System Admin"), but user.admin? instead
   def can?(thing)
-    return true if admin? && admin_roles.include?(thing)
+    return true if admin?
     # Check if user is granted the function
     return true if granted?(thing)
     # Check if user is denied the function
@@ -83,27 +83,6 @@ class User < ActiveRecord::Base
 
   def attributes
     super.merge(display_name: display_name)
-  end
-
-  def functions
-    User::FUNCTIONS.each_with_object({}) do |function, result|
-      result[function] ||= {}
-      result[function][:enabled] = admin_roles.include?(function)
-    end
-  end
-
-  def toggle_admin_roles(role:, enable: true)
-    return if role == "System Admin"
-    # TODO: remove once we launch certification v2
-    # or once we move it out of the feature list.
-    if role == "CertificationV2"
-      if enable
-        FeatureToggle.enable!(:certification_v2, users: [username])
-      else
-        FeatureToggle.disable!(:certification_v2, users: [username])
-      end
-    end
-    enable ? admin_roles << role : admin_roles.delete(role)
   end
 
   def current_task(task_type)
@@ -161,16 +140,11 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      # System Admin users are permitted to grant their own functions. We store the list of functions
-      # that a System Admin user currently has in "admin_roles"
-      user["admin_roles"] ||= []
-
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
         u.ip_address = request.remote_ip
-        u.admin_roles = user["admin_roles"]
         u.regional_office = session[:regional_office]
         u.save
       end

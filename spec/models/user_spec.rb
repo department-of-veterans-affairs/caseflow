@@ -80,22 +80,11 @@ describe User do
 
     context "user has only system admin role" do
       before { Functions.grant!("System Admin", users: ["123"]) }
-      before { session["user"]["admin_roles"] = [] }
 
       it "disables other roles" do
         expect(subject["Reader"][:enabled]).to be_falsey
         expect(subject["Establish Claim"][:enabled]).to be_falsey
         expect(subject["Certify Appeal"][:enabled]).to be_falsey
-      end
-    end
-
-    context "user has more than a system admin role" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
-      before { session["user"]["admin_roles"] = ["Manage Claim Establishment"] }
-
-      it "enables only selected roles" do
-        expect(subject["Manage Claim Establishment"][:enabled]).to be_truthy
-        expect(subject["Reader"][:enabled]).to be_falsey
       end
     end
   end
@@ -106,15 +95,6 @@ describe User do
 
     it "are not admins" do
       expect(user.admin?).to be_falsey
-    end
-  end
-
-  context "#toggle_admin_roles" do
-    it "adds a function and then removes" do
-      user.toggle_admin_roles(role: "Establish Claim", enable: true)
-      expect(user.admin_roles).to eq ["Establish Claim"]
-      user.toggle_admin_roles(role: "Establish Claim", enable: false)
-      expect(user.admin_roles).to eq []
     end
   end
 
@@ -166,15 +146,9 @@ describe User do
       it { is_expected.to be_falsey }
     end
 
-    context "when system admin roles don't contain the thing" do
+    context "when system admin and roles don't contain the thing" do
       before { Functions.grant!("System Admin", users: ["123"]) }
-      before { session["user"]["admin_roles"] = [] }
-      it { is_expected.to be_falsey }
-    end
-
-    context "when system admin roles contain the thing" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
-      before { session["user"]["admin_roles"] = ["Do the thing"] }
+      before { session["user"]["roles"] = ["Do the other thing"] }
       it { is_expected.to be_truthy }
     end
   end
@@ -282,7 +256,6 @@ describe User do
     context "gets a user object from a session" do
       before do
         session["user"]["roles"] = ["Do the thing"]
-        session["user"]["admin_roles"] = ["Do even more"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
         session["user"]["ip_address"] = "127.0.0.1"
@@ -293,7 +266,6 @@ describe User do
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
-        expect(subject.admin_roles).to eq(["Do even more"])
       end
 
       it "persists user to DB" do
