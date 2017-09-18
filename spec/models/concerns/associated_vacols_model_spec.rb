@@ -16,6 +16,7 @@ describe AssociatedVacolsModel do
     include AssociatedVacolsModel
 
     vacols_attr_accessor :foo, :bar, :foobar
+    attr_accessor :attr
 
     def self.repository
       TestVacolsModelRepository
@@ -33,7 +34,10 @@ describe AssociatedVacolsModel do
     context "call setter before first get" do
       before { model.foo = "hello" }
       subject { model.foo }
-      it { is_expected.to eq("hello") }
+      it do
+        expect(model).to_not receive(:check_and_load_vacols_data!)
+        is_expected.to eq("hello")
+      end
     end
 
     context "ensure setter sets value" do
@@ -42,6 +46,24 @@ describe AssociatedVacolsModel do
         model.foo = "hello"
         expect(model.foo).to eq("hello")
       end
+    end
+
+    context "fields not set trigger a call to load data" do
+      it do
+        model.bar = "hello"
+        Rails.logger.should_receive(:warn).with(/Future Error/)
+        expect(model.foo).to eq("bar")
+      end
+    end
+  end
+
+  context ".vacols_field?" do
+    it "returns true for variables set with vacols_attr_accessor" do
+      expect(TestVacolsModel.vacols_field?(:foo)).to be_truthy
+    end
+
+    it "returns false for variables set with attr_accessor" do
+      expect(TestVacolsModel.vacols_field?(:attr)).to be_falsy
     end
   end
 
@@ -79,6 +101,42 @@ describe AssociatedVacolsModel do
         expect(TestVacolsModelRepository).to receive(:load_vacols_data).exactly(0).times
         expect(model.check_and_load_vacols_data!).to eq(false)
       end
+    end
+  end
+
+  context "#field_set?" do
+    subject { model.field_set?(:foo) }
+
+    it "returns false when nothing is set" do
+      is_expected.to be_falsy
+    end
+
+    context "when a different field has been set" do
+      before do
+        model.bar = "value"
+      end
+
+      it "returns false for the current field" do
+        is_expected.to be_falsy
+      end
+    end
+
+    context "when field has been set" do
+      before do
+        model.foo = "value"
+      end
+
+      it "returns true" do
+        is_expected.to be_truthy
+      end
+    end
+  end
+
+  context "#mark_field_as_set" do
+    it "field_set? returns true after running mark_field_as_set" do
+      expect(model.field_set?(:foo)).to be_falsy
+      model.mark_field_as_set(:foo)
+      expect(model.field_set?(:foo)).to be_truthy
     end
   end
 end

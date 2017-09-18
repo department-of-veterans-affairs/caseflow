@@ -108,18 +108,18 @@ describe('.onContentionsChange', () => {
   });
 });
 
-describe('.onPeriodsChange', () => {
-  it('sets periods text', () => {
+describe('.onMilitaryServiceChange', () => {
+  it('sets military service text', () => {
 
-    const periods = 'this is a worksheet periods text';
+    const militaryService = 'this is a worksheet periods text';
     const expectedAction = {
-      type: Constants.SET_PERIODS,
+      type: Constants.SET_MILITARY_SERVICE,
       payload: {
-        periods
+        militaryService
       }
     };
 
-    expect(Actions.onPeriodsChange(periods)).to.deep.equal(expectedAction);
+    expect(Actions.onMilitaryServiceChange(militaryService)).to.deep.equal(expectedAction);
   });
 });
 
@@ -138,17 +138,17 @@ describe('.onEvidenceChange', () => {
   });
 });
 
-describe('.onCommentsChange', () => {
+describe('.onCommentsForAttorneyChange', () => {
   it('sets comment text', () => {
 
-    const comments = 'this is a worksheet comments text';
+    const commentsForAttorney = 'this is a comment for attorney';
     const expectedAction = {
-      type: Constants.SET_COMMENTS,
+      type: Constants.SET_COMMENTS_FOR_ATTORNEY,
       payload: {
-        comments
+        commentsForAttorney
       }
     };
 
-    expect(Actions.onCommentsChange(comments)).to.deep.equal(expectedAction);
+    expect(Actions.onCommentsForAttorneyChange(commentsForAttorney)).to.deep.equal(expectedAction);
   });
 });

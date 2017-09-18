@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :appeals, only: :index
+      resources :jobs, only: :create
     end
   end
 
@@ -72,7 +73,7 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show]
   end
-  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
+  get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
   resources :hearings, only: [:update]
 

@@ -110,12 +110,15 @@ export class EstablishClaimEmail extends BaseForm {
             </div>
           </div>
 
+          <div className="route-claim-confirmNote-wrapper">
           <Checkbox
               label="I confirm that I have sent an email to route this claim."
               name="confirmEmail"
               onChange={this.handleFieldChange('emailForm', 'confirmBox')}
               {...this.state.emailForm.confirmBox}
+              required={true}
           />
+         </div>
 
         </div>
 

@@ -1,6 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
+  include RegionalOfficeConcern
+
   has_many :tasks
   has_many :appeal_views
 
@@ -94,6 +96,15 @@ class Appeal < ActiveRecord::Base
   attr_writer :saved_documents
   def saved_documents
     @saved_documents ||= fetch_documents!(save: true)
+  end
+
+  def number_of_documents
+    documents.size
+  end
+
+  def number_of_documents_after_certification
+    return 0 unless certification_date
+    documents.count { |d| d.received_at > certification_date }
   end
 
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
@@ -210,14 +221,6 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
-  def regional_office
-    { key: regional_office_key }.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
-  end
-
-  def regional_office_name
-    "#{regional_office[:city]}, #{regional_office[:state]}"
-  end
-
   def attributes_for_hearing
     {
       "id" => id,
@@ -226,7 +229,8 @@ class Appeal < ActiveRecord::Base
       "soc_date" => soc_date,
       "certification_date" => certification_date,
       "prior_decision_date" => prior_decision_date,
-      "ssoc_dates" => ssoc_dates
+      "ssoc_dates" => ssoc_dates,
+      "docket_number" => docket_number
     }
   end
 
@@ -456,7 +460,8 @@ class Appeal < ActiveRecord::Base
 
   def document_service
     @document_service ||=
-      if RequestStore.store[:application] == "reader" && FeatureToggle.enabled?(:efolder_docs_api)
+      if RequestStore.store[:application] == "reader" &&
+         FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
         EFolderService
       else
         VBMSService

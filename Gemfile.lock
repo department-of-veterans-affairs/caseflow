@@ -16,8 +16,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: ff94bc32a637c77230a3fa5f793e77966ec02c61
-  ref: ff94bc32a637c77230a3fa5f793e77966ec02c61
+  revision: 706ba7bde215f53d96365e3dba217f9a98781f4e
+  ref: 706ba7bde215f53d96365e3dba217f9a98781f4e
   specs:
     caseflow (0.1.6)
       aws-sdk (~> 2)
@@ -44,8 +44,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 1156b0ea76b0e84e2e176c8506ba5a589177e413
-  ref: 1156b0ea76b0e84e2e176c8506ba5a589177e413
+  revision: 0fd06422252e427f501cbaa42da80a1de55875a6
+  ref: 0fd06422252e427f501cbaa42da80a1de55875a6
   specs:
     bgs (0.1)
       nokogiri (~> 1.7.1)
@@ -121,14 +121,14 @@ GEM
       nokogiri
     arel (6.0.4)
     ast (2.3.0)
-    aws-sdk (2.10.22)
-      aws-sdk-resources (= 2.10.22)
-    aws-sdk-core (2.10.22)
+    aws-sdk (2.10.43)
+      aws-sdk-resources (= 2.10.43)
+    aws-sdk-core (2.10.43)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.22)
-      aws-sdk-core (= 2.10.22)
-    aws-sigv4 (1.0.1)
+    aws-sdk-resources (2.10.43)
+      aws-sdk-core (= 2.10.43)
+    aws-sigv4 (1.0.2)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bourbon (4.2.7)
@@ -156,7 +156,7 @@ GEM
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
-    d3-rails (4.10.0)
+    d3-rails (4.10.2)
       railties (>= 3.1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
@@ -359,7 +359,7 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    savon (2.11.1)
+    savon (2.11.2)
       akami (~> 1.2)
       builder (>= 2.1.2)
       gyoku (~> 1.2)

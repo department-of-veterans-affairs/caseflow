@@ -42,13 +42,13 @@ class SeedDB
 
   def create_tasks(number)
     num_appeals = @appeals.length
-    num_users = @users.length
 
     tasks = number.times.map do |i|
       establish_claim = EstablishClaim.create(
-        appeal: @appeals[i % num_appeals]
+        appeal: @appeals[i % num_appeals],
+        aasm_state: :unassigned,
+        prepared_at: rand(3).days.ago
         )
-      establish_claim.prepare!
       establish_claim
     end
 
@@ -109,11 +109,6 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
   end
 
-   def set_up_feature_toggles
-     FeatureToggle.disable!(:reader)
-     FeatureToggle.enable!(:reader, users: ["Reader"])
-   end
-
   def seed
     clean_db
     create_default_users
@@ -124,7 +119,6 @@ class SeedDB
     create_tags
     create_hearings
     create_api_key
-    set_up_feature_toggles
   end
 end
 

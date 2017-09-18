@@ -53,18 +53,28 @@ class User < ActiveRecord::Base
     end
   end
 
+  # We should not use user.can?("System Admin"), but user.admin? instead
   def can?(thing)
     return true if admin? && admin_roles.include?(thing)
-    roles.include? thing
+    # Check if user is granted the function
+    return true if granted?(thing)
+    # Check if user is denied the function
+    return false if denied?(thing)
+    # Ignore "System Admin" function from CSUM/CSEM users
+    return false if thing.include?("System Admin")
+    roles.include?(thing)
   end
 
   def admin?
-    # In prod, as of 05/08/2017, we had 133 users with the System Admin
-    # role, most of which are unknown to us. We'll let those users
-    # keep their privileges in lower environments, but let's
-    # restrict prod system admin access to just the CSFLOW user.
-    return false if Rails.deploy_env?(:prod) && username != "CSFLOW"
-    roles.include? "System Admin"
+    Functions.granted?("System Admin", css_id)
+  end
+
+  def granted?(thing)
+    Functions.granted?(thing, css_id)
+  end
+
+  def denied?(thing)
+    Functions.denied?(thing, css_id)
   end
 
   def authenticated?
@@ -144,7 +154,9 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      user["admin_roles"] ||= user["roles"] && user["roles"].include?("System Admin") ? ["System Admin"] : []
+      # System Admin users are permitted to grant their own functions. We store the list of functions
+      # that a System Admin user currently has in "admin_roles"
+      user["admin_roles"] ||= []
 
       find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.full_name = user["name"]

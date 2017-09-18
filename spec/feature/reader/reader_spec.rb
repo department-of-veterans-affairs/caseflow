@@ -58,7 +58,7 @@ def add_comment_without_clicking_save(text)
   find("#pageContainer1").click
 
   expect(page).to_not have_css(".cf-pdf-placing-comment")
-  fill_in "addComment", with: text
+  fill_in "addComment", with: text, wait: 3
 end
 
 def add_comment(text)
@@ -68,9 +68,6 @@ end
 
 RSpec.feature "Reader" do
   before do
-    FeatureToggle.disable!(:reader)
-    FeatureToggle.enable!(:reader)
-
     Fakes::Initializer.load!
   end
 
@@ -120,7 +117,7 @@ RSpec.feature "Reader" do
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
-          vbms_document_id: 5,
+          vbms_document_id: 4,
           category_medical: true,
           category_other: true
         ),
@@ -128,7 +125,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 4
+          vbms_document_id: 3
         )
       ]
     end
@@ -231,8 +228,8 @@ RSpec.feature "Reader" do
         # Test that the title changed. Functionality in PageRoute.jsx
         expect(page).to have_title("Claims Folder | Caseflow Reader")
 
-        click_on "Caseflow Reader"
-        expect(page).to have_current_path("/reader/appeal")
+        click_on "Caseflow"
+        expect(page).to have_current_path("/reader/appeal/")
         expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "Continue"
@@ -344,13 +341,29 @@ RSpec.feature "Reader" do
 
     scenario "User visits help page" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      find('#menu-trigger').click
+      find_link("DSUSER (DSUSER)").click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
     end
 
+    context "Query params in documents URL" do
+      scenario "User enters valid category" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents?category=case_summary"
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Categories (1)")
+      end
+
+      scenario "User enters invalid category" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents?category=thisisfake"
+        expect(page).to_not have_content("Filtering by:")
+        expect(page).to_not have_content("Categories (1)")
+      end
+    end
+
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      expect(page).to have_content("Caseflow Reader")
+
       add_comment_without_clicking_save("text")
       page.find("body").click
       expect(page).to_not have_css(".cf-pdf-placing-comment")
@@ -376,6 +389,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
       click_on "Edit"
@@ -725,25 +739,40 @@ RSpec.feature "Reader" do
         expect(find_field("page-progress-indicator-input").value).to eq "3"
       end
 
-      scenario "Switch between pages to ensure rendering" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      context "When document 3 is a 147 page document" do
+        before do
+          documents.push(
+            Generators::Document.create(
+              filename: "My SOC",
+              type: "SOC",
+              received_at: 5.days.ago,
+              vbms_document_id: 5,
+              category_medical: true,
+              category_other: true
+            )
+          )
+        end
 
-        click_on documents[1].type
+        scenario "Switch between pages to ensure rendering" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-        # Expect the 23 page to only be rendered once scrolled to.
-        expect(find("#pageContainer23")).to_not have_content("Rating Decision")
+          click_on documents[3].type
 
-        fill_in "page-progress-indicator-input", with: "23\n"
+          # Expect the 23 page to only be rendered once scrolled to.
+          expect(find("#pageContainer23")).to_not have_content("Rating Decision")
 
-        expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+          fill_in "page-progress-indicator-input", with: "23\n"
 
-        expect(in_viewport("pageContainer23")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
 
-        # Entering invalid values leaves the viewer on the same page.
-        fill_in "page-progress-indicator-input", with: "abcd\n"
-        expect(in_viewport("pageContainer23")).to be true
-        expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(in_viewport("pageContainer23")).to be true
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+
+          # Entering invalid values leaves the viewer on the same page.
+          fill_in "page-progress-indicator-input", with: "abcd\n"
+          expect(in_viewport("pageContainer23")).to be true
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+        end
       end
     end
 
@@ -1157,17 +1186,6 @@ RSpec.feature "Reader" do
       expect(page).to have_content("#{num_documents} Documents")
 
       expect(in_viewport("read-indicator")).to be true
-    end
-  end
-
-  context "When user is not whitelisted" do
-    before do
-      FeatureToggle.enable!(:reader, users: ["FAKE_CSS_ID"])
-    end
-
-    scenario "it redirects to unauthorized" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Unauthorized")
     end
   end
 end

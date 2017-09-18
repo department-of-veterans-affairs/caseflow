@@ -109,7 +109,7 @@ export const changeSortState = (sortBy) => ({
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'change-sort-by',
       label: (nextState) => {
-        const direction = nextState.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+        const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
 
         return `${sortBy}-${direction}`;
       }
@@ -346,8 +346,6 @@ export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   }
 });
 
-export const hidePlaceAnnotationIcon = () => ({ type: Constants.HIDE_PLACE_ANNOTATION_ICON });
-
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {
@@ -355,13 +353,6 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
     x: coordinates.xPosition,
     y: coordinates.yPosition,
     documentId
-  }
-});
-
-export const setPageCoordBounds = (coordBounds) => ({
-  type: Constants.SET_PAGE_COORD_BOUNDS,
-  payload: {
-    coordBounds
   }
 });
 
@@ -728,7 +719,7 @@ export const togglePdfSidebar = () => ({
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'toggle-pdf-sidebar',
-      label: (nextState) => nextState.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+      label: (nextState) => nextState.readerReducer.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
     }
   }
 });
@@ -743,7 +734,7 @@ export const handleToggleCommentOpened = (docId) => ({
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
-      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
+      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });
@@ -752,5 +743,14 @@ export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,
   payload: {
     vacolsId
+  }
+});
+
+export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
+  type: Constants.SET_PDF_PAGE_DIMENSIONS,
+  payload: {
+    file,
+    pageIndex,
+    dimensions
   }
 });

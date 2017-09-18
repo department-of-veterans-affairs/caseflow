@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchBar from '../SearchBar';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setSearch, clearSearch, clearAllFilters } from '../../reader/actions';
 import _ from 'lodash';
-import ApiUtil from '../../util/ApiUtil';
-import DocumentsCommentsButton from '../../reader/DocumentsCommentsButton';
+
+import ApiUtil from '../util/ApiUtil';
+import { setSearch, clearSearch, clearAllFilters } from './actions';
+import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
+import SearchBar from '../components/SearchBar';
 
 class DocumentListHeader extends React.Component {
   // Record the search value for analytics purposes. Don't worry if it fails.

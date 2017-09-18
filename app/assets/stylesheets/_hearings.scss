@@ -11,6 +11,26 @@ $color-hearings-saving: #777;
   color: $color-hearings-saving;
 }
 
+.cf-hearings-daily-docket-container {
+  position: relative;
+
+  > .saving {
+    display: inline-block;
+    width: 12em;
+    text-align: right;
+    position: absolute;
+    top: 8.9em;
+    right: 1.8em;
+
+    .loadingSymbol {
+      height: 1em;
+      width: 1em;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+}
+
 .cf-hearings,
 .cf-hearings-schedule,
 .cf-hearings-worksheet {
@@ -95,17 +115,6 @@ $color-hearings-saving: #777;
       &:last-child {
         padding-right: 0;
       }
-
-      // TODO: get rule into a SaveData component
-      > span {
-        display: inline-block;
-        width: 25%;
-
-        &:last-child {
-          width: 75%;
-          text-align: right;
-        }
-      }
     }
 
     .cf-hearings-docket-date {
@@ -156,6 +165,7 @@ $color-hearings-saving: #777;
         padding-top: 0;
         padding-bottom: 0;
         height: 4em;
+        min-height: 4em;
         resize: vertical;
       }
     }
@@ -230,6 +240,15 @@ $color-hearings-saving: #777;
     border: 1px solid $color-gray-medium;
   }
 
+  .cf-hearings-worksheet-witness-cell {
+
+    textarea {
+      height: 44px;
+      min-height: 44px;
+      min-width: 100%;
+    }
+  }
+
   table {
     margin: .5em 0 0;
   }
@@ -244,7 +263,6 @@ $color-hearings-saving: #777;
   }
 
   label {
-    font-weight: bold;
     font-size: 1.05em;
     padding-bottom: .3em;
   }
@@ -311,6 +329,10 @@ $color-hearings-saving: #777;
 
   .cf-txt-l {
     padding-left: .4em;
+
+    [id=trash-can] {
+      margin-top: 20px;
+    }
   }
 
   tr {
@@ -364,6 +386,10 @@ $color-hearings-saving: #777;
       }
     }
   }
+}
+
+.hearings-add-issue {
+  margin-bottom: 20px;
 }
 
 .cf-hearings-worksheet-desc-label {

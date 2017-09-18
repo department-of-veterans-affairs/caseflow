@@ -2,163 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Table from '../components/Table';
-import Checkbox from '../components/Checkbox';
 import moment from 'moment';
-import Button from '../components/Button';
+import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
+import HearingWorksheetStream from './components/HearingWorksheetStream';
+
+
 import {
-  onDescriptionsChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange
        } from './actions/Dockets';
-
-import _ from 'lodash';
 
 export class HearingWorksheet extends React.PureComponent {
 
-
-  getType = (type) => {
-    return (type === 'central_office') ? 'CO' : type;
-  }
-
-  getStartTime = () => {
-    const startTime = `${moment().
-      add(_.random(0, 120), 'minutes').
-      format('LT')} EST`;
-
-    return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
-  }
-
-  getKeyForRow = (index) => {
-    return index;
-  }
-
   render() {
+    let {
+      worksheet
+    } = this.props;
 
-    const columns = [
-      {
-        header: '',
-        valueName: 'counter'
-      },
-      {
-        header: 'Program',
-        align: 'left',
-        valueName: 'program'
-      },
-      {
-        header: 'Issue',
-        align: 'left',
-        valueName: 'issue'
-      },
-      {
-        header: 'Levels 1-3',
-        align: 'left',
-        valueName: 'levels'
-      },
-      {
-        header: 'Description',
-        align: 'left',
-        valueName: 'description'
-      },
-      {
-        header: 'Preliminary Impressions',
-        align: 'left',
-        valueName: 'actions'
-      }
-    ];
-
-    // Temp Placeholder issues
-    const issues = [
-      {
-        program: 'Compensation',
-        issue: 'Service connection',
-        issueID: 101,
-        levels: 'All Others, 5010 - Arthritis, due to trauma',
-        description: 'Right elbow',
-        actions: [
-          false, false, false, true, false, false
-        ]
-      }
-    ];
-
-    const rowObjects = issues.map((issue, index) => {
-      return {
-        counter: <b>{index + 1}.</b>,
-        program: issue.program,
-        issue: issue.issue,
-        issueID: issue.issueID,
-        levels: issue.levels,
-        description: <div>
-          <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
-          <TextareaField
-            aria-label="Description"
-            // TODO Remove placeholder loop | new structure
-            // TODO add logic to find specific issue
-            name={`issue-${issue.issueID}`}
-            id={`worksheet-issue-description-${issue.issueID}`}
-            value={this.props.worksheet.streams.appeal_0.issues.issue_0.description || ''}
-            onChange={this.props.onDescriptionsChange}
-            />
-        </div>,
-        actions: <div className="cf-hearings-worksheet-actions">
-          <Checkbox
-            label="Re-Open"
-            name={`chk_reopen_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[0]}
-          ></Checkbox>
-          <Checkbox
-            label="Allow"
-            name={`chk_allow_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[1]}
-          ></Checkbox>
-          <Checkbox
-            label="Deny"
-            name={`chk_deny_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[2]}
-          ></Checkbox>
-          <Checkbox
-            label="Remand"
-            name={`chk_remand_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[3]}
-          ></Checkbox>
-          <Checkbox
-            label="Dismiss"
-            name={`chk_dismiss_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[4]}
-          ></Checkbox>
-          <Checkbox
-            label="VHA"
-            name={`chk_vha_${index}`}
-            onChange={() => {
-              return true;
-            }}
-            value={issue.actions[5]}
-          ></Checkbox>
-        </div>
-      };
-    });
-
+    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -178,36 +45,36 @@ export class HearingWorksheet extends React.PureComponent {
           <span className="saving">Saving...</span>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
-            <div><b>Somebody Mad</b></div>
+            <div><b>{worksheet.appellant_last_first_mi}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
-            <div>Lansing, MI</div>
+            <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Regional Office:</div>
-            <div>Detroit, MI</div>
+            <div>{worksheet.regional_office_name}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Representative Org:</div>
-            <div>Veterans of Foreign Wars</div>
+            <div>{worksheet.representative}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
             <TextField
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={this.props.worksheet.repName || ''}
+              value={worksheet.repName || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
-            <div><b>Somebody Madder</b></div>
+            <div><b>{worksheet.veteran_name}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Veteran ID:</div>
-            <div><b>{this.props.vbms_id}</b></div>
+            <div><b>{worksheet.vbms_id}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Docket Number:</div>
@@ -215,14 +82,14 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Veteran's Age:</div>
-            <div>32</div>
+            <div>{worksheet.veteran_age}</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-             <TextField
+          <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
+             <TextareaField
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
                 aria-label="Representative Name"
-                value={this.props.worksheet.witness || ''}
+                value={worksheet.witness || ''}
                 onChange={this.props.onWitnessChange}
              />
           </div>
@@ -268,23 +135,16 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Issues</h2>
-          <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
-          <Table
-            className="cf-hearings-worksheet-issues"
-            columns={columns}
-            rowObjects={rowObjects}
-            summary={'Worksheet Issues'}
-            getKeyForRow={this.getKeyForRow}
-          />
-        </div>
+           <HearingWorksheetStream
+              worksheetStreams={this.props.worksheet.streams}
+              {...this.props}
+            />
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value={this.props.worksheet.contentions || ''}
+              value={worksheet.contentions || ''}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -293,16 +153,16 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheet.periods || ''}
-              onChange={this.props.onPeriodsChange}
-              id="worksheet-periods"
+              value={worksheet.military_service || ''}
+              onChange={this.props.onMilitaryServiceChange}
+              id="worksheet-military-service"
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value={this.props.worksheet.evidence || ''}
+              value={worksheet.evidence || ''}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -311,15 +171,19 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments || ''}
-              id="worksheet-comments"
-              onChange={this.props.onCommentsChange}
+              value={worksheet.comments_for_attorney || ''}
+              id="worksheet-comments-for-attorney"
+              onChange={this.props.onCommentsForAttorneyChange}
               />
           </div>
         </form>
       </div>
       <div className="cf-push-right">
-        <Button name="signup-1" className="cf-push-right">Review eFolder</Button>
+        <Link
+          name="signup-1"
+          href="/reader/appeal"
+          button="primary"
+        >Review eFolder</Link>
       </div>
     </div>;
   }
@@ -329,15 +193,13 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
-// TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onDescriptionsChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange
 }, dispatch);
 
 export default connect(
