@@ -342,9 +342,21 @@ export class Pdf extends React.PureComponent {
     }
   }
 
+  updateScrollWindowCenter = () => {
+    const rect = scrollWindow.getBoundingClientRect();
+
+    this.setState({
+      scrollWindowCenter: {
+        x: rect.left + (rect.width / 2),
+        y: rect.top + (rect.height / 2)
+      }
+    });
+  }
+
   componentDidMount() {
     PDFJS.workerSrc = this.props.pdfWorker;
     window.addEventListener('keydown', this.keyListener);
+    window.addEventListener('resize', this.updateScrollWindowCenter);
 
     this.setUpPdf(this.props.file);
 
@@ -353,6 +365,7 @@ export class Pdf extends React.PureComponent {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this.updateScrollWindowCenter);
     window.removeEventListener('keydown', this.keyListener);
   }
 
@@ -444,14 +457,7 @@ export class Pdf extends React.PureComponent {
 
   getScrollWindowRef = (scrollWindow) => {
     this.scrollWindow = scrollWindow;
-    const rect = scrollWindow.getBoundingClientRect();
-
-    this.setState({
-      scrollWindowCenter: {
-        x: rect.left + (rect.width / 2),
-        y: rect.top + (rect.height / 2)
-      }
-    });
+    this.updateScrollWindowCenter();
   }
 
   getPageContainerRef = (index, file, elem) => {
