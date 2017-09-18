@@ -32,4 +32,30 @@ describe HearingRepository do
       expect(subject.representative_name).to eq "test rep name"
     end
   end
+
+  context ".values_based_on_type" do
+    subject { HearingRepository.values_based_on_type(vacols_record) }
+
+    context "when a hearing is a video master record" do
+      let(:vacols_record) do
+        OpenStruct.new(
+          hearing_type: "V",
+          folder_nr: "VIDEO RO15",
+          master_record_type: :video
+        )
+      end
+      it { is_expected.to eq(type: :video, regional_office_key: "RO15") }
+    end
+
+    context "when a hearing is not a master record" do
+      let(:vacols_record) do
+        OpenStruct.new(
+          hearing_type: "T",
+          master_record_type: nil,
+          brieff: OpenStruct.new(bfregoff: "RO36")
+        )
+      end
+      it { is_expected.to eq(type: :travel, regional_office_key: "RO36") }
+    end
+  end
 end

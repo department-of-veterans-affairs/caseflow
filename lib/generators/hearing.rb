@@ -13,8 +13,10 @@ class Generators::Hearing
         witness: "Jane Doe attended",
         contentions: "The veteran believes their knee is hurt",
         evidence: "Medical exam occurred on 10/10/2008",
-        military_service: "Veteran was in the Vietnam War",
-        comments_for_attorney: "Look for knee-related medical records"
+        military_service: "Army 02/02/2003 - 05/07/2009 \n Navy 08/23/2011 - 09/12/2014",
+        comments_for_attorney: "Look for knee-related medical records",
+        regional_office_key: VACOLS::RegionalOffice::CITIES.keys.sample,
+        master_record: [true, false].sample
       }
     end
 

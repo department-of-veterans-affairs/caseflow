@@ -348,7 +348,13 @@ class Fakes::BGSService
       zip_code: "20136",
       power_of_atty_code1: "0",
       power_of_atty_code2: "00",
-      sex: "F"
+      sex: "F",
+      service: [{ branch_of_service: "Army",
+                  entered_on_duty_date: "02132002",
+                  released_active_duty_date: "12212003" },
+                { branch_of_service: "Navy",
+                  entered_on_duty_date: "07022006",
+                  released_active_duty_date: "06282008" }]
     }
   end
 end

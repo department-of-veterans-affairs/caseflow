@@ -21,6 +21,9 @@ import {
 export class HearingWorksheet extends React.PureComponent {
 
   render() {
+    let {
+      worksheet
+    } = this.props;
 
     // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
     return <div>
@@ -42,36 +45,36 @@ export class HearingWorksheet extends React.PureComponent {
           <span className="saving">Saving...</span>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
-            <div><b>Somebody Mad</b></div>
+            <div><b>{worksheet.appellant_last_first_mi}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
-            <div>Lansing, MI</div>
+            <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Regional Office:</div>
-            <div>Detroit, MI</div>
+            <div>{worksheet.regional_office_name}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Representative Org:</div>
-            <div>Veterans of Foreign Wars</div>
+            <div>{worksheet.representative}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
             <TextField
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={this.props.worksheet.repName || ''}
+              value={worksheet.repName || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
-            <div><b>Somebody Madder</b></div>
+            <div><b>{worksheet.veteran_name}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Veteran ID:</div>
-            <div><b>{this.props.vbms_id}</b></div>
+            <div><b>{worksheet.vbms_id}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Docket Number:</div>
@@ -79,14 +82,14 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Veteran's Age:</div>
-            <div>32</div>
+            <div>{worksheet.veteran_age}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
              <TextareaField
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
                 aria-label="Representative Name"
-                value={this.props.worksheet.witness || ''}
+                value={worksheet.witness || ''}
                 onChange={this.props.onWitnessChange}
              />
           </div>
@@ -141,7 +144,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Contentions"
-              value={this.props.worksheet.contentions}
+              value={worksheet.contentions || ''}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
               />
@@ -150,7 +153,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Periods and circumstances of service"
-              value={this.props.worksheet.military_service}
+              value={worksheet.military_service || ''}
               onChange={this.props.onMilitaryServiceChange}
               id="worksheet-military-service"
               />
@@ -159,7 +162,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Evidence"
-              value={this.props.worksheet.evidence}
+              value={worksheet.evidence || ''}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
               />
@@ -168,7 +171,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <TextareaField
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments_for_attorney}
+              value={worksheet.comments_for_attorney || ''}
               id="worksheet-comments-for-attorney"
               onChange={this.props.onCommentsForAttorneyChange}
               />
