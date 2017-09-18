@@ -44,15 +44,17 @@ describe CachedAttributes do
     end
 
     context "when no cached value" do
-      before { model.not_cached_rating = 9 }
+      before do 
+        model.not_cached_rating = 9 
+      end
       it { is_expected.to eq(9) }
     end
 
     context "caches false boolean values" do
-      before {
+      before do
         model.clear_cached_attr!(:rating)
         model.not_cached_rating = false
-      }
+      end
       it "reads from cache" do
         expect(model.rating).to eq(false)
         model.not_cached_rating = true
