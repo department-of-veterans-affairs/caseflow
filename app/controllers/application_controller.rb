@@ -1,12 +1,4 @@
-class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
-
-  force_ssl if: :ssl_enabled?
-  before_action :check_out_of_service
-  before_action :strict_transport_security
-
+class ApplicationController < ApplicationBaseController
   before_action :set_application
   before_action :set_timezone,
                 :setup_fakes,
@@ -17,35 +9,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
-  def unauthorized
-    render status: 403
-  end
-
   private
-
-  def check_out_of_service
-    render "out_of_service", layout: "application" if Rails.cache.read("out_of_service")
-  end
-
-  def ssl_enabled?
-    Rails.env.production? && !(request.path =~ /health-check/)
-  end
-
-  def strict_transport_security
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains" if request.ssl?
-  end
-
-  def not_found
-    respond_to do |format|
-      format.html do
-        render "errors/404", layout: "application", status: 404
-      end
-      format.json do
-        render json: {
-          errors: ["Response not found"] }, status: 404
-      end
-    end
-  end
 
   def current_user
     @current_user ||= begin

@@ -28,7 +28,7 @@ class HearingRepository
     # :nocov:
 
     def set_vacols_values(hearing, vacols_record)
-      hearing.assign_from_vacols(
+      attrs = {
         vacols_record: vacols_record,
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
@@ -39,9 +39,25 @@ class HearingRepository
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
-        type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
-      )
+        master_record: vacols_record.master_record?
+      }
+      hearing.assign_from_vacols(attrs.merge(values_based_on_type(vacols_record)))
       hearing
+    end
+
+    # Fields such as 'type', 'regional_office_key' are stored in different places
+    # depending whether it is a child record or a master record (video or travel_board)
+    def values_based_on_type(vacols_record)
+      case vacols_record.master_record_type
+      when :video
+        { type: :video,
+          regional_office_key: vacols_record.folder_nr.split(" ").second
+        }
+      else
+        { type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym],
+          regional_office_key: vacols_record.brieff.try(:bfregoff)
+        }
+      end
     end
 
     private
