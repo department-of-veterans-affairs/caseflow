@@ -143,10 +143,8 @@ export class PdfPage extends React.PureComponent {
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
-      if (this.props.page) {
-        if (!this.previousShouldDraw || prevProps.scale !== this.props.scale || !prevProps.page) {
-          this.drawPage();
-        }
+      if (this.props.page && (!this.previousShouldDraw || prevProps.scale !== this.props.scale || !prevProps.page)) {
+        this.drawPage();
       }
     } else if (this.shouldDrawPage(prevProps)) {
       this.clearPage();

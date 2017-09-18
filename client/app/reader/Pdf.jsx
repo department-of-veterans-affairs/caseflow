@@ -343,7 +343,11 @@ export class Pdf extends React.PureComponent {
   }
 
   updateScrollWindowCenter = () => {
-    const rect = scrollWindow.getBoundingClientRect();
+    if (!this.scrollWindow) {
+      return;
+    }
+
+    const rect = this.scrollWindow.getBoundingClientRect();
 
     this.setState({
       scrollWindowCenter: {
