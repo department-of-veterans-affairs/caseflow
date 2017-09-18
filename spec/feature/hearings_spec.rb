@@ -92,7 +92,7 @@ RSpec.feature "Hearings" do
       new_window = windows.last
       page.within_window new_window do
         expect(page).to have_content("The veteran believes their knee is hurt")
-        expect(page).to have_content("Veteran was in the Vietnam War")
+        expect(page).to have_content("Army 02/02/2003 - 05/07/2009")
         expect(page).to have_content("Medical exam occurred on 10/10/2008")
         expect(page).to have_content("Look for knee-related medical records")
 
