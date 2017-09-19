@@ -312,13 +312,7 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    let scrollTop = 0;
-    if (this.scrollWindow) {
-      scrollTop = this.scrollWindow.scrollTop;
-    }
-
-    // console.log('PDF Component rendered');
-
+    const scrollTop = this.scrollWindow ? this.scrollWindow.scrollTop : 0;
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
           pdfWorker={this.props.pdfWorker}

@@ -142,9 +142,8 @@ export class PdfPage extends React.PureComponent {
     }
 
     const shouldDraw = this.shouldDrawPage(this.props);
+
     this.scrollTopAtLastUpdate = this.props.scrollTop;
-
-
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
