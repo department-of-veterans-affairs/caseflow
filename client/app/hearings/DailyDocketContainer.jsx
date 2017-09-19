@@ -23,6 +23,14 @@ export class DailyDocketContainer extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    const pageTitle = document.getElementById('page-title');
+
+    if (pageTitle) {
+      pageTitle.innerHTML = ' Hearing Prep';
+    }
+  }
+
   docket = () => {
     return this.props.dockets[this.props.date].hearings_array;
   }
