@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170915195705) do
+ActiveRecord::Schema.define(version: 20170918151745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -261,22 +261,6 @@ ActiveRecord::Schema.define(version: 20170915195705) do
     t.string  "comments_for_attorney"
   end
 
-  create_table "issues", force: :cascade do |t|
-    t.integer "appeal_id"
-    t.string  "vacols_sequence_id"
-    t.boolean "reopen",             default: false
-    t.boolean "vha",                default: false
-    t.boolean "allow",              default: false
-    t.boolean "deny",               default: false
-    t.boolean "remand",             default: false
-    t.boolean "dismiss",            default: false
-    t.string  "program"
-    t.string  "name"
-    t.string  "levels"
-    t.string  "description"
-    t.boolean "from_vacols"
-  end
-
   create_table "tags", force: :cascade do |t|
     t.string   "text"
     t.datetime "created_at", null: false
@@ -331,6 +315,22 @@ ActiveRecord::Schema.define(version: 20170915195705) do
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
+
+  create_table "worksheet_issues", force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string  "vacols_sequence_id"
+    t.boolean "reopen",             default: false
+    t.boolean "vha",                default: false
+    t.boolean "allow",              default: false
+    t.boolean "deny",               default: false
+    t.boolean "remand",             default: false
+    t.boolean "dismiss",            default: false
+    t.string  "program"
+    t.string  "name"
+    t.string  "levels",                             array: true
+    t.string  "description",                        array: true
+    t.boolean "from_vacols"
+  end
 
   add_foreign_key "annotations", "users"
   add_foreign_key "certifications", "users"
