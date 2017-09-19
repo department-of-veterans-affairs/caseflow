@@ -9,21 +9,6 @@ import { setPdfDocument } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
-// This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
-// We need it defined here to be able to expand/contract margin between pages
-// as we zoom.
-const PAGE_MARGIN_BOTTOM = 25;
-
-// These both come from _pdf_viewer.css and is the default height
-// of the pages in the PDF. We need it defined here to be
-// able to expand/contract the height of the pages as we zoom.
-const PAGE_WIDTH = 816;
-const PAGE_HEIGHT = 1056;
-
-// Under this maximum squared distance pages are drawn, beyond it they are not.
-const MAX_SQUARED_DISTANCE = 10000000;
-const NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER = 2;
-
 export class PdfFile extends React.PureComponent {
   constructor(props) {
     super(props);

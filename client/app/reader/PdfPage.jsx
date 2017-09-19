@@ -49,14 +49,6 @@ export class PdfPage extends React.PureComponent {
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
-  // shouldComponentUpdate = (nextProps) => {
-  //   const shallowEqual = Object.keys(nextProps).filter((prop) => prop !== 'scrollTop').some((prop) => nextProps[prop] !== this.props[prop]);
-  //   const result = shallowEqual || Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop) > _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale;
-  //   // console.log('shallowEqual', shallowEqual, Math.abs(this.scrollTopAtLastUpdate - nextProps.scrollTop), _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT) * this.props.scale, result);
-  //   console.log('shouldupdate', result);
-  //   return result;
-  // }
-
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
@@ -187,31 +179,20 @@ export class PdfPage extends React.PureComponent {
   // and PDFJS page object.
   setUpPage = () => {
     this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-      let pageData = {
-        dimensions: this.props.pageDimensions || this.getDimensions(page),
-        page,
-        container: this.pageContainer
-      };
+      this.getText(page).then((text) => {
+        const pageData = {
+          text,
+          dimensions: this.props.pageDimensions || this.getDimensions(page),
+          page,
+          container: this.pageContainer
+        };
 
-      if (this.props.text) {
-        pageData.text = this.props.text;
-        
         this.props.setUpPdfPage(
           this.props.file,
           this.props.pageIndex,
           pageData
         );
-      } else {
-        this.getText(page).then((text) => {
-          pageData.text = text;
-
-          this.props.setUpPdfPage(
-            this.props.file,
-            this.props.pageIndex,
-            pageData
-          );
-        });
-      }
+      });
     });
   }
 
@@ -289,16 +270,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-  // const pageKeys = Object.keys(state.readerReducer.pages).filter((pageName) => pageName.includes(props.file));
-  // const numPagesDefined = pageKeys.length;
-  // const pdfDocument = state.readerReducer.pdfDocuments[props.file];
-  // const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;
-  // let pageContainers = null;
-
-  // if (numPagesDefined !== numPages) {
-  //   return {};
-  // }
-
   const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
 
   return {
