@@ -263,7 +263,6 @@ $color-hearings-saving: #777;
   }
 
   label {
-    font-weight: bold;
     font-size: 1.05em;
     padding-bottom: .3em;
   }
@@ -330,6 +329,10 @@ $color-hearings-saving: #777;
 
   .cf-txt-l {
     padding-left: .4em;
+
+    [id=trash-can] {
+      margin-top: 20px;
+    }
   }
 
   tr {
@@ -383,6 +386,10 @@ $color-hearings-saving: #777;
       }
     }
   }
+}
+
+.hearings-add-issue {
+  margin-bottom: 20px;
 }
 
 .cf-hearings-worksheet-desc-label {

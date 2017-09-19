@@ -1,51 +1,65 @@
 import * as Constants from '../constants/constants';
 
-export const onDescriptionChange = (description) => ({
+export const onDescriptionChange = (description, issueId, appealId) => ({
   type: Constants.SET_DESCRIPTION,
   payload: {
-    description
+    description,
+    issueId,
+    appealId
   }
 });
 
-export const onToggleReopen = (reopen) => ({
+export const onToggleReopen = (reopen, issueId, appealId) => ({
   type: Constants.SET_REOPEN,
   payload: {
-    reopen
+    reopen,
+    issueId,
+    appealId
   }
 });
 
-export const onToggleAllow = (allow) => ({
+export const onToggleAllow = (allow, issueId, appealId) => ({
   type: Constants.SET_ALLOW,
   payload: {
-    allow
+    allow,
+    issueId,
+    appealId
   }
 });
 
-export const onToggleDeny = (deny) => ({
+export const onToggleDeny = (deny, issueId, appealId) => ({
   type: Constants.SET_DENY,
   payload: {
-    deny
+    deny,
+    issueId,
+    appealId
   }
 });
 
-export const onToggleRemand = (remand) => ({
+export const onToggleRemand = (remand, issueId, appealId) => ({
   type: Constants.SET_REMAND,
   payload: {
-    remand
+    remand,
+    issueId,
+    appealId
   }
 });
 
-export const onToggleDismiss = (dismiss) => ({
+export const onToggleDismiss = (dismiss, issueId, appealId) => ({
   type: Constants.SET_DISMISS,
   payload: {
-    dismiss
+    dismiss,
+    issueId,
+    appealId
   }
 });
 
-export const onToggleVHA = (vha) => ({
+export const onToggleVHA = (vha, issueId, appealId) => ({
   type: Constants.SET_VHA,
   payload: {
-    vha
+    vha,
+    issueId,
+    appealId
   }
 });
 

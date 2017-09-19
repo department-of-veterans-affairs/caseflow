@@ -17,9 +17,9 @@ describe('hearingsReducer', () => {
       },
       worksheet: {
         streams: {
-          appeal_0: {
+          8873: {
             issues: {
-              issue_0: {
+              66: {
               }
             }
           }
@@ -190,14 +190,15 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DESCRIPTION,
         payload: {
-          description: 'Elbow Arthritis'
-        }
+          description: 'Elbow Arthritis',
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue description', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { description: 'Elbow Arthritis' }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { description: 'Elbow Arthritis' }
       }
      );
     });
@@ -209,13 +210,15 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REOPEN,
-        payload: { reopen: true }
+        payload: { reopen: true,
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue reopen', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { reopen: true }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { reopen: true }
       }
      );
     });
@@ -227,13 +230,15 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_ALLOW,
-        payload: { allow: true }
+        payload: { allow: true,
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue allow', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { allow: true }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { allow: true }
       }
      );
     });
@@ -245,13 +250,15 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DENY,
-        payload: { deny: true }
+        payload: { deny: true,
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue deny', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { deny: true }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { deny: true }
       }
      );
     });
@@ -263,13 +270,15 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REMAND,
-        payload: { remand: true }
+        payload: { remand: true,
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue remand', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { remand: true }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { remand: true }
       }
      );
     });
@@ -281,13 +290,15 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DISMISS,
-        payload: { dismiss: true }
+        payload: { dismiss: true,
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue dismiss', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { dismiss: true }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { dismiss: true }
       }
      );
     });
@@ -299,13 +310,15 @@ describe('hearingsReducer', () => {
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_VHA,
-        payload: { vha: true }
+        payload: { vha: true,
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
     it('sets worksheet issue vha', () => {
-      expect(state.worksheet.streams.appeal_0.issues).to.deep.equal({
-        issue_0: { vha: true }
+      expect(state.worksheet.streams[8873].issues).to.deep.equal({
+        66: { vha: true }
       }
      );
     });
