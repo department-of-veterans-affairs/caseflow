@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -33,8 +32,8 @@ export class HearingWorksheet extends React.PureComponent {
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
           <div className="meta">
-            <div>{moment(this.props.date).format('ddd l')}</div>
-            <div>Hearing Type: {this.props.hearingType}</div>
+            <div>{moment(worksheet.date).format('ddd l')}</div>
+            <div>Hearing Type: {worksheet.request_type}</div>
           </div>
         </div>
 
@@ -134,7 +133,7 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
 
            <HearingWorksheetStream
-              worksheetStreams={this.props.worksheet.streams}
+              worksheetStreams={worksheet.streams}
               {...this.props}
             />
 
@@ -204,9 +203,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheet);
-
-HearingWorksheet.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
-  date: PropTypes.string,
-  vbms_id: PropTypes.string
-};
