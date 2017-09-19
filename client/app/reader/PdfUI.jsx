@@ -254,7 +254,7 @@ export class PdfUI extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const pdfDocument = state.readerReducer.pdfDocuments[props.doc.content_url];
+  const pdfDocument = _.get(state.readerReducer.pdfDocuments, [props.doc.content_url]);
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
 
   return {
@@ -262,7 +262,7 @@ const mapStateToProps = (state, props) => {
     docListIsFiltered: docListIsFiltered(state.readerReducer),
     ...state.readerReducer.ui.pdf,
     numPages
-  }
+  };
 };
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

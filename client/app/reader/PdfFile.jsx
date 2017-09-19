@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { pageNumberOfPageIndex } from './utils';
 import { setPdfDocument } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -59,9 +58,9 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
       />);
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   render() {

@@ -3,7 +3,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   pageCoordsOfRootCoords } from '../reader/utils';
@@ -57,8 +56,6 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
 };
 
 const COVER_SCROLL_HEIGHT = 120;
-
-const TIMEOUT_FOR_GET_DOCUMENT = 100;
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
@@ -324,7 +321,7 @@ export class Pdf extends React.PureComponent {
           isVisible={this.props.file === file}
           scale={this.props.scale}
         />;
-      });
+    });
 
     return <div
       id="scrollWindow"
@@ -351,6 +348,7 @@ const mapStateToProps = (state, props) => {
   if (numPagesDefined === numPages) {
     pageContainers = pageKeys.reduce((acc, key) => {
       const pageIndex = key.split('-')[1];
+
       acc[pageIndex] = state.readerReducer.pages[key] ? state.readerReducer.pages[key].container : null;
 
       return acc;
