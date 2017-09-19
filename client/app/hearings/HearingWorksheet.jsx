@@ -22,7 +22,7 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet } = this.props;
-    let readerLink = `/reader/appeal/${worksheet.vacols_id}`;
+    let readerLink = `/reader/appeal/${worksheet.vacols_id}/documents`;
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
@@ -179,7 +179,7 @@ export class HearingWorksheet extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="signup-1"
-          href={`${readerLink}/documents?category=case_summary`}
+          href={`${readerLink}?category=case_summary`}
           button="primary">
             Review eFolder</Link>
       </div>
