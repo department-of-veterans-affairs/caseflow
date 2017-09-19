@@ -681,6 +681,25 @@ input[type="search"].cf-search-input-with-close {
   }
 }
 
+// This is override some bad styling in PDFJS. Note selection is not
+// supported in current CSS standards. But with PDFJS using it, we have
+// to override it. When opacity isn't 1, then the highlighting for find
+// is way too light.
+.textLayer {
+  opacity: 1;
+
+  ::selection {
+    background: rgb(179, 179, 255);
+  }
+  ::-moz-selection {
+    background: rgb(179, 179, 255);
+  }
+}
+
+.canvasWrapper {
+  background: $color-black;
+}
+
 .cf-modal-scroll {
   .cf-keyboard-modal-scroll {
     max-height: 370px;

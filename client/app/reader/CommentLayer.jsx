@@ -138,8 +138,10 @@ class CommentLayer extends PureComponent {
 
   render() {
     const TEXT_LAYER_STYLING = {
-      width: `${this.props.currentWidth}px`,
-      height: `${this.props.currentHeight}px`
+      width: `${this.props.dimensions.width}px`,
+      height: `${this.props.dimensions.height}px`,
+      transform: `scale(${this.props.scale})`,
+      transformOrigin: 'left top'
     };
 
     return <div

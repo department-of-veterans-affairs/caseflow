@@ -53,6 +53,7 @@ export class PdfPage extends React.PureComponent {
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
   drawPage = () => {
+    const t0 = performance.now();
     if (this.isDrawing) {
       return Promise.reject();
     }
@@ -72,6 +73,7 @@ export class PdfPage extends React.PureComponent {
       viewport
     }).
       then(() => {
+        console.log('rendered page', this.props.pageNumberOfPageIndex, this.props.file);
         this.isDrawing = false;
         this.isDrawn = true;
 
@@ -136,9 +138,9 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale) {
-      this.drawText();
-    }
+    // if (this.props.isVisible && (prevProps.text !== this.props.text || prevProps.scale !== this.props.scale || prevProps.isVisible)) {
+    //   this.drawText();
+    // }
 
     const shouldDraw = this.shouldDrawPage(this.props);
 
@@ -157,17 +159,19 @@ export class PdfPage extends React.PureComponent {
     this.previousShouldDraw = shouldDraw;
   }
 
-  drawText = () => {
+  drawText = (text) => {
+    const t0 = performance.now();
     const viewport = this.props.page.getViewport(this.props.scale);
 
     this.textLayer.innerHTML = '';
 
     PDFJS.renderTextLayer({
-      textContent: this.props.text,
+      textContent: text,
       container: this.textLayer,
       viewport,
       textDivs: []
     });
+    console.log('rendered text', this.props.pageIndex, this.props.file);
   }
 
   getText = (page) => page.getTextContent()
@@ -189,6 +193,8 @@ export class PdfPage extends React.PureComponent {
           this.props.pageIndex,
           pageData
         );
+
+        this.drawText(text);
       });
     });
   }
@@ -206,8 +212,10 @@ export class PdfPage extends React.PureComponent {
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
-    const currentWidth = this.props.scale * _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
-    const currentHeight = this.props.scale * _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
+    const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
+    const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
+    const currentWidth = this.props.scale * width;
+    const currentHeight = this.props.scale * height;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${currentWidth}px`,
@@ -237,8 +245,8 @@ export class PdfPage extends React.PureComponent {
               scale={this.props.scale}
               getTextLayerRef={this.getTextLayerRef}
               file={this.props.file}
-              dimensions={{ currentWidth,
-                currentHeight }}
+              dimensions={{ width,
+                height }}
               isVisible={this.props.isVisible}
             />
           </div>
