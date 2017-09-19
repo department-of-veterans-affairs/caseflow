@@ -21,11 +21,9 @@ import {
 export class HearingWorksheet extends React.PureComponent {
 
   render() {
-    let {
-      worksheet
-    } = this.props;
+    let { worksheet } = this.props;
+    let readerLink = `/reader/appeal/${worksheet.vacols_id}/documents`;
 
-    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -181,9 +179,9 @@ export class HearingWorksheet extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="signup-1"
-          href="/reader/appeal"
-          button="primary"
-        >Review eFolder</Link>
+          href={`${readerLink}?category=case_summary`}
+          button="primary">
+            Review eFolder</Link>
       </div>
     </div>;
   }
