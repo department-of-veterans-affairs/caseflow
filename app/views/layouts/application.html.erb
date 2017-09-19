@@ -33,7 +33,7 @@
     window.analyticsTiming = function(fieldsObject) {
       var clonedFieldsObject = JSON.parse(JSON.stringify(fieldsObject));
       clonedFieldsObject.hitType = 'timing';
-      ga.apply('send', clonedFieldsObject);
+      ga('send', clonedFieldsObject);
     };
 
     <% unless @react_routed %>

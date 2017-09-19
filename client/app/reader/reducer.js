@@ -1064,13 +1064,15 @@ export const reducer = (state = initialState, action = {}) => {
   }
 };
 
+// TODO Throttle the analytics reducer timing.
+
 export default timeFunction(
   reducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`,
   (timeElapsedMs, state, action) =>
     window.analyticsTiming({
       timingCategory: 'reducer',
-      timingVar: action,
+      timingVar: action.type,
       timingValue: timeElapsedMs
     })
 );
