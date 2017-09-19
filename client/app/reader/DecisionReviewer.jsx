@@ -16,6 +16,7 @@ import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
+import Footer from '../components/Footer';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -166,6 +167,9 @@ export class DecisionReviewer extends React.PureComponent {
             render={this.routedCaseSelect}
           />
         </div>
+        <Footer
+          appName="Reader"
+          feedbackUrl={this.props.feedbackUrl}/>
       </div>
     </Router>;
   }
