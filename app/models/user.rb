@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "CertificationV2", "Reader", "Hearing Prep"].freeze
+               "Reader", "Hearing Prep"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -84,7 +84,7 @@ class User < ActiveRecord::Base
   def attributes
     super.merge(display_name: display_name)
   end
-
+  
   def current_task(task_type)
     tasks.to_complete.find_by(type: task_type)
   end

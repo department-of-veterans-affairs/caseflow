@@ -23,7 +23,7 @@ class HearingWorksheetStream extends Component {
               return <div key={appealId} id={appealId}>
               <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
               <HearingWorksheetIssues
-                worksheetStreamsAppealId={this.props.worksheet.streams[appealId]}
+                worksheetStreamsAppeal={this.props.worksheet.streams[appealId]}
                 worksheetStreamsIssues={this.props.worksheet.streams[appealId].issues}
                 {...this.props}
               />
