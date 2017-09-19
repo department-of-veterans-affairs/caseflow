@@ -9,7 +9,7 @@ class HearingWorksheetDocs extends Component {
              <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
              <h4>Docs in eFolder: 80</h4>
              <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
-             <div className="cf-hearings-worksheet-data-Row">
+             <div>
                 <div className="cf-hearings-worksheet-data-cell column-1">
                    <div>Docket Number:</div>
                    <div>69169169</div>
@@ -31,7 +31,7 @@ class HearingWorksheetDocs extends Component {
                    <div>23</div>
                 </div>
              </div>
-             <div className="cf-hearings-worksheet-data-Row">
+             <div>
                 <div className="cf-hearings-worksheet-data-cell column-1">
                    <div>SOC:</div>
                    <div>01/01/1990</div>
