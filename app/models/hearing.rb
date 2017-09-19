@@ -81,6 +81,7 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :veteran_age,
         :veteran_name,
+        :regional_office_name,
         :venue,
         :cached_number_of_documents,
         :cached_number_of_documents_after_certification,
@@ -93,7 +94,6 @@ class Hearing < ActiveRecord::Base
   def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
-                :regional_office_name,
                 :representative,
                 :appeals_ready_for_hearing],
       include: :issues
