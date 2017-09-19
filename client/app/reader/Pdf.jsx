@@ -89,21 +89,8 @@ export class Pdf extends React.PureComponent {
     };
 
     this.currentPage = 1;
-    this.isGettingPdf = {};
-    this.loadingTasks = {};
-    this.shouldDraw = {};
 
-    this.initializePredrawing();
-    this.initializeRefs();
-  }
-
-  initializeRefs = () => {
     this.scrollWindow = null;
-  }
-
-  initializePredrawing = () => {
-    this.predrawnPdfs = {};
-    this.isPrerdrawing = false;
   }
 
   scrollEvent = () => {
