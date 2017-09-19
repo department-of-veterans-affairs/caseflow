@@ -16,6 +16,15 @@ export const INTERACTION_TYPES = {
   KEYBOARD_SHORTCUT: 'keyboard-shortcut'
 };
 
+export const ENDPOINT_NAMES = {
+  DOCUMENT: 'document',
+  ANNOTATION: 'annotation',
+  MARK_DOC_AS_READ: 'mark-doc-as-read',
+  TAG: 'tag',
+  APPEAL_DETAILS: 'appeal-details',
+  APPEAL_DETAILS_BY_VET_ID: 'appeal-details-by-vet-id'
+}
+
 const debounceFns = {};
 
 export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
