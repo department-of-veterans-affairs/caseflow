@@ -3,6 +3,31 @@ import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
 import StringUtil from './StringUtil';
 import _ from 'lodash';
+import { timeFunctionPromise } from '../util/PerfDebug';
+
+const sendAnalyticsTiming = (timeElapsedMs, url, options, endpointName) => 
+  window.analyticsTiming({
+    timingCategory: 'api-request',
+    timingVar: endpointName || url,
+    timingLabel: timeElapsedMs
+  });
+
+const timeApiRequest = (wrappedFn) => timeFunctionPromise(wrappedFn, sendAnalyticsTiming);
+
+// Default headers needed to talk with rails server.
+// Including rails authenticity token
+const getHeadersObject = (options = {}) => {
+  let headers = Object.assign({},
+    {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    ReactOnRails.authenticityHeaders(),
+    options);
+
+
+  return headers;
+};
 
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
@@ -29,15 +54,15 @@ const ApiUtil = {
   delete(url, options = {}) {
     return request.
       delete(url).
-      set(this.headers(options.headers)).
+      set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache);
   },
 
-  get(url, options = {}) {
+  get: timeApiRequest((url, options = {}) => {
     let promise = request.
       get(url).
-      set(this.headers(options.headers)).
+      set(getHeadersObject(options.headers)).
       query(options.query);
 
     if (options.withCredentials) {
@@ -50,27 +75,12 @@ const ApiUtil = {
 
     return promise.
       use(nocache);
-  },
-
-  // Default headers needed to talk with rails server.
-  // Including rails authenticity token
-  headers(options = {}) {
-    let headers = Object.assign({},
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      ReactOnRails.authenticityHeaders(),
-      options);
-
-
-    return headers;
-  },
+  }),
 
   patch(url, options = {}) {
     return request.
       post(url).
-      set(this.headers({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
+      set(getHeadersObject({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
       send(options.data).
       use(nocache);
   },
@@ -78,7 +88,7 @@ const ApiUtil = {
   post(url, options = {}) {
     return request.
       post(url).
-      set(this.headers(options.headers)).
+      set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache);
   },
@@ -86,7 +96,7 @@ const ApiUtil = {
   put(url, options = {}) {
     return request.
       put(url).
-      set(this.headers(options.headers)).
+      set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache);
   }
