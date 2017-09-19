@@ -37,7 +37,6 @@ export class PdfPage extends React.PureComponent {
 
     this.isDrawing = false;
     this.isDrawn = false;
-    this.scrollTopAtLastUpdate = 0;
     this.previousShouldDraw = false;
   }
 
@@ -97,7 +96,6 @@ export class PdfPage extends React.PureComponent {
 
   componentDidMount = () => {
     this.setUpPage();
-    this.scrollTopAtLastUpdate = this.props.scrollTop;
   }
 
   componentWillUnmount = () => {
@@ -144,7 +142,6 @@ export class PdfPage extends React.PureComponent {
 
     const shouldDraw = this.shouldDrawPage(this.props);
 
-    this.scrollTopAtLastUpdate = this.props.scrollTop;
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
