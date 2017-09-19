@@ -1066,5 +1066,11 @@ export const reducer = (state = initialState, action = {}) => {
 
 export default timeFunction(
   reducer,
-  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`,
+  (timeElapsedMs, state, action) =>
+    window.analyticsTiming({
+      timingCategory: 'reducer',
+      timingVar: action,
+      timingValue: timeElapsedMs
+    })
 );

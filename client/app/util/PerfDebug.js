@@ -43,18 +43,21 @@ export class PerfDebugComponent extends Component {
   componentDidUpdate = componentDidUpdate
 }
 
-export const timeFunction = (fn, getLabel) => (...args) => {
-  const start = window.performance.now();
+export const timeFunction = (fn, getLabel, onTimeElapsed = _.noop) => (...args) => {
+  const startMs = window.performance.now();
   const returnValue = fn(...args);
-  const end = window.performance.now();
+  const endMs = window.performance.now();
 
-  if (start !== 'RUNNING_IN_NODE') {
+  if (startMs !== 'RUNNING_IN_NODE') {
     // eslint-disable-next-line no-console
 
-    const timeLabel = `${(end - start).toFixed(2)}ms`;
+    const timeElapsedMs = endMs - startMs;
+    const timeLabel = `${timeElapsedMs.toFixed(2)}ms`;
     const label = _.isFunction(getLabel) ? getLabel(timeLabel, ...args) : `${getLabel} took ${timeLabel}`;
 
     console.log(label);
+
+    onTimeElapsed(timeElapsedMs, ...args);
   }
 
   return returnValue;
