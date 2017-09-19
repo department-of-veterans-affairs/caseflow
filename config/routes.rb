@@ -62,7 +62,8 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id", constraints: lambda{ |req| req.headers["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
+    get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
+      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
