@@ -65,9 +65,9 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, hearing.venue.timezone)}
+            {getDate(hearing.date, 'EST')}
             <br/>
-            {`${hearing.venue.city}, ${hearing.venue.state}`}
+            {hearing.regional_office_name}
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">

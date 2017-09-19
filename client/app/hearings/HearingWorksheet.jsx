@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -21,11 +20,9 @@ import {
 export class HearingWorksheet extends React.PureComponent {
 
   render() {
-    let {
-      worksheet
-    } = this.props;
+    let { worksheet } = this.props;
+    let readerLink = `/reader/appeal/${worksheet.vacols_id}/documents`;
 
-    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -35,8 +32,8 @@ export class HearingWorksheet extends React.PureComponent {
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
           <div className="meta">
-            <div>{moment(this.props.date).format('ddd l')}</div>
-            <div>Hearing Type: {this.props.hearingType}</div>
+            <div>{moment(worksheet.date).format('ddd l')}</div>
+            <div>Hearing Type: {worksheet.request_type}</div>
           </div>
         </div>
 
@@ -136,7 +133,7 @@ export class HearingWorksheet extends React.PureComponent {
         </div>
 
            <HearingWorksheetStream
-              worksheetStreams={this.props.worksheet.streams}
+              worksheetStreams={worksheet.streams}
               {...this.props}
             />
 
@@ -181,9 +178,9 @@ export class HearingWorksheet extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="signup-1"
-          href="/reader/appeal"
-          button="primary"
-        >Review eFolder</Link>
+          href={`${readerLink}?category=case_summary`}
+          button="primary">
+            Review eFolder</Link>
       </div>
     </div>;
   }
@@ -206,9 +203,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheet);
-
-HearingWorksheet.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
-  date: PropTypes.string,
-  vbms_id: PropTypes.string
-};
