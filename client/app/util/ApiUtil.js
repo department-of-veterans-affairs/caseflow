@@ -7,9 +7,10 @@ import { timeFunctionPromise } from '../util/PerfDebug';
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => 
   window.analyticsTiming({
-    timingCategory: `api-request-${httpVerbName.toLowerCase()}`,
+    timingCategory: 'api-request',
     timingVar: endpointName || url,
-    timingLabel: timeElapsedMs
+    timingValue: timeElapsedMs,
+    timingLabel: httpVerbName.toLowerCase()
   });
 
 const timeApiRequest = (httpFn, httpVerbName) => timeFunctionPromise(httpFn, makeSendAnalyticsTimingFn(httpVerbName));
