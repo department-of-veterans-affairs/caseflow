@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
