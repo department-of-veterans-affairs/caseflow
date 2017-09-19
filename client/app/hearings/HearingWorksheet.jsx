@@ -8,6 +8,8 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 
+// TODO Move all stream related to streams container
+import HearingWorksheetDocs from './components/HearingWorksheetDocs';
 
 import {
   onRepNameChange,
@@ -93,50 +95,12 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
-          <h4>Docs in eFolder: 80</h4>
-          <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>NOD:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Form 9:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Prior BVA Decision:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>&nbsp;</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-            <div>Docs since Certification:</div>
-            <div>23</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>SOC:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Certification:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>SSOC:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>&nbsp;</div>
-          </div>
-        </div>
+        <HearingWorksheetDocs />
 
-           <HearingWorksheetStream
+        <HearingWorksheetStream
               worksheetStreams={this.props.worksheet.streams}
               {...this.props}
-            />
+        />
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
