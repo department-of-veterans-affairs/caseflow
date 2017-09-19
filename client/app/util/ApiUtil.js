@@ -5,14 +5,14 @@ import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
-const sendAnalyticsTiming = (timeElapsedMs, url, options, endpointName) => 
+const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => 
   window.analyticsTiming({
-    timingCategory: 'api-request',
+    timingCategory: `api-request-${httpVerbName.toLowerCase()}`,
     timingVar: endpointName || url,
     timingLabel: timeElapsedMs
   });
 
-const timeApiRequest = (wrappedFn) => timeFunctionPromise(wrappedFn, sendAnalyticsTiming);
+const timeApiRequest = (httpFn, httpVerbName) => timeFunctionPromise(httpFn, makeSendAnalyticsTimingFn(httpVerbName));
 
 // Default headers needed to talk with rails server.
 // Including rails authenticity token
@@ -29,28 +29,7 @@ const getHeadersObject = (options = {}) => {
   return headers;
 };
 
-// TODO(jd): Fill in other HTTP methods as needed
-const ApiUtil = {
-
-  // Converts camelCase to snake_case
-  convertToSnakeCase(data) {
-    if (!_.isObject(data)) {
-      return data;
-    }
-    let result = {};
-
-    for (let key in data) {
-      if ({}.hasOwnProperty.call(data, key)) {
-        let snakeKey = StringUtil.camelCaseToSnakeCase(key);
-
-        // assign value to new object
-        result[snakeKey] = this.convertToSnakeCase(data[key]);
-      }
-    }
-
-    return result;
-  },
-
+const httpMethods = {
   delete(url, options = {}) {
     return request.
       delete(url).
@@ -59,7 +38,7 @@ const ApiUtil = {
       use(nocache);
   },
 
-  get: timeApiRequest((url, options = {}) => {
+  get(url, options = {}) {
     let promise = request.
       get(url).
       set(getHeadersObject(options.headers)).
@@ -75,7 +54,7 @@ const ApiUtil = {
 
     return promise.
       use(nocache);
-  }),
+  },
 
   patch(url, options = {}) {
     return request.
@@ -100,6 +79,31 @@ const ApiUtil = {
       send(options.data).
       use(nocache);
   }
+}
+
+// TODO(jd): Fill in other HTTP methods as needed
+const ApiUtil = {
+
+  // Converts camelCase to snake_case
+  convertToSnakeCase(data) {
+    if (!_.isObject(data)) {
+      return data;
+    }
+    let result = {};
+
+    for (let key in data) {
+      if ({}.hasOwnProperty.call(data, key)) {
+        let snakeKey = StringUtil.camelCaseToSnakeCase(key);
+
+        // assign value to new object
+        result[snakeKey] = this.convertToSnakeCase(data[key]);
+      }
+    }
+
+    return result;
+  },
+
+  ..._.mapValues(httpMethods, timeApiRequest)
 };
 
 export default ApiUtil;
