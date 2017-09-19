@@ -84,9 +84,6 @@ Rails.application.routes.draw do
     get "establish-claim", to: "establish_claims#show"
   end
 
-  resources :functions, only: :index
-  patch '/functions/change', to: 'functions#change'
-
   resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
