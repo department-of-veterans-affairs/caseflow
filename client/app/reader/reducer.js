@@ -1042,18 +1042,22 @@ export const reducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.CLEAR_PDF_PAGE:
-    return update(
-      state,
-      {
-        pages: {
-          [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $merge: {
-              page: null
+    if (state.pages[`${action.payload.file}-${action.payload.pageIndex}`].page === action.payload.page) {
+      return update(
+        state,
+        {
+          pages: {
+            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+              $set: {
+                null
+              }
             }
           }
         }
-      }
-    );
+      );
+    } else {
+      return state;
+    }
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,
