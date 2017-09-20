@@ -3,17 +3,14 @@ class Hearing < ActiveRecord::Base
   include AssociatedVacolsModel
   include RegionalOfficeConcern
 
-  belongs_to :appeal
-  belongs_to :user
-
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
                        :aod, :hold_open, :transcript_requested, :notes, :add_on,
                        :representative_name, :regional_office_key, :master_record
 
   belongs_to :appeal
   belongs_to :user # the judge
-  has_many :issues, foreign_key: :appeal_id, primary_key: :appeal_id
-  accepts_nested_attributes_for :issues
+  has_many :worksheet_issues, foreign_key: :appeal_id, primary_key: :appeal_id
+  accepts_nested_attributes_for :worksheet_issues
 
   def venue
     self.class.venues[venue_key]
@@ -96,14 +93,13 @@ class Hearing < ActiveRecord::Base
       methods: [:appeal_id,
                 :representative,
                 :appeals_ready_for_hearing],
-      include: :issues
+      include: :worksheet_issues
     ).merge(to_hash)
   end
 
+  # TODO: issues must be loaded only once on the initial load of the hearing's worksheet page
   def set_issues_from_appeal
-    appeal.issues.each do |issue|
-      Issue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id)
-    end if appeal
+    appeal.issues.each { |i| WorksheetIssue.create_from_issue(appeal, i) } if appeal
   end
 
   def appeals_ready_for_hearing
@@ -113,6 +109,7 @@ class Hearing < ActiveRecord::Base
   def set_initial_values(appeal_vacols_id, css_id)
     self.appeal = Appeal.find_or_create_by(vacols_id: appeal_vacols_id)
     self.user = User.find_by(css_id: css_id)
+    # TODO: military service must be loaded only once on the initial load of the hearing's worksheet page
     self.military_service = appeal.veteran.periods_of_service.join("\n") if appeal.veteran
     save!
   end

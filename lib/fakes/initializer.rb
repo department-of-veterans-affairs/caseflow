@@ -7,7 +7,6 @@ class Fakes::Initializer
       Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       User.case_assignment_repository = Fakes::CaseAssignmentRepository
-      Issue.repository = Fakes::IssueRepository
     end
 
     # This method is called only 1 time during application bootup
