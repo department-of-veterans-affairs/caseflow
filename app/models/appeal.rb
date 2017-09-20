@@ -542,7 +542,6 @@ class Appeal < ActiveRecord::Base
     # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
     # If vbms_id is > 9 digits, thrown an error.
     def convert_vbms_id_for_vacols_query(vbms_id)
-
       fail Caseflow::Error::InvalidVBMSId unless vbms_id
 
       # delete non-digit characters
