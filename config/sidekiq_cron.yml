@@ -6,25 +6,12 @@
 # | | | | +- Day Of Week (0-6) (Sunday = 0)
 # | | | | |
 
-# Create establish claim task runs every day at 4:30pm
-create_establish_claim_tasks_job:
-  cron: "30 16 * * * America/New_York"
-  class: "CreateEstablishClaimTasksJob"
-  queue: default
-  active_job: true
-
 reassign_old_tasks:
   cron: "1 0 * * * America/New_York"
   class: "ReassignOldTasksJob"
   queue: default
   active_job: true
-
-# This runs 30 min after the create_establish_claim_tasks_job
-prepare_establish_claim_tasks_job:
-  cron: "0 17 * * * America/New_York"
-  class: "PrepareEstablishClaimTasksJob"
-  queue: default
-  active_job: true
+  disabled: true
 
 # This job is used to debug https://github.com/department-of-veterans-affairs/caseflow/issues/1814
 # It is scheduled to run every 5 minute to make sure Sidekiq and Sidekiq Cron
@@ -34,6 +21,7 @@ heartbeat_tasks_job:
   class: "HeartbeatTasksJob"
   queue: default
   active_job: true
+  disabled: true
 
 # Disabled until we have a conversation about how to handle VBMS load
 # Retrieve all documents for active Reader users every night at midnight
@@ -52,6 +40,7 @@ dependencies_check_job:
   class: "DependenciesCheckJob"
   queue: default
   active_job: true
+  disabled: true
 
 # This is created to log DependenciesReportService (and to avoid flooding the logs with each browser window request)
 dependencies_report_service_log_job:
@@ -59,6 +48,7 @@ dependencies_report_service_log_job:
   class: "DependenciesReportServiceLogJob"
   queue: default
   active_job: true
+  disabled: true
 
 # Check which apps are out of service and post a reminder to slack, if any, every 3 hours
 out_of_service_reminder_job:
@@ -66,4 +56,5 @@ out_of_service_reminder_job:
   class: "OutOfServiceReminderJob"
   queue: default
   active_job: true
+  disabled: true
 

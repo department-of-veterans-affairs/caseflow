@@ -33,9 +33,9 @@ export const newHearingIssueState = (state, action, spec) => {
   return update(state, {
     worksheet: {
       streams: {
-        appeal_0: {
+        [action.payload.appealId]: {
           issues: {
-            issue_0: spec
+            [action.payload.issueId]: spec
           }
         }
       }
