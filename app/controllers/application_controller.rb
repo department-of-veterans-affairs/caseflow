@@ -201,9 +201,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :feedback_url
 
   def build_date
-    if Rails.application.config.build_version
-      Rails.application.config.build_version[:date]
-    end
+    return Rails.application.config.build_version[:date] if Rails.application.config.build_version
   end
   helper_method :build_date
 
