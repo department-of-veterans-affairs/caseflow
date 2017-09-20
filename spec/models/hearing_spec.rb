@@ -39,14 +39,11 @@ describe Hearing do
     end
 
     context "when appeal has issues" do
-      let!(:issue1) { WorksheetIssue.create(appeal: appeal) }
-      let!(:issue2) { WorksheetIssue.create(appeal: appeal) }
+      let!(:issue1) { Generators::WorksheetIssue.create(appeal: appeal) }
+      let!(:issue2) { Generators::WorksheetIssue.create(appeal: appeal) }
 
       it "should return issues through the appeal" do
-        # there are 3 issues associated with the appeal
-        # 1 issue is created in Generators::Appeal pending_hearing template
-        # 2 issues are created above
-        expect(subject["worksheet_issues"].size).to eq 3
+        expect(subject["worksheet_issues"].size).to eq 2
       end
     end
 
