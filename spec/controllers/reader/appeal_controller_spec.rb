@@ -37,18 +37,8 @@ RSpec.describe Reader::AppealController, type: :controller do
       expect(appeal_response[:type]).to eq hashed_appeal["type"]
     end
 
-    it "fails routing validation" do
-      request.headers["HTTP_VETERAN_ID"] = "03023232S!"
-      expect { get :find_appeals_by_veteran_id }
-        .to raise_error(ActionController::UrlGenerationError)
-      expect { get :find_appeals_by_veteran_id, veteran_id: nil }.to raise_error(ActionController::UrlGenerationError)
-      expect { get :find_appeals_by_veteran_id, veteran_id: "2" }.to raise_error(ActionController::UrlGenerationError)
-      expect { get :find_appeals_by_veteran_id, veteran_id: "221121212121212" }
-        .to raise_error(ActionController::UrlGenerationError)
-    end
-
     it "should return not found" do
-      request.headers["HTTP_VETERAN_ID"] = "doesnotexist!"
+      request.env["HTTP_VETERAN_ID"] = "doesnotexist!"
       get :find_appeals_by_veteran_id
       expect(response.status).to eq 404
     end
