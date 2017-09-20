@@ -67,16 +67,15 @@ export const timeFunctionPromise = (fn, onTimeElapsed = _.noop) => (...args) => 
   const startMs = window.performance.now();
   const returnPromise = fn(...args);
 
-  // This causes an issue with ApiUtil because `returnPromise` is not actually a promise.
-  returnPromise.then(() => {
-    const endMs = window.performance.now();
+  if (startMs !== 'RUNNING_IN_NODE') {
+    returnPromise.then(() => {
+      const endMs = window.performance.now();
 
-    if (startMs !== 'RUNNING_IN_NODE') {
       const timeElapsedMs = endMs - startMs;
 
       onTimeElapsed(timeElapsedMs, ...args);
-    }
-  });
+    });
+  }
 
   return returnPromise;
 };
