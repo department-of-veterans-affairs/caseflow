@@ -80,7 +80,7 @@ describe Hearing do
     end
 
     context "when appeal does not have any issues" do
-      let(:appeal) { Appeal.create(vacols_id: "1234") }
+      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
 
       it "should not create any issues" do
         hearing.update(appeal: appeal)
@@ -90,14 +90,18 @@ describe Hearing do
     end
 
     context "when appeal has issues" do
-      let(:appeal) { Appeal.create(vacols_id: "1234") }
-      let!(:issue1) { WorksheetIssue.create(appeal: appeal) }
-      let!(:issue2) { WorksheetIssue.create(appeal: appeal) }
+      let(:appeal) { Generators::Appeal.create(vacols_record: :partial_grant_decided) }
 
-      it "should not create any issues" do
+      it "should create issues" do
         hearing.update(appeal: appeal)
+        issue_from_appeal = appeal.issues.first
         subject
-        expect(hearing.worksheet_issues.size).to eq 2
+        expect(hearing.worksheet_issues.size).to eq 3
+        expect(hearing.worksheet_issues.first.program).to eq issue_from_appeal.program.to_s
+        expect(hearing.worksheet_issues.first.levels).to eq issue_from_appeal.levels
+        expect(hearing.worksheet_issues.first.description).to eq issue_from_appeal.description
+        expect(hearing.worksheet_issues.first.name).to eq issue_from_appeal.type[:name].to_s
+        expect(hearing.worksheet_issues.first.from_vacols).to eq true
       end
     end
   end

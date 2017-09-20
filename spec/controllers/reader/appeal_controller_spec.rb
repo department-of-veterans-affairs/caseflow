@@ -2,6 +2,7 @@ RSpec.describe Reader::AppealController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:vacols_record) { :remand_decided }
   let(:appeal) { Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
+
   describe "GET fetch appeal by VBMS Id" do
     it "should be successful" do
       request.env["HTTP_VETERAN_ID"] = appeal[:vbms_id]
