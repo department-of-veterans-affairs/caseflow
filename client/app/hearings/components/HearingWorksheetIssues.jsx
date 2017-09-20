@@ -11,22 +11,22 @@ import { TrashCan } from '../../components/RenderFunctions';
 class HearingWorksheetIssues extends PureComponent {
 
   constructor(props) {
-      super(props);
-      window.jqueryOn = false;
+    super(props);
+    window.jqueryOn = false;
 
-      this.state = {
-        modal: false,
-        value: ''
-      };
-    }
-
-    handleModalOpen = () => {
-      this.setState({ modal: true });
+    this.state = {
+      modal: false,
+      value: ''
     };
+  }
 
-    handleModalClose = () => {
-      this.setState({ modal: false });
-    };
+  handleModalOpen = () => {
+    this.setState({ modal: true });
+  };
+
+  handleModalClose = () => {
+    this.setState({ modal: false });
+  };
 
   render() {
     let {
@@ -34,7 +34,7 @@ class HearingWorksheetIssues extends PureComponent {
      worksheetStreamsAppeal
     } = this.props;
 
-    let modal = this.state.modal;
+    let popConfirm = this.state.modal;
 
     const columns = [
       {
@@ -90,36 +90,37 @@ class HearingWorksheetIssues extends PureComponent {
         actions: <HearingWorksheetPreImpressions
                     appeal={worksheetStreamsAppeal}
                     issue={issueRow} />,
-        deleteIssue: <TrashCan   onClick={this.handleModalOpen} />,
-
+        deleteIssue: <div classname="cf-appeal-stream" onClick={this.handleModalOpen} name="Remove Issue Confirmation">
+          <TrashCan/> </div>
       };
     });
 
     return <div>
-     <Modal
-        buttons = {[
-          { classNames: ['cf-modal-link', 'cf-btn-link'],
-            name: 'Close',
-            onClick: this.handleModalClose
-          },
-          { classNames: ['usa-button', 'usa-button-primary'],
-            name: 'Yes',
-            onClick: this.handleModalClose
-          }
-        ]}
-        closeHandler={this.handleModalClose}
-        title = "Remove Issue Row">
-        <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? <br />
-        This issue will be removed from the worksheet, but will remain in VACOLS</p>
-      </Modal>
-
-    <Table
-            className="cf-hearings-worksheet-issues"
-            columns={columns}
-            rowObjects={rowObjects}
-            summary={'Worksheet Issues'}
-            getKeyForRow={this.getKeyForRow}
-          /></div>;
+          <Table
+              className="cf-hearings-worksheet-issues"
+              columns={columns}
+              rowObjects={rowObjects}
+              summary={'Worksheet Issues'}
+              getKeyForRow={this.getKeyForRow}
+          />
+       { popConfirm && <Modal
+          buttons = {[
+            { classNames: ['cf-modal-link', 'cf-btn-link'],
+              name: 'Close',
+              onClick: this.handleModalClose
+            },
+            { classNames: ['usa-button', 'usa-button-primary'],
+              name: 'Yes',
+              onClick: this.handleModalClose
+            }
+          ]}
+          closeHandler={this.handleModalClose}
+          title = "Remove Issue Row">
+          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? <br />
+          This issue will be removed from the worksheet, but will remain in VACOLS</p>
+        </Modal>
+        }
+        </div>;
   }
 }
 
