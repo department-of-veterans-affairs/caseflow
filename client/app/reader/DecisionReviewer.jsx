@@ -169,7 +169,8 @@ export class DecisionReviewer extends React.PureComponent {
         </div>
         <Footer
           appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}/>
+          feedbackUrl={this.props.feedbackUrl}
+          buildDate={this.props.buildDate}/>
       </div>
     </Router>;
   }

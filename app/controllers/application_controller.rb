@@ -200,6 +200,13 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :feedback_url
 
+  def build_date
+    if Rails.application.config.build_version
+      Rails.application.config.build_version[:date]
+    end
+  end
+  helper_method :build_date
+
   class << self
     def dependencies_faked?
       Rails.env.development? || Rails.env.test? || Rails.env.demo?
