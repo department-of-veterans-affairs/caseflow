@@ -54,25 +54,28 @@ export const timeFunction = (fn, getLabel, onTimeElapsed = _.noop) => (...args) 
     const timeElapsedMs = endMs - startMs;
     const timeLabel = `${timeElapsedMs.toFixed(2)}ms`;
     const label = _.isFunction(getLabel) ? getLabel(timeLabel, ...args) : `${getLabel} took ${timeLabel}`;
-    
+
     console.log(label);
-    
+
     onTimeElapsed(timeElapsedMs, ...args);
   }
-  
+
   return returnValue;
 };
 
 export const timeFunctionPromise = (fn, onTimeElapsed = _.noop) => (...args) => {
   const startMs = window.performance.now();
   const returnPromise = fn(...args);
-  
+
   return returnPromise.then((value) => {
     const endMs = window.performance.now();
+
     if (startMs !== 'RUNNING_IN_NODE') {
       const timeElapsedMs = endMs - startMs;
+
       onTimeElapsed(timeElapsedMs, ...args);
     }
-    return value;    
+
+    return value;
   });
-}
+};

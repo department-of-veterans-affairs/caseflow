@@ -22,8 +22,11 @@ export const ENDPOINT_NAMES = {
   MARK_DOC_AS_READ: 'mark-doc-as-read',
   TAG: 'tag',
   APPEAL_DETAILS: 'appeal-details',
-  APPEAL_DETAILS_BY_VET_ID: 'appeal-details-by-vet-id'
-}
+  APPEAL_DETAILS_BY_VET_ID: 'appeal-details-by-vet-id',
+  CLAIMS_FOLDER_SEARCHES: 'claims-folder-searches',
+  DOCUMENTS: 'documents',
+  DOCUMENT_CONTENT: 'document-content'
+};
 
 const debounceFns = {};
 

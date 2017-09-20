@@ -5,7 +5,7 @@ import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
-const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => 
+const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) =>
   window.analyticsTiming({
     timingCategory: 'api-request',
     timingVar: endpointName || url,
@@ -80,7 +80,7 @@ const httpMethods = {
       send(options.data).
       use(nocache);
   }
-}
+};
 
 // TODO(jd): Fill in other HTTP methods as needed
 const ApiUtil = {
