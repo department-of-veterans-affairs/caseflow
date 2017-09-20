@@ -13,8 +13,6 @@ class Reader::AppealController < Reader::ApplicationController
   end
 
   def find_appeals_by_veteran_id
-    veteran_id = params[:veteran_id]
-
     MetricsService.record("VACOLS: Get appeal information for vbms_id #{veteran_id}",
                           name: "AppealController.find_appeals_by_vbms_id") do
       appeals = Appeal.fetch_appeals_by_vbms_id(veteran_id)
@@ -40,5 +38,11 @@ class Reader::AppealController < Reader::ApplicationController
         end
       end
     end
+  end
+
+  private
+
+  def veteran_id
+    request.headers["HTTP_VETERAN_ID"]
   end
 end
