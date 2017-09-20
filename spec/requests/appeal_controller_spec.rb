@@ -23,9 +23,6 @@ RSpec.describe "Reader Appeal Requests", type: :request do
     end
 
     it "fails routing validation" do
-      get "/reader/appeal/veteran-id", nil, headers
-      expect(response).to have_http_status(:not_found)
-
       headers["HTTP_VETERAN_ID"] = "2"
       get "/reader/appeal/veteran-id", nil, headers
       expect(response).to have_http_status(:not_acceptable)
