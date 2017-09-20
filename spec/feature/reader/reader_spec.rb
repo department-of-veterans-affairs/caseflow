@@ -258,12 +258,12 @@ RSpec.feature "Reader" do
         expect(appeal_options[0]).to have_content("Veteran " + appeal3.veteran_full_name)
         expect(appeal_options[0]).to have_content("Veteran ID " + appeal3.vbms_id)
         expect(appeal_options[0]).to have_content("Issues")
-        expect(appeal_options[0].find_all("li").count).to eq(1)
+        expect(appeal_options[0].find_all("li").count).to eq(appeal3.issues.size)
 
         expect(appeal_options[1]).to have_content("Veteran " + appeal4.veteran_full_name)
         expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
         expect(appeal_options[1]).to have_content("Issues")
-        expect(appeal_options[1].find_all("li").count).to eq(1)
+        expect(appeal_options[1].find_all("li").count).to eq(appeal4.issues.count)
         expect(find("button", text: "Okay")).to be_disabled
 
         appeal_options[0].click
