@@ -187,6 +187,7 @@ $tag-backgrond-color: #d6d7d9;
       max-height: 325px;
       word-break: break-word;
       max-width: 218px;
+      overflow-y: scroll;
 
       li {
         margin-bottom: 0;
@@ -208,6 +209,7 @@ $tag-backgrond-color: #d6d7d9;
       margin-bottom: 0;
       margin-top: 0;
       padding-bottom: 0;
+      overflow-y: scroll;
 
       li {
         margin-bottom: 0;
