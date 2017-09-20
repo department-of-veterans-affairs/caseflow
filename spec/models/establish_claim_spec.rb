@@ -60,10 +60,9 @@ describe EstablishClaim do
     end
 
     context "appeal not found in VACOLS" do
-      before do
-        establish_claim
-        Fakes::AppealRepository.clean!
-      end
+      # We cannot use the appeal generator, since when we use it we necessarily
+      # need a record in our fake VACOLS
+      let(:appeal) { Appeal.new(vacols_id: "MISSING VACOLS ID") }
 
       it { is_expected.to be_truthy }
     end

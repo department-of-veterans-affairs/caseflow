@@ -1,7 +1,7 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
-  include RegionalOffice
+  include RegionalOfficeConcern
 
   belongs_to :appeal
   belongs_to :user
@@ -81,6 +81,7 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :veteran_age,
         :veteran_name,
+        :regional_office_name,
         :venue,
         :cached_number_of_documents,
         :cached_number_of_documents_after_certification,
@@ -93,7 +94,6 @@ class Hearing < ActiveRecord::Base
   def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
-                :regional_office_name,
                 :representative,
                 :appeals_ready_for_hearing],
       include: :issues
@@ -108,6 +108,13 @@ class Hearing < ActiveRecord::Base
 
   def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
+  end
+
+  def set_initial_values(appeal_vacols_id, css_id)
+    self.appeal = Appeal.find_or_create_by(vacols_id: appeal_vacols_id)
+    self.user = User.find_by(css_id: css_id)
+    self.military_service = appeal.veteran.periods_of_service.join("\n") if appeal.veteran
+    save!
   end
 
   class << self
@@ -127,8 +134,7 @@ class Hearing < ActiveRecord::Base
           # If it is a master record, do not create a record in the hearings table
           return hearing if vacols_record.master_record?
 
-          hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-                         user: User.find_by(css_id: vacols_record.css_id))
+          hearing.set_initial_values(vacols_record.folder_nr, vacols_record.css_id) if hearing.new_record?
           hearing.set_issues_from_appeal
         end
       end
