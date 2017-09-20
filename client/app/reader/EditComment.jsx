@@ -20,7 +20,8 @@ export default class EditComment extends React.Component {
     // autosave
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
-        if (this.state.shouldAutosave) {
+        // only autosave when a comment exists
+        if (this.state.shouldAutosave && this.props.comment.comment) {
           this.setState({ shouldAutosave: false });
           this.props.onSaveCommentEdit(this.props.comment);
         }
@@ -30,7 +31,8 @@ export default class EditComment extends React.Component {
 
   componentWillUnmount() {
     window.onbeforeunload = null;
-    if (this.state.shouldAutosave) {
+    // only autosave when a comment exists
+    if (this.state.shouldAutosave && this.props.comment.comment) {
       this.setState({ shouldAutosave: false });
       this.props.onSaveCommentEdit(this.props.comment);
     }
