@@ -44,8 +44,8 @@ describe CachedAttributes do
     end
 
     context "when no cached value" do
-      before do 
-        model.not_cached_rating = 9 
+      before do
+        model.not_cached_rating = 9
       end
       it { is_expected.to eq(9) }
     end
@@ -58,7 +58,7 @@ describe CachedAttributes do
       it "reads from cache" do
         expect(model.rating).to eq(false)
         model.not_cached_rating = true
-        expect(model.rating).to eq(false) 
+        expect(model.rating).to eq(false)
       end
     end
 
