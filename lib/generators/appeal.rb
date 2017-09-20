@@ -82,11 +82,13 @@ class Generators::Appeal
           docket_number: "13 12-225",
           issues: [
             { disposition: :remanded, program: :compensation,
+              vacols_sequence_id: 1,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
               }, category: :knee },
             { disposition: :denied, program: :compensation,
+              vacols_sequence_id: 2,
               type: {
                 name: :service_connection,
                 label: "Service Connection"
