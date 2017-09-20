@@ -7,10 +7,7 @@ import Button from '../components/Button';
 // or editing an existing comment.
 export default class EditComment extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { shouldAutosave: true };
-  }
+  shouldAutosave = true;
 
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
@@ -21,8 +18,7 @@ export default class EditComment extends React.Component {
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
         // only autosave when a comment exists
-        if (this.state.shouldAutosave && this.props.comment.comment) {
-          this.setState({ shouldAutosave: false });
+        if (this.shouldAutosave && this.props.comment.comment) {
           this.props.onSaveCommentEdit(this.props.comment);
         }
       };
@@ -32,8 +28,7 @@ export default class EditComment extends React.Component {
   componentWillUnmount() {
     window.onbeforeunload = null;
     // only autosave when a comment exists
-    if (this.state.shouldAutosave && this.props.comment.comment) {
-      this.setState({ shouldAutosave: false });
+    if (this.shouldAutosave && this.props.comment.comment) {
       this.props.onSaveCommentEdit(this.props.comment);
     }
   }
@@ -42,11 +37,13 @@ export default class EditComment extends React.Component {
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
   onCancelCommentEdit = () => {
-    this.setState({ shouldAutosave: false }, this.props.onCancelCommentEdit.bind(null, this.props.comment.uuid));
+    this.shouldAutosave = false;
+    this.props.onCancelCommentEdit(this.props.comment.uuid);
   }
 
   onSaveCommentEdit = () => {
-    this.setState({ shouldAutosave: false }, this.props.onSaveCommentEdit.bind(null, this.props.comment));
+    this.shouldAutosave = false;
+    this.props.onSaveCommentEdit(this.props.comment);
   }
 
   render() {
