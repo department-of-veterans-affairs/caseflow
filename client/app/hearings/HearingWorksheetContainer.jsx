@@ -54,8 +54,6 @@ export class HearingWorksheetContainer extends React.Component {
     }
 
     return <HearingWorksheet
-      hearingType="Video"
-      worksheet={this.props.worksheet}
       {...this.props}
     />;
   }
