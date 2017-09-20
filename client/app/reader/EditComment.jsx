@@ -9,10 +9,7 @@ export default class EditComment extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      isCancelling: false,
-      autosaved: false
-    };
+    this.state = { shouldAutosave: true };
   }
 
   componentDidMount = () => {
@@ -23,8 +20,8 @@ export default class EditComment extends React.Component {
     // autosave
     if (!window.onbeforeunload) {
       window.onbeforeunload = () => {
-        if (!this.state.autosaved) {
-          this.setState({ autosaved: true });
+        if (this.state.shouldAutosave) {
+          this.setState({ shouldAutosave: false });
           this.props.onSaveCommentEdit(this.props.comment);
         }
       };
@@ -33,8 +30,8 @@ export default class EditComment extends React.Component {
 
   componentWillUnmount() {
     window.onbeforeunload = null;
-    if (!this.state.isCancelling && !this.state.autosaved) {
-      this.setState({ autosaved: true });
+    if (this.state.shouldAutosave) {
+      this.setState({ shouldAutosave: false });
       this.props.onSaveCommentEdit(this.props.comment);
     }
   }
@@ -43,11 +40,11 @@ export default class EditComment extends React.Component {
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
   onCancelCommentEdit = () => {
-    this.setState({ isCancelling: true }, this.props.onCancelCommentEdit.bind(this.props.comment.uuid));
+    this.setState({ shouldAutosave: false }, this.props.onCancelCommentEdit.bind(null, this.props.comment.uuid));
   }
 
   onSaveCommentEdit = () => {
-    this.props.onSaveCommentEdit(this.props.comment);
+    this.setState({ shouldAutosave: false }, this.props.onSaveCommentEdit.bind(null, this.props.comment));
   }
 
   render() {
