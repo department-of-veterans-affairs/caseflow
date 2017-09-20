@@ -2,7 +2,6 @@
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
 class Issue
-  include AssociatedVacolsModel
   include ActiveModel::Model
 
   attr_accessor :program, :type, :category, :description, :disposition, :levels,
