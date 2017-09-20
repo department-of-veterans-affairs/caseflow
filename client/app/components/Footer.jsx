@@ -1,11 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import Link from './Link';
 
 export default class Footer extends React.Component {
+  constructor(props){
+    super(props);
+  }
+
+  onClick = (title) => () => {
+    window.analyticsEvent("menu", title.toLowerCase(), "feedback");
+  }
+
   render() {
-    let {
+    const {
+      appName,
       buildDate,
       feedbackUrl
     } = this.props;
+
+    const analyticsTitle = `${appName} Feedback`;
 
     return <footer className="cf-app-footer">
       <div className="cf-app-width">
@@ -16,11 +29,18 @@ export default class Footer extends React.Component {
           </a>
         </div>
         <div className="cf-push-right">
-          <a target="_blank" href={feedbackUrl}>
-            Send feedback
-          </a>
+          <Link
+            href={feedbackUrl}
+            target="_blank"
+            onClick={this.onClick(analyticsTitle)}>Send feedback</Link>
         </div>
       </div>
     </footer>;
   }
 }
+
+Footer.propTypes = {
+  appName: PropTypes.string.isRequired,
+  buildDate: PropTypes.string,
+  feedbackUrl: PropTypes.string.isRequired
+};
