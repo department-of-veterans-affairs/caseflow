@@ -655,26 +655,6 @@ describe Appeal do
     end
   end
 
-  context "#issue_by_sequence_id" do
-    let(:appeal) { Generators::Appeal.build(vacols_record: { template: :partial_grant_decided }) }
-    subject { appeal.issue_by_sequence_id(id) }
-
-    context "when appeal has an issue with the sequence id" do
-      let(:id) { "2" }
-
-      it "returns the issue" do
-        expect(subject).to_not be_nil
-        expect(subject.vacols_sequence_id).to eq "2"
-      end
-    end
-
-    context "when appeal does not have an issue with the sequence id" do
-      let(:id) { "5" }
-
-      it { is_expected.to be_nil }
-    end
-  end
-
   context "#partial_grant?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
     subject { appeal.partial_grant? }
