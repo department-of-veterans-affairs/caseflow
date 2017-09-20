@@ -67,6 +67,7 @@ export const timeFunctionPromise = (fn, onTimeElapsed = _.noop) => (...args) => 
   const startMs = window.performance.now();
   const returnPromise = fn(...args);
 
+  // This causes an issue with ApiUtil because `returnPromise` is not actually a promise.
   return returnPromise.then((value) => {
     const endMs = window.performance.now();
 

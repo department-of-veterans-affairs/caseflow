@@ -53,8 +53,10 @@ describe('ApiUtil', () => {
     });
   });
 
-  context('.get', () => {
+  context.only('.get', () => {
     let req = ApiUtil.get('/foo', { query: { bar: 'baz' } });
+
+    console.log(req);
 
     expect(req.url).to.eq('/foo');
     expect(req.qs.bar).to.eq('baz');
