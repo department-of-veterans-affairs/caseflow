@@ -17,7 +17,7 @@ class Fakes::HearingRepository
 
   def self.update_vacols_hearing!(vacols_record, hearing_info)
     return if (hearing_info.keys.map(&:to_sym) & [:notes, :aod, :disposition, :hold_open, :transcript_requested]).empty?
-    hearing = find_by_vacols_id(vacols_record[:vacols_id])
+    hearing = find_by_vacols_id(vacols_record[:vacols_id].to_s)
     hearing.assign_from_vacols(hearing_info)
   end
 

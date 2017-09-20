@@ -82,46 +82,38 @@ const mapDispatchToProps = (dispatch) => ({
   save: (docket, date) => () => {
     const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
-    let hearingsToSaveIndeces = [];
-
-    for (let index = 0; index < docket.length; index++) {
-      if (docket[index].edited) {
-        hearingsToSaveIndeces.push(index);
-      }
+    if (hearingsToSave.length === 0) {
+      return;
     }
 
-    if (hearingsToSave.length) {
+    let savingError = false;
+    dispatch({ type: TOGGLE_SAVING });
+
+    hearingsToSave.forEach((hearing) => {
+
+      const index = docket.findIndex(x => x.id==hearing.id);
+
+      const updatedInformation = {
+        "hearing": {
+          "notes": hearing.notes,
+          "disposition": hearing.disposition,
+          "hold_open": hearing.hold_open,
+          "aod": hearing.aod,
+          "transcript_requested": hearing.transcript_requested,
+          "add_on": hearing.add_on
+        }
+      };
+
+      ApiUtil.patch('/hearings/' + hearing.id, { data: updatedInformation } ).
+      then(() => {
+        dispatch({ type: SET_EDITED_FLAG_TO_FALSE, payload: { date, index }})
+      },
+      () => {
+        savingError = true;
+      })
+    });
+    if (!savingError) {
       dispatch({ type: TOGGLE_SAVING });
-
-      // ApiUtil.put('/hearings/save_data', { data: { hearings: hearingsToSave} }).
-      //   then(
-      //     () => {
-      //       dispatch({ type: TOGGLE_SAVING });
-      //
-      //       hearingsToSaveIndeces.forEach((index) => {
-      //         dispatch({ type: SET_EDITED_FLAG_TO_FALSE, payload: { date, index }})
-      //       });
-      //     },
-      //     (err) => {
-      //       dispatch({ type: TOGGLE_SAVING });
-      //       dispatch(handleServerError(err));
-      //     }
-      //   );
-
-      // instead of mocking ApiUtil somehow, assume a PUT request succeeds after 1 second
-      setTimeout(() => {
-        dispatch({ type: TOGGLE_SAVING });
-
-        hearingsToSaveIndeces.forEach((index) => {
-          dispatch({
-            type: SET_EDITED_FLAG_TO_FALSE,
-            payload: {
-              date,
-              index
-            }
-          });
-        });
-      }, 1000);
     }
   }
 });
