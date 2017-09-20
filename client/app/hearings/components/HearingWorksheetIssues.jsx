@@ -4,20 +4,37 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
+import Modal from '../../components/Modal';
 
 import { TrashCan } from '../../components/RenderFunctions';
 
 class HearingWorksheetIssues extends PureComponent {
 
-  getKeyForRow = (index) => {
-    return index;
-  }
+  constructor(props) {
+      super(props);
+      window.jqueryOn = false;
+
+      this.state = {
+        modal: false,
+        value: ''
+      };
+    }
+
+    handleModalOpen = () => {
+      this.setState({ modal: true });
+    };
+
+    handleModalClose = () => {
+      this.setState({ modal: false });
+    };
 
   render() {
     let {
      worksheetStreamsIssues,
      worksheetStreamsAppeal
     } = this.props;
+
+    let modal = this.state.modal;
 
     const columns = [
       {
@@ -73,18 +90,36 @@ class HearingWorksheetIssues extends PureComponent {
         actions: <HearingWorksheetPreImpressions
                     appeal={worksheetStreamsAppeal}
                     issue={issueRow} />,
-        deleteIssue: <TrashCan />
+        deleteIssue: <TrashCan   onClick={this.handleModalOpen} />,
 
       };
     });
 
-    return <Table
+    return <div>
+     <Modal
+        buttons = {[
+          { classNames: ['cf-modal-link', 'cf-btn-link'],
+            name: 'Close',
+            onClick: this.handleModalClose
+          },
+          { classNames: ['usa-button', 'usa-button-primary'],
+            name: 'Yes',
+            onClick: this.handleModalClose
+          }
+        ]}
+        closeHandler={this.handleModalClose}
+        title = "Remove Issue Row">
+        <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? <br />
+        This issue will be removed from the worksheet, but will remain in VACOLS</p>
+      </Modal>
+
+    <Table
             className="cf-hearings-worksheet-issues"
             columns={columns}
             rowObjects={rowObjects}
             summary={'Worksheet Issues'}
             getKeyForRow={this.getKeyForRow}
-          />;
+          /></div>;
   }
 }
 
