@@ -87,30 +87,33 @@ const mapDispatchToProps = (dispatch) => ({
     }
 
     let savingError = false;
+
     dispatch({ type: TOGGLE_SAVING });
 
     hearingsToSave.forEach((hearing) => {
 
-      const index = docket.findIndex(x => x.id==hearing.id);
+      const index = docket.findIndex((x) => x.id === hearing.id);
 
       const updatedInformation = {
-        "hearing": {
-          "notes": hearing.notes,
-          "disposition": hearing.disposition,
-          "hold_open": hearing.hold_open,
-          "aod": hearing.aod,
-          "transcript_requested": hearing.transcript_requested,
-          "add_on": hearing.add_on
+        hearing: {
+          notes: hearing.notes,
+          disposition: hearing.disposition,
+          hold_open: hearing.hold_open,
+          aod: hearing.aod,
+          transcript_requested: hearing.transcript_requested,
+          add_on: hearing.add_on
         }
       };
 
-      ApiUtil.patch('/hearings/' + hearing.id, { data: updatedInformation } ).
+      ApiUtil.patch(`/hearings/${hearing.id}`, { data: updatedInformation }).
       then(() => {
-        dispatch({ type: SET_EDITED_FLAG_TO_FALSE, payload: { date, index }})
+        dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
+          payload: { date,
+            index } });
       },
       () => {
         savingError = true;
-      })
+      });
     });
     if (!savingError) {
       dispatch({ type: TOGGLE_SAVING });
