@@ -21,3 +21,9 @@ Date | PR | Change
 Date | PR | Change
 ---- | -- | ------
      |    |  
+
+## Header
+
+Date | PR | Change
+---- | -- | ------
+9/11/17 | https://github.com/department-of-veterans-affairs/caseflow/pull/3118 | Changed header menu events from: eventCategory: 'Menu', eventAction: 'Click`(Help|Feedback)`', eventLabel: '`(Help|Feedback)`', eventValue: 1 to eventCategory: '`(AppName)`', eventAction: '`(Help|Feedback)`'
