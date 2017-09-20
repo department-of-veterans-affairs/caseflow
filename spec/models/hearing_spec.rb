@@ -91,14 +91,8 @@ describe Hearing do
 
       it "should create issues" do
         hearing.update(appeal: appeal)
-        issue_from_appeal = appeal.issues.first
         subject
         expect(hearing.worksheet_issues.size).to eq 3
-        expect(hearing.worksheet_issues.first.program).to eq issue_from_appeal.program.to_s
-        expect(hearing.worksheet_issues.first.levels).to eq issue_from_appeal.levels
-        expect(hearing.worksheet_issues.first.description).to eq issue_from_appeal.description
-        expect(hearing.worksheet_issues.first.name).to eq issue_from_appeal.type[:name].to_s
-        expect(hearing.worksheet_issues.first.from_vacols).to eq true
       end
     end
   end
