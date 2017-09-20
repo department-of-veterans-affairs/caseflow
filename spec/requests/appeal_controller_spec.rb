@@ -29,6 +29,10 @@ RSpec.describe "Reader Appeal Requests", type: :request do
       headers["HTTP_VETERAN_ID"] = "2"
       get "/reader/appeal/veteran-id", nil, headers
       expect(response).to have_http_status(:not_acceptable)
+
+      headers["HTTP_VETERAN_ID"] = nil
+      get "/reader/appeal/veteran-id", nil, headers
+      expect(response).to have_http_status(:not_acceptable)
     end
   end
 end
