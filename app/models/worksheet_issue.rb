@@ -1,4 +1,4 @@
-# Columns: reopen, vha, allow, deny, remand, dismiss represent worksheet data entered
+# Worksheet Issue table represents the worksheet data entered
 # by the judge, it is not an official determination on the issue
 class WorksheetIssue < ActiveRecord::Base
   belongs_to :appeal
