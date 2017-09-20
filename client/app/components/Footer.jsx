@@ -3,12 +3,9 @@ import PropTypes from 'prop-types';
 import Link from './Link';
 
 export default class Footer extends React.Component {
-  constructor(props){
-    super(props);
-  }
 
   onClick = (title) => () => {
-    window.analyticsEvent("menu", title.toLowerCase(), "feedback");
+    window.analyticsEvent('menu', title.toLowerCase(), 'feedback');
   }
 
   render() {
