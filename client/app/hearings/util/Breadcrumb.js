@@ -23,6 +23,6 @@ class CurrentLocation extends React.Component {
   }
 }
 
-const BreadCrumb = withRouter(CurrentLocation);
+const Breadcrumb = withRouter(CurrentLocation);
 
-export default BreadCrumb;
+export default Breadcrumb;
