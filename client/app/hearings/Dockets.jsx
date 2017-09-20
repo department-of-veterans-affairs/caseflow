@@ -24,6 +24,20 @@ export class Dockets extends React.Component {
     return index;
   }
 
+  masterRecord = (docket) => {
+    return docket.hearings_array[0].master_record === true;
+  };
+
+  linkToDailyDocket = (docket) => {
+    if (this.masterRecord(docket)) {
+      return moment(docket.date).format('l');
+    }
+
+    return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
+        {moment(docket.date).format('l')}
+    </Link>;
+  };
+
   render() {
 
     const docketIndex = Object.keys(this.props.dockets).sort();
@@ -62,9 +76,7 @@ export class Dockets extends React.Component {
       let docket = this.props.dockets[docketDate];
 
       return {
-        date: <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-          {moment(docket.date).format('l')}
-        </Link>,
+        date: this.linkToDailyDocket(docket),
         start_time: this.getStartTime(),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
