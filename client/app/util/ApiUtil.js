@@ -17,7 +17,7 @@ const timeApiRequest = (httpFn, httpVerbName) => timeFunctionPromise(httpFn, mak
 
 // Default headers needed to talk with rails server.
 // Including rails authenticity token
-const getHeadersObject = (options = {}) => {
+export const getHeadersObject = (options = {}) => {
   let headers = Object.assign({},
     {
       Accept: 'application/json',
