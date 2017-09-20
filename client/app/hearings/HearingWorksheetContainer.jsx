@@ -24,14 +24,6 @@ export class HearingWorksheetContainer extends React.Component {
     if (!this.props.worksheet) {
       this.props.getWorksheet(this.props.hearingId);
     }
-
-    // Since the page title does not change when react router
-    // renders this component...
-    const pageTitle = document.getElementById('page-title');
-
-    if (pageTitle) {
-      pageTitle.innerHTML += ' | Daily Docket | Hearing Worksheet';
-    }
   }
 
   render() {

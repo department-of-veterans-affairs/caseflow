@@ -12,6 +12,7 @@ import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
+import BreadCrumb from './util/BreadCrumb';
 
 const configureStore = (data) => {
 
@@ -53,7 +54,8 @@ const Hearings = ({ hearings }) => {
             appName="Hearing Prep"
             defaultUrl="/hearings/dockets"
             userDisplayName={hearings.userDisplayName}
-            dropdownUrls={hearings.dropdownUrls}/>
+            dropdownUrls={hearings.dropdownUrls}
+            breadCrumb={<BreadCrumb />}/>
           <div className="cf-wide-app">
             <div className="usa-grid">
               <ScrollToTop />
