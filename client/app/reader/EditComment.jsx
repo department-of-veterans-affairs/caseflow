@@ -7,12 +7,16 @@ import Button from '../components/Button';
 // or editing an existing comment.
 export default class EditComment extends React.Component {
 
-  shouldAutosave = true;
+  constructor(props) {
+    super(props);
+
+    this.shouldAutosave = true;
+  }
 
   handleAutoSave = () => {
     // only autosave when a comment exists
     if (this.shouldAutosave && this.props.comment.comment) {
-      this.props.onSaveCommentEdit(this.props.comment);
+      this.onSaveCommentEdit();
     }
   }
 
