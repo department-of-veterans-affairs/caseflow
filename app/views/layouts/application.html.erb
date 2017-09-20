@@ -135,12 +135,6 @@
                         </li>
                       <% end %>
 
-                      <% if current_user.admin? %>
-                        <li>
-                          <a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a>
-                        </li>
-                      <% end %>
-
                       <li>
                         <div class="dropdown-border"></div>
                         <a href="<%= url_for controller: '/sessions', action: 'destroy'%>">Sign out</a>

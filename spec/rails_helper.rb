@@ -97,8 +97,7 @@ module StubbableUser
             "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"],
-            "admin_roles" => [] }
+            "roles" => roles || ["Certify Appeal"] }
         }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
