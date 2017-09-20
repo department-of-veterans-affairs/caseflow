@@ -9,28 +9,25 @@ export default class EditComment extends React.Component {
 
   shouldAutosave = true;
 
+  handleAutoSave = () => {
+    // only autosave when a comment exists
+    if (this.shouldAutosave && this.props.comment.comment) {
+      this.props.onSaveCommentEdit(this.props.comment);
+    }
+  }
+
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
     commentBox.focus();
 
-    // autosave
-    if (!window.onbeforeunload) {
-      window.onbeforeunload = () => {
-        // only autosave when a comment exists
-        if (this.shouldAutosave && this.props.comment.comment) {
-          this.props.onSaveCommentEdit(this.props.comment);
-        }
-      };
-    }
+    // ensure we autosave if we ever exit
+    window.addEventListener('beforeunload', this.handleAutoSave);
   }
 
   componentWillUnmount() {
-    window.onbeforeunload = null;
-    // only autosave when a comment exists
-    if (this.shouldAutosave && this.props.comment.comment) {
-      this.props.onSaveCommentEdit(this.props.comment);
-    }
+    window.removeEventListener('beforeunload', this.handleAutoSave);
+    this.handleAutoSave();
   }
 
 
