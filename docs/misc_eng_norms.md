@@ -23,6 +23,17 @@ Follow [these guidelines](https://chris.beams.io/posts/git-commit/) for writing 
 * [Bad example](https://github.com/department-of-veterans-affairs/caseflow/commit/d5ab5a00cf4b0a26da3b0e531865610543da4b9d)
 * [Good example](https://github.com/department-of-veterans-affairs/caseflow/commit/eae5435ee9cf318377fcf05e654595731bdec7d9)
 
+If your commit message links to the PR and/or issue, then the message itself can be very sparse since those linked items have details.
+
+```
+commit ababab121212
+Author: Nick Heiner
+
+    Add Foo component to Bar page (#1234)
+    
+    Closes #9001.
+```
+
 ## Tickets
 When you are actively working on a ticket, add the [In Progress](https://github.com/department-of-veterans-affairs/caseflow/labels/In%20Progress) label. This will make it show up under your name in the [standup app](https://cold-stream-43683.herokuapp.com/sprint/standup?team=CASEFLOW). If you are not going to work on a ticket on a given day, it should not have the "In Progress" label. This helps everyone keep track of what's actually being worked on, instead of diluting the value of GitHub issues as a tool for project management. It also means that someone else on the team could potentially pick up where you left off, if they free up and you're still working on other things. And finally, it avoids falsely communicating to teammates that we're making progress on issues that we're not.
 

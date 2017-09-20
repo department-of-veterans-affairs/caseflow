@@ -20,9 +20,7 @@ class Generators::Issue
     end
 
     def build(attrs = {})
-      attrs[:appeal_id] = attrs[:appeal].try(:id)
-
-      vacols_id ||= attrs.delete(:vacols_id) || attrs[:appeal].try(:vacols_id)
+      vacols_id ||= attrs.delete(:vacols_id)
       issue = ::Issue.new(default_attrs.merge(attrs))
 
       if vacols_id

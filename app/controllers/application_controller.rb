@@ -72,8 +72,6 @@ class ApplicationController < ApplicationBaseController
 
     urls.append(title: "Switch User",
                 link: url_for(controller: "/test/users", action: "index")) if ApplicationController.dependencies_faked?
-    urls.append(title: "Change Functions",
-                link: url_for(controller: "/functions", action: "index")) if current_user.admin?
     urls.append(title: "Sign Out",
                 link: url_for(controller: "/sessions", action: "destroy"))
 
