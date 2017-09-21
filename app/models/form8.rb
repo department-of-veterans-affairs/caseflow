@@ -52,6 +52,8 @@ class Form8 < ActiveRecord::Base
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
     assign_attributes(
@@ -91,6 +93,10 @@ class Form8 < ActiveRecord::Base
       _initial_ssoc_required: appeal.ssoc_dates.empty? ? "Not required" : "Required and furnished"
     )
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize
 
   def update_certification_date
     update_attributes!(certification_date: Time.zone.now.to_date)
