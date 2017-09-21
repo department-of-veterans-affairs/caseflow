@@ -2,21 +2,61 @@
 
 Caseflow Certification is a web-based tool that pre-fills the electronic Form 8 for paperless appeals and checks case documents for readiness for certification.
 
-![Screenshot of Caseflow Certification ](certification.png "Caseflow Certification")
+## Certification (Dev Mode)
 
-### How to Enter Caseflow Certification
-1. Click on this link for the Demo to open. http://dsva-appeals-certification-demo-1715715888.us-gov-west-1.elb.amazonaws.com/test/users
-2. On the dropdown menu User Selector, click 'Certify Appeal at 283'.
-3. On App Selector tab, select Certification.
-4. Select 'New' from the Certification tab to open tha application.
+To log in, you can use the following credentials:
 
-### (For developers) How to run unit tests in Certification
-It is always good practise to run unit tests everytime you introduce a new or change a feature. Here is how you run some of the unit tests:
+Username: "DSUSER"
+Password: "DSUSER"
 
-* In order to run tests for starts certification as a user who is not logged in, a user who is not authorized to login, a user who is authorized to login, run `bundle exec rspec spec/feature/certification/start_certification_spec.rb`.
-* In order to run tests for save Certification as an authorized user, save certification data in the database, confirm validation works, run unit test 
-`bundle exec rspec spec/feature/certification/save_certification_spec.rb`.
-* In order to run tests for the CertificationV2 Stats Dashboard, run `bundle exec rspec spec/feature/certification/certification_v2_stats_spec.rb`.
-* In order to run tests for the Certification Stats Dashboard, run `bundle exec rspec spec/feature/certification/certification_stats_spec.rb`.
-* In order to run tests to cancel certification as authorized user, run `bundle exec rspec spec/feature/certification/cancel_certification_spec.rb`.
+To get to the various pages in the workflow we have a set of five URLs of dummy data.
+
+[http://localhost:3000/certifications/new/123C](http://localhost:3000/certifications/new/123C) is an appeal that is ready to certify.
+[http://localhost:3000/certifications/new/456C](http://localhost:3000/certifications/new/456C) is an appeal with mismatched docs.
+[http://localhost:3000/certifications/new/789C](http://localhost:3000/certifications/new/789C) is an appeal that is already certified.
+[http://localhost:3000/certifications/new/000ERR](http://localhost:3000/certifications/new/000ERR) is an appeal that raises a vbms error.
+[http://localhost:3000/certifications/new/001ERR](http://localhost:3000/certifications/new/001ERR) is an appeal that is missing data.
+
+## Changing between test users
+
+Select 'Switch User' from the dropdown and select 'Certify Appeal at 283' or navigate to
+[http://localhost:3000/dev/users](http://localhost:3000/test/users). You can use
+this page to switch to any user that is currently in the database. The users' names specify
+what roles they have and therefore what pages they can access. To add new users with new
+roles, you should seed them in the database via the seeds.rb file. The css_id of the user
+should be a comma separated list of roles you want that user to have.
+
+This page also contains links to different parts of the site to make dev-ing faster. Please
+add more links and users as needed.
+
+## Running tests
+
+To run the test suite:
+
+    rake
+
+
+### Running unit tests
+
+ To run a test that starts certification as a user who is not logged in, a user who is not authorized to login, a user who is authorized to login:
+
+     bundle exec rspec spec/feature/certification/start_certification_spec.rb
+
+To run tests for save Certification as an authorized user, save certification data in the database, confirm validation works:
+
+     bundle exec rspec spec/feature/certification/save_certification_spec.rb 
+
+ To run tests for the CertificationV2 Stats Dashboard:
+
+    bundle exec rspec spec/feature/certification/certification_v2_stats_spec.rb
+
+ To run tests for the Certification Stats Dashboard:
+
+     bundle exec rspec spec/feature/certification/certification_stats_spec.rb
+
+ To run tests to cancel certification as authorized user:
+
+      bundle exec rspec spec/feature/certification/cancel_certification_spec.rb
+
+
 
