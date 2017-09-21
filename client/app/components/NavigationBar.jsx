@@ -32,9 +32,7 @@ export default class NavigationBar extends React.Component {
       }, []);
     }
 
-    const breadcrumbComponents = getRoutes(this).map((route, index) =>
-      <Route path={route.path} render={(props) =>
-        return <span>
+    const breadcrumbComponents = getRoutes(this).map((route, index) => <Route path={route.path} render={(props) => <span>
           <h2 id="page-title" className="cf-application-title">&nbsp; > &nbsp;</h2>
           <Link id="cf-logo-link" to={props.match.url}>
             <h2 id="page-title" className="cf-application-title">{route.breadcrumb}</h2>
