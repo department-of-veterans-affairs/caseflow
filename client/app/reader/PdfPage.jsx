@@ -213,7 +213,6 @@ export class PdfPage extends React.PureComponent {
             setUpPdfPage(text);
           });
         }
-
       });
     }
   }

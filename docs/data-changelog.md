@@ -21,3 +21,9 @@ Date | PR | Change
 Date | PR | Change
 ---- | -- | ------
      |    |  
+
+## Google Analytics
+
+Date | PR | Change
+---- | -- | ------
+9/11/17 | https://github.com/department-of-veterans-affairs/caseflow/pull/3118 | Changed header menu events from: eventCategory: 'Menu', eventAction: 'Click`(Help or Feedback)`', eventLabel: '`(Help or Feedback)`', eventValue: 1 to eventCategory: '`(AppName)`', eventAction: '`(Help or Feedback)`'
