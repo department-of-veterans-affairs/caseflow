@@ -4,8 +4,8 @@ import Link from './Link';
 
 export default class Footer extends React.Component {
 
-  onClick = (title) => () => {
-    window.analyticsEvent('menu', title.toLowerCase(), 'feedback');
+  onClick = (title) => {
+    window.analyticsEvent(title, 'feedback', 'footer');
   }
 
   render() {
@@ -15,21 +15,18 @@ export default class Footer extends React.Component {
       feedbackUrl
     } = this.props;
 
-    const analyticsTitle = `${appName} Feedback`;
-
     return <footer className="cf-app-footer">
       <div className="cf-app-width">
         <div className="cf-push-left">
           <span title={buildDate}>Built</span> with <abbr title="love">&#9825;</abbr> by the
-          <a href="https://www.usds.gov/"> Digital Service at the
-            <abbr title="Department of Veterans Affairs"> VA</abbr>
-          </a>
+          <Link href="https://www.usds.gov"> Digital Service at the
+            <abbr title="Department of Veterans Affairs"> VA</abbr></Link>
         </div>
         <div className="cf-push-right">
           <Link
             href={feedbackUrl}
             target="_blank"
-            onClick={this.onClick(analyticsTitle)}>Send feedback</Link>
+            onClick={this.onClick(appName)}>Send feedback</Link>
         </div>
       </div>
     </footer>;
