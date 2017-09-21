@@ -31,7 +31,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
-    // this.documentsRoute.displayName = 'DocumentsRoute';
+    this.routedCaseSelect.displayName = 'RoutedCaseSelect';
   }
 
   showPdf = (history, vacolsId) => (docId) => () => {
@@ -82,15 +82,15 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-      <PdfListView
-        showPdf={this.showPdf(props.history, vacolsId)}
-        sortBy={this.state.sortBy}
-        selectedLabels={this.state.selectedLabels}
-        isCommentLabelSelected={this.state.isCommentLabelSelected}
-        documentPathBase={`/${vacolsId}/documents`}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        {...props}
-      />
+        <PdfListView
+          showPdf={this.showPdf(props.history, vacolsId)}
+          sortBy={this.state.sortBy}
+          selectedLabels={this.state.selectedLabels}
+          isCommentLabelSelected={this.state.isCommentLabelSelected}
+          documentPathBase={`/${vacolsId}/documents`}
+          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+          {...props}
+        />
       </ReaderLoadingScreen>;
   }
 
@@ -101,54 +101,25 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-      <PdfViewer
-        addNewTag={this.props.addNewTag}
-        removeTag={this.props.removeTag}
-        allDocuments={_.values(this.props.storeDocuments)}
-        pdfWorker={this.props.pdfWorker}
-        showPdf={this.showPdf(props.history, vacolsId)}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        documentPathBase={`/${vacolsId}/documents`}
-        {...props}
-      />
+        <PdfViewer
+          addNewTag={this.props.addNewTag}
+          removeTag={this.props.removeTag}
+          allDocuments={_.values(this.props.storeDocuments)}
+          pdfWorker={this.props.pdfWorker}
+          showPdf={this.showPdf(props.history, vacolsId)}
+          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+          documentPathBase={`/${vacolsId}/documents`}
+          {...props}
+        />
       </ReaderLoadingScreen>
     ;
   }
 
-  routedCaseSelect = (props) => {
-    return <CaseSelectLoadingScreen
-      assignments={this.props.assignments}>
-        <CaseSelect history={props.history}
-            feedbackUrl={this.props.feedbackUrl}/>
-    </CaseSelectLoadingScreen>;
-  }
+  routedCaseSelect = (props) => <CaseSelectLoadingScreen assignments={this.props.assignments}>
+      <CaseSelect history={props.history}
+          feedbackUrl={this.props.feedbackUrl}/>
+    </CaseSelectLoadingScreen>
 
-  navigationBar = (props) => {
-    const getNavBarWithBreadcrumbs = (breadcrumbs) => () =>
-      <NavigationBar
-        appName="Reader"
-        userDisplayName={this.props.userDisplayName}
-        dropdownUrls={this.props.dropdownUrls}
-        breadcrumbs={breadcrumbs}/>;
-    console.log(props);
-    return <div>
-      <Route path="/:vacolsId/documents" exact render={getNavBarWithBreadcrumbs([{
-        name: 'Case File',
-        url: `${props.location.pathname}`
-      }])}/>
-      <Route path="/:vacolsId/documents/:documentId" exact render={getNavBarWithBreadcrumbs([{
-        name: 'Case File',
-        url: `${props.location.pathname}`
-      }, {
-        name: 'Document View',
-        url: `${props.location.pathname}`
-      }])}/>
-      <Route path="/" exact render={getNavBarWithBreadcrumbs()}/>
-    </div>;
-  }
-  //       <Route
-  //         path="/"
-  //         render={this.navigationBar}/>
   render() {
     const Router = this.props.router || BrowserRouter;
 
@@ -157,7 +128,6 @@ export class DecisionReviewer extends React.PureComponent {
         appName="Reader"
         userDisplayName={this.props.userDisplayName}
         dropdownUrls={this.props.dropdownUrls}>
-      <div>
         <div className="section--document-list">
           <PageRoute
             exact
@@ -178,7 +148,6 @@ export class DecisionReviewer extends React.PureComponent {
             render={this.routedPdfViewer}
           />
         </div>
-      </div>
       </NavigationBar>
     </Router>;
   }
