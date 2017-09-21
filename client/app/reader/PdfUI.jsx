@@ -152,7 +152,7 @@ export class PdfUI extends React.Component {
   onBackToClaimsFolder = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
-    this.props.onShowList();
+    // this.props.onShowList();
   }
 
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
@@ -165,13 +165,14 @@ export class PdfUI extends React.Component {
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
-          { this.props.showClaimsFolderNavigation && <Button
+          { this.props.showClaimsFolderNavigation && <Link
+            to={`${this.props.documentPathBase}`}
             name="backToClaimsFolder"
-            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
+            button="matte"
             onClick={this.onBackToClaimsFolder}>
             <LeftChevron />
             &nbsp; Back to claims folder
-          </Button> }
+          </Link> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
           <span className="category-icons-and-doc-type">

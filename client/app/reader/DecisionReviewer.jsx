@@ -31,7 +31,7 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.routedPdfListView.displayName = 'RoutedPdfListView';
     this.routedPdfViewer.displayName = 'RoutedPdfViewer';
-    this.documentsRoute.displayName = 'DocumentsRoute';
+    // this.documentsRoute.displayName = 'DocumentsRoute';
   }
 
   showPdf = (history, vacolsId) => (docId) => () => {
@@ -40,10 +40,6 @@ export class DecisionReviewer extends React.PureComponent {
     }
 
     history.push(`/${vacolsId}/documents/${docId}`);
-  }
-
-  onShowList = (history, vacolsId) => () => {
-    history.push(`/${vacolsId}/documents`);
   }
 
   clearPlacingAnnotationState = () => {
@@ -82,7 +78,11 @@ export class DecisionReviewer extends React.PureComponent {
 
     this.determineInitialCategoryFilter(props);
 
-    return <PdfListView
+    return <ReaderLoadingScreen
+      appealDocuments={this.props.appealDocuments}
+      annotations={this.props.annotations}
+      vacolsId={vacolsId}>
+      <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
@@ -90,83 +90,96 @@ export class DecisionReviewer extends React.PureComponent {
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         {...props}
-      />;
+      />
+      </ReaderLoadingScreen>;
   }
 
   routedPdfViewer = (props) => {
-    const { vacolsId } = props.match.params;
-
-    return <PdfViewer
-        addNewTag={this.props.addNewTag}
-        removeTag={this.props.removeTag}
-        allDocuments={_.values(this.props.storeDocuments)}
-        pdfWorker={this.props.pdfWorker}
-        onShowList={this.onShowList(props.history, vacolsId)}
-        showPdf={this.showPdf(props.history, vacolsId)}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        documentPathBase={`/${vacolsId}/documents`}
-        {...props}
-      />
-    ;
-  }
-
-  routedCaseSelect = (props) => {
-    return <CaseSelectLoadingScreen
-      assignments={this.props.assignments}>
-        <PageRoute
-          exact
-          title="Assignments | Caseflow Reader"
-          path="/"
-          render={() => <CaseSelect history={props.history}
-            feedbackUrl={this.props.feedbackUrl} />}
-        />
-    </CaseSelectLoadingScreen>;
-  }
-
-  documentsRoute = (props) => {
     const { vacolsId } = props.match.params;
 
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-      <div>
-        <PageRoute
-          exact
-          title="Claims Folder | Caseflow Reader"
-          path="/:vacolsId/documents"
-          render={this.routedPdfListView}
-        />
-        <PageRoute
-          title ="Document Viewer | Caseflow Reader"
-          path="/:vacolsId/documents/:docId"
-          render={this.routedPdfViewer}
-        />
-      </div>
-    </ReaderLoadingScreen>;
+      <PdfViewer
+        addNewTag={this.props.addNewTag}
+        removeTag={this.props.removeTag}
+        allDocuments={_.values(this.props.storeDocuments)}
+        pdfWorker={this.props.pdfWorker}
+        showPdf={this.showPdf(props.history, vacolsId)}
+        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        documentPathBase={`/${vacolsId}/documents`}
+        {...props}
+      />
+      </ReaderLoadingScreen>
+    ;
   }
 
+  routedCaseSelect = (props) => {
+    return <CaseSelectLoadingScreen
+      assignments={this.props.assignments}>
+        <CaseSelect history={props.history}
+            feedbackUrl={this.props.feedbackUrl}/>
+    </CaseSelectLoadingScreen>;
+  }
+
+  navigationBar = (props) => {
+    const getNavBarWithBreadcrumbs = (breadcrumbs) => () =>
+      <NavigationBar
+        appName="Reader"
+        userDisplayName={this.props.userDisplayName}
+        dropdownUrls={this.props.dropdownUrls}
+        breadcrumbs={breadcrumbs}/>;
+    console.log(props);
+    return <div>
+      <Route path="/:vacolsId/documents" exact render={getNavBarWithBreadcrumbs([{
+        name: 'Case File',
+        url: `${props.location.pathname}`
+      }])}/>
+      <Route path="/:vacolsId/documents/:documentId" exact render={getNavBarWithBreadcrumbs([{
+        name: 'Case File',
+        url: `${props.location.pathname}`
+      }, {
+        name: 'Document View',
+        url: `${props.location.pathname}`
+      }])}/>
+      <Route path="/" exact render={getNavBarWithBreadcrumbs()}/>
+    </div>;
+  }
+  //       <Route
+  //         path="/"
+  //         render={this.navigationBar}/>
   render() {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
+      <NavigationBar
+        appName="Reader"
+        userDisplayName={this.props.userDisplayName}
+        dropdownUrls={this.props.dropdownUrls}>
       <div>
-        <NavigationBar
-          appName="Reader"
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}/>
         <div className="section--document-list">
-          <Route
-            path="/:vacolsId/documents"
-            render={this.documentsRoute}
-          />
-          <Route
+          <PageRoute
             exact
             path="/"
-            render={this.routedCaseSelect}
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect}/>
+          <PageRoute
+            exact
+            title="Claims Folder | Caseflow Reader"
+            breadcrumb="Claims Folder"
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView}/>
+          <PageRoute
+            exact
+            title ="Document Viewer | Caseflow Reader"
+            breadcrumb="Document Viewer"
+            path="/:vacolsId/documents/:docId"
+            render={this.routedPdfViewer}
           />
         </div>
       </div>
+      </NavigationBar>
     </Router>;
   }
 }

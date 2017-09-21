@@ -3,16 +3,47 @@ import PropTypes from 'prop-types';
 import DropdownMenu from './DropdownMenu';
 import Link from './Link';
 import PerformanceDegradationBanner from './PerformanceDegradationBanner';
+import PageRoute from './PageRoute';
+import { Route } from 'react-router-dom';
 
 export default class NavigationBar extends React.Component {
   render() {
     let {
       appName,
+      breadcrumbs,
       dropdownUrls,
       userDisplayName
     } = this.props;
 
-    return <header className="cf-app-header">
+    const getRoutes = (element) => {
+      if (!element.props.children) {
+        return [];
+      }
+
+      return React.Children.toArray(element.props.children).reduce((acc, child) => {  
+        if (child.props.breadcrumb) {
+          return [...acc, {
+            path: child.props.path,
+            breadcrumb: child.props.breadcrumb
+          }];
+        }
+        
+        return [...acc, ...getRoutes(child)];
+      }, []);
+    }
+
+    const breadcrumbComponents = getRoutes(this).map((route, index) =>
+      <Route path={route.path} render={(props) =>
+        return <span>
+          <h2 id="page-title" className="cf-application-title">&nbsp; > &nbsp;</h2>
+          <Link id="cf-logo-link" to={props.match.url}>
+            <h2 id="page-title" className="cf-application-title">{route.breadcrumb}</h2>
+          </Link>
+        </span>
+      } />
+    );
+
+    return <div><header className="cf-app-header">
         <div>
           <div className="cf-app-width">
             <span className="cf-push-left">
@@ -22,6 +53,7 @@ export default class NavigationBar extends React.Component {
                   <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
                 </Link>
               </h1>
+              {breadcrumbComponents}
             </span>
             <span className="cf-dropdown cf-push-right">
               <DropdownMenu
@@ -35,7 +67,9 @@ export default class NavigationBar extends React.Component {
           </div>
         </div>
         <PerformanceDegradationBanner />
-      </header>;
+      </header>
+      {this.props.children}
+      </div>;
   }
 }
 

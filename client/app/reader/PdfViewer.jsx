@@ -183,7 +183,6 @@ export class PdfViewer extends React.Component {
             id="pdf"
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
-            onShowList={this.props.onShowList}
             prevDocId={this.getPrevDocId()}
             nextDocId={this.getNextDocId()}
             showPdf={this.props.showPdf}
