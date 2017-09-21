@@ -13,9 +13,9 @@ class VACOLS::CaseIssue < VACOLS::Record
   # in VFTYPES.FTKEY, where the diagnostic code is prefixed with 'DG'.
   # This query matches each ISSUE table code with the appropriate label,
   # either from the ISSREF or VFTYPES table.
-  def self.descriptions(issue_key)
+  def self.descriptions(issue_keys)
     conn = connection
-    key = conn.quote(issue_key)
+    issue_keys = issue_keys.map { |key| conn.quote(key) }
 
     conn.exec_query(<<-SQL).to_hash
       select
@@ -67,7 +67,7 @@ class VACOLS::CaseIssue < VACOLS::Record
           or (ISSREF.LEV2_CODE = '##' and 'DG' || ISSUES.ISSLEV2 = VFTYPES.FTKEY)
           or (ISSREF.LEV3_CODE = '##' and 'DG' || ISSUES.ISSLEV3 = VFTYPES.FTKEY))
 
-      where ISSUES.ISSKEY = #{key}
+      where ISSUES.ISSKEY IN (#{issue_keys.to_csv(row_sep: nil)})
     SQL
   end
   # rubocop:enable MethodLength

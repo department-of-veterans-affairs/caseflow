@@ -490,6 +490,10 @@ class Appeal < ActiveRecord::Base
                 .reverse
     end
 
+    def issues(vacols_ids)
+      @repository.issues(vacols_ids)
+    end
+
     def bgs
       BGSService.new
     end

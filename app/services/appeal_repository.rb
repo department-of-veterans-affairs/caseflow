@@ -142,6 +142,12 @@ class AppealRepository
     end
   end
 
+  def self.bulk_issues(vacols_ids)
+    VACOLS::CaseIssue.descriptions(vacols_ids).map do |issue_hash|
+      Issue.load_from_vacols(issue_hash)
+    end
+  end
+
   def self.remands_ready_for_claims_establishment
     remands = MetricsService.record("VACOLS: remands_ready_for_claims_establishment",
                                     service: :vacols,
