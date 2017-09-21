@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
 import * as AppConstants from '../constants/AppConstants';
-import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE } from './constants/constants';
+import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
 import AutoSave from '../components/AutoSave.jsx';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
@@ -86,9 +86,9 @@ const mapDispatchToProps = (dispatch) => ({
       return;
     }
 
-    let savingError = false;
-
     dispatch({ type: TOGGLE_SAVING });
+
+    dispatch({type: SET_SAVE_FAILED, payload: {saveFailed: false}});
 
     hearingsToSave.forEach((hearing) => {
 
@@ -101,12 +101,10 @@ const mapDispatchToProps = (dispatch) => ({
             index } });
       },
       () => {
-        savingError = true;
+        dispatch({type: SET_SAVE_FAILED, payload: {saveFailed: true}})
       });
     });
-    if (!savingError) {
-      dispatch({ type: TOGGLE_SAVING });
-    }
+    dispatch({ type: TOGGLE_SAVING });
   }
 });
 

@@ -134,6 +134,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       isSaving: { $set: !state.isSaving }
     });
 
+  case Constants.SET_SAVE_FAILED:
+    return update(state, {
+      saveFailed: { $set: action.payload.saveFailed }
+    });
+
   case Constants.SET_EDITED_FLAG_TO_FALSE:
     return update(state, {
       dockets: {
