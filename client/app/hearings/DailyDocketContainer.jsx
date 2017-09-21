@@ -88,7 +88,8 @@ const mapDispatchToProps = (dispatch) => ({
 
     dispatch({ type: TOGGLE_SAVING });
 
-    dispatch({type: SET_SAVE_FAILED, payload: {saveFailed: false}});
+    dispatch({ type: SET_SAVE_FAILED,
+      payload: { saveFailed: false } });
 
     hearingsToSave.forEach((hearing) => {
 
@@ -101,7 +102,8 @@ const mapDispatchToProps = (dispatch) => ({
             index } });
       },
       () => {
-        dispatch({type: SET_SAVE_FAILED, payload: {saveFailed: true}})
+        dispatch({ type: SET_SAVE_FAILED,
+          payload: { saveFailed: true } });
       });
     });
     dispatch({ type: TOGGLE_SAVING });
