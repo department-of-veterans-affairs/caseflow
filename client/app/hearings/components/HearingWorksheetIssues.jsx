@@ -28,6 +28,8 @@ class HearingWorksheetIssues extends PureComponent {
     this.setState({ modal: false });
   };
 
+  getKeyForRow = (index) => index;
+
   render() {
     let {
      worksheetStreamsIssues,
