@@ -1,5 +1,5 @@
 class StartCertificationJob < ActiveJob::Base
-  # TODO (Sunil) for now use sidekiq. when sqs works well
+  # TODO(sunil): for now use sidekiq. when sqs works well
   # use shoryuken instead of sidekiq
   queue_as :default
   self.queue_adapter = :sidekiq
