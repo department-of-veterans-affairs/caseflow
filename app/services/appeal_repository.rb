@@ -136,16 +136,17 @@ class AppealRepository
   end
 
   # :nocov:
-  def self.issues(vacols_id)
-    VACOLS::CaseIssue.descriptions(vacols_id).map do |issue_hash|
+  def self.issues(vacols_ids)
+    issues = VACOLS::CaseIssue.descriptions(vacols_ids)
+    
+    issues.map do |issue_hash|
       Issue.load_from_vacols(issue_hash)
     end
-  end
-
-  def self.bulk_issues(vacols_ids)
-    VACOLS::CaseIssue.descriptions(vacols_ids).map do |issue_hash|
-      Issue.load_from_vacols(issue_hash)
-    end
+    # issues = vacols_ids.map do |vacols_id|
+    #   VACOLS::CaseIssue.descriptions(vacols_id).map do |issue_hash|
+    #     Issue.load_from_vacols(issue_hash)
+    #   end
+    # end
   end
 
   def self.remands_ready_for_claims_establishment
