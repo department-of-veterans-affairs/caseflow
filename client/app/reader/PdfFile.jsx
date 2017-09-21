@@ -21,6 +21,8 @@ export class PdfFile extends React.PureComponent {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
 
+    // We have to set withCredentials to true since we're requesting the file from a
+    // different domain (eFolder), and still need to pass our credentials to authenticate.
     this.loadingTask = PDFJS.getDocument({
       url: this.props.file,
       withCredentials: true
