@@ -65,34 +65,59 @@ describe Hearing do
     end
   end
 
-  context "#set_issues_from_appeal" do
-    subject { hearing.set_issues_from_appeal }
+  context "#military_service" do
+    subject { hearing.military_service }
+    let(:hearing) { Hearing.create(vacols_id: "3456", military_service: military_service) }
+
+    context "when military service is not set" do
+      let(:military_service) { nil }
+
+      context "when appeal is not set" do
+        it { is_expected.to eq nil }
+      end
+
+      context "when appeal is set" do
+        let(:appeal) { Appeal.create(vacols_id: "1234", vbms_id: "1234567") }
+
+        it "should load military service from appeal" do
+          hearing.update(appeal: appeal)
+          expect(subject).to eq appeal.veteran.periods_of_service.join("\n")
+        end
+      end
+    end
+
+    context "when military service is set" do
+      let(:military_service) { "Test" }
+      let(:appeal) { Appeal.create(vacols_id: "1234") }
+
+      it "should load military service from appeal" do
+        hearing.update(appeal: appeal)
+        expect(subject).to eq "Test"
+      end
+    end
+  end
+
+  context "#issues" do
+    subject { hearing.worksheet_issues }
     let(:hearing) { Hearing.create(vacols_id: "3456") }
 
     context "when appeal is not set" do
-      it "should not create any issues" do
-        subject
-        expect(hearing.worksheet_issues.size).to eq 0
-      end
+      it { is_expected.to eq [] }
     end
 
     context "when appeal does not have any issues" do
-      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
+      let(:appeal) { Appeal.create(vacols_id: "1234") }
 
-      it "should not create any issues" do
-        hearing.update(appeal: appeal)
-        subject
-        expect(hearing.worksheet_issues.size).to eq 0
-      end
+      it { is_expected.to eq [] }
     end
 
     context "when appeal has issues" do
-      let(:appeal) { Generators::Appeal.create(vacols_record: :partial_grant_decided) }
+      let(:appeal) { Generators::Appeal.create(vacols_record: :remand_decided) }
 
       it "should create issues" do
         hearing.update(appeal: appeal)
         subject
-        expect(hearing.worksheet_issues.size).to eq 3
+        expect(subject.size).to eq 2
       end
     end
   end
@@ -117,10 +142,10 @@ describe Hearing do
 
   context "#update" do
     subject { hearing.update(hearing_hash) }
-    let(:hearing) { Generators::Hearing.build }
+    let(:appeal) { Generators::Appeal.create(vacols_record: :form9_not_submitted) }
+    let(:hearing) { Generators::Hearing.create(appeal: appeal) }
 
     context "when Vacols does not need an update" do
-      let(:issue) { hearing.appeal.worksheet_issues.first }
       let(:hearing_hash) do
         {
           military_service: "Vietnam 1968 - 1970",
