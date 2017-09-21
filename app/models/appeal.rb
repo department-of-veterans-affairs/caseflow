@@ -1,6 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
+  include RegionalOfficeConcern
+
   has_many :tasks
   has_many :appeal_views
 
@@ -219,14 +221,6 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
-  def regional_office
-    { key: regional_office_key }.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
-  end
-
-  def regional_office_name
-    "#{regional_office[:city]}, #{regional_office[:state]}"
-  end
-
   def attributes_for_hearing
     {
       "id" => id,
@@ -235,7 +229,8 @@ class Appeal < ActiveRecord::Base
       "soc_date" => soc_date,
       "certification_date" => certification_date,
       "prior_decision_date" => prior_decision_date,
-      "ssoc_dates" => ssoc_dates
+      "ssoc_dates" => ssoc_dates,
+      "docket_number" => docket_number
     }
   end
 
@@ -372,10 +367,6 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
-  end
-
-  def issue_by_sequence_id(sequence_id)
-    issues.find { |i| i.vacols_sequence_id == sequence_id }
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
@@ -547,6 +538,8 @@ class Appeal < ActiveRecord::Base
     # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
     # If vbms_id is > 9 digits, thrown an error.
     def convert_vbms_id_for_vacols_query(vbms_id)
+      fail Caseflow::Error::InvalidVBMSId unless vbms_id
+
       # delete non-digit characters
       sanitized_vbms_id = vbms_id.delete("^0-9")
       vbms_id_length = sanitized_vbms_id.length

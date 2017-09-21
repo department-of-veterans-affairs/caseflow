@@ -72,13 +72,10 @@ RSpec.feature "Out of Service" do
 
   context "Reader" do
     before do
-      FeatureToggle.enable!(:reader)
-
       Fakes::Initializer.load!
     end
 
     after do
-      FeatureToggle.disable!(:reader)
       Rails.cache.write("reader_out_of_service", false)
     end
 

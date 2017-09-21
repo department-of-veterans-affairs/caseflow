@@ -1,16 +1,16 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
-  belongs_to :appeal
-  belongs_to :user
+  include RegionalOfficeConcern
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes, :add_on
+                       :aod, :hold_open, :transcript_requested, :notes, :add_on,
+                       :representative_name, :regional_office_key, :master_record
 
   belongs_to :appeal
   belongs_to :user # the judge
-  has_many :issues, foreign_key: :appeal_id, primary_key: :appeal_id
-  accepts_nested_attributes_for :issues
+  has_many :worksheet_issues, foreign_key: :appeal_id, primary_key: :appeal_id
+  accepts_nested_attributes_for :worksheet_issues
 
   def venue
     self.class.venues[venue_key]
@@ -49,16 +49,15 @@ class Hearing < ActiveRecord::Base
 
   delegate \
     :veteran_age, \
-    :veteran_full_name, \
-    :representative_name, \
+    :veteran_name, \
     :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
-    :regional_office_name, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
-    to: :appeal
+    :representative, \
+    to: :appeal, allow_nil: true
 
   # rubocop:disable Metrics/MethodLength
   def to_hash
@@ -72,12 +71,14 @@ class Hearing < ActiveRecord::Base
         :hold_open,
         :notes,
         :add_on,
+        :master_record,
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
         :representative_name,
         :veteran_age,
-        :veteran_full_name,
+        :veteran_name,
+        :regional_office_name,
         :venue,
         :cached_number_of_documents,
         :cached_number_of_documents_after_certification,
@@ -87,21 +88,30 @@ class Hearing < ActiveRecord::Base
   end
   # rubocop:enable Metrics/MethodLength
 
-  def to_hash_with_all_information
+  def to_hash_for_worksheet
     serializable_hash(
-      methods: :appeals,
-      include: :issues
+      methods: [:appeal_id,
+                :representative,
+                :appeals_ready_for_hearing],
+      include: :worksheet_issues
     ).merge(to_hash)
   end
 
+  # TODO: issues must be loaded only once on the initial load of the hearing's worksheet page
   def set_issues_from_appeal
-    appeal.issues.each do |issue|
-      Issue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id)
-    end if appeal
+    appeal.issues.each { |i| WorksheetIssue.create_from_issue(appeal, i) } if appeal
   end
 
-  def appeals
+  def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
+  end
+
+  def set_initial_values(appeal_vacols_id, css_id)
+    self.appeal = Appeal.find_or_create_by(vacols_id: appeal_vacols_id)
+    self.user = User.find_by(css_id: css_id)
+    # TODO: military service must be loaded only once on the initial load of the hearing's worksheet page
+    self.military_service = appeal.veteran.periods_of_service.join("\n") if appeal.veteran
+    save!
   end
 
   class << self
@@ -117,9 +127,11 @@ class Hearing < ActiveRecord::Base
 
     def create_from_vacols_record(vacols_record)
       transaction do
-        find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
-          hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-                         user: User.find_by(css_id: vacols_record.css_id))
+        find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
+          # If it is a master record, do not create a record in the hearings table
+          return hearing if vacols_record.master_record?
+
+          hearing.set_initial_values(vacols_record.folder_nr, vacols_record.css_id) if hearing.new_record?
           hearing.set_issues_from_appeal
         end
       end

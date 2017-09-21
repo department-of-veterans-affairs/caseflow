@@ -21,8 +21,8 @@ describe Hearing do
     end
   end
 
-  context "#to_hash_with_all_information" do
-    subject { hearing.to_hash_with_all_information }
+  context "#to_hash_for_worksheet" do
+    subject { hearing.to_hash_for_worksheet }
 
     let(:appeal) do
       Generators::Appeal.create(vacols_record: { template: :pending_hearing },
@@ -39,20 +39,17 @@ describe Hearing do
     end
 
     context "when appeal has issues" do
-      let!(:issue1) { Generators::Issue.create(appeal: appeal) }
-      let!(:issue2) { Generators::Issue.create(appeal: appeal) }
+      let!(:issue1) { Generators::WorksheetIssue.create(appeal: appeal) }
+      let!(:issue2) { Generators::WorksheetIssue.create(appeal: appeal) }
 
       it "should return issues through the appeal" do
-        # there are 3 issues associated with the appeal
-        # 1 issue is created in Generators::Appeal pending_hearing template
-        # 2 issues are created above
-        expect(subject["issues"].size).to eq 3
+        expect(subject["worksheet_issues"].size).to eq 2
       end
     end
 
     context "when hearing has appeals ready for hearing" do
-      it "should contain appeals" do
-        expect(subject["appeals"].size).to eq 2
+      it "should contain appeal streams" do
+        expect(subject["appeals_ready_for_hearing"].size).to eq 2
       end
     end
 
@@ -61,7 +58,7 @@ describe Hearing do
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
-        expect(subject["veteran_full_name"]).to eq(appeal.veteran_full_name)
+        expect(subject["veteran_name"]).to eq(appeal.veteran_name)
         expect(subject["cached_number_of_documents"]).to eq 2
         expect(subject["cached_number_of_documents_after_certification"]).to eq 0
       end
@@ -75,29 +72,27 @@ describe Hearing do
     context "when appeal is not set" do
       it "should not create any issues" do
         subject
-        expect(hearing.issues.size).to eq 0
+        expect(hearing.worksheet_issues.size).to eq 0
       end
     end
 
     context "when appeal does not have any issues" do
-      let(:appeal) { Appeal.create(vacols_id: "1234") }
+      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
 
       it "should not create any issues" do
         hearing.update(appeal: appeal)
         subject
-        expect(hearing.issues.size).to eq 0
+        expect(hearing.worksheet_issues.size).to eq 0
       end
     end
 
     context "when appeal has issues" do
-      let(:appeal) { Appeal.create(vacols_id: "1234") }
-      let!(:issue1) { Generators::Issue.create(appeal: appeal) }
-      let!(:issue2) { Generators::Issue.create(appeal: appeal) }
+      let(:appeal) { Generators::Appeal.create(vacols_record: :partial_grant_decided) }
 
-      it "should not create any issues" do
+      it "should create issues" do
         hearing.update(appeal: appeal)
         subject
-        expect(hearing.issues.size).to eq 2
+        expect(hearing.worksheet_issues.size).to eq 3
       end
     end
   end
@@ -107,6 +102,8 @@ describe Hearing do
       OpenStruct.new(hearing_pkseq: "1234", folder_nr: "5678", css_id: "1111")
     end
     let!(:user) { User.create(css_id: "1111", station_id: "123") }
+    let!(:appeal) { Generators::Appeal.build(vacols_id: "5678") }
+
     subject { Hearing.create_from_vacols_record(vacols_record) }
 
     it "should should create a hearing record" do
@@ -123,43 +120,43 @@ describe Hearing do
     let(:hearing) { Generators::Hearing.build }
 
     context "when Vacols does not need an update" do
-      let(:issue) { hearing.appeal.issues.first }
+      let(:issue) { hearing.appeal.worksheet_issues.first }
       let(:hearing_hash) do
         {
-          worksheet_military_service: "Vietnam 1968 - 1970",
-          issues_attributes: [
+          military_service: "Vietnam 1968 - 1970",
+          worksheet_issues_attributes: [
             {
               remand: true,
-              hearing_worksheet_vha: true
+              vha: true
             }
           ]
         }
       end
 
-      it "updates nested attributes (issues)" do
-        expect(hearing.issues.count).to eq(0)
+      it "updates nested attributes (worksheet_issues)" do
+        expect(hearing.worksheet_issues.count).to eq(0)
         subject # do update
-        expect(hearing.issues.count).to eq(1)
+        expect(hearing.worksheet_issues.count).to eq(1)
 
-        expect(hearing.issues.first.remand).to eq(true)
-        expect(hearing.issues.first.allow).to eq(false)
-        expect(hearing.issues.first.deny).to eq(false)
-        expect(hearing.issues.first.dismiss).to eq(false)
-        expect(hearing.issues.first.hearing_worksheet_vha).to be_truthy
+        expect(hearing.worksheet_issues.first.remand).to eq(true)
+        expect(hearing.worksheet_issues.first.allow).to eq(false)
+        expect(hearing.worksheet_issues.first.deny).to eq(false)
+        expect(hearing.worksheet_issues.first.dismiss).to eq(false)
+        expect(hearing.worksheet_issues.first.vha).to be_truthy
 
         # test that a 2nd save updates the same record, rather than create new one
-        hearing_issue_id = hearing.issues.first.id
-        hearing_hash[:issues_attributes][0][:deny] = true
-        hearing_hash[:issues_attributes][0][:id] = hearing_issue_id
+        hearing_issue_id = hearing.worksheet_issues.first.id
+        hearing_hash[:worksheet_issues_attributes][0][:deny] = true
+        hearing_hash[:worksheet_issues_attributes][0][:id] = hearing_issue_id
 
         hearing.update(hearing_hash)
 
-        expect(hearing.issues.count).to eq(1)
-        expect(hearing.issues.first.id).to eq(hearing_issue_id)
-        expect(hearing.issues.first.deny).to eq(true)
-        expect(hearing.issues.first.remand).to eq(true)
-        expect(hearing.issues.first.allow).to eq(false)
-        expect(hearing.issues.first.dismiss).to eq(false)
+        expect(hearing.worksheet_issues.count).to eq(1)
+        expect(hearing.worksheet_issues.first.id).to eq(hearing_issue_id)
+        expect(hearing.worksheet_issues.first.deny).to eq(true)
+        expect(hearing.worksheet_issues.first.remand).to eq(true)
+        expect(hearing.worksheet_issues.first.allow).to eq(false)
+        expect(hearing.worksheet_issues.first.dismiss).to eq(false)
       end
     end
 
@@ -170,7 +167,8 @@ describe Hearing do
           transcript_requested: false,
           disposition: :postponed,
           add_on: true,
-          hold_open: 60
+          hold_open: 60,
+          representative_name: "DAV - DON REED"
         }
       end
 
@@ -187,6 +185,7 @@ describe Hearing do
         expect(hearing.disposition).to eq :postponed
         expect(hearing.add_on).to eq true
         expect(hearing.hold_open).to eq 60
+        expect(hearing.representative_name).to eq "DAV - DON REED"
       end
     end
   end

@@ -68,7 +68,8 @@ describe HearingMapper do
           transcript_requested: false,
           disposition: :postponed,
           hold_open: 60,
-          add_on: false }
+          add_on: false,
+          representative_name: "test name" }
       end
 
       it "should convert to Vacols values" do
@@ -79,6 +80,7 @@ describe HearingMapper do
         expect(result[:disposition]).to eq :P
         expect(result[:hold_open]).to eq 60
         expect(result[:add_on]).to eq :N
+        expect(result[:representative_name]).to eq "test name"
       end
     end
 
@@ -99,14 +101,16 @@ describe HearingMapper do
     context "values with nil" do
       let(:info) do
         { notes: nil,
-          aod: :filed }
+          aod: :filed,
+          representative_name: nil }
       end
 
       it "should clear these values" do
         result = subject
-        expect(result.values.size).to eq 2
+        expect(result.values.size).to eq 3
         expect(result[:notes]).to eq nil
         expect(result[:aod]).to eq :Y
+        expect(result[:representative_name]).to eq nil
       end
     end
 
@@ -136,6 +140,15 @@ describe HearingMapper do
       end
       it "raises InvalidNotesError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidNotesError)
+      end
+    end
+
+    context "when representative name is not valid" do
+      let(:info) do
+        { representative_name: 77 }
+      end
+      it "raises InvalidNotesError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRepresentativeNameError)
       end
     end
 

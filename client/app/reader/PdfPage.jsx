@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { setPdfPageDimensions } from '../reader/actions';
+import { bindActionCreators } from 'redux';
+import { pageNumberOfPageIndex } from './utils';
 
 import classNames from 'classnames';
-import { pageNumberOfPageIndex } from './utils';
 
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
@@ -30,11 +32,37 @@ export class PdfPage extends React.Component {
     this.props.getTextLayerRef(this.props.pageIndex, this.props.file, textLayer);
   }
 
+  getDimensions = () => {
+    this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((pdfPage) => {
+      const PAGE_DIMENSION_SCALE = 1;
+      const viewport = pdfPage.getViewport(PAGE_DIMENSION_SCALE);
+      const pageDimensions = _.pick(viewport, ['width', 'height']);
+
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    }).
+    catch(() => {
+      const pageDimensions = {
+        width: PAGE_WIDTH,
+        height: PAGE_HEIGHT
+      };
+
+      this.props.setPdfPageDimensions(this.props.file, this.props.pageIndex, pageDimensions);
+    });
+  }
+
+  componentDidMount = () => {
+    this.getDimensions();
+  }
+
   render() {
-    const currentWidth = _.get(this.props.pageDimensions,
-      [this.props.file, this.props.pageIndex, 'width'], PAGE_WIDTH);
-    const currentHeight = _.get(this.props.pageDimensions,
-      [this.props.file, this.props.pageIndex, 'height'], PAGE_HEIGHT);
+    const pageClassNames = classNames({
+      'cf-pdf-pdfjs-container': true,
+      page: true,
+      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
+    });
+    const currentWidth = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
+    const currentHeight = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
+
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${this.props.scale * currentWidth}px`,
@@ -42,11 +70,6 @@ export class PdfPage extends React.Component {
       verticalAlign: 'top',
       display: this.props.isVisible ? '' : 'none'
     };
-    const pageClassNames = classNames({
-      'cf-pdf-pdfjs-container': true,
-      page: true,
-      'cf-pdf-placing-comment': this.props.isPlacingAnnotation
-    });
 
     // Only pages that are the correct scale should be visible
     const CORRECT_SCALE_DELTA_THRESHOLD = 0.01;
@@ -65,15 +88,14 @@ export class PdfPage extends React.Component {
             ref={this.getCanvasRef}
             className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
-            {this.props.isVisible && <CommentLayer
+            <CommentLayer
               documentId={this.props.documentId}
               pageIndex={this.props.pageIndex}
               scale={this.props.scale}
-            />}
+              getTextLayerRef={this.getTextLayerRef}
+              file={this.props.file}
+            />
           </div>
-          <div
-            ref={this.getTextLayerRef}
-            className="textLayer"/>
         </div>
       </div>;
   }
@@ -85,16 +107,22 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
-  pageDimensions: PropTypes.object,
   isDrawn: PropTypes.object,
   getPageContainerRef: PropTypes.func,
   getCanvasRef: PropTypes.func,
-  getTextLayerRef: PropTypes.func
+  getTextLayerRef: PropTypes.func,
+  pdfDocument: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer.ui, 'selectedAnnotationId'),
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    setPdfPageDimensions
+  }, dispatch)
+});
+
+const mapStateToProps = (state, props) => ({
+  pageDimensions: _.get(state.readerReducer, ['documentsByFile', props.file, 'pages', props.pageIndex]),
   isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
 });
 
-export default connect(mapStateToProps)(PdfPage);
+export default connect(mapStateToProps, mapDispatchToProps)(PdfPage);

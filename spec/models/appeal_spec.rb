@@ -14,7 +14,8 @@ describe Appeal do
       video_hearing_requested: video_hearing_requested,
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
-      appellant_last_name: "Tester"
+      appellant_last_name: "Tester",
+      decision_date: nil
     )
   end
 
@@ -26,7 +27,10 @@ describe Appeal do
       ssoc_dates: ssoc_dates,
       documents: documents,
       hearing_request_type: hearing_request_type,
-      video_hearing_requested: video_hearing_requested
+      video_hearing_requested: video_hearing_requested,
+      appellant_first_name: nil,
+      appellant_middle_initial: nil,
+      appellant_last_name: nil
     )
   end
 
@@ -648,26 +652,6 @@ describe Appeal do
       it "raises InvalidFileNumber error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
       end
-    end
-  end
-
-  context "#issue_by_sequence_id" do
-    let(:appeal) { Generators::Appeal.build(vacols_record: { template: :partial_grant_decided }) }
-    subject { appeal.issue_by_sequence_id(id) }
-
-    context "when appeal has an issue with the sequence id" do
-      let(:id) { "2" }
-
-      it "returns the issue" do
-        expect(subject).to_not be_nil
-        expect(subject.vacols_sequence_id).to eq "2"
-      end
-    end
-
-    context "when appeal does not have an issue with the sequence id" do
-      let(:id) { "5" }
-
-      it { is_expected.to be_nil }
     end
   end
 

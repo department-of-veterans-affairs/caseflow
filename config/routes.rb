@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :appeals, only: :index
+      resources :jobs, only: :create
     end
   end
 
@@ -61,7 +62,8 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    get 'appeal/veteran-id/:veteran_id', to: "appeal#find_appeals_by_veteran_id", constraints: { veteran_id: /[a-zA-Z0-9]{2,12}/ }
+    get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
+      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -72,7 +74,7 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show]
   end
-  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
+  get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
   resources :hearings, only: [:update]
 
@@ -82,9 +84,6 @@ Rails.application.routes.draw do
     post "establish-claim", to: "establish_claims#create"
     get "establish-claim", to: "establish_claims#show"
   end
-
-  resources :functions, only: :index
-  patch '/functions/change', to: 'functions#change'
 
   resources :offices, only: :index
 
@@ -108,7 +107,6 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
 
-  post 'jobs/start_async' => 'jobs#start_async'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'

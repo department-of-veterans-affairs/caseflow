@@ -265,6 +265,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "</message></formFieldErrors>")
     end
 
+    let(:client_error) { VBMS::ClientError }
+
     scenario "Assign the correct new task to myself" do
       # Create an older task with an inaccessible appeal
       Generators::EstablishClaim.create(
@@ -433,6 +435,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       click_on "Create End Product"
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("This veteran does not have a social security number")
+
+      # Client error
+      allow(VBMSService).to receive(:establish_claim!).and_raise(client_error)
+
+      click_on "Create End Product"
+      expect(page).to_not have_content("Success!")
+      expect(page).to have_content("System Error")
     end
 
     context "For an appeal with multiple possible decision documents in VBMS" do
@@ -818,6 +827,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           )
         end
       end
+    end
+  end
+
+  context "As another employee" do
+    let!(:current_user) do
+      User.authenticate!(roles: ["Some non-Dispatch role"])
+    end
+
+    scenario "Attempts to view establish claim pages" do
+      visit "/dispatch/establish-claim"
+      expect(page).to have_content("You aren't authorized")
     end
   end
 end

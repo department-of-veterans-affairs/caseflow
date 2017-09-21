@@ -65,14 +65,14 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, hearing.venue.timezone)}
+            {getDate(hearing.date, 'EST')}
             <br/>
-            {`${hearing.venue.city}, ${hearing.venue.state}`}
+            {hearing.regional_office_name}
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
           <b>{hearing.appellant_last_first_mi}</b>
-          <Link to={`/hearings/${hearing.id}/worksheet`}>{hearing.vbms_id}</Link>
+          <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">

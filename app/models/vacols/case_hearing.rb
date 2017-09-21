@@ -35,17 +35,9 @@ class VACOLS::CaseHearing < VACOLS::Record
     hold_open: :holddays,
     aod: :aod,
     transcript_requested: :tranreq,
-    add_on: :addon
+    add_on: :addon,
+    representative_name: :repname
   }.freeze
-
-  NOT_MASTER_RECORD = %(
-    vdkey is NOT NULL
-  ).freeze
-
-  WITHOUT_DISPOSITION = %(
-    hearing_disp IS NULL
-    -- an older hearing still awaiting a disposition
-  ).freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
   after_update :create_or_update_diaries
@@ -55,10 +47,14 @@ class VACOLS::CaseHearing < VACOLS::Record
     def upcoming_for_judge(css_id)
       id = connection.quote(css_id)
 
-      select_hearings
-        .where("staff.sdomainid = #{id}")
-        .where(WITHOUT_DISPOSITION)
-        .where(NOT_MASTER_RECORD)
+      hearings = select_hearings.where("staff.sdomainid = #{id}")
+                                .where("hearing_date > ?", 1.week.ago)
+
+      # For a video master record, the hearing_pkseq number becomes the VDKEY that links all
+      # the child records (veterans scheduled for that video) to the parent record
+      children_ids = hearings.map(&:vdkey).compact.map(&:to_i)
+      # Filter out video master records with children
+      hearings.reject { |hearing| hearing.master_record? && children_ids.include?(hearing.hearing_pkseq) }
     end
 
     def for_appeal(appeal_vacols_id)
@@ -86,6 +82,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :aod,
              :holddays,
              :tranreq,
+             :repname,
              :addon,
              :board_member,
              :mduser,
@@ -94,6 +91,15 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+  end
+
+  def master_record_type
+    return :video if folder_nr =~ /VIDEO/
+    # TODO: return :travel_board if a record is from tb_sched
+  end
+
+  def master_record?
+    master_record_type.present?
   end
 
   def update_hearing!(hearing_info)

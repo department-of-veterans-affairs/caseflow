@@ -70,7 +70,8 @@ describe Veteran do
         country: country,
         zip_code: "94117",
         military_post_office_type_code: military_post_office_type_code,
-        military_postal_type_code: military_postal_type_code
+        military_postal_type_code: military_postal_type_code,
+        service: [{ branch_of_service: "army" }]
       }
     end
 
@@ -84,6 +85,7 @@ describe Veteran do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
+        service: [{ branch_of_service: "army" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
@@ -114,6 +116,58 @@ describe Veteran do
 
         it { is_expected.to include(state: "AA", city: "DPO", address_type: "OVR") }
       end
+    end
+  end
+
+  context "#periods_of_service" do
+    subject { veteran.periods_of_service }
+    let(:veteran) do
+      Veteran.new(service: service)
+    end
+
+    context "when a veteran served in multiple places" do
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: "06282003" },
+         { branch_of_service: "Navy",
+           entered_on_duty_date: "06282006",
+           released_active_duty_date: "06282008" }]
+      end
+
+      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003", "Navy 06/28/2006 - 06/28/2008"] }
+    end
+
+    context "when a veteran is still serving" do
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: nil }]
+      end
+
+      it { is_expected.to eq ["Army 06/28/2002 - "] }
+    end
+
+    context "when a veteran does not have any service information" do
+      let(:service) do
+        [{ branch_of_service: nil,
+           entered_on_duty_date: nil,
+           released_active_duty_date: nil }]
+      end
+
+      it { is_expected.to eq [] }
+    end
+
+    context "when a veteran served in one place" do
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: "06282003" },
+         { branch_of_service: nil,
+           entered_on_duty_date: nil,
+           released_active_duty_date: nil }]
+      end
+      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003"] }
     end
   end
 

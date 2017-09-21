@@ -10,10 +10,13 @@ class Generators::Hearing
         venue_key: "RO13",
         vacols_id: vacols_id,
         vacols_record: { vacols_id: vacols_id },
-        worksheet_witness: "Jane Doe attended",
-        worksheet_contentions: "The veteran believes their knee is hurt",
-        worksheet_evidence: "Medical exam occurred on 10/10/2008",
-        worksheet_comments_for_attorney: "Look for knee-related medical records"
+        witness: "Jane Doe attended",
+        contentions: "The veteran believes their knee is hurt",
+        evidence: "Medical exam occurred on 10/10/2008",
+        military_service: "Army 02/02/2003 - 05/07/2009 \n Navy 08/23/2011 - 09/12/2014",
+        comments_for_attorney: "Look for knee-related medical records",
+        regional_office_key: VACOLS::RegionalOffice::CITIES.keys.sample,
+        master_record: [true, false].sample
       }
     end
 
