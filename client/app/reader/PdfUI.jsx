@@ -152,7 +152,6 @@ export class PdfUI extends React.Component {
   onBackToClaimsFolder = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
-    // this.props.onShowList();
   }
 
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
