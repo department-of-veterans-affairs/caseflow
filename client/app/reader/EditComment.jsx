@@ -6,17 +6,46 @@ import Button from '../components/Button';
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
 export default class EditComment extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.shouldAutosave = true;
+  }
+
+  handleAutoSave = () => {
+    // only autosave when a comment exists
+    if (this.shouldAutosave && this.props.comment.comment) {
+      this.onSaveCommentEdit();
+    }
+  }
+
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
     commentBox.focus();
+
+    // ensure we autosave if we ever exit
+    window.addEventListener('beforeunload', this.handleAutoSave);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.handleAutoSave);
+    this.handleAutoSave();
+  }
+
 
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
-  onCancelCommentEdit = () => this.props.onCancelCommentEdit(this.props.comment.uuid)
+  onCancelCommentEdit = () => {
+    this.shouldAutosave = false;
+    this.props.onCancelCommentEdit(this.props.comment.uuid);
+  }
 
-  onSaveCommentEdit = () => this.props.onSaveCommentEdit(this.props.comment)
+  onSaveCommentEdit = () => {
+    this.shouldAutosave = false;
+    this.props.onSaveCommentEdit(this.props.comment);
+  }
 
   render() {
     return <div>
