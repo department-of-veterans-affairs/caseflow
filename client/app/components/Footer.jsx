@@ -3,14 +3,12 @@ import PropTypes from 'prop-types';
 import Link from './Link';
 
 export default class Footer extends React.Component {
-
-  onFeedbackClick = (title) => {
-    window.analyticsEvent(title, 'feedback', 'footer');
+  onFeedbackClick = () => {
+    window.analyticsEvent(this.props.appName, 'feedback', 'footer');
   }
 
   render() {
     const {
-      appName,
       buildDate,
       feedbackUrl
     } = this.props;
@@ -26,7 +24,7 @@ export default class Footer extends React.Component {
           <Link
             href={feedbackUrl}
             target="_blank"
-            onClick={this.onFeedbackClick(appName)}>Send feedback</Link>
+            onClick={this.onFeedbackClick}>Send feedback</Link>
         </div>
       </div>
     </footer>;
