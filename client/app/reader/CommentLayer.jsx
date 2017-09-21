@@ -150,7 +150,7 @@ class CommentLayer extends PureComponent {
       onClick={this.onPageClick}
       onMouseMove={this.mouseListener}
       ref={this.getCommentLayerDivRef}>
-      {this.getCommentIcons()}
+      {this.props.isVisible && this.getCommentIcons()}
       <div
         style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
@@ -171,6 +171,7 @@ CommentLayer.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number
   }),
+  isVisible: PropTypes.bool,
   getTextLayerRef: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   placingAnnotationIconPageCoords: PropTypes.object,

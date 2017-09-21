@@ -207,7 +207,8 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  pages: {}
+  pages: {},
+  pdfDocuments: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -391,18 +392,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.SET_PDF_READY_TO_SHOW:
-    return update(state, {
-      ui: {
-        pdf: {
-          pdfsReadyToShow: {
-            $set: {
-              [action.payload.docId]: true
-            }
-          }
-        }
-      }
-    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
       hideErrorMessage(state, 'category'),
@@ -1048,6 +1037,31 @@ export const reducer = (state = initialState, action = {}) => {
         pages: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
             $set: action.payload.page
+          }
+        }
+      }
+    );
+  case Constants.CLEAR_PDF_PAGE:
+    return update(
+      state,
+      {
+        pages: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $merge: {
+              page: null,
+              container: null
+            }
+          }
+        }
+      }
+    );
+  case Constants.SET_PDF_DOCUMENT:
+    return update(
+      state,
+      {
+        pdfDocuments: {
+          [action.payload.file]: {
+            $set: action.payload.doc
           }
         }
       }

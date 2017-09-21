@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setUpPdfPage } from '../reader/actions';
+import { setUpPdfPage, clearPdfPage } from '../reader/actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -23,7 +23,7 @@ const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
 // This is the maximum squared distance within which pages are drawn.
-// We compare this value with the result of (window_center_x - page_center_x) ^ 2 + 
+// We compare this value with the result of (window_center_x - page_center_x) ^ 2 +
 // (window_center_y - page_center_y) ^ 2 which is the square of the distance between
 // the center of the window, and the page. If this is less than MAX_SQUARED_DISTANCE
 // then we draw the page. A good value for MAX_SQUARED_DISTANCE is determined empirically
@@ -42,7 +42,6 @@ export class PdfPage extends React.PureComponent {
 
   getPageContainerRef = (pageContainer) => {
     this.pageContainer = pageContainer;
-    this.props.getPageContainerRef(this.props.pageIndex, this.props.file, pageContainer);
   }
 
   getCanvasRef = (canvas) => this.canvas = canvas
@@ -102,8 +101,10 @@ export class PdfPage extends React.PureComponent {
   componentWillUnmount = () => {
     this.isDrawing = false;
     this.isDrawn = false;
-    this.props.page.cleanup();
-    this.props.setUpPdfPage(this.props.file, this.props.pageIndex, null);
+    if (this.props.page) {
+      this.props.page.cleanup();
+    }
+    this.props.clearPdfPage(this.props.file, this.props.pageIndex);
   }
 
   // This function gets the square of the distance to the center of the scroll window.
@@ -127,6 +128,7 @@ export class PdfPage extends React.PureComponent {
       if (props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
         return true;
       }
+
       return false;
     }
 
@@ -143,10 +145,13 @@ export class PdfPage extends React.PureComponent {
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
-      if (this.props.page && (!this.previousShouldDraw || prevProps.scale !== this.props.scale || !prevProps.page)) {
+      if (this.props.page && (!this.previousShouldDraw ||
+          prevProps.scale !== this.props.scale ||
+          !prevProps.page ||
+          (this.props.isVisible && !prevProps.isVisible))) {
         this.drawPage();
       }
-    } else if (this.shouldDrawPage(prevProps)) {
+    } else if (this.previousShouldDraw) {
       this.clearPage();
     }
     this.previousShouldDraw = shouldDraw;
@@ -174,8 +179,9 @@ export class PdfPage extends React.PureComponent {
       this.getText(page).then((text) => {
         const pageData = {
           text,
-          dimensions: this.getDimensions(page),
-          page
+          dimensions: this.props.pageDimensions || this.getDimensions(page),
+          page,
+          container: this.pageContainer
         };
 
         this.props.setUpPdfPage(
@@ -233,6 +239,7 @@ export class PdfPage extends React.PureComponent {
               file={this.props.file}
               dimensions={{ currentWidth,
                 currentHeight }}
+              isVisible={this.props.isVisible}
             />
           </div>
         </div>
@@ -250,18 +257,17 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
-  getPageContainerRef: PropTypes.func,
   pdfDocument: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    clearPdfPage,
     setUpPdfPage
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => {
-
   const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
 
   return {
