@@ -80,4 +80,6 @@ Rails.application.configure do
 
   config.google_analytics_account = ENV["GA_TRACKING_ID"]
 
+  ENV["AWS_REGION"] ||= "us-gov-west-1"
+
 end

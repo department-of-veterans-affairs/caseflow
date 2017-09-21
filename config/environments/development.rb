@@ -53,6 +53,8 @@ Rails.application.configure do
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
 
+  ENV["AWS_REGION"] ||= "us-gov-west-1"
+
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"

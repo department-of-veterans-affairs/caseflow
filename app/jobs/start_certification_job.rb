@@ -1,5 +1,8 @@
 class StartCertificationJob < ActiveJob::Base
+  # TODO(sunil): for now use sidekiq. when sqs works well
+  # use shoryuken instead of sidekiq
   queue_as :default
+  self.queue_adapter = :sidekiq
 
   def perform(certification, user = nil, ip_address = nil)
     RequestStore.store[:current_user] = user if user

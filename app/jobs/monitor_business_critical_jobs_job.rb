@@ -2,7 +2,7 @@
 # and completed. This will alert us if a job has not run due to
 # sidekiq-cron being unreliable
 class MonitorBusinessCriticalJobsJob < CaseflowJob
-  queue_as :default
+  queue_as :low_priority
 
   BUSINESS_CRITICAL_JOBS = %w(
     CreateEstablishClaimTasksJob
