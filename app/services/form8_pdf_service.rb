@@ -180,7 +180,7 @@ class Form8PdfService
       )
     end
 
-    # File.delete(final_location) if File.exist?(final_location)
+    File.delete(final_location) if File.exist?(final_location)
 
     # Run it through `pdftk cat`. The reason for this is that editable PDFs have
     # an RSA signature on them which proves they are genuine. pdftk tries to
@@ -194,12 +194,10 @@ class Form8PdfService
       final_location
     )
 
-    byebug
-
     S3Service.store_file(form8.pdf_filename, final_location, :filepath)
 
     # Remove it from the tmp_location, leaving it only in final_location
-    # File.delete(tmp_location)
+    File.delete(tmp_location)
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
