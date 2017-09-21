@@ -22,7 +22,8 @@ RSpec.feature "Hearings" do
           id: id,
           user: current_user,
           date: 5.days.from_now,
-          type: "video"
+          type: "video",
+          master_record: false
         )
       end
 
@@ -30,7 +31,8 @@ RSpec.feature "Hearings" do
         id: 3,
         user: current_user,
         type: "central_office",
-        date: Time.zone.now
+        date: Time.zone.now,
+        master_record: true
       )
     end
 
@@ -69,6 +71,12 @@ RSpec.feature "Hearings" do
       find('#menu-trigger').click
       find_link("Help").click
       expect(page).to have_content("Caseflow Hearings Help")
+    end
+
+    scenario "Upcoming docket days correctly handles master records" do
+      visit "/hearings/dockets"
+      expect(page).to have_link(5.days.from_now.strftime("%-m/%-d/%Y"))
+      expect(page).not_to have_link(Time.zone.now.strftime("%-m/%-d/%Y"))
     end
 
     scenario "Shows a daily docket" do
