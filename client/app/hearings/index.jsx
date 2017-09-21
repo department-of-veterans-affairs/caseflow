@@ -12,7 +12,7 @@ import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
-import Breadcrumb from './util/Breadcrumb';
+import Breadcrumb from './components/Breadcrumb';
 
 const configureStore = (data) => {
 
