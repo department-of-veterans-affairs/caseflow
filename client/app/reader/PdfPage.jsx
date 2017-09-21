@@ -36,14 +36,13 @@ export class PdfPage extends React.PureComponent {
     super(props);
 
     this.isDrawing = false;
-    this.isDrawn = false;
+    this.isDrawing = false;
+    this.didFailDrawing = false;
     this.previousShouldDraw = false;
     this.isUnmounting = false;
   }
 
-  getPageContainerRef = (pageContainer) => {
-    this.pageContainer = pageContainer;
-  }
+  getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
 
   getCanvasRef = (canvas) => this.canvas = canvas
 
@@ -54,9 +53,8 @@ export class PdfPage extends React.PureComponent {
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
   drawPage = () => {
-    const t0 = performance.now();
-    if (this.isDrawing || !this.props.page) {
-      return Promise.reject();
+    if (this.isDrawing) {
+      return Promise.resolve();
     }
     this.isDrawing = true;
 
@@ -72,29 +70,28 @@ export class PdfPage extends React.PureComponent {
     return this.props.page.render({
       canvasContext: this.canvas.getContext('2d', { alpha: false }),
       viewport
-    }).
-      then(() => {
-        console.log('rendered page', this.props.pageNumberOfPageIndex, this.props.file);
-        this.isDrawing = false;
-        this.isDrawn = true;
+    }).then(() => {
+      this.isDrawing = false;
+      this.isDrawing = true;
 
-        // If the scale has changed, draw the page again at the latest scale.
-        if (currentScale !== this.props.scale) {
-          return this.drawPage();
-        }
-      }).
-      catch(() => {
-        this.isDrawing = false;
-      });
+      // If the scale has changed, draw the page again at the latest scale.
+      if (currentScale !== this.props.scale && this.props.page) {
+        return this.drawPage();
+      }
+    }).
+    catch(() => {
+      this.didFailDrawing = true;
+      this.isDrawing = false;
+    });
   }
 
   clearPage = () => {
-    if (this.isDrawn) {
+    if (this.isDrawing) {
       this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.props.page.cleanup();
     }
 
-    this.isDrawn = false;
+    this.isDrawing = false;
   }
 
   componentDidMount = () => {
@@ -111,7 +108,7 @@ export class PdfPage extends React.PureComponent {
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    this.isDrawn = false;
+    this.isDrawing = false;
     this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();  
@@ -154,9 +151,8 @@ export class PdfPage extends React.PureComponent {
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
-      if (this.props.page && (!this.previousShouldDraw ||
-          prevProps.scale !== this.props.scale ||
-          !prevProps.page ||
+      if (this.props.page && (this.didFailDrawing || !this.previousShouldDraw ||
+          prevProps.scale !== this.props.scale || !prevProps.page ||
           (this.props.isVisible && !prevProps.isVisible))) {
         this.drawPage();
       }
@@ -167,7 +163,6 @@ export class PdfPage extends React.PureComponent {
   }
 
   drawText = (page, text) => {
-    const t0 = performance.now();
     const viewport = page.getViewport(this.props.scale);
 
     this.textLayer.innerHTML = '';
@@ -213,6 +208,9 @@ export class PdfPage extends React.PureComponent {
             setUpPdfPage(text);
           });
         }
+      }).
+      catch(() => {
+        this.setUpPage();
       });
     }
   }

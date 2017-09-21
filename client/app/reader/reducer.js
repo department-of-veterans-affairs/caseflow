@@ -1042,7 +1042,7 @@ export const reducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.CLEAR_PDF_PAGE:
-    if (state.pages[`${action.payload.file}-${action.payload.pageIndex}`].page === action.payload.page) {
+    if (!action.payload.page && _.get(state.pages, [`${action.payload.file}-${action.payload.pageIndex}`, 'page']) === action.payload.page) {
       return update(
         state,
         {
