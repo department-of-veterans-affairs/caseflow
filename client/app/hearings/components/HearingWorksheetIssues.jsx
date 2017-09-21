@@ -34,7 +34,7 @@ class HearingWorksheetIssues extends PureComponent {
      worksheetStreamsAppeal
     } = this.props;
 
-    let popConfirm = this.state.modal;
+    let issueDeleteConfirmable = this.state.modal;
 
     const columns = [
       {
@@ -90,8 +90,11 @@ class HearingWorksheetIssues extends PureComponent {
         actions: <HearingWorksheetPreImpressions
                     appeal={worksheetStreamsAppeal}
                     issue={issueRow} />,
-        deleteIssue: <div classname="cf-appeal-stream" onClick={this.handleModalOpen} name="Remove Issue Confirmation">
-          <TrashCan/> </div>
+        deleteIssue: <div className="cf-issue-delete"
+                        onClick={this.handleModalOpen}
+                        name="Remove Issue Confirmation">
+                        <TrashCan/>
+                    </div>
       };
     });
 
@@ -103,9 +106,9 @@ class HearingWorksheetIssues extends PureComponent {
               summary={'Worksheet Issues'}
               getKeyForRow={this.getKeyForRow}
           />
-       { popConfirm && <Modal
+    { issueDeleteConfirmable && <Modal
           buttons = {[
-            { classNames: ['cf-modal-link', 'cf-btn-link'],
+            { classNames: ['usa-button', 'usa-button-outline'],
               name: 'Close',
               onClick: this.handleModalClose
             },
@@ -116,10 +119,10 @@ class HearingWorksheetIssues extends PureComponent {
           ]}
           closeHandler={this.handleModalClose}
           title = "Remove Issue Row">
-          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? <br />
-          This issue will be removed from the worksheet, but will remain in VACOLS</p>
+          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
+          <p>This issue will be removed from the worksheet, but will remain in VACOLS</p>
         </Modal>
-        }
+    }
         </div>;
   }
 }

@@ -309,6 +309,24 @@ $color-hearings-saving: #777;
     margin-bottom: 0;
   }
 
+  .cf-modal {
+
+    h2 {
+      border-bottom: none;
+      font-size: 1.5em;
+    }
+
+    .cf-modal-divider {
+      display: none;
+      visibility: hidden;
+    }
+
+  }
+
+  .cf-issue-delete {
+    cursor: pointer;
+  }
+
   h2 {
     border-bottom: 1px solid $color-gray-light;
     margin-bottom: .5em;
