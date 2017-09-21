@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Route, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
 import PageRoute from '../components/PageRoute';

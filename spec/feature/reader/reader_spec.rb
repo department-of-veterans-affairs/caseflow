@@ -228,6 +228,9 @@ RSpec.feature "Reader" do
         # Test that the title changed. Functionality in PageRoute.jsx
         expect(page).to have_title("Claims Folder | Caseflow Reader")
 
+        # Test that the header has breadcrumbs.
+        expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
+
         click_on "Caseflow"
         expect(page).to have_current_path("/reader/appeal/")
         expect(page).to have_title("Assignments | Caseflow Reader")
