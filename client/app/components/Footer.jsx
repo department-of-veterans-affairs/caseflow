@@ -4,7 +4,7 @@ import Link from './Link';
 
 export default class Footer extends React.Component {
 
-  onClick = (title) => {
+  onFeedbackClick = (title) => {
     window.analyticsEvent(title, 'feedback', 'footer');
   }
 
@@ -26,7 +26,7 @@ export default class Footer extends React.Component {
           <Link
             href={feedbackUrl}
             target="_blank"
-            onClick={this.onClick(appName)}>Send feedback</Link>
+            onClick={this.onFeedbackClick(appName)}>Send feedback</Link>
         </div>
       </div>
     </footer>;
