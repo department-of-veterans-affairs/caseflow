@@ -18,6 +18,7 @@ describe('hearingsReducer', () => {
       worksheet: {
         streams: {
           8873: {
+            edited: true,
             issues: {
               66: {
               }

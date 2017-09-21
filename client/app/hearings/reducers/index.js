@@ -34,6 +34,7 @@ export const newHearingIssueState = (state, action, spec) => {
     worksheet: {
       streams: {
         [action.payload.appealId]: {
+          edited: { $set: true },
           issues: {
             [action.payload.issueId]: spec
           }
