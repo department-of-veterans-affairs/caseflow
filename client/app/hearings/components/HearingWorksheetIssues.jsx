@@ -118,6 +118,7 @@ class HearingWorksheetIssues extends PureComponent {
             }
           ]}
           closeHandler={this.handleModalClose}
+          noDivider={true}
           title = "Remove Issue Row">
           <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
           <p>This issue will be removed from the worksheet, but will remain in VACOLS</p>
