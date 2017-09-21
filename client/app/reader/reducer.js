@@ -1048,7 +1048,8 @@ export const reducer = (state = initialState, action = {}) => {
         pages: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
             $merge: {
-              page: null
+              page: null,
+              container: null
             }
           }
         }
