@@ -93,6 +93,9 @@ class Form8PdfService
     nod_date: "Field32[0]",
     soc_date: "Field32[1]",
     form9_date: "Field32[2]",
+    ssoc_date_1: "Field32[3]",
+    ssoc_date_2: "Field32[4]",
+    ssoc_date_3: "Field32[5]",
     representative: "TextField1[4]",
     hearing_preference: {
       "HEARING_CANCELLED" => "CheckBox21[0]",
@@ -177,7 +180,7 @@ class Form8PdfService
       )
     end
 
-    File.delete(final_location) if File.exist?(final_location)
+    # File.delete(final_location) if File.exist?(final_location)
 
     # Run it through `pdftk cat`. The reason for this is that editable PDFs have
     # an RSA signature on them which proves they are genuine. pdftk tries to
@@ -191,10 +194,12 @@ class Form8PdfService
       final_location
     )
 
+    byebug
+
     S3Service.store_file(form8.pdf_filename, final_location, :filepath)
 
     # Remove it from the tmp_location, leaving it only in final_location
-    File.delete(tmp_location)
+    # File.delete(tmp_location)
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
