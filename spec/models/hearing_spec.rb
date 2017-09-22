@@ -157,7 +157,8 @@ describe Hearing do
               name: "Spoon",
               levels: %w(Cabbage Pickle),
               description: %w(Donkey Cow),
-              from_vacols: true
+              from_vacols: true,
+              vacols_sequence_id: 1
             }
           ]
         }
@@ -196,6 +197,13 @@ describe Hearing do
         expect(hearing.worksheet_issues.first.name).to eq "Spoon"
         expect(hearing.worksheet_issues.first.levels).to eq %w(Cabbage Pickle)
         expect(hearing.worksheet_issues.first.description).to eq ["Tomato"]
+
+        # soft delete an issue
+        hearing_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
+        hearing.update(hearing_hash)
+        expect(hearing.worksheet_issues.count).to eq(0)
+        expect(hearing.worksheet_issues.with_deleted.count).to eq(1)
+        expect(hearing.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
       end
     end
 

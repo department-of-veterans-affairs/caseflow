@@ -7,7 +7,6 @@ class WorksheetIssue < ActiveRecord::Base
   belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
 
   validates :appeal, :vacols_sequence_id, presence: true
-  validates :appeal_id, scope: :vacols_sequence_id, uniqueness: true
 
   class << self
     def create_from_issue(appeal, issue)

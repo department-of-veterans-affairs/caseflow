@@ -4,7 +4,7 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
   let(:hearing) { Generators::Hearing.create(appeal: appeal) }
 
   describe "PATCH update" do
-    it "should be successful" do
+    it "add a new issue" do
       params = { worksheet_issues_attributes: [
         {
           remand: true,
@@ -29,6 +29,17 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
       expect(response_body["worksheet_issues"][0]["description"]).to eq %w(Donkey Cow)
       expect(response_body["worksheet_issues"][0]["from_vacols"]).to eq false
       expect(response_body["worksheet_issues"][0]["vacols_sequence_id"]).to eq "1"
+    end
+
+    it "delete an issue" do
+      issue = Generators::WorksheetIssue.create(appeal: appeal)
+      expect(WorksheetIssue.all.size).to eq 1
+      params = { worksheet_issues_attributes: [{ _destroy: "1", id: issue.id }] }
+      patch :update, hearing_id: hearing.id, worksheet: params
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)["worksheet"]
+      expect(WorksheetIssue.all.size).to eq 0
+      expect(response_body["worksheet_issues"].size).to eq 0
     end
 
     it "should return not found" do

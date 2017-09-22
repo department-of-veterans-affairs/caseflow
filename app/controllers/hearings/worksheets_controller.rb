@@ -26,7 +26,8 @@ class Hearings::WorksheetsController < HearingsController
     params.require(:worksheet)
           .permit(worksheet_issues_attributes: [:id, :allow, :deny, :remand, :dismiss,
                                                 :reopen, :vha, :program, :name, :from_vacols,
-                                                :vacols_sequence_id, description: [], levels: []])
+                                                :vacols_sequence_id, :_destroy, description: [],
+                                                                                levels: []])
   end
 
   def hearing_worksheet # rubocop:disable Metrics/MethodLength
