@@ -4,20 +4,38 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
+import Modal from '../../components/Modal';
 
 import { TrashCan } from '../../components/RenderFunctions';
 
 class HearingWorksheetIssues extends PureComponent {
 
-  getKeyForRow = (index) => {
-    return index;
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      modal: false,
+      value: ''
+    };
   }
+
+  handleModalOpen = () => {
+    this.setState({ modal: true });
+  };
+
+  handleModalClose = () => {
+    this.setState({ modal: false });
+  };
+
+  getKeyForRow = (index) => index;
 
   render() {
     let {
      worksheetStreamsIssues,
      worksheetStreamsAppeal
     } = this.props;
+
+    let issueDeleteConfirmable = this.state.modal;
 
     const columns = [
       {
@@ -73,18 +91,41 @@ class HearingWorksheetIssues extends PureComponent {
         actions: <HearingWorksheetPreImpressions
                     appeal={worksheetStreamsAppeal}
                     issue={issueRow} />,
-        deleteIssue: <TrashCan />
-
+        deleteIssue: <div className="cf-issue-delete"
+                        onClick={this.handleModalOpen}
+                        name="Remove Issue Confirmation">
+                        <TrashCan />
+                    </div>
       };
     });
 
-    return <Table
-            className="cf-hearings-worksheet-issues"
-            columns={columns}
-            rowObjects={rowObjects}
-            summary={'Worksheet Issues'}
-            getKeyForRow={this.getKeyForRow}
-          />;
+    return <div>
+          <Table
+              className="cf-hearings-worksheet-issues"
+              columns={columns}
+              rowObjects={rowObjects}
+              summary={'Worksheet Issues'}
+              getKeyForRow={this.getKeyForRow}
+          />
+    { issueDeleteConfirmable && <Modal
+          buttons = {[
+            { classNames: ['usa-button', 'usa-button-outline'],
+              name: 'Close',
+              onClick: this.handleModalClose
+            },
+            { classNames: ['usa-button', 'usa-button-primary'],
+              name: 'Yes',
+              onClick: this.handleModalClose
+            }
+          ]}
+          closeHandler={this.handleModalClose}
+          noDivider={true}
+          title = "Remove Issue Row">
+          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
+          <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
+        </Modal>
+    }
+        </div>;
   }
 }
 
