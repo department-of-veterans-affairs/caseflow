@@ -1042,6 +1042,10 @@ export const reducer = (state = initialState, action = {}) => {
       }
     );
   case Constants.CLEAR_PDF_PAGE:
+    // We only want to remove the page and container if we're cleaning up the same page that is
+    // currently stored here. This is to avoid a race condition where a user returns to this
+    // page and the new page object is stored here before we have a chance to destroy the
+    // old object.
     if (!action.payload.page && _.get(state.pages, [`${action.payload.file}-${action.payload.pageIndex}`, 'page']) === action.payload.page) {
       return update(
         state,

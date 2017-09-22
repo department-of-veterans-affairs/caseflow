@@ -137,6 +137,7 @@ class CommentLayer extends PureComponent {
     onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
 
   render() {
+    // Instead of redrawing the text on scales, we just do a CSS transform which is faster.
     const TEXT_LAYER_STYLING = {
       width: `${this.props.dimensions.width}px`,
       height: `${this.props.dimensions.height}px`,

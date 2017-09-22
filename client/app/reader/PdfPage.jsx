@@ -73,6 +73,7 @@ export class PdfPage extends React.PureComponent {
     }).then(() => {
       this.isDrawing = false;
       this.isDrawing = true;
+      this.didFailDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
       if (currentScale !== this.props.scale && this.props.page) {
@@ -86,15 +87,19 @@ export class PdfPage extends React.PureComponent {
   }
 
   clearPage = () => {
-    if (this.isDrawing) {
+    if (this.isDrawn) {
       this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.props.page.cleanup();
     }
 
-    this.isDrawing = false;
+    this.isDrawn = false;
   }
 
   componentDidMount = () => {
+    // We only want to setUpPage immediately if it's either on a visible page, or if that page
+    // is in a non-visible page but within the first NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER pages.
+    // These are the pages we are most likely to show to the user. All other pages can wait
+    // until we have idle time.
     if (this.props.isVisible || this.props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
       this.setUpPage();
     } else {
@@ -111,8 +116,10 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.isUnmounting = true;
     if (this.props.page) {
-      this.props.page.cleanup();  
+      this.props.page.cleanup();
     }
+    // Cleaning up this page from the Redux store should happen when we have idle time.
+    // We don't want to block showing pages because we're too busy cleaning old pages.
     window.requestIdleCallback(this.clearPdfPage);
   }
 
@@ -173,7 +180,6 @@ export class PdfPage extends React.PureComponent {
       viewport,
       textDivs: []
     });
-    console.log('rendered text', this.props.pageIndex, this.props.file);
   }
 
   getText = (page) => page.getTextContent()
@@ -201,6 +207,8 @@ export class PdfPage extends React.PureComponent {
           }
         }
 
+        // We don't want to get the text again if we already have it saved. So we either
+        // use our previous text value, or get the text and then pass it in.
         if (this.props.text) {
           setUpPdfPage(this.props.text);
         } else {
