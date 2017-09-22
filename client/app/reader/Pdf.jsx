@@ -324,7 +324,9 @@ export class Pdf extends React.PureComponent {
 }
 
 const mapStateToProps = (state, props) => {
-  const pageKeys = Object.keys(state.readerReducer.pages).filter((pageName) => pageName.includes(props.file));
+  // Gets page keys where the container is defined.
+  const pageKeys = Object.keys(state.readerReducer.pages).filter(
+    (pageName) => pageName.includes(props.file) && state.readerReducer.pages[pageName].container);
   const numPagesDefined = pageKeys.length;
   const pdfDocument = state.readerReducer.pdfDocuments[props.file];
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;

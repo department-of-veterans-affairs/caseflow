@@ -189,7 +189,7 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     if (this.props.pdfDocument) {
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-        const setUpPdfPage = (text) => {
+        const setUpPageWithText = (text) => {
           const pageData = {
             dimensions: this.props.pageDimensions || this.getDimensions(page),
             page,
@@ -200,20 +200,21 @@ export class PdfPage extends React.PureComponent {
             this.props.setUpPdfPage(
               this.props.file,
               this.props.pageIndex,
-              { ...pageData, text }
+              { ...pageData,
+                text }
             );
 
             this.drawText(page, text);
           }
-        }
+        };
 
         // We don't want to get the text again if we already have it saved. So we either
         // use our previous text value, or get the text and then pass it in.
         if (this.props.text) {
-          setUpPdfPage(this.props.text);
+          setUpPageWithText(this.props.text);
         } else {
           this.getText(page).then((text) => {
-            setUpPdfPage(text);
+            setUpPageWithText(text);
           });
         }
       }).

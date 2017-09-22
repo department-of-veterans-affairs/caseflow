@@ -1046,7 +1046,8 @@ export const reducer = (state = initialState, action = {}) => {
     // currently stored here. This is to avoid a race condition where a user returns to this
     // page and the new page object is stored here before we have a chance to destroy the
     // old object.
-    if (!action.payload.page && _.get(state.pages, [`${action.payload.file}-${action.payload.pageIndex}`, 'page']) === action.payload.page) {
+    if (action.payload.page &&
+      _.get(state.pages, [`${action.payload.file}-${action.payload.pageIndex}`, 'page']) === action.payload.page) {
       return update(
         state,
         {
@@ -1060,9 +1061,10 @@ export const reducer = (state = initialState, action = {}) => {
           }
         }
       );
-    } else {
-      return state;
     }
+
+    return state;
+
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,

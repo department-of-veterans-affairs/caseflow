@@ -689,10 +689,7 @@ input[type="search"].cf-search-input-with-close {
   opacity: 1;
 
   ::selection {
-    background: rgb(179, 179, 255);
-  }
-  ::-moz-selection {
-    background: rgb(179, 179, 255);
+    background: $color-primary-alt-light;
   }
 }
 
