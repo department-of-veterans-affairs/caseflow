@@ -113,10 +113,10 @@ describe Form8PdfService do
       expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].TextField1[0]" => "Joe Patriot",
                                           "form1[0].#subform[0].#area[0].TextField1[1]" => "1234QWERTY",
                                           "form1[0].#subform[0].#area[0].TextField1[2]" => "Brad Pitt",
-                                          "form1[0].#subform[0].#area[0].Field32[0]"=>"11/23/2002",
-                                          "form1[0].#subform[0].#area[0].Field32[1]"=>"11/23/2001",
-                                          "form1[0].#subform[0].#area[0].Field32[2]"=>"11/23/2003",
-                                          "form1[0].#subform[0].#area[0].Field32[4]"=>"11/23/2005")
+                                          "form1[0].#subform[0].#area[0].Field32[0]" => "11/23/2002",
+                                          "form1[0].#subform[0].#area[0].Field32[1]" => "11/23/2001",
+                                          "form1[0].#subform[0].#area[0].Field32[2]" => "11/23/2003",
+                                          "form1[0].#subform[0].#area[0].Field32[4]" => "11/23/2005")
     end
   end
 
