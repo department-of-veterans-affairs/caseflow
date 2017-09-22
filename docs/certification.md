@@ -1,6 +1,15 @@
-## What is Caseflow Certification?
+# What is Caseflow Certification?
 
 Caseflow Certification is a web-based tool that pre-fills the electronic Form 8 for paperless appeals and checks case documents for readiness for certification.
+
+## About
+
+Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
+
+[You can read more about the project here](https://medium.com/the-u-s-digital-service/new-tool-launches-to-improve-the-benefits-claim-appeals-process-at-the-va-59c2557a4a1c#.t1qhhz7h8).
+
+
+![Screenshot of new Certification](certification.png "Certification")
 
 ## Certification (Dev Mode)
 
