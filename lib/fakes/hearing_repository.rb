@@ -2,11 +2,16 @@ require "prime"
 class Fakes::HearingRepository
   class << self
     attr_accessor :hearing_records
+    attr_accessor :master_records
   end
 
   def self.upcoming_hearings_for_judge(css_id)
     user = User.find_by_css_id(css_id)
-    (hearing_records || []).select { |h| h.user_id == user.id }
+    records.select { |h| h.user_id == user.id }
+  end
+
+  def self.records
+    (hearing_records || []) + (master_records || [])
   end
 
   def self.hearings_for_appeal(appeal_vacols_id)
@@ -26,7 +31,7 @@ class Fakes::HearingRepository
     record = find_by_vacols_id(hearing.vacols_id)
 
     return false unless record
-    hearing.assign_from_vacols(vacols_record: record.vacols_record)
+    hearing.assign_from_vacols(record.vacols_attributes)
     true
   end
 
@@ -42,6 +47,10 @@ class Fakes::HearingRepository
     hearing_records.find { |h| h.id == id }
   end
 
+  def self.find_by_date(date)
+    master_records.find { |h| h.date.to_date == date }
+  end
+
   def self.clean!
     self.hearing_records = []
   end
@@ -49,8 +58,10 @@ class Fakes::HearingRepository
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     50.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
+    2.times.each { |i| Generators::Hearings::MasterRecord.build(user: user, date: Time.zone.now + (i + 6).days) }
   end
 
+  # rubocop:disable Metrics/AbcSize
   def self.random_attrs(i)
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
@@ -60,8 +71,10 @@ class Fakes::HearingRepository
       disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.values[i % 4],
       aod: [VACOLS::CaseHearing::HEARING_AODS.values[i % 3], nil].sample,
       hold_open: [30, 60, 90].sample,
+      add_on: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample,
       notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
       transcript_requested: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample
     }
   end
+  # rubocop:enable Metrics/AbcSize
 end
