@@ -152,7 +152,12 @@ describe Hearing do
           worksheet_issues_attributes: [
             {
               remand: true,
-              vha: true
+              vha: true,
+              program: "Wheel",
+              name: "Spoon",
+              levels: %w(Cabbage Pickle),
+              description: %w(Donkey Cow),
+              from_vacols: true
             }
           ]
         }
@@ -163,15 +168,20 @@ describe Hearing do
         subject # do update
         expect(hearing.worksheet_issues.count).to eq(1)
 
-        expect(hearing.worksheet_issues.first.remand).to eq(true)
-        expect(hearing.worksheet_issues.first.allow).to eq(false)
-        expect(hearing.worksheet_issues.first.deny).to eq(false)
-        expect(hearing.worksheet_issues.first.dismiss).to eq(false)
-        expect(hearing.worksheet_issues.first.vha).to be_truthy
+        expect(hearing.worksheet_issues.first.remand).to eq true
+        expect(hearing.worksheet_issues.first.allow).to eq false
+        expect(hearing.worksheet_issues.first.deny).to eq false
+        expect(hearing.worksheet_issues.first.dismiss).to eq false
+        expect(hearing.worksheet_issues.first.vha).to eq true
+        expect(hearing.worksheet_issues.first.program).to eq "Wheel"
+        expect(hearing.worksheet_issues.first.name).to eq "Spoon"
+        expect(hearing.worksheet_issues.first.levels).to eq %w(Cabbage Pickle)
+        expect(hearing.worksheet_issues.first.description).to eq %w(Donkey Cow)
 
         # test that a 2nd save updates the same record, rather than create new one
         hearing_issue_id = hearing.worksheet_issues.first.id
         hearing_hash[:worksheet_issues_attributes][0][:deny] = true
+        hearing_hash[:worksheet_issues_attributes][0][:description] = ["Tomato"]
         hearing_hash[:worksheet_issues_attributes][0][:id] = hearing_issue_id
 
         hearing.update(hearing_hash)
@@ -182,6 +192,10 @@ describe Hearing do
         expect(hearing.worksheet_issues.first.remand).to eq(true)
         expect(hearing.worksheet_issues.first.allow).to eq(false)
         expect(hearing.worksheet_issues.first.dismiss).to eq(false)
+        expect(hearing.worksheet_issues.first.program).to eq "Wheel"
+        expect(hearing.worksheet_issues.first.name).to eq "Spoon"
+        expect(hearing.worksheet_issues.first.levels).to eq %w(Cabbage Pickle)
+        expect(hearing.worksheet_issues.first.description).to eq ["Tomato"]
       end
     end
 
