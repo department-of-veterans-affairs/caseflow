@@ -53,7 +53,6 @@ class Form8 < ActiveRecord::Base
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
     ssoc_dates = appeal.ssoc_dates.empty? ? [] : appeal.ssoc_dates.sort
@@ -97,7 +96,6 @@ class Form8 < ActiveRecord::Base
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/AbcSize
 
   def update_certification_date
