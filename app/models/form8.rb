@@ -56,6 +56,8 @@ class Form8 < ActiveRecord::Base
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
+    ssoc_dates = appeal.ssoc_dates.empty? ? [] : appeal.ssoc_dates.sort
+
     assign_attributes(
       vacols_id: appeal.vacols_id,
       appellant_name: appeal.appellant_name,
@@ -69,9 +71,9 @@ class Form8 < ActiveRecord::Base
       soc_date: appeal.soc_date,
       form9_date: appeal.form9_date,
       nod_date: appeal.nod_date,
-      ssoc_date_1: appeal.ssoc_dates.empty? ? nil : appeal.ssoc_dates[0],
-      ssoc_date_2: appeal.ssoc_dates.empty? ? nil : appeal.ssoc_dates[1],
-      ssoc_date_3: appeal.ssoc_dates.empty? ? nil : appeal.ssoc_dates[2],
+      ssoc_date_1: ssoc_dates[0],
+      ssoc_date_2: ssoc_dates[1],
+      ssoc_date_3: ssoc_dates[2],
       representative_name: appeal.representative_name,
       representative_type: appeal.representative_type,
       hearing_requested: appeal.hearing_requested ? "Yes" : "No",
