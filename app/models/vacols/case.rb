@@ -1,5 +1,3 @@
-require "csv"
-
 class VACOLS::Case < VACOLS::Record
   self.table_name = "vacols.brieff"
   self.sequence_name = "vacols.bfkeyseq"
@@ -245,7 +243,7 @@ class VACOLS::Case < VACOLS::Record
 
     conn.transaction do
       query = <<-SQL
-        SELECT (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
+        SELECT BRIEFF.BFKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
         FROM BRIEFF
 
         LEFT JOIN (
@@ -263,14 +261,18 @@ class VACOLS::Case < VACOLS::Record
           GROUP BY FOLDER_NR
         ) AOD_HEARINGS
         ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-        WHERE BRIEFF.BFKEY IN (#{vacols_ids.to_csv(row_sep: nil)})
+        WHERE BRIEFF.BFKEY IN (#{vacols_ids.join(',')})
       SQL
 
       aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
                                                                                service: :vacols) do
         conn.exec_query(query)
       end
-      aod_result.to_hash.map { |result| result["aod"] }
+
+      aod_result.to_hash.reduce({}) do |memo, result| 
+        memo["#{result["bfkey"]}"] = result["aod"]
+        memo
+      end
     end
   end
 
