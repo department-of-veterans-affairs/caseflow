@@ -12,7 +12,6 @@ class HearingWorksheetIssues extends PureComponent {
 
   constructor(props) {
     super(props);
-    window.jqueryOn = false;
 
     this.state = {
       modal: false,
