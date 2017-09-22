@@ -22,6 +22,8 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
+[You can read more about Certification testing](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
+
 ## Setup
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 

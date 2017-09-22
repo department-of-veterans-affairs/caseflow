@@ -26,6 +26,9 @@ To get to the various pages in the workflow we have a set of five URLs of dummy 
 [http://localhost:3000/certifications/new/000ERR](http://localhost:3000/certifications/new/000ERR) is an appeal that raises a vbms error.
 [http://localhost:3000/certifications/new/001ERR](http://localhost:3000/certifications/new/001ERR) is an appeal that is missing data.
 
+
+[https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md) 
+
 ## Changing between test users
 
 Select 'Switch User' from the dropdown and select 'Certify Appeal at 283' or navigate to
