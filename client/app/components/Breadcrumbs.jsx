@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Link from './Link';
 import { Route } from 'react-router-dom';
 
@@ -19,10 +20,13 @@ const getElementsWithBreadcrumbs = (element) => {
   }, []);
 };
 
+// When passed a child component with Route or PageRoute objects that have
+// breadcrumb properties set, this component will generate breadcrumbs as links
+// to those other routes.
 export default class Breadcrumbs extends React.Component {
   render() {
     const breadcrumbComponents = getElementsWithBreadcrumbs(this).map(
-    (route) => <Route path={route.path} render={
+    (route) => <Route key={route.breadcrumb} path={route.path} render={
       (props) => <span>
           <h2 id="page-title" className="cf-application-title">&nbsp; > &nbsp;</h2>
           <Link id="cf-logo-link" to={props.match.url}>
@@ -35,3 +39,7 @@ export default class Breadcrumbs extends React.Component {
     return <span>{breadcrumbComponents}</span>;
   }
 }
+
+Breadcrumbs.propTypes = {
+  children: PropTypes.node
+};
