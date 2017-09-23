@@ -14,15 +14,17 @@ import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 
-export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file) => {
+export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation) => {
+  const rotationIncrements = -(rotation / 90) % 4;
+  const transformedDirection = Constants.MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[(direction + rotationIncrements + 4) % 4];
   const moveAmountPx = 5;
   const movementDirection = _.includes(
     [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
-    direction
+    transformedDirection
   ) ? -1 : 1;
   const movementDimension = _.includes(
     [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN],
-    direction
+    transformedDirection
   ) ? 'y' : 'x';
 
   const {
@@ -65,13 +67,14 @@ export class PdfViewer extends React.Component {
       ArrowDown: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN
     }[event.key];
 
-    if (this.props.isPlacingAnnotation && direction) {
+    if (this.props.isPlacingAnnotation && direction >= 0) {
       const { pageIndex, ...origCoords } = this.props.placingAnnotationIconPageCoords;
       const constrainedCoords = getNextAnnotationIconPageCoords(
         direction,
         this.props.placingAnnotationIconPageCoords,
         this.props.pages,
-        this.selectedDoc().content_url
+        this.selectedDoc().content_url,
+        selectedDoc().rotation
       );
 
       if (!_.isEqual(origCoords, constrainedCoords)) {

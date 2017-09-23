@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  pageCoordsOfRootCoords } from '../reader/utils';
+  pageCoordsOfRootCoords, rotateCoordinates } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -276,8 +276,9 @@ export class Pdf extends React.PureComponent {
         this.onPageChange(this.props.jumpToPageNumber);
       }
       if (this.props.scrollToComment) {
-        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page),
-          this.props.scrollToComment.y);
+        const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
+        const y = rotateCoordinates({x: this.props.scrollToComment.x, y: this.props.scrollToComment.y}, this.props.pageContainers[pageIndex].getBoundingClientRect(), -this.props.rotation).y;
+        this.scrollToPageLocation(pageIndex, y);
       }
     }
 
@@ -346,7 +347,8 @@ const mapStateToProps = (state, props) => {
     ...state.readerReducer.ui.pdf,
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
-    ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
+    ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
   };
 };
 
@@ -386,5 +388,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   setPdfReadyToShow: PropTypes.func,
-  prefetchFiles: PropTypes.arrayOf(PropTypes.string)
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
+  rotation: PropTypes.number
 };

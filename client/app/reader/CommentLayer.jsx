@@ -39,7 +39,8 @@ class CommentLayer extends PureComponent {
     const { x, y } = getPageCoordinatesOfMouseEvent(
       event,
       this.commentLayerDiv.getBoundingClientRect(),
-      this.props.scale
+      this.props.scale,
+      this.props.rotation
     );
 
     this.props.placeAnnotation(
@@ -94,10 +95,12 @@ class CommentLayer extends PureComponent {
 
     const pageBox = this.commentLayerDiv.getBoundingClientRect();
 
-    const coordinates = {
-      x: (event.pageX - pageBox.left - dragAndDropData.iconCoordinates.x) / this.props.scale,
-      y: (event.pageY - pageBox.top - dragAndDropData.iconCoordinates.y) / this.props.scale
-    };
+    const coordinates = getPageCoordinatesOfMouseEvent(
+      event,
+      this.commentLayerDiv.getBoundingClientRect(),
+      this.props.scale,
+      this.props.rotation
+    );
 
     const droppedAnnotation = {
       ...this.props.allAnnotations[dragAndDropData.uuid],
@@ -112,8 +115,11 @@ class CommentLayer extends PureComponent {
       const pageCoords = getPageCoordinatesOfMouseEvent(
         event,
         this.commentLayerDiv.getBoundingClientRect(),
-        this.props.scale
+        this.props.scale,
+        this.props.rotation
       );
+
+      console.log('pagecoords', pageCoords);
 
       this.props.showPlaceAnnotationIcon(this.props.pageIndex, pageCoords);
     }
@@ -129,6 +135,7 @@ class CommentLayer extends PureComponent {
 
   getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
     comment={comment}
+    rotation={-this.props.rotation}
     position={{
       x: comment.x * this.props.scale,
       y: comment.y * this.props.scale
@@ -189,7 +196,8 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.readerReducer.ui.pdf,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.documentId),
-  allAnnotations: state.readerReducer.annotations
+  allAnnotations: state.readerReducer.annotations,
+  rotation: _.get(state.readerReducer.documents, [ownProps.documentId, 'rotation'])
 });
 
 const mapDispatchToProps = (dispatch) => ({

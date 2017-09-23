@@ -239,8 +239,13 @@ export class PdfPage extends React.PureComponent {
     });
     const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
     const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
-    const currentWidth = this.props.scale * width;
-    const currentHeight = this.props.scale * height;
+    const normalizedRotation = (this.props.rotation + 360) % 360;
+    let currentWidth = this.props.scale * width;
+    let currentHeight = this.props.scale * height;
+    if (normalizedRotation === 90 || normalizedRotation === 270) {
+      currentWidth = this.props.scale * height;
+      currentHeight = this.props.scale * width;
+    }
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${currentWidth}px`,
@@ -259,7 +264,7 @@ export class PdfPage extends React.PureComponent {
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div className={pageContentsVisibleClass}>
+        <div style={{transform: `rotate(${this.props.rotation}deg)`}}className={pageContentsVisibleClass}>
           <canvas
             ref={this.getCanvasRef}
             className="canvasWrapper" />
@@ -290,6 +295,7 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
+  rotate: PropTypes.number,
   pdfDocument: PropTypes.object
 };
 
@@ -307,7 +313,8 @@ const mapStateToProps = (state, props) => {
     pageDimensions: _.get(page, ['dimensions']),
     page: _.get(page, ['page']),
     text: _.get(page, ['text']),
-    isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
+    isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
   };
 };
 

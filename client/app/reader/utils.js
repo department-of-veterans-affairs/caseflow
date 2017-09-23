@@ -20,14 +20,30 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   y: (y - pageBoundingBox.top) / scale
 });
 
-export const getPageCoordinatesOfMouseEvent = (event, container, scale) => {
+export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation) => {
   const constrainedRootCoords = {
     x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
     y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
   };
 
-  return pageCoordsOfRootCoords(constrainedRootCoords, container, scale);
+  return rotateCoordinates(pageCoordsOfRootCoords(constrainedRootCoords, container, scale), container, rotation);
 };
+
+export const rotateCoordinates = ({x, y}, container, rotation) => {
+  const normalizedRotation = (rotation + 360) % 360;
+
+  if (normalizedRotation === 0) {
+    return {x, y}; 
+  } else if (normalizedRotation === 90) {
+    return {x: y, y: container.width - x}; 
+  } else if (normalizedRotation === 180) {
+    return {x: container.height - x, y: container.width - y}; 
+  } else if (normalizedRotation === 270) {
+    return {x: container.height - y, y: x}; 
+  } else {
+    return {x, y};
+  }
+}
 
 /**
  * immutability-helper takes two arguments: an object and a spec for how to change it:
