@@ -37,7 +37,7 @@ export const rotateCoordinates = ({x, y}, container, rotation) => {
   } else if (normalizedRotation === 90) {
     return {x: y, y: container.width - x}; 
   } else if (normalizedRotation === 180) {
-    return {x: container.height - x, y: container.width - y}; 
+    return {x: container.width - x, y: container.height - y}; 
   } else if (normalizedRotation === 270) {
     return {x: container.height - y, y: x}; 
   } else {

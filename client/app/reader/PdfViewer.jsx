@@ -74,7 +74,7 @@ export class PdfViewer extends React.Component {
         this.props.placingAnnotationIconPageCoords,
         this.props.pages,
         this.selectedDoc().content_url,
-        selectedDoc().rotation
+        this.selectedDoc().rotation
       );
 
       if (!_.isEqual(origCoords, constrainedCoords)) {
