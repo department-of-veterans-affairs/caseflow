@@ -226,6 +226,7 @@ export class PdfUI extends React.Component {
             ariaLabel="rotate document">
             <Rotate />
           </Button>
+          <span className="cf-pdf-spaced-buttons">|</span>
           <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-download-icon']}
