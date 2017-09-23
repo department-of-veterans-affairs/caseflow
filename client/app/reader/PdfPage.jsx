@@ -240,18 +240,20 @@ export class PdfPage extends React.PureComponent {
     const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
     const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
     const normalizedRotation = (this.props.rotation + 360) % 360;
-    let currentWidth = this.props.scale * width;
-    let currentHeight = this.props.scale * height;
+    const currentWidth = this.props.scale * width;
+    const currentHeight = this.props.scale * height;
+    let marginDifference = 0;
+
     if (normalizedRotation === 90 || normalizedRotation === 270) {
-      currentWidth = this.props.scale * height;
-      currentHeight = this.props.scale * width;
+      marginDifference = this.props.scale * width - this.props.scale * height;
     }
     const divPageStyle = {
-      marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
+      marginBottom: `${marginDifference + (PAGE_MARGIN_BOTTOM * this.props.scale)}px`,
       width: `${currentWidth}px`,
       height: `${currentHeight}px`,
       verticalAlign: 'top',
-      display: this.props.isVisible ? '' : 'none'
+      display: this.props.isVisible ? '' : 'none',
+      transform: `rotate(${this.props.rotation}deg)`
     };
     // Pages that are currently drawing should not be visible since they may be currently rendered
     // at the wrong scale.
@@ -264,7 +266,7 @@ export class PdfPage extends React.PureComponent {
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div style={{transform: `rotate(${this.props.rotation}deg)`}}className={pageContentsVisibleClass}>
+        <div className={pageContentsVisibleClass}>
           <canvas
             ref={this.getCanvasRef}
             className="canvasWrapper" />
@@ -314,7 +316,7 @@ const mapStateToProps = (state, props) => {
     page: _.get(page, ['page']),
     text: _.get(page, ['text']),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0)
   };
 };
 
