@@ -255,15 +255,6 @@ class AppealRepository
     end
   end
 
-  # Reverses the certification of an appeal.
-  # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
-  def self.uncertify(appeal)
-    appeal.case_record.bftbind = nil
-    appeal.case_record.bfdcertool = nil
-    appeal.case_record.bf41stat = nil
-    appeal.case_record.save!
-  end
-
   def self.aod(vacols_id)
     VACOLS::Case.aod(vacols_id) == 1
   end
