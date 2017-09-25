@@ -47,5 +47,11 @@ module CaseflowCertification
     # eFolder API URL to retrieve appeal documents
     config.efolder_url = ENV["EFOLDER_EXPRESS_URL"]
     config.efolder_key = ENV["EFOLDER_API_KEY"]
+    config.active_job.queue_adapter = :shoryuken
+
+    # sqs details
+    config.active_job.queue_name_prefix = ENV['DEPLOY_ENV'] || Rails.env
+    # it's a safe assumption we're running on us-gov-west-1
+    ENV["AWS_REGION"] ||= "us-gov-west-1"
   end
 end
