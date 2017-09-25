@@ -11,7 +11,7 @@ $bookmark-white-outline: #5b616b;
 $bookmark-pink: #f772e7;
 $bookmark-green: #3fcd65;
 $bookmark-yellow: #efdf1a;
-$caseflow-text-select: #C8F0FF;
+$caseflow-text-select: transparentize(#6392ff, 0.7);
 
 @mixin focus {
   &:focus {
@@ -690,6 +690,10 @@ input[type="search"].cf-search-input-with-close {
   opacity: 1;
 
   ::selection {
+    background: $caseflow-text-select;
+  }
+
+  ::-moz-selection {
     background: $caseflow-text-select;
   }
 }

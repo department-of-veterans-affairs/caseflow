@@ -20,7 +20,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    console.log('mounting pdfFile', this.props.file);
     PDFJS.workerSrc = this.props.pdfWorker;
 
     // We have to set withCredentials to true since we're requesting the file from a
@@ -31,12 +30,12 @@ export class PdfFile extends React.PureComponent {
     });
 
     return this.loadingTask.then((pdfDocument) => {
-      if (!this.loadingTask.destroyed) {
+      if (this.loadingTask.destroyed) {
+        pdfDocument.destroy();
+      } else {
         this.loadingTask = null;
         this.pdfDocument = pdfDocument;
         this.props.setPdfDocument(this.props.file, pdfDocument);
-      } else {
-        pdfDocument.destroy();
       }
     }).
     catch(() => {
@@ -45,10 +44,8 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentWillUnmount = () => {
-    console.log('unmounting pdfFile', this.props.file);
     if (this.loadingTask) {
       this.loadingTask.destroy();
-      console.log('loading task', this.loadingTask);
     }
     if (this.pdfDocument) {
       this.pdfDocument.destroy();

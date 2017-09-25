@@ -25,7 +25,7 @@ const PAGE_HEIGHT = 1056;
 // This is the maximum squared distance within which pages are drawn.
 // We compare this value with the result of (window_center_x - page_center_x) ^ 2 +
 // (window_center_y - page_center_y) ^ 2 which is the square of the distance between
-// the center of the window, and the page. If this is less than MAX_SQUARED_DISTANCE
+// thef center of the window, and the page. If this is less than MAX_SQUARED_DISTANCE
 // then we draw the page. A good value for MAX_SQUARED_DISTANCE is determined empirically
 // balancing rendering enough pages in the future with not rendering too many pages in parallel.
 const MAX_SQUARED_DISTANCE = 100000000;
@@ -115,7 +115,7 @@ export class PdfPage extends React.PureComponent {
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    this.isDrawing = false;
+    this.isDrawn = false;
     this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();
@@ -164,6 +164,8 @@ export class PdfPage extends React.PureComponent {
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
+      // If we have yet to set up the page since we haven't received an idle moment, we force
+      // it to be setup here.
       this.setUpPage();
 
       if (this.props.page && !this.props.page.transport.destroyed && (this.didFailDrawing || !this.previousShouldDraw ||
@@ -230,7 +232,8 @@ export class PdfPage extends React.PureComponent {
             setUpPageWithText(text);
           });
         }
-      }).catch(() => {
+      }).
+      catch(() => {
         this.isPageSetup = false;
       });
     }
