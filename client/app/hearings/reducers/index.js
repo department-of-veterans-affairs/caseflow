@@ -61,6 +61,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { $set: action.payload.worksheet }
     });
 
+  case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: {  edited: { $set: false }}
+  });
+
   case Constants.HANDLE_SERVER_ERROR:
     return update(state, {
       serverError: { $set: action.payload.err }
