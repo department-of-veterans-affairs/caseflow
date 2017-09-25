@@ -131,6 +131,10 @@ $color-hearings-saving: #777;
           margin-right: .5em;
           width: 1.5em;
         }
+
+        &:last-child {
+          padding-left: 2em;
+        }
       }
     }
 
@@ -385,6 +389,12 @@ $color-hearings-saving: #777;
         white-space: nowrap;
       }
     }
+  }
+}
+
+.cf-hearings-worksheet-form {
+  label {
+    font-weight: bold;
   }
 }
 
