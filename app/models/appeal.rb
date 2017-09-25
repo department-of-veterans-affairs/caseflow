@@ -367,7 +367,7 @@ class Appeal < ActiveRecord::Base
 
   attr_writer :issues
   def issues
-    @issues ||= self.class.repository.issues([vacols_id])[0]
+    @issues ||= self.class.repository.issues(vacols_id)
   end
 
   # VACOLS stores the VBA veteran unique identifier a little

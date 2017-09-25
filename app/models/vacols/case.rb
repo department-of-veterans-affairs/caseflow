@@ -270,7 +270,7 @@ class VACOLS::Case < VACOLS::Record
       end
 
       aod_result.to_hash.reduce({}) do |memo, result|
-        memo[(result["bfkey"]).to_s] = result["aod"]
+        memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
         memo
       end
     end
