@@ -72,7 +72,7 @@ gem "sidekiq-cron", "~> 0.4.0"
 # remove when upgrading to rails 5
 gem 'where-or'
 
-gem 'prometheus-client'
+gem 'prometheus-client', "~> 0.6"
 
 gem 'request_store'
 
