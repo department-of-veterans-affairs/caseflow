@@ -125,37 +125,38 @@ export class DecisionReviewer extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <NavigationBar
-        appName="Reader"
-        userDisplayName={this.props.userDisplayName}
-        dropdownUrls={this.props.dropdownUrls}>
-        <div className="section--document-list">
-          <PageRoute
-            exact
-            path="/"
-            title="Assignments | Caseflow Reader"
-            render={this.routedCaseSelect}/>
-          <PageRoute
-            exact
-            title="Claims Folder | Caseflow Reader"
-            breadcrumb="Claims Folder"
-            path="/:vacolsId/documents"
-            render={this.routedPdfListView}/>
-          <PageRoute
-            exact
-            title ="Document Viewer | Caseflow Reader"
-            breadcrumb="Document Viewer"
-            path="/:vacolsId/documents/:docId"
-            render={this.routedPdfViewer}
-          />
+        <div>
+          <NavigationBar
+            appName="Reader"
+            userDisplayName={this.props.userDisplayName}
+            dropdownUrls={this.props.dropdownUrls}>
+            <div className="section--document-list">
+              <PageRoute
+                exact
+                path="/"
+                title="Assignments | Caseflow Reader"
+                render={this.routedCaseSelect}/>
+              <PageRoute
+                exact
+                title="Claims Folder | Caseflow Reader"
+                breadcrumb="Claims Folder"
+                path="/:vacolsId/documents"
+                render={this.routedPdfListView}/>
+              <PageRoute
+                exact
+                title ="Document Viewer | Caseflow Reader"
+                breadcrumb="Document Viewer"
+                path="/:vacolsId/documents/:docId"
+                render={this.routedPdfViewer}
+              />
+            </div>
+          </NavigationBar>
+          <Footer
+            appName="Reader"
+            feedbackUrl={this.props.feedbackUrl}
+            buildDate={this.props.buildDate}/>
         </div>
-      </NavigationBar>
-        <Footer
-          appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate}/>
-      </div>
-    </Router>;
+      </Router>;
   }
 }
 
