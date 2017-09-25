@@ -29,7 +29,8 @@ export const newHearingState = (state, action, spec) => {
 
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
-
+  _.extend(spec, { edited: { $set: true } });
+  
   return update(state, {
     worksheet: {
       streams: {

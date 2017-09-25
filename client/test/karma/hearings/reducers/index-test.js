@@ -20,6 +20,7 @@ describe('hearingsReducer', () => {
           8873: {
             issues: {
               66: {
+                
               }
             }
           }
