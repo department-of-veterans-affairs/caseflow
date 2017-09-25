@@ -62,7 +62,8 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    get 'appeal/veteran-id/:veteran_id', to: "appeal#find_appeals_by_veteran_id", constraints: { veteran_id: /[a-zA-Z0-9]{2,12}/ }
+    get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
+      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -83,9 +84,6 @@ Rails.application.routes.draw do
     post "establish-claim", to: "establish_claims#create"
     get "establish-claim", to: "establish_claims#show"
   end
-
-  resources :functions, only: :index
-  patch '/functions/change', to: 'functions#change'
 
   resources :offices, only: :index
 

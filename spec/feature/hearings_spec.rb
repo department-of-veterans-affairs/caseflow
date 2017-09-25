@@ -22,7 +22,8 @@ RSpec.feature "Hearings" do
           id: id,
           user: current_user,
           date: 5.days.from_now,
-          type: "video"
+          type: "video",
+          master_record: false
         )
       end
 
@@ -30,7 +31,8 @@ RSpec.feature "Hearings" do
         id: 3,
         user: current_user,
         type: "central_office",
-        date: Time.zone.now
+        date: Time.zone.now,
+        master_record: true
       )
     end
 
@@ -71,6 +73,12 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Caseflow Hearings Help")
     end
 
+    scenario "Upcoming docket days correctly handles master records" do
+      visit "/hearings/dockets"
+      expect(page).to have_link(5.days.from_now.strftime("%-m/%-d/%Y"))
+      expect(page).not_to have_link(Time.zone.now.strftime("%-m/%-d/%Y"))
+    end
+
     scenario "Shows a daily docket" do
       visit "/hearings/dockets/2017-01-06"
       expect(page).to have_content("Daily Docket")
@@ -92,7 +100,7 @@ RSpec.feature "Hearings" do
       new_window = windows.last
       page.within_window new_window do
         expect(page).to have_content("The veteran believes their knee is hurt")
-        expect(page).to have_content("Veteran was in the Vietnam War")
+        expect(page).to have_content("Army 02/02/2003 - 05/07/2009")
         expect(page).to have_content("Medical exam occurred on 10/10/2008")
         expect(page).to have_content("Look for knee-related medical records")
 

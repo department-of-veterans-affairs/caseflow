@@ -191,7 +191,8 @@ describe('hearingsReducer', () => {
         type: Constants.SET_DESCRIPTION,
         payload: {
           description: 'Elbow Arthritis',
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
@@ -210,7 +211,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REOPEN,
         payload: { reopen: true,
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
@@ -229,7 +231,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_ALLOW,
         payload: { allow: true,
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
@@ -248,7 +251,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DENY,
         payload: { deny: true,
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
@@ -267,7 +271,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REMAND,
         payload: { remand: true,
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
@@ -286,7 +291,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DISMISS,
         payload: { dismiss: true,
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
@@ -305,7 +311,8 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_VHA,
         payload: { vha: true,
-          issueId: 66 }
+          issueId: 66,
+          appealId: 8873 }
       });
     });
 
