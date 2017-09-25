@@ -13,7 +13,7 @@ export default function StyleGuideLayout () {
     <p>
       Any Caseflow app should always follow the same layout and structure shown here.
       At the top of the application is the Navigation Bar.
-      Next, sitting on the canvass of the application is the main content area.
+      Next, sitting on the canvas of the application is the main content area.
       This is where the title of the page, instructions for the user, and detailed interaction should be placed.
       The primary and secondary actions sit below the main content area.
       Finally, the Footer should go at the bottom of the app.
