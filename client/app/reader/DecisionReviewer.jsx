@@ -130,19 +130,17 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-      <div>
-        <PageRoute
-          exact
-          title="Claims Folder | Caseflow Reader"
-          path="/:vacolsId/documents"
-          render={this.routedPdfListView}
-        />
-        <PageRoute
-          title ="Document Viewer | Caseflow Reader"
-          path="/:vacolsId/documents/:docId"
-          render={this.routedPdfViewer}
-        />
-      </div>
+      <PageRoute
+        exact
+        title="Claims Folder | Caseflow Reader"
+        path="/:vacolsId/documents"
+        render={this.routedPdfListView}
+      />
+      <PageRoute
+        title ="Document Viewer | Caseflow Reader"
+        path="/:vacolsId/documents/:docId"
+        render={this.routedPdfViewer}
+      />
     </ReaderLoadingScreen>;
   }
 
