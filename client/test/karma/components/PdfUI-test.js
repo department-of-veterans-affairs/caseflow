@@ -65,7 +65,7 @@ describe('PdfUI', () => {
       });
     });
 
-    context.only('.onPageChange', () => {
+    context('.onPageChange', () => {
       it('updates the state', () => {
         let currentPage = 2;
         let fitToScreenZoom = 3;

@@ -11,6 +11,9 @@ global.window.analyticsPageView = () => {};
 // eslint-disable-next-line no-empty-function
 global.window.analyticsEvent = () => {};
 
+global.window.requestIdleCallback = (func) => {
+  func();
+};
 
 // JSDOM returns undefined for these properties, so we can mock them out globally here.
 // Every DOM element will now return 100 for its offsetHeight. We gate it with the if
