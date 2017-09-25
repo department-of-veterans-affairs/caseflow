@@ -93,6 +93,9 @@ class Form8PdfService
     nod_date: "Field32[0]",
     soc_date: "Field32[1]",
     form9_date: "Field32[2]",
+    ssoc_date_1: "Field32[3]",
+    ssoc_date_2: "Field32[4]",
+    ssoc_date_3: "Field32[5]",
     representative: "TextField1[4]",
     hearing_preference: {
       "HEARING_CANCELLED" => "CheckBox21[0]",
