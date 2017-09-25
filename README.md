@@ -22,7 +22,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
-[You can read more about Certification testing](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
+[View information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
 
 ## Setup
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
@@ -81,21 +81,6 @@ Or to run the rails server and frontend webpack server separately:
     cd client && nvm use && npm run dev
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
-
-## Certification (Dev Mode)
-
-To log in, you can use the following credentials:
-
-Username: "DSUSER"
-Password: "DSUSER"
-
-To get to the various pages in the workflow we have a set of five URLs of dummy data.
-
-[http://localhost:3000/certifications/new/123C](http://localhost:3000/certifications/new/123C) is an appeal that is ready to certify.
-[http://localhost:3000/certifications/new/456C](http://localhost:3000/certifications/new/456C) is an appeal with mismatched docs.
-[http://localhost:3000/certifications/new/789C](http://localhost:3000/certifications/new/789C) is an appeal that is already certified.
-[http://localhost:3000/certifications/new/000ERR](http://localhost:3000/certifications/new/000ERR) is an appeal that raises a vbms error.
-[http://localhost:3000/certifications/new/001ERR](http://localhost:3000/certifications/new/001ERR) is an appeal that is missing data.
 
 ## Roles
 
