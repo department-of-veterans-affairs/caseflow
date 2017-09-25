@@ -58,7 +58,6 @@ class Fakes::HearingRepository
       type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
       date: Time.zone.now - (i % 9).days - rand(3).days,
       vacols_id: 950_330_575 + (i * 1465),
-      add_on: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample,
       disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.values[i % 4],
       aod: [VACOLS::CaseHearing::HEARING_AODS.values[i % 3], nil].sample,
       hold_open: [30, 60, 90].sample,
