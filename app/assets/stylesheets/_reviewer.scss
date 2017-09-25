@@ -11,6 +11,7 @@ $bookmark-white-outline: #5b616b;
 $bookmark-pink: #f772e7;
 $bookmark-green: #3fcd65;
 $bookmark-yellow: #efdf1a;
+$caseflow-text-select: transparentize(#6392ff, 0.7);
 
 @mixin focus {
   &:focus {
@@ -679,6 +680,26 @@ input[type="search"].cf-search-input-with-close {
       fill: $color-gray-dark;
     }
   }
+}
+
+// This is override some bad styling in PDFJS. Note selection is not
+// supported in current CSS standards. But with PDFJS using it, we have
+// to override it. When opacity isn't 1, then the highlighting for find
+// is way too light.
+.textLayer {
+  opacity: 1;
+
+  ::selection {
+    background: $caseflow-text-select;
+  }
+
+  ::-moz-selection {
+    background: $caseflow-text-select;
+  }
+}
+
+.canvasWrapper {
+  background: $color-black;
 }
 
 .cf-modal-scroll {
