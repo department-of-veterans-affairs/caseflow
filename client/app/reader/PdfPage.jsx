@@ -201,8 +201,11 @@ export class PdfPage extends React.PureComponent {
       return;
     }
 
-    this.isPageSetup = true;
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+      // We mark the page as setup here. If we error on the promise, then we mark the page
+      // as not setup. On every componentDidUpdate we call setUpPage again. This way if
+      // we failed to setup the page here, we'll make our best attempt to update it in the future.
+      this.isPageSetup = true;
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
         const setUpPageWithText = (text) => {
           const pageData = {

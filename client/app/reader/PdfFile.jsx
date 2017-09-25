@@ -54,6 +54,11 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPages = () => {
+    // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
+    // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
+    // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
+    // pdfDocument in the Redux state. So we must check that the transport is not destroyed
+    // before trying to render the page.
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
       return _.range(this.props.pdfDocument.pdfInfo.numPages).map((pageIndex) => <PdfPage
         scrollTop={this.props.scrollTop}
