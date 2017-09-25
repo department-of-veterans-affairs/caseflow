@@ -480,7 +480,7 @@ DEPENDENCIES
   pdfjs_viewer-rails!
   pg
   poltergeist
-  prometheus-client
+  prometheus-client (~> 0.6)
   pry
   puma (~> 2.16.0)
   rails (= 4.2.7.1)
