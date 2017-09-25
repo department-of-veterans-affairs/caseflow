@@ -41,7 +41,7 @@ class Appeal < ActiveRecord::Base
   attr_accessor :date_assigned, :date_received, :signed_date
 
   cache_attribute :aod do
-     self.class.repository.aod(vacols_id)[vacols_id]
+    self.class.repository.aod(vacols_id)
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
