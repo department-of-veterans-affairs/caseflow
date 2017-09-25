@@ -13,7 +13,10 @@ describe Form8PdfService do
       hearing_requested: "Yes",
       ssoc_required: "Not required",
       # date field
+      nod_date: "2002-11-23T04:05:06+00:00",
       soc_date: "2001-11-23T04:05:06+00:00",
+      form9_date: "2003-11-23T04:05:06+00:00",
+      ssoc_date_2: "2005-11-23T04:05:06+00:00",
       # remarks with rollover field
       remarks: "On February 10, 2007, Obama announced his candidacy for President of the " \
                "United States in front of the Old State Capitol building in " \
@@ -109,7 +112,11 @@ describe Form8PdfService do
     it "switches to form8_v2 correctly" do
       expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].TextField1[0]" => "Joe Patriot",
                                           "form1[0].#subform[0].#area[0].TextField1[1]" => "1234QWERTY",
-                                          "form1[0].#subform[0].#area[0].TextField1[2]" => "Brad Pitt")
+                                          "form1[0].#subform[0].#area[0].TextField1[2]" => "Brad Pitt",
+                                          "form1[0].#subform[0].#area[0].Field32[0]" => "11/23/2002",
+                                          "form1[0].#subform[0].#area[0].Field32[1]" => "11/23/2001",
+                                          "form1[0].#subform[0].#area[0].Field32[2]" => "11/23/2003",
+                                          "form1[0].#subform[0].#area[0].Field32[4]" => "11/23/2005")
     end
   end
 
