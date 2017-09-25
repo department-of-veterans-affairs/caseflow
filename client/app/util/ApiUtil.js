@@ -5,13 +5,16 @@ import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
-const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) =>
-  window.analyticsTiming({
-    timingCategory: 'api-request',
-    timingVar: endpointName || url,
-    timingValue: timeElapsedMs,
-    timingLabel: httpVerbName.toLowerCase()
-  });
+const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
+  if (endpointName) {
+    window.analyticsTiming({
+      timingCategory: 'api-request',
+      timingVar: endpointName,
+      timingValue: timeElapsedMs,
+      timingLabel: httpVerbName.toLowerCase()
+    });
+  }
+};
 
 const timeApiRequest = (httpFn, httpVerbName) => timeFunctionPromise(httpFn, makeSendAnalyticsTimingFn(httpVerbName));
 
