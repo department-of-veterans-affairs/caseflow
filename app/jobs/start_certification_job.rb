@@ -1,5 +1,7 @@
 class StartCertificationJob < ActiveJob::Base
   queue_as :default
+  self.queue_adapter = :sidekiq
+
 
   def perform(certification, user = nil, ip_address = nil)
     RequestStore.store[:current_user] = user if user

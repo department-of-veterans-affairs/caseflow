@@ -1,5 +1,5 @@
 class DependenciesReportServiceLogJob < ActiveJob::Base
-  queue_as :default
+  queue_as :low_priority
 
   def perform
     outage = DependenciesReportService.find_degraded_dependencies
