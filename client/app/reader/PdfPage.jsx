@@ -128,6 +128,10 @@ export class PdfPage extends React.PureComponent {
   // This function gets the square of the distance to the center of the scroll window.
   // We don't calculate linear distance since taking square roots is expensive.
   getSquaredDistanceToCenter = (props) => {
+    if (!this.pageContainer) {
+      return Number.MAX_SAFE_INTEGER;
+    }
+
     const square = (num) => num * num;
     const boundingRect = this.pageContainer.getBoundingClientRect();
     const pageCenter = {
@@ -162,7 +166,7 @@ export class PdfPage extends React.PureComponent {
     if (shouldDraw) {
       this.setUpPage();
 
-      if (this.props.page && (this.didFailDrawing || !this.previousShouldDraw ||
+      if (this.props.page && !this.props.page.transport.destroyed && (this.didFailDrawing || !this.previousShouldDraw ||
           prevProps.scale !== this.props.scale || !prevProps.page ||
           (this.props.isVisible && !prevProps.isVisible))) {
         this.drawPage();
@@ -195,7 +199,8 @@ export class PdfPage extends React.PureComponent {
       return;
     }
 
-    if (this.props.pdfDocument) {
+    this.isPageSetup = true;
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
         const setUpPageWithText = (text) => {
           const pageData = {
@@ -213,7 +218,6 @@ export class PdfPage extends React.PureComponent {
             );
 
             this.drawText(page, text);
-            this.isPageSetup = true;
           }
         };
 
@@ -226,7 +230,9 @@ export class PdfPage extends React.PureComponent {
             setUpPageWithText(text);
           });
         }
-      })
+      }).catch(() => {
+        this.isPageSetup = false;
+      });
     }
   }
 

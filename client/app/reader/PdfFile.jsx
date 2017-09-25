@@ -57,7 +57,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPages = () => {
-    if (this.props.pdfDocument) {
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
       return _.range(this.props.pdfDocument.pdfInfo.numPages).map((pageIndex) => <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
