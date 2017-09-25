@@ -266,11 +266,11 @@ class VACOLS::Case < VACOLS::Record
 
       aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
                                                                                service: :vacols) do
-        conn.exec_query(query)
+        conn.exec_query(ActiveRecord::Base.send(:sanitize_sql_array, query))
       end
 
-      aod_result.to_hash.reduce({}) do |memo, result| 
-        memo["#{result["bfkey"]}"] = result["aod"]
+      aod_result.to_hash.reduce({}) do |memo, result|
+        memo[(result["bfkey"]).to_s] = result["aod"]
         memo
       end
     end
