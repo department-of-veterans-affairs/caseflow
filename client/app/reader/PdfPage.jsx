@@ -36,10 +36,11 @@ export class PdfPage extends React.PureComponent {
     super(props);
 
     this.isDrawing = false;
-    this.isDrawing = false;
+    this.isDrawn = false;
     this.didFailDrawing = false;
     this.previousShouldDraw = false;
     this.isUnmounting = false;
+    this.isPageSetup = false;
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -72,7 +73,7 @@ export class PdfPage extends React.PureComponent {
       viewport
     }).then(() => {
       this.isDrawing = false;
-      this.isDrawing = true;
+      this.isDrawn = true;
       this.didFailDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -83,6 +84,7 @@ export class PdfPage extends React.PureComponent {
     catch(() => {
       this.didFailDrawing = true;
       this.isDrawing = false;
+      this.isDrawn = false;
     });
   }
 
@@ -158,6 +160,8 @@ export class PdfPage extends React.PureComponent {
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
+      this.setUpPage();
+
       if (this.props.page && (this.didFailDrawing || !this.previousShouldDraw ||
           prevProps.scale !== this.props.scale || !prevProps.page ||
           (this.props.isVisible && !prevProps.isVisible))) {
@@ -187,6 +191,10 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
+    if (this.isPageSetup) {
+      return;
+    }
+
     if (this.props.pdfDocument) {
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
         const setUpPageWithText = (text) => {
@@ -205,6 +213,7 @@ export class PdfPage extends React.PureComponent {
             );
 
             this.drawText(page, text);
+            this.isPageSetup = true;
           }
         };
 
@@ -217,10 +226,7 @@ export class PdfPage extends React.PureComponent {
             setUpPageWithText(text);
           });
         }
-      }).
-      catch(() => {
-        this.setUpPage();
-      });
+      })
     }
   }
 

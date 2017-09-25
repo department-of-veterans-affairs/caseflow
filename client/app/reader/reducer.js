@@ -1046,13 +1046,15 @@ export const reducer = (state = initialState, action = {}) => {
     // currently stored here. This is to avoid a race condition where a user returns to this
     // page and the new page object is stored here before we have a chance to destroy the
     // old object.
+    const FILE_PAGE_INDEX = `${action.payload.file}-${action.payload.pageIndex}`;
+
     if (action.payload.page &&
-      _.get(state.pages, [`${action.payload.file}-${action.payload.pageIndex}`, 'page']) === action.payload.page) {
+      _.get(state.pages, [FILE_PAGE_INDEX, 'page']) === action.payload.page) {
       return update(
         state,
         {
           pages: {
-            [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            [FILE_PAGE_INDEX]: {
               $merge: {
                 page: null,
                 container: null
