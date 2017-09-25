@@ -640,8 +640,9 @@ export const requestAppealUsingVeteranId = () => ({
 export const fetchAppealUsingVeteranId = (veteranId) => (
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/reader/appeal/veteran-id?json',
-      { headers: { veteran_id: veteranId } },
+    ApiUtil.get('/reader/appeal/veteran-id?json', {
+      headers: { 'veteran-id': veteranId }
+    },
       ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
     then((response) => {
       const returnedObject = JSON.parse(response.text);
