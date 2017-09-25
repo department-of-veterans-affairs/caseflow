@@ -1064,9 +1064,7 @@ export const reducer = (state = initialState, action = {}) => {
         }
       );
     }
-
     return state;
-
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,
@@ -1078,6 +1076,20 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.CLEAR_PDF_DOCUMENT:
+    if (action.payload.doc && _.get(state.pdfDocuments, [action.payload.file]) === action.payload.doc) {
+      return update(
+        state,
+        {
+          pdfDocuments: {
+            [action.payload.file]: {
+              $set: null
+            }
+          }
+        });
+    } else {
+      return state;
+    }
   default:
     return state;
   }
