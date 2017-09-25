@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170918151745) do
+ActiveRecord::Schema.define(version: 20170921182723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -246,6 +246,9 @@ ActiveRecord::Schema.define(version: 20170918151745) do
     t.string   "hearing_preference"
     t.date     "nod_date"
     t.date     "form9_date"
+    t.date     "ssoc_date_1"
+    t.date     "ssoc_date_2"
+    t.date     "ssoc_date_3"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
