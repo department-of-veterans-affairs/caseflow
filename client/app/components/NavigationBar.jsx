@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DropdownMenu from './DropdownMenu';
 import Link from './Link';
+import Breadcrumbs from './Breadcrumbs';
 import PerformanceDegradationBanner from './PerformanceDegradationBanner';
 
 export default class NavigationBar extends React.Component {
@@ -12,7 +13,7 @@ export default class NavigationBar extends React.Component {
       userDisplayName
     } = this.props;
 
-    return <header className="cf-app-header">
+    return <div><header className="cf-app-header">
         <div>
           <div className="cf-app-width">
             <span className="cf-push-left">
@@ -22,6 +23,9 @@ export default class NavigationBar extends React.Component {
                   <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
                 </Link>
               </h1>
+              <Breadcrumbs>
+                {this.props.children}
+              </Breadcrumbs>
             </span>
             <span className="cf-dropdown cf-push-right">
               <DropdownMenu
@@ -35,7 +39,9 @@ export default class NavigationBar extends React.Component {
           </div>
         </div>
         <PerformanceDegradationBanner />
-      </header>;
+      </header>
+      {this.props.children}
+      </div>;
   }
 }
 

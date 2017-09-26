@@ -27,7 +27,7 @@ RSpec.feature "Hearings" do
         )
       end
 
-      Generators::Hearing.build(
+      Generators::Hearing.create(
         id: 3,
         user: current_user,
         type: "central_office",
@@ -88,6 +88,18 @@ RSpec.feature "Hearings" do
 
       find_link("Back to Upcoming Hearing Days").click
       expect(page).to have_content("Upcoming Hearing Days")
+    end
+
+    scenario "Daily docket saves to the backend" do
+      visit "/hearings/dockets/2017-01-01"
+      fill_in "3.notes", with: "This is a note about the hearing!"
+      find("label", text: "Add on").click
+      find("label", text: "Transcript Requested").click
+
+      visit "/hearings/dockets/2017-01-01"
+      expect(page).to have_content("This is a note about the hearing!")
+      expect(find_field("Add on", visible: false)).to be_checked
+      expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
     scenario "Shows a hearing worksheet" do
