@@ -53,7 +53,7 @@ module CaseflowCertification
     config.active_job.queue_adapter = :shoryuken
 
     # sqs details
-    config.active_job.queue_name_prefix = ENV['DEPLOY_ENV']
+    config.active_job.queue_name_prefix = "caseflow_" + ENV['DEPLOY_ENV']
 
     # it's a safe assumption we're running on us-gov-west-1
     ENV["AWS_REGION"] ||= "us-gov-west-1"
