@@ -23,6 +23,9 @@ module CaseflowCertification
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
+    # setup the deploy env environment variable
+    ENV['DEPLOY_ENV'] ||= Rails.env
+
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
@@ -50,7 +53,8 @@ module CaseflowCertification
     config.active_job.queue_adapter = :shoryuken
 
     # sqs details
-    config.active_job.queue_name_prefix = ENV['DEPLOY_ENV'] || Rails.env
+    config.active_job.queue_name_prefix = ENV['DEPLOY_ENV']
+
     # it's a safe assumption we're running on us-gov-west-1
     ENV["AWS_REGION"] ||= "us-gov-west-1"
   end
