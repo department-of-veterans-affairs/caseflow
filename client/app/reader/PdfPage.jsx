@@ -161,19 +161,6 @@ export class PdfPage extends React.PureComponent {
   componentDidUpdate = (prevProps) => {
     const shouldDraw = this.shouldDrawPage(this.props);
 
-    // if (prevProps.rotation !== this.props.rotation) {
-    //   const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
-    //   const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
-
-    //   if (this.props.rotation === 90 || this.props.rotation === 270) {
-    //     this.canvas.height = this.props.scale * width;
-    //     this.canvas.width = this.props.scale * height;
-    //   } else {
-    //     this.canvas.height = this.props.scale * width;
-    //     this.canvas.width = this.props.scale * height;
-    //   }
-    // }
-
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
