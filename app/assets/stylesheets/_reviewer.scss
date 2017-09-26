@@ -11,7 +11,8 @@ $bookmark-white-outline: #5b616b;
 $bookmark-pink: #f772e7;
 $bookmark-green: #3fcd65;
 $bookmark-yellow: #efdf1a;
-$caseflow-text-select: #C8F0FF;
+$caseflow-text-select-without-transparency: #6392ff;
+$caseflow-text-select: transparentize($caseflow-text-select-without-transparency, 0.7);
 
 @mixin focus {
   &:focus {
@@ -691,6 +692,12 @@ input[type="search"].cf-search-input-with-close {
   ::selection {
     background: $caseflow-text-select;
   }
+
+  // scss-lint:disable VendorPrefix
+  ::-moz-selection {
+    background: $caseflow-text-select;
+  }
+  // scss-lint:enable VendorPrefix
 }
 
 .canvasWrapper {

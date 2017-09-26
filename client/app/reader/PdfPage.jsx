@@ -36,10 +36,11 @@ export class PdfPage extends React.PureComponent {
     super(props);
 
     this.isDrawing = false;
-    this.isDrawing = false;
+    this.isDrawn = false;
     this.didFailDrawing = false;
     this.previousShouldDraw = false;
     this.isUnmounting = false;
+    this.isPageSetup = false;
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -72,7 +73,7 @@ export class PdfPage extends React.PureComponent {
       viewport
     }).then(() => {
       this.isDrawing = false;
-      this.isDrawing = true;
+      this.isDrawn = true;
       this.didFailDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
@@ -83,6 +84,7 @@ export class PdfPage extends React.PureComponent {
     catch(() => {
       this.didFailDrawing = true;
       this.isDrawing = false;
+      this.isDrawn = false;
     });
   }
 
@@ -113,7 +115,7 @@ export class PdfPage extends React.PureComponent {
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    this.isDrawing = false;
+    this.isDrawn = false;
     this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();
@@ -126,6 +128,10 @@ export class PdfPage extends React.PureComponent {
   // This function gets the square of the distance to the center of the scroll window.
   // We don't calculate linear distance since taking square roots is expensive.
   getSquaredDistanceToCenter = (props) => {
+    if (!this.pageContainer) {
+      return Number.MAX_SAFE_INTEGER;
+    }
+
     const square = (num) => num * num;
     const boundingRect = this.pageContainer.getBoundingClientRect();
     const pageCenter = {
@@ -158,7 +164,11 @@ export class PdfPage extends React.PureComponent {
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
-      if (this.props.page && (this.didFailDrawing || !this.previousShouldDraw ||
+      // If we have yet to set up the page since we haven't received an idle moment, we force
+      // it to be setup here.
+      this.setUpPage();
+
+      if (this.props.page && !this.props.page.transport.destroyed && (this.didFailDrawing || !this.previousShouldDraw ||
           prevProps.scale !== this.props.scale || !prevProps.page ||
           (this.props.isVisible && !prevProps.isVisible))) {
         this.drawPage();
@@ -187,7 +197,15 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
-    if (this.props.pdfDocument) {
+    if (this.isPageSetup) {
+      return;
+    }
+
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+      // We mark the page as setup here. If we error on the promise, then we mark the page
+      // as not setup. On every componentDidUpdate we call setUpPage again. This way if
+      // we failed to setup the page here, we'll make our best attempt to update it in the future.
+      this.isPageSetup = true;
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
         const setUpPageWithText = (text) => {
           const pageData = {
@@ -219,7 +237,7 @@ export class PdfPage extends React.PureComponent {
         }
       }).
       catch(() => {
-        this.setUpPage();
+        this.isPageSetup = false;
       });
     }
   }

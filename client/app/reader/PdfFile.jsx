@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { setPdfDocument } from '../reader/actions';
+import { setPdfDocument, clearPdfDocument } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -16,6 +16,7 @@ export class PdfFile extends React.PureComponent {
     this.isDrawn = false;
     this.previousShouldDraw = 0;
     this.loadingTask = null;
+    this.pdfDocument = null;
   }
 
   componentDidMount = () => {
@@ -29,8 +30,13 @@ export class PdfFile extends React.PureComponent {
     });
 
     return this.loadingTask.then((pdfDocument) => {
-      this.loadingTask = null;
-      this.props.setPdfDocument(this.props.file, pdfDocument);
+      if (this.loadingTask.destroyed) {
+        pdfDocument.destroy();
+      } else {
+        this.loadingTask = null;
+        this.pdfDocument = pdfDocument;
+        this.props.setPdfDocument(this.props.file, pdfDocument);
+      }
     }).
     catch(() => {
       this.loadingTask = null;
@@ -41,14 +47,19 @@ export class PdfFile extends React.PureComponent {
     if (this.loadingTask) {
       this.loadingTask.destroy();
     }
-    if (this.props.pdfDocument) {
-      this.props.pdfDocument.destroy();
-      this.props.setPdfDocument(this.props.file, null);
+    if (this.pdfDocument) {
+      this.pdfDocument.destroy();
+      this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
   }
 
   getPages = () => {
-    if (this.props.pdfDocument) {
+    // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
+    // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
+    // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
+    // pdfDocument in the Redux state. So we must check that the transport is not destroyed
+    // before trying to render the page.
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
       return _.range(this.props.pdfDocument.pdfInfo.numPages).map((pageIndex) => <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
@@ -78,7 +89,8 @@ PdfFile.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setPdfDocument
+    setPdfDocument,
+    clearPdfDocument
   }, dispatch)
 });
 
