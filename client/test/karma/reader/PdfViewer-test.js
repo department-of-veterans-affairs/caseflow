@@ -4,6 +4,16 @@ import * as Constants from '../../../app/reader/constants';
 
 describe('PdfViewer', () => {
   describe('getNextAnnotationIconPageCoords', () => {
+    const pages = {
+      'test-1': {
+        dimensions: {
+          width: 1000,
+          height: 2000
+        }
+      }
+    };
+    const file = 'test';
+
     describe('allowing movement', () => {
       it('up in the middle of the page', () => {
         expect(
@@ -14,12 +24,8 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 100,
@@ -36,12 +42,8 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 100,
@@ -58,12 +60,8 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 95,
@@ -80,12 +78,8 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 105,
@@ -103,12 +97,8 @@ describe('PdfViewer', () => {
               x: 100,
               y: 0
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 100,
@@ -125,12 +115,8 @@ describe('PdfViewer', () => {
               x: 0,
               y: 100
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 0,
@@ -147,12 +133,8 @@ describe('PdfViewer', () => {
               x: 960,
               y: 300
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 960,
@@ -169,12 +151,8 @@ describe('PdfViewer', () => {
               x: 0,
               y: 1960
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file
           )
         ).to.deep.equal({
           x: 0,
