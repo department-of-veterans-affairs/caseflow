@@ -137,6 +137,14 @@ class CommentLayer extends PureComponent {
     onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
 
   render() {
+    // Instead of redrawing the text on scales, we just do a CSS transform which is faster.
+    const TEXT_LAYER_STYLING = {
+      width: `${this.props.dimensions.width}px`,
+      height: `${this.props.dimensions.height}px`,
+      transform: `scale(${this.props.scale})`,
+      transformOrigin: 'left top'
+    };
+
     return <div
       id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
       style={DIV_STYLING}
@@ -145,8 +153,9 @@ class CommentLayer extends PureComponent {
       onClick={this.onPageClick}
       onMouseMove={this.mouseListener}
       ref={this.getCommentLayerDivRef}>
-      {this.getCommentIcons()}
+      {this.props.isVisible && this.getCommentIcons()}
       <div
+        style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
         className="textLayer"/>
     </div>;
@@ -161,6 +170,11 @@ CommentLayer.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   })),
+  dimensions: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number
+  }),
+  isVisible: PropTypes.bool,
   getTextLayerRef: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   placingAnnotationIconPageCoords: PropTypes.object,

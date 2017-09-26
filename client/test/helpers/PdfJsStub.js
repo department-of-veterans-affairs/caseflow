@@ -13,8 +13,15 @@ export default {
     },
     getPage: sinon.stub().resolves({
       getViewport: () => ({ width: PAGE_WIDTH,
-        height: PAGE_HEIGHT })
-    })
+        height: PAGE_HEIGHT }),
+      transport: {
+        destroyed: false
+      }
+    }),
+    destroy: sinon.stub(),
+    transport: {
+      destroyed: false
+    }
   },
 
   beforeEach() {
