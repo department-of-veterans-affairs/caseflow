@@ -737,6 +737,8 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[1].type
+        expect(page).to have_content("IN THE APPEAL", wait: 10)
+
         expect(page).to have_css(".page")
         scroll_element_to_view("pageContainer3")
         expect(find_field("page-progress-indicator-input").value).to eq "3"
@@ -766,7 +768,7 @@ RSpec.feature "Reader" do
 
           fill_in "page-progress-indicator-input", with: "23\n"
 
-          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
 
           expect(in_viewport("pageContainer23")).to be true
           expect(find_field("page-progress-indicator-input").value).to eq "23"

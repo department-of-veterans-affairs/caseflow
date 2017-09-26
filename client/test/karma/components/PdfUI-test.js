@@ -68,11 +68,11 @@ describe('PdfUI', () => {
     context('.onPageChange', () => {
       it('updates the state', () => {
         let currentPage = 2;
-        let numPages = 4;
+        let fitToScreenZoom = 3;
 
-        wrapper.instance().onPageChange(currentPage, numPages);
+        wrapper.instance().onPageChange(currentPage, fitToScreenZoom);
         expect(wrapper.state('currentPage')).to.equal(currentPage);
-        expect(wrapper.state('numPages')).to.equal(numPages);
+        expect(wrapper.state('fitToScreenZoom')).to.equal(fitToScreenZoom);
       });
     });
 

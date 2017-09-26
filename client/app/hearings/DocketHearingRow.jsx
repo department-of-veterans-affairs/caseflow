@@ -66,7 +66,8 @@ export class DocketHearingRow extends React.PureComponent {
           <span>{index + 1}.</span>
           <span>
             {getDate(hearing.date, 'EST')}
-            <br/>
+          </span>
+          <span>
             {hearing.regional_office_name}
           </span>
         </td>

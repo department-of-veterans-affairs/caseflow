@@ -493,13 +493,6 @@ export const removeTagRequestSuccess = (docId, tagId) => (
   }
 );
 
-export const setPdfReadyToShow = (docId) => ({
-  type: Constants.SET_PDF_READY_TO_SHOW,
-  payload: {
-    docId
-  }
-});
-
 export const setTagFilter = (text, checked, tagId) => ({
   type: Constants.SET_TAG_FILTER,
   payload: {
@@ -748,11 +741,37 @@ export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   }
 });
 
-export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
-  type: Constants.SET_PDF_PAGE_DIMENSIONS,
+export const setUpPdfPage = (file, pageIndex, page) => ({
+  type: Constants.SET_UP_PDF_PAGE,
   payload: {
     file,
     pageIndex,
-    dimensions
+    page
+  }
+});
+
+export const clearPdfPage = (file, pageIndex, page) => ({
+  type: Constants.CLEAR_PDF_PAGE,
+  payload: {
+    file,
+    pageIndex,
+    page
+  }
+});
+
+export const clearPdfDocument = (file, pageIndex, doc) => ({
+  type: Constants.CLEAR_PDF_DOCUMENT,
+  payload: {
+    file,
+    pageIndex,
+    doc
+  }
+});
+
+export const setPdfDocument = (file, doc) => ({
+  type: Constants.SET_PDF_DOCUMENT,
+  payload: {
+    file,
+    doc
   }
 });
