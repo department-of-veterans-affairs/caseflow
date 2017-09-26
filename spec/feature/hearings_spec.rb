@@ -95,10 +95,11 @@ RSpec.feature "Hearings" do
       fill_in "3.notes", with: "This is a note about the hearing!"
       find("label", text: "Add on").click
       find("label", text: "Transcript Requested").click
+
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
-      expect(find("label", text: "Add on")).to be_checked
-      expect(find("label", text: "Transcript Requested")).to be_checked
+      expect(find_field("Add on", visible: false)).to be_checked
+      expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
     scenario "Shows a hearing worksheet" do
