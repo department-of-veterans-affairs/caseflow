@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import ApiUtil from '../../../app/util/ApiUtil';
+import ApiUtil, { getHeadersObject } from '../../../app/util/ApiUtil';
 
 describe('ApiUtil', () => {
-  context('.headers', () => {
+  context('getHeadersObject', () => {
     it('returns default headers', () => {
-      let headers = ApiUtil.headers();
+      let headers = getHeadersObject();
 
       expect(headers.Accept).to.eq('application/json');
       expect(headers['Content-Type']).to.eq('application/json');
