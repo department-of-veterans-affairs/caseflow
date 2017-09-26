@@ -169,15 +169,16 @@ describe Hearing do
         subject # do update
         expect(hearing.worksheet_issues.count).to eq(1)
 
-        expect(hearing.worksheet_issues.first.remand).to eq true
-        expect(hearing.worksheet_issues.first.allow).to eq false
-        expect(hearing.worksheet_issues.first.deny).to eq false
-        expect(hearing.worksheet_issues.first.dismiss).to eq false
-        expect(hearing.worksheet_issues.first.vha).to eq true
-        expect(hearing.worksheet_issues.first.program).to eq "Wheel"
-        expect(hearing.worksheet_issues.first.name).to eq "Spoon"
-        expect(hearing.worksheet_issues.first.levels).to eq %w(Cabbage Pickle)
-        expect(hearing.worksheet_issues.first.description).to eq %w(Donkey Cow)
+        issue = hearing.worksheet_issues.first
+        expect(issue.remand).to eq true
+        expect(issue.allow).to eq false
+        expect(issue.deny).to eq false
+        expect(issue.dismiss).to eq false
+        expect(issue.vha).to eq true
+        expect(issue.program).to eq "Wheel"
+        expect(issue.name).to eq "Spoon"
+        expect(issue.levels).to eq %w(Cabbage Pickle)
+        expect(issue.description).to eq %w(Donkey Cow)
 
         # test that a 2nd save updates the same record, rather than create new one
         hearing_issue_id = hearing.worksheet_issues.first.id
@@ -187,16 +188,18 @@ describe Hearing do
 
         hearing.update(hearing_hash)
 
+        issue = hearing.worksheet_issues.first
+
         expect(hearing.worksheet_issues.count).to eq(1)
-        expect(hearing.worksheet_issues.first.id).to eq(hearing_issue_id)
-        expect(hearing.worksheet_issues.first.deny).to eq(true)
-        expect(hearing.worksheet_issues.first.remand).to eq(true)
-        expect(hearing.worksheet_issues.first.allow).to eq(false)
-        expect(hearing.worksheet_issues.first.dismiss).to eq(false)
-        expect(hearing.worksheet_issues.first.program).to eq "Wheel"
-        expect(hearing.worksheet_issues.first.name).to eq "Spoon"
-        expect(hearing.worksheet_issues.first.levels).to eq %w(Cabbage Pickle)
-        expect(hearing.worksheet_issues.first.description).to eq ["Tomato"]
+        expect(issue.id).to eq(hearing_issue_id)
+        expect(issue.deny).to eq(true)
+        expect(issue.remand).to eq(true)
+        expect(issue.allow).to eq(false)
+        expect(issue.dismiss).to eq(false)
+        expect(issue.program).to eq "Wheel"
+        expect(issue.name).to eq "Spoon"
+        expect(issue.levels).to eq %w(Cabbage Pickle)
+        expect(issue.description).to eq ["Tomato"]
 
         # soft delete an issue
         hearing_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
