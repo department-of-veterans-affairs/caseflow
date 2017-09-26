@@ -2,7 +2,7 @@
 # that RequestStore is cleared after every job.
 class JobRequestStoreMiddleware
   # :nocov:
-  def call(_worker, _msg, _queue)
+  def call(worker_instance, queue, msg, body)
     yield
   ensure
     ::RequestStore.clear! if defined?(::RequestStore)
