@@ -24,7 +24,9 @@ const configureStore = () => {
       store.replaceReducer(readerReducer);
     });
   }
-}
+
+  return store;
+};
 
 const Reader = (props) => {
   return <Provider store={configureStore()}>
