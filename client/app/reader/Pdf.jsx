@@ -7,8 +7,7 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfReadyToShow,
-  placeAnnotation, startPlacingAnnotation,
+import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
@@ -358,8 +357,7 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    onScrollToComment,
-    setPdfReadyToShow
+    onScrollToComment
   }, dispatch)
 });
 
@@ -387,7 +385,6 @@ Pdf.propTypes = {
     y: PropTypes.number
   }),
   onIconMoved: PropTypes.func,
-  setPdfReadyToShow: PropTypes.func,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   rotation: PropTypes.number
 };

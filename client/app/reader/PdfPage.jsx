@@ -161,6 +161,19 @@ export class PdfPage extends React.PureComponent {
   componentDidUpdate = (prevProps) => {
     const shouldDraw = this.shouldDrawPage(this.props);
 
+    // if (prevProps.rotation !== this.props.rotation) {
+    //   const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
+    //   const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
+
+    //   if (this.props.rotation === 90 || this.props.rotation === 270) {
+    //     this.canvas.height = this.props.scale * width;
+    //     this.canvas.width = this.props.scale * height;
+    //   } else {
+    //     this.canvas.height = this.props.scale * width;
+    //     this.canvas.width = this.props.scale * height;
+    //   }
+    // }
+
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
     if (shouldDraw) {
@@ -257,21 +270,21 @@ export class PdfPage extends React.PureComponent {
     });
     const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
     const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
-    const normalizedRotation = (this.props.rotation + 360) % 360;
-    const currentWidth = this.props.scale * width;
-    const currentHeight = this.props.scale * height;
-    let marginDifference = 0;
+    let currentWidth = this.props.scale * width;
+    let currentHeight = this.props.scale * height;
+    const marginTop = this.props.rotation === 270 ? currentWidth - currentHeight : 0;
 
-    if (normalizedRotation === 90 || normalizedRotation === 270) {
-      marginDifference = this.props.scale * width - this.props.scale * height;
+    if (this.props.rotation === 90 || this.props.rotation === 270) {
+      currentWidth = this.props.scale * height;
+      currentHeight = this.props.scale * width;
     }
+
     const divPageStyle = {
-      marginBottom: `${marginDifference + (PAGE_MARGIN_BOTTOM * this.props.scale)}px`,
+      marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${currentWidth}px`,
       height: `${currentHeight}px`,
       verticalAlign: 'top',
-      display: this.props.isVisible ? '' : 'none',
-      transform: `rotate(${this.props.rotation}deg)`
+      display: this.props.isVisible ? '' : 'none'
     };
     // Pages that are currently drawing should not be visible since they may be currently rendered
     // at the wrong scale.
@@ -284,7 +297,7 @@ export class PdfPage extends React.PureComponent {
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div className={pageContentsVisibleClass}>
+        <div className={pageContentsVisibleClass} style={{transform: `rotate(${this.props.rotation}deg)`, marginTop}}>
           <canvas
             ref={this.getCanvasRef}
             className="canvasWrapper" />
