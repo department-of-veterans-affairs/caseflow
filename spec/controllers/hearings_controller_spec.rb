@@ -3,7 +3,7 @@ RSpec.describe HearingsController, type: :controller do
   let(:hearing) { Generators::Hearing.create }
 
   describe "PATCH update" do
-    it "should be succesful" do
+    it "should be successful" do
       params = { notes: "Test",
                  hold_open: 30,
                  transcript_requested: false,
