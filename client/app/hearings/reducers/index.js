@@ -43,6 +43,12 @@ export const newHearingIssueState = (state, action, spec) => {
   });
 };
 
+export const newHearingWorksheetState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
+
+  return update(state, { worksheet: spec });
+};
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
   case Constants.POPULATE_DOCKETS:
@@ -61,13 +67,27 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_REPNAME:
-    return update(state, {
-      worksheet: { repName: { $set: action.payload.repName } }
-    });
+    return newHearingWorksheetState(state, action, { repName: { $set: action.payload.repName } });
 
   case Constants.SET_WITNESS:
-    return update(state, {
-      worksheet: { witness: { $set: action.payload.witness } }
+    return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
+
+  case Constants.SET_CONTENTIONS:
+    return newHearingWorksheetState(state, action, { contentions: { $set: action.payload.contentions } });
+
+  case Constants.SET_MILITARY_SERVICE:
+    return newHearingWorksheetState(state, action, {
+      military_service: { $set: action.payload.militaryService }
+    });
+
+  case Constants.SET_EVIDENCE:
+    return newHearingWorksheetState(state, action, {
+      evidence: { $set: action.payload.evidence }
+    });
+
+  case Constants.SET_COMMENTS_FOR_ATTORNEY:
+    return newHearingWorksheetState(state, action, {
+      comments_for_attorney: { $set: action.payload.commentsForAttorney }
     });
 
   case Constants.SET_NOTES:
@@ -108,26 +128,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_VHA:
     return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
-
-  case Constants.SET_CONTENTIONS:
-    return update(state, {
-      worksheet: { contentions: { $set: action.payload.contentions } }
-    });
-
-  case Constants.SET_MILITARY_SERVICE:
-    return update(state, {
-      worksheet: { military_service: { $set: action.payload.militaryService } }
-    });
-
-  case Constants.SET_EVIDENCE:
-    return update(state, {
-      worksheet: { evidence: { $set: action.payload.evidence } }
-    });
-
-  case Constants.SET_COMMENTS_FOR_ATTORNEY:
-    return update(state, {
-      worksheet: { comments_for_attorney: { $set: action.payload.commentsForAttorney } }
-    });
 
   case Constants.TOGGLE_SAVING:
     return update(state, {
