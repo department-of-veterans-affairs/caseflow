@@ -1,5 +1,6 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
+import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveDocs, onReceiveAnnotations, onInitialDataLoadingFail } from './actions';
 import { connect } from 'react-redux';
@@ -22,7 +23,7 @@ export class ReaderLoadingScreen extends React.Component {
       // We clear any loading failures before trying to load.
       this.props.onInitialDataLoadingFail(false);
 
-      ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`).then((response) => {
+      ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
         const { annotations } = returnedObject;
@@ -38,7 +39,7 @@ export class ReaderLoadingScreen extends React.Component {
           ApiUtil.get(documentUrls[index], {
             cache: true,
             withCredentials: true
-          }).then(
+          }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
             () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
           );
         };
