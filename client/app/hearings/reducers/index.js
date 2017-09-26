@@ -77,18 +77,17 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_MILITARY_SERVICE:
     return newHearingWorksheetState(state, action, {
-      military_service: { $set: action.payload.militaryService
-    }
+      military_service: { $set: action.payload.militaryService }
     });
 
   case Constants.SET_EVIDENCE:
-    return newHearingWorksheetState(state, action, { evidence: { $set: action.payload.evidence }
+    return newHearingWorksheetState(state, action, {
+      evidence: { $set: action.payload.evidence }
     });
 
   case Constants.SET_COMMENTS_FOR_ATTORNEY:
     return newHearingWorksheetState(state, action, {
-      comments_for_attorney: { $set: action.payload.commentsForAttorney
-      }
+      comments_for_attorney: { $set: action.payload.commentsForAttorney }
     });
 
   case Constants.SET_NOTES:
