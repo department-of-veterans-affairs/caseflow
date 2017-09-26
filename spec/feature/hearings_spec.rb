@@ -90,7 +90,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Upcoming Hearing Days")
     end
 
-    scenario "Daily docket saves to the backend", focus: true do
+    scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
       find("label", text: "Add on").click
