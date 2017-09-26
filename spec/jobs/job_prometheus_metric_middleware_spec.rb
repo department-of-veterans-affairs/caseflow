@@ -6,7 +6,7 @@ describe JobPrometheusMetricMiddleware do
       "job_class" => "FunTestJob"
     }
     @msg = {
-      "args" => [ @body ]
+      "args" => [@body]
     }
     @yield_called = false
     allow(PrometheusService).to receive(:push_metrics!).and_return(nil)

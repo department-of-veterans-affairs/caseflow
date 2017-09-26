@@ -1,6 +1,6 @@
 # This middleware adds tracking for job status such as start & end time
 class JobMonitoringMiddleware
-  def call(worker_instance, queue, msg, body)
+  def call(_worker, _queue, _msg, body)
     job_class = body["job_class"]
     Rails.cache.write("#{job_class}_last_started_at", Time.now.utc)
 

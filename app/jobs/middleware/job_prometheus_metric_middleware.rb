@@ -1,5 +1,5 @@
 class JobPrometheusMetricMiddleware
-  def call(worker_instance, queue, msg, body)
+  def call(_worker, _queue, _msg, body)
     job_class = body["job_class"]
 
     yield
