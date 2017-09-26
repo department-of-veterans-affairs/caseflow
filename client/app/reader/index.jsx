@@ -7,24 +7,27 @@ import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 import { reduxAnalyticsMiddleware } from './analytics';
 
-// eslint-disable-next-line no-underscore-dangle
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
-  combineReducers({
-    readerReducer
-  }),
-  composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
-);
 
-if (module.hot) {
-  // Enable Webpack hot module replacement for reducers
-  module.hot.accept('./reducer', () => {
-    store.replaceReducer(readerReducer);
-  });
+const configureStore = () => {
+  // eslint-disable-next-line no-underscore-dangle
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const store = createStore(
+    combineReducers({
+      readerReducer
+    }),
+    composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
+  );
+
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers
+    module.hot.accept('./reducer', () => {
+      store.replaceReducer(readerReducer);
+    });
+  }
 }
 
 const Reader = (props) => {
-  return <Provider store={store}>
+  return <Provider store={configureStore()}>
       <DecisionReviewer {...props} />
   </Provider>;
 };
