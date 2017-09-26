@@ -33,7 +33,7 @@ const aodOptions = [{ value: 'grant',
   label: 'None' }];
 
 const getDate = (date, timezone) => {
-  return moment.tz(date, timezone).
+  return moment.tz(date, 'America/New_York').
     format('h:mm a z').
     replace(/(p|a)m/, '$1.m.');
 };
@@ -65,7 +65,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, 'EST')}
+            {getDate(hearing.date.timezone, 'EST')}
           </span>
           <span>
             {hearing.regional_office_name}
