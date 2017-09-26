@@ -35,6 +35,24 @@ class Hearing < ActiveRecord::Base
     end
   end
 
+  def vacols_attributes
+    {
+      date: date,
+      type: type,
+      venue_key: venue_key,
+      vacols_record: vacols_record,
+      disposition: disposition,
+      aod: aod,
+      hold_open: hold_open,
+      transcript_requested: transcript_requested,
+      notes: notes,
+      add_on: add_on,
+      representative_name: representative_name,
+      regional_office_key: regional_office_key,
+      master_record: master_record
+    }
+  end
+
   def request_type
     type != :central_office ? type.to_s.capitalize : "CO"
   end
@@ -91,6 +109,7 @@ class Hearing < ActiveRecord::Base
   def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
+                :appeal_vacols_id,
                 :representative,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
@@ -118,6 +137,10 @@ class Hearing < ActiveRecord::Base
   def worksheet_issues
     appeal.issues.each { |i| WorksheetIssue.create_from_issue(appeal, i) } if appeal && super.empty?
     super
+  end
+
+  def appeal_vacols_id
+    appeal.try(:vacols_id)
   end
 
   class << self
