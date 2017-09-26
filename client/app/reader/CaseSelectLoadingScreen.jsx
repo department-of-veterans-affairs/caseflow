@@ -1,5 +1,6 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
+import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments, onInitialCaseLoadingFail } from './actions';
 import { connect } from 'react-redux';
@@ -16,7 +17,7 @@ export class CaseSelectLoadingScreen extends React.Component {
     if (this.props.assignments) {
       this.props.onInitialCaseLoadingFail(false);
 
-      ApiUtil.get('/reader/appeal?json').then((response) => {
+      ApiUtil.get('/reader/appeal?json', {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
         const returnedObject = JSON.parse(response.text);
 
         this.props.onReceiveAssignments(returnedObject.cases);

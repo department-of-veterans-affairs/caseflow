@@ -198,7 +198,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue description', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { description: 'Elbow Arthritis' }
+        66: { description: 'Elbow Arthritis',
+          edited: true }
       }
      );
     });
@@ -218,7 +219,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue reopen', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { reopen: true }
+        66: { reopen: true,
+          edited: true }
       }
      );
     });
@@ -238,7 +240,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue allow', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { allow: true }
+        66: { allow: true,
+          edited: true }
       }
      );
     });
@@ -258,7 +261,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue deny', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { deny: true }
+        66: { deny: true,
+          edited: true }
       }
      );
     });
@@ -278,7 +282,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue remand', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { remand: true }
+        66: { remand: true,
+          edited: true }
       }
      );
     });
@@ -298,7 +303,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue dismiss', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { dismiss: true }
+        66: { dismiss: true,
+          edited: true }
       }
      );
     });
@@ -318,7 +324,8 @@ describe('hearingsReducer', () => {
 
     it('sets worksheet issue vha', () => {
       expect(state.worksheet.streams[8873].issues).to.deep.equal({
-        66: { vha: true }
+        66: { vha: true,
+          edited: true }
       }
      );
     });
