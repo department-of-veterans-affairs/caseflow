@@ -43,6 +43,8 @@ export class PerfDebugComponent extends Component {
   componentDidUpdate = componentDidUpdate
 }
 
+const getTimeLabel = (countMs) => `${countMs.toFixed(2)}ms`;
+
 export const timeFunction = (fn, getLabel) => (...args) => {
   const startMs = window.performance.now();
   const returnValue = fn(...args);
@@ -51,7 +53,7 @@ export const timeFunction = (fn, getLabel) => (...args) => {
   if (startMs !== 'RUNNING_IN_NODE') {
     // eslint-disable-next-line no-console
 
-    const timeLabel = `${(endMs - startMs).toFixed(2)}ms`;
+    const timeLabel = getTimeLabel(endMs - startMs);
     const label = _.isFunction(getLabel) ? getLabel(timeLabel, ...args) : `${getLabel} took ${timeLabel}`;
 
     console.log(label);
@@ -60,7 +62,7 @@ export const timeFunction = (fn, getLabel) => (...args) => {
   return returnValue;
 };
 
-export const timeFunctionPromise = (fn, onTimeElapsed = _.noop) => (...args) => {
+export const timeFunctionPromise = (fn, onTimeElapsed, label = '') => (...args) => {
   const startMs = window.performance.now();
   const returnPromise = fn(...args);
 
@@ -71,6 +73,10 @@ export const timeFunctionPromise = (fn, onTimeElapsed = _.noop) => (...args) => 
       const timeElapsedMs = endMs - startMs;
 
       onTimeElapsed(timeElapsedMs, ...args);
+
+      if (label) {
+        console.log(`${label} took ${getTimeLabel(timeElapsedMs)}.`);
+      }
     });
   }
 
