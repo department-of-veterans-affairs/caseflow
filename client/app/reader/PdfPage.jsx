@@ -249,27 +249,43 @@ export class PdfPage extends React.PureComponent {
     return _.pick(viewport, ['width', 'height']);
   }
 
+  getDivDimensions = () => {
+    const innerDivDimensions = {
+      innerDivWidth: _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH),
+      innerDivHeight: _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT)
+    };
+
+    // If we have rotated the page, we need to switch the width and height.
+    if (this.props.rotation === 90 || this.props.rotation === 270) {
+      return {
+        outerDivWidth: this.props.scale * innerDivDimensions.innerDivHeight,
+        outerDivHeight: this.props.scale * innerDivDimensions.innerDivWidth,
+        ...innerDivDimensions
+      };
+    }
+
+    return {
+      outerDivWidth: this.props.scale * innerDivDimensions.innerDivWidth,
+      outerDivHeight: this.props.scale * innerDivDimensions.innerDivHeight,
+      ...innerDivDimensions
+    };
+  }
+
   render() {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
-    const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
-    const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
-    let currentWidth = this.props.scale * width;
-    let currentHeight = this.props.scale * height;
-    const marginTop = this.props.rotation === 270 ? currentWidth - currentHeight : 0;
+    const { outerDivWidth, outerDivHeight, innerDivWidth, innerDivHeight } = this.getDivDimensions();
 
-    if (this.props.rotation === 90 || this.props.rotation === 270) {
-      currentWidth = this.props.scale * height;
-      currentHeight = this.props.scale * width;
-    }
-
+    // When you rotate a page 270 degrees there is a margin on the right equal to the difference
+    // between the current width and current height. We need to undo that margin to get things to align.
+    const marginTop = this.props.rotation === 270 ? outerDivWidth - outerDivHeight : 0;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-      width: `${currentWidth}px`,
-      height: `${currentHeight}px`,
+      width: `${outerDivWidth}px`,
+      height: `${outerDivHeight}px`,
       verticalAlign: 'top',
       display: this.props.isVisible ? '' : 'none'
     };
@@ -278,13 +294,22 @@ export class PdfPage extends React.PureComponent {
     const pageContentsVisibleClass = classNames({
       'cf-pdf-page-hidden': this.props.isDrawing
     });
+    // This div is the one responsible for rotating the page. It is within the outer div which changes
+    // its width and height based on whether this page has been rotated to be in a portrait or landscape view.
+    const innerDivStyle = {
+      transform: `rotate(${this.props.rotation}deg)`,
+      marginTop
+    };
 
     return <div
-      id={`pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`}
+      id={`pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}-${this.props.file}`}
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div className={pageContentsVisibleClass} style={{transform: `rotate(${this.props.rotation}deg)`, marginTop}}>
+        <div
+          id={`rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}-${this.props.file}`}
+          className={pageContentsVisibleClass}
+          style={innerDivStyle}>
           <canvas
             ref={this.getCanvasRef}
             className="canvasWrapper" />
@@ -295,8 +320,10 @@ export class PdfPage extends React.PureComponent {
               scale={this.props.scale}
               getTextLayerRef={this.getTextLayerRef}
               file={this.props.file}
-              dimensions={{ width,
-                height }}
+              dimensions={{
+                width: innerDivWidth,
+                height: innerDivHeight
+              }}
               isVisible={this.props.isVisible}
             />
           </div>

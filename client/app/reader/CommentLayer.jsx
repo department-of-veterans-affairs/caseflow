@@ -93,8 +93,6 @@ class CommentLayer extends PureComponent {
       throw err;
     }
 
-    const pageBox = this.commentLayerDiv.getBoundingClientRect();
-
     const coordinates = getPageCoordinatesOfMouseEvent(
       event,
       this.commentLayerDiv.getBoundingClientRect(),
@@ -118,8 +116,6 @@ class CommentLayer extends PureComponent {
         this.props.scale,
         this.props.rotation
       );
-
-      console.log('pagecoords', pageCoords);
 
       this.props.showPlaceAnnotationIcon(this.props.pageIndex, pageCoords);
     }

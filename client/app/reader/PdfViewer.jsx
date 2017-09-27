@@ -14,9 +14,12 @@ import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 
+const NUMBER_OF_DIRECTIONS = 4;
+
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation) => {
-  const rotationIncrements = -(rotation / 90) % 4;
-  const transformedDirection = Constants.MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[(direction + rotationIncrements + 4) % 4];
+  const rotationIncrements = -(rotation / Constants.ROTATION_INCREMENTS) % NUMBER_OF_DIRECTIONS;
+  const transformedDirection = Constants.MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[
+    (direction + rotationIncrements + NUMBER_OF_DIRECTIONS) % NUMBER_OF_DIRECTIONS];
   const moveAmountPx = 5;
   const movementDirection = _.includes(
     [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],

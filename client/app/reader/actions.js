@@ -783,4 +783,4 @@ export const rotateDocument = (docId) => ({
   payload: {
     docId
   }
-})
+});

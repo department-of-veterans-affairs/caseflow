@@ -276,7 +276,9 @@ export class Pdf extends React.PureComponent {
       }
       if (this.props.scrollToComment) {
         const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
-        const y = rotateCoordinates({x: this.props.scrollToComment.x, y: this.props.scrollToComment.y}, this.props.pageContainers[pageIndex].getBoundingClientRect(), -this.props.rotation).y;
+        const y = rotateCoordinates(this.props.scrollToComment,
+          this.props.pageContainers[pageIndex].getBoundingClientRect(), -this.props.rotation).y * this.props.scale;
+
         this.scrollToPageLocation(pageIndex, y);
       }
     }
