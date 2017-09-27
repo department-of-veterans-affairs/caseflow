@@ -3,6 +3,7 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
+import AppFrame from '../components/AppFrame';
 import First from './pages/first';
 
 export default class IntakeFrame extends React.PureComponent {
@@ -11,7 +12,7 @@ export default class IntakeFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
-    return <Router  basename="/intake" {...this.props.routerTestProps}>
+    return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
         <NavigationBar
           appName={appName}
@@ -19,11 +20,13 @@ export default class IntakeFrame extends React.PureComponent {
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/"
         >
+        <AppFrame>
           <PageRoute
             exact
             path="/"
             title="Welcome | Caseflow Intake"
             component={First}/>
+        </AppFrame>
         </NavigationBar>
         <Footer
           appName={appName}
