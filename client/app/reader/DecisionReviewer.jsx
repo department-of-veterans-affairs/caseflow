@@ -129,8 +129,9 @@ export class DecisionReviewer extends React.PureComponent {
           <NavigationBar
             appName="Reader"
             userDisplayName={this.props.userDisplayName}
-            dropdownUrls={this.props.dropdownUrls}>
-            <div className="section--document-list">
+            dropdownUrls={this.props.dropdownUrls}
+            defaultUrl="/">
+            <div className="cf-wide-app section--document-list">
               <PageRoute
                 exact
                 path="/"
