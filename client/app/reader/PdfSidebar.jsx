@@ -11,6 +11,7 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
+import CannotSaveAlert from '../reader/CannotSaveAlert';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 import { plusIcon, Keyboard } from '../components/RenderFunctions';
@@ -162,8 +163,6 @@ export class PdfSidebar extends React.Component {
         this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
     );
 
-    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
-
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
           <Button
@@ -187,7 +186,7 @@ export class PdfSidebar extends React.Component {
             </AccordionSection>
             <AccordionSection title="Categories">
               <div className="cf-category-sidebar">
-                {showErrorMessage.category && cannotSaveAlert}
+                {showErrorMessage.category && <CannotSaveAlert />}
                 <DocCategoryPicker
                   allowReadOnly={true}
                   handleCategoryToggle={
