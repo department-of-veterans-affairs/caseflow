@@ -29,6 +29,7 @@ export const newHearingState = (state, action, spec) => {
 
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
 
   return update(state, {
     worksheet: {
@@ -103,7 +104,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingState(state, action, { aod: { $set: action.payload.aod } });
 
   case Constants.SET_ADD_ON:
-    return newHearingState(state, action, { addon: { $set: action.payload.addOn } });
+    return newHearingState(state, action, { add_on: { $set: action.payload.addOn } });
 
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
@@ -132,6 +133,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.TOGGLE_SAVING:
     return update(state, {
       isSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.SET_SAVE_FAILED:
+    return update(state, {
+      saveFailed: { $set: action.payload.saveFailed }
     });
 
   case Constants.SET_EDITED_FLAG_TO_FALSE:

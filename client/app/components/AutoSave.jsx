@@ -43,12 +43,17 @@ export class AutoSave extends React.Component {
       </div>;
     }
 
+    if (this.props.saveFailed) {
+      return <span className="saving">Save failed.</span>;
+    }
+
     return <span className="saving">Last saved at {now()}</span>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  isSaving: state.isSaving
+  isSaving: state.isSaving,
+  saveFailed: state.saveFailed
 });
 
 export default connect(
@@ -59,7 +64,8 @@ AutoSave.propTypes = {
   isSaving: PropTypes.bool,
   spinnerColor: PropTypes.string,
   intervalInMs: PropTypes.number,
-  save: PropTypes.func.isRequired
+  save: PropTypes.func.isRequired,
+  saveFailed: PropTypes.bool
 };
 
 AutoSave.defaultProps = {
