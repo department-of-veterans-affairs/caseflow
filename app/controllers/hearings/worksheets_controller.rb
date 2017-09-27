@@ -47,7 +47,8 @@ class Hearings::WorksheetsController < HearingsController
               allow: true,
               dismiss: false,
               deny: false,
-              vha: false },
+              vha: false,
+              from_vacols: false},
             "17": {
               id: 17,
               program: "Compensation",
@@ -59,7 +60,8 @@ class Hearings::WorksheetsController < HearingsController
               allow: true,
               dismiss: false,
               deny: false,
-              vha: true }
+              vha: true,
+              from_vacols: true}
           },
           nod: 99,
           soc: 10,
@@ -78,7 +80,8 @@ class Hearings::WorksheetsController < HearingsController
               allow: false,
               dismiss: false,
               deny: false,
-              vha: false },
+              vha: false,
+              from_vacols: false},
             "1754": {
               id: 1754,
               program: "Compensation",
@@ -90,7 +93,8 @@ class Hearings::WorksheetsController < HearingsController
               allow: false,
               dismiss: false,
               deny: true,
-              vha: true }
+              vha: true,
+              from_vacols: true}
           },
           nod: 99,
           soc: 10,

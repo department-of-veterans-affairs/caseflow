@@ -63,12 +63,29 @@ class HearingWorksheetIssues extends PureComponent {
 
       return {
         counter: <b>{key + 1}.</b>,
-        program: issueRow.program,
-        issue: issueRow.issue,
-        levels: issueRow.levels,
+        program: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="program"
+            from_vacols={issueRow.from_vacols}
+        />,
+        issue: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="issue"
+            from_vacols={issueRow.from_vacols}
+        />,
+        levels: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="levels"
+            from_vacols={issueRow.from_vacols}
+        />,
         description: <HearingWorksheetIssueFields
                       appeal={worksheetStreamsAppeal}
                       issue={issueRow}
+                      field="description"
+                      from_vacols={issueRow.from_vacols}
                        />,
         actions: <HearingWorksheetPreImpressions
                     appeal={worksheetStreamsAppeal}
