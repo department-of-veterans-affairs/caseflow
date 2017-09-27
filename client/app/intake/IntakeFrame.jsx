@@ -23,7 +23,7 @@ export default class IntakeFrame extends React.PureComponent {
             exact
             path="/"
             title="Welcome | Caseflow Intake"
-            render={() => <First />}/>
+            component={First}/>
         </NavigationBar>
         <Footer
           appName={appName}
