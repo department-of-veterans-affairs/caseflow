@@ -16,6 +16,7 @@ import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 import { plusIcon, Keyboard } from '../components/RenderFunctions';
 import SideBarDocumentInformation from './SideBarDocumentInformation';
+import SideBarIssueTags from './SideBarIssueTags';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
@@ -77,27 +78,6 @@ export class PdfSidebar extends React.Component {
         ].getBoundingClientRect().top - commentListBoundingBox.top -
         COMMENT_SCROLL_FROM_THE_TOP;
       this.props.handleFinishScrollToSidebarComment();
-    }
-  }
-
-  generateOptionsFromTags = (tags) =>
-    _(tags).
-      reject('pendingRemoval').
-      map((tag) => ({
-        value: tag.text,
-        label: tag.text,
-        tagId: tag.id })
-      ).
-      value();
-
-  onChange = (values, deletedValue) => {
-    if (_.size(deletedValue)) {
-      const tagValue = _.first(deletedValue).label;
-      const result = _.find(this.props.doc.tags, { text: tagValue });
-
-      this.props.removeTag(this.props.doc, result.id);
-    } else if (values && values.length) {
-      this.props.addNewTag(this.props.doc, values);
     }
   }
 
@@ -197,19 +177,12 @@ export class PdfSidebar extends React.Component {
             </AccordionSection>
             <AccordionSection title="Issue tags">
               <div className="cf-issue-tag-sidebar">
-                {showErrorMessage.tag && cannotSaveAlert}
-                <SearchableDropdown
-                  key={doc.id}
-                  name="tags"
-                  label="Select or tag issue(s)"
-                  multi={true}
-                  creatable={true}
-                  options={this.generateOptionsFromTags(tagOptions)}
-                  placeholder=""
-                  value={this.generateOptionsFromTags(doc.tags)}
-                  onChange={this.onChange}
-                  selfManageValueState={true}
-                />
+                <SideBarIssueTags
+                  doc={this.props.doc}
+                  showErrorMessage={showErrorMessage}
+                  tagOptions={tagOptions}
+                  addNewTag={this.props.addNewTag}
+                  removeTag={this.props.removeTag}/>
               </div>
             </AccordionSection>
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
