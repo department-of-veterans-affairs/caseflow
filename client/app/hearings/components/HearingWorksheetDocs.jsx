@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { formatDate } from '../../util/DateUtil';
+import { formatDate, formatArrayOfDateStrings } from '../../util/DateUtil';
 
 class HearingWorksheetDocs extends Component {
 
@@ -50,7 +50,7 @@ class HearingWorksheetDocs extends Component {
                     </div>
                     <div className="cf-hearings-worksheet-data-cell column-3">
                         <div>SSOC:</div>
-                        <div>01/01/1990</div>
+                        <div>{formatArrayOfDateStrings(appeal.ssoc_dates)}</div>
                     </div>
                     <div className="cf-hearings-worksheet-data-cell column-4">
                         <div>&nbsp;</div>

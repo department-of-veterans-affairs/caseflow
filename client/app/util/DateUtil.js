@@ -15,6 +15,12 @@ export const formatDate = function(dateString) {
   return `${month}/${day}/${year}`;
 };
 
+export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
+  return arrayOfDateStrings.map((dateString) => {
+    return formatDate(dateString);
+  }).join(', ');
+};
+
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => (
   moment(dateString, dateFormat).format(expectedFormat)
 );
