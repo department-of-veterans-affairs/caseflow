@@ -26,12 +26,12 @@ export default class IntakeFrame extends React.PureComponent {
             exact
             path="/"
             title="Welcome | Caseflow Intake"
-            component={First}/>
+            component={First} />
           <PageRoute
             exact
             path="/second"
             title="Welcome 2 | Caseflow Intake"
-            component={Second}/>
+            component={Second} />
         </AppFrame>
         </NavigationBar>
         <Footer

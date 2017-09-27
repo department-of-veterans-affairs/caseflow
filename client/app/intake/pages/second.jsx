@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default class First extends React.PureComponent {
+export default class Second extends React.PureComponent {
   render() {
-    return <h1>INTAKE FUCK YEAH DUDE second page</h1>;
+    return <h1>INTAKE YEAH DUDE second page</h1>;
   }
 }
 
