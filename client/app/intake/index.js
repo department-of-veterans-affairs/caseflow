@@ -6,7 +6,7 @@ import IntakeFrame from './IntakeFrame';
 import reducer from './redux/reducer';
 import { reduxAnalyticsMiddleware } from '../reader/analytics';
 
-const Reader = (props) => {
+const Intake = (props) => {
   // eslint-disable-next-line no-underscore-dangle
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const store = createStore(
@@ -28,4 +28,4 @@ const Reader = (props) => {
   </Provider>;
 };
 
-export default Reader;
+export default Intake;
