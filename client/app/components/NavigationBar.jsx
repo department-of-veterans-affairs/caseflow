@@ -9,7 +9,6 @@ export default class NavigationBar extends React.Component {
   render() {
     let {
       appName,
-      breadCrumb,
       defaultUrl,
       dropdownUrls,
       userDisplayName
@@ -20,12 +19,12 @@ export default class NavigationBar extends React.Component {
           <div className="cf-app-width">
             <span className="cf-push-left">
               <h1 className={`cf-logo cf-logo-image-${appName.
-                  split(' ').
-                  join('-').
+                  split(" ").
+                  join("-").
                   toLowerCase()}`}>
                 <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
-                  <h2 id="page-title" className="cf-application-title">&nbsp; {appName} {breadCrumb}</h2>
+                  <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
                 </Link>
               </h1>
               <Breadcrumbs>
@@ -56,8 +55,7 @@ NavigationBar.propTypes = {
     link: PropTypes.string.isRequired,
     target: PropTypes.string
   })),
-  userDisplayName: PropTypes.string.isRequired,
-  appName: PropTypes.string.isRequired,
   defaultUrl: PropTypes.string.isRequired,
-  breadCrumb: PropTypes.node
+  userDisplayName: PropTypes.string.isRequired,
+  appName: PropTypes.string.isRequired
 };

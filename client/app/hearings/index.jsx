@@ -54,8 +54,7 @@ const Hearings = ({ hearings }) => {
             appName="Hearing Prep"
             defaultUrl="/hearings/dockets"
             userDisplayName={hearings.userDisplayName}
-            dropdownUrls={hearings.dropdownUrls}
-            breadCrumb={<Breadcrumb />}/>
+            dropdownUrls={hearings.dropdownUrls}>
           <div className="cf-wide-app">
             <div className="usa-grid">
               <ScrollToTop />
@@ -67,6 +66,7 @@ const Hearings = ({ hearings }) => {
                />
 
                <Route exact path="/hearings/dockets/:date"
+                 breadcrumb="Daily Docket"
                  component={(props) => (
                    <DailyDocketContainer
                      veteran_law_judge={hearings.veteran_law_judge}
@@ -75,6 +75,7 @@ const Hearings = ({ hearings }) => {
                />
 
              <Route exact path="/hearings/:hearingId/worksheet"
+                 breadcrumb="Daily Docket > Hearing Worksheet"
                  component={(props) => (
                    <HearingWorksheetContainer
                      veteran_law_judge={hearings.veteran_law_judge}
@@ -83,6 +84,7 @@ const Hearings = ({ hearings }) => {
                />
             </div>
           </div>
+          </NavigationBar>
         </div>
 
       </BrowserRouter>
