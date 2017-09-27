@@ -2,9 +2,8 @@
   <%= react_component("BaseContainer", props: {
     userDisplayName: current_user.display_name,
     dropdownUrls: dropdown_urls,
-    page: "DecisionReviewer",
+    page: "Intake",
     feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
-    pdfWorker: asset_path('pdf.worker.js'),
     buildDate: build_date
   }) %>
 <% end %>
