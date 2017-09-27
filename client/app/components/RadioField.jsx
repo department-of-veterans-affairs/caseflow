@@ -68,7 +68,7 @@ export default class RadioField extends React.Component {
               value={option.value}
               checked={value === option.value}
             />
-            <label htmlFor={`${idPart}_${option.value}`}>{option.displayText}</label>
+            <label htmlFor={`${idPart}_${option.value}`}>{option.displayText || option.displayElem}</label>
           </div>
         )}
       </div>

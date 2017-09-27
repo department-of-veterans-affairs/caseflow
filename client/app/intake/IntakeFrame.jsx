@@ -19,7 +19,7 @@ export default class IntakeFrame extends React.PureComponent {
       { title: '1. Begin Intake' },
       { title: '2. Review Request' },
       { title: '3. Finish Processing' },
-      { title: '4. Confirmation' },
+      { title: '4. Confirmation' }
     ];
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
@@ -31,17 +31,17 @@ export default class IntakeFrame extends React.PureComponent {
           defaultUrl="/"
         >
           <AppFrame>
-            <ProgressBar sections={progressBarSections} /> 
+            <ProgressBar sections={progressBarSections} />
             <PrimaryAppContent>
               <PageRoute
                 exact
                 path="/"
-                title="Welcome | Caseflow Intake"
+                title="Begin Intake | Caseflow Intake"
                 component={BeginPage} />
               <PageRoute
                 exact
-                path="/second"
-                title="Welcome 2 | Caseflow Intake"
+                path="/review-request"
+                title="Review Request | Caseflow Intake"
                 component={ReviewPage} />
               </PrimaryAppContent>
           </AppFrame>
