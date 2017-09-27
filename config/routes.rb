@@ -86,8 +86,7 @@ Rails.application.routes.draw do
   end
 
   resources :intake, only: :index
-
-  resources :offices, only: :index
+  match '/intake/:any' => 'intake#index', via: [:get]
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
