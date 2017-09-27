@@ -158,7 +158,7 @@ describe('hearingsReducer', () => {
     });
 
     it('sets addon', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { addon: true,
+      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { add_on: true,
         edited: true } } } });
     });
   });

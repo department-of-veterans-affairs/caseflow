@@ -15,7 +15,8 @@ class Generators::Issue
         program: :compensation,
         type: { name: :service_connection, label: "Service Connection" },
         category: :knee,
-        note: "low back condition"
+        note: "low back condition",
+        vacols_sequence_id: 1
       }
     end
 
@@ -27,7 +28,6 @@ class Generators::Issue
         Fakes::AppealRepository.issue_records ||= {}
         Fakes::AppealRepository.issue_records[vacols_id] ||= []
         Fakes::AppealRepository.issue_records[vacols_id].push(issue)
-        issue.vacols_sequence_id = Fakes::AppealRepository.issue_records[vacols_id].length
       end
 
       issue

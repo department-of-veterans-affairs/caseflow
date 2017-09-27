@@ -23,7 +23,7 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet } = this.props;
-    let readerLink = `/reader/appeal/${worksheet.vacols_id}/documents`;
+    let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">

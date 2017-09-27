@@ -35,7 +35,8 @@ const aodOptions = [{ value: 'grant',
 const getDate = (date, timezone) => {
   return moment.tz(date, timezone).
     format('h:mm a z').
-    replace(/(p|a)m/, '$1.m.');
+    replace('AM', 'a.m.').
+    replace('PM', 'p.m.');
 };
 
 export class DocketHearingRow extends React.PureComponent {
@@ -65,7 +66,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, 'EST')}
+            {getDate(hearing.date, 'America/New_York')}
           </span>
           <span>
             {hearing.regional_office_name}
@@ -105,7 +106,7 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               label="Add on"
               name={`${hearing.id}.addon`}
-              value={hearing.addon}
+              value={hearing.add_on}
               onChange={this.setAddOn}
             />
           </div>

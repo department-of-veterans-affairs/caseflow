@@ -6,3 +6,7 @@ window.analyticsPageView = function() {
 window.analyticsEvent = function() {
 };
 
+// eslint-disable-next-line no-empty-function
+window.analyticsTiming = function() {
+};
+
