@@ -264,7 +264,7 @@ class AppealRepository
   end
 
   def self.aod(vacols_id)
-    (VACOLS::Case.aod([vacols_id])[vacols_id] == 1) || 0
+    VACOLS::Case.aod([vacols_id])[vacols_id]
   end
 
   # :nocov:

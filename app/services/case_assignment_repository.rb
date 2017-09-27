@@ -14,7 +14,7 @@ class CaseAssignmentRepository
       active_cases_for_user.map do |assignment|
         appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
         appeal.attributes = assignment.attributes
-        appeal.aod = (active_cases_aod_results[assignment.vacols_id] == 1)
+        appeal.aod = active_cases_aod_results[index]
         appeal.issues = Issue.load_from_vacols(active_cases_issues[assignment.vacols_id]) if fetch_issues
         appeal.save
         appeal
