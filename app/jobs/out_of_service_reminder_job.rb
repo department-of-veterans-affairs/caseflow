@@ -1,5 +1,5 @@
 class OutOfServiceReminderJob < ActiveJob::Base
-  queue_as :default
+  queue_as :low_priority
 
   def perform
     apps = %w(certification dispatch hearing_prep reader)
