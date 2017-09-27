@@ -147,6 +147,7 @@ body {
   }
 }
 
+// Used for Caseflow app header rendered in Rails
 @mixin app-width($app) {
   margin-left: auto;
   margin-right: auto;
@@ -155,6 +156,15 @@ body {
     width: 85vw;
   } @else {
     width: 75vw;
+  }
+}
+
+// Used for Caseflow app header rendered in React
+.cf-wide-app {
+  .usa-grid {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 85vw;
   }
 }
 
