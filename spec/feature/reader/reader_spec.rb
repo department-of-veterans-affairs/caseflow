@@ -204,7 +204,7 @@ RSpec.feature "Reader" do
       end
 
       before do
-        Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
+        Fakes::AppealReposiotry.appeal_records = [appeal, appeal2]
       end
 
       scenario "Enter a case" do
