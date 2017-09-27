@@ -4,6 +4,8 @@ import Footer from '../components/Footer';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
+import ProgressBar from '../components/ProgressBar';
+import PrimaryAppContent from '../components/PrimaryAppContent';
 import BeginPage from './pages/begin';
 import ReviewPage from './pages/review';
 
@@ -13,6 +15,13 @@ export default class IntakeFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
+    const progressBarSections = [
+      { title: '1. Begin Intake' },
+      { title: '2. Review Request' },
+      { title: '3. Finish Processing' },
+      { title: '4. Confirmation' },
+    ];
+
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
         <NavigationBar
@@ -21,18 +30,21 @@ export default class IntakeFrame extends React.PureComponent {
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/"
         >
-        <AppFrame>
-          <PageRoute
-            exact
-            path="/"
-            title="Welcome | Caseflow Intake"
-            component={BeginPage} />
-          <PageRoute
-            exact
-            path="/second"
-            title="Welcome 2 | Caseflow Intake"
-            component={ReviewPage} />
-        </AppFrame>
+          <AppFrame>
+            <ProgressBar sections={progressBarSections} /> 
+            <PrimaryAppContent>
+              <PageRoute
+                exact
+                path="/"
+                title="Welcome | Caseflow Intake"
+                component={BeginPage} />
+              <PageRoute
+                exact
+                path="/second"
+                title="Welcome 2 | Caseflow Intake"
+                component={ReviewPage} />
+              </PrimaryAppContent>
+          </AppFrame>
         </NavigationBar>
         <Footer
           appName={appName}
