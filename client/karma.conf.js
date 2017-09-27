@@ -17,7 +17,7 @@ module.exports = function(config) {
 
     files: [
       'test/karma/setup.js',
-      { pattern: karmaTestPattern }
+      'test/karma/test_index.js'
     ],
 
     mochaReporter: {
@@ -25,7 +25,8 @@ module.exports = function(config) {
     },
 
     preprocessors: {
-      [karmaTestPattern]: ['webpack', 'sourcemap']
+      // [karmaTestPattern]: ['webpack', 'sourcemap']
+       'test/karma/test_index.js': ['webpack']
     },
 
     // Note that karma-webpack will ignore the `entry` value for
@@ -35,6 +36,7 @@ module.exports = function(config) {
     // for shims and polyfills, need to be manually imported
     // in the tests.
     webpack: _.merge({
+      watch: true,
       externals: {
         cheerio: 'window',
         'react/addons': true,

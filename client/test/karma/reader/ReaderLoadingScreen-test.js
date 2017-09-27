@@ -8,7 +8,7 @@ import { ReaderLoadingScreen } from '../../../app/reader/ReaderLoadingScreen';
 describe('ReaderLoadingScreen', () => {
   const getContext = () => mount(<ReaderLoadingScreen onInitialDataLoadingFail={_.noop} >
         <p>Show when documents are loaded</p>
-    </ReaderLoadingScreen>);
+    </ReaderLoadingScreen>, { attachTo: document.body });
   const vacolsId = 1;
 
   it('displays children when the documents are loaded', () => {
