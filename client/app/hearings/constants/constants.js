@@ -24,6 +24,7 @@ export const SET_DENY = 'SET_DENY';
 export const SET_REMAND = 'SET_REMAND';
 export const SET_DISMISS = 'SET_DISMISS';
 export const SET_VHA = 'SET_VHA';
+export const ADD_ISSUE = 'ADD_ISSUE';
 
 export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_MILITARY_SERVICE = 'SET_MILITARY_SERVICE';

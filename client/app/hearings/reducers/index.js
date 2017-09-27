@@ -130,6 +130,20 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_VHA:
     return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
 
+  case Constants.ADD_ISSUE:
+    return update(state, {
+      worksheet: {
+        streams: {
+          [action.payload.appealId]: {
+            issues: {
+              [action.payload.issueId]: spec
+            }
+          }
+        }
+      }
+  });
+
+
   case Constants.TOGGLE_SAVING:
     return update(state, {
       isSaving: { $set: !state.isSaving }
