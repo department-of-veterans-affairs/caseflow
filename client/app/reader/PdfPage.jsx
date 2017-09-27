@@ -281,7 +281,7 @@ export class PdfPage extends React.PureComponent {
 
     // When you rotate a page 270 degrees there is a margin on the right equal to the difference
     // between the current width and current height. We need to undo that margin to get things to align.
-    const marginTop = this.props.rotation === 270 ? outerDivWidth - outerDivHeight : 0;
+    const marginTop = this.props.rotation === 270 ? outerDivHeight - outerDivWidth : 0;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${outerDivWidth}px`,
