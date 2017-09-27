@@ -4,8 +4,8 @@ import Footer from '../components/Footer';
 import { BrowserRouter } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
-import First from './pages/first';
-import Second from './pages/second';
+import BeginPage from './pages/begin';
+import ReviewPage from './pages/review';
 
 export default class IntakeFrame extends React.PureComponent {
   render() {
@@ -26,12 +26,12 @@ export default class IntakeFrame extends React.PureComponent {
             exact
             path="/"
             title="Welcome | Caseflow Intake"
-            component={First} />
+            component={BeginPage} />
           <PageRoute
             exact
             path="/second"
             title="Welcome 2 | Caseflow Intake"
-            component={Second} />
+            component={ReviewPage} />
         </AppFrame>
         </NavigationBar>
         <Footer
