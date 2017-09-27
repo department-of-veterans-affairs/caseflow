@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
 import * as AppConstants from '../constants/AppConstants';
-import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE } from './constants/constants';
+import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
 import AutoSave from '../components/AutoSave.jsx';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
@@ -82,47 +82,31 @@ const mapDispatchToProps = (dispatch) => ({
   save: (docket, date) => () => {
     const hearingsToSave = docket.filter((hearing) => hearing.edited);
 
-    let hearingsToSaveIndeces = [];
-
-    for (let index = 0; index < docket.length; index++) {
-      if (docket[index].edited) {
-        hearingsToSaveIndeces.push(index);
-      }
+    if (hearingsToSave.length === 0) {
+      return;
     }
 
-    if (hearingsToSave.length) {
-      dispatch({ type: TOGGLE_SAVING });
+    dispatch({ type: TOGGLE_SAVING });
 
-      // ApiUtil.put('/hearings/save_data', { data: { hearings: hearingsToSave} }).
-      //   then(
-      //     () => {
-      //       dispatch({ type: TOGGLE_SAVING });
-      //
-      //       hearingsToSaveIndeces.forEach((index) => {
-      //         dispatch({ type: SET_EDITED_FLAG_TO_FALSE, payload: { date, index }})
-      //       });
-      //     },
-      //     (err) => {
-      //       dispatch({ type: TOGGLE_SAVING });
-      //       dispatch(handleServerError(err));
-      //     }
-      //   );
+    dispatch({ type: SET_SAVE_FAILED,
+      payload: { saveFailed: false } });
 
-      // instead of mocking ApiUtil somehow, assume a PUT request succeeds after 1 second
-      setTimeout(() => {
-        dispatch({ type: TOGGLE_SAVING });
+    hearingsToSave.forEach((hearing) => {
 
-        hearingsToSaveIndeces.forEach((index) => {
-          dispatch({
-            type: SET_EDITED_FLAG_TO_FALSE,
-            payload: {
-              date,
-              index
-            }
-          });
-        });
-      }, 1000);
-    }
+      const index = docket.findIndex((x) => x.id === hearing.id);
+
+      ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+      then(() => {
+        dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
+          payload: { date,
+            index } });
+      },
+      () => {
+        dispatch({ type: SET_SAVE_FAILED,
+          payload: { saveFailed: true } });
+      });
+    });
+    dispatch({ type: TOGGLE_SAVING });
   }
 });
 

@@ -22,6 +22,9 @@ const PAGE_MARGIN_BOTTOM = 25;
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 
+// Base scale used to calculate dimensions and draw text.
+const PAGE_DIMENSION_SCALE = 1;
+
 // This is the maximum squared distance within which pages are drawn.
 // We compare this value with the result of (window_center_x - page_center_x) ^ 2 +
 // (window_center_y - page_center_y) ^ 2 which is the square of the distance between
@@ -180,7 +183,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   drawText = (page, text) => {
-    const viewport = page.getViewport(this.props.scale);
+    const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
     this.textLayer.innerHTML = '';
 
@@ -243,7 +246,6 @@ export class PdfPage extends React.PureComponent {
   }
 
   getDimensions = (page) => {
-    const PAGE_DIMENSION_SCALE = 1;
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
     return _.pick(viewport, ['width', 'height']);
