@@ -13,7 +13,6 @@ describe('PdfViewer', () => {
       }
     };
     const file = 'test';
-    const noRotation = 0;
 
     describe('allowing movement', () => {
       it('up in the middle of the page', () => {
@@ -26,8 +25,7 @@ describe('PdfViewer', () => {
               y: 200
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 100,
@@ -45,8 +43,7 @@ describe('PdfViewer', () => {
               y: 200
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 100,
@@ -64,8 +61,7 @@ describe('PdfViewer', () => {
               y: 200
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 95,
@@ -83,8 +79,7 @@ describe('PdfViewer', () => {
               y: 200
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 105,
@@ -103,8 +98,7 @@ describe('PdfViewer', () => {
               y: 0
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 100,
@@ -122,8 +116,7 @@ describe('PdfViewer', () => {
               y: 100
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 0,
@@ -141,8 +134,7 @@ describe('PdfViewer', () => {
               y: 300
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 960,
@@ -160,8 +152,7 @@ describe('PdfViewer', () => {
               y: 1960
             },
             pages,
-            file,
-            noRotation
+            file
           )
         ).to.deep.equal({
           x: 0,
@@ -169,85 +160,6 @@ describe('PdfViewer', () => {
         });
       });
 
-    });
-    describe('when rotated 90 degrees', () => {
-      const oneRotation = 90;
-
-      it('up in the middle of the page', () => {
-        expect(
-          getNextAnnotationIconPageCoords(
-            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
-            {
-              pageIndex: 1,
-              x: 100,
-              y: 200
-            },
-            pages,
-            file,
-            oneRotation
-          )
-        ).to.deep.equal({
-          x: 95,
-          y: 200
-        });
-      });
-
-      it('down in the middle of the page', () => {
-        expect(
-          getNextAnnotationIconPageCoords(
-            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
-            {
-              pageIndex: 1,
-              x: 100,
-              y: 200
-            },
-            pages,
-            file,
-            oneRotation
-          )
-        ).to.deep.equal({
-          x: 105,
-          y: 200
-        });
-      });
-
-      it('left in the middle of the page', () => {
-        expect(
-          getNextAnnotationIconPageCoords(
-            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
-            {
-              pageIndex: 1,
-              x: 100,
-              y: 200
-            },
-            pages,
-            file,
-            oneRotation
-          )
-        ).to.deep.equal({
-          x: 100,
-          y: 205
-        });
-      });
-
-      it('right in the middle of the page', () => {
-        expect(
-          getNextAnnotationIconPageCoords(
-            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
-            {
-              pageIndex: 1,
-              x: 100,
-              y: 200
-            },
-            pages,
-            file,
-            oneRotation
-          )
-        ).to.deep.equal({
-          x: 100,
-          y: 195
-        });
-      });
     });
   });
 });
