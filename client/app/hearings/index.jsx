@@ -11,6 +11,7 @@ import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
+import NavigationBar from '../components/NavigationBar';
 
 const configureStore = (data) => {
 
@@ -48,29 +49,41 @@ const Hearings = ({ hearings }) => {
     <div>
       <BrowserRouter>
         <div>
-         <ScrollToTop />
-          <Route exact path="/hearings/dockets"
-            component={() => (
-              <DocketsContainer
-                veteran_law_judge={hearings.veteran_law_judge} />
-            )}
-          />
+          <NavigationBar
+            appName="Hearing Prep"
+            defaultUrl="/hearings/dockets"
+            userDisplayName={hearings.userDisplayName}
+            dropdownUrls={hearings.dropdownUrls}>
+            <div className="cf-wide-app">
+              <div className="usa-grid">
+                <ScrollToTop />
+                <Route exact path="/hearings/dockets"
+                  component={() => (
+                    <DocketsContainer
+                      veteran_law_judge={hearings.veteran_law_judge} />
+                  )}
+                  />
 
-          <Route exact path="/hearings/dockets/:date"
-            component={(props) => (
-              <DailyDocketContainer
-                veteran_law_judge={hearings.veteran_law_judge}
-                date={props.match.params.date} />
-            )}
-          />
+                <Route exact path="/hearings/dockets/:date"
+                  breadcrumb="Daily Docket"
+                  component={(props) => (
+                    <DailyDocketContainer
+                      veteran_law_judge={hearings.veteran_law_judge}
+                      date={props.match.params.date} />
+                  )}
+                  />
 
-        <Route exact path="/hearings/:hearingId/worksheet"
-            component={(props) => (
-              <HearingWorksheetContainer
-                veteran_law_judge={hearings.veteran_law_judge}
-                hearingId={props.match.params.hearingId} />
-            )}
-          />
+                <Route exact path="/hearings/:hearingId/worksheet"
+                  breadcrumb="Daily Docket > Hearing Worksheet"
+                  component={(props) => (
+                    <HearingWorksheetContainer
+                      veteran_law_judge={hearings.veteran_law_judge}
+                      hearingId={props.match.params.hearingId} />
+                  )}
+                  />
+              </div>
+            </div>
+          </NavigationBar>
         </div>
 
       </BrowserRouter>
