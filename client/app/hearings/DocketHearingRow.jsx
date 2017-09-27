@@ -66,7 +66,8 @@ export class DocketHearingRow extends React.PureComponent {
           <span>{index + 1}.</span>
           <span>
             {getDate(hearing.date, 'EST')}
-            <br/>
+          </span>
+          <span>
             {hearing.regional_office_name}
           </span>
         </td>
@@ -104,7 +105,7 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               label="Add on"
               name={`${hearing.id}.addon`}
-              value={hearing.addon}
+              value={hearing.add_on}
               onChange={this.setAddOn}
             />
           </div>

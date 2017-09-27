@@ -14,7 +14,7 @@ import { getFilteredDocuments } from './selectors';
 import * as Constants from '../reader/constants';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
 
-export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, allPagesCoordsBounds) => {
+export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file) => {
   const moveAmountPx = 5;
   const movementDirection = _.includes(
     [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
@@ -34,7 +34,7 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
     }
   });
 
-  const pageCoordsBounds = allPagesCoordsBounds[pageIndex];
+  const pageCoordsBounds = pages[`${file}-${pageIndex}`].dimensions;
 
   // This calculation is not quite right, because we are not using the scale
   // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where
@@ -70,7 +70,8 @@ export class PdfViewer extends React.Component {
       const constrainedCoords = getNextAnnotationIconPageCoords(
         direction,
         this.props.placingAnnotationIconPageCoords,
-        this.props.pageCoordsBounds
+        this.props.pages,
+        this.selectedDoc().content_url
       );
 
       if (!_.isEqual(origCoords, constrainedCoords)) {
@@ -154,7 +155,7 @@ export class PdfViewer extends React.Component {
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
   shouldComponentUpdate(nextProps, nextState) {
-    const getRenderProps = (props) => _.omit(props, 'pageCoordsBounds');
+    const getRenderProps = (props) => _.omit(props, 'pages');
 
     return !(_.isEqual(this.state, nextState) && _.isEqual(getRenderProps(this.props), getRenderProps(nextProps)));
   }
@@ -183,7 +184,6 @@ export class PdfViewer extends React.Component {
             id="pdf"
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
-            onShowList={this.props.onShowList}
             prevDocId={this.getPrevDocId()}
             nextDocId={this.getNextDocId()}
             showPdf={this.props.showPdf}
@@ -221,11 +221,10 @@ export class PdfViewer extends React.Component {
   }
 }
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state.readerReducer),
   appeal: state.readerReducer.appeal,
-  pageCoordsBounds: _.get(state.readerReducer, ['documentsByFile',
-    state.readerReducer.documents[props.match.params.docId].content_url, 'pages']),
+  pages: state.readerReducer.pages,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
   ..._.pick(state.readerReducer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
   ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')

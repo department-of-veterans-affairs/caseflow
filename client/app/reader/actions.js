@@ -4,7 +4,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
-import { CATEGORIES } from './analytics';
+import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -185,7 +185,7 @@ export const deleteAnnotation = (docId, annotationId) =>
       }
     });
 
-    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`).
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`, {}, ENDPOINT_NAMES.ANNOTATION).
       then(
         () => dispatch({
           type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
@@ -218,7 +218,7 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }, ENDPOINT_NAMES.ANNOTATION).
     then(
       () => dispatch({
         type: Constants.REQUEST_MOVE_ANNOTATION_SUCCESS,
@@ -310,7 +310,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }).
+  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }, ENDPOINT_NAMES.ANNOTATION).
     then(
       () => dispatch({
         type: Constants.REQUEST_EDIT_ANNOTATION_SUCCESS,
@@ -382,7 +382,7 @@ export const createAnnotation = (annotation) => (dispatch) => {
 
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
-  ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }).
+  ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }, ENDPOINT_NAMES.ANNOTATION).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);
@@ -459,7 +459,7 @@ export const selectCurrentPdfLocally = (docId) => ({
 });
 
 export const selectCurrentPdf = (docId) => (dispatch) => {
-  ApiUtil.patch(`/document/${docId}/mark-as-read`).
+  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
     catch((err) => {
       // eslint-disable-next-line no-console
       console.log('Error marking as read', docId, err);
@@ -492,13 +492,6 @@ export const removeTagRequestSuccess = (docId, tagId) => (
     dispatch(collectAllTags(documents));
   }
 );
-
-export const setPdfReadyToShow = (docId) => ({
-  type: Constants.SET_PDF_READY_TO_SHOW,
-  payload: {
-    docId
-  }
-});
 
 export const setTagFilter = (text, checked, tagId) => ({
   type: Constants.SET_TAG_FILTER,
@@ -579,7 +572,7 @@ export const removeTag = (doc, tagId) => (
         tagId
       }
     });
-    ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`).
+    ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`, {}, ENDPOINT_NAMES.TAG).
       then(() => {
         dispatch(removeTagRequestSuccess(doc.id, tagId));
       }, () => {
@@ -605,7 +598,7 @@ export const fetchedNoAppealsUsingVeteranId = () => ({
 
 export const fetchAppealDetails = (vacolsId) => (
   (dispatch) => {
-    ApiUtil.get(`/reader/appeal/${vacolsId}?json`).then((response) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
       const returnedObject = JSON.parse(response.text);
 
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
@@ -641,7 +634,9 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/reader/appeal/veteran-id?json', {
-      headers: { 'veteran-id': veteranId } }).
+      headers: { 'veteran-id': veteranId }
+    },
+      ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
     then((response) => {
       const returnedObject = JSON.parse(response.text);
 
@@ -671,7 +666,7 @@ export const addNewTag = (doc, tags) => (
           docId: doc.id
         }
       });
-      ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }).
+      ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }, ENDPOINT_NAMES.TAG).
         then((data) => {
           dispatch(newTagRequestSuccess(doc.id, data.body.tags));
         }, () => {
@@ -748,11 +743,37 @@ export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   }
 });
 
-export const setPdfPageDimensions = (file, pageIndex, dimensions) => ({
-  type: Constants.SET_PDF_PAGE_DIMENSIONS,
+export const setUpPdfPage = (file, pageIndex, page) => ({
+  type: Constants.SET_UP_PDF_PAGE,
   payload: {
     file,
     pageIndex,
-    dimensions
+    page
+  }
+});
+
+export const clearPdfPage = (file, pageIndex, page) => ({
+  type: Constants.CLEAR_PDF_PAGE,
+  payload: {
+    file,
+    pageIndex,
+    page
+  }
+});
+
+export const clearPdfDocument = (file, pageIndex, doc) => ({
+  type: Constants.CLEAR_PDF_DOCUMENT,
+  payload: {
+    file,
+    pageIndex,
+    doc
+  }
+});
+
+export const setPdfDocument = (file, doc) => ({
+  type: Constants.SET_PDF_DOCUMENT,
+  payload: {
+    file,
+    doc
   }
 });

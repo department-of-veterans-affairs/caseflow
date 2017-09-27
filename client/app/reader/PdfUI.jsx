@@ -32,8 +32,7 @@ export class PdfUI extends React.Component {
     super(props);
     this.state = {
       scale: 1,
-      currentPage: 1,
-      numPages: null
+      currentPage: 1
     };
   }
 
@@ -80,15 +79,15 @@ export class PdfUI extends React.Component {
   }
 
   getPageIndicator = () => {
-    if (_.get(this.props.pdfsReadyToShow, this.props.doc.id) && this.state.numPages) {
+    if (this.props.numPages) {
       return <span>
         <PdfUIPageNumInput
           currentPage={this.state.currentPage}
-          numPages={this.state.numPages}
+          numPages={this.props.numPages}
           docId={this.props.doc.id}
           onPageChange={this.onPageChange}
         />
-        of {this.state.numPages}
+        of {this.props.numPages}
       </span>;
     }
 
@@ -141,10 +140,9 @@ export class PdfUI extends React.Component {
     });
   }
 
-  onPageChange = (currentPage, numPages, fitToScreenZoom) => {
+  onPageChange = (currentPage, fitToScreenZoom) => {
     this.setState({
       currentPage,
-      numPages,
       fitToScreenZoom
     });
   }
@@ -152,7 +150,6 @@ export class PdfUI extends React.Component {
   onBackToClaimsFolder = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
-    this.props.onShowList();
   }
 
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
@@ -165,13 +162,14 @@ export class PdfUI extends React.Component {
     return <div className={pdfUiClass}>
       <div className="cf-pdf-header cf-pdf-toolbar usa-grid-full">
         <span className="usa-width-one-third cf-pdf-buttons-left">
-          { this.props.showClaimsFolderNavigation && <Button
+          { this.props.showClaimsFolderNavigation && <Link
+            to={`${this.props.documentPathBase}`}
             name="backToClaimsFolder"
-            classNames={['cf-pdf-button cf-pdf-cutoff cf-pdf-buttons-left cf-pdf-spaced-buttons']}
+            button="matte"
             onClick={this.onBackToClaimsFolder}>
             <LeftChevron />
             &nbsp; Back to claims folder
-          </Button> }
+          </Link> }
         </span>
         <span className="usa-width-one-third cf-pdf-buttons-center">
           <span className="category-icons-and-doc-type">
@@ -255,11 +253,17 @@ export class PdfUI extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
-  docListIsFiltered: docListIsFiltered(state.readerReducer),
-  ...state.readerReducer.ui.pdf
-});
+const mapStateToProps = (state, props) => {
+  const pdfDocument = _.get(state.readerReducer.pdfDocuments, [props.doc.content_url]);
+  const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
+
+  return {
+    ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
+    docListIsFiltered: docListIsFiltered(state.readerReducer),
+    ...state.readerReducer.ui.pdf,
+    numPages
+  };
+};
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     stopPlacingAnnotation,
