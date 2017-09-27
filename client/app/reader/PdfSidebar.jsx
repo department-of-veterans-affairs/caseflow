@@ -173,14 +173,12 @@ export class PdfSidebar extends React.Component {
               </div>
             </AccordionSection>
             <AccordionSection title="Issue tags">
-              <div className="cf-issue-tag-sidebar">
-                <SideBarIssueTags
-                  doc={this.props.doc}
-                  showErrorMessage={showErrorMessage.tag}
-                  tagOptions={tagOptions}
-                  addNewTag={this.props.addNewTag}
-                  removeTag={this.props.removeTag}/>
-              </div>
+              <SideBarIssueTags
+                doc={this.props.doc}
+                showErrorMessage={showErrorMessage.tag}
+                tagOptions={tagOptions}
+                addNewTag={this.props.addNewTag}
+                removeTag={this.props.removeTag}/>
             </AccordionSection>
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
                 <span className="cf-right-side cf-add-comment-button">
