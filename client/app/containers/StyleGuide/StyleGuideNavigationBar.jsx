@@ -51,7 +51,7 @@ export default class StyleGuideNavigationBar extends React.Component {
       The navigation bar is a total of 90px tall with a 1px border-bottom colored
       grey-lighter.
     </p>
-
+     
      <div className="sg-nav-wrap">
       <Router>
       <NavigationBar
