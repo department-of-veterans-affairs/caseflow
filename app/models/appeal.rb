@@ -2,6 +2,7 @@
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   include RegionalOfficeConcern
+  include CachedAttributes
 
   has_many :tasks
   has_many :appeal_views
@@ -105,6 +106,10 @@ class Appeal < ActiveRecord::Base
   def number_of_documents_after_certification
     return 0 unless certification_date
     documents.count { |d| d.received_at > certification_date }
+  end
+
+  cache_attribute :cached_number_of_documents_after_certification do
+    number_of_documents_after_certification
   end
 
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
@@ -231,7 +236,8 @@ class Appeal < ActiveRecord::Base
       "prior_decision_date" => prior_decision_date,
       "form9_date" => form9_date,
       "ssoc_dates" => ssoc_dates,
-      "docket_number" => docket_number
+      "docket_number" => docket_number,
+      "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification
     }
   end
 

@@ -36,7 +36,7 @@ class HearingWorksheetDocs extends Component {
                 </div>
                 <div className="cf-hearings-worksheet-data-cell column-5">
                     <div>Docs since Certification:</div>
-                    <div>23</div>
+                    <div>{appeal.cached_number_of_documents_after_certification}</div>
                 </div>
               </div>
                 <div>
