@@ -98,21 +98,12 @@ export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 export const ROTATION_INCREMENTS = 90;
 export const COMPLETE_ROTATION = 360;
 
-// Arrange the directions such that each direction + 1 rotates clockwise.
 export const MOVE_ANNOTATION_ICON_DIRECTIONS = {
-  UP: 0,
-  RIGHT: 1,
-  DOWN: 2,
-  LEFT: 3
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT',
+  UP: 'UP',
+  DOWN: 'DOWN'
 };
-
-// An array with the directions oriented in a clockwise rotation.
-export const MOVE_ANNOTATION_ICON_DIRECTION_ARRAY = [
-  MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
-  MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
-  MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
-  MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT
-];
 
 export const documentCategories = {
   procedural: {
