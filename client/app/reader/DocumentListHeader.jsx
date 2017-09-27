@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { ENDPOINT_NAMES } from './analytics';
 
 import ApiUtil from '../util/ApiUtil';
 import { setSearch, clearSearch, clearAllFilters } from './actions';
@@ -15,7 +16,8 @@ class DocumentListHeader extends React.Component {
   recordSearch = (query) => {
     ApiUtil.post(
       `/reader/appeal/${this.props.vacolsId}/claims_folder_searches`,
-      { data: { query } }
+      { data: { query } },
+      ENDPOINT_NAMES.CLAIMS_FOLDER_SEARCHES
     ).then(_.noop);
   }
 
