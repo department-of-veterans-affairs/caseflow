@@ -1,6 +1,23 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import DropdownMenu from '../../components/DropdownMenu';
+import NavigationBar from '../../components/NavigationBar';
+
+import { BrowserRouter as Router } from 'react-router-dom';
+
+const options = [
+  {
+    title: 'Help',
+    link: '#navigation_bar'
+  },
+  {
+    title: 'Send feedback',
+    link: '#navigation_bar'
+  },
+  {
+    title: 'Sign out',
+    link: '#navigation_bar'
+  }
+];
 
 export default class StyleGuideNavigationBar extends React.Component {
   constructor(props) {
@@ -10,35 +27,7 @@ export default class StyleGuideNavigationBar extends React.Component {
     };
   }
 
-  handleMenuClick = () => {
-    this.setState((prevState) => ({
-      menu: !prevState.menu
-    }));
-  };
-
-  options = () => {
-    return [
-      {
-        title: 'Help',
-        link: '#navigation_bar'
-      },
-      {
-        title: 'Send feedback',
-        link: '#navigation_bar'
-      },
-      {
-        title: 'Sign out',
-        link: '#navigation_bar'
-      }
-    ];
-  }
-
   render() {
-    let {
-      name
-    } = this.props;
-
-    name = 'App Bar';
 
     return <div className="sg-nav-bar">
       <StyleGuideComponentTitle
@@ -62,25 +51,16 @@ export default class StyleGuideNavigationBar extends React.Component {
       The navigation bar is a total of 90px tall with a 1px border-bottom colored
       grey-lighter.
     </p>
-      <div>
-        <nav className="cf-nav">
-          <a href="#" id="cf-logo-link">
-            <h1 className="cf-logo"><span className="cf-logo-image cf-logo-image-default">
-            </span>Caseflow</h1>
-          </a>
-          <h2 id="page-title" className="cf-application-title">&nbsp; &nbsp; {name}</h2>
-          <div className="cf-dropdown cf-nav-dropdown">
-            <DropdownMenu
-              options={this.options()}
-              onClick={this.handleMenuClick}
-              onBlur={this.handleMenuClick}
-              label="Abraham Lincoln"
-              menu={this.state.menu}
-              />
-          </div>
-      </nav>
-      <br />
-    </div>
+
+     <div className="sg-nav-wrap">
+      <Router>
+      <NavigationBar
+       appName="Reader"
+       userDisplayName="Abraham Lincoln"
+       dropdownUrls={options}
+      />
+     </Router>
+   </div>
   </div>;
   }
 }
