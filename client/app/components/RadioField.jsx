@@ -28,6 +28,7 @@ export default class RadioField extends React.Component {
       onChange,
       required,
       errorMessage,
+      strongLabel,
       hideLabel
     } = this.props;
 
@@ -48,9 +49,15 @@ export default class RadioField extends React.Component {
     // Since HTML5 IDs should not contain spaces...
     let idPart = StringUtil.html5CompliantId(id || name);
 
+    const labelContents = <span>{(label || name)} {(required && <RequiredIndicator/>)}</span>;
+
     return <fieldset className={radioClass.join(' ')}>
       <legend className={labelClass}>
-        {(label || name)} {(required && <RequiredIndicator/>)}
+        {
+          strongLabel ?
+            <strong>{labelContents}</strong> :
+            labelContents
+        }
       </legend>
 
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}

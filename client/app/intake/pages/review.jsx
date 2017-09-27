@@ -21,7 +21,8 @@ export default class Review extends React.PureComponent {
       <p>Check the Veteran's RAMP Opt-In Election form in the Centralized Portal.</p>
       <RadioField
         name="opt-in-election"
-        label={<h3>Which election did the Veteran select?</h3>}
+        label="Which election did the Veteran select?"
+        strongLabel
         options={radioOptions}
         onChange={this.onElectionChange}
       />
