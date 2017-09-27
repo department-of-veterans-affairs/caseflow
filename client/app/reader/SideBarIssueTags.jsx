@@ -2,13 +2,16 @@ import React, { PureComponent } from 'react';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import { connect } from 'react-redux';
 import SearchableDropdown from '../components/SearchableDropdown';
+import _ from 'lodash';
 
 class SideBarIssueTags extends PureComponent {
   render() {
     const {
       doc,
       tagOptions,
-      showErrorMessage
+      showErrorMessage,
+      removeTag,
+      addNewTag
     } = this.props;
 
     let generateOptionsFromTags = (tags) =>
@@ -26,13 +29,14 @@ class SideBarIssueTags extends PureComponent {
         const tagValue = _.first(deletedValue).label;
         const result = _.find(doc.tags, { text: tagValue });
 
-        this.props.removeTag(doc, result.id);
+        removeTag(doc, result.id);
       } else if (values && values.length) {
-        this.props.addNewTag(doc, values);
+        addNewTag(doc, values);
       }
-    }
+    };
 
     return <div className="cf-issue-tag-sidebar">
+      {showErrorMessage.tag && <CannotSaveAlert />}
       <SearchableDropdown
         key={doc.id}
         name="tags"
@@ -45,11 +49,11 @@ class SideBarIssueTags extends PureComponent {
         onChange={onChange}
         selfManageValueState={true}
       />
-    </div>
+    </div>;
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
     tagOptions: state.readerReducer.ui.tagOptions

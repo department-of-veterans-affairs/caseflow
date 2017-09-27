@@ -5,9 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import Comment from './Comment';
-import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from './EditComment';
-import Alert from '../components/Alert';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
@@ -94,7 +92,6 @@ export class PdfSidebar extends React.Component {
     let comments = [];
 
     const {
-      doc,
       showErrorMessage,
       tagOptions,
       appeal
@@ -179,7 +176,7 @@ export class PdfSidebar extends React.Component {
               <div className="cf-issue-tag-sidebar">
                 <SideBarIssueTags
                   doc={this.props.doc}
-                  showErrorMessage={showErrorMessage}
+                  showErrorMessage={showErrorMessage.tag}
                   tagOptions={tagOptions}
                   addNewTag={this.props.addNewTag}
                   removeTag={this.props.removeTag}/>
@@ -194,7 +191,7 @@ export class PdfSidebar extends React.Component {
                   </Button>
                 </span>
               <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-                {showErrorMessage.annotation && cannotSaveAlert}
+                {showErrorMessage.annotation && <CannotSaveAlert />}
                 <div className="cf-pdf-comment-list">
                   {this.props.placedButUnsavedAnnotation &&
                     <EditComment
