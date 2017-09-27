@@ -28,7 +28,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { INTERACTION_TYPES, CATEGORIES } from './analytics';
+import { INTERACTION_TYPES, CATEGORIES, ENDPOINT_NAMES } from './analytics';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -342,7 +342,8 @@ const mapDispatchToProps = (dispatch) => ({
 
     ApiUtil.patch(
       `/document/${docId}`,
-      { data: { [categoryKey]: toggleState } }
+      { data: { [categoryKey]: toggleState } },
+      ENDPOINT_NAMES.DOCUMENT
     ).catch(() =>
       dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
     );

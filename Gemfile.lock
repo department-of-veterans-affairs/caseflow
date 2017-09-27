@@ -241,6 +241,8 @@ GEM
       mini_portile2 (~> 2.3.0)
     nori (2.6.0)
     parallel (1.11.1)
+    paranoia (2.3.1)
+      activerecord (>= 4.0, < 5.2)
     parser (2.4.0.0)
       ast (~> 2.2)
     pdf-forms (1.1.1)
@@ -476,6 +478,7 @@ DEPENDENCIES
   launchy
   moment_timezone-rails
   parallel
+  paranoia (~> 2.2)
   pdf-forms
   pdfjs_viewer-rails!
   pg
