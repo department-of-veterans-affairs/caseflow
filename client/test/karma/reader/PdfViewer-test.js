@@ -237,7 +237,7 @@ describe('PdfViewer', () => {
             {
               pageIndex: 1,
               x: 100,
-              y: 205
+              y: 200
             },
             pages,
             file,
