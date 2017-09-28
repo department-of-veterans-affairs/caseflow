@@ -183,6 +183,7 @@ CommentLayer.propTypes = {
   placingAnnotationIconPageCoords: PropTypes.object,
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
+  rotation: PropTypes.number,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
   documentId: PropTypes.number

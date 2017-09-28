@@ -304,12 +304,12 @@ export class PdfPage extends React.PureComponent {
     };
 
     return <div
-      id={`pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}-${this.props.file}`}
+      id={this.props.isVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
         <div
-          id={`rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}-${this.props.file}`}
+          id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
           className={pageContentsVisibleClass}
           style={innerDivStyle}>
           <canvas

@@ -136,15 +136,15 @@ describe('DecisionReviewer', () => {
           simulate('click', { button: 0 });
         await pause();
 
-        expect(wrapper.find(`#rotationDiv1-/document/${documents[0].id}/pdf`).
+        expect(wrapper.find('#rotationDiv1').
           props().style.transform).to.equal('rotate(0deg)');
 
         wrapper.find('#button-rotation').simulate('click', { button: 0 });
 
-        expect(wrapper.find(`#rotationDiv1-/document/${documents[0].id}/pdf`).
+        expect(wrapper.find('#rotationDiv1').
           props().style.transform).to.equal('rotate(90deg)');
 
-        const pageContainerStyle = wrapper.find(`#pageContainer1-/document/${documents[0].id}/pdf`).props().style;
+        const pageContainerStyle = wrapper.find('#pageContainer1').props().style;
 
         await pause();
 
