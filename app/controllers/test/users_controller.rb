@@ -33,7 +33,7 @@ class Test::UsersController < ApplicationController
       }
     },
     {
-      name: "Miscelaneous",
+      name: "Miscellaneous",
       links: {
         styleguide: "/styleguide",
         stats: "/stats"
