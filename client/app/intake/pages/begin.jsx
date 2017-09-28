@@ -2,28 +2,37 @@ import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setVeteran, setFileNumberSearch } from '../redux/actions';
-import _ from 'lodash';
+import { doFileNumberSearch, setFileNumberSearch } from '../redux/actions';
+import {REQUEST_STATE} from '../constants';
 
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => {
-    this.props.setVeteran('Joe Snuffy', '2222222222');
-    this.props.history.push('/review-request');
+    this.props.doFileNumberSearch();
+    // this.props.history.push('/review-request');
   }
 
   render() {
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
       <p>To begin processing this opt-in request, please enter the Veteran ID below.</p>
-      <SearchBar size="small" onSubmit={this.handleSearchSubmit} onChange={this.props.setFileNumberSearch} />
+      <SearchBar 
+        size="small" 
+        onSubmit={this.handleSearchSubmit} 
+        onChange={this.props.setFileNumberSearch} 
+        value={this.props.fileNumberSearchInput}
+        loading={this.props.fileNumberSearchRequestStatus === REQUEST_STATE.IN_PROGRESS}
+        />
     </div>;
   }
 }
 
 export default connect(
-  ({ inputs }) => _.pick(inputs, 'fileNumberSearch'),
+  ({ inputs, requestStatus }) => ({
+    fileNumberSearchInput: inputs.fileNumberSearch,
+    fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
+  }),
   (dispatch) => bindActionCreators({
-    setVeteran,
+    doFileNumberSearch,
     setFileNumberSearch
   }, dispatch)
 )(Begin);

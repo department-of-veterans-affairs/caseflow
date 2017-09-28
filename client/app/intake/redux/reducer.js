@@ -1,4 +1,4 @@
-import { ACTIONS } from '../constants';
+import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
 const initialState = {
@@ -10,6 +10,9 @@ const initialState = {
     fileNumberSearch: '',
     receiptDateStr: '',
     veteranResponse: null
+  },
+  requestStatus: {
+    fileNumberSearch: REQUEST_STATE.NOT_STARTED
   }
 };
 
@@ -34,6 +37,14 @@ export default (state = initialState, action) => {
         }
       }
     });
+  case ACTIONS.FILE_NUMBER_SEARCH_START:
+    return update(state, {
+      requestStatus: {
+        fileNumberSearch: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    })
   default:
     return state;
   }
