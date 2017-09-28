@@ -1,5 +1,6 @@
 class IntakeController < ApplicationController
-  before_action :verify_access, :react_routed
+  before_action :verify_access, :react_routed, :verify_feature_enabled
+
   
   def set_application
     RequestStore.store[:application] = "intake"
@@ -7,6 +8,10 @@ class IntakeController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Intake")
+  end
+
+  def verify_feature_enabled
+    unauthorized unless FeatureToggle.enabled?(:intake)
   end
 
   def index
