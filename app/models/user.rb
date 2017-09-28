@@ -155,7 +155,7 @@ class User < ActiveRecord::Base
     end
 
     def appeal_repository
-      @case_assignment_repository ||= AppealRepository
+      @appeal_repository ||= AppealRepository
     end
   end
 end

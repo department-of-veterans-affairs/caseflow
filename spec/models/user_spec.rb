@@ -7,7 +7,7 @@ describe User do
   let(:user) { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
 
   before(:all) do
-    User.case_assignment_repository = Fakes::AppealRepository
+    User.appeal_repository = Fakes::AppealRepository
     Functions.client.del("System Admin")
   end
 
@@ -191,7 +191,7 @@ describe User do
     let(:appeal) { Generators::Appeal.create }
 
     before do
-      User.case_assignment_repository = Fakes::AppealRepository
+      User.appeal_repository = Fakes::AppealRepository
     end
 
     it "returns empty array when no cases are assigned" do
