@@ -3,9 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
-import { toggleDocumentCategoryFail } from '../reader/actions';
-import { INTERACTION_TYPES, CATEGORIES, ENDPOINT_NAMES } from './analytics';
-import ApiUtil from '../util/ApiUtil';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
 
@@ -30,7 +27,7 @@ class SideBarCategories extends PureComponent {
         allowReadOnly={true}
         handleCategoryToggle={handleCategoryToggle}
         categoryToggleStates={categoryToggleStates} />
-    </div>
+    </div>;
   }
 }
 
