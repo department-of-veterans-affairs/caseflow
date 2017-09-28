@@ -14,6 +14,7 @@ import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
 import { plusIcon, Keyboard } from '../components/RenderFunctions';
 import SideBarDocumentInformation from './SideBarDocumentInformation';
+import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
@@ -23,7 +24,6 @@ import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, u
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
   from './utils';
-import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
@@ -134,11 +134,6 @@ export class PdfSidebar extends React.Component {
     const sidebarClass = classNames(
       'cf-sidebar-wrapper',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
-    const categoryToggleStates = _.mapValues(
-      Constants.documentCategories,
-      (val, key) =>
-        this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
-    );
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
@@ -162,20 +157,17 @@ export class PdfSidebar extends React.Component {
               <SideBarDocumentInformation appeal={appeal} doc={this.props.doc}/>
             </AccordionSection>
             <AccordionSection title="Categories">
-              <div className="cf-category-sidebar">
-                {showErrorMessage.category && <CannotSaveAlert />}
-                <DocCategoryPicker
-                  allowReadOnly={true}
-                  handleCategoryToggle={
-                    _.partial(this.props.handleCategoryToggle, this.props.doc.id)
-                  }
-                  categoryToggleStates={categoryToggleStates} />
-              </div>
+              <SideBarCategories doc={this.props.doc}
+                documents={this.props.documents}
+                showErrorMessage={showErrorMessage}
+                handleCategoryToggle={
+                  _.partial(this.props.handleCategoryToggle, this.props.doc.id)
+                }/>
             </AccordionSection>
             <AccordionSection title="Issue tags">
               <SideBarIssueTags
                 doc={this.props.doc}
-                showErrorMessage={showErrorMessage.tag}
+                showErrorMessage={showErrorMessage}
                 tagOptions={tagOptions}
                 addNewTag={this.props.addNewTag}
                 removeTag={this.props.removeTag}/>
