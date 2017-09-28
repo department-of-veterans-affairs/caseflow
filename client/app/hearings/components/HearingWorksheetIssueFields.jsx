@@ -30,17 +30,24 @@ class HearingWorksheetIssueFields extends PureComponent {
       levels: { onChange: this.onLevelsChange,
         value: issue.levels },
       description: { onChange: this.onDescriptionChange,
-        value: issue.description }
+        value: issue.description,
+        alwaysEditable: true }
     };
 
     if (!allowedFields[field]) {
+      console.warn('You called HearingWorksheetIssueFields with an invalid field');
+
       return;
     }
 
-    return <div> <TextareaField aria-label={field} name={field}
-                       id={`${issue.id}-issue`}value={allowedFields[field].value}
-                       onChange={allowedFields[field].onChange}/>
-           </div>;
+    if (!issue.from_vacols || allowedFields[field].alwaysEditable) {
+      return <div> <TextareaField aria-label={field} name={field}
+                                    id={`${issue.id}-issue`}value={allowedFields[field].value}
+                                    onChange={allowedFields[field].onChange}/>
+      </div>;
+    }
+
+    return <div>{allowedFields[field].value}</div>;
   }
 }
 

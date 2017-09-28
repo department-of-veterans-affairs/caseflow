@@ -61,24 +61,6 @@ class HearingWorksheetIssues extends PureComponent {
 
       let issueRow = worksheetStreamsIssues[issue];
 
-      if (issueRow.from_vacols) {
-        return {
-          counter: <b>{key + 1}.</b>,
-          program: issueRow.program,
-          issue: issueRow.issue,
-          levels: issueRow.levels,
-          description: <HearingWorksheetIssueFields
-              appeal={worksheetStreamsAppeal}
-              issue={issueRow}
-              field="description"
-          />,
-          actions: <HearingWorksheetPreImpressions
-              appeal={worksheetStreamsAppeal}
-              issue={issueRow} />,
-          deleteIssue: <TrashCan />
-        };
-      }
-
       return {
         counter: <b>{key + 1}.</b>,
         program: <HearingWorksheetIssueFields
