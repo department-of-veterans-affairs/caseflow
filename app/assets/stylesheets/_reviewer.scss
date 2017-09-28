@@ -92,9 +92,9 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   width: 100%;
   top: 50px;
   bottom: 50px;
-  position: absolute;
+  position: absolute;/*
   overflow-y: scroll;
-  overflow-x: visible;
+  overflow-x: visible;*/
   text-align: center;
   z-index: 5;
   will-change: transform;

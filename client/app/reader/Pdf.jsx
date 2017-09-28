@@ -316,11 +316,7 @@ export class Pdf extends React.PureComponent {
       className="cf-pdf-scroll-view"
       onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
-        <div
-          id={this.props.file}
-          className={'cf-pdf-page pdfViewer singlePageView'}>
-          {pages}
-        </div>
+        {pages}
       </div>;
   }
 }

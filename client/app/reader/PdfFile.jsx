@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { List, CellMeasurer, AutoSizer } from 'react-virtualized';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -53,33 +54,58 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPages = () => {
+  getPage = ({ index, key, style }) => {
+    console.log('get page', index);
+    return <div style={style} key={key}>
+      <PdfPage
+        scrollTop={this.props.scrollTop}
+        scrollWindowCenter={this.props.scrollWindowCenter}
+        documentId={this.props.documentId}
+        file={this.props.file}
+        pageIndex={index}
+        isVisible={this.props.isVisible}
+        scale={this.props.scale}
+        pdfDocument={this.props.pdfDocument}
+      />
+    </div>;
+    // return <div key={key} , background: '#FFFFFF'}}></div>;
+  }
+
+  cellSizeAndPosition = (options) => {
+    console.log('options', options);
+    return { width: 1000, height: 1000, x: 0, y: options.index * 1000 };
+  }
+
+  render() {
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
     // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
-      return _.range(this.props.pdfDocument.pdfInfo.numPages).map((pageIndex) => <PdfPage
-        scrollTop={this.props.scrollTop}
-        scrollWindowCenter={this.props.scrollWindowCenter}
-        documentId={this.props.documentId}
-        key={pageIndex}
-        file={this.props.file}
-        pageIndex={pageIndex}
-        isVisible={this.props.isVisible}
-        scale={this.props.scale}
-        pdfDocument={this.props.pdfDocument}
-      />);
+
+    // ({ index, isScrolling  }) => ({ width: 1000, height: 1000, x: width/2 - 250, y: 1000 * index })
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
+      return <AutoSizer>{({ width, height }) =>
+          <List
+            height={height}
+            rowCount={this.props.pdfDocument.pdfInfo.numPages}
+            rowHeight={900}
+            rowRenderer={this.getPage}
+            width={width}
+          />}
+      </AutoSizer>
     }
 
-    return null;
-  }
 
-  render() {
-    return <div>
-      {this.getPages()}
-      </div>;
+    // <Collection
+    //       cellCount={this.props.pdfDocument.pdfInfo.numPages}
+    //       cellRenderer={this.getPage}
+    //       cellSizeAndPositionGetter={this.cellSizeAndPosition}
+    //       height={height}
+    //       width={width}
+    //     />
+
+    return null;
   }
 }
 

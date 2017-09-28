@@ -92,6 +92,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   clearPage = () => {
+    return;
     if (this.isDrawn) {
       this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.props.page.cleanup();
@@ -101,15 +102,18 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    console.log('Mounting', this.props.pageIndex);
+    this.setUpPage();
+
     // We only want to setUpPage immediately if it's either on a visible page, or if that page
     // is in a non-visible page but within the first NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER pages.
     // These are the pages we are most likely to show to the user. All other pages can wait
     // until we have idle time.
-    if (this.props.isVisible || this.props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
-      this.setUpPage();
-    } else {
-      window.requestIdleCallback(this.setUpPage);
-    }
+    // if (this.props.isVisible || this.props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
+    //   this.setUpPage();
+    // } else {
+    //   window.requestIdleCallback(this.setUpPage);
+    // }
   }
 
   clearPdfPage = () => {
@@ -117,15 +121,16 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentWillUnmount = () => {
+    console.log('UnMounting', this.props.pageIndex);
     this.isDrawing = false;
     this.isDrawn = false;
     this.isUnmounting = true;
-    if (this.props.page) {
-      this.props.page.cleanup();
-    }
+    // if (this.props.page) {
+    //   this.props.page.cleanup();
+    // }
     // Cleaning up this page from the Redux store should happen when we have idle time.
     // We don't want to block showing pages because we're too busy cleaning old pages.
-    window.requestIdleCallback(this.clearPdfPage);
+    // window.requestIdleCallback(this.clearPdfPage);
   }
 
   // This function gets the square of the distance to the center of the scroll window.
@@ -150,6 +155,7 @@ export class PdfPage extends React.PureComponent {
   // from the center of the scroll window, or if it's not visible, then if it's page index
   // is less than NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER
   shouldDrawPage = (props) => {
+    return true;
     if (!props.isVisible) {
       if (props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
         return true;
