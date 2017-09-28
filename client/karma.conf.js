@@ -25,8 +25,7 @@ module.exports = function(config) {
     },
 
     preprocessors: {
-      // [karmaTestPattern]: ['webpack', 'sourcemap']
-       'test/karma/test_index.js': ['webpack']
+      'test/karma/test_index.js': ['webpack']
     },
 
     // Note that karma-webpack will ignore the `entry` value for
