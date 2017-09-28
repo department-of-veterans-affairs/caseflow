@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const webpackConfig = require('./webpack.config.js');
 
-const karmaTestPattern = 'test/karma/**/*-test.js';
-
 module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
@@ -17,7 +15,7 @@ module.exports = function(config) {
 
     files: [
       'test/karma/setup.js',
-      'test/karma/test_index.js'
+      'test/karma/test-index.js'
     ],
 
     mochaReporter: {
@@ -25,7 +23,7 @@ module.exports = function(config) {
     },
 
     preprocessors: {
-      'test/karma/test_index.js': ['webpack']
+      'test/karma/test-index.js': ['webpack']
     },
 
     // Note that karma-webpack will ignore the `entry` value for
