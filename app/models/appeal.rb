@@ -242,7 +242,8 @@ class Appeal < ActiveRecord::Base
       "form9_date" => form9_date,
       "ssoc_dates" => ssoc_dates,
       "docket_number" => docket_number,
-      "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification
+      "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
+      "worksheet_issues" => worksheet_issues
     }
   end
 
@@ -375,6 +376,15 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  # If we do not yet have the worksheet issues saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
+  # This is currently only used by hearings prep.
+  def worksheet_issues
+    # TODO: DO NOT MERGE UNTIL SUPER IS TAKEN CARE OF
+    self.issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
+    self.issues
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
