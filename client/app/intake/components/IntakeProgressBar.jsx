@@ -36,8 +36,6 @@ class IntakeProgressBarInner extends React.PureComponent {
   }
 }
 
-export default class IntakeProgressBar extends React.PureComponent {
-  render() {
-    return <Route path="/" component={IntakeProgressBarInner} />;
-  }
+export default class IntakeProgressBar extends React.Component {
+  render = () => <Route path="/" component={IntakeProgressBarInner} />;
 }
