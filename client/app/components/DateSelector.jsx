@@ -45,7 +45,8 @@ export default class DateSelector extends React.Component {
       required,
       type,
       validationError,
-      value
+      value,
+      ...passthroughProps
     } = this.props;
 
     return <TextField
@@ -59,6 +60,7 @@ export default class DateSelector extends React.Component {
       onChange={this.dateFill}
       placeholder={DEFAULT_TEXT}
       required={required}
+      {...passthroughProps}
     />;
 
   }
