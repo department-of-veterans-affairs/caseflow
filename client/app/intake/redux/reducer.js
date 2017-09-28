@@ -26,22 +26,27 @@ export default (state = initialState, action) => {
         }
       }
     });
-  case ACTIONS.SET_VETERAN:
+  case ACTIONS.FILE_NUMBER_SEARCH_START:
     return update(state, {
+      requestStatus: {
+        fileNumberSearch: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.FILE_NUMBER_SEARCH_SUCCEED:
+    return update(state, {
+      requestStatus: {
+        fileNumberSearch: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      },
       veteran: {
         name: {
           $set: action.payload.name
         },
         fileNumber: {
           $set: action.payload.fileNumber
-        }
-      }
-    });
-  case ACTIONS.FILE_NUMBER_SEARCH_START:
-    return update(state, {
-      requestStatus: {
-        fileNumberSearch: {
-          $set: REQUEST_STATE.IN_PROGRESS
         }
       }
     });
