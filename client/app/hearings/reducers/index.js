@@ -115,8 +115,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_PROGRAM:
     return newHearingIssueState(state, action, { program: { $set: action.payload.program } });
 
-  case Constants.SET_ISSUE:
-    return newHearingIssueState(state, action, { issue: { $set: action.payload.issue } });
+  case Constants.SET_NAME:
+    return newHearingIssueState(state, action, { name: { $set: action.payload.name } });
 
   case Constants.SET_LEVELS:
     return newHearingIssueState(state, action, { levels: { $set: action.payload.levels } });

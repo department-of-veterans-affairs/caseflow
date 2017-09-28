@@ -9,10 +9,10 @@ export const onProgramChange = (program, issueId, appealId) => ({
   }
 });
 
-export const onIssueChange = (issue, issueId, appealId) => ({
-  type: Constants.SET_ISSUE,
+export const onNameChange = (name, issueId, appealId) => ({
+  type: Constants.SET_NAME,
   payload: {
-    issue,
+    name,
     issueId,
     appealId
   }

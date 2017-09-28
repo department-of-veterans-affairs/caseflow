@@ -3,15 +3,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import TextareaField from '../../components/TextareaField';
-import { onProgramChange, onIssueChange, onLevelsChange, onDescriptionChange } from '../actions/Issue';
+import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
   onProgramChange = (program) =>
     this.props.onProgramChange(program, this.props.issue.id, this.props.appeal.id);
 
-  onIssueChange = (issue) =>
-    this.props.onIssueChange(issue, this.props.issue.id, this.props.appeal.id);
+  onNameChange = (name) =>
+    this.props.onNameChange(name, this.props.issue.id, this.props.appeal.id);
 
   onLevelsChange = (levels) =>
     this.props.onLevelsChange(levels, this.props.issue.id, this.props.appeal.id);
@@ -25,8 +25,8 @@ class HearingWorksheetIssueFields extends PureComponent {
     const allowedFields = {
       program: { onChange: this.onProgramChange,
         value: issue.program },
-      issue: { onChange: this.onIssueChange,
-        value: issue.issue },
+      name: { onChange: this.onNameChange,
+        value: issue.name },
       levels: { onChange: this.onLevelsChange,
         value: issue.levels },
       description: { onChange: this.onDescriptionChange,
@@ -55,7 +55,7 @@ class HearingWorksheetIssueFields extends PureComponent {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onProgramChange,
-  onIssueChange,
+  onNameChange,
   onLevelsChange,
   onDescriptionChange
 }, dispatch);

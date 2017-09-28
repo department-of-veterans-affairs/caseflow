@@ -71,7 +71,7 @@ class HearingWorksheetIssues extends PureComponent {
         issue: <HearingWorksheetIssueFields
             appeal={worksheetStreamsAppeal}
             issue={issueRow}
-            field="issue"
+            field="name"
         />,
         levels: <HearingWorksheetIssueFields
             appeal={worksheetStreamsAppeal}
