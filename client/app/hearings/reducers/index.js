@@ -9,7 +9,7 @@ import update from 'immutability-helper';
 import * as Constants from '../constants/constants';
 import _ from 'lodash';
 
-export const mapDataToInitialState = (state = {}) => {
+export const mapDataToInitialState = () => {
   return {
     issueDeleteModal: false
   };
