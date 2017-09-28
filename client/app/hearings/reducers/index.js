@@ -10,10 +10,12 @@ import * as Constants from '../constants/constants';
 import _ from 'lodash';
 
 
-export const mapDataToInitialState = () => {
-  return {
-    issueDeleteModal: false
-  };
+const initialState = {
+ issueDeleteModal: false
+};
+
+export const mapDataToInitialState = (state = initialState) => {
+  return state;
 };
 
 export const newHearingState = (state, action, spec) => {
