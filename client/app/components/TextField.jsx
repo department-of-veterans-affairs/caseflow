@@ -23,6 +23,7 @@ export default class TextField extends React.Component {
       placeholder,
       title,
       onKeyPress,
+      strongLabel,
       maxLength
     } = this.props;
 
@@ -41,10 +42,16 @@ export default class TextField extends React.Component {
     //
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
+    const labelContents = <span>{label || name} {required && <span className="cf-required">Required</span>}</span>;
+
     return <div className={textInputClass.join(' ')}>
       {(label !== false) &&
         <label className="question-label" htmlFor={name}>
-          {label || name} {required && <span className="cf-required">Required</span>}
+          {
+            strongLabel ?
+              <strong>{labelContents}</strong> :
+              labelContents
+          }
         </label>
       }
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}

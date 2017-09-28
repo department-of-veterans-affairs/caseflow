@@ -61,10 +61,6 @@ class Hearing < ActiveRecord::Base
     number_of_documents
   end
 
-  cache_attribute :cached_number_of_documents_after_certification do
-    number_of_documents_after_certification
-  end
-
   delegate \
     :veteran_age, \
     :veteran_name, \
@@ -113,7 +109,6 @@ class Hearing < ActiveRecord::Base
                 :representative,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :cached_number_of_documents_after_certification,
                 :military_service],
       include: :worksheet_issues
     ).merge(to_hash)

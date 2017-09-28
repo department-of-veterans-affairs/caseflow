@@ -60,10 +60,7 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: false,
               vha: true }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88 },
+          } },
         "9092": {
           id: 9092,
           issues: {
@@ -91,10 +88,7 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: true,
               vha: true }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88 } }
+          } } }
     }.merge(worksheet.to_hash_for_worksheet)
   end
 end
