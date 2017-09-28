@@ -251,20 +251,43 @@ export class PdfPage extends React.PureComponent {
     return _.pick(viewport, ['width', 'height']);
   }
 
+  getDivDimensions = () => {
+    const innerDivDimensions = {
+      innerDivWidth: _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH),
+      innerDivHeight: _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT)
+    };
+
+    // If we have rotated the page, we need to switch the width and height.
+    if (this.props.rotation === 90 || this.props.rotation === 270) {
+      return {
+        outerDivWidth: this.props.scale * innerDivDimensions.innerDivHeight,
+        outerDivHeight: this.props.scale * innerDivDimensions.innerDivWidth,
+        ...innerDivDimensions
+      };
+    }
+
+    return {
+      outerDivWidth: this.props.scale * innerDivDimensions.innerDivWidth,
+      outerDivHeight: this.props.scale * innerDivDimensions.innerDivHeight,
+      ...innerDivDimensions
+    };
+  }
+
   render() {
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
       'cf-pdf-placing-comment': this.props.isPlacingAnnotation
     });
-    const width = _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH);
-    const height = _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT);
-    const currentWidth = this.props.scale * width;
-    const currentHeight = this.props.scale * height;
+    const { outerDivWidth, outerDivHeight, innerDivWidth, innerDivHeight } = this.getDivDimensions();
+
+    // When you rotate a page 270 degrees there is a margin on the right equal to the difference
+    // between the current width and current height. We need to undo that margin to get things to align.
+    const marginTop = this.props.rotation === 270 ? outerDivHeight - outerDivWidth : 0;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
-      width: `${currentWidth}px`,
-      height: `${currentHeight}px`,
+      width: `${outerDivWidth}px`,
+      height: `${outerDivHeight}px`,
       verticalAlign: 'top',
       display: this.props.isVisible ? '' : 'none'
     };
@@ -273,13 +296,22 @@ export class PdfPage extends React.PureComponent {
     const pageContentsVisibleClass = classNames({
       'cf-pdf-page-hidden': this.props.isDrawing
     });
+    // This div is the one responsible for rotating the page. It is within the outer div which changes
+    // its width and height based on whether this page has been rotated to be in a portrait or landscape view.
+    const innerDivStyle = {
+      transform: `rotate(${this.props.rotation}deg)`,
+      marginTop
+    };
 
     return <div
-      id={`pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}`}
+      id={this.props.isVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div className={pageContentsVisibleClass}>
+        <div
+          id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+          className={pageContentsVisibleClass}
+          style={innerDivStyle}>
           <canvas
             ref={this.getCanvasRef}
             className="canvasWrapper" />
@@ -290,8 +322,10 @@ export class PdfPage extends React.PureComponent {
               scale={this.props.scale}
               getTextLayerRef={this.getTextLayerRef}
               file={this.props.file}
-              dimensions={{ width,
-                height }}
+              dimensions={{
+                width: innerDivWidth,
+                height: innerDivHeight
+              }}
               isVisible={this.props.isVisible}
             />
           </div>
@@ -310,6 +344,7 @@ PdfPage.propTypes = {
   pageIndex: PropTypes.number,
   isVisible: PropTypes.bool,
   scale: PropTypes.number,
+  rotate: PropTypes.number,
   pdfDocument: PropTypes.object
 };
 
@@ -327,7 +362,8 @@ const mapStateToProps = (state, props) => {
     pageDimensions: _.get(page, ['dimensions']),
     page: _.get(page, ['page']),
     text: _.get(page, ['text']),
-    isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation
+    isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0)
   };
 };
 
