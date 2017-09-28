@@ -48,24 +48,7 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      if (Object.keys(matchesCategories).length) {
-        // debugger;
-      }
-      updatedNextState.ui.searchCategoryHighlights[doc.id] = Object.assign({},
-        updatedNextState.ui.searchCategoryHighlights[doc.id],
-        matchesCategories)
-
-      // updatedNextState = update(updatedNextState, {
-        // ui: {
-          // searchCategoryHighlights: {
-            // $merge: {
-              // [doc.id]: {
-                // ...matchesCategories
-              // }
-            // }
-          // }
-        // }
-      // });
+      updatedNextState.ui.searchCategoryHighlights[doc.id] = matchesCategories;
     }
 
     // updating the state of all annotations for expanded comments

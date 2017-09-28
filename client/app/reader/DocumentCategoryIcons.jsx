@@ -15,22 +15,9 @@ const categoriesOfDocument = (document) => _(Constants.documentCategories).
     value();
 
 class DocumentCategoryIcons extends React.Component {
-  // shouldComponentUpdate = (nextProps) => !_.isEqual(
-    // categoriesOfDocument(this.props.doc),
-    // categoriesOfDocument(nextProps.doc)
-  // ) || !_.isEqual(
-    // this.props.searchCategoryHighlights,
-    // nextProps.searchCategoryHighlights
-  // )
-
   render() {
     const { searchCategoryHighlights, doc } = this.props;
     const categories = categoriesOfDocument(doc);
-    const docHighlights = searchCategoryHighlights;
-
-    if (doc.id === 2) {
-      // debugger;
-    }
 
     if (!_.size(categories)) {
       return null;
@@ -44,7 +31,7 @@ class DocumentCategoryIcons extends React.Component {
       {
         _.map(categories, (category) =>
           <li
-            className={docHighlights[getCategoryName(category.humanName)] ?
+            className={searchCategoryHighlights[getCategoryName(category.humanName)] ?
              `${listClassName} highlighted` : listClassName}
             key={category.renderOrder}
             aria-label={category.humanName}>
@@ -61,12 +48,10 @@ DocumentCategoryIcons.propTypes = {
   searchCategoryHighlights: PropTypes.object
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    searchCategoryHighlights:
-      state.readerReducer.ui.searchCategoryHighlights[ownProps.doc.id]
-  }
-};
+const mapStateToProps = (state, ownProps) => ({
+  searchCategoryHighlights:
+    state.readerReducer.ui.searchCategoryHighlights[ownProps.doc.id]
+});
 
 export { DocumentCategoryIcons };
 
