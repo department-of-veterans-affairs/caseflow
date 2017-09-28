@@ -34,9 +34,9 @@ export const newHearingIssueState = (state, action, spec) => {
   return update(state, {
     worksheet: {
       appeals_ready_for_hearing: {
-        [action.payload.appealId]: {
-          issues: {
-            [action.payload.issueId]: spec
+        [action.payload.appealKey]: {
+          worksheet_issues: {
+            [action.payload.issueKey]: spec
           }
         }
       }
