@@ -43,6 +43,10 @@ class DocumentCategoryIcons extends React.Component {
   }
 }
 
+DocumentCategoryIcons.defaultProps = {
+  searchCategoryHighlights: {}
+};
+
 DocumentCategoryIcons.propTypes = {
   doc: PropTypes.object.isRequired,
   searchCategoryHighlights: PropTypes.object
