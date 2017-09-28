@@ -1,6 +1,7 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
+  include CachedAttributes
   include RegionalOfficeConcern
   include CachedAttributes
 
@@ -39,6 +40,10 @@ class Appeal < ActiveRecord::Base
 
   # These are only set when you pull in a case from the Case Assignment Repository
   attr_accessor :date_assigned, :date_received, :signed_date
+
+  cache_attribute :aod do
+    self.class.repository.aod(vacols_id)
+  end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
@@ -244,10 +249,6 @@ class Appeal < ActiveRecord::Base
   def station_key
     result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
     result && result.first
-  end
-
-  def aod
-    @aod ||= self.class.repository.aod(vacols_id)
   end
 
   def nod
