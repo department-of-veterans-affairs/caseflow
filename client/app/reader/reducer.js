@@ -1,7 +1,8 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
+import { update } from '../util/ReducerUtil';
+import { categoryFieldNameOfCategoryName, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
