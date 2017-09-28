@@ -7,12 +7,13 @@ import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from '../reader/actions';
-import { isUserEditingText, update, shouldFetchAppeal } from '../reader/utils';
+  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from './actions';
+import { isUserEditingText, shouldFetchAppeal } from './utils';
+import { update } from '../util/ReducerUtil';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
-import * as Constants from '../reader/constants';
-import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
+import * as Constants from './constants';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from './analytics';
 
 const NUMBER_OF_DIRECTIONS = 4;
 
