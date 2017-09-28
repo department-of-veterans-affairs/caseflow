@@ -16,7 +16,12 @@ import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics
 
 const NUMBER_OF_DIRECTIONS = 4;
 
+// Given a direction, the current coordinates, an array of the div elements for each page,
+// the file, and rotation of the document, this function calculates the next location of the comment.
 export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation) => {
+  // There are four valid rotations: 0, 90, 180, 270. We transform those values to 0, -1, -2, -3.
+  // We then use that value to rotate the direction. I.E. Hitting up (value 0) on the
+  // keyboard when rotated 90 degrees corresponds to moving left (value 3) on the document.
   const rotationIncrements = -(rotation / Constants.ROTATION_INCREMENTS) % NUMBER_OF_DIRECTIONS;
   const transformedDirection = Constants.MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[
     (direction + rotationIncrements + NUMBER_OF_DIRECTIONS) % NUMBER_OF_DIRECTIONS];
