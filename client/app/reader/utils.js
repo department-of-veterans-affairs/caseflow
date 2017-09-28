@@ -21,7 +21,6 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
 });
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
-
   if (rotation === 0) {
     return { x,
       y };

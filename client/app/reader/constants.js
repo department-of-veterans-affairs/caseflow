@@ -98,7 +98,7 @@ export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 export const ROTATION_INCREMENTS = 90;
 export const COMPLETE_ROTATION = 360;
 
-// Arrange the directions such that each direction + 1 rotates clockwise.
+// Arrange the directions such that each direction + 1 modulo 4 rotates clockwise.
 export const MOVE_ANNOTATION_ICON_DIRECTIONS = {
   UP: 0,
   RIGHT: 1,
