@@ -9,7 +9,7 @@ export default class Finish extends React.PureComponent {
       <span>Upload the RAMP election form to VBMS and ensure the Document Type is <em>Correspondence</em>.</span>,
       <span>Update the Subject Line with <em>RAMP Opt-In</em>.</span>,
       <span>Create an EP <strong>030 RAMP Supplemental</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of <em>RAMP</em></span>
+      <span>Add a placeholder contention of <em>RAMP</em>.</span>
     ];
     const stepFns = steps.map((step, index) => () => <span><strong>Step {index}.</strong> {step}</span>);
 
