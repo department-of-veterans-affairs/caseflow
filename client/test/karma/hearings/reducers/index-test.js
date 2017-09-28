@@ -342,7 +342,7 @@ describe.skip('hearingsReducer', () => {
     });
 
     it('toggles issue delete modal', () => {
-      expect(state.issueDeleteModal).to.deep.equal(true);
+      expect(state.issueDeleteModal).to.eq(true);
     });
   });
 

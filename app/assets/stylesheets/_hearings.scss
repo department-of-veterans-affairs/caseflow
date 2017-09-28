@@ -306,20 +306,20 @@ $color-hearings-saving: #777;
     &.column-5 {
       width: 21%;
     }
+
+    .cf-modal {
+
+      h2 {
+        border-bottom: none;
+        font-size: 1.5em;
+      }
+
+    }
   }
 
   .cf-appeal-stream-label {
     margin-top: .5em;
     margin-bottom: 0;
-  }
-
-  .cf-modal {
-
-    h2 {
-      border-bottom: none;
-      font-size: 1.5em;
-    }
-
   }
 
   .cf-issue-delete {
