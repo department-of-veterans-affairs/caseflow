@@ -1,7 +1,6 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import NavigationBar from '../../components/NavigationBar';
-
 import { BrowserRouter as Router } from 'react-router-dom';
 
 const options = [
@@ -20,15 +19,7 @@ const options = [
 ];
 
 export default class StyleGuideNavigationBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: false
-    };
-  }
-
   render() {
-
     return <div className="sg-nav-bar">
       <StyleGuideComponentTitle
         title="Navigation Bar"
@@ -51,13 +42,14 @@ export default class StyleGuideNavigationBar extends React.Component {
       The navigation bar is a total of 90px tall with a 1px border-bottom colored
       grey-lighter.
     </p>
-     
-     <div className="sg-nav-wrap">
-      <Router>
+
+    <div className="sg-nav-wrap">
+     <Router>
       <NavigationBar
-       appName="Reader"
+       appName="efolder"
        userDisplayName="Abraham Lincoln"
        dropdownUrls={options}
+       defaultUrl="/"
       />
      </Router>
    </div>

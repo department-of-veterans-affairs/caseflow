@@ -5,6 +5,16 @@ import Link from './Link';
 import Breadcrumbs from './Breadcrumbs';
 import PerformanceDegradationBanner from './PerformanceDegradationBanner';
 
+const CLASS_NAME_MAPPING = {
+  default: ' cf-logo cf-logo-image-default',
+  certification: 'cf-logo cf-logo-image-certification',
+  reader: 'cf-logo cf-logo-image-reader',
+  hearingPrep: 'cf-logo cf-logo-image-hearing-prep',
+  feedback: 'cf-logo cf-logo-image-feedback',
+  efolder: 'cf-logo cf-logo-image-efolder',
+  dispatch: 'cf-logo cf-logo-image-dispatch'
+};
+
 export default class NavigationBar extends React.Component {
   render() {
     let {
@@ -18,10 +28,9 @@ export default class NavigationBar extends React.Component {
         <div>
           <div className="cf-app-width">
             <span className="cf-push-left">
-              <h1 className={`cf-logo cf-logo-image-${appName.
-                  split(' ').
+              <h1 className={CLASS_NAME_MAPPING[appName.split(' ').
                   join('-').
-                  toLowerCase()}`}>
+                  toLowerCase()]}>
                 <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
                   <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
