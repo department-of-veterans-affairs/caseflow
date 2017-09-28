@@ -11,6 +11,7 @@ import StyleGuideModal from './StyleGuide/StyleGuideModal';
 import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
+import Intake from '../intake';
 import Reader from '../reader/index.jsx';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
@@ -20,6 +21,7 @@ import CanceledTasksIndex from './CanceledTasksIndex';
 const Pages = {
   CaseWorkerIndex,
   DecisionReviewer: Reader,
+  Intake,
   EstablishClaim,
   EstablishClaimCancel,
   EstablishClaimComplete,
