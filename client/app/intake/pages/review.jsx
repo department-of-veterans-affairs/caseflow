@@ -1,6 +1,7 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
 import DateSelector from '../../components/DateSelector';
+import Button from '../../components/Button';
 
 export default class Review extends React.PureComponent {
   onElectionChange = () => {
@@ -31,4 +32,8 @@ export default class Review extends React.PureComponent {
   }
 }
 
+export class ReviewNextButton extends React.PureComponent {
+  handleClick = () => this.props.history.push('/finish')
 
+  render = () => <Button onClick={this.handleClick}>Continue to next step</Button>
+}

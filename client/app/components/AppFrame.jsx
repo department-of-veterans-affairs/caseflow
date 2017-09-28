@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default class AppFrame extends React.PureComponent {
-  render = () =>
-    <main className="cf-app-width">
-      {this.props.children}
-    </main>
-}
+const AppFrame = ({ children }) =>
+  <main className="cf-app-width">
+    {children}
+  </main>;
+
+export default AppFrame;
