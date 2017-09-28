@@ -14,7 +14,7 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
-import PdfJsStub from '../../helpers/PdfJsStub';
+import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
 
 const vacolsId = 'reader_id1';
@@ -52,6 +52,12 @@ describe('DecisionReviewer', () => {
     wrapper = mount(
       <Provider store={store}>
         <DecisionReviewer
+          userDisplayName={'Name'}
+          feedbackUrl={'fakeurl'}
+          dropdownUrls={[{
+            title: 'title',
+            link: 'link'
+          }]}
           pdfWorker="worker"
           url="url"
           router={MemoryRouter}
@@ -120,6 +126,31 @@ describe('DecisionReviewer', () => {
         // Verify there is still a back to claims folder
         expect(wrapper.find('a').filterWhere((link) => link.text().includes('Back to claims'))).to.have.length(1);
       });
+    });
+
+    context('rotate', () => {
+      it('turns pages', asyncTest(async() => {
+        // Click on first document link
+        wrapper.find('a').filterWhere(
+          (link) => link.text() === documents[0].type).
+          simulate('click', { button: 0 });
+        await pause();
+
+        expect(wrapper.find('#rotationDiv1').
+          props().style.transform).to.equal('rotate(0deg)');
+
+        wrapper.find('#button-rotation').simulate('click', { button: 0 });
+
+        expect(wrapper.find('#rotationDiv1').
+          props().style.transform).to.equal('rotate(90deg)');
+
+        const pageContainerStyle = wrapper.find('#pageContainer1').props().style;
+
+        await pause();
+
+        expect(pageContainerStyle.width).to.equal(`${PAGE_HEIGHT}px`);
+        expect(pageContainerStyle.height).to.equal(`${PAGE_WIDTH}px`);
+      }));
     });
 
     context('comments', () => {

@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  pageCoordsOfRootCoords } from '../reader/utils';
+  pageCoordsOfRootCoords, rotateCoordinates } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPdfReadyToShow,
-  placeAnnotation, startPlacingAnnotation,
+import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
@@ -276,8 +275,11 @@ export class Pdf extends React.PureComponent {
         this.onPageChange(this.props.jumpToPageNumber);
       }
       if (this.props.scrollToComment) {
-        this.scrollToPageLocation(pageIndexOfPageNumber(this.props.scrollToComment.page),
-          this.props.scrollToComment.y);
+        const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
+        const y = rotateCoordinates(this.props.scrollToComment,
+          this.props.pageContainers[pageIndex].getBoundingClientRect(), -this.props.rotation).y * this.props.scale;
+
+        this.scrollToPageLocation(pageIndex, y);
       }
     }
 
@@ -346,7 +348,8 @@ const mapStateToProps = (state, props) => {
     ...state.readerReducer.ui.pdf,
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
-    ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords')
+    ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
   };
 };
 
@@ -356,8 +359,7 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    onScrollToComment,
-    setPdfReadyToShow
+    onScrollToComment
   }, dispatch)
 });
 
@@ -385,6 +387,6 @@ Pdf.propTypes = {
     y: PropTypes.number
   }),
   onIconMoved: PropTypes.func,
-  setPdfReadyToShow: PropTypes.func,
-  prefetchFiles: PropTypes.arrayOf(PropTypes.string)
+  prefetchFiles: PropTypes.arrayOf(PropTypes.string),
+  rotation: PropTypes.number
 };
