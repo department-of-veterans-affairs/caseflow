@@ -20,7 +20,9 @@ const updateFilteredDocIds = (nextState) => {
         value();
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
-  let updatedNextState = nextState;
+
+  // ensure we have a deep clone so we are not mutating the original state
+  let updatedNextState = update(nextState, {});
 
   const filteredIds = _(nextState.documents).
     filter(
