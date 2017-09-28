@@ -63,3 +63,10 @@ export const onToggleVHA = (vha, issueId, appealId) => ({
   }
 });
 
+export const toggleIssueDeleteModal = (isShowingModal) => ({
+  type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
+  payload: {
+    isShowingModal
+  }
+});
+
