@@ -19,7 +19,7 @@ In order to have an acceptable level of uptime, our team needs to be responsive 
 
 ### Staffing
 * Nick
-* Mike
+* Lisa
 * JD
 * Alex
 * Anya
@@ -68,7 +68,6 @@ We'll have to figure out holidays when they arise. For holidays that not everyon
 ### Staffing
 * Marian
 * Alexis
-* Shade
 * Nolawi
 * Nemo
 
