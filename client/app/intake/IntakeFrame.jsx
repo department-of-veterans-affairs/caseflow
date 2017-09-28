@@ -9,6 +9,7 @@ import PrimaryAppContent from '../components/PrimaryAppContent';
 import BeginPage from './pages/begin';
 import ReviewPage, { ReviewNextButton } from './pages/review';
 import FinishPage, { FinishNextButton } from './pages/finish';
+import CompletedPage, { CompletedNextButton } from './pages/completed';
 
 export default class IntakeFrame extends React.PureComponent {
   render() {
@@ -49,15 +50,24 @@ export default class IntakeFrame extends React.PureComponent {
                 path="/finish"
                 title="Finish | Caseflow Intake"
                 component={FinishPage} />
-              </PrimaryAppContent>
-              <Route
+              <PageRoute
                 exact
-                path="/review-request"
-                component={ReviewNextButton} />
-              <Route
-                exact
-                path="/finish"
-                component={FinishNextButton} />
+                path="/completed"
+                title="Completed | Caseflow Intake"
+                component={CompletedPage} />
+            </PrimaryAppContent>
+            <Route
+              exact
+              path="/review-request"
+              component={ReviewNextButton} />
+            <Route
+              exact
+              path="/finish"
+              component={FinishNextButton} />
+            <Route
+              exact
+              path="/completed"
+              component={CompletedNextButton} />
           </AppFrame>
         </NavigationBar>
         <Footer
