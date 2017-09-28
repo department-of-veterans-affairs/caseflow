@@ -58,7 +58,7 @@ export default class Button extends React.Component {
 
     return <span>
       <button
-        id={id || `${type}-${name.replace(/\s/g, '-')}`}
+        id={id || (name && `${type}-${name.replace(/\s/g, '-')}`)}
         className={classNames.join(' ') + (loading ? ' hidden-field' : '')}
         type={type}
         disabled={disabled}
@@ -88,7 +88,7 @@ Button.propTypes = {
   name: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.node
-  ]).isRequired,
+  ]),
   onClick: PropTypes.func,
   type: PropTypes.string
 };
