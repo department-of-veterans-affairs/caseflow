@@ -19,32 +19,6 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
-  const updateListComments = (state, id, foundComment) => {
-    return update(state, {
-      documents: {
-        [id]: {
-          listComments: {
-            $set: foundComment
-          }
-        }
-      }
-    });
-  };
-
-  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
-    return update(state, {
-      ui: {
-        searchCategoryHighlights: {
-          $merge: {
-            [docId]: {
-              ...categoryMatches
-            }
-          }
-        }
-      }
-    });
-  };
-
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
   let updatedNextState = nextState;
 
@@ -74,13 +48,12 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
-        doc.id, matchesCategories);
+      updatedNextState.ui.searchCategoryHighlights[doc.id] = matchesCategories;
     }
 
     // updating the state of all annotations for expanded comments
     if (containsWords !== doc.listComments) {
-      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+      updatedNextState.documents[doc.id].listComments = containsWords;
     }
   });
 
