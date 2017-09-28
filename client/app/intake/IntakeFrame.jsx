@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -11,13 +12,16 @@ import BeginPage from './pages/begin';
 import ReviewPage, { ReviewNextButton } from './pages/review';
 import FinishPage, { FinishNextButton } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS } from './constants';
+import { PAGE_PATHS, REQUEST_STATE } from './constants';
 
-export default class IntakeFrame extends React.PureComponent {
+class IntakeFrame extends React.PureComponent {
   render() {
     const appName = 'Intake';
 
     const Router = this.props.router || BrowserRouter;
+
+    const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
+      `${this.props.veteran.name} (${this.props.veteran.fileNumber})` : null;
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
@@ -25,6 +29,7 @@ export default class IntakeFrame extends React.PureComponent {
           appName={appName}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
+          topMessage={topMessage}
           defaultUrl="/">
           <AppFrame>
             <IntakeProgressBar />
@@ -75,3 +80,10 @@ export default class IntakeFrame extends React.PureComponent {
     </Router>;
   }
 }
+
+export default connect(
+  ({ veteran, requestStatus }) => ({
+    veteran,
+    fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
+  })
+)(IntakeFrame);
