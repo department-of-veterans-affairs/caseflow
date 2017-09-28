@@ -92,7 +92,6 @@ export class PdfSidebar extends React.Component {
     let comments = [];
 
     const {
-      showErrorMessage,
       tagOptions,
       appeal
     } = this.props;
