@@ -92,8 +92,9 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-        <HearingWorksheetDocs />
-
+        <HearingWorksheetDocs
+          {...this.props}
+        />
 
         <HearingWorksheetStream
            worksheetStreams={worksheet.streams}
