@@ -15,7 +15,6 @@ class VACOLS::CaseIssue < VACOLS::Record
   # either from the ISSREF or VFTYPES table.
   def self.descriptions(issue_keys)
     conn = connection
-    issue_keys = issue_keys.map { |key| conn.quote(key) }
 
     conn.transaction do
       query = <<-SQL
@@ -68,16 +67,19 @@ class VACOLS::CaseIssue < VACOLS::Record
             or (ISSREF.LEV2_CODE = '##' and 'DG' || ISSUES.ISSLEV2 = VFTYPES.FTKEY)
             or (ISSREF.LEV3_CODE = '##' and 'DG' || ISSUES.ISSLEV3 = VFTYPES.FTKEY))
 
-        where ISSUES.ISSKEY IN (#{issue_keys.join(',')})
+        where ISSUES.ISSKEY IN (?)
       SQL
-    
+
+      #binding.pry
       issues_result = MetricsService.record("VACOLS: CaseIssue.issues for #{issue_keys}", name: "CaseIssue.issues",
-                                                                              service: :vacols) do
-        conn.exec_query(ActiveRecord::Base.send(:sanitize_sql_array, query))
+                                                                                          service: :vacols) do
+        conn.exec_query(sanitize_sql_array([query, issue_keys]))
       end
 
       issues_result.to_hash.reduce({}) do |memo, result|
-        memo[(result["isskey"]).to_s] = result
+        issue_key = result["isskey"].to_s        
+        memo[issue_key] ||= []
+        memo[issue_key] << result
         memo
       end
     end
