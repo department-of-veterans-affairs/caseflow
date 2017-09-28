@@ -94,7 +94,10 @@ class HearingWorksheetIssues extends PureComponent {
         />,
         actions: <HearingWorksheetPreImpressions
                     appeal={worksheetStreamsAppeal}
-                    issue={issueRow} />,
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
+        />,
         deleteIssue: <TrashCan />
 
       };
