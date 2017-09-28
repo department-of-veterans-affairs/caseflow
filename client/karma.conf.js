@@ -26,12 +26,6 @@ module.exports = function(config) {
       'test/karma/test-index.js': ['webpack']
     },
 
-    // Note that karma-webpack will ignore the `entry` value for
-    // our webpack config, and will instead run the compiler for
-    // each file matched by the test pattern specified above.
-    // This means that our other entry points, which we use
-    // for shims and polyfills, need to be manually imported
-    // in the tests.
     webpack: _.merge({
       watch: true,
       externals: {
