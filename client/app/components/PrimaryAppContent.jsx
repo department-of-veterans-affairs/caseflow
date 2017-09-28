@@ -1,8 +1,8 @@
 import React from 'react';
 
 const PrimaryAppContent = ({ children }) =>
-  <main className="cf-app-width cf-app-segment cf-app-segment--alt">
+  <div className="cf-app-width cf-app-segment cf-app-segment--alt">
     {children}
-  </main>;
+  </div>;
 
 export default PrimaryAppContent;

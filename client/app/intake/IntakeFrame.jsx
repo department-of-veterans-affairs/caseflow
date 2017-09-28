@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
+import AppSegment from '../components/AppSegment';
 import ProgressBar from '../components/ProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import BeginPage from './pages/begin';
@@ -56,18 +57,20 @@ export default class IntakeFrame extends React.PureComponent {
                 title="Completed | Caseflow Intake"
                 component={CompletedPage} />
             </PrimaryAppContent>
-            <Route
-              exact
-              path="/review-request"
-              component={ReviewNextButton} />
-            <Route
-              exact
-              path="/finish"
-              component={FinishNextButton} />
-            <Route
-              exact
-              path="/completed"
-              component={CompletedNextButton} />
+            <AppSegment className="cf-workflow-button-wrapper">
+              <Route
+                exact
+                path="/review-request"
+                component={ReviewNextButton} />
+              <Route
+                exact
+                path="/finish"
+                component={FinishNextButton} />
+              <Route
+                exact
+                path="/completed"
+                component={CompletedNextButton} />
+            </AppSegment>
           </AppFrame>
         </NavigationBar>
         <Footer

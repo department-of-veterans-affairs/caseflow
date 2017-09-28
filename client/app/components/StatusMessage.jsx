@@ -8,7 +8,7 @@ export default class StatusMessage extends React.Component {
     let {
       checklist,
       // TODO(nth) This is not a good variable name. It shadows the classNames node module.
-      // And it's too generic – the classNames are applied to one specific child element, but 
+      // And it's too generic – the classNames are applied to one specific child element, but
       // you'd never know what that element is by looking at the variable name.
       classNames,
       example,
