@@ -9,13 +9,13 @@ import EditComment from './EditComment';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
-import CannotSaveAlert from '../reader/CannotSaveAlert';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
-import { plusIcon, Keyboard } from '../components/RenderFunctions';
+import { Keyboard } from '../components/RenderFunctions';
 import SideBarDocumentInformation from './SideBarDocumentInformation';
 import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
+import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
@@ -173,27 +173,15 @@ export class PdfSidebar extends React.Component {
                 removeTag={this.props.removeTag}/>
             </AccordionSection>
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
-                <span className="cf-right-side cf-add-comment-button">
-                  <Button
-                    name="AddComment"
-                    onClick={this.handleAddClick}>
-                    <span>{ plusIcon() } &nbsp; Add a comment</span>
-                  </Button>
-                </span>
-              <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-                {showErrorMessage.annotation && <CannotSaveAlert />}
-                <div className="cf-pdf-comment-list">
-                  {this.props.placedButUnsavedAnnotation &&
-                    <EditComment
-                      comment={this.props.placedButUnsavedAnnotation}
-                      id="addComment"
-                      disableOnEmpty={true}
-                      onChange={this.props.updateNewAnnotationContent}
-                      onCancelCommentEdit={this.stopPlacingAnnotation}
-                      onSaveCommentEdit={this.props.createAnnotation} />}
-                  {comments}
-                </div>
-              </div>
+              <SideBarComments
+                comments={comments}
+                handleAddClick={this.handleAddClick}
+                placedButUnsavedAnnotation={this.props.placedButUnsavedAnnotation}
+                showErrorMessage={showErrorMessage}
+                onChange={this.props.updateNewAnnotationContent}
+                onCancelCommentEdit={this.stopPlacingAnnotation}
+                onSaveCommentEdit={this.props.createAnnotation}
+                />
             </AccordionSection>
           </Accordion>
         </div>
