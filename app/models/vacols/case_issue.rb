@@ -77,6 +77,7 @@ class VACOLS::CaseIssue < VACOLS::Record
     issues_result.to_hash.reduce({}) do |memo, result|
       issue_key = result["isskey"].to_s
       memo[issue_key] = (memo[issue_key] || []) << result
+      memo
     end
   end
   # rubocop:enable MethodLength
