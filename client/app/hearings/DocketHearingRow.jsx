@@ -25,8 +25,8 @@ const holdOptions = [{ value: 30,
 { value: 90,
   label: '90 days' }];
 
-const aodOptions = [{ value: 'grant',
-  label: 'Grant' },
+const aodOptions = [{ value: 'granted',
+  label: 'Granted' },
 { value: 'filed',
   label: 'Filed' },
 { value: 'none',
