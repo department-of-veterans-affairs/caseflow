@@ -64,7 +64,8 @@ RSpec.feature "Hearings" do
       docket1_hearings = get_hearings(1)
       docket2_hearings = get_hearings(2)
 
-      expect(docket1_hearings).to eql("1")
+      # the first one is a master record
+      expect(docket1_hearings).to eql("0")
       expect(docket2_hearings).to eql("2")
 
       # Validate help link
@@ -124,6 +125,18 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/02/2003 - 05/07/2009")
       expect(page).to have_content("Medical exam occurred on 10/10/2008")
       expect(page).to have_content("Look for knee-related medical records")
+    end
+
+    scenario "Worksheet differentiates between user and vacols created records" do
+      visit "/hearings/1/worksheet"
+      expect(page).to have_field("7654-issue-program")
+      expect(page).to have_field("7654-issue-issue")
+      expect(page).to have_field("7654-issue-levels")
+      expect(page).to have_field("7654-issue-description")
+      expect(page).to_not have_field("1754-issue-program")
+      expect(page).to_not have_field("1754-issue-issue")
+      expect(page).to_not have_field("1754-issue-levels")
+      expect(page).to have_field("1754-issue-description")
     end
 
     scenario "Can click from hearing worksheet to reader" do
