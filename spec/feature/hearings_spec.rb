@@ -126,9 +126,16 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Look for knee-related medical records")
     end
 
-    scenario "Worksheet differentiates between user and vacols created records", focus: true do
+    scenario "Worksheet differentiates between user and vacols created records" do
       visit "/hearings/1/worksheet"
-      binding.pry
+      expect(page).to have_field("7654-issue-program")
+      expect(page).to have_field("7654-issue-issue")
+      expect(page).to have_field("7654-issue-levels")
+      expect(page).to have_field("7654-issue-description")
+      expect(page).to_not have_field("1754-issue-program")
+      expect(page).to_not have_field("1754-issue-issue")
+      expect(page).to_not have_field("1754-issue-levels")
+      expect(page).to have_field("1754-issue-description")
     end
 
     scenario "Can click from hearing worksheet to reader" do
