@@ -21,18 +21,16 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
 });
 
 export const rotateCoordinates = ({ x, y }, container, rotation) => {
-  const normalizedRotation = (rotation + 360) % 360;
-
-  if (normalizedRotation === 0) {
+  if (rotation === 0) {
     return { x,
       y };
-  } else if (normalizedRotation === 90) {
+  } else if (rotation === 90) {
     return { x: y,
       y: container.width - x };
-  } else if (normalizedRotation === 180) {
+  } else if (rotation === 180) {
     return { x: container.width - x,
       y: container.height - y };
-  } else if (normalizedRotation === 270) {
+  } else if (rotation === 270) {
     return { x: container.height - y,
       y: x };
   }
