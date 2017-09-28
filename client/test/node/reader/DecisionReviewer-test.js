@@ -378,7 +378,7 @@ describe('DecisionReviewer', () => {
         expect(wrapper.html()).to.include('<mark class=" ">Comment</mark>');
       });
 
-      it('does search highlighting for categories', () => {
+      it.only('does search highlighting for categories', () => {
         wrapper.find('input').simulate('change',
           { target: { value: 'medical' } });
 
