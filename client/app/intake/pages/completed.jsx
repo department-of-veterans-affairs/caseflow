@@ -7,7 +7,6 @@ export default class Completed extends React.PureComponent {
     const message = 'Joe Snuffy\'s (ID #222222222) opt-in request has been processed, ' +
       'and Caseflow closed the record in VACOLS. You can now begin processing the next opt-in letter.';
 
-
     return <div>
       <StatusMessage
         title="Intake completed"
