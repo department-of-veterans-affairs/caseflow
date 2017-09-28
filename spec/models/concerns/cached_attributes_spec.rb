@@ -28,6 +28,14 @@ describe CachedAttributes do
     end
   end
 
+  context "assign cache value" do
+    it "saves assigned cache value" do
+      model.rating = true
+      model.not_cached_rating = false
+      expect(model.rating).to eq(true)
+    end
+  end
+
   context ".cache_attribute" do
     subject { model.rating }
     before do
@@ -36,8 +44,22 @@ describe CachedAttributes do
     end
 
     context "when no cached value" do
-      before { model.not_cached_rating = 9 }
+      before do
+        model.not_cached_rating = 9
+      end
       it { is_expected.to eq(9) }
+    end
+
+    context "caches false boolean values" do
+      before do
+        model.clear_cached_attr!(:rating)
+        model.not_cached_rating = false
+      end
+      it "reads from cache" do
+        expect(model.rating).to eq(false)
+        model.not_cached_rating = true
+        expect(model.rating).to eq(false)
+      end
     end
 
     context "when cached value" do
