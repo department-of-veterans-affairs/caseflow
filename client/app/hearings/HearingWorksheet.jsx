@@ -97,7 +97,7 @@ export class HearingWorksheet extends React.PureComponent {
         />
 
         <HearingWorksheetStream
-           worksheetStreams={worksheet.streams}
+           worksheetStreams={worksheet.appeals_ready_for_hearing}
               {...this.props}
         />
 

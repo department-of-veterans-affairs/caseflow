@@ -382,9 +382,8 @@ class Appeal < ActiveRecord::Base
   # we want to fetch it from VACOLS, save it to the DB, then return it
   # This is currently only used by hearings prep.
   def worksheet_issues
-    # TODO: DO NOT MERGE UNTIL SUPER IS TAKEN CARE OF
-    self.issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
-    self.issues
+    # TODO: Anya's PR will fix this, don't merge until that's ready!
+    WorksheetIssue.all
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
