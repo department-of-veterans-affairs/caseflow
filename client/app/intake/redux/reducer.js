@@ -44,7 +44,7 @@ export default (state = initialState, action) => {
           $set: REQUEST_STATE.IN_PROGRESS
         }
       }
-    })
+    });
   default:
     return state;
   }

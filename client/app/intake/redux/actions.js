@@ -16,13 +16,16 @@ export const setFileNumberSearch = (fileNumber) => ({
 });
 
 export const doFileNumberSearch = () => (dispatch) => {
-  dispatch({
-    type: ACTIONS.FILE_NUMBER_SEARCH_START,
-  });
-  setTimeout(() => {
-    setVeteran({
-      name: 'Joe Snuffy',
-      fileNumber: '222222222'
-    })
-  }, 1000)
+  return new Promise((resolve) => {
+    dispatch({
+      type: ACTIONS.FILE_NUMBER_SEARCH_START
+    });
+    setTimeout(() => {
+      setVeteran({
+        name: 'Joe Snuffy',
+        fileNumber: '222222222'
+      });
+      resolve();
+    }, 1000);
+  })
 };
