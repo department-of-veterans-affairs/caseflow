@@ -129,7 +129,7 @@ describe('DecisionReviewer', () => {
     });
 
     context('rotate', () => {
-      it.only('turns pages', asyncTest(async() => {
+      it('turns pages', asyncTest(async() => {
         // Click on first document link
         wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
