@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../components/Button';
+import BareOrderedList from '../../components/BareOrderedList';
 
 export default class Finish extends React.PureComponent {
   render() {
@@ -10,17 +11,12 @@ export default class Finish extends React.PureComponent {
       <span>Create an EP <strong>030 RAMP Supplemental</strong> in VBMS.</span>,
       <span>Add a placeholder contention of <em>RAMP</em></span>,
     ]
+    const stepFns = steps.map((step, index) => () => <span><strong>Step {index}.</strong> {step}</span>);
 
     return <div>
       <h1>Finish processing Supplemental Claim request</h1>
       <p>Please complete the following 4 steps outside Caseflow.</p>
-      <ol>
-        {
-          steps.map((step, index) => 
-            <li><strong>Step {index}.</strong>{step}</li>
-          )
-        }
-      </ol>
+      <BareOrderedList className='cf-steps-outside-of-caseflow-list' items={stepFns} />
     </div>;
   }
 }
