@@ -777,3 +777,10 @@ export const setPdfDocument = (file, doc) => ({
     doc
   }
 });
+
+export const rotateDocument = (docId) => ({
+  type: Constants.ROTATE_PDF_DOCUMENT,
+  payload: {
+    docId
+  }
+});

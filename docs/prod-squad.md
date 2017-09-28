@@ -68,7 +68,6 @@ We'll have to figure out holidays when they arise. For holidays that not everyon
 ### Staffing
 * Marian
 * Alexis
-* Shade
 * Nolawi
 * Nemo
 
