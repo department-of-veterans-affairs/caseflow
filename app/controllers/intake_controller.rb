@@ -1,5 +1,5 @@
 class IntakeController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled
+  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 
   def set_application
     RequestStore.store[:application] = "intake"
