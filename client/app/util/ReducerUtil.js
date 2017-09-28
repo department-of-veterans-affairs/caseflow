@@ -1,3 +1,10 @@
+import _ from 'lodash';
+import { newContext } from 'immutability-helper';
+
+export const update = newContext();
+
+update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
+
 export default {
   changeFieldValue: (state, action) => ({
     ...state,

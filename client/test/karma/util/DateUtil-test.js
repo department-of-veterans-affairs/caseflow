@@ -1,10 +1,16 @@
 import { expect } from 'chai';
-import { formatDate, formatDateStr, doDatesMatch } from '../../../app/util/DateUtil';
+import { formatDate, formatDateStr, doDatesMatch, formatArrayOfDateStrings } from '../../../app/util/DateUtil';
 
 describe('DateUtil', () => {
   context('.formatDate', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
       expect(formatDate('1/2/2017')).to.eq('01/02/2017');
+    });
+  });
+
+  context('.formatArrayOfDateStrings', () => {
+    it('returns a comma separated string of dates formatted mm/dd/yyyy', () => {
+      expect(formatArrayOfDateStrings(['1/2/2017', '1/3/2017'])).to.eq('01/02/2017, 01/03/2017');
     });
   });
 

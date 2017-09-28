@@ -17,10 +17,11 @@ const CLASS_NAME_MAPPING = {
 
 export default class NavigationBar extends React.Component {
   render() {
-    let {
+    const {
       appName,
       defaultUrl,
       dropdownUrls,
+      topMessage,
       userDisplayName
     } = this.props;
 
@@ -50,11 +51,11 @@ export default class NavigationBar extends React.Component {
                 />
             </span>
           </div>
-        </div>
         <PerformanceDegradationBanner />
+      </div>
       </header>
       {this.props.children}
-      </div>;
+    </div>;
   }
 }
 

@@ -1,5 +1,5 @@
 class DependenciesCheckJob < ActiveJob::Base
-  queue_as :default
+  queue_as :low_priority
 
   def perform
     if ENV["MONITOR_URL"].present?

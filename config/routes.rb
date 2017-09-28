@@ -85,7 +85,8 @@ Rails.application.routes.draw do
     get "establish-claim", to: "establish_claims#show"
   end
 
-  resources :offices, only: :index
+  resources :intake, only: :index
+  match '/intake/:any' => 'intake#index', via: [:get]
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

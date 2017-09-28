@@ -7,22 +7,33 @@ import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from '../reader/actions';
-import { isUserEditingText, update, shouldFetchAppeal } from '../reader/utils';
+  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from './actions';
+import { isUserEditingText, shouldFetchAppeal } from './utils';
+import { update } from '../util/ReducerUtil';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
-import * as Constants from '../reader/constants';
-import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
+import * as Constants from './constants';
+import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from './analytics';
 
-export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file) => {
+const NUMBER_OF_DIRECTIONS = 4;
+
+// Given a direction, the current coordinates, an array of the div elements for each page,
+// the file, and rotation of the document, this function calculates the next location of the comment.
+export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation) => {
+  // There are four valid rotations: 0, 90, 180, 270. We transform those values to 0, -1, -2, -3.
+  // We then use that value to rotate the direction. I.E. Hitting up (value 0) on the
+  // keyboard when rotated 90 degrees corresponds to moving left (value 3) on the document.
+  const rotationIncrements = -(rotation / Constants.ROTATION_INCREMENTS) % NUMBER_OF_DIRECTIONS;
+  const transformedDirection = Constants.MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[
+    (direction + rotationIncrements + NUMBER_OF_DIRECTIONS) % NUMBER_OF_DIRECTIONS];
   const moveAmountPx = 5;
   const movementDirection = _.includes(
     [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
-    direction
+    transformedDirection
   ) ? -1 : 1;
   const movementDimension = _.includes(
     [Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP, Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN],
-    direction
+    transformedDirection
   ) ? 'y' : 'x';
 
   const {
@@ -65,13 +76,14 @@ export class PdfViewer extends React.Component {
       ArrowDown: Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN
     }[event.key];
 
-    if (this.props.isPlacingAnnotation && direction) {
+    if (this.props.isPlacingAnnotation && direction >= 0) {
       const { pageIndex, ...origCoords } = this.props.placingAnnotationIconPageCoords;
       const constrainedCoords = getNextAnnotationIconPageCoords(
         direction,
         this.props.placingAnnotationIconPageCoords,
         this.props.pages,
-        this.selectedDoc().content_url
+        this.selectedDoc().content_url,
+        this.selectedDoc().rotation
       );
 
       if (!_.isEqual(origCoords, constrainedCoords)) {

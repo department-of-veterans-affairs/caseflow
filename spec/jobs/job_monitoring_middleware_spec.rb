@@ -8,11 +8,14 @@ describe JobMonitoringMiddleware do
         "job_class" => "FunTestJob"
       }]
     }
+    @body = {
+      "job_class" => "FunTestJob"
+    }
     @yield_called = false
   end
 
   context ".call" do
-    let(:call) { @middleware.call(nil, @msg, :default) { @yield_called = true } }
+    let(:call) { @middleware.call(nil, nil, @msg, @body) { @yield_called = true } }
     let(:last_started_at) { Rails.cache.read("FunTestJob_last_started_at") }
     let(:last_completed_at) { Rails.cache.read("FunTestJob_last_completed_at") }
 
