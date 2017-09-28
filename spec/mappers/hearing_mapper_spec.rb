@@ -64,9 +64,9 @@ describe HearingMapper do
     context "when all values are present" do
       let(:info) do
         { notes: "test notes",
-          aod: :none,
+          aod: "none",
           transcript_requested: false,
-          disposition: :postponed,
+          disposition: "postponed",
           hold_open: 60,
           add_on: false,
           representative_name: "test name" }
