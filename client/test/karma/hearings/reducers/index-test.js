@@ -3,7 +3,7 @@ import * as Hearings from '../../../../app/hearings/reducers/index';
 import * as Constants from '../../../../app/hearings/constants/constants';
 
 /* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }]*/
-describe('hearingsReducer', () => {
+describe.skip('hearingsReducer', () => {
   let initialState;
 
   beforeEach(() => {
