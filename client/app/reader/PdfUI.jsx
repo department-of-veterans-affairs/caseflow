@@ -8,10 +8,11 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage, togglePdfSidebar } from '../reader/actions';
+import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage,
+  togglePdfSidebar, rotateDocument } from '../reader/actions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  ExternalLink, FitToScreen } from '../components/RenderFunctions';
+  ExternalLink, FitToScreen, Rotate } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
@@ -132,6 +133,10 @@ export class PdfUI extends React.Component {
     </div>;
   }
 
+  rotateDocument = () => {
+    this.props.rotateDocument(this.props.doc.id);
+  }
+
   fitToScreen = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'fit to screen');
 
@@ -216,6 +221,14 @@ export class PdfUI extends React.Component {
             <FitToScreen/>
           </Button>
           <Button
+            name="rotation"
+            classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
+            onClick={this.rotateDocument}
+            ariaLabel="rotate document">
+            <Rotate />
+          </Button>
+          <span className="cf-pdf-spaced-buttons">|</span>
+          <Button
             name="download"
             classNames={['cf-pdf-button cf-pdf-download-icon']}
             onClick={this.openDownloadLink}
@@ -269,6 +282,7 @@ const mapDispatchToProps = (dispatch) => (
     stopPlacingAnnotation,
     togglePdfSidebar,
     resetJumpToPage,
+    rotateDocument,
     selectCurrentPdf
   }, dispatch)
 );

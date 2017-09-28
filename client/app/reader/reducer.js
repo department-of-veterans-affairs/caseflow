@@ -510,6 +510,23 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.ROTATE_PDF_DOCUMENT: {
+    const rotation = (_.get(state.documents, [action.payload.docId, 'rotation'], 0) +
+      Constants.ROTATION_INCREMENTS) % Constants.COMPLETE_ROTATION;
+
+    return update(
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            rotation: {
+              $set: rotation
+            }
+          }
+        }
+      }
+    );
+  }
   case Constants.SET_CATEGORY_FILTER:
     return updateFilteredDocIds(update(
       state,
