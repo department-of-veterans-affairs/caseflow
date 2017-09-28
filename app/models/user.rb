@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   end
 
   def current_case_assignments_with_views
-    appeals = current_case_assignments(fetch_issues: true)
+    appeals = current_case_assignments
     opened_appeals = viewed_appeals(appeals.map(&:id))
 
     appeals.map do |appeal|
@@ -106,8 +106,8 @@ class User < ActiveRecord::Base
     end
   end
 
-  def current_case_assignments(fetch_issues = false)
-    self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id, fetch_issues)
+  def current_case_assignments
+    self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
   private
