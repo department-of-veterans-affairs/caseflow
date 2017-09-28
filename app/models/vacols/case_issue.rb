@@ -70,14 +70,13 @@ class VACOLS::CaseIssue < VACOLS::Record
         where ISSUES.ISSKEY IN (?)
       SQL
 
-      #binding.pry
       issues_result = MetricsService.record("VACOLS: CaseIssue.issues for #{issue_keys}", name: "CaseIssue.issues",
                                                                                           service: :vacols) do
         conn.exec_query(sanitize_sql_array([query, issue_keys]))
       end
 
       issues_result.to_hash.reduce({}) do |memo, result|
-        issue_key = result["isskey"].to_s        
+        issue_key = result["isskey"].to_s
         memo[issue_key] ||= []
         memo[issue_key] << result
         memo

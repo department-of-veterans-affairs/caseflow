@@ -239,7 +239,7 @@ class VACOLS::Case < VACOLS::Record
   #
   def self.aod(vacols_ids)
     conn = connection
-    
+
     conn.transaction do
       query = <<-SQL
         SELECT BRIEFF.BFKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
