@@ -20,45 +20,45 @@ class HearingWorksheetIssueFields extends PureComponent {
     this.props.onDescriptionChange(description, this.props.issue.id, this.props.appeal.id)
 
   render() {
-    let { issue, field, from_vacols } = this.props;
+    let { issue, field, fromVacols } = this.props;
 
-    if (field === "program" && from_vacols) {
+    if (field === 'program' && fromVacols) {
       return <div>{issue.program}</div>;
     }
 
-    if (field === "program" && !from_vacols) {
+    if (field === 'program' && !fromVacols) {
       return <div>
-          <TextareaField aria-label="Program"
+          <TextareaField aria-label="Program" name="Program"
                          id={`${issue.id}-issue`}value={issue.program}
                          onChange={this.onProgramChange}/>
       </div>;
     }
 
-      if (field === "issue" && from_vacols) {
-          return <div>{issue.issue}</div>;
-      }
+    if (field === 'issue' && fromVacols) {
+      return <div>{issue.issue}</div>;
+    }
 
-      if (field === "issue" && !from_vacols) {
-          return <div>
-              <TextareaField aria-label="Program"
+    if (field === 'issue' && !fromVacols) {
+      return <div>
+              <TextareaField aria-label="Program" name="Levels"
                          id={`${issue.id}-issue`}value={issue.issue}
                          onChange={this.onIssueChange}/>
           </div>;
-      }
+    }
 
-      if (field === "levels" && from_vacols) {
-          return <div>{issue.levels}</div>;
-      }
+    if (field === 'levels' && fromVacols) {
+      return <div>{issue.levels}</div>;
+    }
 
-      if (field === "levels" && !from_vacols) {
-          return <div>
-              <TextareaField aria-label="Program"
+    if (field === 'levels' && !fromVacols) {
+      return <div>
+              <TextareaField aria-label="Program" name="Levels"
                          id={`${issue.id}-issue`}value={issue.levels}
                          onChange={this.onLevelsChange}/>
           </div>;
-      }
+    }
 
-    if (field == "description") {
+    if (field === 'description') {
       return <div>
         <TextareaField aria-label="Description" name="Description"
                        id={`${issue.id}-issue`}value={issue.description}
