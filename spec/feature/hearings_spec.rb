@@ -126,6 +126,11 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Look for knee-related medical records")
     end
 
+    scenario "Worksheet differentiates between user and vacols created records", focus: true do
+      visit "/hearings/1/worksheet"
+      binding.pry
+    end
+
     scenario "Can click from hearing worksheet to reader" do
       visit "/hearings/1/worksheet"
       expect(page).to have_content("Review eFolder")
