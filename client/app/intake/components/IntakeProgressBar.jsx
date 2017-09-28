@@ -7,21 +7,21 @@ import _ from 'lodash';
 class IntakeProgressBarInner extends React.PureComponent {
   render() {
     const progressBarSections = [
-      { 
+      {
         title: '1. Begin Intake',
-        path: PAGE_PATHS.BEGIN 
+        path: PAGE_PATHS.BEGIN
       },
-      { 
+      {
         title: '2. Review Request',
         path: PAGE_PATHS.REVIEW
       },
-      { 
+      {
         title: '3. Finish Processing',
-        path: PAGE_PATHS.FINISH 
+        path: PAGE_PATHS.FINISH
       },
-      { 
+      {
         title: '4. Confirmation',
-        path: PAGE_PATHS.COMPLETED 
+        path: PAGE_PATHS.COMPLETED
       }
     ];
 
