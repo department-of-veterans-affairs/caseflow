@@ -30,7 +30,8 @@ export class CommentIcon extends React.Component {
     return <div
       style={{
         left: this.props.position.x,
-        top: this.props.position.y
+        top: this.props.position.y,
+        transform: `rotate(${this.props.rotation}deg)`
       }}
       data-placing-annotation-icon={this.props.comment.isPlacingAnnotationIcon}
       className="commentIcon-container"
@@ -49,7 +50,8 @@ CommentIcon.propTypes = {
   position: PropTypes.shape({
     x: PropTypes.number,
     y: PropTypes.number
-  })
+  }),
+  rotation: PropTypes.number
 };
 
 const mapStateToProps = (state) => ({
