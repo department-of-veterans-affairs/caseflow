@@ -4,3 +4,7 @@ export const PAGE_PATHS = {
   FINISH: '/finish',
   COMPLETED: '/completed'
 };
+
+export const ACTIONS = {
+  SET_VETERAN: 'SET_VETERAN'
+};

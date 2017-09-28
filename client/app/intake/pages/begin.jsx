@@ -1,8 +1,14 @@
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {setVeteran} from '../redux/actions';
 
-export default class Begin extends React.PureComponent {
-  handleSearchSubmit = () => this.props.history.push('/review-request')
+class Begin extends React.PureComponent {
+  handleSearchSubmit = () => {
+    this.props.setVeteran('Joe Snuffy', '2222222222')
+    this.props.history.push('/review-request')
+  }
 
   render() {
     return <div>
@@ -13,4 +19,7 @@ export default class Begin extends React.PureComponent {
   }
 }
 
-
+export default connect(
+  null, 
+  (dispatch) => bindActionCreators({setVeteran}, dispatch)
+)(Begin)
