@@ -13,13 +13,6 @@ Sidekiq.configure_server do |config|
 
     Sidekiq::Cron::Job.load_from_hash! active_jobs
   end
-
-  config.server_middleware do |chain|
-    chain.add JobMonitoringMiddleware
-    chain.add JobPrometheusMetricMiddleware
-    chain.add JobRavenReporterMiddleware
-    chain.add JobRequestStoreMiddleware
-  end
 end
 
 Sidekiq.configure_client do |config|
