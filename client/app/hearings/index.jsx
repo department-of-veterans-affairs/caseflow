@@ -12,6 +12,7 @@ import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
+import Footer from '../components/Footer';
 
 const configureStore = (data) => {
 
@@ -84,8 +85,11 @@ const Hearings = ({ hearings }) => {
               </div>
             </div>
           </NavigationBar>
+          <Footer
+            appName="Hearing Prep"
+            feedbackUrl={hearings.feedbackUrl}
+            buildDate={hearings.buildDate}/>
         </div>
-
       </BrowserRouter>
     </div>
   </Provider>;
