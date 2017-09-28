@@ -935,11 +935,11 @@ RSpec.feature "Reader" do
       end
 
       doc_0_categories =
-        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li", count: 1)
+        get_aria_labels all(".cf-wide-app table tr:first-child .cf-document-category-icons li", count: 1)
       expect(doc_0_categories).to eq(["Case Summary"])
 
       doc_1_categories =
-        get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li", count: 3)
+        get_aria_labels all(".cf-wide-app table tr:nth-child(2) .cf-document-category-icons li", count: 3)
       expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
 
       click_on documents[0].type
@@ -954,7 +954,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       doc_0_categories =
-        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li", count: 1)
+        get_aria_labels all(".cf-wide-app table tr:first-child .cf-document-category-icons li", count: 1)
       expect(doc_0_categories).to eq(["Case Summary"])
 
       click_on documents[1].type
