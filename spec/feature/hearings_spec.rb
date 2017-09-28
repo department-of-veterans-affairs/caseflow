@@ -64,7 +64,8 @@ RSpec.feature "Hearings" do
       docket1_hearings = get_hearings(1)
       docket2_hearings = get_hearings(2)
 
-      expect(docket1_hearings).to eql("1")
+      # the first one is a master record
+      expect(docket1_hearings).to eql("0")
       expect(docket2_hearings).to eql("2")
 
       # Validate help link
