@@ -66,6 +66,7 @@ export default class DropdownMenu extends React.Component {
     return <div ref={this.setWrapperRef} className="cf-dropdown">
       <a href="#dropdown-menu"
         className="cf-dropdown-trigger"
+        id="menu-trigger"
         onClick={this.onMenuClick}>
         {label}
       </a>
