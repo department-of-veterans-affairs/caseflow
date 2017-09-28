@@ -20,53 +20,27 @@ class HearingWorksheetIssueFields extends PureComponent {
     this.props.onDescriptionChange(description, this.props.issue.id, this.props.appeal.id)
 
   render() {
-    let { issue, field, fromVacols } = this.props;
+    let { issue, field } = this.props;
 
-    if (field === 'program' && fromVacols) {
-      return <div>{issue.program}</div>;
+    const allowedFields = {
+      program: { onChange: this.onProgramChange,
+        value: issue.program },
+      issue: { onChange: this.onIssueChange,
+        value: issue.issue },
+      levels: { onChange: this.onLevelsChange,
+        value: issue.levels },
+      description: { onChange: this.onDescriptionChange,
+        value: issue.description }
+    };
+
+    if (!allowedFields[field]) {
+      return;
     }
 
-    if (field === 'program' && !fromVacols) {
-      return <div>
-          <TextareaField aria-label="Program" name="Program"
-                         id={`${issue.id}-issue`}value={issue.program}
-                         onChange={this.onProgramChange}/>
-      </div>;
-    }
-
-    if (field === 'issue' && fromVacols) {
-      return <div>{issue.issue}</div>;
-    }
-
-    if (field === 'issue' && !fromVacols) {
-      return <div>
-              <TextareaField aria-label="Program" name="Levels"
-                         id={`${issue.id}-issue`}value={issue.issue}
-                         onChange={this.onIssueChange}/>
-          </div>;
-    }
-
-    if (field === 'levels' && fromVacols) {
-      return <div>{issue.levels}</div>;
-    }
-
-    if (field === 'levels' && !fromVacols) {
-      return <div>
-              <TextareaField aria-label="Program" name="Levels"
-                         id={`${issue.id}-issue`}value={issue.levels}
-                         onChange={this.onLevelsChange}/>
-          </div>;
-    }
-
-    if (field === 'description') {
-      return <div>
-        <TextareaField aria-label="Description" name="Description"
-                       id={`${issue.id}-issue`}value={issue.description}
-                       onChange={this.onDescriptionChange} maxlength={120} />
-      </div>;
-    }
-
-    return null;
+    return <div> <TextareaField aria-label={field} name={field}
+                       id={`${issue.id}-issue`}value={allowedFields[field].value}
+                       onChange={allowedFields[field].onChange}/>
+           </div>;
   }
 }
 
