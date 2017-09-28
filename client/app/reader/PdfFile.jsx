@@ -9,6 +9,8 @@ import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { List, CellMeasurer, AutoSizer } from 'react-virtualized';
 
+const PAGE_HEIGHT = 1056;
+
 export class PdfFile extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -18,6 +20,7 @@ export class PdfFile extends React.PureComponent {
     this.previousShouldDraw = 0;
     this.loadingTask = null;
     this.pdfDocument = null;
+    this.list = null;
   }
 
   componentDidMount = () => {
@@ -55,7 +58,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPage = ({ index, key, style }) => {
-    console.log('get page', index);
     return <div style={style} key={key}>
       <PdfPage
         scrollTop={this.props.scrollTop}
@@ -71,9 +73,17 @@ export class PdfFile extends React.PureComponent {
     // return <div key={key} , background: '#FFFFFF'}}></div>;
   }
 
-  cellSizeAndPosition = (options) => {
-    console.log('options', options);
-    return { width: 1000, height: 1000, x: 0, y: options.index * 1000 };
+  getRowHeight = ({ index }) => {
+    return (_.get(this.props.pages, [index, 'dimensions', 'height'], PAGE_HEIGHT) + 25) * this.props.scale
+  }
+
+  getList = (list) => this.list = list
+
+  componentDidUpdate = () => {
+    if (this.list) {
+      console.log(this.list);
+      this.list.recomputeRowHeights();
+    }
   }
 
   render() {
@@ -87,9 +97,11 @@ export class PdfFile extends React.PureComponent {
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
       return <AutoSizer>{({ width, height }) =>
           <List
+            ref={this.getList}
+            estimatedRowSize={780}
             height={height}
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
-            rowHeight={900}
+            rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
             width={width}
           />}
@@ -120,8 +132,13 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file]
-});
+const mapStateToProps = (state, props) => {
+  const pages = _.get(state.readerReducer.pages, [props.file]) || {};
+
+  return {
+    pdfDocument: state.readerReducer.pdfDocuments[props.file],
+    pages
+  }
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);

@@ -323,27 +323,26 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   // Gets page keys where the container is defined.
-  const pageKeys = Object.keys(state.readerReducer.pages).filter(
-    (pageName) => pageName.includes(props.file) && state.readerReducer.pages[pageName].container);
-  const numPagesDefined = pageKeys.length;
-  const pdfDocument = state.readerReducer.pdfDocuments[props.file];
-  const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;
-  let pageContainers = null;
+  // const pages = state.readerReducer.pages[props.file];
+  // const numPagesDefined = pages.length;
+  // const pdfDocument = state.readerReducer.pdfDocuments[props.file];
+  // const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;
+  // let pageContainers = null;
 
-  if (numPagesDefined === numPages) {
-    pageContainers = pageKeys.reduce((acc, key) => {
-      const pageIndex = key.split('-')[1];
+  // if (numPagesDefined === numPages) {
+  //   pageContainers = pageKeys.reduce((acc, key) => {
+  //     const pageIndex = key.split('-')[1];
 
-      acc[pageIndex] = state.readerReducer.pages[key] ? state.readerReducer.pages[key].container : null;
+  //     acc[pageIndex] = state.readerReducer.pages[key] ? state.readerReducer.pages[key].container : null;
 
-      return acc;
-    }, {});
-  }
+  //     return acc;
+  //   }, {});
+  // }
 
   return {
     ...state.readerReducer.ui.pdf,
-    arePageDimensionsSet: numPagesDefined === numPages,
-    pageContainers,
+    arePageDimensionsSet: false,
+    pageContainers: null,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
   };

@@ -33,7 +33,7 @@ class Fakes::VBMSService
       when 2
         File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
       when 3
-        File.join(Rails.root, "lib", "pdfs", "Informal_Form9.pdf")
+        File.join(Rails.root, "lib", "pdfs", "War_and_Peace_NT.pdf")
       when 4
         File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf")
       when 5

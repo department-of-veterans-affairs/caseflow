@@ -125,9 +125,10 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.isDrawn = false;
     this.isUnmounting = true;
-    // if (this.props.page) {
-    //   this.props.page.cleanup();
-    // }
+    if (this.props.page) {
+      this.props.page.cleanup();
+    }
+    this.clearPdfPage();
     // Cleaning up this page from the Redux store should happen when we have idle time.
     // We don't want to block showing pages because we're too busy cleaning old pages.
     // window.requestIdleCallback(this.clearPdfPage);
@@ -168,6 +169,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
+    return;
     const shouldDraw = this.shouldDrawPage(this.props);
 
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
@@ -232,6 +234,7 @@ export class PdfPage extends React.PureComponent {
             );
 
             this.drawText(page, text);
+            this.drawPage();
           }
         };
 
@@ -362,7 +365,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-  const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
+  const page = _.get(state.readerReducer.pages, [props.file, props.pageIndex]);
 
   return {
     pageDimensions: _.get(page, ['dimensions']),
