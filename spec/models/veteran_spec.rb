@@ -129,20 +129,24 @@ describe Veteran do
       let(:service) do
         [{ branch_of_service: "Army",
            entered_on_duty_date: "06282002",
-           released_active_duty_date: "06282003" },
+           released_active_duty_date: "06282003",
+           char_of_svc_code: "HON" },
          { branch_of_service: "Navy",
            entered_on_duty_date: "06282006",
-           released_active_duty_date: "06282008" }]
+           released_active_duty_date: "06282008",
+           char_of_svc_code: "DVA" }]
       end
 
-      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003", "Navy 06/28/2006 - 06/28/2008"] }
+      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable Discharge",
+                              "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes Discharge"] }
     end
 
     context "when a veteran is still serving" do
       let(:service) do
         [{ branch_of_service: "Army",
            entered_on_duty_date: "06282002",
-           released_active_duty_date: nil }]
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
       end
 
       it { is_expected.to eq ["Army 06/28/2002 - "] }
@@ -152,7 +156,8 @@ describe Veteran do
       let(:service) do
         [{ branch_of_service: nil,
            entered_on_duty_date: nil,
-           released_active_duty_date: nil }]
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
       end
 
       it { is_expected.to eq [] }
@@ -162,10 +167,26 @@ describe Veteran do
       let(:service) do
         [{ branch_of_service: "Army",
            entered_on_duty_date: "06282002",
-           released_active_duty_date: "06282003" },
+           released_active_duty_date: "06282003",
+           char_of_svc_code: "HVA" },
          { branch_of_service: nil,
            entered_on_duty_date: nil,
-           released_active_duty_date: nil }]
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
+      end
+      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable for VA Purposes Discharge"] }
+    end
+
+    context "when a character of service code is not recognized" do
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: "06282003",
+           char_of_svc_code: "TBD" },
+         { branch_of_service: nil,
+           entered_on_duty_date: nil,
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
       end
       it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003"] }
     end

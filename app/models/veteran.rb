@@ -12,6 +12,13 @@ class Veteran
     military_post_office_type_code service
   ).freeze
 
+  CHARACTER_OF_SERVICE_CODES = {
+    "HON" => "Honorable",
+    "UHC" => "Under Honorable Conditions",
+    "HVA" => "Honorable for VA Purposes",
+    "DVA" => "Dishonorable for VA Purposes"
+  }
+
   attr_accessor(*BGS_ATTRIBUTES)
   attr_accessor :date_of_birth
 
@@ -70,7 +77,13 @@ class Veteran
   def period_of_service(s)
     s[:branch_of_service].strip + " " +
       service_date(s[:entered_on_duty_date]) + " - " +
-      service_date(s[:released_active_duty_date])
+      service_date(s[:released_active_duty_date]) +
+      character_of_service(s)
+  end
+
+  def character_of_service(s)
+    text = CHARACTER_OF_SERVICE_CODES[s[:char_of_svc_code]]
+    text.present? ? ", #{text} Discharge" : ""
   end
 
   def service_date(date)
