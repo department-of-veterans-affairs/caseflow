@@ -3,12 +3,7 @@ import RadioField from '../../components/RadioField';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
 
-export default class Review extends React.PureComponent {
-  onElectionChange = () => {
-    // eslint-disable-next-line no-console
-    console.log('not yet implemented');
-  }
-
+export default class Finish extends React.PureComponent {
   render() {
     const radioOptions = [
       { displayText: 'Supplemental Claim' },
@@ -32,12 +27,12 @@ export default class Review extends React.PureComponent {
   }
 }
 
-export class ReviewNextButton extends React.PureComponent {
+export class FinishNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.history.push('/finish')
+    this.props.history.push('/completed')
   }
 
   render() {
-    return <Button onClick={this.handleClick}>Continue to next step</Button>
+    return <Button onClick={this.handleClick}>I've completed all the steps</Button>
   }
 }

@@ -1,13 +1,14 @@
 import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import ProgressBar from '../components/ProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import BeginPage from './pages/begin';
-import ReviewPage from './pages/review';
+import ReviewPage, {ReviewNextButton} from './pages/review';
+import FinishPage, {FinishNextButton} from './pages/finish';
 
 export default class IntakeFrame extends React.PureComponent {
   render() {
@@ -43,7 +44,20 @@ export default class IntakeFrame extends React.PureComponent {
                 path="/review-request"
                 title="Review Request | Caseflow Intake"
                 component={ReviewPage} />
+              <PageRoute
+                exact
+                path="/finish"
+                title="Finish | Caseflow Intake"
+                component={FinishPage} />
               </PrimaryAppContent>
+              <Route
+                exact
+                path="/review-request"
+                component={ReviewNextButton} />
+              <Route
+                exact
+                path="/finish"
+                component={FinishNextButton} />
           </AppFrame>
         </NavigationBar>
         <Footer

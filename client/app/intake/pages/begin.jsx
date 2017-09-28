@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchBar from '../../components/SearchBar';
 
-export default class First extends React.PureComponent {
+export default class Begin extends React.PureComponent {
 
   handleSearchSubmit = () => {
     this.props.history.push('/review-request');
