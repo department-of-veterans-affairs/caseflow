@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
+import { onAddIssue } from '../actions/Issue';
 
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
@@ -22,7 +23,6 @@ class HearingWorksheetStream extends Component {
             {Object.keys(worksheetStreams).map((appeal, key) => {
                 // Iterates over all apeals to create appeal streams inside worksheet
               let appealId = appeal;
-
 
               return <div key={appealId} id={appealId}>
               <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
