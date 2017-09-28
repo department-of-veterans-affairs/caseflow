@@ -1,5 +1,5 @@
 class PrepareEstablishClaimTasksJob < ActiveJob::Base
-  queue_as :default
+  queue_as :low_priority
 
   def perform
     count = { success: 0, fail: 0 }
