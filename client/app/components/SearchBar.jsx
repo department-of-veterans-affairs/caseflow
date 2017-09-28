@@ -4,6 +4,7 @@ import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
+import uuid from 'uuid';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
@@ -71,6 +72,8 @@ export default class SearchBar extends React.Component {
       placeholder
     } = this.props;
 
+    id = id || uuid.v4();
+
     const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
       'usa-search-small': size === 'small',
@@ -118,7 +121,7 @@ export default class SearchBar extends React.Component {
 }
 
 SearchBar.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   title: PropTypes.string,
   size: PropTypes.string,
   onChange: PropTypes.func,
