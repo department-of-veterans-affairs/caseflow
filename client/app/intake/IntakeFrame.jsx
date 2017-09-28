@@ -82,8 +82,8 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({veteran, requestStatus}) => ({
+  ({ veteran, requestStatus }) => ({
     veteran,
     fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
   })
-)(IntakeFrame)
+)(IntakeFrame);

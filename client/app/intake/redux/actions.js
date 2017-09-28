@@ -2,7 +2,7 @@ import { ACTIONS } from '../constants';
 
 export const startNewIntake = () => ({
   type: ACTIONS.START_NEW_INTAKE
-})
+});
 
 export const setFileNumberSearch = (fileNumber) => ({
   type: ACTIONS.SET_FILE_NUMBER_SEARCH,
@@ -26,5 +26,5 @@ export const doFileNumberSearch = () => (dispatch) => {
       });
       resolve();
     }, 1000);
-  })
+  });
 };

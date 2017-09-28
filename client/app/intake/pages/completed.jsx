@@ -24,7 +24,7 @@ export default class Completed extends React.PureComponent {
 class UnconnectedCompletedNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.startNewIntake();
-    this.props.history.push('/')
+    this.props.history.push('/');
   }
 
   render = () => <Button onClick={this.handleClick}>Begin next intake</Button>
@@ -35,4 +35,4 @@ export const CompletedNextButton = connect(
   (dispatch) => bindActionCreators({
     startNewIntake
   }, dispatch)
-)(UnconnectedCompletedNextButton)
+)(UnconnectedCompletedNextButton);
