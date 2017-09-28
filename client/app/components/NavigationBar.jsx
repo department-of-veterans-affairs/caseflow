@@ -40,6 +40,7 @@ export default class NavigationBar extends React.Component {
               <Breadcrumbs>
                 {this.props.children}
               </Breadcrumbs>
+              {topMessage && <h2 className="cf-application-title"> &nbsp; | &nbsp; {topMessage}</h2>}
             </span>
             <span className="cf-dropdown cf-push-right">
               <DropdownMenu
