@@ -27,6 +27,12 @@ class Test::UsersController < ApplicationController
       }
     },
     {
+      name: "Intake",
+      links: {
+        start: "/intake"
+      }
+    },
+    {
       name: "Hearing prep",
       links: {
         upcoming_days: "/hearings/dockets"
