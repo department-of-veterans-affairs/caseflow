@@ -7,3 +7,10 @@ export const setVeteran = (name, fileNumber) => ({
     fileNumber
   }
 });
+
+export const setFileNumberSearch = (fileNumber) => ({
+  type: ACTIONS.SET_FILE_NUMBER_SEARCH,
+  payload: {
+    fileNumber
+  }
+});
