@@ -7,8 +7,8 @@ import AppFrame from '../components/AppFrame';
 import ProgressBar from '../components/ProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import BeginPage from './pages/begin';
-import ReviewPage, {ReviewNextButton} from './pages/review';
-import FinishPage, {FinishNextButton} from './pages/finish';
+import ReviewPage, { ReviewNextButton } from './pages/review';
+import FinishPage, { FinishNextButton } from './pages/finish';
 
 export default class IntakeFrame extends React.PureComponent {
   render() {
