@@ -18,6 +18,8 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+  case ACTIONS.START_NEW_INTAKE:
+    return initialState;
   case ACTIONS.SET_FILE_NUMBER_SEARCH:
     return update(state, {
       inputs: {

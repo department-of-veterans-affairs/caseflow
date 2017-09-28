@@ -1,6 +1,9 @@
 import React from 'react';
 import Button from '../../components/Button';
 import StatusMessage from '../../components/StatusMessage';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { startNewIntake } from '../redux/actions';
 
 export default class Completed extends React.PureComponent {
   render() {
@@ -18,8 +21,18 @@ export default class Completed extends React.PureComponent {
   }
 }
 
-export class CompletedNextButton extends React.PureComponent {
-  handleClick = () => this.props.history.push('/')
+class UnconnectedCompletedNextButton extends React.PureComponent {
+  handleClick = () => {
+    this.props.startNewIntake();
+    this.props.history.push('/')
+  }
 
   render = () => <Button onClick={this.handleClick}>Begin next intake</Button>
 }
+
+export const CompletedNextButton = connect(
+  null,
+  (dispatch) => bindActionCreators({
+    startNewIntake
+  }, dispatch)
+)(UnconnectedCompletedNextButton)
