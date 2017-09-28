@@ -19,11 +19,7 @@ export default class Completed extends React.PureComponent {
 }
 
 export class CompletedNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.history.push('/');
-  }
+  handleClick = () => this.props.history.push('/')
 
-  render() {
-    return <Button onClick={this.handleClick}>Begin next intake</Button>;
-  }
+  render = () => <Button onClick={this.handleClick}>Begin next intake</Button>
 }

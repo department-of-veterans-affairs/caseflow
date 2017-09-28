@@ -4,7 +4,6 @@ import BareOrderedList from '../../components/BareOrderedList';
 
 export default class Finish extends React.PureComponent {
   render() {
-
     const steps = [
       <span>Upload the RAMP election form to VBMS and ensure the Document Type is <em>Correspondence</em>.</span>,
       <span>Update the Subject Line with <em>RAMP Opt-In</em>.</span>,
@@ -22,11 +21,7 @@ export default class Finish extends React.PureComponent {
 }
 
 export class FinishNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.history.push('/completed');
-  }
+  handleClick = () => this.props.history.push('/completed');
 
-  render() {
-    return <Button onClick={this.handleClick}>I've completed all the steps</Button>;
-  }
+  render = () => <Button onClick={this.handleClick}>I've completed all the steps</Button>;
 }

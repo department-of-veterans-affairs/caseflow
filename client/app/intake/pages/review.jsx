@@ -33,11 +33,7 @@ export default class Review extends React.PureComponent {
 }
 
 export class ReviewNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.history.push('/finish');
-  }
+  handleClick = () => this.props.history.push('/finish')
 
-  render() {
-    return <Button onClick={this.handleClick}>Continue to next step</Button>;
-  }
+  render = () => <Button onClick={this.handleClick}>Continue to next step</Button>
 }

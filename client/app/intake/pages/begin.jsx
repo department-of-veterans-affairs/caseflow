@@ -2,10 +2,7 @@ import React from 'react';
 import SearchBar from '../../components/SearchBar';
 
 export default class Begin extends React.PureComponent {
-
-  handleSearchSubmit = () => {
-    this.props.history.push('/review-request');
-  }
+  handleSearchSubmit = () => this.props.history.push('/review-request')
 
   render() {
     return <div>
