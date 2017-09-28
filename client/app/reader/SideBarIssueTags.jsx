@@ -9,7 +9,6 @@ class SideBarIssueTags extends PureComponent {
     const {
       doc,
       tagOptions,
-      showErrorMessage,
       removeTag,
       addNewTag
     } = this.props;
@@ -36,7 +35,7 @@ class SideBarIssueTags extends PureComponent {
     };
 
     return <div className="cf-issue-tag-sidebar">
-      {showErrorMessage.tag && <CannotSaveAlert />}
+      {this.props.showErrorMessage.tag && <CannotSaveAlert />}
       <SearchableDropdown
         key={doc.id}
         name="tags"
@@ -55,8 +54,7 @@ class SideBarIssueTags extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
-    tagOptions: state.readerReducer.ui.tagOptions
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
   };
 };
 

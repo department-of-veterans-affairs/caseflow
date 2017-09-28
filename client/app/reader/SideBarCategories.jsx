@@ -11,7 +11,6 @@ class SideBarCategories extends PureComponent {
     let {
       doc,
       documents,
-      showErrorMessage,
       handleCategoryToggle
     } = this.props;
 
@@ -22,7 +21,7 @@ class SideBarCategories extends PureComponent {
     );
 
     return <div className="cf-category-sidebar">
-      {showErrorMessage.category && <CannotSaveAlert />}
+      {this.props.showErrorMessage.category && <CannotSaveAlert />}
       <DocCategoryPicker
         allowReadOnly={true}
         handleCategoryToggle={handleCategoryToggle}

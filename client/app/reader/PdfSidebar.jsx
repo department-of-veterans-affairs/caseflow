@@ -159,7 +159,6 @@ export class PdfSidebar extends React.Component {
             <AccordionSection title="Categories">
               <SideBarCategories doc={this.props.doc}
                 documents={this.props.documents}
-                showErrorMessage={showErrorMessage}
                 handleCategoryToggle={
                   _.partial(this.props.handleCategoryToggle, this.props.doc.id)
                 }/>
@@ -167,7 +166,6 @@ export class PdfSidebar extends React.Component {
             <AccordionSection title="Issue tags">
               <SideBarIssueTags
                 doc={this.props.doc}
-                showErrorMessage={showErrorMessage}
                 tagOptions={tagOptions}
                 addNewTag={this.props.addNewTag}
                 removeTag={this.props.removeTag}/>
@@ -177,7 +175,6 @@ export class PdfSidebar extends React.Component {
                 comments={comments}
                 handleAddClick={this.handleAddClick}
                 placedButUnsavedAnnotation={this.props.placedButUnsavedAnnotation}
-                showErrorMessage={showErrorMessage}
                 onChange={this.props.updateNewAnnotationContent}
                 onCancelCommentEdit={this.stopPlacingAnnotation}
                 onSaveCommentEdit={this.props.createAnnotation}
