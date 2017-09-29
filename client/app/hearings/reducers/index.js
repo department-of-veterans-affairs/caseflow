@@ -144,7 +144,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: {
         streams: {
           [action.payload.appealKey]: {
-            worksheet_issues: {$push: {from_vacols: false}}
+            worksheet_issues: {$push: [{from_vacols: false}]}
           }
         }
       }
