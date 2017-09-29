@@ -90,10 +90,10 @@ export const onToggleVHA = (vha, issueKey, appealKey) => ({
   }
 });
 
-export const onAddIssue = (appealId) => ({
+export const onAddIssue = (appealKey) => ({
   type: Constants.ADD_ISSUE,
   payload: {
-    appealId
+    appealKey
   }
 });
 

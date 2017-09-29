@@ -9,7 +9,7 @@ import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
 
-  onAddIssue = (key) => this.props.onAddIssue(key);
+  onAddIssue = () => this.props.onAddIssue(0);
 
   render() {
 
