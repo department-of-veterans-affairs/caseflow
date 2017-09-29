@@ -13,11 +13,10 @@ class VACOLS::CaseIssue < VACOLS::Record
   # in VFTYPES.FTKEY, where the diagnostic code is prefixed with 'DG'.
   # This query matches each ISSUE table code with the appropriate label,
   # either from the ISSREF or VFTYPES table.
-  def self.descriptions(issue_key)
+  def self.descriptions(vacols_ids)
     conn = connection
-    key = conn.quote(issue_key)
 
-    conn.exec_query(<<-SQL).to_hash
+    query = <<-SQL
       select
         ISSUES.ISSKEY,
         ISSUES.ISSSEQ,
@@ -67,8 +66,19 @@ class VACOLS::CaseIssue < VACOLS::Record
           or (ISSREF.LEV2_CODE = '##' and 'DG' || ISSUES.ISSLEV2 = VFTYPES.FTKEY)
           or (ISSREF.LEV3_CODE = '##' and 'DG' || ISSUES.ISSLEV3 = VFTYPES.FTKEY))
 
-      where ISSUES.ISSKEY = #{key}
+      where ISSUES.ISSKEY IN (?)
     SQL
+
+    issues_result = MetricsService.record("VACOLS: CaseIssue.issues for #{vacols_ids}", name: "CaseIssue.issues",
+                                                                                        service: :vacols) do
+      conn.exec_query(sanitize_sql_array([query, vacols_ids]))
+    end
+
+    issues_result.to_hash.reduce({}) do |memo, result|
+      issue_key = result["isskey"].to_s
+      memo[issue_key] = (memo[issue_key] || []) << result
+      memo
+    end
   end
   # rubocop:enable MethodLength
   # :nocov:
