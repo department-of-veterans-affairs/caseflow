@@ -48,7 +48,7 @@ class AppealRepository
                   .includes(:folder, :correspondent)
     end
 
-    cases.map { |case_record| build_appeal(case_record) }
+    cases.map { |case_record| build_appeal(case_record, true) }
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
@@ -78,8 +78,9 @@ class AppealRepository
   # :nocov:
 
   # TODO: consider persisting these records
-  def self.build_appeal(case_record)
+  def self.build_appeal(case_record, persist = false)
     appeal = Appeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+    appeal.save! if persist
     set_vacols_values(appeal: appeal, case_record: case_record)
   end
 
