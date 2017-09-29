@@ -173,7 +173,6 @@ export class PdfSidebar extends React.Component {
               <SideBarComments
                 comments={comments}
                 handleAddClick={this.handleAddClick}
-                placedButUnsavedAnnotation={this.props.placedButUnsavedAnnotation}
                 onChange={this.props.updateNewAnnotationContent}
                 onCancelCommentEdit={this.stopPlacingAnnotation}
                 onSaveCommentEdit={this.props.createAnnotation}

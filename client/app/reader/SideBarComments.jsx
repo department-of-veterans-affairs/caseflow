@@ -11,7 +11,6 @@ class SideBarComments extends PureComponent {
     let {
       comments,
       handleAddClick,
-      placedButUnsavedAnnotation,
       onChange,
       onCancelCommentEdit,
       onSaveCommentEdit
@@ -28,9 +27,9 @@ class SideBarComments extends PureComponent {
     <div id="cf-comment-wrapper" className="cf-comment-wrapper">
       {this.props.showErrorMessage.annotation && <CannotSaveAlert />}
       <div className="cf-pdf-comment-list">
-        {placedButUnsavedAnnotation &&
+        {this.props.placedButUnsavedAnnotation &&
           <EditComment
-            comment={placedButUnsavedAnnotation}
+            comment={this.props.placedButUnsavedAnnotation}
             id="addComment"
             disableOnEmpty={true}
             onChange={onChange}
