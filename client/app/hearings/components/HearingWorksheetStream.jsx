@@ -9,18 +9,18 @@ import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
 
-  onAddIssue = () => this.props.onAddIssue(0);
+  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey);
 
   render() {
 
     let {
-     worksheetStreams
+      worksheetStreams
     } = this.props;
 
     return <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Issues</h2>
             {Object.keys(worksheetStreams).map((appeal, key) => {
-                // Iterates over all apeals to create appeal streams inside worksheet
+                // Iterates over all appeals to create appeal streams inside worksheet
               let appealId = appeal;
 
               return <div key={appealId} id={appealId}>
@@ -32,10 +32,10 @@ class HearingWorksheetStream extends Component {
                 {...this.props}
               />
               <Button
-              classNames={['usa-button-outline', 'hearings-add-issue']}
-              name="+ Add Issue"
-              id={`button-addIssue-${appealId}`}
-              onClick={this.onAddIssue}
+                classNames={['usa-button-outline', 'hearings-add-issue']}
+                name="+ Add Issue"
+                id={`button-addIssue-${appealId}`}
+                onClick={this.onAddIssue(key)}
               />
               <hr />
               </div>;
