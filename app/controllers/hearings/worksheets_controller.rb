@@ -35,8 +35,8 @@ class Hearings::WorksheetsController < HearingsController
       streams: {
         "8873": {
           id: 8873,
-          issues: {
-            "66": {
+          issues: [
+            {
               id: 66,
               program: "Compensation",
               issue: "Service connection",
@@ -49,7 +49,7 @@ class Hearings::WorksheetsController < HearingsController
               deny: false,
               vha: false,
               from_vacols: false },
-            "17": {
+            {
               id: 17,
               program: "Compensation",
               issue: "Service connection",
@@ -62,11 +62,11 @@ class Hearings::WorksheetsController < HearingsController
               deny: false,
               vha: true,
               from_vacols: true }
-          } },
+          ] },
         "9092": {
           id: 9092,
-          issues: {
-            "7654": {
+          issues: [
+            {
               id: 7654,
               program: "Compensation",
               issue: "Service connection",
@@ -79,7 +79,7 @@ class Hearings::WorksheetsController < HearingsController
               deny: false,
               vha: false,
               from_vacols: false },
-            "1754": {
+            {
               id: 1754,
               program: "Compensation",
               issue: "Service connection",
@@ -92,7 +92,7 @@ class Hearings::WorksheetsController < HearingsController
               deny: true,
               vha: true,
               from_vacols: true }
-          } } }
+          ] } }
     }.merge(worksheet.to_hash_for_worksheet)
   end
 end
