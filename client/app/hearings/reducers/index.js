@@ -153,6 +153,18 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
+  case Constants.DELETE_ISSUE:
+    return update(state, {
+      worksheet: {
+        streams: {
+          [action.payload.appealKey]: {
+            worksheet_issues: { $push: [{ from_vacols: false,
+              edited: true }] }
+          }
+        }
+      }
+    });
+
   case Constants.TOGGLE_ISSUE_DELETE_MODAL:
     return update(state, { issueDeleteModal: { $set: action.payload.isShowingModal } });
 

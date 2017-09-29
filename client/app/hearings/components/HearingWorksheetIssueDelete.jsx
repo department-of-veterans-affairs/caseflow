@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { toggleIssueDeleteModal } from '../actions/Issue';
+import { toggleIssueDeleteModal, onDeleteIssue } from '../actions/Issue';
 import Modal from '../../components/Modal';
 import { TrashCan } from '../../components/RenderFunctions';
 
@@ -17,10 +17,12 @@ class HearingWorksheetIssueDelete extends PureComponent {
     this.props.toggleIssueDeleteModal(false);
   };
 
+  onDeleteIssue = () => {
+    this.props.onDeleteIssue(this.props.issueKey, this.props.appealKey);
+  }
+
   render() {
     let {
-//    appealKey,
-//   issueKey,
      issueDeleteModal
     } = this.props;
 
@@ -37,7 +39,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
             },
             { classNames: ['usa-button', 'usa-button-primary'],
               name: 'Yes',
-              onClick: this.handleModalClose
+              onClick: this.onDeleteIssue
             }
           ]}
           closeHandler={this.handleModalClose}
@@ -56,7 +58,8 @@ const mapStateToProps = (state) => ({
   issueDeleteModal: state.issueDeleteModal
 });
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleIssueDeleteModal
+  toggleIssueDeleteModal,
+  onDeleteIssue
 }, dispatch);
 
 HearingWorksheetIssueDelete.propTypes = {
