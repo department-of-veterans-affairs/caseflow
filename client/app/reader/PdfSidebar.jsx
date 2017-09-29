@@ -19,7 +19,7 @@ import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
 import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
   startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
+  selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
   } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
 import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
@@ -89,46 +89,46 @@ export class PdfSidebar extends React.Component {
     event.stopPropagation();
   }
   render() {
-    let comments = [];
+    // let comments = [];
 
     const {
       tagOptions,
       appeal
     } = this.props;
 
-    comments = sortAnnotations(this.props.comments).map((comment, index) => {
-      if (comment.editing) {
-        return <EditComment
-            id={`editCommentBox-${keyOfAnnotation(comment)}`}
-            comment={comment}
-            onCancelCommentEdit={this.props.cancelEditAnnotation}
-            onChange={this.props.updateAnnotationContent}
-            value={comment.comment}
-            onSaveCommentEdit={this.props.requestEditAnnotation}
-            key={keyOfAnnotation(comment)}
-          />;
-      }
-
-      const handleClick = () => {
-        this.props.onJumpToComment(comment)();
-        this.props.selectAnnotation(comment.id);
-      };
-
-      return <div ref={(commentElement) => {
-        this.commentElements[comment.id] = commentElement;
-      }}
-        key={keyOfAnnotation(comment)}>
-        <Comment
-          id={`comment${index}`}
-          onEditComment={this.props.startEditAnnotation}
-          uuid={comment.uuid}
-          selected={comment.id === this.props.selectedAnnotationId}
-          onClick={handleClick}
-          page={comment.page}>
-            {comment.comment}
-          </Comment>
-        </div>;
-    });
+    // comments = sortAnnotations(this.props.comments).map((comment, index) => {
+    //   if (comment.editing) {
+    //     return <EditComment
+    //         id={`editCommentBox-${keyOfAnnotation(comment)}`}
+    //         comment={comment}
+    //         onCancelCommentEdit={this.props.cancelEditAnnotation}
+    //         onChange={this.props.updateAnnotationContent}
+    //         value={comment.comment}
+    //         onSaveCommentEdit={this.props.requestEditAnnotation}
+    //         key={keyOfAnnotation(comment)}
+    //       />;
+    //   }
+    //
+    //   const handleClick = () => {
+    //     this.props.onJumpToComment(comment)();
+    //     this.props.selectAnnotation(comment.id);
+    //   };
+    //
+    //   return <div ref={(commentElement) => {
+    //     this.commentElements[comment.id] = commentElement;
+    //   }}
+    //     key={keyOfAnnotation(comment)}>
+    //     <Comment
+    //       id={`comment${index}`}
+    //       onEditComment={this.props.startEditAnnotation}
+    //       uuid={comment.uuid}
+    //       selected={comment.id === this.props.selectedAnnotationId}
+    //       onClick={handleClick}
+    //       page={comment.page}>
+    //         {comment.comment}
+    //       </Comment>
+    //     </div>;
+    // });
 
     const sidebarClass = classNames(
       'cf-sidebar-wrapper',
@@ -171,11 +171,8 @@ export class PdfSidebar extends React.Component {
             </AccordionSection>
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
               <SideBarComments
-                comments={comments}
                 handleAddClick={this.handleAddClick}
-                onChange={this.props.updateNewAnnotationContent}
                 onCancelCommentEdit={this.stopPlacingAnnotation}
-                onSaveCommentEdit={this.props.createAnnotation}
                 />
             </AccordionSection>
           </Accordion>
