@@ -6,11 +6,11 @@ class IntakeController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Intake")
+    verify_authorized_roles("Mail Intake")
   end
 
   def verify_feature_enabled
-    unauthorized unless FeatureToggle.enabled?(:intake)
+    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
   def index

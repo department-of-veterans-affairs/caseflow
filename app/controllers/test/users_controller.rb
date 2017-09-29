@@ -27,7 +27,7 @@ class Test::UsersController < ApplicationController
       }
     },
     {
-      name: "Intake",
+      name: "Mail Intake",
       links: {
         start: "/intake"
       }
