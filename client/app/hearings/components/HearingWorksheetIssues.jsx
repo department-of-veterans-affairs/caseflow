@@ -2,15 +2,9 @@ import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
-import Modal from '../../components/Modal';
-import { toggleIssueDeleteModal } from '../actions/Issue';
-
-import { toggleIssueDeleteModal } from '../actions/Issue';
-
-
+import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -28,8 +22,7 @@ class HearingWorksheetIssues extends PureComponent {
     let {
       worksheetStreamsIssues,
       worksheetStreamsAppeal,
-      appealKey,
-     issueDeleteModal
+      appealKey
     } = this.props;
 
 
@@ -111,11 +104,12 @@ class HearingWorksheetIssues extends PureComponent {
                     appealKey={appealKey}
                     issueKey={key}
         />,
-        deleteIssue: <div className="cf-issue-delete"
-                        onClick={this.handleModalOpen}
-                        alt="Remove Issue Confirmation">
-                        <TrashCan />
-                    </div>
+        deleteIssue: <HearingWorksheetIssueDelete
+                    appeal={worksheetStreamsAppeal}
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
+        />
       };
     });
 
@@ -132,22 +126,16 @@ class HearingWorksheetIssues extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  HearingWorksheetIssues: state,
-  issueDeleteModal: state.issueDeleteModal
+  HearingWorksheetIssues: state
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleIssueDeleteModal
-}, dispatch);
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
 )(HearingWorksheetIssues);
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
   worksheetStreamsIssues: PropTypes.array.isRequired,
-  worksheetStreamsAppeal: PropTypes.object.isRequired,
-  issueDeleteModal: PropTypes.bool.isRequired
+  worksheetStreamsAppeal: PropTypes.object.isRequired
 };
