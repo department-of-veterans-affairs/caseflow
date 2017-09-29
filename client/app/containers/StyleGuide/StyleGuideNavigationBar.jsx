@@ -46,7 +46,7 @@ export default class StyleGuideNavigationBar extends React.Component {
     <div className="sg-nav-wrap">
      <Router>
       <NavigationBar
-       appName="eFolder"
+       appName="Hearing Prep"
        userDisplayName="Abraham Lincoln"
        dropdownUrls={options}
        defaultUrl="/"
