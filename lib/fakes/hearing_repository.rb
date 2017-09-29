@@ -72,9 +72,9 @@ class Fakes::HearingRepository
       disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.values[i % 4],
       aod: [VACOLS::CaseHearing::HEARING_AODS.values[i % 3], nil].sample,
       hold_open: [30, 60, 90].sample,
-      add_on: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample,
+      add_on: false,
       notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
-      transcript_requested: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample
+      transcript_requested: false
     }
   end
   # rubocop:enable Metrics/AbcSize
