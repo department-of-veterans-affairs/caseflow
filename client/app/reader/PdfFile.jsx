@@ -36,6 +36,21 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = null;
         this.pdfDocument = pdfDocument;
         this.props.setPdfDocument(this.props.file, pdfDocument);
+
+        const textObject = {};
+        const t0 = performance.now();
+
+        _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
+          pdfDocument.getPage(index + 1).then((page) => {
+            page.getTextContent().then((text) => {
+              textObject[index] = text;
+              if (_.size(textObject) === pdfDocument.pdfInfo.numPages) {
+                console.log('textObject', textObject);
+                console.log('timing', performance.now() - t0);
+              }
+            });
+          });
+        });
       }
     }).
     catch(() => {
