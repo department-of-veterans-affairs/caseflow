@@ -1,12 +1,13 @@
 import React from 'react';
 import { expect } from 'chai';
-import { mount } from 'enzyme';
-import DocketsContainer from '../../../app/hearings/DocketsContainer';
+import { shallow } from 'enzyme';
+import { DocketsContainer } from '../../../app/hearings/DocketsContainer';
+import Dockets from '../../../app/hearings/Dockets';
 
 /* eslint-disable camelcase */
 describe('DocketsContainer', () => {
   it('notifies user when no dockets are returned', () => {
-    const wrapper = mount(<DocketsContainer veteran_law_judge={{ name: 'me' }} dockets={{}} />);
+    const wrapper = shallow(<DocketsContainer veteran_law_judge={{ name: 'me' }} dockets={{}} />);
 
     expect(wrapper.text()).to.include('You have no upcoming hearings.');
   });
@@ -44,8 +45,8 @@ describe('DocketsContainer', () => {
         }
       }
     };
-    const wrapper = mount(<DocketsContainer veteran_law_judge={{ name: 'me' }} dockets={dockets} />);
+    const wrapper = shallow(<DocketsContainer veteran_law_judge={{ name: 'me' }} dockets={dockets} />);
 
-    expect(wrapper.text()).to.include('Upcoming Hearing Days');
+    expect(wrapper.find(Dockets)).to.have.length(1);
   });
 });
