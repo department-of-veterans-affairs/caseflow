@@ -8,7 +8,9 @@ import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import Modal from '../../components/Modal';
 import { toggleIssueDeleteModal } from '../actions/Issue';
 
-import { TrashCan } from '../../components/RenderFunctions';
+import { toggleIssueDeleteModal } from '../actions/Issue';
+
+
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -113,24 +115,6 @@ class HearingWorksheetIssues extends PureComponent {
               summary={'Worksheet Issues'}
               getKeyForRow={this.getKeyForRow}
           />
-    { issueDeleteModal && <Modal
-          buttons = {[
-            { classNames: ['usa-button', 'usa-button-outline'],
-              name: 'Close',
-              onClick: this.handleModalClose
-            },
-            { classNames: ['usa-button', 'usa-button-primary'],
-              name: 'Yes',
-              onClick: this.handleModalClose
-            }
-          ]}
-          closeHandler={this.handleModalClose}
-          noDivider={true}
-          title = "Remove Issue Row">
-          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
-          <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
-        </Modal>
-    }
         </div>;
   }
 }
