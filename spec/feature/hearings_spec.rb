@@ -122,7 +122,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
       expect(page).to have_content("The veteran believes their knee is hurt")
-      expect(page).to have_content("Army 02/02/2003 - 05/07/2009")
+      expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
       expect(page).to have_content("Medical exam occurred on 10/10/2008")
       expect(page).to have_content("Look for knee-related medical records")
     end
