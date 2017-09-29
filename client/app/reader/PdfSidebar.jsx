@@ -28,7 +28,7 @@ import { scrollColumns, scrollInstructions, commentColumns, commentInstructions,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { INTERACTION_TYPES, CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -84,10 +84,6 @@ export class PdfSidebar extends React.Component {
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
-  handleAddClick = (event) => {
-    this.props.startPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
-    event.stopPropagation();
-  }
   render() {
     let comments = [];
 
@@ -172,7 +168,6 @@ export class PdfSidebar extends React.Component {
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
               <SideBarComments
                 comments={comments}
-                handleAddClick={this.handleAddClick}
                 />
             </AccordionSection>
           </Accordion>

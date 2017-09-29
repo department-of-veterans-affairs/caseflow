@@ -6,25 +6,30 @@ import CannotSaveAlert from '../reader/CannotSaveAlert';
 import { plusIcon } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import _ from 'lodash';
+import { INTERACTION_TYPES } from './analytics';
 
 import { updateNewAnnotationContent, selectAnnotation, cancelEditAnnotation,
   updateAnnotationContent, requestEditAnnotation, startEditAnnotation,
-  createAnnotation, stopPlacingAnnotation } from '../reader/actions';
+  createAnnotation, stopPlacingAnnotation, startPlacingAnnotation } from '../reader/actions';
 
 class SideBarComments extends PureComponent {
+  handleAddClick = (event) => {
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
+    event.stopPropagation();
+  }
+
   stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
 
   render() {
     let {
-      comments,
-      handleAddClick
+      comments
     } = this.props;
 
     return <div>
       <span className="cf-right-side cf-add-comment-button">
         <Button
           name="AddComment"
-          onClick={handleAddClick}>
+          onClick={this.handleAddClick}>
           <span>{ plusIcon() } &nbsp; Add a comment</span>
         </Button>
       </span>
@@ -63,7 +68,8 @@ const mapDispatchToProps = (dispatch) => ({
     stopPlacingAnnotation,
     updateAnnotationContent,
     requestEditAnnotation,
-    startEditAnnotation
+    startEditAnnotation,
+    startPlacingAnnotation
   }, dispatch)
 });
 
