@@ -81,6 +81,7 @@ class SeedDB
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
     @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina Smith"))
     @users.push(User.create(css_id: "Hearing Prep", station_id: "283", full_name: "Lauren Roth"))
+    @users.push(User.create(css_id: "Mail Intake", station_id: "283", full_name: "Kwame Nkrumah"))
   end
 
   def create_annotations
