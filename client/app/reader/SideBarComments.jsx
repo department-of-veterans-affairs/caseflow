@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Comment from './Comment';
 import EditComment from './EditComment';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import { plusIcon } from '../components/RenderFunctions';
@@ -10,52 +9,16 @@ import _ from 'lodash';
 
 import { updateNewAnnotationContent, selectAnnotation, cancelEditAnnotation,
   updateAnnotationContent, requestEditAnnotation, startEditAnnotation,
-  createAnnotation} from '../reader/actions';
-import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
-  from './utils';
+  createAnnotation, stopPlacingAnnotation } from '../reader/actions';
 
 class SideBarComments extends PureComponent {
+  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
+
   render() {
     let {
-      handleAddClick,
-      onCancelCommentEdit
+      comments,
+      handleAddClick
     } = this.props;
-
-    let comments = [];
-
-    comments = sortAnnotations(this.props.comments).map((comment, index) => {
-      if (comment.editing) {
-        return <EditComment
-            id={`editCommentBox-${keyOfAnnotation(comment)}`}
-            comment={comment}
-            onCancelCommentEdit={this.props.cancelEditAnnotation}
-            onChange={this.props.updateAnnotationContent}
-            value={comment.comment}
-            onSaveCommentEdit={this.props.requestEditAnnotation}
-            key={keyOfAnnotation(comment)}
-          />;
-      }
-
-      const handleClick = () => {
-        this.props.onJumpToComment(comment)();
-        this.props.selectAnnotation(comment.id);
-      };
-
-      return <div ref={(commentElement) => {
-        this.commentElements[comment.id] = commentElement;
-      }}
-        key={keyOfAnnotation(comment)}>
-        <Comment
-          id={`comment${index}`}
-          onEditComment={this.props.startEditAnnotation}
-          uuid={comment.uuid}
-          selected={comment.id === this.props.selectedAnnotationId}
-          onClick={handleClick}
-          page={comment.page}>
-            {comment.comment}
-          </Comment>
-        </div>;
-    });
 
     return <div>
       <span className="cf-right-side cf-add-comment-button">
@@ -74,7 +37,7 @@ class SideBarComments extends PureComponent {
             id="addComment"
             disableOnEmpty={true}
             onChange={this.props.updateNewAnnotationContent}
-            onCancelCommentEdit={onCancelCommentEdit}
+            onCancelCommentEdit={this.stopPlacingAnnotation}
             onSaveCommentEdit={this.props.createAnnotation} />}
         {comments}
       </div>
@@ -86,7 +49,8 @@ class SideBarComments extends PureComponent {
 const mapStateToProps = (state) => {
   return {
     ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
+    scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment
   };
 };
 
@@ -95,11 +59,13 @@ const mapDispatchToProps = (dispatch) => ({
     updateNewAnnotationContent,
     selectAnnotation,
     cancelEditAnnotation,
+    createAnnotation,
+    stopPlacingAnnotation,
     updateAnnotationContent,
     requestEditAnnotation,
     startEditAnnotation
   }, dispatch)
-})
+});
 
 export default connect(
   mapStateToProps,
