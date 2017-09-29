@@ -26,7 +26,7 @@ export class Dockets extends React.Component {
 
   masterRecord = (docket) => {
     return docket.hearings_array[0].master_record === true;
-  };
+  }
 
   linkToDailyDocket = (docket) => {
     if (this.masterRecord(docket)) {
@@ -36,7 +36,11 @@ export class Dockets extends React.Component {
     return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
         {moment(docket.date).format('l')}
     </Link>;
-  };
+  }
+
+  scheduled = (docket) => {
+    return (this.masterRecord(docket)) ? 0 : docket.hearings_array.length;
+  }
 
   render() {
 
@@ -81,7 +85,7 @@ export class Dockets extends React.Component {
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: _.random(8, 12),
-        scheduled: docket.hearings_array.length
+        scheduled: this.scheduled(docket)
       };
     });
 

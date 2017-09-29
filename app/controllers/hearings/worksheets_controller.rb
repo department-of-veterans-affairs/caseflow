@@ -32,14 +32,14 @@ class Hearings::WorksheetsController < HearingsController
 
   def hearing_worksheet # rubocop:disable Metrics/MethodLength
     {
-      streams: {
-        "8873": {
+      streams: [
+        {
           id: 8873,
-          issues: [
+          worksheet_issues: [
             {
               id: 66,
               program: "Compensation",
-              issue: "Service connection",
+              name: "Service connection",
               levels: "All Others, 5010 - Arthritis, due to trauma",
               description: "Left Elbow",
               reopen: true,
@@ -48,11 +48,11 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: false,
               vha: false,
-              from_vacols: false },
+              from_vacols: true },
             {
               id: 17,
               program: "Compensation",
-              issue: "Service connection",
+              name: "Service connection",
               levels: "All Others, 5010 - Migrane",
               description: "Frequent headaches, caused by concussion",
               reopen: false,
@@ -61,15 +61,16 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: false,
               vha: true,
-              from_vacols: true }
-          ] },
-        "9092": {
+              from_vacols: false }
+          ]
+        },
+        {
           id: 9092,
-          issues: [
+          worksheet_issues: [
             {
               id: 7654,
               program: "Compensation",
-              issue: "Service connection",
+              name: "Service connection",
               levels: "All Others, 5010 - Arthritis, due to trauma",
               description: "Right Leg",
               reopen: false,
@@ -78,11 +79,11 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: false,
               vha: false,
-              from_vacols: false },
+              from_vacols: true },
             {
               id: 1754,
               program: "Compensation",
-              issue: "Service connection",
+              name: "Service connection",
               levels: "All Others, 4664 - Lyphatic system disability",
               description: "Needs additional examination",
               reopen: false,
@@ -91,8 +92,10 @@ class Hearings::WorksheetsController < HearingsController
               dismiss: false,
               deny: true,
               vha: true,
-              from_vacols: true }
-          ] } }
+              from_vacols: false }
+          ]
+        }
+      ]
     }.merge(worksheet.to_hash_for_worksheet)
   end
 end

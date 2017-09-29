@@ -1,92 +1,92 @@
 import * as Constants from '../constants/constants';
 
-export const onProgramChange = (program, issueId, appealId) => ({
+export const onProgramChange = (program, issueKey, appealKey) => ({
   type: Constants.SET_PROGRAM,
   payload: {
     program,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onIssueChange = (issue, issueId, appealId) => ({
-  type: Constants.SET_ISSUE,
+export const onNameChange = (name, issueKey, appealKey) => ({
+  type: Constants.SET_NAME,
   payload: {
-    issue,
-    issueId,
-    appealId
+    name,
+    issueKey,
+    appealKey
   }
 });
 
-export const onLevelsChange = (levels, issueId, appealId) => ({
+export const onLevelsChange = (levels, issueKey, appealKey) => ({
   type: Constants.SET_LEVELS,
   payload: {
     levels,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onDescriptionChange = (description, issueId, appealId) => ({
+export const onDescriptionChange = (description, issueKey, appealKey) => ({
   type: Constants.SET_DESCRIPTION,
   payload: {
     description,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleReopen = (reopen, issueId, appealId) => ({
+export const onToggleReopen = (reopen, issueKey, appealKey) => ({
   type: Constants.SET_REOPEN,
   payload: {
     reopen,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleAllow = (allow, issueId, appealId) => ({
+export const onToggleAllow = (allow, issueKey, appealKey) => ({
   type: Constants.SET_ALLOW,
   payload: {
     allow,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleDeny = (deny, issueId, appealId) => ({
+export const onToggleDeny = (deny, issueKey, appealKey) => ({
   type: Constants.SET_DENY,
   payload: {
     deny,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleRemand = (remand, issueId, appealId) => ({
+export const onToggleRemand = (remand, issueKey, appealKey) => ({
   type: Constants.SET_REMAND,
   payload: {
     remand,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleDismiss = (dismiss, issueId, appealId) => ({
+export const onToggleDismiss = (dismiss, issueKey, appealKey) => ({
   type: Constants.SET_DISMISS,
   payload: {
     dismiss,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleVHA = (vha, issueId, appealId) => ({
+export const onToggleVHA = (vha, issueKey, appealKey) => ({
   type: Constants.SET_VHA,
   payload: {
     vha,
-    issueId,
-    appealId
+    issueKey,
+    appealKey
   }
 });
 

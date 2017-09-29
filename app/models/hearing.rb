@@ -122,7 +122,7 @@ class Hearing < ActiveRecord::Base
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update_attributes(military_service: appeal.veteran.periods_of_service.join("\n")) if persisted? && veteran
+      update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
   end

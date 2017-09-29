@@ -15,18 +15,9 @@ const categoriesOfDocument = (document) => _(Constants.documentCategories).
     value();
 
 class DocumentCategoryIcons extends React.Component {
-  shouldComponentUpdate = (nextProps) => !_.isEqual(
-    categoriesOfDocument(this.props.doc),
-    categoriesOfDocument(nextProps.doc)
-  ) || !_.isEqual(
-    this.props.searchCategoryHighlights,
-    nextProps.searchCategoryHighlights
-  )
-
   render() {
     const { searchCategoryHighlights, doc } = this.props;
     const categories = categoriesOfDocument(doc);
-    const docHighlights = searchCategoryHighlights ? searchCategoryHighlights[doc.id] : {};
 
     if (!_.size(categories)) {
       return null;
@@ -40,7 +31,7 @@ class DocumentCategoryIcons extends React.Component {
       {
         _.map(categories, (category) =>
           <li
-            className={docHighlights[getCategoryName(category.humanName)] ?
+            className={searchCategoryHighlights[getCategoryName(category.humanName)] ?
              `${listClassName} highlighted` : listClassName}
             key={category.renderOrder}
             aria-label={category.humanName}>
@@ -52,13 +43,18 @@ class DocumentCategoryIcons extends React.Component {
   }
 }
 
+DocumentCategoryIcons.defaultProps = {
+  searchCategoryHighlights: {}
+};
+
 DocumentCategoryIcons.propTypes = {
   doc: PropTypes.object.isRequired,
   searchCategoryHighlights: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  searchCategoryHighlights: state.readerReducer.ui.searchCategoryHighlights
+const mapStateToProps = (state, ownProps) => ({
+  searchCategoryHighlights:
+    state.readerReducer.ui.searchCategoryHighlights[ownProps.doc.id]
 });
 
 export { DocumentCategoryIcons };

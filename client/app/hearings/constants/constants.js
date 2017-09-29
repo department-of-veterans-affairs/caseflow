@@ -18,7 +18,7 @@ export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
 
 // issues
 export const SET_PROGRAM = 'SET_PROGRAM';
-export const SET_ISSUE = 'SET_ISSUE';
+export const SET_NAME = 'SET_NAME';
 export const SET_LEVELS = 'SET_LEVELS';
 export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 export const SET_REOPEN = 'SET_REOPEN';
