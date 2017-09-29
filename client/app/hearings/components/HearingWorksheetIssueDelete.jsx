@@ -47,8 +47,11 @@ class HearingWorksheetIssueDelete extends PureComponent {
 const mapStateToProps = (state) => ({
   issueDeleteModal: state.issueDeleteModal
 });
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  toggleIssueDeleteModal
+}, dispatch);
 
-HearingWorksheetIssueFields.propTypes = {
+HearingWorksheetIssueDelete.propTypes = {
   issue: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
   issueDeleteModal: PropTypes.bool.isRequired
@@ -57,5 +60,5 @@ HearingWorksheetIssueFields.propTypes = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HearingWorksheetIssueFields);
+)(HearingWorksheetIssueDelete);
 
