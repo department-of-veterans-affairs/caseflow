@@ -93,9 +93,9 @@ class Hearings::WorksheetsController < HearingsController
               deny: true,
               vha: true,
               from_vacols: false }
-            ]
-          }
-        ]
+          ]
+        }
+      ]
     }.merge(worksheet.to_hash_for_worksheet)
   end
 end
