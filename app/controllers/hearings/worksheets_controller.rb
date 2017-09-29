@@ -32,11 +32,11 @@ class Hearings::WorksheetsController < HearingsController
 
   def hearing_worksheet # rubocop:disable Metrics/MethodLength
     {
-      streams: {
-        "0": {
+      streams: [
+        {
           id: 8873,
-          worksheet_issues: {
-            "0": {
+          worksheet_issues: [
+            {
               id: 66,
               program: "Compensation",
               name: "Service connection",
@@ -49,7 +49,7 @@ class Hearings::WorksheetsController < HearingsController
               deny: false,
               vha: false,
               from_vacols: true },
-            "1": {
+            {
               id: 17,
               program: "Compensation",
               name: "Service connection",
@@ -62,11 +62,12 @@ class Hearings::WorksheetsController < HearingsController
               deny: false,
               vha: true,
               from_vacols: false }
-          } },
-        "1": {
+          ]
+        },
+        {
           id: 9092,
-          worksheet_issues: {
-            "0": {
+          worksheet_issues: [
+            {
               id: 7654,
               program: "Compensation",
               name: "Service connection",
@@ -79,7 +80,7 @@ class Hearings::WorksheetsController < HearingsController
               deny: false,
               vha: false,
               from_vacols: true },
-            "1": {
+            {
               id: 1754,
               program: "Compensation",
               name: "Service connection",
@@ -92,7 +93,9 @@ class Hearings::WorksheetsController < HearingsController
               deny: true,
               vha: true,
               from_vacols: false }
-          } } }
+            ]
+          }
+        ]
     }.merge(worksheet.to_hash_for_worksheet)
   end
 end

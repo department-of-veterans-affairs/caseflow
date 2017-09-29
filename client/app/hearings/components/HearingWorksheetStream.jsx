@@ -46,7 +46,7 @@ const mapStateToProps = (state) => ({
 });
 
 HearingWorksheetStream.propTypes = {
-  worksheetStreams: PropTypes.object.isRequired
+  worksheetStreams: PropTypes.array.isRequired
 };
 
 export default connect(
