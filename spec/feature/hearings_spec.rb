@@ -131,9 +131,9 @@ RSpec.feature "Hearings" do
       expect(page).to_not have_field("66-issue-levels")
       expect(page).to have_field("66-issue-description")
       click_on "button-addIssue-0"
-      expect(page).to_not have_field("undefined-issue-program")
-      expect(page).to_not have_field("undefined-issue-name")
-      expect(page).to_not have_field("undefined-issue-levels")
+      expect(page).to have_field("undefined-issue-program")
+      expect(page).to have_field("undefined-issue-name")
+      expect(page).to have_field("undefined-issue-levels")
       expect(page).to have_field("undefined-issue-description")
     end
 
