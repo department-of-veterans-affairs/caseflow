@@ -8,9 +8,8 @@ import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
 
-import { updateNewAnnotationContent, selectAnnotation, cancelEditAnnotation,
-  updateAnnotationContent, requestEditAnnotation, startEditAnnotation,
-  createAnnotation, stopPlacingAnnotation, startPlacingAnnotation } from '../reader/actions';
+import { updateNewAnnotationContent, createAnnotation, stopPlacingAnnotation,
+  startPlacingAnnotation } from '../reader/actions';
 
 class SideBarComments extends PureComponent {
   handleAddClick = (event) => {
@@ -54,21 +53,15 @@ class SideBarComments extends PureComponent {
 const mapStateToProps = (state) => {
   return {
     ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
-    scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     updateNewAnnotationContent,
-    selectAnnotation,
-    cancelEditAnnotation,
     createAnnotation,
     stopPlacingAnnotation,
-    updateAnnotationContent,
-    requestEditAnnotation,
-    startEditAnnotation,
     startPlacingAnnotation
   }, dispatch)
 });
