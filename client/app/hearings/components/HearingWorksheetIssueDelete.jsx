@@ -26,12 +26,15 @@ class HearingWorksheetIssueDelete extends PureComponent {
      issueDeleteModal
     } = this.props;
 
-    return <div className="cf-issue-delete"
+    return <div>
+    <div className="cf-issue-delete"
                         onClick={this.handleModalOpen}
                         alt="Remove Issue Confirmation">
                         <TrashCan />
 
-    { issueDeleteModal && <Modal
+
+         </div>
+            { issueDeleteModal && <Modal
           buttons = {[
             { classNames: ['usa-button', 'usa-button-outline'],
               name: 'Close',
@@ -49,7 +52,9 @@ class HearingWorksheetIssueDelete extends PureComponent {
           <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
         </Modal>
     }
-         </div>;
+         </div>
+
+         ;
   }
 
   }
