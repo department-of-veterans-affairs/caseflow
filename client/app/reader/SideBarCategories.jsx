@@ -8,7 +8,7 @@ import { categoryFieldNameOfCategoryName } from './utils';
 
 class SideBarCategories extends PureComponent {
   render() {
-    let {
+    const {
       doc,
       documents,
       handleCategoryToggle
@@ -23,7 +23,7 @@ class SideBarCategories extends PureComponent {
     return <div className="cf-category-sidebar">
       {this.props.showErrorMessage.category && <CannotSaveAlert />}
       <DocCategoryPicker
-        allowReadOnly={true}
+        allowReadOnly
         handleCategoryToggle={handleCategoryToggle}
         categoryToggleStates={categoryToggleStates} />
     </div>;
