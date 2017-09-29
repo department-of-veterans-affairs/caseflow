@@ -225,9 +225,9 @@ RSpec::Matchers.define :become_truthy do |_event_name|
 
   match do |block|
     begin
-      Timeout.timeout(Capybara.default_max_wait_time) do
-        sleep(0.1) until block.call
-        true
+      Timeout.timeout(10) do
+        sleep(0.1) until value = block.call
+        value
       end
     rescue TimeoutError
       false
