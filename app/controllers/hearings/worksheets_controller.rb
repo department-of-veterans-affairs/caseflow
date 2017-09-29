@@ -47,7 +47,8 @@ class Hearings::WorksheetsController < HearingsController
               allow: true,
               dismiss: false,
               deny: false,
-              vha: false },
+              vha: false,
+              from_vacols: false },
             "17": {
               id: 17,
               program: "Compensation",
@@ -59,11 +60,9 @@ class Hearings::WorksheetsController < HearingsController
               allow: true,
               dismiss: false,
               deny: false,
-              vha: true }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88 },
+              vha: true,
+              from_vacols: true }
+          } },
         "9092": {
           id: 9092,
           issues: {
@@ -78,7 +77,8 @@ class Hearings::WorksheetsController < HearingsController
               allow: false,
               dismiss: false,
               deny: false,
-              vha: false },
+              vha: false,
+              from_vacols: false },
             "1754": {
               id: 1754,
               program: "Compensation",
@@ -90,11 +90,9 @@ class Hearings::WorksheetsController < HearingsController
               allow: false,
               dismiss: false,
               deny: true,
-              vha: true }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88 } }
+              vha: true,
+              from_vacols: true }
+          } } }
     }.merge(worksheet.to_hash_for_worksheet)
   end
 end

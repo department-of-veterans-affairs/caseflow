@@ -1,11 +1,7 @@
 import _ from 'lodash';
-import { newContext } from 'immutability-helper';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-
-export const update = newContext();
-
-update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
+import { update } from '../util/ReducerUtil';
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;

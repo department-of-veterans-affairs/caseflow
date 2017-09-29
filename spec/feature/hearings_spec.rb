@@ -11,7 +11,7 @@ RSpec.feature "Hearings" do
     Generators::Appeal.create
   end
 
-  context "Upcoming Hearing Days" do
+  context "Hearings Prep" do
     let!(:current_user) do
       User.authenticate!(roles: ["Hearing Prep"])
     end
@@ -64,7 +64,8 @@ RSpec.feature "Hearings" do
       docket1_hearings = get_hearings(1)
       docket2_hearings = get_hearings(2)
 
-      expect(docket1_hearings).to eql("1")
+      # the first one is a master record
+      expect(docket1_hearings).to eql("0")
       expect(docket2_hearings).to eql("2")
 
       # Validate help link
@@ -102,26 +103,47 @@ RSpec.feature "Hearings" do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
-    scenario "Shows a hearing worksheet" do
+    scenario "Link on daily docket opens worksheet in new tab" do
       visit "/hearings/dockets/2017-01-06"
-
       link = find(".cf-hearings-docket-appellant", match: :first).find("a")
       link_href = link[:href]
 
       link.click
       new_window = windows.last
       page.within_window new_window do
-        expect(page).to have_content("The veteran believes their knee is hurt")
-        expect(page).to have_content("Army 02/02/2003 - 05/07/2009")
-        expect(page).to have_content("Medical exam occurred on 10/10/2008")
-        expect(page).to have_content("Look for knee-related medical records")
-
         visit link_href
         expect(page).to have_content("Hearing Worksheet")
-
-        # There's no functionality yet, but you should be able to...
-        click_on "Review eFolder"
       end
+    end
+
+    scenario "Hearing worksheet page displays worksheet information" do
+      visit "/hearings/1/worksheet"
+      expect(page).to have_content("Hearing Type: Video")
+      expect(page).to have_content("Docket Number: 4198")
+      expect(page).to have_content("Form 9: 12/21/2016")
+      expect(page).to have_content("The veteran believes their knee is hurt")
+      expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      expect(page).to have_content("Medical exam occurred on 10/10/2008")
+      expect(page).to have_content("Look for knee-related medical records")
+    end
+
+    scenario "Worksheet differentiates between user and vacols created records" do
+      visit "/hearings/1/worksheet"
+      expect(page).to have_field("7654-issue-program")
+      expect(page).to have_field("7654-issue-issue")
+      expect(page).to have_field("7654-issue-levels")
+      expect(page).to have_field("7654-issue-description")
+      expect(page).to_not have_field("1754-issue-program")
+      expect(page).to_not have_field("1754-issue-issue")
+      expect(page).to_not have_field("1754-issue-levels")
+      expect(page).to have_field("1754-issue-description")
+    end
+
+    scenario "Can click from hearing worksheet to reader" do
+      visit "/hearings/1/worksheet"
+      expect(page).to have_content("Review eFolder")
+      click_on "Review eFolder"
+      expect(page).to have_content("You've viewed 0 out of 4 documents")
     end
   end
 end

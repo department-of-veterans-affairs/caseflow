@@ -17,7 +17,7 @@ module HearingMapper
         add_on: add_on_to_vacols_format(hearing_info[:add_on]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested]),
         representative_name: representative_name_to_vacols_format(hearing_info[:representative_name])
-      }.select { |k, _v| hearing_info.keys.include? k } # only send updates to key/values that are passed
+      }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
     end
 
     def bfha_vacols_code(hearing_record)
@@ -54,7 +54,7 @@ module HearingMapper
     end
 
     def disposition_to_vacols_format(value, keys)
-      vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value)
+      vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value.try(:to_sym))
       # disposition cannot be nil
       fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
       vacols_code
@@ -66,7 +66,7 @@ module HearingMapper
     end
 
     def aod_to_vacols_format(value)
-      vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value)
+      vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value.try(:to_sym))
       fail(InvalidAodError) if !value.nil? && vacols_code.blank?
       vacols_code
     end
