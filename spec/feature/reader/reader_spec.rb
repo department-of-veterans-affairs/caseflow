@@ -760,24 +760,22 @@ RSpec.feature "Reader" do
           )
         end
 
-        ensure_stable do
-          scenario "Switch between pages to ensure rendering", :focus => true do
-            visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        scenario "Switch between pages to ensure rendering" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
-            click_on documents[3].type
+          click_on documents[3].type
 
-            fill_in "page-progress-indicator-input", with: "23\n"
+          fill_in "page-progress-indicator-input", with: "23\n"
 
-            expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
+          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
 
-            expect_in_viewport("pageContainer23")
-            expect(find_field("page-progress-indicator-input").value).to eq "23"
-            
-            # Entering invalid values leaves the viewer on the same page.
-            fill_in "page-progress-indicator-input", with: "abcd\n"
-            expect_in_viewport("pageContainer23")
-            expect(find_field("page-progress-indicator-input").value).to eq "23"
-          end
+          expect_in_viewport("pageContainer23")
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
+          
+          # Entering invalid values leaves the viewer on the same page.
+          fill_in "page-progress-indicator-input", with: "abcd\n"
+          expect_in_viewport("pageContainer23")
+          expect(find_field("page-progress-indicator-input").value).to eq "23"
         end
       end
     end
