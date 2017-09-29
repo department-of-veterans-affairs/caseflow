@@ -124,7 +124,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
     end
 
-    scenario "Worksheet adds user created issues", focus: true do
+    scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
       expect(page).to_not have_field("66-issue-program")
       expect(page).to_not have_field("66-issue-name")
