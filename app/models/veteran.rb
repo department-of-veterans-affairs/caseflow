@@ -17,7 +17,7 @@ class Veteran
     "UHC" => "Under Honorable Conditions",
     "HVA" => "Honorable for VA Purposes",
     "DVA" => "Dishonorable for VA Purposes"
-  }
+  }.freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
   attr_accessor :date_of_birth

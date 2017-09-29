@@ -137,8 +137,10 @@ describe Veteran do
            char_of_svc_code: "DVA" }]
       end
 
-      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable Discharge",
-                              "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes Discharge"] }
+      it do
+        is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable Discharge",
+                           "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes Discharge"]
+      end
     end
 
     context "when a veteran is still serving" do
