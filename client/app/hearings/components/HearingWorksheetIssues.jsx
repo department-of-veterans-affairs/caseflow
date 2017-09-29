@@ -99,7 +99,7 @@ class HearingWorksheetIssues extends PureComponent {
                     issue={issueRow} />,
         deleteIssue: <div className="cf-issue-delete"
                         onClick={this.handleModalOpen}
-                        name="Remove Issue Confirmation">
+                        alt="Remove Issue Confirmation">
                         <TrashCan />
                     </div>
       };
