@@ -30,7 +30,69 @@ class Hearings::WorksheetsController < HearingsController
                                                                                 levels: []])
   end
 
-  def hearing_worksheet
-    worksheet.to_hash_for_worksheet
+  def hearing_worksheet # rubocop:disable Metrics/MethodLength
+    {
+      streams: {
+        "0": {
+          id: 8873,
+          worksheet_issues: {
+            "0": {
+              id: 66,
+              program: "Compensation",
+              name: "Service connection",
+              levels: "All Others, 5010 - Arthritis, due to trauma",
+              description: "Left Elbow",
+              reopen: true,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: false,
+              from_vacols: true },
+            "1": {
+              id: 17,
+              program: "Compensation",
+              name: "Service connection",
+              levels: "All Others, 5010 - Migrane",
+              description: "Frequent headaches, caused by concussion",
+              reopen: false,
+              remand: true,
+              allow: true,
+              dismiss: false,
+              deny: false,
+              vha: true,
+              from_vacols: false }
+          } },
+        "1": {
+          id: 9092,
+          worksheet_issues: {
+            "0": {
+              id: 7654,
+              program: "Compensation",
+              name: "Service connection",
+              levels: "All Others, 5010 - Arthritis, due to trauma",
+              description: "Right Leg",
+              reopen: false,
+              remand: true,
+              allow: false,
+              dismiss: false,
+              deny: false,
+              vha: false,
+              from_vacols: true },
+            "1": {
+              id: 1754,
+              program: "Compensation",
+              name: "Service connection",
+              levels: "All Others, 4664 - Lyphatic system disability",
+              description: "Needs additional examination",
+              reopen: false,
+              remand: true,
+              allow: false,
+              dismiss: false,
+              deny: true,
+              vha: true,
+              from_vacols: false }
+          } } }
+    }.merge(worksheet.to_hash_for_worksheet)
   end
 end

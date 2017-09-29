@@ -24,8 +24,8 @@ class HearingWorksheetStream extends Component {
               <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
               <HearingWorksheetIssues
                 appealKey={key}
-                worksheetStreamsAppeal={this.props.worksheet.appeals_ready_for_hearing[key]}
-                worksheetStreamsIssues={this.props.worksheet.appeals_ready_for_hearing[key].worksheet_issues}
+                worksheetStreamsAppeal={this.props.worksheet.streams[key]}
+                worksheetStreamsIssues={this.props.worksheet.streams[key].worksheet_issues}
                 {...this.props}
               />
               <Button
@@ -46,7 +46,7 @@ const mapStateToProps = (state) => ({
 });
 
 HearingWorksheetStream.propTypes = {
-  worksheetStreams: PropTypes.array.isRequired
+  worksheetStreams: PropTypes.object.isRequired
 };
 
 export default connect(
