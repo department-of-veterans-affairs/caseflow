@@ -8,7 +8,6 @@ import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
 class HearingWorksheetIssues extends PureComponent {
 
-
   getKeyForRow = (index) => index;
 
   render() {
