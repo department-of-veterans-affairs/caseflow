@@ -16,7 +16,6 @@ import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
 
 class SideBarComments extends PureComponent {
   render() {
-    debugger;
     let {
       handleAddClick,
       onCancelCommentEdit
