@@ -17,13 +17,18 @@ const CLASS_NAME_MAPPING = {
 
 export default class NavigationBar extends React.Component {
 
-  getClassName = (appName)=> {
-  const app = appName.split(' ').join('-').toLowerCase();
-  if (app in CLASS_NAME_MAPPING) {
-  return  CLASS_NAME_MAPPING[app]
-  } 
-  return CLASS_NAME_MAPPING['default']
-}
+  getClassName = (appName) => {
+    const app = appName.split(' ').
+    join('-').
+    toLowerCase();
+
+    if (app in CLASS_NAME_MAPPING) {
+      return CLASS_NAME_MAPPING[app];
+    }
+
+    return CLASS_NAME_MAPPING.default;
+  }
+
   render() {
     const {
       appName,
