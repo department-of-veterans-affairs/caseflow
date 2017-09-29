@@ -129,14 +129,14 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet differentiates between user and vacols created records" do
       visit "/hearings/1/worksheet"
-      expect(page).to have_field("7654-issue-program")
-      expect(page).to have_field("7654-issue-issue")
-      expect(page).to have_field("7654-issue-levels")
-      expect(page).to have_field("7654-issue-description")
-      expect(page).to_not have_field("1754-issue-program")
-      expect(page).to_not have_field("1754-issue-issue")
-      expect(page).to_not have_field("1754-issue-levels")
-      expect(page).to have_field("1754-issue-description")
+      expect(page).to have_field("17-issue-program")
+      expect(page).to have_field("17-issue-name")
+      expect(page).to have_field("17-issue-levels")
+      expect(page).to have_field("17-issue-description")
+      expect(page).to_not have_field("66-issue-program")
+      expect(page).to_not have_field("66-issue-name")
+      expect(page).to_not have_field("66-issue-levels")
+      expect(page).to have_field("66-issue-description")
     end
 
     scenario "Can click from hearing worksheet to reader" do
