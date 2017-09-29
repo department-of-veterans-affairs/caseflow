@@ -24,7 +24,8 @@ describe.skip('hearingsReducer', () => {
             }
           }
         }
-      }
+      },
+      issueDeleteModal: false
     });
   });
 
@@ -328,6 +329,20 @@ describe.skip('hearingsReducer', () => {
           edited: true }
       }
      );
+    });
+  });
+
+  context(Constants.TOGGLE_ISSUE_DELETE_MODAL, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.TOGGLE_ISSUE_DELETE_MODAL
+      });
+    });
+
+    it('toggles issue delete modal', () => {
+      expect(state.issueDeleteModal).to.eq(true);
     });
   });
 
