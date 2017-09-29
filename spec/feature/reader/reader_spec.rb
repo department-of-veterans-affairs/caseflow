@@ -768,7 +768,7 @@ RSpec.feature "Reader" do
 
             expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
 
-            expect(in_viewport("pageContainer23")).to be true
+            expect(in_viewport("pageContainer23"), wait: 10).to be true
             expect(find_field("page-progress-indicator-input").value).to eq "23"
 
             # Entering invalid values leaves the viewer on the same page.

@@ -158,6 +158,8 @@ User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
 RSpec.configure do |config|
+  config.fail_fast = true
+
   # This checks whether compiled webpack assets already exist
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
