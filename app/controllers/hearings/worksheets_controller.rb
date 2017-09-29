@@ -10,10 +10,10 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def update
-    worksheet.update!(worksheet_params)
-    render json: { worksheet: hearing_worksheet }
-  end
+  # def update
+  #   worksheet.update!(worksheet_params)
+  #   render json: { worksheet: hearing_worksheet }
+  # end
 
   private
 
@@ -21,13 +21,6 @@ class Hearings::WorksheetsController < HearingsController
     Hearing.find(params[:hearing_id])
   end
   helper_method :worksheet
-
-  def worksheet_params
-    params.require(:worksheet)
-          .permit(worksheet_issues_attributes: [:id, :allow, :deny, :remand, :dismiss,
-                                                :reopen, :vha, :program, :name, :from_vacols,
-                                                :vacols_sequence_id, :_destroy, :description, :levels])
-  end
 
   def hearing_worksheet # rubocop:disable Metrics/MethodLength
     {

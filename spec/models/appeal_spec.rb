@@ -1097,6 +1097,85 @@ describe Appeal do
     end
   end
 
+  context "#worksheet_issues" do
+    subject { appeal.worksheet_issues.size }
+
+    context "when appeal does not have any Vacols issues" do
+      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
+      it { is_expected.to eq 0 }
+    end
+
+    context "when appeal has Vacols issues" do
+      let(:appeal) { Generators::Appeal.create(vacols_record: :remand_decided) }
+      it { is_expected.to eq 2 }
+    end
+  end
+
+  context "#update" do
+    subject { appeal.update(appeals_hash) }
+    let(:appeal) { Generators::Appeal.create(vacols_record: :form9_not_submitted) }
+
+    context "when Vacols does not need an update" do
+      let(:appeals_hash) do
+         { worksheet_issues_attributes: [{
+              remand: true,
+              vha: true,
+              program: "Wheel",
+              name: "Spoon",
+              levels: %w(Cabbage Pickle),
+              description: %w(Donkey Cow),
+              from_vacols: true,
+              vacols_sequence_id: 1
+            }]
+          }
+      end
+
+      it "updates worksheet issues" do
+        expect(appeal.worksheet_issues.count).to eq(0)
+        subject # do update
+        expect(appeal.worksheet_issues.count).to eq(1)
+
+        issue = appeal.worksheet_issues.first
+        expect(issue.remand).to eq true
+        expect(issue.allow).to eq false
+        expect(issue.deny).to eq false
+        expect(issue.dismiss).to eq false
+        expect(issue.vha).to eq true
+        expect(issue.program).to eq "Wheel"
+        expect(issue.name).to eq "Spoon"
+        expect(issue.levels).to eq %w(Cabbage Pickle)
+        expect(issue.description).to eq %w(Donkey Cow)
+
+        # test that a 2nd save updates the same record, rather than create new one
+        id = appeal.worksheet_issues.first.id
+        appeals_hash[:worksheet_issues_attributes][0][:deny] = true
+        appeals_hash[:worksheet_issues_attributes][0][:description] = ["Tomato"]
+        appeals_hash[:worksheet_issues_attributes][0][:id] = id
+
+        appeal.update(appeals_hash)
+
+        expect(appeal.worksheet_issues.count).to eq(1)
+        issue = appeal.worksheet_issues.first
+        expect(issue.id).to eq(id)
+        expect(issue.deny).to eq(true)
+        expect(issue.remand).to eq(true)
+        expect(issue.allow).to eq(false)
+        expect(issue.dismiss).to eq(false)
+        expect(issue.program).to eq "Wheel"
+        expect(issue.name).to eq "Spoon"
+        expect(issue.levels).to eq %w(Cabbage Pickle)
+        expect(issue.description).to eq ["Tomato"]
+
+        # soft delete an issue
+        appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
+        appeal.update(appeals_hash)
+        expect(appeal.worksheet_issues.count).to eq(0)
+        expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
+        expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+      end
+    end
+  end
+
   context "#sanitized_hearing_request_type" do
     subject { appeal.sanitized_hearing_request_type }
     let(:video_hearing_requested) { true }
