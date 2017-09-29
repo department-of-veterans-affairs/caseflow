@@ -8,13 +8,6 @@ import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
 class HearingWorksheetIssues extends PureComponent {
 
-  handleModalOpen = () => {
-    this.props.toggleIssueDeleteModal(true);
-  };
-
-  handleModalClose = () => {
-    this.props.toggleIssueDeleteModal(false);
-  };
 
   getKeyForRow = (index) => index;
 

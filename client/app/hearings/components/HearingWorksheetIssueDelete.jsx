@@ -6,6 +6,7 @@ import { toggleIssueDeleteModal } from '../actions/Issue';
 import Modal from '../../components/Modal';
 import { TrashCan } from '../../components/RenderFunctions';
 
+
 class HearingWorksheetIssueDelete extends PureComponent {
 
   handleModalOpen = () => {
@@ -17,11 +18,17 @@ class HearingWorksheetIssueDelete extends PureComponent {
   };
 
   render() {
+    let {
+//    appealKey,
+//   issueKey,
+     issueDeleteModal
+    } = this.props;
+
     return <div className="cf-issue-delete"
                         onClick={this.handleModalOpen}
                         alt="Remove Issue Confirmation">
                         <TrashCan />
-                </div>;
+
     { issueDeleteModal && <Modal
           buttons = {[
             { classNames: ['usa-button', 'usa-button-outline'],
@@ -38,8 +45,9 @@ class HearingWorksheetIssueDelete extends PureComponent {
           title = "Remove Issue Row">
           <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
           <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
-        </Modal>;
+        </Modal>
     }
+         </div>;
   }
 
   }
