@@ -34,7 +34,7 @@ def expect_in_viewport(element)
   expect {
     page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
       " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
-  }.to become_truthy
+  }.to become_truthy(wait: 10)
 end
 
 def get_size(element)
