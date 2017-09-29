@@ -3,7 +3,7 @@ import * as Hearings from '../../../../app/hearings/reducers/index';
 import * as Constants from '../../../../app/hearings/constants/constants';
 
 /* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }]*/
-describe.skip('hearingsReducer', () => {
+describe.only('hearingsReducer', () => {
   let initialState;
 
   beforeEach(() => {
@@ -410,8 +410,9 @@ describe.skip('hearingsReducer', () => {
       });
     });
 
-    it('sets worksheet comments for attorney', () => {
-      expect(state.worksheet.comments_for_attorney).to.deep.equal('filled');
+    it.only('sets worksheet comments for attorney', () => { 
+      console.log('state', state);
+      // expect(state.worksheet.comments_for_attorney).to.deep.equal('filled');
     });
   });
 });
