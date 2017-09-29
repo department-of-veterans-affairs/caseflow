@@ -143,14 +143,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, {
       worksheet: {
         streams: {
-          [action.payload.appealkey]: {
-            worksheet_issues: {
-            }
+          [action.payload.appealKey]: {
+            worksheet_issues: {$push: {from_vacols: false}}
           }
         }
       }
-  });
-
+    });
 
   case Constants.TOGGLE_SAVING:
     return update(state, {
