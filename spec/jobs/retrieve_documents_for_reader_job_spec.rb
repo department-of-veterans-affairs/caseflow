@@ -108,8 +108,9 @@ describe RetrieveDocumentsForReaderJob do
 
       it "stops if limit is reached after finishing current case" do
         # appeal_with_doc1 will have 2 docs associated with it
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user.css_id)
+                                               .and_return([appeal_with_doc1]).once
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
           .and_return([expected_doc1, new_doc]).once
@@ -117,8 +118,9 @@ describe RetrieveDocumentsForReaderJob do
         expect_calls_for_doc(expected_doc1, doc1_expected_content)
         expect_calls_for_doc(new_doc, new_doc_expected_content)
 
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user_w_many_roles.css_id)
-          .and_return([appeal_with_doc2]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user_w_many_roles.css_id)
+                                               .and_return([appeal_with_doc2]).once
         dont_expect_calls_for_appeal(appeal_with_doc2, expected_doc2)
 
         RetrieveDocumentsForReaderJob.perform_now("limit" => 1)
@@ -138,8 +140,9 @@ describe RetrieveDocumentsForReaderJob do
         end
 
         it "catches the exception when thrown by fetch_documents_for and continues to the next appeal" do
-          expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
-            .and_return([appeal_with_doc1]).once
+          expect(Fakes::AppealRepository).to receive
+          :load_user_case_assignments_from_vacols.with(reader_user.css_id)
+                                                 .and_return([appeal_with_doc1]).once
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
             .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>")).once
 
@@ -160,8 +163,9 @@ describe RetrieveDocumentsForReaderJob do
         end
 
         it "catches the exception when thrown by fetch_content and continues to the next document" do
-          expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
-            .and_return([appeal_with_doc1]).once
+          expect(Fakes::AppealRepository).to receive
+          :load_user_case_assignments_from_vacols.with(reader_user.css_id)
+                                                 .and_return([appeal_with_doc1]).once
           expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
             .and_return([expected_doc1]).once
@@ -187,10 +191,12 @@ describe RetrieveDocumentsForReaderJob do
       end
 
       it "catches the exception and continues to the next appeal" do
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1]).once
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user_w_many_roles.css_id)
-          .and_return([appeal_with_doc2]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user.css_id)
+                                               .and_return([appeal_with_doc1]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user_w_many_roles.css_id)
+                                               .and_return([appeal_with_doc2]).once
 
         expect(VBMSService).to receive(:fetch_documents_for).with(any_args)
           .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).exactly(2).times
@@ -211,11 +217,13 @@ describe RetrieveDocumentsForReaderJob do
         appeals_that_fail = [appeal_with_doc1] + (0..4).map { create_doc_and_appeal }
         reader_user_appeals = [appeal_with_doc2] + appeals_that_fail
 
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
-          .and_return(reader_user_appeals).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user.css_id)
+                                               .and_return(reader_user_appeals).once
 
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user_w_many_roles.css_id)
-          .and_return(nil).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user_w_many_roles.css_id)
+                                               .and_return(nil).once
 
         # Checks that counter is reset by having one call succeed in between failures
         expect_calls_for_appeal(appeal_with_doc2, expected_doc2, doc2_expected_content)
@@ -247,14 +255,16 @@ describe RetrieveDocumentsForReaderJob do
       end
 
       it "does not fetch content" do
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
-          .and_return([appeal_with_doc1]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user.css_id)
+                                               .and_return([appeal_with_doc1]).once
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user)
           .and_return([expected_doc1]).once
 
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user_w_many_roles.css_id)
-          .and_return([appeal_with_doc2]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user_w_many_roles.css_id)
+                                               .and_return([appeal_with_doc2]).once
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
           .and_return([expected_doc2]).once
@@ -279,8 +289,9 @@ describe RetrieveDocumentsForReaderJob do
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user)
           .and_return([expected_doc1]).once
 
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user_w_many_roles.css_id)
-          .and_return([appeal_with_doc2]).once
+        expect(Fakes::AppealRepository).to receive
+        :load_user_case_assignments_from_vacols.with(reader_user_w_many_roles.css_id)
+                                               .and_return([appeal_with_doc2]).once
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
           .and_return([expected_doc2]).once
@@ -298,8 +309,9 @@ describe RetrieveDocumentsForReaderJob do
   end
 
   def expect_all_calls_for_user(user, appeal, doc, content)
-    expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(user.css_id)
-      .and_return([appeal]).once
+    expect(Fakes::AppealRepository).to receive
+    :load_user_case_assignments_from_vacols.with(user.css_id)
+                                           .and_return([appeal]).once
     expect_calls_for_appeal(appeal, doc, content)
   end
 
