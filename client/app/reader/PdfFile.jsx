@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { setPdfDocument, clearPdfDocument } from '../reader/actions';
+import { setPdfDocument, clearPdfDocument, getDocumentText } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -36,21 +36,9 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = null;
         this.pdfDocument = pdfDocument;
         this.props.setPdfDocument(this.props.file, pdfDocument);
-
-        const textObject = {};
-        const t0 = performance.now();
-
-        _.range(pdfDocument.pdfInfo.numPages).forEach((index) => {
-          pdfDocument.getPage(index + 1).then((page) => {
-            page.getTextContent().then((text) => {
-              textObject[index] = text;
-              if (_.size(textObject) === pdfDocument.pdfInfo.numPages) {
-                console.log('textObject', textObject);
-                console.log('timing', performance.now() - t0);
-              }
-            });
-          });
-        });
+        if (this.props.isVisible) {
+          this.props.getDocumentText(pdfDocument);
+        }
       }
     }).
     catch(() => {
@@ -92,6 +80,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   render() {
+    console.log('textObject', this.props.textObject);
     return <div>
       {this.getPages()}
       </div>;
@@ -105,7 +94,8 @@ PdfFile.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfDocument,
-    clearPdfDocument
+    clearPdfDocument,
+    getDocumentText
   }, dispatch)
 });
 

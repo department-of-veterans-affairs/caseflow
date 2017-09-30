@@ -784,3 +784,32 @@ export const rotateDocument = (docId) => ({
     docId
   }
 });
+
+export const getDocumentText = (pdfDocument) => (
+  (dispatch) => {
+    const getTextForPage = (index) => {
+      return pdfDocument.getPage(index + 1).then((page) => {
+        return page.getTextContent();
+      });
+    };
+
+    const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
+    console.log('getTextPromises', getTextPromises);
+    Promise.all(getTextPromises).then((text) => {
+      console.log('text', text);
+      dispatch({
+        type: Constants.GET_DCOUMENT_TEXT,
+        payload: {
+          text
+        }
+      });
+    });
+  }
+);
+
+export const setDocumentSearch = (searchString) => ({
+  type: Constants.SET_DOCUMENT_SEARCH,
+  payload: {
+    searchString
+  }
+});
