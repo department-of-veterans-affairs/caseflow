@@ -62,7 +62,6 @@ class Fakes::HearingRepository
     2.times.each { |i| Generators::Hearings::MasterRecord.build(user: user, date: Time.zone.now + (i + 6).days) }
   end
 
-  # rubocop:disable Metrics/AbcSize
   def self.random_attrs(i)
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
@@ -77,5 +76,4 @@ class Fakes::HearingRepository
       transcript_requested: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample
     }
   end
-  # rubocop:enable Metrics/AbcSize
 end
