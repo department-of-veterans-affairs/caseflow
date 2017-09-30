@@ -158,7 +158,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: {
         streams: {
           [action.payload.appealKey]: {
-            worksheet_issues: { /* $unshift: [action.payload.issueKey] */}
+            worksheet_issues: {
+              $apply: (worksheetIssues) => worksheetIssues.filter((issue, key) => {
+                return key !== action.payload.issueKey;
+              })
+            }
           }
         }
       }
