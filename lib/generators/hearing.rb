@@ -10,7 +10,7 @@ class Generators::Hearing
         venue_key: "RO13",
         vacols_id: vacols_id,
         vacols_record: { vacols_id: vacols_id },
-        witness: "Jane Doe attended",
+        witness: "",
         contentions: "The veteran believes their knee is hurt",
         evidence: "Medical exam occurred on 10/10/2008",
         comments_for_attorney: "Look for knee-related medical records",
