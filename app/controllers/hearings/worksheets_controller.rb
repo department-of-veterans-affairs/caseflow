@@ -42,9 +42,9 @@ class Hearings::WorksheetsController < HearingsController
               name: "Service connection",
               levels: "All Others, 5010 - Arthritis, due to trauma",
               description: "Left Elbow",
-              reopen: true,
-              remand: true,
-              allow: true,
+              reopen: false,
+              remand: false,
+              allow: false,
               dismiss: false,
               deny: false,
               vha: false,
@@ -56,12 +56,12 @@ class Hearings::WorksheetsController < HearingsController
               levels: "All Others, 5010 - Migrane",
               description: "Frequent headaches, caused by concussion",
               reopen: false,
-              remand: true,
-              allow: true,
+              remand: false,
+              allow: false,
               dismiss: false,
               deny: false,
-              vha: true,
-              from_vacols: false }
+              vha: false,
+              from_vacols: true }
           ]
         },
         {
@@ -74,7 +74,7 @@ class Hearings::WorksheetsController < HearingsController
               levels: "All Others, 5010 - Arthritis, due to trauma",
               description: "Right Leg",
               reopen: false,
-              remand: true,
+              remand: false,
               allow: false,
               dismiss: false,
               deny: false,
@@ -87,12 +87,12 @@ class Hearings::WorksheetsController < HearingsController
               levels: "All Others, 4664 - Lyphatic system disability",
               description: "Needs additional examination",
               reopen: false,
-              remand: true,
+              remand: false,
               allow: false,
               dismiss: false,
-              deny: true,
-              vha: true,
-              from_vacols: false }
+              deny: false,
+              vha: false,
+              from_vacols: true }
           ]
         }
       ]
