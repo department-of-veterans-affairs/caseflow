@@ -121,22 +121,21 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
-      expect(page).to have_content("The veteran believes their knee is hurt")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
-      expect(page).to have_content("Medical exam occurred on 10/10/2008")
-      expect(page).to have_content("Look for knee-related medical records")
     end
 
-    scenario "Worksheet differentiates between user and vacols created records" do
+    scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
-      expect(page).to have_field("17-issue-program")
-      expect(page).to have_field("17-issue-name")
-      expect(page).to have_field("17-issue-levels")
-      expect(page).to have_field("17-issue-description")
       expect(page).to_not have_field("66-issue-program")
       expect(page).to_not have_field("66-issue-name")
       expect(page).to_not have_field("66-issue-levels")
       expect(page).to have_field("66-issue-description")
+      click_on "button-addIssue-0"
+      # These IDs will be updated when we save edits to the backend
+      expect(page).to have_field("undefined-issue-program")
+      expect(page).to have_field("undefined-issue-name")
+      expect(page).to have_field("undefined-issue-levels")
+      expect(page).to have_field("undefined-issue-description")
     end
 
     scenario "Can click from hearing worksheet to reader" do

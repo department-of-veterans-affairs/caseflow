@@ -71,9 +71,9 @@ class Fakes::HearingRepository
       disposition: nil,
       aod: nil,
       hold_open: nil,
-      add_on: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample,
+      add_on: false,
       notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
-      transcript_requested: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample
+      transcript_requested: false
     }
   end
 end
