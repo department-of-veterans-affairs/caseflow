@@ -68,9 +68,9 @@ class Fakes::HearingRepository
       type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
       date: Time.zone.now - (i % 9).days - rand(3).days,
       vacols_id: 950_330_575 + (i * 1465),
-      disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.values[i % 4],
-      aod: [VACOLS::CaseHearing::HEARING_AODS.values[i % 3], nil].sample,
-      hold_open: [30, 60, 90].sample,
+      disposition: nil,
+      aod: nil,
+      hold_open: nil,
       add_on: false,
       notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
       transcript_requested: false
