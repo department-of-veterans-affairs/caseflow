@@ -9,10 +9,8 @@ import update from 'immutability-helper';
 import * as Constants from '../constants/constants';
 import _ from 'lodash';
 
-export const mapDataToInitialState = () => {
-  return {
-    issueDeleteModal: false
-  };
+export const mapDataToInitialState = function(state = {}) {
+  return state;
 };
 
 export const newHearingState = (state, action, spec) => {
@@ -141,6 +139,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_VHA:
     return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
 
+  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
+    return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });
+
   case Constants.ADD_ISSUE:
     return update(state, {
       worksheet: {
@@ -167,9 +168,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
         }
       }
     });
-
-  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
-    return update(state, { issueDeleteModal: { $set: action.payload.isShowingModal } });
 
   case Constants.TOGGLE_SAVING:
     return update(state, {

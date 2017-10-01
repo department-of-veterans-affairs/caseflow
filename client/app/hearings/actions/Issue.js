@@ -106,9 +106,11 @@ export const onDeleteIssue = (issueKey, appealKey) => ({
 });
 
 
-export const toggleIssueDeleteModal = (isShowingModal) => ({
+export const toggleIssueDeleteModal = (issueKey, appealKey, isShowingModal) => ({
   type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
   payload: {
+    issueKey,
+    appealKey,
     isShowingModal
   }
 });
