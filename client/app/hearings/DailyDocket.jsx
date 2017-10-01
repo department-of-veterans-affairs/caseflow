@@ -26,7 +26,7 @@ export class DailyDocket extends React.Component {
           <thead>
             <tr>
               <th>Time/Regional Office</th>
-              <th>Appellant</th>
+              <th>Appellant/Veteran ID</th>
               <th>Representative</th>
               <th>
                 Actions
