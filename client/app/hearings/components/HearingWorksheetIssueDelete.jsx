@@ -39,7 +39,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
       { issue.isShowingModal && <Modal
           buttons = {[
             { classNames: ['usa-button', 'usa-button-outline'],
-              name: 'Close',
+              name: 'Cancel',
               onClick: this.handleModalClose(appealKey, issueKey)
             },
             { classNames: ['usa-button', 'usa-button-primary'],
