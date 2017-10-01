@@ -9,37 +9,28 @@ import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
 
-const dispositionOptions = [
-  { value: null,
-    label: 'Select...' },
-  { value: 'held',
-    label: 'Held' },
-  { value: 'no_show',
-    label: 'No Show' },
-  { value: 'cancelled',
-    label: 'Cancelled' },
-  { value: 'postponed',
-    label: 'Postponed' }];
+const dispositionOptions = [{ value: 'held',
+  label: 'Held' },
+{ value: 'no_show',
+  label: 'No Show' },
+{ value: 'cancelled',
+  label: 'Cancelled' },
+{ value: 'postponed',
+  label: 'Postponed' }];
 
-const holdOptions = [
-  { value: null,
-    label: 'Select...' },
-  { value: 30,
-    label: '30 days' },
-  { value: 60,
-    label: '60 days' },
-  { value: 90,
-    label: '90 days' }];
+const holdOptions = [{ value: 30,
+  label: '30 days' },
+{ value: 60,
+  label: '60 days' },
+{ value: 90,
+  label: '90 days' }];
 
-const aodOptions = [
-  { value: null,
-    label: 'Select...' },
-  { value: 'granted',
-    label: 'Granted' },
-  { value: 'filed',
-    label: 'Filed' },
-  { value: 'none',
-    label: 'None' }];
+const aodOptions = [{ value: 'granted',
+  label: 'Granted' },
+{ value: 'filed',
+  label: 'Filed' },
+{ value: 'none',
+  label: 'None' }];
 
 const getDate = (date, timezone) => {
   return moment.tz(date, timezone).
