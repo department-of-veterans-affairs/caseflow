@@ -9,16 +9,16 @@ import { TrashCan } from '../../components/RenderFunctions';
 
 class HearingWorksheetIssueDelete extends PureComponent {
 
-  handleModalOpen = (issueKey, appealKey) => () => {
-    this.props.toggleIssueDeleteModal(issueKey, appealKey, true);
+  handleModalOpen = (appealKey, issueKey) => () => {
+    this.props.toggleIssueDeleteModal(appealKey, issueKey, true);
   };
 
-  handleModalClose = (issueKey, appealKey) => () => {
-    this.props.toggleIssueDeleteModal(issueKey, appealKey, false);
+  handleModalClose = (appealKey, issueKey) => () => {
+    this.props.toggleIssueDeleteModal(appealKey, issueKey, false);
   };
 
   onDeleteIssue = (appealKey, issueKey) => () => {
-    this.props.onDeleteIssue(issueKey, appealKey);
+    this.props.onDeleteIssue(appealKey, issueKey);
   };
 
   render() {
@@ -32,7 +32,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
     return <div>
       <div
         className="cf-issue-delete"
-        onClick={this.handleModalOpen(issueKey, appealKey)}
+        onClick={this.handleModalOpen(appealKey, issueKey)}
         alt="Remove Issue Confirmation">
         <TrashCan />
       </div>
@@ -40,16 +40,16 @@ class HearingWorksheetIssueDelete extends PureComponent {
           buttons = {[
             { classNames: ['usa-button', 'usa-button-outline'],
               name: 'Close',
-              onClick: this.handleModalClose(issueKey, appealKey)
+              onClick: this.handleModalClose(appealKey, issueKey)
             },
             { classNames: ['usa-button', 'usa-button-primary'],
               name: 'Yes',
               onClick: this.onDeleteIssue(appealKey, issueKey)
             }]}
-          closeHandler={this.handleModalClose(issueKey, appealKey)}
+          closeHandler={this.handleModalClose(appealKey, issueKey)}
           noDivider={true}
           title = "Remove Issue Row">
-          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
+          <p>Are you sure you want to remove this issue from Appeal Stream {appealKey + 1} on the worksheet? </p>
           <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
         </Modal>
       }

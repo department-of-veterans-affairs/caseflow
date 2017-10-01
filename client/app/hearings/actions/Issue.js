@@ -97,7 +97,7 @@ export const onAddIssue = (appealKey) => ({
   }
 });
 
-export const onDeleteIssue = (issueKey, appealKey) => ({
+export const onDeleteIssue = (appealKey, issueKey) => ({
   type: Constants.DELETE_ISSUE,
   payload: {
     appealKey,
@@ -106,7 +106,7 @@ export const onDeleteIssue = (issueKey, appealKey) => ({
 });
 
 
-export const toggleIssueDeleteModal = (issueKey, appealKey, isShowingModal) => ({
+export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => ({
   type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
   payload: {
     issueKey,
