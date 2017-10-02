@@ -17,8 +17,7 @@ import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
-import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
-  updateNewAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
+import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
   selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
   } from '../reader/actions';
 import ApiUtil from '../util/ApiUtil';
@@ -78,8 +77,6 @@ export class PdfSidebar extends React.Component {
       this.props.handleFinishScrollToSidebarComment();
     }
   }
-
-  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
 
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
@@ -153,10 +150,7 @@ export class PdfSidebar extends React.Component {
             </AccordionSection>
             <AccordionSection title="Categories">
               <SideBarCategories doc={this.props.doc}
-                documents={this.props.documents}
-                handleCategoryToggle={
-                  _.partial(this.props.handleCategoryToggle, this.props.doc.id)
-                }/>
+                documents={this.props.documents} />
             </AccordionSection>
             <AccordionSection title="Issue tags">
               <SideBarIssueTags
@@ -253,12 +247,8 @@ const mapDispatchToProps = (dispatch) => ({
     togglePdfSidebar,
     setOpenedAccordionSections,
     selectAnnotation,
-    startPlacingAnnotation,
-    createAnnotation,
-    stopPlacingAnnotation,
     startEditAnnotation,
     updateAnnotationContent,
-    updateNewAnnotationContent,
     cancelEditAnnotation,
     requestEditAnnotation
   }, dispatch),
@@ -268,33 +258,6 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
       payload: {
         scrollToSidebarComment: null
-      }
-    });
-  },
-  handleCategoryToggle(docId, categoryName, toggleState) {
-    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-    ApiUtil.patch(
-      `/document/${docId}`,
-      { data: { [categoryKey]: toggleState } },
-      ENDPOINT_NAMES.DOCUMENT
-    ).catch(() =>
-      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
-    );
-
-    dispatch({
-      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-      payload: {
-        categoryKey,
-        toggleState,
-        docId
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-          action: `${toggleState ? 'set' : 'unset'} document category`,
-          label: categoryName
-        }
       }
     });
   }
