@@ -3,9 +3,7 @@ dist: trusty
 sudo: required
 rvm:
   - 2.2.4
-nvm:
-  - 6.11.3
-  
+
 branches:
     only:
       - master
@@ -17,10 +15,11 @@ env:
 
 before_install:
   - ./ensure-env-vars-exist.bash
-  - node -v
-  - npm -v
   - pip install --user awscli
   - mkdir ./coverage
+  - nvm install v6.11.3
+  - node -v
+  - npm -v
   - sudo apt-get update
 # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
