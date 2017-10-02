@@ -15,6 +15,7 @@ export class Dockets extends React.Component {
   getStartTime = () => {
     const startTime = `${moment.tz('America/New_York').
       format('h:mm a z')}`;
+
     return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
   }
 
