@@ -20,14 +20,13 @@ import * as Constants from '../reader/constants';
 import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
   selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
   } from '../reader/actions';
-import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
+import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { CATEGORIES } from './analytics';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
