@@ -66,7 +66,8 @@ describe RetrieveDocumentsForReaderJob do
       S3Service.files = nil
 
       # Fail test if Mock is called for non-reader user
-      expect(Fakes::AppealRepository).not_to receive(:load_user_case_assignments_from_vacols).with(non_reader_user.css_id)
+      expect(Fakes::AppealRepository).not_to receive(:load_user_case_assignments_from_vacols)
+        .with(non_reader_user.css_id)
       dont_expect_calls_for_appeal(appeal_with_doc_for_non_reader, unexpected_document)
 
       # Expect all tests to call Slack service at the end

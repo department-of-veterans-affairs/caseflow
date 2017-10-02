@@ -282,8 +282,8 @@ class AppealRepository
       appeals = Appeal.where(vacols_id: active_cases_vacols_ids)
 
       # creating a hash of those appeals for easy lookup
-      appeals_hash = appeals.reduce({}) { |memo, appeal| memo[appeal.vacols_id] = appeal; memo }
-
+      appeals_hash = appeals.each_with_object({}) { |appeal, memo| memo[appeal.vacols_id] = appeal }
+      
       active_cases_for_user.map do |assignment|
         case_issues_hash_array = active_cases_issues[assignment.vacols_id]
 
