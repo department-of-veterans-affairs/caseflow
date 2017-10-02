@@ -38,17 +38,16 @@ class HearingWorksheetIssueDelete extends PureComponent {
       </div>
       { issue.isShowingModal && <Modal
           buttons = {[
-            { classNames: ['usa-button', 'usa-button-outline'],
+            { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Cancel',
               onClick: this.handleModalClose(appealKey, issueKey)
             },
-            { classNames: ['usa-button', 'usa-button-primary'],
-              name: 'Yes',
+            { classNames: ['usa-button', 'usa-button-secondary'],
+              name: 'Confirm delete',
               onClick: this.onDeleteIssue(appealKey, issueKey)
             }]}
           closeHandler={this.handleModalClose(appealKey, issueKey)}
-          noDivider={true}
-          title = "Remove Issue Row">
+          title = "Delete Issue Row">
           <p>Are you sure you want to remove this issue from Appeal Stream {appealKey + 1} on the worksheet? </p>
           <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
         </Modal>
