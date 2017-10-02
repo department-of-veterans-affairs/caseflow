@@ -283,11 +283,14 @@ class AppealRepository
 
       # creating a hash of those appeals for easy lookup
       appeals_hash = appeals.each_with_object({}) { |appeal, memo| memo[appeal.vacols_id] = appeal }
-      
+
       active_cases_for_user.map do |assignment|
         case_issues_hash_array = active_cases_issues[assignment.vacols_id]
 
-        appeal = appeals_hash[assignment.vacols_id]
+        # if that appeal is not found, it intializes a new appeal with the
+        # assignments vacols_id
+        appeal = appeals_hash[assignment.vacols_id] ||
+                 Appeal.new(vacols_id: assignment.vacols_id)
         appeal.attributes = assignment.attributes
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
 
