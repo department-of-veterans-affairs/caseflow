@@ -8,7 +8,7 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { PdfPage } from '../../../app/reader/PdfPage';
 
 describe.only('PdfPage', () => {
-  getDocument = () => {
+  const getDocument = async () => {
     const data = atob(
       'JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog' +
       'IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv' +
@@ -24,7 +24,7 @@ describe.only('PdfPage', () => {
       'MDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9v' +
       'dCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G');
 
-    const pdfDocument = await Promise.resolve(5);//PDFJS.getDocument({ data });
+    const pdfDocument = await PDFJS.getDocument({ data });
     return pdfDocument;
   }
 

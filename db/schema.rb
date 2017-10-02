@@ -264,6 +264,17 @@ ActiveRecord::Schema.define(version: 20170929182028) do
     t.string  "comments_for_attorney"
   end
 
+  create_table "issues", force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string  "vacols_sequence_id"
+    t.boolean "reopen",             default: false
+    t.boolean "vha",                default: false
+    t.boolean "allow",              default: false
+    t.boolean "deny",               default: false
+    t.boolean "remand",             default: false
+    t.boolean "dismiss",            default: false
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string   "text"
     t.datetime "created_at", null: false
