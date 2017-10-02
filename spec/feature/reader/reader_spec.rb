@@ -31,10 +31,10 @@ end
 
 # Returns true if an element is currently visible on the page.
 def expect_in_viewport(element)
-  expect {
+  expect do
     page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
       " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
-  }.to become_truthy(wait: 10)
+  end.to become_truthy(wait: 10)
 end
 
 def get_size(element)
@@ -771,7 +771,7 @@ RSpec.feature "Reader" do
 
           expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
-          
+
           # Entering invalid values leaves the viewer on the same page.
           fill_in "page-progress-indicator-input", with: "abcd\n"
           expect_in_viewport("pageContainer23")

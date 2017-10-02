@@ -227,6 +227,7 @@ RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
   match do |block|
     begin
       Timeout.timeout(wait) do
+        # rubocop:disable AssignmentInCondition
         sleep(0.1) until value = block.call
         value
       end
