@@ -4,7 +4,8 @@ sudo: required
 rvm:
   - 2.2.4
 nvm:
-
+  - 6.11.3
+  
 branches:
     only:
       - master
@@ -16,6 +17,8 @@ env:
 
 before_install:
   - ./ensure-env-vars-exist.bash
+  - node -v
+  - npm -v
   - pip install --user awscli
   - mkdir ./coverage
   - sudo apt-get update
@@ -26,8 +29,6 @@ before_install:
   - sudo apt-get install pdftk
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
-  - node -v
-  - npm -v
   - cd ./client && npm install --no-optional
   - cd ..
 
