@@ -10,8 +10,7 @@ import { addNewTag, removeTag } from '../reader/actions';
 class SideBarIssueTags extends PureComponent {
   render() {
     const {
-      doc,
-      tagOptions
+      doc
     } = this.props;
 
     let generateOptionsFromTags = (tags) =>
@@ -43,7 +42,7 @@ class SideBarIssueTags extends PureComponent {
         label="Select or tag issue(s)"
         multi={true}
         creatable={true}
-        options={generateOptionsFromTags(tagOptions)}
+        options={generateOptionsFromTags(this.props.tagOptions)}
         placeholder=""
         value={generateOptionsFromTags(doc.tags)}
         onChange={onChange}
@@ -55,7 +54,8 @@ class SideBarIssueTags extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
+    ..._.pick(state.readerReducer.ui, 'tagOptions')
   };
 };
 

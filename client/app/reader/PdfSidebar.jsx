@@ -84,7 +84,6 @@ export class PdfSidebar extends React.Component {
     let comments = [];
 
     const {
-      tagOptions,
       appeal
     } = this.props;
 
@@ -153,8 +152,7 @@ export class PdfSidebar extends React.Component {
             </AccordionSection>
             <AccordionSection title="Issue tags">
               <SideBarIssueTags
-                doc={this.props.doc}
-                tagOptions={tagOptions}/>
+                doc={this.props.doc}/>
             </AccordionSection>
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
               <SideBarComments
@@ -235,7 +233,6 @@ const mapStateToProps = (state, ownProps) => {
     hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
     showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
     appeal: state.readerReducer.loadedAppeal,
-    tagOptions: state.readerReducer.ui.tagOptions,
     ..._.pick(state.readerReducer, 'documents', 'openedAccordionSections')
   };
 };
