@@ -3,21 +3,21 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import TextareaField from '../../components/TextareaField';
-import { onProgramChange, onIssueChange, onLevelsChange, onDescriptionChange } from '../actions/Issue';
+import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
   onProgramChange = (program) =>
-    this.props.onProgramChange(program, this.props.issue.id, this.props.appeal.id);
+    this.props.onProgramChange(program, this.props.issueKey, this.props.appealKey);
 
-  onIssueChange = (issue) =>
-    this.props.onIssueChange(issue, this.props.issue.id, this.props.appeal.id);
+  onNameChange = (name) =>
+    this.props.onNameChange(name, this.props.issueKey, this.props.appealKey);
 
   onLevelsChange = (levels) =>
-    this.props.onLevelsChange(levels, this.props.issue.id, this.props.appeal.id);
+    this.props.onLevelsChange(levels, this.props.issueKey, this.props.appealKey);
 
   onDescriptionChange = (description) =>
-    this.props.onDescriptionChange(description, this.props.issue.id, this.props.appeal.id)
+    this.props.onDescriptionChange(description, this.props.issueKey, this.props.appealKey);
 
   render() {
     let { issue, field } = this.props;
@@ -25,8 +25,8 @@ class HearingWorksheetIssueFields extends PureComponent {
     const allowedFields = {
       program: { onChange: this.onProgramChange,
         value: issue.program },
-      issue: { onChange: this.onIssueChange,
-        value: issue.issue },
+      name: { onChange: this.onNameChange,
+        value: issue.name },
       levels: { onChange: this.onLevelsChange,
         value: issue.levels },
       description: { onChange: this.onDescriptionChange,
@@ -44,7 +44,7 @@ class HearingWorksheetIssueFields extends PureComponent {
       return <div>
         <h4 className="cf-hearings-worksheet-desc-label">{field}</h4>
         <TextareaField aria-label={field} name={field}
-              id={`${issue.id}-issue-${field}`}value={allowedFields[field].value}
+              id={`${issue.id}-issue-${field}`}value={allowedFields[field].value || ''}
               onChange={allowedFields[field].onChange}/>
       </div>;
     }
@@ -55,7 +55,7 @@ class HearingWorksheetIssueFields extends PureComponent {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onProgramChange,
-  onIssueChange,
+  onNameChange,
   onLevelsChange,
   onDescriptionChange
 }, dispatch);
@@ -66,7 +66,10 @@ const mapStateToProps = (state) => ({
 
 HearingWorksheetIssueFields.propTypes = {
   issue: PropTypes.object.isRequired,
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  field: PropTypes.string.isRequired,
+  appealKey: PropTypes.number.isRequired,
+  issueKey: PropTypes.number.isRequired
 };
 
 export default connect(

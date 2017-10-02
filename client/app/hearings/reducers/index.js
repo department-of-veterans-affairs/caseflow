@@ -34,9 +34,9 @@ export const newHearingIssueState = (state, action, spec) => {
   return update(state, {
     worksheet: {
       streams: {
-        [action.payload.appealId]: {
-          issues: {
-            [action.payload.issueId]: spec
+        [action.payload.appealKey]: {
+          worksheet_issues: {
+            [action.payload.issueKey]: spec
           }
         }
       }
@@ -115,8 +115,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_PROGRAM:
     return newHearingIssueState(state, action, { program: { $set: action.payload.program } });
 
-  case Constants.SET_ISSUE:
-    return newHearingIssueState(state, action, { issue: { $set: action.payload.issue } });
+  case Constants.SET_NAME:
+    return newHearingIssueState(state, action, { name: { $set: action.payload.name } });
 
   case Constants.SET_LEVELS:
     return newHearingIssueState(state, action, { levels: { $set: action.payload.levels } });
@@ -138,6 +138,36 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_VHA:
     return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
+
+  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
+    return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });
+
+  case Constants.ADD_ISSUE:
+    return update(state, {
+      worksheet: {
+        streams: {
+          [action.payload.appealKey]: {
+            worksheet_issues: { $push: [{ from_vacols: false,
+              edited: true }] }
+          }
+        }
+      }
+    });
+
+  case Constants.DELETE_ISSUE:
+    return update(state, {
+      worksheet: {
+        streams: {
+          [action.payload.appealKey]: {
+            worksheet_issues: {
+              $apply: (worksheetIssues) => worksheetIssues.filter((issue, key) => {
+                return key !== action.payload.issueKey;
+              })
+            }
+          }
+        }
+      }
+    });
 
   case Constants.TOGGLE_SAVING:
     return update(state, {
