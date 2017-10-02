@@ -18,12 +18,15 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [{ value: 30,
-  label: '30 days' },
-{ value: 60,
-  label: '60 days' },
-{ value: 90,
-  label: '90 days' }];
+const holdOptions = [
+  { value: 0,
+    label: '0 days' },
+  { value: 30,
+    label: '30 days' },
+  { value: 60,
+    label: '60 days' },
+  { value: 90,
+    label: '90 days' }];
 
 const aodOptions = [{ value: 'granted',
   label: 'Granted' },

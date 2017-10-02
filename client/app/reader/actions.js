@@ -4,6 +4,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
+import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 
 export const collectAllTags = (documents) => ({
@@ -66,6 +67,34 @@ export const setSearch = (searchQuery) => ({
     }
   }
 });
+
+export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
+  const categoryKey = categoryFieldNameOfCategoryName(categoryName);
+
+  ApiUtil.patch(
+    `/document/${docId}`,
+    { data: { [categoryKey]: toggleState } },
+    ENDPOINT_NAMES.DOCUMENT
+  ).catch(() =>
+    dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
+  );
+
+  dispatch({
+    type: Constants.TOGGLE_DOCUMENT_CATEGORY,
+    payload: {
+      categoryKey,
+      toggleState,
+      docId
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+        action: `${toggleState ? 'set' : 'unset'} document category`,
+        label: categoryName
+      }
+    }
+  });
+};
 
 export const setCaseSelectSearch = (searchQuery) => ({
   type: Constants.SET_CASE_SELECT_SEARCH,
