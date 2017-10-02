@@ -73,6 +73,7 @@ Rails.application.routes.draw do
   namespace :hearings do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show], param: :hearing_id
+    resources :appeals, only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
