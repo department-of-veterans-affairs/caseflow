@@ -215,6 +215,26 @@ def ensure_stable
   end
 end
 
+def safe_click(selector)
+  scroll_element_in_to_view(selector)
+  page.first(selector).click
+end
+
+def scroll_element_in_to_view(selector)
+  expect do
+    page.evaluate_script <<-EOS
+      function() {
+        var elem = document.querySelector('#{selector}');
+        if (!elem) {
+          return false;
+        }
+        elem.scrollIntoView();
+        return true;
+      }();
+    EOS
+  end.to become_truthy
+end
+
 # We generally avoid writing our own polling code, since proper Cappybara use generally
 # doesn't require it. That said, there may be some situations (such as evaluating javascript)
 # that require a spinning test. We got the following matcher from
