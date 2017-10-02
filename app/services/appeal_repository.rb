@@ -271,8 +271,8 @@ class AppealRepository
 
   def self.load_user_case_assignments_from_vacols(css_id)
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
-    service: :vacols,
-    name: "active_cases_for_user") do
+                          service: :vacols,
+                          name: "active_cases_for_user") do
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
@@ -281,7 +281,7 @@ class AppealRepository
       # fetching appeals from vacols for the active cases
       appeals = Appeal.where(vacols_id: active_cases_vacols_ids)
 
-      #creating a hash of those appeals for easy lookup
+      # creating a hash of those appeals for easy lookup
       appeals_hash = appeals.reduce({}) { |memo, appeal| memo[appeal.vacols_id] = appeal; memo }
 
       active_cases_for_user.map do |assignment|

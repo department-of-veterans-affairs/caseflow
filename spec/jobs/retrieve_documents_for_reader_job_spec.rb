@@ -121,7 +121,7 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
           .with(reader_user_w_many_roles.css_id)
           .and_return([appeal_with_doc2]).once
-        
+
         dont_expect_calls_for_appeal(appeal_with_doc2, expected_doc2)
 
         RetrieveDocumentsForReaderJob.perform_now("limit" => 1)
