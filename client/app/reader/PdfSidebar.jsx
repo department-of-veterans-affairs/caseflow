@@ -5,30 +5,28 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import Comment from './Comment';
-import SearchableDropdown from '../components/SearchableDropdown';
 import EditComment from './EditComment';
-import Alert from '../components/Alert';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
 import Accordion from '../components/Accordion';
 import AccordionSection from '../components/AccordionSection';
-import { plusIcon, Keyboard } from '../components/RenderFunctions';
+import { Keyboard } from '../components/RenderFunctions';
 import SideBarDocumentInformation from './SideBarDocumentInformation';
+import SideBarCategories from './SideBarCategories';
+import SideBarIssueTags from './SideBarIssueTags';
+import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
-import { toggleDocumentCategoryFail, startPlacingAnnotation, createAnnotation, updateAnnotationContent,
-  startEditAnnotation, cancelEditAnnotation, requestEditAnnotation, stopPlacingAnnotation,
-  updateNewAnnotationContent, selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
+import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
+  selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
   } from '../reader/actions';
-import ApiUtil from '../util/ApiUtil';
-import { categoryFieldNameOfCategoryName, keyOfAnnotation, sortAnnotations }
+import { keyOfAnnotation, sortAnnotations }
   from './utils';
-import DocCategoryPicker from '../reader/DocCategoryPicker';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
   documentsInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
-import { INTERACTION_TYPES, CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { CATEGORIES } from './analytics';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -79,42 +77,13 @@ export class PdfSidebar extends React.Component {
     }
   }
 
-  generateOptionsFromTags = (tags) =>
-    _(tags).
-      reject('pendingRemoval').
-      map((tag) => ({
-        value: tag.text,
-        label: tag.text,
-        tagId: tag.id })
-      ).
-      value();
-
-  onChange = (values, deletedValue) => {
-    if (_.size(deletedValue)) {
-      const tagValue = _.first(deletedValue).label;
-      const result = _.find(this.props.doc.tags, { text: tagValue });
-
-      this.props.removeTag(this.props.doc, result.id);
-    } else if (values && values.length) {
-      this.props.addNewTag(this.props.doc, values);
-    }
-  }
-
-  stopPlacingAnnotation = () => this.props.stopPlacingAnnotation('from-canceling-new-annotation');
-
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
-  handleAddClick = (event) => {
-    this.props.startPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
-    event.stopPropagation();
-  }
   render() {
     let comments = [];
 
     const {
-      doc,
-      showErrorMessage,
       tagOptions,
       appeal
     } = this.props;
@@ -156,13 +125,6 @@ export class PdfSidebar extends React.Component {
     const sidebarClass = classNames(
       'cf-sidebar-wrapper',
       { 'hidden-sidebar': this.props.hidePdfSidebar });
-    const categoryToggleStates = _.mapValues(
-      Constants.documentCategories,
-      (val, key) =>
-        this.props.documents[this.props.doc.id][categoryFieldNameOfCategoryName(key)]
-    );
-
-    const cannotSaveAlert = <Alert type="error" message="Unable to save. Please try again." />;
 
     return <div className={sidebarClass}>
         <div className="cf-sidebar-header">
@@ -186,55 +148,20 @@ export class PdfSidebar extends React.Component {
               <SideBarDocumentInformation appeal={appeal} doc={this.props.doc}/>
             </AccordionSection>
             <AccordionSection title="Categories">
-              <div className="cf-category-sidebar">
-                {showErrorMessage.category && cannotSaveAlert}
-                <DocCategoryPicker
-                  allowReadOnly={true}
-                  handleCategoryToggle={
-                    _.partial(this.props.handleCategoryToggle, this.props.doc.id)
-                  }
-                  categoryToggleStates={categoryToggleStates} />
-              </div>
+              <SideBarCategories doc={this.props.doc}
+                documents={this.props.documents} />
             </AccordionSection>
             <AccordionSection title="Issue tags">
-              <div className="cf-issue-tag-sidebar">
-                {showErrorMessage.tag && cannotSaveAlert}
-                <SearchableDropdown
-                  key={doc.id}
-                  name="tags"
-                  label="Select or tag issue(s)"
-                  multi={true}
-                  creatable={true}
-                  options={this.generateOptionsFromTags(tagOptions)}
-                  placeholder=""
-                  value={this.generateOptionsFromTags(doc.tags)}
-                  onChange={this.onChange}
-                  selfManageValueState={true}
-                />
-              </div>
+              <SideBarIssueTags
+                doc={this.props.doc}
+                tagOptions={tagOptions}
+                addNewTag={this.props.addNewTag}
+                removeTag={this.props.removeTag}/>
             </AccordionSection>
             <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
-                <span className="cf-right-side cf-add-comment-button">
-                  <Button
-                    name="AddComment"
-                    onClick={this.handleAddClick}>
-                    <span>{ plusIcon() } &nbsp; Add a comment</span>
-                  </Button>
-                </span>
-              <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-                {showErrorMessage.annotation && cannotSaveAlert}
-                <div className="cf-pdf-comment-list">
-                  {this.props.placedButUnsavedAnnotation &&
-                    <EditComment
-                      comment={this.props.placedButUnsavedAnnotation}
-                      id="addComment"
-                      disableOnEmpty={true}
-                      onChange={this.props.updateNewAnnotationContent}
-                      onCancelCommentEdit={this.stopPlacingAnnotation}
-                      onSaveCommentEdit={this.props.createAnnotation} />}
-                  {comments}
-                </div>
-              </div>
+              <SideBarComments
+                comments={comments}
+                />
             </AccordionSection>
           </Accordion>
         </div>
@@ -319,12 +246,8 @@ const mapDispatchToProps = (dispatch) => ({
     togglePdfSidebar,
     setOpenedAccordionSections,
     selectAnnotation,
-    startPlacingAnnotation,
-    createAnnotation,
-    stopPlacingAnnotation,
     startEditAnnotation,
     updateAnnotationContent,
-    updateNewAnnotationContent,
     cancelEditAnnotation,
     requestEditAnnotation
   }, dispatch),
@@ -334,33 +257,6 @@ const mapDispatchToProps = (dispatch) => ({
       type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
       payload: {
         scrollToSidebarComment: null
-      }
-    });
-  },
-  handleCategoryToggle(docId, categoryName, toggleState) {
-    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-    ApiUtil.patch(
-      `/document/${docId}`,
-      { data: { [categoryKey]: toggleState } },
-      ENDPOINT_NAMES.DOCUMENT
-    ).catch(() =>
-      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
-    );
-
-    dispatch({
-      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-      payload: {
-        categoryKey,
-        toggleState,
-        docId
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-          action: `${toggleState ? 'set' : 'unset'} document category`,
-          label: categoryName
-        }
       }
     });
   }
