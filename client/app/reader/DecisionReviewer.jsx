@@ -103,8 +103,6 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
         <PdfViewer
-          addNewTag={this.props.addNewTag}
-          removeTag={this.props.removeTag}
           allDocuments={_.values(this.props.storeDocuments)}
           pdfWorker={this.props.pdfWorker}
           showPdf={this.showPdf(props.history, vacolsId)}
