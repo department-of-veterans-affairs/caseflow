@@ -17,12 +17,12 @@ ensure_stable do
       visit "test/users"
       expect(page).not_to have_content("123 (DSUSER)")
       expect(page).to have_content("DSUSER")
-      safe_click('div.Select-control')
+      safe_click("div.Select-control")
       safe_click('#react-select-2--option-0')
       safe_click('#button-Switch-user')
       expect(page).not_to have_content("123 (DSUSER)")
     end
-    
+
     # Dispatch-speific seeding
     scenario "We can switch between test EP data in demo mode" do
       visit "test/users"
