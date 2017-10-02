@@ -307,14 +307,6 @@ $color-hearings-saving: #777;
       width: 21%;
     }
 
-    .cf-modal {
-
-      h2 {
-        border-bottom: none;
-        font-size: 1.5em;
-      }
-
-    }
   }
 
   .cf-appeal-stream-label {
@@ -324,6 +316,15 @@ $color-hearings-saving: #777;
 
   .cf-issue-delete {
     cursor: pointer;
+
+    .cf-modal {
+
+      h2 {
+        border-bottom: none;
+        font-size: 1.5em;
+      }
+
+    }
   }
 
   h2 {
