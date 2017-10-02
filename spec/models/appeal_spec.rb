@@ -1122,8 +1122,8 @@ describe Appeal do
               vha: true,
               program: "Wheel",
               name: "Spoon",
-              levels: %w(Cabbage Pickle),
-              description: %w(Donkey Cow),
+              levels: "Cabbage\nPickle",
+              description: "Donkey\nCow",
               from_vacols: true,
               vacols_sequence_id: 1
             }]
@@ -1143,13 +1143,13 @@ describe Appeal do
         expect(issue.vha).to eq true
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq %w(Cabbage Pickle)
-        expect(issue.description).to eq %w(Donkey Cow)
+        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
         id = appeal.worksheet_issues.first.id
         appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:description] = ["Tomato"]
+        appeals_hash[:worksheet_issues_attributes][0][:description] = "Tomato"
         appeals_hash[:worksheet_issues_attributes][0][:id] = id
 
         appeal.update(appeals_hash)
@@ -1163,8 +1163,8 @@ describe Appeal do
         expect(issue.dismiss).to eq(false)
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq %w(Cabbage Pickle)
-        expect(issue.description).to eq ["Tomato"]
+        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Tomato"
 
         # soft delete an issue
         appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
