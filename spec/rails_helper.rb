@@ -217,15 +217,17 @@ end
 
 # We generally avoid writing our own polling code, since proper Cappybara use generally
 # doesn't require it. That said, there may be some situations (such as evaluating javascript)
-# that require a spinning test. We got the following matcher from https://gist.github.com/jnicklas/4129937
-RSpec::Matchers.define :become_truthy do |_event_name|
+# that require a spinning test. We got the following matcher from
+# https://gist.github.com/showaltb/0456ce0002842c88c3fc06db43f3ee7b
+RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
   supports_block_expectations
 
   match do |block|
     begin
-      Timeout.timeout(Capybara.default_max_wait_time) do
-        sleep(0.1) until block.call
-        true
+      Timeout.timeout(wait) do
+        # rubocop:disable AssignmentInCondition
+        sleep(0.1) until value = block.call
+        value
       end
     rescue TimeoutError
       false
