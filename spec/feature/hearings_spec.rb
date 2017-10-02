@@ -13,7 +13,7 @@ RSpec.feature "Hearings" do
 
   context "Hearings Prep" do
     let!(:current_user) do
-      User.authenticate!(roles: ["Hearing Prep"])
+      User.authenticate!(roles: ["Hearing Prep"], id: "Hearing Prep")
     end
 
     before do
