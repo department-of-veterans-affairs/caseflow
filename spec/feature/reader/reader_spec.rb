@@ -763,9 +763,6 @@ RSpec.feature "Reader" do
 
           click_on documents[3].type
 
-          # Expect the 23 page to only be rendered once scrolled to.
-          expect(find("#pageContainer23")).to_not have_content("Rating Decision")
-
           fill_in "page-progress-indicator-input", with: "23\n"
 
           expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)

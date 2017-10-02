@@ -76,7 +76,7 @@ export class DocketHearingRow extends React.PureComponent {
           <b>{hearing.appellant_last_first_mi}</b>
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
-        <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
+        <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
           <SearchableDropdown
             label="Disposition"
