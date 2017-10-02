@@ -3,6 +3,8 @@ dist: trusty
 sudo: required
 rvm:
   - 2.2.4
+node_js:
+  - 6.11.3
 
 branches:
     only:
@@ -17,7 +19,6 @@ before_install:
   - ./ensure-env-vars-exist.bash
   - pip install --user awscli
   - mkdir ./coverage
-  - nvm install v6.11.3
   - node -v
   - npm -v
   - sudo apt-get update
