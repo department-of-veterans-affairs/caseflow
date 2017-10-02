@@ -90,6 +90,7 @@ class Hearing < ActiveRecord::Base
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
+        :representative,
         :representative_name,
         :veteran_age,
         :veteran_name,

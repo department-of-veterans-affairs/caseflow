@@ -24,25 +24,25 @@ class HearingWorksheetPreImpressions extends PureComponent {
     this.props.onToggleVHA(vha, this.props.issueKey, this.props.appealKey);
 
   render() {
-    let { issue } = this.props;
+    let { issue, issueKey, appealKey } = this.props;
 
     return <div className="cf-hearings-worksheet-actions">
-            <Checkbox label="Re-Open" name={`${issue.id}-chk_reopen`}
+            <Checkbox label="Re-Open" name={`${issueKey}-${appealKey}-chk_reopen`}
               onChange={this.onToggleReopen} value={issue.reopen}>
             </Checkbox>
-            <Checkbox label="Allow" name={`${issue.id}-chk_allow`}
+            <Checkbox label="Allow" name={`${issueKey}-${appealKey}-chk_allow`}
               onChange={this.onToggleAllow} value={issue.allow}>
             </Checkbox>
-            <Checkbox label="Deny" name={`${issue.id}-chk_deny`}
+            <Checkbox label="Deny" name={`${issueKey}-${appealKey}-chk_deny`}
               onChange={this.onToggleDeny} value={issue.deny}>
             </Checkbox>
-            <Checkbox label="Remand" name={`${issue.id}-chk_remand`}
+            <Checkbox label="Remand" name={`${issueKey}-${appealKey}-chk_remand`}
               onChange={this.onToggleRemand} value={issue.remand}>
             </Checkbox>
-            <Checkbox label="Dismiss" name={`${issue.id}-chk_dismiss`}
+            <Checkbox label="Dismiss" name={`${issueKey}-${appealKey}-chk_dismiss`}
               onChange={this.onToggleDismiss} value={issue.dismiss}>
             </Checkbox>
-            <Checkbox label="VHA" name={`${issue.id}-chk_vha`}
+            <Checkbox label="VHA" name={`${issueKey}-${appealKey}-chk_vha`}
               onChange={this.onToggleVHA} value={issue.vha}>
             </Checkbox>
         </div>;
