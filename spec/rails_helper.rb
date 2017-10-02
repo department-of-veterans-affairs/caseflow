@@ -210,7 +210,8 @@ end
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
-  20.times do
+  repeat_count = if ENV["TRAVIS"] then 100 else 20
+  repeat_count.times do
     yield
   end
 end
