@@ -29,10 +29,12 @@ def scroll_to_bottom(element)
   EOS
 end
 
-# This utility function returns true if an element is currently visible on the page
-def in_viewport(element)
-  page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
-  " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+# Returns true if an element is currently visible on the page.
+def expect_in_viewport(element)
+  expect do
+    page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
+      " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+  end.to become_truthy(wait: 10)
 end
 
 def get_size(element)
@@ -671,7 +673,7 @@ RSpec.feature "Reader" do
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
 
-        expect { in_viewport(comment_icon_id) }.to become_truthy
+        expect_in_viewport(comment_icon_id)
       end
 
       scenario "Scroll to comment" do
@@ -767,12 +769,12 @@ RSpec.feature "Reader" do
 
           expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
 
-          expect(in_viewport("pageContainer23")).to be true
+          expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
 
           # Entering invalid values leaves the viewer on the same page.
           fill_in "page-progress-indicator-input", with: "abcd\n"
-          expect(in_viewport("pageContainer23")).to be true
+          expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
         end
       end
@@ -1176,7 +1178,7 @@ RSpec.feature "Reader" do
       click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
-      expect(in_viewport("read-indicator")).to be true
+      expect_in_viewport("read-indicator")
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
@@ -1187,7 +1189,7 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      expect(in_viewport("read-indicator")).to be true
+      expect_in_viewport("read-indicator")
     end
   end
 end
