@@ -2,23 +2,11 @@ import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
-import Modal from '../../components/Modal';
-import { toggleIssueDeleteModal } from '../actions/Issue';
-
-import { TrashCan } from '../../components/RenderFunctions';
+import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
 class HearingWorksheetIssues extends PureComponent {
-
-  handleModalOpen = () => {
-    this.props.toggleIssueDeleteModal(true);
-  };
-
-  handleModalClose = () => {
-    this.props.toggleIssueDeleteModal(false);
-  };
 
   getKeyForRow = (index) => index;
 
@@ -26,8 +14,7 @@ class HearingWorksheetIssues extends PureComponent {
     let {
       worksheetStreamsIssues,
       worksheetStreamsAppeal,
-      appealKey,
-     issueDeleteModal
+      appealKey
     } = this.props;
 
 
@@ -109,11 +96,12 @@ class HearingWorksheetIssues extends PureComponent {
                     appealKey={appealKey}
                     issueKey={key}
         />,
-        deleteIssue: <div className="cf-issue-delete"
-                        onClick={this.handleModalOpen}
-                        alt="Remove Issue Confirmation">
-                        <TrashCan />
-                    </div>
+        deleteIssue: <HearingWorksheetIssueDelete
+                    appeal={worksheetStreamsAppeal}
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
+        />
       };
     });
 
@@ -125,45 +113,21 @@ class HearingWorksheetIssues extends PureComponent {
               summary={'Worksheet Issues'}
               getKeyForRow={this.getKeyForRow}
           />
-    { issueDeleteModal && <Modal
-          buttons = {[
-            { classNames: ['usa-button', 'usa-button-outline'],
-              name: 'Close',
-              onClick: this.handleModalClose
-            },
-            { classNames: ['usa-button', 'usa-button-primary'],
-              name: 'Yes',
-              onClick: this.handleModalClose
-            }
-          ]}
-          closeHandler={this.handleModalClose}
-          noDivider={true}
-          title = "Remove Issue Row">
-          <p>Are you sure you want to remove this issue from Appeal Stream 1 on the worksheet? </p>
-          <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p>
-        </Modal>
-    }
         </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  HearingWorksheetIssues: state,
-  issueDeleteModal: state.issueDeleteModal
+  HearingWorksheetIssues: state
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleIssueDeleteModal
-}, dispatch);
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
 )(HearingWorksheetIssues);
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
   worksheetStreamsIssues: PropTypes.array.isRequired,
-  worksheetStreamsAppeal: PropTypes.object.isRequired,
-  issueDeleteModal: PropTypes.bool.isRequired
+  worksheetStreamsAppeal: PropTypes.object.isRequired
 };
