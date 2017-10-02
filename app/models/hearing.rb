@@ -9,8 +9,6 @@ class Hearing < ActiveRecord::Base
 
   belongs_to :appeal
   belongs_to :user # the judge
-  has_many :worksheet_issues, foreign_key: :appeal_id, primary_key: :appeal_id
-  accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   def venue
     self.class.venues[venue_key]
@@ -110,8 +108,7 @@ class Hearing < ActiveRecord::Base
                 :representative,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :military_service],
-      include: :worksheet_issues
+                :military_service]
     ).merge(to_hash)
   end
 
@@ -126,13 +123,6 @@ class Hearing < ActiveRecord::Base
       update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
-  end
-
-  # If we do not yet have the worksheet issues saved in Caseflow's DB, then
-  # we want to fetch it from VACOLS, save it to the DB, then return it
-  def worksheet_issues
-    appeal.issues.each { |i| WorksheetIssue.create_from_issue(appeal, i) } if appeal && super.empty?
-    super
   end
 
   def appeal_vacols_id
