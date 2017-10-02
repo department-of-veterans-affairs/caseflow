@@ -11,8 +11,8 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
           vha: false,
           program: "Wheel",
           name: "Spoon",
-          levels: %w(Cabbage Pickle),
-          description: %w(Donkey Cow),
+          levels: "Cabbage Pickle",
+          description: "Donkey Cow",
           from_vacols: false,
           vacols_sequence_id: 1
         }]
@@ -25,8 +25,8 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
       expect(response_body["worksheet_issues"][0]["vha"]).to eq false
       expect(response_body["worksheet_issues"][0]["program"]).to eq "Wheel"
       expect(response_body["worksheet_issues"][0]["name"]).to eq "Spoon"
-      expect(response_body["worksheet_issues"][0]["levels"]).to eq %w(Cabbage Pickle)
-      expect(response_body["worksheet_issues"][0]["description"]).to eq %w(Donkey Cow)
+      expect(response_body["worksheet_issues"][0]["levels"]).to eq "Cabbage Pickle"
+      expect(response_body["worksheet_issues"][0]["description"]).to eq "Donkey Cow"
       expect(response_body["worksheet_issues"][0]["from_vacols"]).to eq false
       expect(response_body["worksheet_issues"][0]["vacols_sequence_id"]).to eq "1"
     end
