@@ -13,8 +13,8 @@ class WorksheetIssue < ActiveRecord::Base
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
         record.update(program: issue.program,
                       name: issue.type[:name],
-                      levels: issue.levels,
-                      description: issue.description,
+                      levels: issue.levels.join("\n"),
+                      description: issue.description.join("\n"),
                       from_vacols: true)
       end
     end
