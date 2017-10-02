@@ -68,39 +68,34 @@ export const docListIsFiltered = createSelector(
 
 const getText = (state) => state.text;
 
-const getTextObject = createSelector([getText], (text) => text.map(
-  (pageText) => pageText.items.map((row) => row.str).join(' '))
-});
+const getTextObject = createSelector([getText], (text) => { return text.reduce(
+  (acc, pageText, index) => {
+    const concatenated = pageText.items.map((row) => row.str).join(' ');
+    const splitWords = concatenated.split(' ');
+    splitWords.forEach((word, wordIndex) => {
+      const end = Math.min(wordIndex + 5, concatenated.length);
+      const begin = Math.max(wordIndex - 5, 0);
+      const sentence = splitWords.slice(begin, end).join(' ');
+      const after = splitWords.slice(wordIndex + 1, end);
+      if (acc[word]) {
+        acc[word].push({ index, sentence, after });
+      } else {
+        acc[word] = [{ index, sentence, after }];
+      }
+    })
+    return acc;
+  }, {}
+)});
 
 const getSearchTerm = (state) => state.documentSearchString;
 
 export const getTextSnippets = createSelector([getTextObject, getSearchTerm], (textObject, searchTerm) => {
-  // Adapted from: https://stackoverflow.com/questions/3410464/how-to-find-indices-of-all-occurrences-of-one-string-in-another-in-javascript
-  const getIndicesOf = (searchStr, str) => {
-    const searchStrLen = searchStr.length;
-    const lowerCaseStr = str.toLowerCase();
-    const lowerCaseSearchStr = searchStr.toLowerCase();
-
-    if (searchStrLen == 0) {
-        return [];
+  return Object.keys(textObject).reduce((acc, key) => {
+    console.log(key, searchTerm, key.includes(searchTerm));
+    if (key.includes(searchTerm)) {
+      return acc.concat(textObject[key]);
     }
 
-    let startIndex = 0;
-    let index = 0;
-    let indices = [];
-
-    while ((index = lowerCaseStr.indexOf(lowerCaseSearchStr, startIndex)) > -1) {
-        indices.push(index);
-        startIndex = index + searchStrLen;
-    }
-    return indices;
-  }
-
-  return textObject.reduce((acc, text) => {
-    const searchTermLength = searchTerm.length;
-    const buffer = 10;
-    const texts = getIndicesOf(searchTerm, text).map((index) => text.substring(Math.max(index - buffer, 0), Math.min(index + searchTermLength + buffer, text.length)));
-    console.log('texts', texts);
-    return [...acc, ...texts]
+    return acc;
   }, []);
 });
