@@ -1,16 +1,17 @@
 import React, { PureComponent } from 'react';
+import { bindActionCreators } from 'redux';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import { connect } from 'react-redux';
 import SearchableDropdown from '../components/SearchableDropdown';
 import _ from 'lodash';
 
+import { addNewTag, removeTag } from '../reader/actions';
+
 class SideBarIssueTags extends PureComponent {
   render() {
     const {
       doc,
-      tagOptions,
-      removeTag,
-      addNewTag
+      tagOptions
     } = this.props;
 
     let generateOptionsFromTags = (tags) =>
@@ -28,9 +29,9 @@ class SideBarIssueTags extends PureComponent {
         const tagValue = _.first(deletedValue).label;
         const result = _.find(doc.tags, { text: tagValue });
 
-        removeTag(doc, result.id);
+        this.props.removeTag(doc, result.id);
       } else if (values && values.length) {
-        addNewTag(doc, values);
+        this.props.addNewTag(doc, values);
       }
     };
 
@@ -58,6 +59,13 @@ const mapStateToProps = (state) => {
   };
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    addNewTag,
+    removeTag
+  }, dispatch)
+});
+
 export default connect(
-  mapStateToProps
+  mapStateToProps, mapDispatchToProps
 )(SideBarIssueTags);
