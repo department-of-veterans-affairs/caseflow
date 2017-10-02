@@ -1,13 +1,12 @@
 import React, { PureComponent } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
-import ApiUtil from '../util/ApiUtil';
-import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
-import { toggleDocumentCategoryFail } from '../reader/actions';
+import { handleCategoryToggle } from '../reader/actions';
 
 class SideBarCategories extends PureComponent {
   render() {
@@ -33,33 +32,9 @@ class SideBarCategories extends PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  handleCategoryToggle(docId, categoryName, toggleState) {
-    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-    ApiUtil.patch(
-      `/document/${docId}`,
-      { data: { [categoryKey]: toggleState } },
-      ENDPOINT_NAMES.DOCUMENT
-    ).catch(() =>
-      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
-    );
-
-    dispatch({
-      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-      payload: {
-        categoryKey,
-        toggleState,
-        docId
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-          action: `${toggleState ? 'set' : 'unset'} document category`,
-          label: categoryName
-        }
-      }
-    });
-  }
+  ...bindActionCreators({
+    handleCategoryToggle
+  }, dispatch)
 });
 
 const mapStateToProps = (state) => {
