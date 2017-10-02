@@ -3,9 +3,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import Button from '../../components/Button';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
 import Footer from '../../components/Footer';
-import PropTypes from 'prop-types';
 
 const options = [
   {
@@ -75,7 +73,7 @@ export default class StyleGuideFooter extends React.Component {
    <Footer
     appName="Hearing Prep"
     buildDate="10/01/2017"
-    feedbackUrl="#" /> 
+    feedbackUrl="#" />
   </div>
 </div>;
   }
