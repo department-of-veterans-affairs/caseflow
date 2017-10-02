@@ -1,5 +1,4 @@
 class Hearings::AppealsController < HearingsController
-
   def update
     appeal.update!(appeal_params)
     render json: { appeal: appeal.attributes_for_hearing }
@@ -19,4 +18,3 @@ class Hearings::AppealsController < HearingsController
                                                 :vacols_sequence_id, :_destroy, :description, :levels])
   end
 end
-

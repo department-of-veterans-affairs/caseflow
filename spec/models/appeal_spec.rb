@@ -1117,17 +1117,17 @@ describe Appeal do
 
     context "when Vacols does not need an update" do
       let(:appeals_hash) do
-         { worksheet_issues_attributes: [{
-              remand: true,
-              vha: true,
-              program: "Wheel",
-              name: "Spoon",
-              levels: "Cabbage\nPickle",
-              description: "Donkey\nCow",
-              from_vacols: true,
-              vacols_sequence_id: 1
-            }]
-          }
+        { worksheet_issues_attributes: [{
+          remand: true,
+          vha: true,
+          program: "Wheel",
+          name: "Spoon",
+          levels: "Cabbage\nPickle",
+          description: "Donkey\nCow",
+          from_vacols: true,
+          vacols_sequence_id: 1
+        }]
+         }
       end
 
       it "updates worksheet issues" do
