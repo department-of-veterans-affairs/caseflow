@@ -8,15 +8,15 @@ import Footer from '../../components/Footer';
 const options = [
   {
     title: 'Help',
-    link: '#navigation_bar'
+    link: '#footer'
   },
   {
     title: 'Send feedback',
-    link: '#navigation_bar'
+    link: '#footer'
   },
   {
     title: 'Sign out',
-    link: '#navigation_bar'
+    link: '#footer'
   }
 ];
 
@@ -37,7 +37,8 @@ export default class StyleGuideFooter extends React.Component {
     <p>
      Conveniently, if a developer hovers over the word
      “Built” they’ll see a tooltip showing the build date
-     of the app that they are viewing.</p>
+     of the app that they are viewing. In styleguide footer,  recent build date
+     is based off of “date” in build_version.yml.</p>
 
     <Router>
      <div className="sg-nav-wrap">
@@ -73,7 +74,7 @@ export default class StyleGuideFooter extends React.Component {
    <Footer
     appName="Hearing Prep"
     buildDate="10/01/2017"
-    feedbackUrl="#" />
+    feedbackUrl="#footer" />
   </div>
 </div>;
   }
