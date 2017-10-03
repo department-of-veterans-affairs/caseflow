@@ -44,7 +44,9 @@ class HearingWorksheetIssueFields extends PureComponent {
       return <div>
         <h4 className="cf-hearings-worksheet-desc-label">{field}</h4>
         <TextareaField aria-label={field} name={field}
-              id={`${issue.id}-issue-${field}`}value={allowedFields[field].value || ''}
+              id={`${issue.id}-issue-${field}`} 
+              value={allowedFields[field].value || ''}
+             // autoExpand={autoExpand}
               onChange={allowedFields[field].onChange}/>
       </div>;
     }

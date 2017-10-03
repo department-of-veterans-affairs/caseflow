@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
+import TextareaField from '../components/TextareaField';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -129,9 +130,11 @@ export class DocketHearingRow extends React.PureComponent {
           <div>
             <label htmlFor={`${hearing.id}.notes`}>Notes</label>
             <div>
-              <textarea
+              <TextareaField
                 id={`${hearing.id}.notes`}
-                defaultValue={hearing.notes}
+                value={hearing.notes || ''}
+                name="Hearing Notes"
+             //   autoExpand={false}
                 onChange={this.setNotes}
                 maxLength="100"
               />
