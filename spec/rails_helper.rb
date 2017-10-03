@@ -209,7 +209,7 @@ end
 
 def hang
   puts "Hanging the test indefinitely so you can debug in the browser."
-  sleep(inspection_timeout: 10_000)
+  sleep(10_000)
 end
 
 # Wrap this around your test to run it many times and ensure that it passes consistently.
