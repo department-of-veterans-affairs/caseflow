@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170918151745) do
+ActiveRecord::Schema.define(version: 20170929182028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -246,6 +246,9 @@ ActiveRecord::Schema.define(version: 20170918151745) do
     t.string   "hearing_preference"
     t.date     "nod_date"
     t.date     "form9_date"
+    t.date     "ssoc_date_1"
+    t.date     "ssoc_date_2"
+    t.date     "ssoc_date_3"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
@@ -317,20 +320,23 @@ ActiveRecord::Schema.define(version: 20170918151745) do
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
 
   create_table "worksheet_issues", force: :cascade do |t|
-    t.integer "appeal_id"
-    t.string  "vacols_sequence_id"
-    t.boolean "reopen",             default: false
-    t.boolean "vha",                default: false
-    t.boolean "allow",              default: false
-    t.boolean "deny",               default: false
-    t.boolean "remand",             default: false
-    t.boolean "dismiss",            default: false
-    t.string  "program"
-    t.string  "name"
-    t.string  "levels",                             array: true
-    t.string  "description",                        array: true
-    t.boolean "from_vacols"
+    t.integer  "appeal_id"
+    t.string   "vacols_sequence_id"
+    t.boolean  "reopen",             default: false
+    t.boolean  "vha",                default: false
+    t.boolean  "allow",              default: false
+    t.boolean  "deny",               default: false
+    t.boolean  "remand",             default: false
+    t.boolean  "dismiss",            default: false
+    t.string   "program"
+    t.string   "name"
+    t.string   "levels"
+    t.string   "description"
+    t.boolean  "from_vacols"
+    t.datetime "deleted_at"
   end
+
+  add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
   add_foreign_key "certifications", "users"

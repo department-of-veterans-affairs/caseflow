@@ -1,11 +1,7 @@
 import _ from 'lodash';
-import { newContext } from 'immutability-helper';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-
-export const update = newContext();
-
-update.extend('$unset', (keyToUnset, obj) => obj && _.omit(obj, keyToUnset));
+import { update } from '../util/ReducerUtil';
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
@@ -20,13 +16,34 @@ export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   y: (y - pageBoundingBox.top) / scale
 });
 
-export const getPageCoordinatesOfMouseEvent = (event, container, scale) => {
+export const rotateCoordinates = ({ x, y }, container, rotation) => {
+  if (rotation === 0) {
+    return { x,
+      y };
+  } else if (rotation === 90) {
+    return { x: y,
+      y: container.width - x };
+  } else if (rotation === 180) {
+    return { x: container.width - x,
+      y: container.height - y };
+  } else if (rotation === 270) {
+    return { x: container.height - y,
+      y: x };
+  }
+
+  return {
+    x,
+    y
+  };
+};
+
+export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation) => {
   const constrainedRootCoords = {
     x: _.clamp(event.pageX, container.left, container.right - ANNOTATION_ICON_SIDE_LENGTH),
     y: _.clamp(event.pageY, container.top, container.bottom - ANNOTATION_ICON_SIDE_LENGTH)
   };
 
-  return pageCoordsOfRootCoords(constrainedRootCoords, container, scale);
+  return rotateCoordinates(pageCoordsOfRootCoords(constrainedRootCoords, container, scale), container, rotation);
 };
 
 /**

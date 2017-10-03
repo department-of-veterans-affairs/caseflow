@@ -39,7 +39,8 @@ class CommentLayer extends PureComponent {
     const { x, y } = getPageCoordinatesOfMouseEvent(
       event,
       this.commentLayerDiv.getBoundingClientRect(),
-      this.props.scale
+      this.props.scale,
+      this.props.rotation
     );
 
     this.props.placeAnnotation(
@@ -92,12 +93,12 @@ class CommentLayer extends PureComponent {
       throw err;
     }
 
-    const pageBox = this.commentLayerDiv.getBoundingClientRect();
-
-    const coordinates = {
-      x: (event.pageX - pageBox.left - dragAndDropData.iconCoordinates.x) / this.props.scale,
-      y: (event.pageY - pageBox.top - dragAndDropData.iconCoordinates.y) / this.props.scale
-    };
+    const coordinates = getPageCoordinatesOfMouseEvent(
+      event,
+      this.commentLayerDiv.getBoundingClientRect(),
+      this.props.scale,
+      this.props.rotation
+    );
 
     const droppedAnnotation = {
       ...this.props.allAnnotations[dragAndDropData.uuid],
@@ -112,7 +113,8 @@ class CommentLayer extends PureComponent {
       const pageCoords = getPageCoordinatesOfMouseEvent(
         event,
         this.commentLayerDiv.getBoundingClientRect(),
-        this.props.scale
+        this.props.scale,
+        this.props.rotation
       );
 
       this.props.showPlaceAnnotationIcon(this.props.pageIndex, pageCoords);
@@ -129,6 +131,7 @@ class CommentLayer extends PureComponent {
 
   getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
     comment={comment}
+    rotation={-this.props.rotation}
     position={{
       x: comment.x * this.props.scale,
       y: comment.y * this.props.scale
@@ -137,6 +140,14 @@ class CommentLayer extends PureComponent {
     onClick={comment.isPlacingAnnotationIcon ? _.noop : this.props.handleSelectCommentIcon} />)
 
   render() {
+    // Instead of redrawing the text on scales, we just do a CSS transform which is faster.
+    const TEXT_LAYER_STYLING = {
+      width: `${this.props.dimensions.width}px`,
+      height: `${this.props.dimensions.height}px`,
+      transform: `scale(${this.props.scale})`,
+      transformOrigin: 'left top'
+    };
+
     return <div
       id={`comment-layer-${this.props.pageIndex}-${this.props.file}`}
       style={DIV_STYLING}
@@ -145,8 +156,9 @@ class CommentLayer extends PureComponent {
       onClick={this.onPageClick}
       onMouseMove={this.mouseListener}
       ref={this.getCommentLayerDivRef}>
-      {this.getCommentIcons()}
+      {this.props.isVisible && this.getCommentIcons()}
       <div
+        style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
         className="textLayer"/>
     </div>;
@@ -161,11 +173,17 @@ CommentLayer.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number
   })),
+  dimensions: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number
+  }),
+  isVisible: PropTypes.bool,
   getTextLayerRef: PropTypes.func,
   handleSelectCommentIcon: PropTypes.func,
   placingAnnotationIconPageCoords: PropTypes.object,
   isPlacingAnnotation: PropTypes.bool,
   scale: PropTypes.number,
+  rotation: PropTypes.number,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
   documentId: PropTypes.number
@@ -175,7 +193,8 @@ const mapStateToProps = (state, ownProps) => ({
   ...state.readerReducer.ui.pdf,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.documentId),
-  allAnnotations: state.readerReducer.annotations
+  allAnnotations: state.readerReducer.annotations,
+  rotation: _.get(state.readerReducer.documents, [ownProps.documentId, 'rotation'])
 });
 
 const mapDispatchToProps = (dispatch) => ({

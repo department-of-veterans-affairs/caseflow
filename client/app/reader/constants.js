@@ -34,7 +34,6 @@ export const LAST_READ_DOCUMENT = 'LAST_READ_DOCUMENT';
 export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
 export const COLLECT_ALL_TAGS_FOR_OPTIONS = 'COLLECT_ALL_TAGS_FOR_OPTIONS';
 export const SET_SORT = 'SET_SORT';
-export const SET_PDF_READY_TO_SHOW = 'SET_PDF_READY_TO_SHOW';
 export const SET_SEARCH = 'SET_SEARCH';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
 export const CLEAR_ALL_SEARCH = 'CLEAR_ALL_SEARCH';
@@ -66,7 +65,12 @@ export const SHOW_PLACE_ANNOTATION_ICON = 'SHOW_PLACE_ANNOTATION_ICON';
 export const STOP_PLACING_ANNOTATION = 'STOP_PLACING_ANNOTATION';
 export const SELECT_ANNOTATION = 'SELECT_ANNOTATION';
 export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
-export const SET_PDF_PAGE_DIMENSIONS = 'SET_PDF_PAGE_DIMENSIONS';
+export const SET_UP_PDF_PAGE = 'SET_UP_PDF_PAGE';
+export const SET_PDF_DOCUMENT = 'SET_PDF_DOCUMENT';
+export const CLEAR_PDF_PAGE = 'CLEAR_PDF_PAGE';
+export const ROTATE_PDF_DOCUMENT = 'ROTATE_PDF_DOCUMENT';
+export const CLEAR_PDF_DOCUMENT = 'CLEAR_PDF_DOCUMENT';
+
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
 export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
@@ -91,12 +95,24 @@ export const DOCUMENTS_OR_COMMENTS_ENUM = {
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
+export const ROTATION_INCREMENTS = 90;
+export const COMPLETE_ROTATION = 360;
+
+// Arrange the directions such that each direction + 1 modulo 4 rotates clockwise.
 export const MOVE_ANNOTATION_ICON_DIRECTIONS = {
-  LEFT: 'LEFT',
-  RIGHT: 'RIGHT',
-  UP: 'UP',
-  DOWN: 'DOWN'
+  UP: 0,
+  RIGHT: 1,
+  DOWN: 2,
+  LEFT: 3
 };
+
+// An array with the directions oriented in a clockwise rotation.
+export const MOVE_ANNOTATION_ICON_DIRECTION_ARRAY = [
+  MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
+  MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
+  MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
+  MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT
+];
 
 export const documentCategories = {
   procedural: {

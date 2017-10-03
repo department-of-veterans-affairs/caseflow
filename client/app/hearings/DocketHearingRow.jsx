@@ -18,15 +18,18 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [{ value: 30,
-  label: '30 days' },
-{ value: 60,
-  label: '60 days' },
-{ value: 90,
-  label: '90 days' }];
+const holdOptions = [
+  { value: 0,
+    label: '0 days' },
+  { value: 30,
+    label: '30 days' },
+  { value: 60,
+    label: '60 days' },
+  { value: 90,
+    label: '90 days' }];
 
-const aodOptions = [{ value: 'grant',
-  label: 'Grant' },
+const aodOptions = [{ value: 'granted',
+  label: 'Granted' },
 { value: 'filed',
   label: 'Filed' },
 { value: 'none',
@@ -35,7 +38,8 @@ const aodOptions = [{ value: 'grant',
 const getDate = (date, timezone) => {
   return moment.tz(date, timezone).
     format('h:mm a z').
-    replace(/(p|a)m/, '$1.m.');
+    replace('AM', 'a.m.').
+    replace('PM', 'p.m.');
 };
 
 export class DocketHearingRow extends React.PureComponent {
@@ -65,8 +69,9 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, 'EST')}
-            <br/>
+            {getDate(hearing.date, 'America/New_York')}
+          </span>
+          <span>
             {hearing.regional_office_name}
           </span>
         </td>
@@ -74,7 +79,7 @@ export class DocketHearingRow extends React.PureComponent {
           <b>{hearing.appellant_last_first_mi}</b>
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
-        <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
+        <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
           <SearchableDropdown
             label="Disposition"
@@ -104,7 +109,7 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               label="Add on"
               name={`${hearing.id}.addon`}
-              value={hearing.addon}
+              value={hearing.add_on}
               onChange={this.setAddOn}
             />
           </div>

@@ -17,6 +17,9 @@ export const SET_TRANSCRIPT_REQUESTED = 'SET_TRANSCRIPT_REQUESTED';
 export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
 
 // issues
+export const SET_PROGRAM = 'SET_PROGRAM';
+export const SET_NAME = 'SET_NAME';
+export const SET_LEVELS = 'SET_LEVELS';
 export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 export const SET_REOPEN = 'SET_REOPEN';
 export const SET_ALLOW = 'SET_ALLOW';
@@ -24,6 +27,9 @@ export const SET_DENY = 'SET_DENY';
 export const SET_REMAND = 'SET_REMAND';
 export const SET_DISMISS = 'SET_DISMISS';
 export const SET_VHA = 'SET_VHA';
+export const ADD_ISSUE = 'ADD_ISSUE';
+export const DELETE_ISSUE = 'DELETE_ISSUE';
+export const TOGGLE_ISSUE_DELETE_MODAL = 'TOGGLE_ISSUE_DELETE_MODAL';
 
 export const SET_CONTENTIONS = 'SET_CONTENTIONS';
 export const SET_MILITARY_SERVICE = 'SET_MILITARY_SERVICE';
@@ -31,5 +37,6 @@ export const SET_EVIDENCE = 'SET_EVIDENCE';
 export const SET_COMMENTS_FOR_ATTORNEY = 'SET_COMMENTS_FOR_ATTORNEY';
 
 export const TOGGLE_SAVING = 'TOGGLE_SAVING';
+export const SET_SAVE_FAILED = 'SET_SAVE_FAILED';
 
 export const SET_EDITED_FLAG_TO_FALSE = 'SET_EDITED_FLAG_TO_FALSE';

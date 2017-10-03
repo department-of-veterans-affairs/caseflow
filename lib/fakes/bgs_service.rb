@@ -351,10 +351,12 @@ class Fakes::BGSService
       sex: "F",
       service: [{ branch_of_service: "Army",
                   entered_on_duty_date: "02132002",
-                  released_active_duty_date: "12212003" },
+                  released_active_duty_date: "12212003",
+                  char_of_svc_code: "HON" },
                 { branch_of_service: "Navy",
                   entered_on_duty_date: "07022006",
-                  released_active_duty_date: "06282008" }]
+                  released_active_duty_date: "06282008",
+                  char_of_svc_code: "UHC" }]
     }
   end
 end

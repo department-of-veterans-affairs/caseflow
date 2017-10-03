@@ -72,7 +72,8 @@ Rails.application.routes.draw do
 
   namespace :hearings do
     resources :dockets, only: [:index, :show]
-    resources :worksheets, only: [:update, :show]
+    resources :worksheets, only: [:update, :show], param: :hearing_id
+    resources :appeals, only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
@@ -85,7 +86,8 @@ Rails.application.routes.draw do
     get "establish-claim", to: "establish_claims#show"
   end
 
-  resources :offices, only: :index
+  resources :intake, only: :index
+  match '/intake/:any' => 'intake#index', via: [:get]
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

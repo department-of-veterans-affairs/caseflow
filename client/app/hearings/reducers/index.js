@@ -29,18 +29,25 @@ export const newHearingState = (state, action, spec) => {
 
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
 
   return update(state, {
     worksheet: {
       streams: {
-        [action.payload.appealId]: {
-          issues: {
-            [action.payload.issueId]: spec
+        [action.payload.appealKey]: {
+          worksheet_issues: {
+            [action.payload.issueKey]: spec
           }
         }
       }
     }
   });
+};
+
+export const newHearingWorksheetState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
+
+  return update(state, { worksheet: spec });
 };
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
@@ -61,13 +68,27 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_REPNAME:
-    return update(state, {
-      worksheet: { repName: { $set: action.payload.repName } }
-    });
+    return newHearingWorksheetState(state, action, { repName: { $set: action.payload.repName } });
 
   case Constants.SET_WITNESS:
-    return update(state, {
-      worksheet: { witness: { $set: action.payload.witness } }
+    return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
+
+  case Constants.SET_CONTENTIONS:
+    return newHearingWorksheetState(state, action, { contentions: { $set: action.payload.contentions } });
+
+  case Constants.SET_MILITARY_SERVICE:
+    return newHearingWorksheetState(state, action, {
+      military_service: { $set: action.payload.militaryService }
+    });
+
+  case Constants.SET_EVIDENCE:
+    return newHearingWorksheetState(state, action, {
+      evidence: { $set: action.payload.evidence }
+    });
+
+  case Constants.SET_COMMENTS_FOR_ATTORNEY:
+    return newHearingWorksheetState(state, action, {
+      comments_for_attorney: { $set: action.payload.commentsForAttorney }
     });
 
   case Constants.SET_NOTES:
@@ -83,13 +104,22 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingState(state, action, { aod: { $set: action.payload.aod } });
 
   case Constants.SET_ADD_ON:
-    return newHearingState(state, action, { addon: { $set: action.payload.addOn } });
+    return newHearingState(state, action, { add_on: { $set: action.payload.addOn } });
 
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
   case Constants.SET_DESCRIPTION:
     return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
+
+  case Constants.SET_PROGRAM:
+    return newHearingIssueState(state, action, { program: { $set: action.payload.program } });
+
+  case Constants.SET_NAME:
+    return newHearingIssueState(state, action, { name: { $set: action.payload.name } });
+
+  case Constants.SET_LEVELS:
+    return newHearingIssueState(state, action, { levels: { $set: action.payload.levels } });
 
   case Constants.SET_REOPEN:
     return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
@@ -109,29 +139,44 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_VHA:
     return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
 
-  case Constants.SET_CONTENTIONS:
+  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
+    return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });
+
+  case Constants.ADD_ISSUE:
     return update(state, {
-      worksheet: { contentions: { $set: action.payload.contentions } }
+      worksheet: {
+        streams: {
+          [action.payload.appealKey]: {
+            worksheet_issues: { $push: [{ from_vacols: false,
+              edited: true }] }
+          }
+        }
+      }
     });
 
-  case Constants.SET_MILITARY_SERVICE:
+  case Constants.DELETE_ISSUE:
     return update(state, {
-      worksheet: { military_service: { $set: action.payload.militaryService } }
-    });
-
-  case Constants.SET_EVIDENCE:
-    return update(state, {
-      worksheet: { evidence: { $set: action.payload.evidence } }
-    });
-
-  case Constants.SET_COMMENTS_FOR_ATTORNEY:
-    return update(state, {
-      worksheet: { comments_for_attorney: { $set: action.payload.commentsForAttorney } }
+      worksheet: {
+        streams: {
+          [action.payload.appealKey]: {
+            worksheet_issues: {
+              $apply: (worksheetIssues) => worksheetIssues.filter((issue, key) => {
+                return key !== action.payload.issueKey;
+              })
+            }
+          }
+        }
+      }
     });
 
   case Constants.TOGGLE_SAVING:
     return update(state, {
       isSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.SET_SAVE_FAILED:
+    return update(state, {
+      saveFailed: { $set: action.payload.saveFailed }
     });
 
   case Constants.SET_EDITED_FLAG_TO_FALSE:

@@ -58,7 +58,7 @@ export default class StyleGuideFooter extends React.Component {
     “Built with ♡ by the Digital Service at the VA.” and a “Send Feedback” link.</p>
 
     <p>
-     Conveniently, if a developer hover’s over the word
+     Conveniently, if a developer hovers over the word
      “Built” they’ll see a tooltip showing the build date
      of the app that they are viewing.</p>
 

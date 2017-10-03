@@ -189,6 +189,8 @@ class ApplicationController < ApplicationBaseController
                 "Caseflow Certification"
               elsif request.original_fullpath.include? "reader"
                 "Caseflow Reader"
+              elsif request.original_fullpath.include? "hearings"
+                "Caseflow Hearing Prep"
               else
                 # default to just plain Caseflow.
                 "Caseflow"
@@ -199,6 +201,11 @@ class ApplicationController < ApplicationBaseController
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
   helper_method :feedback_url
+
+  def build_date
+    return Rails.application.config.build_version[:date] if Rails.application.config.build_version
+  end
+  helper_method :build_date
 
   class << self
     def dependencies_faked?

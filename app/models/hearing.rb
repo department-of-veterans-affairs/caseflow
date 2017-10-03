@@ -9,8 +9,6 @@ class Hearing < ActiveRecord::Base
 
   belongs_to :appeal
   belongs_to :user # the judge
-  has_many :worksheet_issues, foreign_key: :appeal_id, primary_key: :appeal_id
-  accepts_nested_attributes_for :worksheet_issues
 
   def venue
     self.class.venues[venue_key]
@@ -35,16 +33,30 @@ class Hearing < ActiveRecord::Base
     end
   end
 
+  def vacols_attributes
+    {
+      date: date,
+      type: type,
+      venue_key: venue_key,
+      vacols_record: vacols_record,
+      disposition: disposition,
+      aod: aod,
+      hold_open: hold_open,
+      transcript_requested: transcript_requested,
+      notes: notes,
+      add_on: add_on,
+      representative_name: representative_name,
+      regional_office_key: regional_office_key,
+      master_record: master_record
+    }
+  end
+
   def request_type
     type != :central_office ? type.to_s.capitalize : "CO"
   end
 
   cache_attribute :cached_number_of_documents do
     number_of_documents
-  end
-
-  cache_attribute :cached_number_of_documents_after_certification do
-    number_of_documents_after_certification
   end
 
   delegate \
@@ -76,6 +88,7 @@ class Hearing < ActiveRecord::Base
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,
+        :representative,
         :representative_name,
         :veteran_age,
         :veteran_name,
@@ -91,12 +104,11 @@ class Hearing < ActiveRecord::Base
   def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
+                :appeal_vacols_id,
                 :representative,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :cached_number_of_documents_after_certification,
-                :military_service],
-      include: :worksheet_issues
+                :military_service]
     ).merge(to_hash)
   end
 
@@ -108,16 +120,13 @@ class Hearing < ActiveRecord::Base
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update_attributes(military_service: appeal.veteran.periods_of_service.join("\n")) if persisted? && veteran
+      update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
   end
 
-  # If we do not yet have the worksheet issues saved in Caseflow's DB, then
-  # we want to fetch it from VACOLS, save it to the DB, then return it
-  def worksheet_issues
-    appeal.issues.each { |i| WorksheetIssue.create_from_issue(appeal, i) } if appeal && super.empty?
-    super
+  def appeal_vacols_id
+    appeal.try(:vacols_id)
   end
 
   class << self

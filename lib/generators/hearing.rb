@@ -10,13 +10,12 @@ class Generators::Hearing
         venue_key: "RO13",
         vacols_id: vacols_id,
         vacols_record: { vacols_id: vacols_id },
-        witness: "Jane Doe attended",
-        contentions: "The veteran believes their knee is hurt",
-        evidence: "Medical exam occurred on 10/10/2008",
-        military_service: "Army 02/02/2003 - 05/07/2009 \n Navy 08/23/2011 - 09/12/2014",
-        comments_for_attorney: "Look for knee-related medical records",
+        witness: "",
+        contentions: "",
+        evidence: "",
+        comments_for_attorney: "",
         regional_office_key: VACOLS::RegionalOffice::CITIES.keys.sample,
-        master_record: [true, false].sample
+        master_record: false
       }
     end
 
@@ -50,12 +49,7 @@ class Generators::Hearing
     end
 
     def documents
-      documents = []
-      types = %w(NOD SOC SSOC)
-      rand(5).times do
-        documents << Generators::Document.build(type: types.sample, received_at: 4.days.ago)
-      end
-      documents
+      Fakes::AppealRepository.static_reader_documents
     end
 
     def default_appeal_id(hearing)
@@ -63,6 +57,7 @@ class Generators::Hearing
         Generators::Appeal.build(
           vacols_record: { template: :pending_hearing },
           vacols_id: hearing.appeal.vacols_id,
+          vbms_id: hearing.appeal.vbms_id,
           documents: documents
         )
         return hearing.appeal_id

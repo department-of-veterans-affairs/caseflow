@@ -68,11 +68,11 @@ describe('PdfUI', () => {
     context('.onPageChange', () => {
       it('updates the state', () => {
         let currentPage = 2;
-        let numPages = 4;
+        let fitToScreenZoom = 3;
 
-        wrapper.instance().onPageChange(currentPage, numPages);
+        wrapper.instance().onPageChange(currentPage, fitToScreenZoom);
         expect(wrapper.state('currentPage')).to.equal(currentPage);
-        expect(wrapper.state('numPages')).to.equal(numPages);
+        expect(wrapper.state('fitToScreenZoom')).to.equal(fitToScreenZoom);
       });
     });
 
@@ -112,18 +112,15 @@ describe('PdfUI', () => {
       });
 
       context('backToClaimsFolder', () => {
-        it('calls the onShowList and stopPlacingAnnotation props', () => {
-          const mockOnShowListClick = sinon.spy();
+        it('calls the stopPlacingAnnotation props', () => {
           const mockStopPlacingAnnotationClick = sinon.spy();
 
           wrapper.setProps({
             showClaimsFolderNavigation: true,
-            onShowList: mockOnShowListClick,
             stopPlacingAnnotation: mockStopPlacingAnnotationClick
           });
           wrapper.find({ name: 'backToClaimsFolder' }).simulate('click');
 
-          expect(mockOnShowListClick.calledOnce).to.be.true;
           expect(mockStopPlacingAnnotationClick.calledOnce).to.be.true;
         });
       });

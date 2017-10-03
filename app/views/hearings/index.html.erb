@@ -2,8 +2,14 @@
   page_title(@hearing_page_title || 'Upcoming Hearing Days')
 end %>
 
+<% content_for :full_page_content do %>
 <%= react_component("Hearings", props: {
   hearings: {
-    veteran_law_judge: current_user.to_hash
+    veteran_law_judge: current_user.to_hash,
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+    buildDate: build_date
   }
 }) %>
+<% end %>

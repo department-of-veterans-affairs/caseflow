@@ -27,6 +27,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'active_model_serializers', '~> 0.10.0'
 
+# soft delete gem
+gem "paranoia", "~> 2.2"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -42,7 +45,7 @@ gem 'wannabe_bool'
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '0fd06422252e427f501cbaa42da80a1de55875a6'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: 'a9041f859632ccd32cf8e3a22554505d6baa4276'
 
 # PDF Tools
 gem 'pdf-forms'
@@ -63,7 +66,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "f561599c8b68806ae838530b2fc02d481157b02a"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dd26fbff2179d400b4f19f91084835686276297f"
 
 gem 'redis-rails'
 
@@ -73,7 +76,7 @@ gem "sidekiq-cron", "~> 0.4.0"
 # remove when upgrading to rails 5
 gem 'where-or'
 
-gem 'prometheus-client'
+gem 'prometheus-client', "~> 0.6"
 
 gem 'request_store'
 

@@ -11,6 +11,8 @@ $bookmark-white-outline: #5b616b;
 $bookmark-pink: #f772e7;
 $bookmark-green: #3fcd65;
 $bookmark-yellow: #efdf1a;
+$caseflow-text-select-without-transparency: #6392ff;
+$caseflow-text-select: transparentize($caseflow-text-select-without-transparency, 0.7);
 
 @mixin focus {
   &:focus {
@@ -94,8 +96,8 @@ $bookmark-yellow: #efdf1a;
   overflow-y: scroll;
   overflow-x: visible;
   text-align: center;
-  float: left;
   z-index: 5;
+  will-change: transform;
 
   @include focus;
 }
@@ -337,7 +339,7 @@ svg[aria-hidden=true],
 }
 
 .cf-pdf-spaced-buttons {
-  margin: 0 25px;
+  margin: 0 18px;
 }
 
 .cf-pdf-edit-comment {
@@ -619,8 +621,7 @@ svg[aria-hidden=true],
 }
 
 [type="button"].cf-pdf-download-icon {
-  margin-left: 40px;
-  margin-right: 23px;
+  margin-left: 0;
 }
 
 // scss-lint:disable QualifyingElement
@@ -679,6 +680,28 @@ input[type="search"].cf-search-input-with-close {
       fill: $color-gray-dark;
     }
   }
+}
+
+// This is override some bad styling in PDFJS. Note selection is not
+// supported in current CSS standards. But with PDFJS using it, we have
+// to override it. When opacity isn't 1, then the highlighting for find
+// is way too light.
+.textLayer {
+  opacity: 1;
+
+  ::selection {
+    background: $caseflow-text-select;
+  }
+
+  // scss-lint:disable VendorPrefix
+  ::-moz-selection {
+    background: $caseflow-text-select;
+  }
+  // scss-lint:enable VendorPrefix
+}
+
+.canvasWrapper {
+  background: $color-black;
 }
 
 .cf-modal-scroll {
