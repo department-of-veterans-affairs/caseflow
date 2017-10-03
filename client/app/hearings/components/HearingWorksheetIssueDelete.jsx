@@ -27,7 +27,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
       issueKey
     } = this.props;
 
-    const issue = this.props.worksheet.streams[appealKey].worksheet_issues[issueKey];
+    const issue = this.props.worksheet.appeals_ready_for_hearing[appealKey].worksheet_issues[issueKey];
 
     return <div>
       <div
