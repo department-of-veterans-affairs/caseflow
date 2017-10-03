@@ -16,7 +16,6 @@ describe HearingDocket do
     HearingDocket.new(
       date: 7.days.from_now,
       type: :video,
-      slots: 9,
       regional_office_name: hearing.regional_office_name,
       hearings: [
         hearing
@@ -45,7 +44,7 @@ describe HearingDocket do
       expect(subject[:hearings_array].length).to eq(1)
       expect(subject[:type]).to eq(:video)
       expect(subject[:regional_office_name]).to eq(hearing.regional_office_name)
-      expect(subject[:slots]).to eq(9)
+      expect(subject[:slots].class).to eq(Fixnum)
     end
   end
 

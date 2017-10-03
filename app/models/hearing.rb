@@ -3,7 +3,7 @@ class Hearing < ActiveRecord::Base
   include AssociatedVacolsModel
   include RegionalOfficeConcern
 
-  vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition, :slots,
+  vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
                        :aod, :hold_open, :transcript_requested, :notes, :add_on,
                        :representative_name, :regional_office_key, :master_record
 
@@ -47,7 +47,6 @@ class Hearing < ActiveRecord::Base
       add_on: add_on,
       representative_name: representative_name,
       regional_office_key: regional_office_key,
-      slots: slots,
       master_record: master_record
     }
   end
@@ -86,7 +85,6 @@ class Hearing < ActiveRecord::Base
         :notes,
         :add_on,
         :master_record,
-        :slots,
         :appellant_last_first_mi,
         :appellant_city,
         :appellant_state,

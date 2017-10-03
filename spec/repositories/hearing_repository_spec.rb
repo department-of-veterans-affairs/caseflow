@@ -1,4 +1,9 @@
 describe HearingRepository do
+  before do
+    Timecop.freeze(Time.utc(2017, 2, 2))
+    Time.zone = "America/Chicago"
+  end
+
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
@@ -30,6 +35,17 @@ describe HearingRepository do
       expect(subject.hold_open).to eq 90
       expect(subject.notes).to eq "test notes"
       expect(subject.representative_name).to eq "test rep name"
+    end
+  end
+
+  context ".slots_based_on_type" do
+    subject { HearingRepository.slots_based_on_type(staff: staff, type: type, date: date) }
+
+    context "when it is a central office" do
+      let(:staff) { OpenStruct.new }
+      let(:type) { :central_office }
+      let(:date) { Time.now }
+      it { is_expected.to eq 11 }
     end
   end
 

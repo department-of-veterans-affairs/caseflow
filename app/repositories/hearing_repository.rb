@@ -23,7 +23,8 @@ class HearingRepository
     end
 
     def number_of_slots(regional_office_key:, type:, date:)
-      VACOLS::Staff.number_of_slots(ro: regional_office_key, type: type, date: date)
+      record = VACOLS::Staff.find_by(stafkey: regional_office_key)
+      slots_based_on_type(staff: record, type: type, date: date) if record
     end
 
     def appeals_ready_for_hearing(vbms_id)
@@ -34,6 +35,20 @@ class HearingRepository
     def set_vacols_values(hearing, vacols_record)
       hearing.assign_from_vacols(vacols_attributes(vacols_record))
       hearing
+    end
+
+    # STAFF.STC2 is the Travel Board limit for Mon and Fri
+    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
+    # STAFF.STC4 is the Video limit
+    def slots_based_on_type(staff:, type:, date:)
+      case type
+      when :central_office
+        11
+      when :video
+        staff.stc4
+      when :travel
+        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
+      end
     end
 
     # Fields such as 'type', 'regional_office_key' are stored in different places
@@ -76,11 +91,6 @@ class HearingRepository
         notes: vacols_record.notes1,
         master_record: vacols_record.master_record?
       }.merge(values_based_on_type(vacols_record))
-
-      attrs.merge(slots: number_of_slots(
-        regional_office_key: attrs[:regional_office_key],
-        type: attrs[:type],
-        date: attrs[:date]))
     end
   end
 end

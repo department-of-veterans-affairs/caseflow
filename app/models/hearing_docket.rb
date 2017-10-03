@@ -3,19 +3,18 @@ class HearingDocket
   include ActiveModel::Model
   include ActiveModel::Serializers::JSON
 
-  attr_accessor :date, :type, :regional_office_name, :hearings, :user, :slots
+  attr_accessor :date, :type, :regional_office_name, :hearings, :user, :regional_office_key
 
   def to_hash
     serializable_hash(
-      methods: [:regional_office_name, :hearings_array]
+      methods: [:regional_office_name, :hearings_array, :slots]
     )
   end
 
   def attributes
     {
       date: date,
-      type: type,
-      slots: slots
+      type: type
     }
   end
 
@@ -23,7 +22,21 @@ class HearingDocket
     hearings.map(&:to_hash)
   end
 
+  def slots
+    HearingDocket.repository.number_of_slots(
+      regional_office_key: regional_office_key,
+      type: type,
+      date: date
+    )
+  end
+
   class << self
+    attr_writer :repository
+
+    def repository
+      @repository ||= HearingRepository
+    end
+
     def from_hearings(hearings)
       new(
         date: hearings.sort_by(&:date).first.date,
@@ -31,7 +44,7 @@ class HearingDocket
         hearings: hearings,
         user: hearings.first.user,
         regional_office_name: hearings.first.regional_office_name,
-        slots: hearings.first.slots
+        regional_office_key: hearings.first.regional_office_key
       )
     end
   end
