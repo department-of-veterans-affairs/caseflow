@@ -452,21 +452,19 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         ]
       end
 
-      ensure_stable do
-        scenario "Review page lets users choose which document to use", focus: true do
-          visit "/dispatch/establish-claim"
-          click_on "Establish next claim"
+      scenario "Review page lets users choose which document to use" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish next claim"
 
-          expect(page).to have_content("Multiple Decision Documents")
+        expect(page).to have_content("Multiple Decision Documents")
 
-          # Text on the tab
-          expect(page).to have_content("Decision 1 (")
-          safe_click("#main-tab-1")
+        # Text on the tab
+        expect(page).to have_content("Decision 1 (")
+        safe_click("#main-tab-1")
 
-          safe_click("#button-Route-claim-for-Decision-2")
+        safe_click("#button-Route-claim-for-Decision-2")
 
-          expect(page).to have_content("Benefit Type")
-        end
+        expect(page).to have_content("Benefit Type")
       end
 
       scenario "the EP creation page has a link back to decision review" do
@@ -674,8 +672,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_css(".usa-button-disabled")
       end
 
-    ensure_stable do
-      scenario "Establish a new claim with special issues", focus: true do
+      scenario "Establish a new claim with special issues" do
         visit "/dispatch/establish-claim"
 
         click_on "Establish next claim"
@@ -749,7 +746,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
       end
-    end
 
       scenario "Establish a new claim with special issues with no EP" do
         task.assign!(:assigned, current_user)
