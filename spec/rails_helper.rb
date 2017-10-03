@@ -208,6 +208,7 @@ def be_titled(title)
 end
 
 def hang
+  puts 'Hanging the test indefinitely so you can debug in the browser.'
   sleep(inspection_timeout=10000)
 end
 
@@ -225,11 +226,15 @@ def safe_click(selector)
   page.first(selector).click
 end
 
+def click_label(label_for)
+  safe_click("label[for='#{label_for}']")
+end
+
 def scroll_element_in_to_view(selector)
   expect do
     page.evaluate_script <<-EOS
       function() {
-        var elem = document.querySelector('#{selector}');
+        var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
         if (!elem) {
           return false;
         }
