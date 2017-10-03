@@ -41,6 +41,48 @@ describe HearingRepository do
     end
   end
 
+  context ".hearings_for" do
+    subject { HearingRepository.hearings_for(records) }
+
+    let(:record1) do
+      OpenStruct.new(
+        hearing_type: "T",
+        master_record_type: nil,
+        bfregoff: "RO36",
+        hearing_pkseq: "1234",
+        folder_nr: "5678",
+        hearing_date: Time.zone.now,
+      )
+    end
+
+    let(:record2) do
+      OpenStruct.new(
+        folder_nr: "VIDEO RO15",
+        hearing_date: Time.zone.now,
+        master_record_type: :video
+      )
+    end
+
+    let(:record3) do
+      OpenStruct.new(
+        tbro: "RO19",
+        tbstdate: Time.zone.now,
+        tbenddate: Time.zone.now,
+        master_record_type: :travel_board
+      )
+    end
+
+    let(:records) { [record1, record2, record3] }
+
+    it "should create hearing records" do
+      expect(subject.size).to eq 3
+      expect(subject.first.vacols_id).to eq "1234"
+      expect(subject.first.master_record).to eq false
+      expect(subject.second.master_record).to eq true
+      expect(subject.third.master_record).to eq true
+    end
+  end
+
   context ".slots_based_on_type" do
     subject { HearingRepository.slots_based_on_type(staff: staff, type: type, date: date) }
 
@@ -71,46 +113,6 @@ describe HearingRepository do
         let(:date) { Time.zone.now }
         it { is_expected.to eq 9 }
       end
-    end
-  end
-
-  context ".hearing_datetime" do
-    subject { HearingRepository.hearing_datetime(Time.zone.now, regional_office_key) }
-
-    context "uses regional office timezone to set the zone" do
-      let(:regional_office_key) { "RO58" }
-
-      it "calculates the date and hour correctly" do
-        expect(subject.day).to eq 3
-        expect(subject.hour).to eq 7
-        expect(subject.zone).to eq "EDT"
-      end
-    end
-  end
-
-  context ".values_based_on_type" do
-    subject { HearingRepository.values_based_on_type(vacols_record) }
-
-    context "when a hearing is a video master record" do
-      let(:vacols_record) do
-        OpenStruct.new(
-          hearing_type: "V",
-          folder_nr: "VIDEO RO15",
-          master_record_type: :video
-        )
-      end
-      it { is_expected.to eq(type: :video, regional_office_key: "RO15", date: nil) }
-    end
-
-    context "when a hearing is not a master record" do
-      let(:vacols_record) do
-        OpenStruct.new(
-          hearing_type: "T",
-          master_record_type: nil,
-          bfregoff: "RO36"
-        )
-      end
-      it { is_expected.to eq(type: :travel, regional_office_key: "RO36", date: nil) }
     end
   end
 end

@@ -33,6 +33,20 @@ module HearingMapper
       end
     end
 
+    # The hearing datetime reflect the timezone of the local RO,
+    # So we append the timezone based on the regional office location
+    # And then convert the date to Eastern Time
+    def normalize_datetime(datetime, regional_office_key)
+      # asctime - returns a canonical string representation of time
+      datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
+    end
+
+    def timezone(regional_office_key)
+      regional_office = VACOLS::RegionalOffice::CITIES[regional_office_key] ||
+                        VACOLS::RegionalOffice::SATELLITE_OFFICES[regional_office_key]
+      regional_office[:timezone]
+    end
+
     private
 
     def code_based_on_hearing_type(type)
