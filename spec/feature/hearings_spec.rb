@@ -126,10 +126,10 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
-      expect(page).to_not have_field("66-issue-program")
-      expect(page).to_not have_field("66-issue-name")
-      expect(page).to_not have_field("66-issue-levels")
-      expect(page).to have_field("66-issue-description")
+      expect(page).to_not have_field("1-issue-program")
+      expect(page).to_not have_field("1-issue-name")
+      expect(page).to_not have_field("1-issue-levels")
+      expect(page).to have_field("1-issue-description")
       click_on "button-addIssue-0"
       # These IDs will be updated when we save edits to the backend
       expect(page).to have_field("undefined-issue-program")
@@ -140,9 +140,15 @@ RSpec.feature "Hearings" do
 
     scenario "Can click from hearing worksheet to reader" do
       visit "/hearings/1/worksheet"
+      link = find("#review-efolder")
+      link_href = link[:href]
       expect(page).to have_content("Review eFolder")
       click_on "Review eFolder"
-      expect(page).to have_content("You've viewed 0 out of 4 documents")
+      new_window = windows.last
+      page.within_window new_window do
+        visit link_href
+        expect(page).to have_content("You've viewed 0 out of 4 documents")
+      end
     end
   end
 end
