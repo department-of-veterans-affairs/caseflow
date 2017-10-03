@@ -14,7 +14,7 @@ env:
     - PATH=$HOME/.local/bin:$PATH
 
 before_install:
-  - ./ensure-env-vars-exist.bash
+  - ./ci-bin/ensure-env-vars-exist.bash
   - pip install --user awscli
   - mkdir ./coverage
   - mkdir travis-node
