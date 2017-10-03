@@ -1,6 +1,6 @@
 describe HearingRepository do
   before do
-    Timecop.freeze(Time.utc(2017, 2, 2))
+    Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"
   end
 
@@ -46,6 +46,28 @@ describe HearingRepository do
       let(:type) { :central_office }
       let(:date) { Time.now }
       it { is_expected.to eq 11 }
+    end
+
+    context "when it is a video, use staff.stc4" do
+      let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
+      let(:type) { :video }
+      let(:date) { Time.now }
+      it { is_expected.to eq 12 }
+    end
+
+    context "when it is a travel board" do
+      let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
+      let(:type) { :travel }
+
+      context "when it is a Monday, use staff.stc2" do
+        let(:date) { 1.day.ago }
+        it { is_expected.to eq 8 }
+      end
+
+      context "when it is a Tuesday, use staff.stc3" do
+        let(:date) { Time.now }
+        it { is_expected.to eq 9 }
+      end
     end
   end
 
