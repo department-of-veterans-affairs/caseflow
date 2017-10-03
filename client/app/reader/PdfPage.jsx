@@ -44,6 +44,8 @@ export class PdfPage extends React.PureComponent {
     this.previousShouldDraw = false;
     this.isUnmounting = false;
     this.isPageSetup = false;
+
+    console.log('props', props);
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -57,6 +59,7 @@ export class PdfPage extends React.PureComponent {
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
   drawPage = () => {
+    console.log('inside drawPage!');
     if (this.isDrawing) {
       return Promise.resolve();
     }
@@ -130,7 +133,8 @@ export class PdfPage extends React.PureComponent {
 
   // This function gets the square of the distance to the center of the scroll window.
   // We don't calculate linear distance since taking square roots is expensive.
-  getSquaredDistanceToCenter = (props) => {
+  getSquaredDistanceToCenter = (scrollWindowCenter) => {
+    console.log('pageContainer', this.pageContainer);
     if (!this.pageContainer) {
       return Number.MAX_SAFE_INTEGER;
     }
@@ -142,27 +146,29 @@ export class PdfPage extends React.PureComponent {
       y: (boundingRect.top + boundingRect.bottom) / 2
     };
 
-    return (square(pageCenter.x - props.scrollWindowCenter.x) +
-      square(pageCenter.y - props.scrollWindowCenter.y));
+    return (square(pageCenter.x - scrollWindowCenter.x) +
+      square(pageCenter.y - scrollWindowCenter.y));
   }
 
   // This function determines whether or not it should draw the page based on its distance
   // from the center of the scroll window, or if it's not visible, then if it's page index
   // is less than NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER
-  shouldDrawPage = (props) => {
-    if (!props.isVisible) {
-      if (props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
+  shouldDrawPage = ({ scrollWindowCenter, isVisible, pageIndex }) => {
+    if (!isVisible) {
+      if (pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
         return true;
       }
 
       return false;
     }
 
-    return this.getSquaredDistanceToCenter(props) < MAX_SQUARED_DISTANCE;
+    return this.getSquaredDistanceToCenter(scrollWindowCenter) < MAX_SQUARED_DISTANCE;
   }
 
   componentDidUpdate = (prevProps) => {
+    console.log('didupdate');
     const shouldDraw = this.shouldDrawPage(this.props);
+    console.log('shouldDraw', shouldDraw);
 
     // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
     // the page was just loaded.
@@ -200,23 +206,26 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
+    console.log('setup page')
     if (this.isPageSetup) {
       return;
     }
 
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
+      console.log('not destroyed');
       // We mark the page as setup here. If we error on the promise, then we mark the page
       // as not setup. On every componentDidUpdate we call setUpPage again. This way if
       // we failed to setup the page here, we'll make our best attempt to update it in the future.
       this.isPageSetup = true;
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
+        console.log('inside get page');
         const setUpPageWithText = (text) => {
           const pageData = {
             dimensions: this.props.pageDimensions || this.getDimensions(page),
             page,
             container: this.pageContainer
           };
-
+          console.log({...pageData, text});
           if (!this.isUnmounting) {
             this.props.setUpPdfPage(
               this.props.file,
@@ -239,7 +248,7 @@ export class PdfPage extends React.PureComponent {
           });
         }
       }).
-      catch(() => {
+      catch((error) => {
         this.isPageSetup = false;
       });
     }

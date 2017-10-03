@@ -29,6 +29,7 @@ module.exports = function(config) {
 
     webpack: _.merge({
       watch: true,
+      devtool: 'inline-source-map',
       externals: {
         cheerio: 'window',
         'react/addons': true,

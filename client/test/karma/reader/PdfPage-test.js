@@ -5,9 +5,13 @@ import sinon from 'sinon';
 import XhrStub from '../../helpers/XhrStub';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
-import { PdfPage } from '../../../app/reader/PdfPage';
+import { PdfPage, getSquaredDistanceToCenter, shouldDrawPage } from '../../../app/reader/PdfPage';
 
-describe.only('PdfPage', () => {
+describe('PdfPage', () => {
+  // describe('getSquaredDistanceToCenter', () => {
+  //   it()
+  // });
+
   const getDocument = async () => {
     const data = atob(
       'JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog' +
@@ -24,18 +28,47 @@ describe.only('PdfPage', () => {
       'MDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9v' +
       'dCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G');
 
-    const pdfDocument = await PDFJS.getDocument({ data });
-    return pdfDocument;
+    return await PDFJS.getDocument({ data });
   }
 
-  const getContext = () => {
+  const FILE_NAME = 'test';
+  const PAGE_INDEX = 0;
+
+  const getContext = async (props) => {
+    const pdfDocument = await getDocument();
 
     return shallow(<PdfPage
-      pdfDocument={getDocument()}
+      pdfDocument={pdfDocument}
+      pageIndex={PAGE_INDEX}
+      file={FILE_NAME}
+      {...props}
     />)
   }
 
-  it('displays children when the welcome page is loaded', () => {
-    expect(true).to.eq(true);
+  const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  describe('When page is visible', async () => {
+    it('setUpPdfPage is called', async () => {
+      const setUpPdfPage = sinon.spy()
+      const pdfPage = await getContext({
+        setUpPdfPage,
+        isVisible: true
+      });
+
+      await sleep(0);
+      // TODO: Put more in matcher
+      expect(setUpPdfPage.withArgs(FILE_NAME, PAGE_INDEX).calledOnce).to.equal(true);
+    });
+
+    it.only('drawPage is called', async () => {
+      const pdfPage = await getContext({
+        isVisible: true
+      });
+      pdfPage.setProps({
+        page: 'test'
+      });
+    })
   });
 });

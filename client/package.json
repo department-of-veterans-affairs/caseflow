@@ -12,7 +12,7 @@
     "test": "npm run test:karma && npm run test:legacy",
     "test:legacy": "NODE_ENV=test mocha --recursive test/node/setup.js test/node/* --compilers jsx:babel-core/register js:babel-core/register",
     "test:karma": "NODE_ENV=test karma start",
-    "test:karma:watch": "npm run test:karma -- --no-single-run",
+    "test:karma:watch": "npm run test:karma -- --no-single-run --debug",
     "test:legacy:watch": "npm run test:legacy -- --watch",
     "lint": "eslint . --ext .jsx --ext .js --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
@@ -75,7 +75,8 @@
   "devDependencies": {
     "babel-eslint": "^6.1.2",
     "chai": "^3.5.0",
-    "enzyme": "^2.6.0",
+    "enzyme": "^3.0.0",
+    "enzyme-adapter-react-15": "^1.0.0",
     "eslint": "^3.11.1",
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-react": "^6.7.1",
