@@ -20,7 +20,7 @@ before_install:
   # The version we specify here must be in sync with .nvmrc. Travis claims that it can read directly from
   # .nvmrc, but the method specified in the docs do not work.
   - nvm install v6.11.3
-  - npm install -g npm
+  - npm install -g npm@5.4.2
   - node -v
   - npm -v
   - ./ci-bin/retry.bash sudo apt-get update
