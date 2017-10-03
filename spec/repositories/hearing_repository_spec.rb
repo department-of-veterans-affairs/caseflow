@@ -44,14 +44,14 @@ describe HearingRepository do
     context "when it is a central office" do
       let(:staff) { OpenStruct.new }
       let(:type) { :central_office }
-      let(:date) { Time.now }
+      let(:date) { Time.zone.now }
       it { is_expected.to eq 11 }
     end
 
     context "when it is a video, use staff.stc4" do
       let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
       let(:type) { :video }
-      let(:date) { Time.now }
+      let(:date) { Time.zone.now }
       it { is_expected.to eq 12 }
     end
 
@@ -65,7 +65,7 @@ describe HearingRepository do
       end
 
       context "when it is a Tuesday, use staff.stc3" do
-        let(:date) { Time.now }
+        let(:date) { Time.zone.now }
         it { is_expected.to eq 9 }
       end
     end

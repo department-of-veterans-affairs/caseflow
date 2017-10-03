@@ -78,7 +78,7 @@ class HearingRepository
     # :nocov:
 
     def vacols_attributes(vacols_record)
-      attrs = {
+      {
         vacols_record: vacols_record,
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
