@@ -290,10 +290,9 @@ class AppealRepository
         appeal = appeals_hash[assignment.vacols_id]
         appeal.attributes = assignment.attributes
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
-
+        
         # fetching Issue objects using the issue hash
         appeal.issues = case_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
-        appeal.save
         appeal
       end
     end
