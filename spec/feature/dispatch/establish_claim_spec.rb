@@ -452,20 +452,21 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         ]
       end
 
-      scenario "Review page lets users choose which document to use" do
-        visit "/dispatch/establish-claim"
-        click_on "Establish next claim"
+      ensure_stable do
+        scenario "Review page lets users choose which document to use", focus: true do
+          visit "/dispatch/establish-claim"
+          click_on "Establish next claim"
 
-        expect(page).to have_content("Multiple Decision Documents")
+          expect(page).to have_content("Multiple Decision Documents")
 
-        # Text on the tab
-        expect(page).to have_content("Decision 1 (")
-        find("#main-tab-1").click
+          # Text on the tab
+          expect(page).to have_content("Decision 1 (")
+          safe_click("#main-tab-1")
 
-        expect(page).to have_content("Route claim for Decision 2")
-        click_on "Route claim for Decision 2"
+          safe_click("#button-Route-claim-for-Decision-2")
 
-        expect(page).to have_content("Benefit Type")
+          expect(page).to have_content("Benefit Type")
+        end
       end
 
       scenario "the EP creation page has a link back to decision review" do
