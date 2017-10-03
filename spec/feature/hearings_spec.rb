@@ -126,10 +126,10 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
-      expect(page).to_not have_field("66-issue-program")
-      expect(page).to_not have_field("66-issue-name")
-      expect(page).to_not have_field("66-issue-levels")
-      expect(page).to have_field("66-issue-description")
+      expect(page).to_not have_field("1-issue-program")
+      expect(page).to_not have_field("1-issue-name")
+      expect(page).to_not have_field("1-issue-levels")
+      expect(page).to have_field("1-issue-description")
       click_on "button-addIssue-0"
       # These IDs will be updated when we save edits to the backend
       expect(page).to have_field("undefined-issue-program")
