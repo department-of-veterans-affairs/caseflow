@@ -81,11 +81,6 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  namespace :admin do
-    post "establish-claim", to: "establish_claims#create"
-    get "establish-claim", to: "establish_claims#show"
-  end
-
   resources :intake, only: :index
   match '/intake/:any' => 'intake#index', via: [:get]
 
