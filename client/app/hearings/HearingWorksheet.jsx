@@ -146,9 +146,10 @@ export class HearingWorksheet extends React.PureComponent {
       </div>
       <div className="cf-push-right">
         <Link
-          name="signup-1"
+          name="review-efolder"
           href={`${readerLink}?category=case_summary`}
-          button="primary">
+          button="primary"
+          target="_blank">
             Review eFolder</Link>
       </div>
     </div>;
