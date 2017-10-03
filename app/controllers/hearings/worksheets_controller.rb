@@ -10,10 +10,10 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def update
-    worksheet.update!(worksheet_params)
-    render json: { worksheet: hearing_worksheet }
-  end
+  # def update
+  #   worksheet.update!(worksheet_params)
+  #   render json: { worksheet: hearing_worksheet }
+  # end
 
   private
 
@@ -21,14 +21,6 @@ class Hearings::WorksheetsController < HearingsController
     Hearing.find(params[:hearing_id])
   end
   helper_method :worksheet
-
-  def worksheet_params
-    params.require(:worksheet)
-          .permit(worksheet_issues_attributes: [:id, :allow, :deny, :remand, :dismiss,
-                                                :reopen, :vha, :program, :name, :from_vacols,
-                                                :vacols_sequence_id, :_destroy, description: [],
-                                                                                levels: []])
-  end
 
   def hearing_worksheet # rubocop:disable Metrics/MethodLength
     {
@@ -42,9 +34,9 @@ class Hearings::WorksheetsController < HearingsController
               name: "Service connection",
               levels: "All Others, 5010 - Arthritis, due to trauma",
               description: "Left Elbow",
-              reopen: true,
-              remand: true,
-              allow: true,
+              reopen: false,
+              remand: false,
+              allow: false,
               dismiss: false,
               deny: false,
               vha: false,
@@ -56,12 +48,12 @@ class Hearings::WorksheetsController < HearingsController
               levels: "All Others, 5010 - Migrane",
               description: "Frequent headaches, caused by concussion",
               reopen: false,
-              remand: true,
-              allow: true,
+              remand: false,
+              allow: false,
               dismiss: false,
               deny: false,
-              vha: true,
-              from_vacols: false }
+              vha: false,
+              from_vacols: true }
           ]
         },
         {
@@ -74,7 +66,7 @@ class Hearings::WorksheetsController < HearingsController
               levels: "All Others, 5010 - Arthritis, due to trauma",
               description: "Right Leg",
               reopen: false,
-              remand: true,
+              remand: false,
               allow: false,
               dismiss: false,
               deny: false,
@@ -87,12 +79,12 @@ class Hearings::WorksheetsController < HearingsController
               levels: "All Others, 4664 - Lyphatic system disability",
               description: "Needs additional examination",
               reopen: false,
-              remand: true,
+              remand: false,
               allow: false,
               dismiss: false,
-              deny: true,
-              vha: true,
-              from_vacols: false }
+              deny: false,
+              vha: false,
+              from_vacols: true }
           ]
         }
       ]

@@ -18,12 +18,15 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [{ value: 30,
-  label: '30 days' },
-{ value: 60,
-  label: '60 days' },
-{ value: 90,
-  label: '90 days' }];
+const holdOptions = [
+  { value: 0,
+    label: '0 days' },
+  { value: 30,
+    label: '30 days' },
+  { value: 60,
+    label: '60 days' },
+  { value: 90,
+    label: '90 days' }];
 
 const aodOptions = [{ value: 'granted',
   label: 'Granted' },
@@ -76,7 +79,7 @@ export class DocketHearingRow extends React.PureComponent {
           <b>{hearing.appellant_last_first_mi}</b>
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
-        <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
+        <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
           <SearchableDropdown
             label="Disposition"

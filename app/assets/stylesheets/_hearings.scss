@@ -283,6 +283,15 @@ $color-hearings-saving: #777;
     right: 0;
   }
 
+  .cf-modal {
+
+    h2 {
+      border-bottom: none;
+      font-size: 1.5em;
+    }
+
+  }
+
 
   .cf-hearings-worksheet-data-cell {
     display: inline-block;
@@ -307,14 +316,6 @@ $color-hearings-saving: #777;
       width: 21%;
     }
 
-    .cf-modal {
-
-      h2 {
-        border-bottom: none;
-        font-size: 1.5em;
-      }
-
-    }
   }
 
   .cf-appeal-stream-label {

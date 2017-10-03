@@ -256,23 +256,14 @@ class AppealRepository
     end
   end
 
-  # Reverses the certification of an appeal.
-  # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
-  def self.uncertify(appeal)
-    appeal.case_record.bftbind = nil
-    appeal.case_record.bfdcertool = nil
-    appeal.case_record.bf41stat = nil
-    appeal.case_record.save!
-  end
-
   def self.aod(vacols_id)
     VACOLS::Case.aod([vacols_id])[vacols_id]
   end
 
   def self.load_user_case_assignments_from_vacols(css_id)
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
-    service: :vacols,
-    name: "active_cases_for_user") do
+                          service: :vacols,
+                          name: "active_cases_for_user") do
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
@@ -281,13 +272,16 @@ class AppealRepository
       # fetching appeals from vacols for the active cases
       appeals = Appeal.where(vacols_id: active_cases_vacols_ids)
 
-      #creating a hash of those appeals for easy lookup
-      appeals_hash = appeals.reduce({}) { |memo, appeal| memo[appeal.vacols_id] = appeal; memo }
+      # creating a hash of those appeals for easy lookup
+      appeals_hash = appeals.each_with_object({}) { |appeal, memo| memo[appeal.vacols_id] = appeal }
 
       active_cases_for_user.map do |assignment|
         case_issues_hash_array = active_cases_issues[assignment.vacols_id]
 
-        appeal = appeals_hash[assignment.vacols_id]
+        # if that appeal is not found, it intializes a new appeal with the
+        # assignments vacols_id
+        appeal = appeals_hash[assignment.vacols_id] ||
+                 Appeal.new(vacols_id: assignment.vacols_id)
         appeal.attributes = assignment.attributes
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
         

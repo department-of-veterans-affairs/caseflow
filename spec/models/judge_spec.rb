@@ -7,7 +7,7 @@ describe Judge do
   context ".upcoming_dockets" do
     subject { Judge.new(user).upcoming_dockets }
 
-    let(:user) { Generators::User.create }
+    let(:user) { Generators::User.create(css_id: "Hearing Prep") }
     let!(:hearing)            { Generators::Hearing.create(user: user, date: 1.day.from_now) }
     let!(:hearing_same_date)  { Generators::Hearing.create(user: user, date: 1.day.from_now + 2.hours) }
     let!(:hearing_later_date) { Generators::Hearing.create(user: user, date: 3.days.from_now) }
@@ -48,7 +48,7 @@ describe Judge do
   end
 
   context "#docket?" do
-    let(:user) { Generators::User.create }
+    let(:user) { Generators::User.create(css_id: "Hearing Prep") }
     let(:judge) { Judge.new(user) }
     let(:date) { Time.zone.now }
     let(:out_of_range_date) { date - 300.years }

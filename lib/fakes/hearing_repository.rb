@@ -5,8 +5,8 @@ class Fakes::HearingRepository
     attr_accessor :master_records
   end
 
-  def self.upcoming_hearings_for_judge(css_id)
-    user = User.find_by_css_id(css_id)
+  def self.upcoming_hearings_for_judge(_css_id)
+    user = User.find_by_css_id("Hearing Prep")
     records.select { |h| h.user_id == user.id }
   end
 
@@ -62,20 +62,18 @@ class Fakes::HearingRepository
     2.times.each { |i| Generators::Hearings::MasterRecord.build(user: user, date: Time.zone.now + (i + 6).days) }
   end
 
-  # rubocop:disable Metrics/AbcSize
   def self.random_attrs(i)
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
       type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
       date: Time.zone.now - (i % 9).days - rand(3).days,
       vacols_id: 950_330_575 + (i * 1465),
-      disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.values[i % 4],
-      aod: [VACOLS::CaseHearing::HEARING_AODS.values[i % 3], nil].sample,
-      hold_open: [30, 60, 90].sample,
-      add_on: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample,
+      disposition: nil,
+      aod: nil,
+      hold_open: nil,
+      add_on: false,
       notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
-      transcript_requested: [VACOLS::CaseHearing::BOOLEAN_MAP.values[i % 2], nil].sample
+      transcript_requested: false
     }
   end
-  # rubocop:enable Metrics/AbcSize
 end

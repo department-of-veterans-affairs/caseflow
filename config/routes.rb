@@ -73,17 +73,13 @@ Rails.application.routes.draw do
   namespace :hearings do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show], param: :hearing_id
+    resources :appeals, only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
   resources :hearings, only: [:update]
 
   patch "certifications" => "certifications#create"
-
-  namespace :admin do
-    post "establish-claim", to: "establish_claims#create"
-    get "establish-claim", to: "establish_claims#show"
-  end
 
   resources :intake, only: :index
   match '/intake/:any' => 'intake#index', via: [:get]
@@ -122,15 +118,6 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
-    # Only allow data_setup routes if TEST_USER is set
-    if ENV["TEST_USER_ID"]
-      resources :setup, only: [:index]
-      post "setup-uncertify-appeal" => "setup#uncertify_appeal"
-      post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset"
-      post "setup-toggle-features" => "setup#toggle_features"
-      get "setup-delete-test-data" => "setup#delete_test_data"
-    end
-
     if ApplicationController.dependencies_faked?
       resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"
