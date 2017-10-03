@@ -37,7 +37,7 @@ export default class StyleGuideFooter extends React.Component {
     <p>
      Conveniently, if a developer hovers over the word
      “Built” they’ll see a tooltip showing the build date
-     of the app that they are viewing. In styleguide footer,  recent build date
+     of the app that they are viewing. In styleguide footer, recent build date
      is based off of “date” in build_version.yml.</p>
 
     <Router>
