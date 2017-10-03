@@ -72,6 +72,7 @@ class Fakes::HearingRepository
       aod: nil,
       hold_open: nil,
       add_on: false,
+      slots: [8, 9, 10, 11, 12].sample,
       notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
       transcript_requested: false
     }
