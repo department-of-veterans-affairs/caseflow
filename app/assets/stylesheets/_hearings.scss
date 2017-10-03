@@ -236,6 +236,7 @@ $color-hearings-saving: #777;
       margin: 0;
       width: 100%;
       resize: vertical;
+      min-height: 48px;
     }
   }
 
@@ -337,6 +338,7 @@ $color-hearings-saving: #777;
   margin: 0;
 
   .cf-form-textarea {
+    min-height: 48px;
 
     .question-label {
       position: absolute;
