@@ -23,6 +23,18 @@ describe HearingDocket do
     )
   end
 
+  context ".from_hearings" do
+    subject { HearingDocket.from_hearings(hearings) }
+
+    let(:hearings) do
+      [Generators::Hearing.create(date: 5.minutes.ago), Generators::Hearing.create(date: 10.minutes.ago)]
+    end
+
+    it "returns the earliest date" do
+      expect(subject.date).to eq 10.minutes.ago
+    end
+  end
+
   context "#to_hash" do
     subject { docket.to_hash.symbolize_keys }
 
@@ -32,6 +44,7 @@ describe HearingDocket do
       expect(subject[:hearings_array].length).to eq(1)
       expect(subject[:type]).to eq(:video)
       expect(subject[:regional_office_name]).to eq(hearing.regional_office_name)
+      expect(subject[:slots].class).to eq(Fixnum)
     end
   end
 
