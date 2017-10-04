@@ -239,12 +239,9 @@ class AppealRepository
   # Close an appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
-  def self.close!(appeal:, user:, closed_on:, disposition:)
+  def self.close!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
-
-    disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-    fail "Disposition #{disposition}, does not exist" unless disposition_code
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(
