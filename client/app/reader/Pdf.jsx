@@ -7,7 +7,7 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { placeAnnotation, startPlacingAnnotation,
+import { createAnnotation, requestEditAnnotation, placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
@@ -176,14 +176,24 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltEnter = () => {
-    this.props.placeAnnotation(
-      pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-      {
-        xPosition: this.props.placingAnnotationIconPageCoords.x,
-        yPosition: this.props.placingAnnotationIconPageCoords.y
-      },
-      this.props.documentId
-    );
+    if (this.props.isPlacingAnnotation) {
+      this.props.placeAnnotation(
+        pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
+        {
+          xPosition: this.props.placingAnnotationIconPageCoords.x,
+          yPosition: this.props.placingAnnotationIconPageCoords.y
+        },
+        this.props.documentId
+      );
+    }
+    else {
+      if (this.props.placedButUnsavedAnnotation) {
+        console.log("I'M MR MEESEEKS LOOK AT ME");
+      }
+      else if (this.props.editingAnnotations) {
+        console.log("wubba lubba dub dub");
+      }
+    }
   }
 
   keyListener = (event) => {
@@ -349,12 +359,16 @@ const mapStateToProps = (state, props) => {
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
+    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation'),
+    ..._.pick(state.readerReducer, 'editingAnnotations'),
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
+    createAnnotation,
+    requestEditAnnotation,
     placeAnnotation,
     startPlacingAnnotation,
     stopPlacingAnnotation,
