@@ -138,8 +138,8 @@ describe Veteran do
       end
 
       it do
-        is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable Discharge",
-                           "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes Discharge"]
+        is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable",
+                           "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes"]
       end
     end
 
@@ -176,7 +176,7 @@ describe Veteran do
            released_active_duty_date: nil,
            char_of_svc_code: nil }]
       end
-      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable for VA Purposes Discharge"] }
+      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable for VA Purposes"] }
     end
 
     context "when a character of service code is not recognized" do
