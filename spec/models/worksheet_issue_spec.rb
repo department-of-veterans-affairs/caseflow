@@ -12,7 +12,7 @@ describe WorksheetIssue do
       expect(subject.program).to eq issue.program.to_s
       expect(subject.levels).to eq issue.levels.join("\n")
       expect(subject.description).to eq issue.description.join("\n")
-      expect(subject.name).to eq issue.type[:name].to_s
+      expect(subject.name).to eq issue.type[:label].to_s
       expect(subject.from_vacols).to eq true
     end
   end
