@@ -20,7 +20,8 @@ describe HearingRepository do
         tranreq: nil,
         holddays: 90,
         notes1: "test notes",
-        repname: "test rep name"
+        repname: "test rep name",
+        bfso: "E"
       )
     end
 
@@ -35,6 +36,7 @@ describe HearingRepository do
       expect(subject.hold_open).to eq 90
       expect(subject.notes).to eq "test notes"
       expect(subject.representative_name).to eq "test rep name"
+      expect(subject.representative).to eq "Jewish War Veterans"
     end
   end
 
@@ -90,7 +92,7 @@ describe HearingRepository do
         OpenStruct.new(
           hearing_type: "T",
           master_record_type: nil,
-          brieff: OpenStruct.new(bfregoff: "RO36")
+          bfregoff: "RO36"
         )
       end
       it { is_expected.to eq(type: :travel, regional_office_key: "RO36") }
