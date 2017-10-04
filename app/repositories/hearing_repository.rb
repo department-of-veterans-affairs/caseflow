@@ -22,27 +22,33 @@ class HearingRepository
       false
     end
 
+    def number_of_slots(regional_office_key:, type:, date:)
+      record = VACOLS::Staff.find_by(stafkey: regional_office_key)
+      slots_based_on_type(staff: record, type: type, date: date) if record
+    end
+
     def appeals_ready_for_hearing(vbms_id)
       AppealRepository.appeals_ready_for_hearing(vbms_id)
     end
     # :nocov:
 
     def set_vacols_values(hearing, vacols_record)
-      attrs = {
-        vacols_record: vacols_record,
-        venue_key: vacols_record.hearing_venue,
-        disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
-        date: AppealRepository.normalize_vacols_date(vacols_record.hearing_date),
-        representative_name: vacols_record.repname,
-        aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
-        hold_open: vacols_record.holddays,
-        transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
-        add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
-        notes: vacols_record.notes1,
-        master_record: vacols_record.master_record?
-      }
-      hearing.assign_from_vacols(attrs.merge(values_based_on_type(vacols_record)))
+      hearing.assign_from_vacols(vacols_attributes(vacols_record))
       hearing
+    end
+
+    # STAFF.STC2 is the Travel Board limit for Mon and Fri
+    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
+    # STAFF.STC4 is the Video limit
+    def slots_based_on_type(staff:, type:, date:)
+      case type
+      when :central_office
+        11
+      when :video
+        staff.stc4
+      when :travel
+        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
+      end
     end
 
     # Fields such as 'type', 'regional_office_key' are stored in different places
@@ -70,5 +76,21 @@ class HearingRepository
       end
     end
     # :nocov:
+
+    def vacols_attributes(vacols_record)
+      {
+        vacols_record: vacols_record,
+        venue_key: vacols_record.hearing_venue,
+        disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
+        date: vacols_record.hearing_date,
+        representative_name: vacols_record.repname,
+        aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
+        hold_open: vacols_record.holddays,
+        transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
+        add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
+        notes: vacols_record.notes1,
+        master_record: vacols_record.master_record?
+      }.merge(values_based_on_type(vacols_record))
+    end
   end
 end
