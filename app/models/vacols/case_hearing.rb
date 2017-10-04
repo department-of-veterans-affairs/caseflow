@@ -72,23 +72,17 @@ class VACOLS::CaseHearing < VACOLS::Record
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
              "staff.sdomainid as css_id",
-             :hearing_disp,
-             :hearing_pkseq,
-             :hearing_date,
-             :hearing_type,
-             :notes1,
-             :folder_nr,
-             :vdkey,
-             :aod,
-             :holddays,
-             :tranreq,
-             :repname,
-             :addon,
-             :board_member,
-             :mduser,
-             :mdtime,
-             :sattyid)
+             :hearing_disp, :hearing_pkseq,
+             :hearing_date, :hearing_type,
+             :notes1, :folder_nr,
+             :vdkey, :aod,
+             :holddays, :tranreq,
+             :repname, :addon,
+             :board_member, :mduser,
+             :mdtime, :sattyid,
+             :bfregoff, :bfso)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .where(hearing_type: HEARING_TYPES.keys)
     end
   end

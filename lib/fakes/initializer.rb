@@ -4,6 +4,7 @@ class Fakes::Initializer
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       User.authentication_service = Fakes::AuthenticationService
       Hearing.repository = Fakes::HearingRepository
+      HearingDocket.repository = Fakes::HearingRepository
       Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
       User.appeal_repository = Fakes::AppealRepository

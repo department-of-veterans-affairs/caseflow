@@ -154,6 +154,7 @@ end
 Appeal.repository = Fakes::AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
+HearingDocket.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
