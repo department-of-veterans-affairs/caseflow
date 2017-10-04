@@ -176,6 +176,7 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltEnter = () => {
+    //TODO: fix why the comment doesn't save in focus
     if (this.props.isPlacingAnnotation) {
       this.props.placeAnnotation(
         pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
@@ -186,13 +187,12 @@ export class Pdf extends React.PureComponent {
         this.props.documentId
       );
     }
-    else {
-      if (this.props.placedButUnsavedAnnotation) {
-        console.log("I'M MR MEESEEKS LOOK AT ME");
-      }
-      else if (this.props.editingAnnotations) {
-        console.log("wubba lubba dub dub");
-      }
+    else if (this.props.placedButUnsavedAnnotation) {
+      //TODO: fix why this creates 2 annotations
+      this.props.createAnnotation(this.props.placedButUnsavedAnnotation);
+    }
+    else if (this.props.editingAnnotations){
+      this.props.requestEditAnnotation(this.props.editingAnnotations);
     }
   }
 
