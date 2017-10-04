@@ -88,7 +88,6 @@ export class HearingWorksheet extends React.PureComponent {
                 aria-label="Representative Name"
                 value={worksheet.witness || ''}
                 onChange={this.props.onWitnessChange}
-              //  autoExpand={autoExpand}
              />
           </div>
         </div>
@@ -109,7 +108,6 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.contentions || ''}
               onChange={this.props.onContentionsChange}
               id="worksheet-contentions"
-                  //  autoExpand={autoExpand}
               />
           </div>
 
@@ -119,7 +117,6 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.military_service || ''}
               onChange={this.props.onMilitaryServiceChange}
               id="worksheet-military-service"
-                  //  autoExpand={autoExpand}
               />
           </div>
 
@@ -129,7 +126,6 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.evidence || ''}
               onChange={this.props.onEvidenceChange}
               id="worksheet-evidence"
-                  //  autoExpand={autoExpand}
               />
           </div>
 

@@ -15,7 +15,6 @@ export default class TextareaField extends React.Component {
       name,
       required,
       type,
-   //   autoExpand,
       value
     } = this.props;
 
@@ -23,6 +22,8 @@ export default class TextareaField extends React.Component {
           `${errorMessage ? ' usa-input-error' : ''}`;
 
     let characterLimitCount = maxlength - value.length;
+
+
 
     return <div className={className}>
       <label className="question-label" htmlFor={id || name}>
@@ -37,7 +38,6 @@ export default class TextareaField extends React.Component {
         type={type}
         value={value}
         maxLength={maxlength}
-        // autoExpand={autoExpand}
       />
       {(characterLimitCount !== maxlength && maxlength) &&
         <p><i>{characterLimitCount} characters left</i></p>
@@ -50,7 +50,6 @@ TextareaField.propTypes = {
   id: PropTypes.string,
   label: PropTypes.string,
   maxlength: PropTypes.number,
-  autoExpand: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onKeyDown: PropTypes.func,

@@ -127,16 +127,13 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
-     
               <TextareaField
                 id={`${hearing.id}.notes`}
                 value={hearing.notes || ''}
                 name="Notes"
-             //   autoExpand={false}
                 onChange={this.setNotes}
                 maxLength="100"
               />
-       
         </td>
       </tr>
     </tbody>;

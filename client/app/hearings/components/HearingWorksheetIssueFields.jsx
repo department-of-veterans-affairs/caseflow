@@ -46,7 +46,6 @@ class HearingWorksheetIssueFields extends PureComponent {
         <TextareaField aria-label={field} name={field}
               id={`${issue.id}-issue-${field}`} 
               value={allowedFields[field].value || ''}
-             // autoExpand={autoExpand}
               onChange={allowedFields[field].onChange}/>
       </div>;
     }
