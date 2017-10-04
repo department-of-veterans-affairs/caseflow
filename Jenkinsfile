@@ -38,8 +38,10 @@ node('deploy') {
     stage ('checkout-deploy-repo') {
       sh "git clone https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
       
-      // This is temporary until we fully migrate to the new Jenkins.
-      sh "git checkout new-jenkins"
+      dir ('./ansible-deployment') {
+        // This is temporary until we fully migrate to the new Jenkins.
+        sh "git checkout new-jenkins"
+      }
       
       // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
       if (env.APP_ENV == 'prod') {
