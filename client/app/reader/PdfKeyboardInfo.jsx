@@ -27,6 +27,8 @@ export const commentInstructions = [
   { commentInstruction: 'Move comment right',
     shortcut: <span><ArrowRight /></span> },
   { commentInstruction: 'Place a comment',
+    shortcut: <span><code>alt</code> + <code>enter</code></span> },
+  { commentInstruction: 'Save a comment',
     shortcut: <span><code>alt</code> + <code>enter</code></span> }
 ];
 
