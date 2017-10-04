@@ -13,9 +13,8 @@ export class Dockets extends React.Component {
   }
 
   getStartTime = () => {
-    const startTime = `${moment().
-      add(_.random(0, 120), 'minutes').
-      format('LT')} EST`;
+    const startTime = `${moment.tz('America/New_York').
+      format('h:mm a z')}`;
 
     return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
   }
@@ -81,7 +80,7 @@ export class Dockets extends React.Component {
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: this.getStartTime(),
+        start_time: this.getStartTime('America/New_York'),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: _.random(8, 12),
