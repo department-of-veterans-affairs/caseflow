@@ -84,7 +84,7 @@ export class Dockets extends React.Component {
         start_time: this.getStartTime(),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
-        slots: _.random(8, 12),
+        slots: docket.slots,
         scheduled: this.scheduled(docket)
       };
     });
