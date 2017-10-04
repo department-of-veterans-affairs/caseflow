@@ -208,6 +208,11 @@ def be_titled(title)
   have_xpath("//title[contains(.,'#{title}')]", visible: false)
 end
 
+def hang
+  puts "Hanging the test indefinitely so you can debug in the browser."
+  sleep(10_000)
+end
+
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
@@ -222,11 +227,15 @@ def safe_click(selector)
   page.first(selector).click
 end
 
+def click_label(label_for)
+  safe_click("label[for='#{label_for}']")
+end
+
 def scroll_element_in_to_view(selector)
   expect do
     page.evaluate_script <<-EOS
       function() {
-        var elem = document.querySelector('#{selector}');
+        var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
         if (!elem) {
           return false;
         }

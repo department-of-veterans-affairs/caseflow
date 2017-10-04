@@ -33,7 +33,7 @@ export const newHearingIssueState = (state, action, spec) => {
 
   return update(state, {
     worksheet: {
-      streams: {
+      appeals_ready_for_hearing: {
         [action.payload.appealKey]: {
           worksheet_issues: {
             [action.payload.issueKey]: spec
@@ -145,7 +145,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.ADD_ISSUE:
     return update(state, {
       worksheet: {
-        streams: {
+        appeals_ready_for_hearing: {
           [action.payload.appealKey]: {
             worksheet_issues: { $push: [{ from_vacols: false,
               edited: true }] }
@@ -157,7 +157,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.DELETE_ISSUE:
     return update(state, {
       worksheet: {
-        streams: {
+        appeals_ready_for_hearing: {
           [action.payload.appealKey]: {
             worksheet_issues: {
               $apply: (worksheetIssues) => worksheetIssues.filter((issue, key) => {
