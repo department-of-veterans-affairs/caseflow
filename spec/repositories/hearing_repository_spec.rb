@@ -1,4 +1,9 @@
 describe HearingRepository do
+  before do
+    Timecop.freeze(Time.utc(2017, 10, 4))
+    Time.zone = "America/Chicago"
+  end
+
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
@@ -30,6 +35,39 @@ describe HearingRepository do
       expect(subject.hold_open).to eq 90
       expect(subject.notes).to eq "test notes"
       expect(subject.representative_name).to eq "test rep name"
+    end
+  end
+
+  context ".slots_based_on_type" do
+    subject { HearingRepository.slots_based_on_type(staff: staff, type: type, date: date) }
+
+    context "when it is a central office" do
+      let(:staff) { OpenStruct.new }
+      let(:type) { :central_office }
+      let(:date) { Time.zone.now }
+      it { is_expected.to eq 11 }
+    end
+
+    context "when it is a video, use staff.stc4" do
+      let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
+      let(:type) { :video }
+      let(:date) { Time.zone.now }
+      it { is_expected.to eq 12 }
+    end
+
+    context "when it is a travel board" do
+      let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
+      let(:type) { :travel }
+
+      context "when it is a Monday, use staff.stc2" do
+        let(:date) { 1.day.ago }
+        it { is_expected.to eq 8 }
+      end
+
+      context "when it is a Tuesday, use staff.stc3" do
+        let(:date) { Time.zone.now }
+        it { is_expected.to eq 9 }
+      end
     end
   end
 
