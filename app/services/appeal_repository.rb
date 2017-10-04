@@ -236,6 +236,58 @@ class AppealRepository
     "98"
   end
 
+  # Close an appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
+  # WARNING: some parts of this action are not automatically reversable, and must
+  # be reversed by hand
+  def self.close!(appeal:, user:, closed_on:, disposition:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+    fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+    VACOLS::Case.transaction do
+      case_record.update_attributes!(
+        bfmpro: "HIS",
+        bfddec: dateshift_to_utc(closed_on),
+        bfdc: disposition_code,
+        bfboard: "00",
+        bfmemid: "000",
+        bfattid: "000"
+      )
+
+      case_record.update_vacols_location!("99")
+
+      folder_record.update_attributes!(
+        ticukey: "HISTORY",
+        tikeywrd: "HISTORY",
+        tidcls: dateshift_to_utc(closed_on),
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+
+      # Close any issues associated to the appeal
+      case_record.case_issues.update_all(
+        issdc: disposition_code,
+        issdcls: VacolsHelper.local_time_with_utc_timezone
+      )
+
+      # Cancel any open diary notes for the appeal
+      case_record.notes.where(tskdcls: nil).update_all(
+        tskdcls: VacolsHelper.local_time_with_utc_timezone,
+        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
+        tskmdusr: user.regional_office,
+        tskstat: "C"
+      )
+
+      # Cancel any scheduled hearings
+      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
+        clsdate: VacolsHelper.local_time_with_utc_timezone,
+        hearing_disp: "C"
+      )
+    end
+  end
+
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 

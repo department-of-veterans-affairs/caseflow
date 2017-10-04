@@ -143,10 +143,6 @@ class Fakes::AppealRepository
     []
   end
 
-  def self.uncertify(_appeal)
-    # noop
-  end
-
   def self.issues(vacols_id)
     (issue_records || {})[vacols_id] || []
   end
