@@ -269,24 +269,17 @@ class AppealRepository
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
       active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
 
-      # fetching appeals from vacols for the active cases
-      appeals = Appeal.where(vacols_id: active_cases_vacols_ids)
-
-      # creating a hash of those appeals for easy lookup
-      appeals_hash = appeals.each_with_object({}) { |appeal, memo| memo[appeal.vacols_id] = appeal }
-
       active_cases_for_user.map do |assignment|
-        case_issues_hash_array = active_cases_issues[assignment.vacols_id]
+        assignment_issues_hash_array = active_cases_issues[assignment.vacols_id]
 
         # if that appeal is not found, it intializes a new appeal with the
         # assignments vacols_id
-        appeal = appeals_hash[assignment.vacols_id] ||
-                 Appeal.new(vacols_id: assignment.vacols_id)
+        appeal = Appeal.new(vacols_id: assignment.vacols_id, vbms_id: assignment.vbms_id)
         appeal.attributes = assignment.attributes
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
         
         # fetching Issue objects using the issue hash
-        appeal.issues = case_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
+        appeal.issues = assignment_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
         appeal
       end
     end
