@@ -11,6 +11,9 @@ def APP_NAME = 'certification';
 // See http://docs.ansible.com/ansible/git_module.html version field
 def APP_VERSION = 'HEAD'
 
+// Allows appeals-deployment branch (defaults to master) to be overridden for
+// testing purposes 
+def DEPLOY_BRANCH = (env.DEPLOY_BRANCH != null) ? env.DEPLOY_BRANCH : 'master'
 
 /************************ Common Pipeline boilerplate ************************/
 
@@ -36,8 +39,8 @@ node('deploy') {
     // Checkout the deployment repo for the ansible script. This is needed
     // since the deployment scripts are separated from the source code.
     stage ('checkout-deploy-repo') {
-      // Using "new-jenkins" is temporary until we fully migrate to the new Jenkins.
-      sh "git clone -b new-jenkins https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
+
+      sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
       
       // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
       if (env.APP_ENV == 'prod') {
