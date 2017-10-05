@@ -11,8 +11,8 @@ export class Dockets extends React.Component {
     return (type === 'central_office') ? 'CO' : type;
   }
 
-  getDate = (date, timezone) => {
-    return moment.tz(date, timezone).
+  getDate = (date) => {
+    return moment(date).
     format('LT').
     replace('AM', 'a.m.').
     replace('PM', 'p.m.');

@@ -35,8 +35,8 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
-const getDate = (date, timezone) => {
-  return moment.tz(date, timezone).
+const getDate = (date) => {
+  return moment(date).
     format('LT').
     replace('AM', 'a.m.').
     replace('PM', 'p.m.');
