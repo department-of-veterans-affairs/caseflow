@@ -16,8 +16,8 @@ class Reader::AppealController < Reader::ApplicationController
     MetricsService.record("VACOLS: Get appeal information for vbms_id #{veteran_id}",
                           name: "AppealController.find_appeals_by_vbms_id") do
       appeals = Appeal.fetch_appeals_by_vbms_id(veteran_id)
-      hashed_appeals = appeal.map { |appeal| appeal.to_hash(issues: appeal.issues) }
-        .reject { |appeal| appeal.issues.empty? }
+      hashed_appeals = appeals.map { |appeal| appeal.to_hash(issues: []) }
+                              .reject { |appeal| appeal["issues"].empty? }
 
       render json: {
         appeals: hashed_appeals
