@@ -21,7 +21,8 @@ describe HearingRepository do
         holddays: 90,
         notes1: "test notes",
         repname: "test rep name",
-        bfso: "E"
+        bfso: "E",
+        bfregoff: "RO36"
       )
     end
 
@@ -29,7 +30,7 @@ describe HearingRepository do
       expect(subject.venue[:city]).to eq("San Antonio")
       expect(subject.type).to eq(:video)
       expect(subject.vacols_record).to eq(hearing_hash)
-      expect(subject.date).to eq(date)
+      expect(subject.date.class).to eq(ActiveSupport::TimeWithZone)
       expect(subject.disposition).to eq(:no_show)
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil
@@ -73,6 +74,20 @@ describe HearingRepository do
     end
   end
 
+  context ".hearing_datetime" do
+    subject { HearingRepository.hearing_datetime(Time.zone.now, regional_office_key) }
+
+    context "uses regional office timezone to set the zone" do
+      let(:regional_office_key) { "RO58" }
+
+      it "calculates the date and hour correctly" do
+        expect(subject.day).to eq 3
+        expect(subject.hour).to eq 7
+        expect(subject.zone).to eq "EDT"
+      end
+    end
+  end
+
   context ".values_based_on_type" do
     subject { HearingRepository.values_based_on_type(vacols_record) }
 
@@ -84,7 +99,7 @@ describe HearingRepository do
           master_record_type: :video
         )
       end
-      it { is_expected.to eq(type: :video, regional_office_key: "RO15") }
+      it { is_expected.to eq(type: :video, regional_office_key: "RO15", date: nil) }
     end
 
     context "when a hearing is not a master record" do
@@ -95,7 +110,7 @@ describe HearingRepository do
           bfregoff: "RO36"
         )
       end
-      it { is_expected.to eq(type: :travel, regional_office_key: "RO36") }
+      it { is_expected.to eq(type: :travel, regional_office_key: "RO36", date: nil) }
     end
   end
 end
