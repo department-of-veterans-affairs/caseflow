@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import Link from '../components/Link';
 import TextField from '../components/TextField';
-import TextareaField from '../components/TextareaField';
+import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 
 // TODO Move all stream related to streams container
@@ -20,6 +20,12 @@ import {
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
+
+  onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
+  onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
+  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
+  onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
+  onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
     let { worksheet } = this.props;
@@ -82,12 +88,12 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell column-4">
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
-             <TextareaField
+             <Textarea
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
                 aria-label="Representative Name"
                 value={worksheet.witness || ''}
-                onChange={this.props.onWitnessChange}
+                onChange={this.onWitnessChange}
              />
           </div>
         </div>
@@ -103,38 +109,38 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <Textarea
               name="Contentions"
               value={worksheet.contentions || ''}
-              onChange={this.props.onContentionsChange}
+              onChange={this.onContentionsChange}
               id="worksheet-contentions"
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <Textarea
               name="Periods and circumstances of service"
               value={worksheet.military_service || ''}
-              onChange={this.props.onMilitaryServiceChange}
+              onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <Textarea
               name="Evidence"
               value={worksheet.evidence || ''}
-              onChange={this.props.onEvidenceChange}
+              onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <Textarea
               name="Comments and special instructions to attorneys"
               value={worksheet.comments_for_attorney || ''}
               id="worksheet-comments-for-attorney"
-              onChange={this.props.onCommentsForAttorneyChange}
+              onChange={this.onCommentsForAttorneyChange}
                   //  autoExpand={autoExpand}
               />
           </div>

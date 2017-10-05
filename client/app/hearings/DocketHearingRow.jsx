@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
-import TextareaField from '../components/TextareaField';
+import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -57,7 +57,7 @@ export class DocketHearingRow extends React.PureComponent {
   setTranscriptRequested = (value) =>
       this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
-  setNotes = (setNotes) => this.props.setNotes(this.props.index, setNotes, this.props.hearingDate);
+  setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
   render() {
     const {
@@ -127,7 +127,7 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
-              <TextareaField
+              <Textarea
                 id={`${hearing.id}.notes`}
                 value={hearing.notes || ''}
                 name="Notes"
