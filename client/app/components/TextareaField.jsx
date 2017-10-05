@@ -23,8 +23,6 @@ export default class TextareaField extends React.Component {
 
     let characterLimitCount = maxlength - value.length;
 
-
-
     return <div className={className}>
       <label className="question-label" htmlFor={id || name}>
         {label || name} {required && <span className="cf-required">Required</span>}
