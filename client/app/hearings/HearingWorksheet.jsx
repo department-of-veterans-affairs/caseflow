@@ -9,7 +9,7 @@ import HearingWorksheetStream from './components/HearingWorksheetStream';
 import AutoSave from '../components/AutoSave';
 import * as AppConstants from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
+import { TOGGLE_SAVING, SET_WORKSHEET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -177,15 +177,17 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
     if (worksheet.edited) {
       dispatch({ type: TOGGLE_SAVING });
 
-      dispatch({ type: SET_SAVE_FAILED, payload: { saveFailed: false } });
+      dispatch({ type: SET_SAVE_FAILED,
+        payload: { saveFailed: false } });
 
       ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
       then(() => {
-        },
+        dispatch({ type: SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
+      },
         () => {
           dispatch({ type: SET_SAVE_FAILED,
             payload: { saveFailed: true } });
-      });
+        });
       dispatch({ type: TOGGLE_SAVING });
     }
   }

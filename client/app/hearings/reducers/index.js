@@ -190,6 +190,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
+  case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: { edited: { $set: false } }
+    });
+
   default: return state;
   }
 };
