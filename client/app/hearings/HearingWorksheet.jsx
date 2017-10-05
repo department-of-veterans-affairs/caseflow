@@ -117,6 +117,7 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.contentions || ''}
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
+              minRows={3}
               />
           </div>
 
