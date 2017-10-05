@@ -61,7 +61,7 @@ class HearingRepository
         }
       else
         { type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym],
-          regional_office_key: vacols_record.brieff.try(:bfregoff)
+          regional_office_key: vacols_record.bfregoff
         }
       end
     end
@@ -84,6 +84,7 @@ class HearingRepository
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
         date: vacols_record.hearing_date,
         representative_name: vacols_record.repname,
+        representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
         hold_open: vacols_record.holddays,
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
