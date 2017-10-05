@@ -25,7 +25,8 @@ class AppealEvent
       "Advance Withdrawn Death of Veteran",
       "Advance Withdrawn by Appellant/Rep",
       "Advance Failure to Respond",
-      "Remand Failure to Respond"
+      "Remand Failure to Respond",
+      "RAMP Opt-in"
     ],
     merged: [
       "Merged Appeal"
@@ -33,7 +34,6 @@ class AppealEvent
     other: [
       "Designation of Record",
       "Reconsideration by Letter",
-      "RAMP Opt-in"
     ]
   }.freeze
 
