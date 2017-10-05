@@ -68,7 +68,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_REPNAME:
-    return newHearingWorksheetState(state, action, { repName: { $set: action.payload.repName } });
+    return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
   case Constants.SET_WITNESS:
     return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });

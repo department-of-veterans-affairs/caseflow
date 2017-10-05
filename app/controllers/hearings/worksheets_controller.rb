@@ -10,12 +10,21 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  # def update
-  #   worksheet.update!(worksheet_params)
-  #   render json: { worksheet: hearing_worksheet }
-  # end
+  def update
+    worksheet.update!(worksheet_params)
+    render json: { worksheet: hearing_worksheet }
+  end
 
   private
+
+  def worksheet_params
+    params.require("worksheet").permit(:representative_name,
+                                       :witness,
+                                       :contentions,
+                                       :military_service,
+                                       :evidence,
+                                       :comments_for_attorney)
+  end
 
   def worksheet
     Hearing.find(params[:hearing_id])

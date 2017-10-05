@@ -74,7 +74,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={worksheet.repName || ''}
+              value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
@@ -178,8 +178,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
       dispatch({ type: TOGGLE_SAVING });
 
       dispatch({ type: SET_SAVE_FAILED, payload: { saveFailed: false } });
-
-      console.log(worksheet);
 
       ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
       then(() => {
