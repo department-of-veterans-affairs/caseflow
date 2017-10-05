@@ -33,7 +33,7 @@ class AppealEvent
     ],
     other: [
       "Designation of Record",
-      "Reconsideration by Letter",
+      "Reconsideration by Letter"
     ]
   }.freeze
 
