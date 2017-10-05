@@ -468,6 +468,49 @@ describe Appeal do
     end
   end
 
+  context "#close!" do
+    let(:vacols_record) { :ready_to_certify }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:user) { Generators::User.build }
+
+    subject { appeal.close!(user: user, closed_on: 4.days.ago, disposition: disposition) }
+
+    context "when disposition is not valid" do
+      let(:disposition) { "I'm not a disposition" }
+
+      it "should raise error" do
+        expect { subject }.to raise_error(/Disposition/)
+      end
+    end
+
+    context "when disposition is valid" do
+      let(:disposition) { "RAMP Opt-in" }
+
+      context "when appeal is not active" do
+        let(:vacols_record) { :full_grant_decided }
+
+        it "should raise error" do
+          expect { subject }.to raise_error(/active/)
+        end
+      end
+
+      context "when appeal is active" do
+        let(:vacols_record) { :ready_to_certify }
+
+        it "closes the appeal in VACOLS" do
+          expect(AppealRepository).to receive(:close!).with(
+            appeal: appeal,
+            user: user,
+            closed_on: 4.days.ago,
+            disposition_code: "P"
+          )
+
+          subject
+        end
+      end
+    end
+  end
+
   context "#certify!" do
     let(:appeal) { Appeal.new(vacols_id: "765") }
     subject { appeal.certify! }

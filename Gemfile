@@ -18,7 +18,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 
 # React
-gem "react_on_rails", "~> 6.8.0"
+gem "react_on_rails", "8.0.6"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
