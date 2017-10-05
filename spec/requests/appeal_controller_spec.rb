@@ -2,8 +2,11 @@ RSpec.describe "Reader Appeal Requests", type: :request do
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:vacols_record) { :remand_decided }
   let(:appeal) { Generators::Appeal.build(vbms_id: "123456789S", vacols_record: vacols_record) }
-  let(:appeal_with_no_issues) { Generators::Appeal.build(vbms_id: "123456788S", vacols_record: vacols_record, issues: [] )}
-  
+  let(:appeal_with_no_issues) do
+    Generators::Appeal.build(
+      vbms_id: "123456788S", vacols_record: vacols_record, issues: [])
+  end
+
   describe "Appeals Find by Veteran ID Endpoint" do
     let(:headers) { { "HTTP_VETERAN_ID": "111225555S" } }
 
