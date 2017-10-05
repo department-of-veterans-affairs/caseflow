@@ -13,7 +13,7 @@ export class Dockets extends React.Component {
 
   getDate = (date, timezone) => {
     return moment.tz(date, timezone).
-    format('h:mm a z').
+    format('LT').
     replace('AM', 'a.m.').
     replace('PM', 'p.m.');
   };
@@ -79,7 +79,7 @@ export class Dockets extends React.Component {
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: this.getDate(docket.date, 'America/New_York'),
+        start_time: `${this.getDate(docket.date)} EDT`,
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: docket.slots,
