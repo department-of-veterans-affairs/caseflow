@@ -56,14 +56,27 @@ class HearingRepository
     def values_based_on_type(vacols_record)
       case vacols_record.master_record_type
       when :video
-        { type: :video,
-          regional_office_key: vacols_record.folder_nr.split(" ").second
-        }
+        ro = vacols_record.folder_nr.split(" ").second
+        type = :video
       else
-        { type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym],
-          regional_office_key: vacols_record.bfregoff
-        }
+        ro = vacols_record.bfregoff
+        type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       end
+      date = hearing_datetime(vacols_record.hearing_date, ro) if vacols_record.hearing_date && ro
+
+      { type: type,
+        regional_office_key: ro,
+        date: date
+      }
+    end
+
+    # The hearing datetime reflect the timezone of the local RO,
+    # So we append the timezone based on the regional office location
+    # And then convert the date to Eastern Time
+    def hearing_datetime(datetime, regional_office_key)
+      timezone = VACOLS::RegionalOffice::CITIES[regional_office_key][:timezone]
+      # asctime - returns a canonical string representation of time
+      datetime.asctime.in_time_zone(timezone).in_time_zone("Eastern Time (US & Canada)")
     end
 
     private
@@ -78,11 +91,11 @@ class HearingRepository
     # :nocov:
 
     def vacols_attributes(vacols_record)
-      {
+      attrs = values_based_on_type(vacols_record)
+      attrs.merge(
         vacols_record: vacols_record,
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
-        date: vacols_record.hearing_date,
         representative_name: vacols_record.repname,
         representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
@@ -91,7 +104,7 @@ class HearingRepository
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
         master_record: vacols_record.master_record?
-      }.merge(values_based_on_type(vacols_record))
+      )
     end
   end
 end
