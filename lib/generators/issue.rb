@@ -23,14 +23,7 @@ class Generators::Issue
 
     def build(attrs = {})
       vacols_id ||= attrs.delete(:vacols_id)
-      issue = ::Issue.new(default_attrs.merge(attrs))
-
-      if vacols_id
-        Fakes::AppealRepository.issue_records ||= {}
-        Fakes::AppealRepository.issue_records[vacols_id] ||= []
-      end
-
-      issue
+      ::Issue.new(default_attrs.merge(attrs))
     end
   end
 end
