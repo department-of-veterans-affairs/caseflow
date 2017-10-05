@@ -7,14 +7,14 @@ import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } fr
 
 class HearingWorksheetIssueFields extends PureComponent {
 
-  onProgramChange = (program) =>
-    this.props.onProgramChange(program, this.props.issueKey, this.props.appealKey);
+  onProgramChange = (event) =>
+    this.props.onProgramChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
-  onNameChange = (name) =>
-    this.props.onNameChange(name, this.props.issueKey, this.props.appealKey);
+  onNameChange = (event) =>
+    this.props.onNameChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
-  onLevelsChange = (levels) =>
-    this.props.onLevelsChange(levels, this.props.issueKey, this.props.appealKey);
+  onLevelsChange = (event) =>
+    this.props.onLevelsChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
   onDescriptionChange = (event) =>
     this.props.onDescriptionChange(event.target.value, this.props.issueKey, this.props.appealKey);
