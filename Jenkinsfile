@@ -13,13 +13,7 @@ def APP_VERSION = 'HEAD'
 
 // Allows appeals-deployment branch (defaults to master) to be overridden for
 // testing purposes 
-def DEPLOY_BRANCH;
-if(env.DEPLOY_BRANCH) {
-  DEPLOY_BRANCH = env.DEPLOY_BRANCH
-} else {
-  DEPLOY_BRANCH = 'master'
-  print "DEPLOY_BRANCH is not defined. Defaulting to ${DEPLOY_BRANCH}."
-}
+def DEPLOY_BRANCH = (env.DEPLOY_BRANCH != null) ? env.DEPLOY_BRANCH : 'master'
 
 /************************ Common Pipeline boilerplate ************************/
 
