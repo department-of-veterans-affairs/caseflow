@@ -42,7 +42,7 @@ class HearingWorksheetIssueFields extends PureComponent {
 
     if (!issue.from_vacols || allowedFields[field].alwaysEditable) {
       return <div>
-        <h4 className="cf-hearings-worksheet-desc-label">{field}</h4>
+        <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-${field}`}>{field}</label>
         <Textarea aria-label={field} name={field}
               id={`${issue.id}-issue-${field}`}
               value={allowedFields[field].value || ''}
