@@ -14,6 +14,7 @@ class Generators::Hearing
         contentions: "",
         evidence: "",
         comments_for_attorney: "",
+        representative: "Military Order of the Purple Heart",
         regional_office_key: VACOLS::RegionalOffice::CITIES.keys.sample,
         master_record: false
       }
