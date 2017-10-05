@@ -159,6 +159,10 @@ $color-hearings-saving: #777;
         display: inline-block;
         vertical-align: top;
         width: 3em;
+
+        div {
+          padding-left: 3em;
+       }
       }
 
       textarea {
@@ -167,7 +171,7 @@ $color-hearings-saving: #777;
         height: 4em;
         min-height: 4em;
         resize: vertical;
-        margin-left:3em;
+        margin-left: 3em;
         width: 88%;
       }
     }

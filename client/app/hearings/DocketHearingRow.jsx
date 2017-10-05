@@ -127,6 +127,9 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
+         <div>
+          <label htmlFor={`${hearing.id}.notes`}>Notes</label>
+          <div>
               <Textarea
                 id={`${hearing.id}.notes`}
                 value={hearing.notes || ''}
@@ -134,6 +137,8 @@ export class DocketHearingRow extends React.PureComponent {
                 onChange={this.setNotes}
                 maxLength="100"
               />
+            </div>
+          </div>
         </td>
       </tr>
     </tbody>;
