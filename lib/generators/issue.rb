@@ -16,7 +16,8 @@ class Generators::Issue
         type: { name: :service_connection, label: "Service Connection" },
         category: :knee,
         note: "low back condition",
-        vacols_sequence_id: 1
+        vacols_sequence_id: 1,
+        id: SecureRandom.random_number(1_000_000)
       }
     end
 
@@ -27,7 +28,6 @@ class Generators::Issue
       if vacols_id
         Fakes::AppealRepository.issue_records ||= {}
         Fakes::AppealRepository.issue_records[vacols_id] ||= []
-        Fakes::AppealRepository.issue_records[vacols_id].push(issue)
       end
 
       issue
