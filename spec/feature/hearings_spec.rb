@@ -124,6 +124,23 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
     end
 
+    scenario "Worksheet saves on refresh" do
+      visit "/hearings/1/worksheet"
+      fill_in "Rep. Name:", with: "This is a rep name"
+      fill_in "appellant-vet-witness", with: "This is a witness"
+      fill_in "worksheet-contentions", with: "These are contentions"
+      fill_in "worksheet-military-service", with: "This is military service"
+      fill_in "worksheet-evidence", with: "This is evidence"
+      fill_in "worksheet-comments-for-attorney", with: "These are comments"
+      visit "/hearings/1/worksheet"
+      expect(page).to have_content("This is a rep name")
+      expect(page).to have_content("This is a witness")
+      expect(page).to have_content("These are contentions")
+      expect(page).to have_content("This is military service")
+      expect(page).to have_content("This is evidence")
+      expect(page).to have_content("These are comments")
+    end
+
     scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
       expect(page).to_not have_field("1-issue-program")
