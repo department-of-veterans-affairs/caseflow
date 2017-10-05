@@ -88,10 +88,11 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell column-4">
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
+             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
              <Textarea
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
-                aria-label="Representative Name"
+                aria-label="Witness Observer"
                 value={worksheet.witness || ''}
                 onChange={this.onWitnessChange}
              />
@@ -109,6 +110,7 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
+            <label htmlFor="worksheet-contentions">Contentions</label>
             <Textarea
               name="Contentions"
               minRows={3}
@@ -119,6 +121,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
+             <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
             <Textarea
               name="Periods and circumstances of service"
               value={worksheet.military_service || ''}
@@ -129,6 +132,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
+          <label htmlFor="worksheet-evidence">Evidence</label>
             <Textarea
               name="Evidence"
               value={worksheet.evidence || ''}
@@ -139,6 +143,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
+             <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
             <Textarea
               name="Comments and special instructions to attorneys"
               value={worksheet.comments_for_attorney || ''}
