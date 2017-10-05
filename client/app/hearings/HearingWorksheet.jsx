@@ -6,6 +6,10 @@ import Link from '../components/Link';
 import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
+import AutoSave from '../components/AutoSave';
+import * as AppConstants from '../constants/AppConstants';
+import ApiUtil from '../util/ApiUtil';
+import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -20,6 +24,10 @@ import {
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
+
+  saveWorksheet = () => {
+    this.props.saveWorksheet(this.props.worksheet);
+  };
 
   render() {
     let { worksheet } = this.props;
@@ -41,7 +49,10 @@ export class HearingWorksheet extends React.PureComponent {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <span className="saving">Saving...</span>
+          <AutoSave
+            save={this.saveWorksheet}
+            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+          />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
             <div><b>{worksheet.appellant_last_first_mi}</b></div>
@@ -161,7 +172,25 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  saveWorksheet: (worksheet) => () => {
+    if (worksheet.edited) {
+      dispatch({ type: TOGGLE_SAVING });
+
+      dispatch({ type: SET_SAVE_FAILED, payload: { saveFailed: false } });
+
+      console.log(worksheet);
+
+      ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
+      then(() => {
+        },
+        () => {
+          dispatch({ type: SET_SAVE_FAILED,
+            payload: { saveFailed: true } });
+      });
+      dispatch({ type: TOGGLE_SAVING });
+    }
+  }
 }, dispatch);
 
 export default connect(
