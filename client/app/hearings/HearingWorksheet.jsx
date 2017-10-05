@@ -111,6 +111,7 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data">
             <Textarea
               name="Contentions"
+              minRows={3}
               value={worksheet.contentions || ''}
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
@@ -123,6 +124,7 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.military_service || ''}
               onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
+              minRows={3}
               />
           </div>
 
@@ -132,6 +134,7 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.evidence || ''}
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
+              minRows={3}
               />
           </div>
 
@@ -141,7 +144,7 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.comments_for_attorney || ''}
               id="worksheet-comments-for-attorney"
               onChange={this.onCommentsForAttorneyChange}
-                  //  autoExpand={autoExpand}
+              minRows={3}
               />
           </div>
         </form>

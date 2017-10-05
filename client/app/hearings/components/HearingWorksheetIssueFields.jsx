@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import TextareaField from '../../components/TextareaField';
+import Textarea from 'react-textarea-autosize';
 import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
@@ -16,8 +16,8 @@ class HearingWorksheetIssueFields extends PureComponent {
   onLevelsChange = (levels) =>
     this.props.onLevelsChange(levels, this.props.issueKey, this.props.appealKey);
 
-  onDescriptionChange = (description) =>
-    this.props.onDescriptionChange(description, this.props.issueKey, this.props.appealKey);
+  onDescriptionChange = (event) =>
+    this.props.onDescriptionChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
   render() {
     let { issue, field } = this.props;
@@ -43,10 +43,13 @@ class HearingWorksheetIssueFields extends PureComponent {
     if (!issue.from_vacols || allowedFields[field].alwaysEditable) {
       return <div>
         <h4 className="cf-hearings-worksheet-desc-label">{field}</h4>
-        <TextareaField aria-label={field} name={field}
+        <Textarea aria-label={field} name={field}
               id={`${issue.id}-issue-${field}`}
               value={allowedFields[field].value || ''}
-              onChange={allowedFields[field].onChange}/>
+              onChange={allowedFields[field].onChange}
+              minRows={2}
+              maxRows={8}
+              />
       </div>;
     }
 
