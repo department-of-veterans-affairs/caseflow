@@ -116,9 +116,9 @@ RSpec.feature "Hearings" do
       end
     end
 
-    scenario "Hearing worksheet page displays worksheet information" do
+    scenario "Hearing worksheet page displays worksheet information", focus: true do
       visit "/hearings/1/worksheet"
-      expect(page.driver.browser.manage.logs.get(:browser).select {|m| m.level == 'SEVERE'}.length).to eq(0)
+      expect(page.driver.browser.manage.logs.get(:browser).select {|m| m.level == 'SEVERE'}.first).to eq("")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
