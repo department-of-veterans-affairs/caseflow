@@ -215,12 +215,12 @@ $color-hearings-saving: #777;
 
 .loading-hearings {
   width: 50%;
-  height: 35vh;
+  min-height: 35vh;
   margin: 100px auto 0;
   text-align: center;
 
   .cf-image-loader {
-    height: 300px;
+    height: 35vh;
     width: 300px;
   }
 }
