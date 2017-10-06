@@ -37,7 +37,6 @@ class Fakes::HearingRepository
   end
 
   def self.number_of_slots(*)
-    [8, 9, 10, 11, 12].sample
   end
 
   def self.appeals_ready_for_hearing(vbms_id)
