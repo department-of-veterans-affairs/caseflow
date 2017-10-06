@@ -14,7 +14,7 @@ import classNames from 'classnames';
 // This comes from the class .pdfViewer.singlePageView .page in _reviewer.scss.
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
-const PAGE_MARGIN_BOTTOM = 25;
+export const PAGE_MARGIN_BOTTOM = 25;
 
 // These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
@@ -72,7 +72,7 @@ export class PdfPage extends React.PureComponent {
     // the width and height of the viewport.
     this.canvas.height = viewport.height;
     this.canvas.width = viewport.width;
-
+    console.log('viewport', viewport, this.canvas);
     // Call PDFJS to actually draw the page.
     return this.props.page.render({
       canvasContext: this.canvas.getContext('2d', { alpha: false }),
@@ -134,7 +134,6 @@ export class PdfPage extends React.PureComponent {
   // This function gets the square of the distance to the center of the scroll window.
   // We don't calculate linear distance since taking square roots is expensive.
   getSquaredDistanceToCenter = (scrollWindowCenter) => {
-    console.log('pageContainer', this.pageContainer);
     if (!this.pageContainer) {
       return Number.MAX_SAFE_INTEGER;
     }
@@ -192,13 +191,14 @@ export class PdfPage extends React.PureComponent {
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
     this.textLayer.innerHTML = '';
-
+    console.log('drawing text', viewport, text.items, this.textLayer);
     PDFJS.renderTextLayer({
       textContent: text,
       container: this.textLayer,
       viewport,
       textDivs: []
     });
+    console.log('text drawn');
   }
 
   getText = (page) => page.getTextContent()
@@ -283,6 +283,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   render() {
+    console.log('rotation', this.props.rotation);
     const pageClassNames = classNames({
       'cf-pdf-pdfjs-container': true,
       page: true,
