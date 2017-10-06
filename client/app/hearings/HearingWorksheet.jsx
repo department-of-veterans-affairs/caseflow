@@ -20,7 +20,6 @@ import {
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
-  setSaveFailed,
   setWorksheetEditedFlagToFalse,
   saveWorksheet
        } from './actions/Dockets';
@@ -57,6 +56,7 @@ export class HearingWorksheet extends React.PureComponent {
             save={this.props.saveWorksheet(worksheet)}
             spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
             isSaving={this.props.worksheetIsSaving}
+            saveFailed={this.props.saveWorksheetFailed}
           />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
@@ -188,7 +188,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
-  setSaveFailed,
   setWorksheetEditedFlagToFalse,
   saveWorksheet
 }, dispatch);

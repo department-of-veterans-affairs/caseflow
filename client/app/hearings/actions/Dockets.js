@@ -123,8 +123,8 @@ export const toggleWorksheetSaving = () => ({
   type: Constants.TOGGLE_WORKSHEET_SAVING
 });
 
-export const setSaveFailed = () => ({
-  type: Constants.SET_SAVE_FAILED,
+export const setWorksheetSaveFailed = () => ({
+  type: Constants.SET_WORKSHEET_SAVE_FAILED,
   payload: { saveFailed: false }
 });
 
@@ -141,7 +141,7 @@ export const saveWorksheet = (worksheet) => (
 
     dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
     dispatch({
-      type: Constants.SET_SAVE_FAILED,
+      type: Constants.SET_WORKSHEET_SAVE_FAILED,
       payload: { saveFailed: false }
     });
 
@@ -150,8 +150,8 @@ export const saveWorksheet = (worksheet) => (
       dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
     () => {
-            // dispatch({ type: SET_SAVE_FAILED,
-            //   payload: { saveFailed: true } });
+      dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
+        payload: { saveFailed: true } });
     });
     dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
   });

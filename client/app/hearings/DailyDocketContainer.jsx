@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
 import * as AppConstants from '../constants/AppConstants';
-import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
+import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from './constants/constants';
 import AutoSave from '../components/AutoSave.jsx';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
@@ -46,6 +46,7 @@ export class DailyDocketContainer extends React.Component {
         save={this.props.save(this.docket(), this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
         isSaving={this.props.docketIsSaving}
+        saveFailed={this.props.saveDocketFailed}
       />
       <DailyDocket
         veteran_law_judge={this.props.veteran_law_judge}
@@ -81,7 +82,7 @@ const mapDispatchToProps = (dispatch) => ({
 
     dispatch({ type: TOGGLE_DOCKET_SAVING });
 
-    dispatch({ type: SET_SAVE_FAILED,
+    dispatch({ type: SET_DOCKET_SAVE_FAILED,
       payload: { saveFailed: false } });
 
     hearingsToSave.forEach((hearing) => {
@@ -95,7 +96,7 @@ const mapDispatchToProps = (dispatch) => ({
             index } });
       },
       () => {
-        dispatch({ type: SET_SAVE_FAILED,
+        dispatch({ type: SET_DOCKET_SAVE_FAILED,
           payload: { saveFailed: true } });
       });
     });
