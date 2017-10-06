@@ -8,8 +8,6 @@ import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import AutoSave from '../components/AutoSave';
 import * as AppConstants from '../constants/AppConstants';
-import ApiUtil from '../util/ApiUtil';
-import { TOGGLE_WORKSHEET_SAVING, SET_WORKSHEET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -20,12 +18,15 @@ import {
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  toggleWorksheetSaving,
+  setSaveFailed,
+  setWorksheetEditedFlagToFalse,
+  saveWorksheet
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
 
-  saveWorksheet = () => this.props.saveWorksheet(this.props.worksheet);
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
@@ -53,7 +54,7 @@ export class HearingWorksheet extends React.PureComponent {
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
           <AutoSave
-            save={this.saveWorksheet}
+            save={this.props.saveWorksheet(worksheet)}
             spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
             isSaving={this.props.worksheetIsSaving}
           />
@@ -186,24 +187,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
-  saveWorksheet: (worksheet) => () => {
-    if (worksheet.edited) {
-      dispatch({ type: TOGGLE_WORKSHEET_SAVING });
-
-      dispatch({ type: SET_SAVE_FAILED,
-        payload: { saveFailed: false } });
-
-      ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
-      then(() => {
-        dispatch({ type: SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
-      },
-        () => {
-          dispatch({ type: SET_SAVE_FAILED,
-            payload: { saveFailed: true } });
-        });
-      dispatch({ type: TOGGLE_WORKSHEET_SAVING });
-    }
-  }
+  toggleWorksheetSaving,
+  setSaveFailed,
+  setWorksheetEditedFlagToFalse,
+  saveWorksheet
 }, dispatch);
 
 export default connect(

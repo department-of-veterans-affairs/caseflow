@@ -5,7 +5,6 @@ import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import { LOADING_INDICATOR_COLOR_DEFAULT } from '../constants/AppConstants';
 import moment from 'moment';
 
-// This may go away in favor of the timestamp from updated record
 const now = () => {
   return moment().
     format('h:mm a').
