@@ -134,6 +134,10 @@ class ApplicationController < ApplicationBaseController
   helper_method :page_title
 
   def verify_authorized_roles(*roles)
+    STDERR.puts "this is from stderr"
+    STDERR.puts *roles
+    puts "this is from just puts"
+    puts *roles
     return true if current_user && roles.all? { |r| current_user.can?(r) }
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")

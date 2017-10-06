@@ -127,6 +127,7 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
+      expect(current_user.can?("Hearing Prep")).to eq("")
       fill_in "appellant-vet-witness", with: "This is a witness"
       fill_in "worksheet-contentions", with: "These are contentions"
       fill_in "worksheet-military-service", with: "This is military service"
@@ -142,6 +143,7 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
+      expect(current_user.roles).to eq([])
       expect(page).to_not have_field("1-issue-program")
       expect(page).to_not have_field("1-issue-name")
       expect(page).to_not have_field("1-issue-levels")
