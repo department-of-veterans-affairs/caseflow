@@ -9,7 +9,7 @@ import HearingWorksheetStream from './components/HearingWorksheetStream';
 import AutoSave from '../components/AutoSave';
 import * as AppConstants from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { TOGGLE_SAVING, SET_WORKSHEET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
+import { TOGGLE_WORKSHEET_SAVING, SET_WORKSHEET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -52,6 +52,7 @@ export class HearingWorksheet extends React.PureComponent {
           <AutoSave
             save={this.saveWorksheet}
             spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+            isSaving={this.props.worksheetIsSaving}
           />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
@@ -175,7 +176,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCommentsForAttorneyChange,
   saveWorksheet: (worksheet) => () => {
     if (worksheet.edited) {
-      dispatch({ type: TOGGLE_SAVING });
+      dispatch({ type: TOGGLE_WORKSHEET_SAVING });
 
       dispatch({ type: SET_SAVE_FAILED,
         payload: { saveFailed: false } });
@@ -188,7 +189,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
           dispatch({ type: SET_SAVE_FAILED,
             payload: { saveFailed: true } });
         });
-      dispatch({ type: TOGGLE_SAVING });
+      dispatch({ type: TOGGLE_WORKSHEET_SAVING });
     }
   }
 }, dispatch);

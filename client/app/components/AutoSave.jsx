@@ -52,7 +52,6 @@ export class AutoSave extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  isSaving: state.isSaving,
   saveFailed: state.saveFailed
 });
 

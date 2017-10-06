@@ -169,9 +169,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
-  case Constants.TOGGLE_SAVING:
-    return update(state, {
-      isSaving: { $set: !state.isSaving }
+  case Constants.TOGGLE_DOCKET_SAVING:
+    return update(state, { docketIsSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.TOGGLE_WORKSHEET_SAVING:
+    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
     });
 
   case Constants.SET_SAVE_FAILED:
