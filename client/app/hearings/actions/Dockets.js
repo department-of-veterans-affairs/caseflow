@@ -136,7 +136,7 @@ export const setWorksheetEditedFlagToFalse = () => ({
 export const saveWorksheet = (worksheet) => (
   (dispatch) => () => {
     if (!worksheet.edited) {
-        return;
+      return;
     }
 
     dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
@@ -154,4 +154,4 @@ export const saveWorksheet = (worksheet) => (
             //   payload: { saveFailed: true } });
     });
     dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
-});
+  });
