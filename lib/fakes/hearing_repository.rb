@@ -69,7 +69,7 @@ class Fakes::HearingRepository
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
       type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
-      date: Time.zone.now - (i % 9).days - rand(3).days,
+      date: Time.zone.now - (i % 9).days - rand(3).days - rand(2).hours + rand(60).minutes,
       vacols_id: 950_330_575 + (i * 1465),
       disposition: nil,
       aod: nil,
