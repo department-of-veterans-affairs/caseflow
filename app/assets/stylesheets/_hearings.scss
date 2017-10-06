@@ -160,9 +160,9 @@ $color-hearings-saving: #777;
         vertical-align: top;
         width: 3em;
 
-        + div {
+        div {
           padding-left: 3em;
-        }
+       }
       }
 
       textarea {
@@ -171,6 +171,8 @@ $color-hearings-saving: #777;
         height: 4em;
         min-height: 4em;
         resize: vertical;
+        margin-left: 3em;
+        width: 88%;
       }
     }
 
@@ -236,6 +238,7 @@ $color-hearings-saving: #777;
       margin: 0;
       width: 100%;
       resize: vertical;
+      min-height: 48px;
     }
   }
 
@@ -337,6 +340,7 @@ $color-hearings-saving: #777;
   margin: 0;
 
   .cf-form-textarea {
+    min-height: 48px;
 
     .question-label {
       position: absolute;
