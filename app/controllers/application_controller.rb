@@ -1,10 +1,10 @@
 class ApplicationController < ApplicationBaseController
-  before_action :set_application
-  before_action :set_timezone,
-                :setup_fakes,
-                :check_whats_new_cookie
-  before_action :set_raven_user
-  before_action :verify_authentication
+  # before_action :set_application
+  # before_action :set_timezone,
+  #               :setup_fakes,
+  #               :check_whats_new_cookie
+  # before_action :set_raven_user
+  # before_action :verify_authentication
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -134,9 +134,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :page_title
 
   def verify_authorized_roles(*roles)
-    puts roles
     return true if current_user && roles.all? { |r| current_user.can?(r) }
-    puts "got behind true in verify_authorized_roles"
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
     session["return_to"] = request.original_url
@@ -145,15 +143,13 @@ class ApplicationController < ApplicationBaseController
 
   # Verifies the passed user matches the current user
   def verify_user(user)
-    puts current_user
     return true if current_user == user
-    puts "got behind true in verify_user"
+
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
 
   def verify_system_admin
-    puts "somehow got into verify_system_admin"
     redirect_to "/unauthorized" unless current_user.admin?
   end
 

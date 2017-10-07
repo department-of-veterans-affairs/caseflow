@@ -1,6 +1,6 @@
 class HearingsController < ApplicationController
   # :nocov:
-  before_action :verify_access, :check_hearing_prep_out_of_service
+  # before_action :verify_access, :check_hearing_prep_out_of_service
 
   def update
     hearing.update(update_params)
