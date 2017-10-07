@@ -116,7 +116,7 @@ RSpec.feature "Hearings" do
       end
     end
 
-    scenario "Hearing worksheet page displays worksheet information", focus: true do
+    scenario "Hearing worksheet page displays worksheet information" do
       visit "/hearings/1/worksheet"
       # expect(page.driver.browser.manage.logs.get(:browser).select {|m| m.level == 'SEVERE'}.first).to eq("")
       expect(page).to have_content("Hearing Type: Video")
@@ -125,7 +125,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
     end
 
-    scenario "Worksheet saves on refresh", focus: true do
+    scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
       # expect(current_user.can?("Hearing Prep")).to eq("")
       fill_in "appellant-vet-witness", with: "This is a witness"
@@ -141,7 +141,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("These are comments")
     end
 
-    scenario "Worksheet adds user created issues", focus: true do
+    scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
       # expect(current_user.roles).to eq([])
       expect(page).to_not have_field("1-issue-program")
@@ -156,7 +156,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_field("undefined-issue-description")
     end
 
-    scenario "Can click from hearing worksheet to reader", focus: true do
+    scenario "Can click from hearing worksheet to reader" do
       visit "/hearings/1/worksheet"
       link = find("#review-efolder")
       link_href = link[:href]
