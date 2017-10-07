@@ -10,11 +10,11 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def update
-    # worksheet.update!(worksheet_params)
-    # worksheet.class.repository.update_vacols_hearing!(worksheet.vacols_record, worksheet_params)
-    render json: { worksheet: hearing_worksheet }
-  end
+  # def update
+  #   worksheet.update!(worksheet_params)
+  #   worksheet.class.repository.update_vacols_hearing!(worksheet.vacols_record, worksheet_params)
+  #   render json: { worksheet: hearing_worksheet }
+  # end
 
   private
 
