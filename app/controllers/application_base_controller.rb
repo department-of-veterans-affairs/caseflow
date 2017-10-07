@@ -8,6 +8,7 @@ class ApplicationBaseController < ActionController::Base
   # before_action :strict_transport_security
 
   def unauthorized
+    puts "how did i get in here??"
     render status: 403
   end
 
