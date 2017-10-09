@@ -79,6 +79,7 @@ class Test::UsersController < ApplicationController
   end
 
   def require_demo
+    puts 'require_demo unauthorized'
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
   end
   # :nocov:
