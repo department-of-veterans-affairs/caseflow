@@ -24,7 +24,7 @@ before_install:
   - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
   - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
   
-  - yarn -v
+  - yarn --version
   - ./ci-bin/retry.bash sudo apt-get update
 # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
