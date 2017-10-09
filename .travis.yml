@@ -17,12 +17,13 @@ before_install:
   - ./ci-bin/ensure-env-vars-exist.bash
   - pip install --user awscli
   - mkdir ./coverage
-  # The version we specify here must be in sync with .nvmrc. Travis claims that it can read directly from
-  # .nvmrc, but the method specified in the docs do not work.
   - nvm install $(cat .nvmrc)
+  - node -v
+
+  # Yarn install instructions from https://yarnpkg.com/en/docs/install#linux-tab
   - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
   - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  - node -v
+  
   - yarn -v
   - ./ci-bin/retry.bash sudo apt-get update
 # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
