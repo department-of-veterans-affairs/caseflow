@@ -19,10 +19,11 @@ before_install:
   - mkdir ./coverage
   # The version we specify here must be in sync with .nvmrc. Travis claims that it can read directly from
   # .nvmrc, but the method specified in the docs do not work.
-  - nvm install v6.11.3
-  - npm install -g npm@5.4.2
+  - nvm install $(cat .nvmrc)
+  - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+  - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
   - node -v
-  - npm -v
+  - yarn -v
   - ./ci-bin/retry.bash sudo apt-get update
 # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_53.0.2785.143-0ubuntu0.14.04.1.1145_amd64.deb -O $PWD/chromium-chromedriver.deb
@@ -31,8 +32,7 @@ before_install:
   - sudo apt-get install pdftk
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
-  - cd ./client && npm install --no-optional
-  - npm ls
+  - cd ./client && yarn --frozen-lockfile
   - cd ..
 
 
@@ -98,7 +98,7 @@ jobs:
       env: TEST_CATEGORY=javascript
       script:
         - cd client
-        - npm run build
+        - yarn run build
         - cd ..
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3 # give xvfb some time to start
@@ -110,7 +110,7 @@ jobs:
         - bundle exec rake lint
         - bundle exec rake security
         - cd ./client
-        - mv node_modules node_modules_bak && npm install --production --no-optional && npm run build:production
+        - mv node_modules node_modules_bak && yarn --frozen-lockfile --production && yarn run build:production
         # Move the non-production node_modules back so that it's cached for next travis test run
         - rm -rf node_modules && mv node_modules_bak node_modules
 
