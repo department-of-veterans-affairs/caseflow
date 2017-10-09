@@ -4,10 +4,6 @@
   "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "license": "none",
   "version": "0.0.1",
-  "engines": {
-    "node": "6.10.2",
-    "npm": "3.10.10"
-  },
   "scripts": {
     "test": "npm run test:karma && npm run test:legacy",
     "test:legacy": "NODE_ENV=test mocha --recursive test/node/setup.js test/node/* --compilers jsx:babel-core/register js:babel-core/register",
