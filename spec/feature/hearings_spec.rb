@@ -117,53 +117,73 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Hearing worksheet page displays worksheet information" do
-      visit "/hearings/1/worksheet"
-      expect(page.driver.browser.manage.logs.get(:browser).find { |m| m.level == "SEVERE" }).to eq("")
-      expect(page).to have_content("Hearing Type: Video")
-      expect(page).to have_content("Docket Number: 4198")
-      expect(page).to have_content("Form 9: 12/21/2016")
-      expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      begin
+        visit "/hearings/1/worksheet"
+        expect(page.driver.browser.manage.logs.get(:browser).find { |m| m.level == "SEVERE" }).to eq("")
+        expect(page).to have_content("Hearing Type: Video")
+        expect(page).to have_content("Docket Number: 4198")
+        expect(page).to have_content("Form 9: 12/21/2016")
+        expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      rescue Exception => e
+        print page.html
+        raise e
+      end
     end
 
     scenario "Worksheet saves on refresh" do
-      visit "/hearings/1/worksheet"
-      fill_in "appellant-vet-witness", with: "This is a witness"
-      fill_in "worksheet-contentions", with: "These are contentions"
-      fill_in "worksheet-military-service", with: "This is military service"
-      fill_in "worksheet-evidence", with: "This is evidence"
-      fill_in "worksheet-comments-for-attorney", with: "These are comments"
-      visit "/hearings/1/worksheet"
-      expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are contentions")
-      expect(page).to have_content("This is military service")
-      expect(page).to have_content("This is evidence")
-      expect(page).to have_content("These are comments")
+      begin
+        visit "/hearings/1/worksheet"
+        fill_in "appellant-vet-witness", with: "This is a witness"
+        fill_in "worksheet-contentions", with: "These are contentions"
+        fill_in "worksheet-military-service", with: "This is military service"
+        fill_in "worksheet-evidence", with: "This is evidence"
+        fill_in "worksheet-comments-for-attorney", with: "These are comments"
+        visit "/hearings/1/worksheet"
+        expect(page).to have_content("This is a witness")
+        expect(page).to have_content("These are contentions")
+        expect(page).to have_content("This is military service")
+        expect(page).to have_content("This is evidence")
+        expect(page).to have_content("These are comments")
+      rescue Exception => e
+        print page.html
+        raise e
+      end
     end
 
     scenario "Worksheet adds user created issues" do
-      visit "/hearings/1/worksheet"
-      expect(page).to_not have_field("1-issue-program")
-      expect(page).to_not have_field("1-issue-name")
-      expect(page).to_not have_field("1-issue-levels")
-      expect(page).to have_field("1-issue-description")
-      click_on "button-addIssue-0"
-      # These IDs will be updated when we save edits to the backend
-      expect(page).to have_field("undefined-issue-program")
-      expect(page).to have_field("undefined-issue-name")
-      expect(page).to have_field("undefined-issue-levels")
-      expect(page).to have_field("undefined-issue-description")
+      begin
+        visit "/hearings/1/worksheet"
+        expect(page).to_not have_field("1-issue-program")
+        expect(page).to_not have_field("1-issue-name")
+        expect(page).to_not have_field("1-issue-levels")
+        expect(page).to have_field("1-issue-description")
+        click_on "button-addIssue-0"
+        # These IDs will be updated when we save edits to the backend
+        expect(page).to have_field("undefined-issue-program")
+        expect(page).to have_field("undefined-issue-name")
+        expect(page).to have_field("undefined-issue-levels")
+        expect(page).to have_field("undefined-issue-description")
+      rescue Exception => e
+        print page.html
+        raise e
+      end
     end
 
     scenario "Can click from hearing worksheet to reader" do
-      visit "/hearings/1/worksheet"
-      link = find("#review-efolder")
-      link_href = link[:href]
-      expect(page).to have_content("Review eFolder")
-      click_on "Review eFolder"
-      new_window = windows.last
-      page.within_window new_window do
-        visit link_href
-        expect(page).to have_content("You've viewed 0 out of 4 documents")
+      begin
+        visit "/hearings/1/worksheet"
+        link = find("#review-efolder")
+        link_href = link[:href]
+        expect(page).to have_content("Review eFolder")
+        click_on "Review eFolder"
+        new_window = windows.last
+        page.within_window new_window do
+          visit link_href
+          expect(page).to have_content("You've viewed 0 out of 4 documents")
+        end
+      rescue Exception => e
+        print page.html
+        raise e
       end
     end
   end
