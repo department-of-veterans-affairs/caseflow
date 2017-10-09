@@ -1,4 +1,5 @@
 import * as Constants from '../constants/constants';
+import ApiUtil from '../../util/ApiUtil';
 
 export const onProgramChange = (program, issueKey, appealKey) => ({
   type: Constants.SET_PROGRAM,
@@ -113,5 +114,16 @@ export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => (
     appealKey,
     isShowingModal
   }
+});
+
+export const saveIssues = (worksheet) => ((dispatch) => {
+  worksheet.appeals_ready_for_hearing.map((appeal) => {
+    appeal.worksheet_issues.map((issue) => {
+        ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal } }).
+        then(() => {},
+            () => {
+            });
+    });
+  });
 });
 

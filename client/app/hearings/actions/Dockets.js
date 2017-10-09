@@ -119,7 +119,7 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   }
 });
 
-export const saveWorksheet = (worksheet) => ((dispatch) => () => {
+export const saveWorksheet = (worksheet) => ((dispatch) => {
   if (!worksheet.edited) {
     return;
   }
