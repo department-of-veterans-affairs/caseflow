@@ -19,8 +19,6 @@ import {
   onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
-  toggleWorksheetSaving,
-  setWorksheetEditedFlagToFalse,
   saveWorksheet
        } from './actions/Dockets';
 
@@ -187,8 +185,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
-  toggleWorksheetSaving,
-  setWorksheetEditedFlagToFalse,
   saveWorksheet
 }, dispatch);
 

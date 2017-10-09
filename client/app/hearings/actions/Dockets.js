@@ -119,39 +119,24 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   }
 });
 
-export const toggleWorksheetSaving = () => ({
-  type: Constants.TOGGLE_WORKSHEET_SAVING
-});
+export const saveWorksheet = (worksheet) => ((dispatch) => () => {
+  if (!worksheet.edited) {
+    return;
+  }
 
-export const setWorksheetSaveFailed = () => ({
-  type: Constants.SET_WORKSHEET_SAVE_FAILED,
-  payload: { saveFailed: false }
-});
-
-export const setWorksheetEditedFlagToFalse = () => ({
-  type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE
-});
-
-
-export const saveWorksheet = (worksheet) => (
-  (dispatch) => () => {
-    if (!worksheet.edited) {
-      return;
-    }
-
-    dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
-    dispatch({
-      type: Constants.SET_WORKSHEET_SAVE_FAILED,
-      payload: { saveFailed: false }
-    });
-
-    ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
-    then(() => {
-      dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
-    },
-    () => {
-      dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
-        payload: { saveFailed: true } });
-    });
-    dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
+  dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
+  dispatch({
+    type: Constants.SET_WORKSHEET_SAVE_FAILED,
+    payload: { saveFailed: false }
   });
+
+  ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
+  then(() => {
+    dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
+  },
+  () => {
+    dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
+      payload: { saveFailed: true } });
+  });
+  dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
+});
