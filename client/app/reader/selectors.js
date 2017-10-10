@@ -65,3 +65,37 @@ export const docListIsFiltered = createSelector(
 );
 
 /* eslint-enable newline-per-chained-call */
+
+const getText = (state) => state.text;
+
+const getTextObject = createSelector([getText], (text) => { return text.reduce(
+  (acc, pageText, index) => {
+    const concatenated = pageText.items.map((row) => row.str).join(' ');
+    const splitWords = concatenated.split(' ');
+    splitWords.forEach((word, wordIndex) => {
+      const end = Math.min(wordIndex + 5, concatenated.length);
+      const begin = Math.max(wordIndex - 5, 0);
+      const sentence = splitWords.slice(begin, end).join(' ');
+      const after = splitWords.slice(wordIndex + 1, end);
+      if (acc[word]) {
+        acc[word].push({ index, sentence, after });
+      } else {
+        acc[word] = [{ index, sentence, after }];
+      }
+    })
+    return acc;
+  }, {}
+)});
+
+const getSearchTerm = (state) => state.documentSearchString;
+
+export const getTextSnippets = createSelector([getTextObject, getSearchTerm], (textObject, searchTerm) => {
+  return Object.keys(textObject).reduce((acc, key) => {
+    console.log(key, searchTerm, key.includes(searchTerm));
+    if (key.includes(searchTerm)) {
+      return acc.concat(textObject[key]);
+    }
+
+    return acc;
+  }, []);
+});
