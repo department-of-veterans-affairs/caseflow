@@ -33,7 +33,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
     it "delete an issue" do
       issue = Generators::WorksheetIssue.create(appeal: appeal)
       expect(WorksheetIssue.all.size).to eq 1
-      params = { worksheet_issues_attributes: [{ _destroy: "1", id: issue.id }] }
+      params = { worksheet_issues_attributes: [{ _destroy: true, id: issue.id }] }
       patch :update, appeal_id: appeal.id, appeal: params
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["appeal"]
