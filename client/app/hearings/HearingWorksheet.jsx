@@ -21,6 +21,7 @@ import {
   onEvidenceChange,
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
+  setWorksheetSaveFailedStatus,
   saveWorksheet
        } from './actions/Dockets';
 
@@ -29,6 +30,7 @@ export class HearingWorksheet extends React.PureComponent {
   save = (worksheet) => () => {
     // TODO: These need to run synchronously.
     this.props.toggleWorksheetSaving();
+    this.props.setWorksheetSaveFailedStatus(false);
     this.props.saveWorksheet(worksheet);
     this.props.saveIssues(worksheet);
     this.props.toggleWorksheetSaving();
@@ -197,6 +199,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
   saveWorksheet,
+  setWorksheetSaveFailedStatus,
   saveIssues
 }, dispatch);
 
