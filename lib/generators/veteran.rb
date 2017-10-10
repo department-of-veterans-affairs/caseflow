@@ -2,6 +2,7 @@ class Generators::Veteran
   extend Generators::Base
 
   class << self
+    # rubocop:disable Metrics/MethodLength
     def default_attrs
       {
         address_line1: "1234 FAKE ST",
@@ -83,6 +84,7 @@ class Generators::Veteran
                     char_of_svc_code: "UHC" }]
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
     def build(attrs = {})
       Fakes::BGSService.veteran_records ||= {}

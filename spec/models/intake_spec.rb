@@ -56,5 +56,10 @@ describe Intake do
         expect(intake.error_code).to eq(:veteran_not_accessible)
       end
     end
+
+    context "when number is valid (even with extra spaces)" do
+      let(:veteran_file_number) { "  64205050  " }
+      it { is_expected.to be_truthy }
+    end
   end
 end

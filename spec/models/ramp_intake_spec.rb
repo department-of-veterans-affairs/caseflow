@@ -27,8 +27,8 @@ describe RampIntake do
         expect(subject).to be_truthy
 
         expect(intake).to be_persisted
-        expect(intake.started_at).to eq(Time.now)
-        expect(intake.detail).to eq(ramp_election) 
+        expect(intake.started_at).to eq(Time.zone.now)
+        expect(intake.detail).to eq(ramp_election)
       end
     end
   end

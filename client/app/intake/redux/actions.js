@@ -26,7 +26,7 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
           dispatch({
             type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
             payload: {
-              name: responseObject.veteran_name, 
+              name: responseObject.veteran_name,
               formName: responseObject.veteran_form_name,
               fileNumber: responseObject.veteran_file_number
             }
