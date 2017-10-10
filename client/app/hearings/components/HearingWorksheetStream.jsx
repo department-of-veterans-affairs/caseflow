@@ -26,7 +26,7 @@ class HearingWorksheetStream extends Component {
   };
 
   getVacolsSequenceId = () => {
-    return Number(this.getMaxVacolsSequenceId()) + 1;
+    return this.getMaxVacolsSequenceId() + 1;
   };
 
   render() {

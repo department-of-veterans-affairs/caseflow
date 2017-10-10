@@ -132,6 +132,9 @@ export const saveIssues = (worksheet) => (dispatch) => {
               appealIndex,
               issueIndex } });
           if (!issue.id) {
+            console.log(JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
+              return issue.vacols_sequence_id === dbIssue.vacols_sequence_id;
+            }));
             const id = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
               return issue.vacols_sequence_id === dbIssue.vacols_sequence_id;
             })[0].id;
