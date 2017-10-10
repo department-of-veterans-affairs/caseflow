@@ -5,7 +5,7 @@ import { LOADING_INDICATOR_COLOR_DEFAULT } from '../constants/AppConstants';
 import moment from 'moment';
 
 const now = () => {
-  return moment().
+  return moment().tz("America/New_York").
     format('h:mm a').
     replace(/(p|a)m/, '$1.m.');
 };

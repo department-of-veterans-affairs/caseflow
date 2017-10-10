@@ -1,4 +1,5 @@
 class HearingsController < ApplicationController
+  # :nocov:
   before_action :verify_access, :check_hearing_prep_out_of_service
 
   def update
@@ -55,4 +56,5 @@ class HearingsController < ApplicationController
       nil
     end
   end
+  # :nocov:
 end
