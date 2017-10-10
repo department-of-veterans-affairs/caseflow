@@ -39,6 +39,8 @@ class Intake < ActiveRecord::Base
   private
 
   def file_number_valid?
+    return false unless veteran_file_number
+
     self.veteran_file_number = veteran_file_number.strip
     veteran_file_number =~ /[0-9]{8,}/
   end

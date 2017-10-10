@@ -199,6 +199,7 @@ class Fakes::BGSService
 
   def self.clean!
     self.ssn_not_found = false
+    self.inaccessible_appeal_vbms_ids = []
   end
 
   def get_end_products(_veteran_id)
