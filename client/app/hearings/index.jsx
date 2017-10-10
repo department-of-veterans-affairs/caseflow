@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
-import ConfigUtil from '../util/ConfigUtil';
 import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
@@ -16,11 +15,7 @@ import Footer from '../components/Footer';
 
 const configureStore = (data) => {
 
-  const middleware = [];
-
-  if (!ConfigUtil.test()) {
-    middleware.push(thunk, perflogger);
-  }
+  const middleware = [thunk, perflogger];
 
   // This is to be used with the Redux Devtools Chrome extension
   // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd

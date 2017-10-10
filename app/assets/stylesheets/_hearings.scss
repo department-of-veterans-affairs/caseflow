@@ -134,6 +134,7 @@ $color-hearings-saving: #777;
 
         &:last-child {
           padding-left: 2em;
+          display: block;
         }
       }
     }
@@ -160,9 +161,9 @@ $color-hearings-saving: #777;
         vertical-align: top;
         width: 3em;
 
-        + div {
+        div {
           padding-left: 3em;
-        }
+       }
       }
 
       textarea {
@@ -171,6 +172,8 @@ $color-hearings-saving: #777;
         height: 4em;
         min-height: 4em;
         resize: vertical;
+        margin-left: 3em;
+        width: 88%;
       }
     }
 
@@ -212,12 +215,12 @@ $color-hearings-saving: #777;
 
 .loading-hearings {
   width: 50%;
-  height: 35vh;
+  min-height: 35vh;
   margin: 100px auto 0;
   text-align: center;
 
   .cf-image-loader {
-    height: 300px;
+    height: 35vh;
     width: 300px;
   }
 }
@@ -236,6 +239,7 @@ $color-hearings-saving: #777;
       margin: 0;
       width: 100%;
       resize: vertical;
+      min-height: 48px;
     }
   }
 
@@ -337,6 +341,7 @@ $color-hearings-saving: #777;
   margin: 0;
 
   .cf-form-textarea {
+    min-height: 48px;
 
     .question-label {
       position: absolute;

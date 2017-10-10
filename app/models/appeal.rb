@@ -307,6 +307,10 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
+  def close!(user:, closed_on:, disposition:)
+    Appeal.close(appeal: self, user: user, closed_on: closed_on, disposition: disposition)
+  end
+
   def fetch_documents!(save:)
     save ? find_or_create_documents! : fetched_documents
   end
@@ -535,6 +539,20 @@ class Appeal < ActiveRecord::Base
       @repository ||= AppealRepository
     end
 
+    def close(appeal:, user:, closed_on:, disposition:)
+      fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      AppealRepository.close!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: disposition_code
+      )
+    end
+
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       certification = Certification.find_by_vacols_id(appeal.vacols_id)
@@ -544,7 +562,7 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
-      vbms.clean_document(form8.pdf_location)
+      vbms.clean_document(form8.pdf_location) unless Rails.env.development?
     end
 
     # TODO: Move to AppealMapper?

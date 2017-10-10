@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
+import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,12 +36,13 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
-const getDate = (date, timezone) => {
-  return moment.tz(date, timezone).
-    format('h:mm a z').
+const getDate = (date) => {
+  return moment(date).
+    format('LT').
     replace('AM', 'a.m.').
     replace('PM', 'p.m.');
 };
+
 
 export class DocketHearingRow extends React.PureComponent {
 
@@ -69,7 +71,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, 'America/New_York')}
+            {getDate(hearing.date)} EDT
           </span>
           <span>
             {hearing.regional_office_name}
@@ -126,12 +128,13 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
+         <div>
+          <label htmlFor={`${hearing.id}.notes`}>Notes</label>
           <div>
-            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
-            <div>
-              <textarea
+              <Textarea
                 id={`${hearing.id}.notes`}
-                defaultValue={hearing.notes}
+                value={hearing.notes || ''}
+                name="Notes"
                 onChange={this.setNotes}
                 maxLength="100"
               />

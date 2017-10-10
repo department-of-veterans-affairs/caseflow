@@ -11,9 +11,9 @@ class WorksheetIssue < ActiveRecord::Base
   class << self
     def create_from_issue(appeal, issue)
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
-        record.update(program: issue.program,
-                      name: issue.type[:name],
-                      levels: issue.levels.join("\n"),
+        record.update(program: issue.program.capitalize,
+                      name: issue.type[:label],
+                      levels: issue.levels.join("; "),
                       description: issue.description.join("\n"),
                       from_vacols: true)
       end
