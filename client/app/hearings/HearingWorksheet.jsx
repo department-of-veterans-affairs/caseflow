@@ -4,8 +4,10 @@ import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import Link from '../components/Link';
 import TextField from '../components/TextField';
-import TextareaField from '../components/TextareaField';
+import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
+import AutoSave from '../components/AutoSave';
+import * as AppConstants from '../constants/AppConstants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -16,10 +18,17 @@ import {
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  saveWorksheet
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
+
+  onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
+  onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
+  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
+  onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
+  onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
     let { worksheet } = this.props;
@@ -41,7 +50,12 @@ export class HearingWorksheet extends React.PureComponent {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <span className="saving">Saving...</span>
+          <AutoSave
+            save={this.props.saveWorksheet(worksheet)}
+            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+            isSaving={this.props.worksheetIsSaving}
+            saveFailed={this.props.saveWorksheetFailed}
+          />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
             <div><b>{worksheet.appellant_last_first_mi}</b></div>
@@ -63,7 +77,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={worksheet.repName || ''}
+              value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
@@ -82,12 +96,13 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell column-4">
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
-             <TextareaField
+             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
+             <Textarea
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
-                aria-label="Representative Name"
+                aria-label="Witness Observer"
                 value={worksheet.witness || ''}
-                onChange={this.props.onWitnessChange}
+                onChange={this.onWitnessChange}
              />
           </div>
         </div>
@@ -103,38 +118,46 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <label htmlFor="worksheet-contentions">Contentions</label>
+            <Textarea
               name="Contentions"
               value={worksheet.contentions || ''}
-              onChange={this.props.onContentionsChange}
+              onChange={this.onContentionsChange}
               id="worksheet-contentions"
+              minRows={3}
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+             <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
+            <Textarea
               name="Periods and circumstances of service"
               value={worksheet.military_service || ''}
-              onChange={this.props.onMilitaryServiceChange}
+              onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
+              minRows={3}
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+          <label htmlFor="worksheet-evidence">Evidence</label>
+            <Textarea
               name="Evidence"
               value={worksheet.evidence || ''}
-              onChange={this.props.onEvidenceChange}
+              onChange={this.onEvidenceChange}
               id="worksheet-evidence"
+              minRows={3}
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+             <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+            <Textarea
               name="Comments and special instructions to attorneys"
               value={worksheet.comments_for_attorney || ''}
               id="worksheet-comments-for-attorney"
-              onChange={this.props.onCommentsForAttorneyChange}
+              onChange={this.onCommentsForAttorneyChange}
+              minRows={3}
               />
           </div>
         </form>
@@ -161,7 +184,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  saveWorksheet
 }, dispatch);
 
 export default connect(

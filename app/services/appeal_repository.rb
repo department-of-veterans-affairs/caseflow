@@ -235,6 +235,55 @@ class AppealRepository
     "98"
   end
 
+  # Close an appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
+  # WARNING: some parts of this action are not automatically reversable, and must
+  # be reversed by hand
+  def self.close!(appeal:, user:, closed_on:, disposition_code:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    VACOLS::Case.transaction do
+      case_record.update_attributes!(
+        bfmpro: "HIS",
+        bfddec: dateshift_to_utc(closed_on),
+        bfdc: disposition_code,
+        bfboard: "00",
+        bfmemid: "000",
+        bfattid: "000"
+      )
+
+      case_record.update_vacols_location!("99")
+
+      folder_record.update_attributes!(
+        ticukey: "HISTORY",
+        tikeywrd: "HISTORY",
+        tidcls: dateshift_to_utc(closed_on),
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+
+      # Close any issues associated to the appeal
+      case_record.case_issues.update_all(
+        issdc: disposition_code,
+        issdcls: VacolsHelper.local_time_with_utc_timezone
+      )
+
+      # Cancel any open diary notes for the appeal
+      case_record.notes.where(tskdcls: nil).update_all(
+        tskdcls: VacolsHelper.local_time_with_utc_timezone,
+        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
+        tskmdusr: user.regional_office,
+        tskstat: "C"
+      )
+
+      # Cancel any scheduled hearings
+      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
+        clsdate: VacolsHelper.local_time_with_utc_timezone,
+        hearing_disp: "C"
+      )
+    end
+  end
+
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -259,5 +308,29 @@ class AppealRepository
     VACOLS::Case.aod([vacols_id])[vacols_id]
   end
 
+  def self.load_user_case_assignments_from_vacols(css_id)
+    MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
+                          service: :vacols,
+                          name: "active_cases_for_user") do
+      active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
+      active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
+      active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
+      active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
+
+      active_cases_for_user.map do |assignment|
+        assignment_issues_hash_array = active_cases_issues[assignment.vacols_id]
+
+        # if that appeal is not found, it intializes a new appeal with the
+        # assignments vacols_id
+        appeal = Appeal.new(vacols_id: assignment.vacols_id, vbms_id: assignment.vbms_id)
+        appeal.attributes = assignment.attributes
+        appeal.aod = active_cases_aod_results[assignment.vacols_id]
+
+        # fetching Issue objects using the issue hash
+        appeal.issues = assignment_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
+        appeal
+      end
+    end
+  end
   # :nocov:
 end
