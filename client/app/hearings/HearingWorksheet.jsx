@@ -28,7 +28,6 @@ import {
 export class HearingWorksheet extends React.PureComponent {
 
   save = (worksheet) => () => {
-    // TODO: These need to run synchronously.
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
     this.props.saveWorksheet(worksheet);
