@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import Button from '../../components/Button';
-import { onAddIssue } from '../actions/Issue';
 
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
 
-  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey);
 
   render() {
 
@@ -32,12 +28,6 @@ class HearingWorksheetStream extends Component {
                 worksheetStreamsIssues={this.props.worksheet.appeals_ready_for_hearing[key].worksheet_issues}
                 {...this.props}
               />
-              <Button
-                classNames={['usa-button-outline', 'hearings-add-issue']}
-                name="+ Add Issue"
-                id={`button-addIssue-${appealId}`}
-                onClick={this.onAddIssue(key)}
-              />
               <hr />
               </div>;
             })}
@@ -45,9 +35,6 @@ class HearingWorksheetStream extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onAddIssue
-}, dispatch);
 
 const mapStateToProps = (state) => ({
   HearingWorksheetStream: state
@@ -58,6 +45,5 @@ HearingWorksheetStream.propTypes = {
 };
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(HearingWorksheetStream);
