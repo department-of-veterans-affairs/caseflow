@@ -129,7 +129,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => () => {
   }
 
   dispatch({
-    type: Constants.SET_WORKSHEET_SAVE_STATUS,
+    type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
     payload: { saveFailed: false }
   });
 
@@ -138,7 +138,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => () => {
     dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
   },
   () => {
-    dispatch({ type: Constants.SET_WORKSHEET_SAVE_STATUS,
+    dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
       payload: { saveFailed: true } });
   },
   () => {
