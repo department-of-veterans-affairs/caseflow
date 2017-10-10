@@ -148,26 +148,30 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
         appeals_ready_for_hearing: {
           [action.payload.appealKey]: {
             worksheet_issues: { $push: [{ from_vacols: false,
-              edited: true }] }
+              edited: true,
+              vacols_sequence_id: action.payload.vacolsSequenceId }] }
+          }
+        }
+      }
+    });
+
+  case Constants.SET_ISSUE_ID:
+    return update(state, {
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: {
+                id: { $set: action.payload.id }
+              }
+            }
           }
         }
       }
     });
 
   case Constants.DELETE_ISSUE:
-    return update(state, {
-      worksheet: {
-        appeals_ready_for_hearing: {
-          [action.payload.appealKey]: {
-            worksheet_issues: {
-              $apply: (worksheetIssues) => worksheetIssues.filter((issue, key) => {
-                return key !== action.payload.issueKey;
-              })
-            }
-          }
-        }
-      }
-    });
+    return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
   case Constants.TOGGLE_DOCKET_SAVING:
     return update(state, { docketIsSaving: { $set: !state.isSaving }
@@ -182,7 +186,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       saveDocketFailed: { $set: action.payload.saveFailed }
     });
 
-  case Constants.SET_WORKSHEET_SAVE_FAILED:
+  case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {
       saveWorksheetFailed: { $set: action.payload.saveFailed }
     });
@@ -193,6 +197,19 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
         [action.payload.date]: {
           hearings_array: {
             [action.payload.index]: { edited: { $set: false } }
+          }
+        }
+      }
+    });
+
+  case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: { edited: { $set: false } }
+            }
           }
         }
       }
