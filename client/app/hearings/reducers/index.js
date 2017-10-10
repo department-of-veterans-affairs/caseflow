@@ -155,19 +155,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.DELETE_ISSUE:
-    return update(state, {
-      worksheet: {
-        appeals_ready_for_hearing: {
-          [action.payload.appealKey]: {
-            worksheet_issues: {
-              $apply: (worksheetIssues) => worksheetIssues.filter((issue, key) => {
-                return key !== action.payload.issueKey;
-              })
-            }
-          }
-        }
-      }
-    });
+    return newHearingIssueState(state, action, { destroyed: { $set: true } });
 
   case Constants.TOGGLE_DOCKET_SAVING:
     return update(state, { docketIsSaving: { $set: !state.isSaving }
