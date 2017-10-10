@@ -41,7 +41,7 @@ describe Form8PdfService do
     )
   end
 
-  context ".pdf_values_for_form8_v2" do
+  context ".pdf_values_for_form8" do
     let(:form_fields) { Form8PdfService::FIELD_LOCATIONS_FORM8_V2 }
     let(:pdf_form8_values) do
       Form8PdfService.pdf_values_for(form8, form_fields)
