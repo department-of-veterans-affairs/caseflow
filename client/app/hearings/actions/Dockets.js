@@ -124,7 +124,6 @@ export const toggleWorksheetSaving = () => ({
 });
 
 export const saveWorksheet = (worksheet) => (dispatch) => {
-  console.log('do we ever go in here anymore');
   if (!worksheet.edited) {
     return;
   }
