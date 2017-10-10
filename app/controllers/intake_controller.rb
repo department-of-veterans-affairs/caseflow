@@ -18,4 +18,18 @@ class IntakeController < ApplicationController
       format.html { render(:index) }
     end
   end
+
+  def create
+    if intake.start!
+      render json: { success: true }
+    else
+      render json: { error_code: intake.error_code }, status: 422
+    end
+  end
+
+  private
+
+  def intake
+    @intake ||= RampIntake.new(veteran_file_number: params[:file_number])
+  end
 end

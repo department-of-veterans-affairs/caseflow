@@ -193,6 +193,7 @@ class Generators::Appeal
       appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible
+      Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
 
       appeal
     end

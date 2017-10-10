@@ -206,7 +206,7 @@ class Fakes::BGSService
   end
 
   def fetch_veteran_info(vbms_id)
-    (self.class.veteran_records || {})[vbms_id] || default_veteran_record
+    (self.class.veteran_records || {})[vbms_id]
   end
 
   def can_access?(vbms_id)

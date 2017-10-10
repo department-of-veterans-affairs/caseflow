@@ -1,4 +1,5 @@
 import { ACTIONS } from '../constants';
+import ApiUtil from '../../util/ApiUtil';
 
 export const startNewIntake = () => ({
   type: ACTIONS.START_NEW_INTAKE
@@ -11,20 +12,39 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
-export const doFileNumberSearch = () => (dispatch) => {
-  return new Promise((resolve) => {
+export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
+  return new Promise((resolve, fail) => {
     dispatch({
       type: ACTIONS.FILE_NUMBER_SEARCH_START
     });
-    setTimeout(() => {
-      dispatch({
-        type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
-        payload: {
-          name: 'Joe Snuffy',
-          fileNumber: '222222222'
+
+    ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }).
+      then(
+        (response) => {
+          const responseObject = JSON.parse(response.text);
+
+          dispatch({
+            type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
+            payload: {
+              name: 'Joe Snuffy',
+              fileNumber: '222222222'
+            }
+          });
+
+          resolve();
+        },
+        (error) => {
+          const responseObject = JSON.parse(error.response.text);
+
+          dispatch({
+            type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
+            payload: {
+              errorCode: responseObject.error_code
+            }
+          });
+
+          fail();
         }
-      });
-      resolve();
-    }, 1000);
+      );
   });
 };
