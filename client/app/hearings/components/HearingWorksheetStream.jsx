@@ -9,7 +9,23 @@ import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
 
-  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey);
+  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey, this.getVacolsSequenceId());
+
+  getMaxVacolsSequenceId = () => {
+    let maxValue = 0;
+    this.props.worksheetStreams.forEach((appeal) => {
+      appeal.worksheet_issues.forEach((issue) => {
+        if (issue.vacols_sequence_id > maxValue) {
+          maxValue = issue.vacols_sequence_id;
+        }
+      })
+    });
+    return maxValue;
+  };
+
+  getVacolsSequenceId = () => {
+    return this.getMaxVacolsSequenceId() + 1;
+  };
 
   render() {
 
