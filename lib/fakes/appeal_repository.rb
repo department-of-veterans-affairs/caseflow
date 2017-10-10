@@ -102,6 +102,9 @@ class Fakes::AppealRepository
     Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
   end
 
+  def self.close!(*)
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")
@@ -146,10 +149,6 @@ class Fakes::AppealRepository
 
   def self.amc_full_grants(*)
     []
-  end
-
-  def self.uncertify(_appeal)
-    # noop
   end
 
   def self.issues(vacols_id)

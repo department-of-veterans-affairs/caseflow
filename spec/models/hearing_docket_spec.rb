@@ -17,6 +17,7 @@ describe HearingDocket do
       date: 7.days.from_now,
       type: :video,
       regional_office_name: hearing.regional_office_name,
+      regional_office_key: "RO31",
       hearings: [
         hearing
       ]
@@ -35,6 +36,14 @@ describe HearingDocket do
     end
   end
 
+  context "#slots" do
+    subject { docket.slots }
+
+    context "should use the default number of slots for the regional office" do
+      it { is_expected.to eq 9 }
+    end
+  end
+
   context "#to_hash" do
     subject { docket.to_hash.symbolize_keys }
 
@@ -44,7 +53,7 @@ describe HearingDocket do
       expect(subject[:hearings_array].length).to eq(1)
       expect(subject[:type]).to eq(:video)
       expect(subject[:regional_office_name]).to eq(hearing.regional_office_name)
-      expect(subject[:slots].class).to eq(Fixnum)
+      expect(subject[:slots]).to eq 9
     end
   end
 

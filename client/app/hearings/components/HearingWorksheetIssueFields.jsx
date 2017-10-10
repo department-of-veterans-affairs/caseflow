@@ -2,22 +2,22 @@ import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import TextareaField from '../../components/TextareaField';
+import Textarea from 'react-textarea-autosize';
 import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
-  onProgramChange = (program) =>
-    this.props.onProgramChange(program, this.props.issueKey, this.props.appealKey);
+  onProgramChange = (event) =>
+    this.props.onProgramChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
-  onNameChange = (name) =>
-    this.props.onNameChange(name, this.props.issueKey, this.props.appealKey);
+  onNameChange = (event) =>
+    this.props.onNameChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
-  onLevelsChange = (levels) =>
-    this.props.onLevelsChange(levels, this.props.issueKey, this.props.appealKey);
+  onLevelsChange = (event) =>
+    this.props.onLevelsChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
-  onDescriptionChange = (description) =>
-    this.props.onDescriptionChange(description, this.props.issueKey, this.props.appealKey);
+  onDescriptionChange = (event) =>
+    this.props.onDescriptionChange(event.target.value, this.props.issueKey, this.props.appealKey);
 
   render() {
     let { issue, field } = this.props;
@@ -42,10 +42,14 @@ class HearingWorksheetIssueFields extends PureComponent {
 
     if (!issue.from_vacols || allowedFields[field].alwaysEditable) {
       return <div>
-        <h4 className="cf-hearings-worksheet-desc-label">{field}</h4>
-        <TextareaField aria-label={field} name={field}
-              id={`${issue.id}-issue-${field}`}value={allowedFields[field].value || ''}
-              onChange={allowedFields[field].onChange}/>
+        <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-${field}`}>{field}</label>
+        <Textarea aria-label={field} name={field}
+              id={`${issue.id}-issue-${field}`}
+              value={allowedFields[field].value || ''}
+              onChange={allowedFields[field].onChange}
+              minRows={2}
+              maxRows={8}
+              />
       </div>;
     }
 
