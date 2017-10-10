@@ -143,7 +143,7 @@ export const saveIssues = (worksheet) => (dispatch) => {
           }
         },
         () => {
-          dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
+          dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
             payload: { saveFailed: true } });
         });
       }

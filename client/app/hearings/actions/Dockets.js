@@ -129,7 +129,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   }
 
   dispatch({
-    type: Constants.SET_WORKSHEET_SAVE_FAILED,
+    type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
     payload: { saveFailed: false }
   });
 
@@ -139,7 +139,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
   },
   () => {
-    dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
+    dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
       payload: { saveFailed: true } });
   });
 };
