@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 class HearingWorksheetIssueCounter extends PureComponent {
   // Issue counter numbers issues across multiple streams
-  // TODO renumber issues onDelete not just refersh
+  // TODO renumber issues onDelete update whole stream state
   render() {
     return <b>{this.props.issueCounter}</b>;
   }
