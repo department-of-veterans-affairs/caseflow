@@ -35,7 +35,6 @@ class Api::V1::AppealsController < Api::V1::ApplicationController
   end
 
   def verify_feature_enabled
-    puts "verify_feature_enabled?"
     unauthorized unless FeatureToggle.enabled?(:appeals_status)
   end
 

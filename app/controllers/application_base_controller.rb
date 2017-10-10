@@ -1,14 +1,13 @@
 class ApplicationBaseController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  # protect_from_forgery with: :exception
-  #
-  # force_ssl if: :ssl_enabled?
-  # before_action :check_out_of_service
-  # before_action :strict_transport_security
+  protect_from_forgery with: :exception
+
+  force_ssl if: :ssl_enabled?
+  before_action :check_out_of_service
+  before_action :strict_transport_security
 
   def unauthorized
-    puts "main application_base_controller?"
     render status: 403
   end
 

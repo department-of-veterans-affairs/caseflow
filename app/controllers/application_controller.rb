@@ -1,10 +1,10 @@
 class ApplicationController < ApplicationBaseController
-  # before_action :set_application
-  # before_action :set_timezone,
-  #               :setup_fakes,
-  #               :check_whats_new_cookie
-  # before_action :set_raven_user
-  # before_action :verify_authentication
+  before_action :set_application
+  before_action :set_timezone,
+                :setup_fakes,
+                :check_whats_new_cookie
+  before_action :set_raven_user
+  before_action :verify_authentication
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error

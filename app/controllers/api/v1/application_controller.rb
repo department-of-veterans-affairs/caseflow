@@ -28,7 +28,6 @@ class Api::V1::ApplicationController < ActionController::Base
   end
 
   def verify_authentication_token
-    puts "verify_authentication_token?"
     return unauthorized unless api_key
 
     Rails.logger.info("API authenticated by #{api_key.consumer_name}")
@@ -39,7 +38,6 @@ class Api::V1::ApplicationController < ActionController::Base
   end
 
   def unauthorized
-    puts "unauthorized in api/v1/application_controller?"
     render json: { status: "unauthorized" }, status: 401
   end
 
