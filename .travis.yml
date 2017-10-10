@@ -24,7 +24,7 @@ before_install:
   - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
   - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
   - ./ci-bin/retry.bash sudo apt-get update
-  - sudo apt-get install yarn
+  - sudo apt-get install yarn=1.1.0-1
 
   # Travis has an old version of yarn installed at /usr/local/bin, and that comes first in the PATH,
   # so we need to explicitly point to the version of Yarn we just installed.
