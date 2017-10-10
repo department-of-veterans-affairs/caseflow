@@ -19,6 +19,7 @@ RSpec.feature "RAMP Intake", focus: true do
       fill_in "Search small", with: "5678"
       click_on "Search"
 
+      expect(page).to have_current_path("/intake")
       expect(page).to have_content("Veteran ID not found")
     end
 
@@ -27,6 +28,7 @@ RSpec.feature "RAMP Intake", focus: true do
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
+      expect(page).to have_current_path("/intake")
       expect(page).to have_content("No opt-in letter was sent to this veteran")
     end
 
@@ -38,8 +40,8 @@ RSpec.feature "RAMP Intake", focus: true do
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
-      # TODO: this should be based on the veteran's name and not hard coded
-      expect(page).to have_content("Review Joe Snuffy's opt-in request")
+      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_content("Review Ed Merica's opt-in request")
     end
   end
 

@@ -4,6 +4,7 @@ import { update } from '../../util/ReducerUtil';
 const initialState = {
   veteran: {
     name: null,
+    formName: null,
     fileNumber: null
   },
   inputs: {
@@ -47,6 +48,9 @@ export default (state = initialState, action) => {
       veteran: {
         name: {
           $set: action.payload.name
+        },
+        formName: {
+          $set: action.payload.formName
         },
         fileNumber: {
           $set: action.payload.fileNumber

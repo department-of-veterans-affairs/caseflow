@@ -21,7 +21,11 @@ class IntakeController < ApplicationController
 
   def create
     if intake.start!
-      render json: { success: true }
+      render json: {
+        veteran_file_number: intake.veteran_file_number,
+        veteran_name: intake.veteran.name.formatted(:readable_short),
+        veteran_form_name: intake.veteran.name.formatted(:form)
+      }
     else
       render json: { error_code: intake.error_code }, status: 422
     end

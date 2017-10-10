@@ -28,6 +28,11 @@ class Veteran
   validates :zip_code, presence: true, if: "country_requires_zip?"
   validates :state, presence: true, if: "country_requires_state?"
 
+  # TODO: get middle initial from BGS 
+  def name
+    FullName.new(first_name, "", last_name)
+  end
+
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country)
   end

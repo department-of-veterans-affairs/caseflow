@@ -179,11 +179,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def veteran_name
-    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
+    veteran_name_object.formatted(:form)
   end
 
   def veteran_full_name
-    [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ").titleize
+    veteran_name_object.formatted(:readable_full)
   end
 
   # When the decision is signed by an attorney at BVA, an outcoder physically stamps the date,
@@ -439,6 +439,12 @@ class Appeal < ActiveRecord::Base
   end
 
   private
+
+  # TODO: this is named "veteran_name_object" to avoid name collision, refactor
+  #       the naming of the helper methods.
+  def veteran_name_object
+    FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

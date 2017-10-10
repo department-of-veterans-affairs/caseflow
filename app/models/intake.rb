@@ -5,6 +5,7 @@ class Intake < ActiveRecord::Base
   attr_reader :error_code
 
   def start!
+    # TODO: trim the file number
     return false unless valid_to_start?
 
     # TODO: Fill this out with everything that happens on start
@@ -29,11 +30,11 @@ class Intake < ActiveRecord::Base
     !error_code
   end
 
-  private
-
   def veteran
     @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
   end
+
+  private
 
   def file_number_valid?
     veteran_file_number =~ /[0-9]{8,}/
