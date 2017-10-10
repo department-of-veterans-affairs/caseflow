@@ -69,7 +69,7 @@ class HearingWorksheetIssues extends PureComponent {
 
       return {
         counter: <HearingWorksheetIssueCounter
-                  issueCounter={issueCounter}
+                  issueCounter={issueCounter + key}
          />,
         program: <HearingWorksheetIssueFields
             appeal={worksheetStreamsAppeal}
