@@ -123,7 +123,8 @@ export const toggleWorksheetSaving = () => ({
   type: Constants.TOGGLE_WORKSHEET_SAVING
 });
 
-export const saveWorksheet = (worksheet) => (dispatch) => () => {
+export const saveWorksheet = (worksheet) => (dispatch) => {
+  console.log('do we ever go in here anymore');
   if (!worksheet.edited) {
     return;
   }

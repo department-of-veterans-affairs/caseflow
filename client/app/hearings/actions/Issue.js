@@ -117,7 +117,7 @@ export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => (
   }
 });
 
-export const saveIssues = (worksheet) => ((dispatch) => {
+export const saveIssues = (worksheet) => (dispatch) => {
   worksheet.appeals_ready_for_hearing.forEach((appeal) => {
     appeal.worksheet_issues.forEach((issue) => {
       const appealIndex = worksheet.appeals_ready_for_hearing.findIndex((x) => x.id === appeal.id);
@@ -149,5 +149,5 @@ export const saveIssues = (worksheet) => ((dispatch) => {
       }
     });
   });
-});
+};
 
