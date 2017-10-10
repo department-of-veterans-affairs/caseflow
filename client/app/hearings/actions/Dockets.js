@@ -119,12 +119,15 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   }
 });
 
+export const toggleWorksheetSaving = () => ({
+  type: Constants.TOGGLE_WORKSHEET_SAVING
+});
+
 export const saveWorksheet = (worksheet) => ((dispatch) => {
   if (!worksheet.edited) {
     return;
   }
 
-  dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
   dispatch({
     type: Constants.SET_WORKSHEET_SAVE_FAILED,
     payload: { saveFailed: false }
@@ -138,5 +141,4 @@ export const saveWorksheet = (worksheet) => ((dispatch) => {
     dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
       payload: { saveFailed: true } });
   });
-  dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
 });

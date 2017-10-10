@@ -122,8 +122,9 @@ export const saveIssues = (worksheet) => ((dispatch) => {
       ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal: {
       worksheet_issues_attributes: [issue]} } }).
       then(() => {},
-          () => {
-          });
+      () => {
+        dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED, payload: { saveFailed: true } });
+      });
     });
   });
 });
