@@ -6,6 +6,7 @@ import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { createSearchAction, getSearchSelectors } from 'redux-search'
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -824,12 +825,26 @@ export const getDocumentText = (pdfDocument) => (
 
     const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
     console.log('getTextPromises', getTextPromises);
-    Promise.all(getTextPromises).then((text) => {
-      console.log('text', text);
+    Promise.all(getTextPromises).then((pages) => {
+      console.log('all text from pdfjs', pages);
+      const textObject = pages.reduce((acc, page, pageIndex) => {
+        const concatenated = page.items.map((row) => row.str).join(' ');
+
+        return {
+          ...acc,
+          [pageIndex]: {
+            id: pageIndex,
+            text: concatenated,
+            pageIndex: pageIndex
+          }
+        };
+      }, {});
+
+      console.log('textObject', textObject);
       dispatch({
         type: Constants.GET_DCOUMENT_TEXT,
         payload: {
-          text
+          textObject
         }
       });
     });
@@ -842,3 +857,5 @@ export const setDocumentSearch = (searchString) => ({
     searchString
   }
 });
+
+export const searchText = createSearchAction('pagesText');

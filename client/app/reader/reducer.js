@@ -186,7 +186,8 @@ export const initialState = {
   pages: {},
   pdfDocuments: {},
   text: [],
-  documentSearchString: null
+  documentSearchString: null,
+  pagesText: []
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1091,8 +1092,8 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        text: {
-          $set: action.payload.text
+        pagesText: {
+          $set: action.payload.textObject
         }
       }
     );

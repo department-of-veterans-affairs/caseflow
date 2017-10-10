@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
+import { getSearchSelectors } from 'redux-search'
 
 const getFilteredDocIds = (state) => state.ui.filteredDocIds;
 const getAllDocs = (state) => state.documents;
@@ -99,3 +100,24 @@ export const getTextSnippets = createSelector([getTextObject, getSearchTerm], (t
     return acc;
   }, []);
 });
+
+// :text is a selector that returns the text Books are currently filtered by
+// :result is an Array of Book ids that match the current seach :text (or all Books if there is no search :text)
+const {
+  text, // search text
+  result // book ids
+} = getSearchSelectors({
+  resourceName: 'pagesText',
+  resourceSelector: (resourceName, state) => state.readerReducer[resourceName]
+})
+
+const pagesText = state => state.readerReducer.pagesText;
+
+export const getTextSearch = createSelector(
+  [result, pagesText, text],
+  (pageIds, pagesText, searchText) => ({
+    pageIds,
+    pagesText,
+    searchText
+  })
+)

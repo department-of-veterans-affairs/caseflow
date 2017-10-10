@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
 import { connect } from 'react-redux';
-import { getTextSnippets } from './selectors';
+import { getTextSearch } from './selectors';
 import SearchBar from '../components/SearchBar';
-import { setDocumentSearch } from './actions';
+import { searchText } from './actions';
+import _ from 'lodash';
 
 export class DocumentSearch extends React.PureComponent {
   render() {
@@ -17,25 +18,46 @@ export class DocumentSearch extends React.PureComponent {
       zIndex: '20'
     };
 
-    const textDivs = this.props.textSnippets.map((snippet) => <p>{snippet.index} {snippet.sentence}</p>);
+    const textDivs = this.props.searchObjects.map((obj) => <p>{obj.before}[{this.props.searchTextValue}]{obj.after}</p>);
 
     return <div style={style}>
       <SearchBar
-        onChange={this.props.setDocumentSearch}
+        onChange={this.props.searchText}
       />
       {textDivs}
     </div>;
   }
 }
 
-const mapStateToProps = (state) => ({
-  textSnippets: getTextSnippets(state.readerReducer),
-  documentSearchString: state.readerReducer.documentSearchString
-});
+const mapStateToProps = (state) => {
+  const { pageIds, pagesText, searchText } = getTextSearch(state);
+  console.log('getTextSearch', getTextSearch(state));
+  // if (!_.isEmpty(pagesText)) {
+  //   debugger;
+  // }
+  const scopedPages = pageIds.map((id) => pagesText[id]);
+  const searchObjects = scopedPages.map((text) => {
+    const split = text.text.split(searchText);
+
+    return _.range(split.length - 1).map((index) => {
+      return {
+        before: split[index].substring(split[index].length - 10),
+        after: split[index + 1].substring(0, 10)
+      };
+    });
+  }).reduce((acc, obj) => acc.concat(obj), []);
+
+  return {
+    searchObjects,
+    searchTextValue: searchText,
+    textSnippets: getTextSearch(state),
+    documentSearchString: state.readerReducer.documentSearchString
+  }
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setDocumentSearch
+    searchText
   }, dispatch)
 });
 

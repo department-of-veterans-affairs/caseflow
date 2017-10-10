@@ -80,7 +80,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   render() {
-    console.log('textObject', this.props.textObject);
+    // console.log('textObject', this.props.textObject);
     return <div>
       {this.getPages()}
       </div>;
