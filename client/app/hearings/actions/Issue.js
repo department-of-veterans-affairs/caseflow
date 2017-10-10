@@ -132,11 +132,14 @@ export const saveIssues = (worksheet) => ((dispatch) => {
               appealIndex,
               issueIndex } });
           if (!issue.id) {
-            const id = JSON.parse(data.text).appeal.worksheet_issues.filter((db_issue) => {
-              return issue.vacols_sequence_id == db_issue.vacols_sequence_id
+            const id = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
+              return issue.vacols_sequence_id === dbIssue.vacols_sequence_id;
             })[0].id;
+
             dispatch({ type: Constants.SET_ISSUE_ID,
-            payload: { id, appealIndex, issueIndex }})
+              payload: { id,
+                appealIndex,
+                issueIndex } });
           }
         },
         () => {

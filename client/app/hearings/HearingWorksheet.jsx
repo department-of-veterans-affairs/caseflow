@@ -197,8 +197,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCommentsForAttorneyChange,
   toggleWorksheetSaving,
   saveWorksheet,
-  saveIssues,
-  saveWorksheet
+  saveIssues
 }, dispatch);
 
 export default connect(

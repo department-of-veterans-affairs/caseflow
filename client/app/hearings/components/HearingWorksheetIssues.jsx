@@ -60,7 +60,7 @@ class HearingWorksheetIssues extends PureComponent {
       let issueRow = worksheetStreamsIssues[issue];
 
       if (issueRow._destroy) {
-        return {}
+        return {};
       }
 
       return {

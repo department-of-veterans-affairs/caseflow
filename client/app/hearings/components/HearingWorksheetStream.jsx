@@ -13,13 +13,15 @@ class HearingWorksheetStream extends Component {
 
   getMaxVacolsSequenceId = () => {
     let maxValue = 0;
+
     this.props.worksheetStreams.forEach((appeal) => {
       appeal.worksheet_issues.forEach((issue) => {
         if (issue.vacols_sequence_id > maxValue) {
           maxValue = issue.vacols_sequence_id;
         }
-      })
+      });
     });
+
     return maxValue;
   };
 
