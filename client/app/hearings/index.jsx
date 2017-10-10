@@ -16,11 +16,7 @@ import Footer from '../components/Footer';
 
 const configureStore = (data) => {
 
-  const middleware = [];
-
-  if (!ConfigUtil.test()) {
-    middleware.push(thunk, perflogger);
-  }
+  const middleware = [thunk, perflogger];
 
   // This is to be used with the Redux Devtools Chrome extension
   // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
