@@ -186,6 +186,19 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
+  case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: { edited: { $set: false } }
+            }
+          }
+        }
+      }
+    });
+
   case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
     return update(state, {
       worksheet: { edited: { $set: false } }

@@ -117,14 +117,25 @@ export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => (
 });
 
 export const saveIssues = (worksheet) => ((dispatch) => {
-  worksheet.appeals_ready_for_hearing.map((appeal) => {
-    appeal.worksheet_issues.map((issue) => {
-      ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal: {
-      worksheet_issues_attributes: [issue]} } }).
-      then(() => {},
-      () => {
-        dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED, payload: { saveFailed: true } });
-      });
+  worksheet.appeals_ready_for_hearing.forEach((appeal) => {
+    appeal.worksheet_issues.forEach((issue) => {
+      const appealIndex = worksheet.appeals_ready_for_hearing.findIndex((x) => x.id === appeal.id);
+      const issueIndex = appeal.worksheet_issues.findIndex((x) => x.id === issue.id);
+
+      if (issue.edited) {
+        ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal: {
+          worksheet_issues_attributes: [issue] } } }).
+        then(() => {
+          dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
+            payload: { saveFailed: true,
+              appealIndex,
+              issueIndex } });
+        },
+        () => {
+          dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
+            payload: { saveFailed: true } });
+        });
+      }
     });
   });
 });
