@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
+import HearingWorksheetIssueCounter from './HearingWorksheetIssueCounter';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -62,7 +63,7 @@ class HearingWorksheetIssues extends PureComponent {
       let issueRow = worksheetStreamsIssues[issue];
 
       return {
-        counter: <b>{issueCounter}.</b>,
+        counter: <HearingWorksheetIssueCounter />,
         program: <HearingWorksheetIssueFields
             appeal={worksheetStreamsAppeal}
             issue={issueRow}
