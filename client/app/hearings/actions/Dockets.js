@@ -119,7 +119,7 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   }
 });
 
-export const saveWorksheet = (worksheet) => ((dispatch) => () => {
+export const saveWorksheet = (worksheet) => (dispatch) => () => {
   console.log('SaveWorksheet !!!!!!');
   if (!worksheet.edited) {
     return;
@@ -140,4 +140,4 @@ export const saveWorksheet = (worksheet) => ((dispatch) => () => {
       payload: { saveFailed: true } });
   });
   dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
-});
+};
