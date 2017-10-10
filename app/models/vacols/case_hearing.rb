@@ -79,9 +79,10 @@ class VACOLS::CaseHearing < VACOLS::Record
              :holddays, :tranreq,
              :repname, :addon,
              :board_member, :mduser,
-             :mdtime, :sattyid)
+             :mdtime, :sattyid,
+             :bfregoff, :bfso)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
-        .includes(:brieff)
+        .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .where(hearing_type: HEARING_TYPES.keys)
     end
   end

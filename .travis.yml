@@ -32,6 +32,7 @@ before_install:
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
   - cd ./client && npm install --no-optional
+  - npm ls
   - cd ..
 
 
