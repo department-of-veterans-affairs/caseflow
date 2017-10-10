@@ -68,7 +68,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_REPNAME:
-    return newHearingWorksheetState(state, action, { repName: { $set: action.payload.repName } });
+    return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
   case Constants.SET_WITNESS:
     return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
@@ -169,14 +169,22 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
-  case Constants.TOGGLE_SAVING:
-    return update(state, {
-      isSaving: { $set: !state.isSaving }
+  case Constants.TOGGLE_DOCKET_SAVING:
+    return update(state, { docketIsSaving: { $set: !state.isSaving }
     });
 
-  case Constants.SET_SAVE_FAILED:
+  case Constants.TOGGLE_WORKSHEET_SAVING:
+    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.SET_DOCKET_SAVE_FAILED:
     return update(state, {
-      saveFailed: { $set: action.payload.saveFailed }
+      saveDocketFailed: { $set: action.payload.saveFailed }
+    });
+
+  case Constants.SET_WORKSHEET_SAVE_FAILED:
+    return update(state, {
+      saveWorksheetFailed: { $set: action.payload.saveFailed }
     });
 
   case Constants.SET_EDITED_FLAG_TO_FALSE:
@@ -188,6 +196,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
           }
         }
       }
+    });
+
+  case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: { edited: { $set: false } }
     });
 
   default: return state;
