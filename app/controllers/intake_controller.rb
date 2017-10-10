@@ -34,6 +34,6 @@ class IntakeController < ApplicationController
   private
 
   def intake
-    @intake ||= RampIntake.new(veteran_file_number: params[:file_number])
+    @intake ||= RampIntake.new(user: current_user, veteran_file_number: params[:file_number])
   end
 end

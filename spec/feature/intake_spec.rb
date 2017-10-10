@@ -3,6 +3,8 @@ require "rails_helper"
 RSpec.feature "RAMP Intake", focus: true do
   before do
     FeatureToggle.enable!(:intake)
+
+    Timecop.freeze(Time.utc(2017, 1, 1))
   end
 
   let!(:veteran) do
@@ -42,6 +44,10 @@ RSpec.feature "RAMP Intake", focus: true do
 
       expect(page).to have_current_path("/intake/review-request")
       expect(page).to have_content("Review Ed Merica's opt-in request")
+
+      intake = RampIntake.find_by(veteran_file_number: "12341234")
+      expect(intake).to_not be_nil
+      expect(intake.started_at).to eq(Time.zone.now)
     end
   end
 

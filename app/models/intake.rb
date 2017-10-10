@@ -8,8 +8,10 @@ class Intake < ActiveRecord::Base
     # TODO: trim the file number
     return false unless valid_to_start?
 
-    # TODO: Fill this out with everything that happens on start
-    true
+    update_attributes(
+      started_at: Time.zone.now,
+      detail: find_or_create_initial_detail
+    )
   end
 
   def valid_to_start?
@@ -43,5 +45,9 @@ class Intake < ActiveRecord::Base
   # Optionally implement this methods in subclass
   def validate_detail_on_start
     true
+  end
+
+  def find_or_create_initial_detail
+    fail Caseflow::Error::MustImplementInSubclass
   end
 end
