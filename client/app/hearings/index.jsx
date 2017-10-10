@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
-import ConfigUtil from '../util/ConfigUtil';
 import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
