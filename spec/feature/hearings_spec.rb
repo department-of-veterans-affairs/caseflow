@@ -119,13 +119,13 @@ RSpec.feature "Hearings" do
     scenario "Hearing worksheet page displays worksheet information" do
       begin
         visit "/hearings/1/worksheet"
-        expect(page.driver.browser.manage.logs.get(:browser).find { |m| m.level == "SEVERE" }).to eq("")
+        page.driver.browser.manage.logs.get(:browser).each { |m| puts m }
+
         expect(page).to have_content("Hearing Type: Video")
         expect(page).to have_content("Docket Number: 4198")
         expect(page).to have_content("Form 9: 12/21/2016")
         expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
       rescue Exception => e
-        print page.html
         raise e
       end
     end
@@ -145,7 +145,6 @@ RSpec.feature "Hearings" do
         expect(page).to have_content("This is evidence")
         expect(page).to have_content("These are comments")
       rescue Exception => e
-        print page.html
         raise e
       end
     end
@@ -164,7 +163,6 @@ RSpec.feature "Hearings" do
         expect(page).to have_field("undefined-issue-levels")
         expect(page).to have_field("undefined-issue-description")
       rescue Exception => e
-        print page.html
         raise e
       end
     end
@@ -182,7 +180,6 @@ RSpec.feature "Hearings" do
           expect(page).to have_content("You've viewed 0 out of 4 documents")
         end
       rescue Exception => e
-        print page.html
         raise e
       end
     end
