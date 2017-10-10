@@ -5,7 +5,8 @@ class Hearing < ActiveRecord::Base
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
                        :aod, :hold_open, :transcript_requested, :notes, :add_on,
-                       :representative_name, :regional_office_key, :master_record
+                       :representative_name, :regional_office_key, :master_record,
+                       :representative
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -45,6 +46,7 @@ class Hearing < ActiveRecord::Base
       transcript_requested: transcript_requested,
       notes: notes,
       add_on: add_on,
+      representative: representative,
       representative_name: representative_name,
       regional_office_key: regional_office_key,
       master_record: master_record
@@ -68,11 +70,9 @@ class Hearing < ActiveRecord::Base
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
-    :representative, \
     :veteran,  \
     to: :appeal, allow_nil: true
 
-  # rubocop:disable Metrics/MethodLength
   def to_hash
     serializable_hash(
       methods: [
@@ -85,13 +85,8 @@ class Hearing < ActiveRecord::Base
         :notes,
         :add_on,
         :master_record,
-        :appellant_last_first_mi,
-        :appellant_city,
-        :appellant_state,
         :representative,
         :representative_name,
-        :veteran_age,
-        :veteran_name,
         :regional_office_name,
         :venue,
         :vbms_id
@@ -99,15 +94,18 @@ class Hearing < ActiveRecord::Base
       except: :military_service
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
                 :appeal_vacols_id,
-                :representative,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
+                :veteran_age,
+                :veteran_name,
+                :appellant_last_first_mi,
+                :appellant_city,
+                :appellant_state,
                 :military_service]
     ).merge(to_hash)
   end

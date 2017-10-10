@@ -16,7 +16,11 @@ class Veteran
     "HON" => "Honorable",
     "UHC" => "Under Honorable Conditions",
     "HVA" => "Honorable for VA Purposes",
-    "DVA" => "Dishonorable for VA Purposes"
+    "DVA" => "Dishonorable for VA Purposes",
+    "12D" => "Dishonorable - Ch 17 Eligible",
+    "12C" => "Dishonorable - Not Ch 17 Eligible",
+    "OTH" => "Other Than Honorable",
+    "DIS" => "Discharge"
   }.freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
@@ -100,7 +104,7 @@ class Veteran
 
   def character_of_service(s)
     text = CHARACTER_OF_SERVICE_CODES[s[:char_of_svc_code]]
-    text.present? ? ", #{text} Discharge" : ""
+    text.present? ? ", #{text}" : ""
   end
 
   def service_date(date)

@@ -69,8 +69,9 @@ class VACOLS::CaseIssue < VACOLS::Record
       where ISSUES.ISSKEY IN (?)
     SQL
 
-    issues_result = MetricsService.record("VACOLS: CaseIssue.issues for #{vacols_ids}", name: "CaseIssue.issues",
-                                                                                        service: :vacols) do
+    issues_result = MetricsService.record("VACOLS: CaseIssue.descriptions for #{vacols_ids}",
+                                          name: "CaseIssue.descriptions",
+                                          service: :vacols) do
       conn.exec_query(sanitize_sql_array([query, vacols_ids]))
     end
 

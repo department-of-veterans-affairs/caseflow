@@ -7,7 +7,7 @@ class Fakes::Initializer
       HearingDocket.repository = Fakes::HearingRepository
       Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      User.case_assignment_repository = Fakes::CaseAssignmentRepository
+      User.appeal_repository = Fakes::AppealRepository
     end
 
     # This method is called only 1 time during application bootup

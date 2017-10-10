@@ -10,10 +10,7 @@ class Generators::Hearing
         venue_key: "RO13",
         vacols_id: vacols_id,
         vacols_record: { vacols_id: vacols_id },
-        witness: "",
-        contentions: "",
-        evidence: "",
-        comments_for_attorney: "",
+        representative: "Military Order of the Purple Heart",
         regional_office_key: VACOLS::RegionalOffice::CITIES.keys.sample,
         master_record: false
       }
