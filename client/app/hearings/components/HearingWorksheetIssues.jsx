@@ -62,6 +62,11 @@ class HearingWorksheetIssues extends PureComponent {
 
       let issueRow = worksheetStreamsIssues[issue];
 
+        // eslint-disable-next-line no-underscore-dangle
+      if (issueRow._destroy) {
+        return {};
+      }
+
       return {
         counter: <HearingWorksheetIssueCounter />,
         program: <HearingWorksheetIssueFields
