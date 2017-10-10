@@ -11,6 +11,7 @@ import * as AppConstants from '../constants/AppConstants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
+import { saveIssues } from './actions/Issue';
 
 import {
   onRepNameChange,
@@ -19,10 +20,20 @@ import {
   onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
+  toggleWorksheetSaving,
+  setWorksheetSaveFailedStatus,
   saveWorksheet
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
+
+  save = (worksheet) => () => {
+    this.props.toggleWorksheetSaving();
+    this.props.setWorksheetSaveFailedStatus(false);
+    this.props.saveWorksheet(worksheet);
+    this.props.saveIssues(worksheet);
+    this.props.toggleWorksheetSaving();
+  };
 
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
@@ -51,7 +62,7 @@ export class HearingWorksheet extends React.PureComponent {
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
           <AutoSave
-            save={this.props.saveWorksheet(worksheet)}
+            save={this.save(worksheet)}
             spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
             isSaving={this.props.worksheetIsSaving}
             saveFailed={this.props.saveWorksheetFailed}
@@ -185,7 +196,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
-  saveWorksheet
+  toggleWorksheetSaving,
+  saveWorksheet,
+  setWorksheetSaveFailedStatus,
+  saveIssues
 }, dispatch);
 
 export default connect(
