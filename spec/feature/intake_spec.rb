@@ -36,7 +36,7 @@ RSpec.feature "RAMP Intake" do
 
     scenario "Search for a veteran that has received a RAMP election" do
       visit "/intake"
-      RampElection.create!(veteran_file_number: "12341234")
+      RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
       visit "/intake"
       fill_in "Search small", with: "12341234"

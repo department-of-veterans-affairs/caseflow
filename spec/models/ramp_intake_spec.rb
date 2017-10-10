@@ -11,7 +11,9 @@ describe RampIntake do
   context "#start!" do
     subject { intake.start! }
 
-    let!(:ramp_election) { RampElection.create!(veteran_file_number: "64205555") }
+    let!(:ramp_election) do
+      RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+    end
 
     context "not valid to start" do
       let(:veteran_file_number) { "NOTVALID" }
@@ -44,7 +46,10 @@ describe RampIntake do
     end
 
     context "there is a ramp election for veteran" do
-      let!(:ramp_election) { RampElection.create!(veteran_file_number: "64205555") }
+      let!(:ramp_election) do
+        RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
+      end
+
       it { is_expected.to eq(true) }
     end
   end

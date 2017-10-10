@@ -270,16 +270,18 @@ ActiveRecord::Schema.define(version: 20171005184519) do
     t.integer  "user_id",             null: false
     t.string   "veteran_file_number"
     t.datetime "started_at"
-    t.datetime "completed_at"
-    t.datetime "cancelled_at"
   end
 
+  add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
+
   create_table "ramp_elections", force: :cascade do |t|
-    t.string "veteran_file_number"
-    t.date   "notice_date"
+    t.string "veteran_file_number", null: false
+    t.date   "notice_date",         null: false
     t.date   "receipt_date"
     t.string "option_selected"
   end
+
+  add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
