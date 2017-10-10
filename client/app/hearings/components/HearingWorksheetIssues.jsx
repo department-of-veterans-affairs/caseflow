@@ -62,7 +62,10 @@ class HearingWorksheetIssues extends PureComponent {
 
       let issueRow = worksheetStreamsIssues[issue];
 
-        // eslint-disable-next-line no-underscore-dangle
+      // Deleted issues can't be removed from Redux because we need to send them
+      // to the backend with their ID information. We need to filter them from
+      // the display.
+      // eslint-disable-next-line no-underscore-dangle
       if (issueRow._destroy) {
         return {};
       }
