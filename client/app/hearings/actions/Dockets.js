@@ -133,10 +133,11 @@ export const saveWorksheet = (worksheet) => (dispatch) => () => {
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
   then(() => {
     dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
-  },
+    dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
+      },
   () => {
     dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED,
       payload: { saveFailed: true } });
+    dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
   });
-  dispatch({ type: Constants.TOGGLE_WORKSHEET_SAVING });
 };
