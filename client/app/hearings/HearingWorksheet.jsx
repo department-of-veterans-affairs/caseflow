@@ -6,6 +6,8 @@ import Link from '../components/Link';
 import TextField from '../components/TextField';
 import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
+import AutoSave from '../components/AutoSave';
+import * as AppConstants from '../constants/AppConstants';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -16,7 +18,8 @@ import {
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  saveWorksheet
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
@@ -47,7 +50,12 @@ export class HearingWorksheet extends React.PureComponent {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <span className="saving">Saving...</span>
+          <AutoSave
+            save={this.props.saveWorksheet(worksheet)}
+            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+            isSaving={this.props.worksheetIsSaving}
+            saveFailed={this.props.saveWorksheetFailed}
+          />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
             <div><b>{worksheet.appellant_last_first_mi}</b></div>
@@ -69,7 +77,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={worksheet.repName || ''}
+              value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
@@ -113,7 +121,6 @@ export class HearingWorksheet extends React.PureComponent {
             <label htmlFor="worksheet-contentions">Contentions</label>
             <Textarea
               name="Contentions"
-              minRows={3}
               value={worksheet.contentions || ''}
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
@@ -177,7 +184,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  saveWorksheet
 }, dispatch);
 
 export default connect(
