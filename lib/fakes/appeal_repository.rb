@@ -7,6 +7,7 @@ class Fakes::AppealRepository
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
     attr_accessor :certified_appeal
+    cattr_accessor :appeal_records
 
     def records
       @records ||= {}
@@ -14,6 +15,10 @@ class Fakes::AppealRepository
 
     def clean!
       @records = {}
+    end
+
+    def load_user_case_assignments_from_vacols(_css_id)
+      appeal_records || Fakes::Data::AppealData.default_records
     end
   end
 
