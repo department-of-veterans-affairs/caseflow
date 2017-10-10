@@ -155,7 +155,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.DELETE_ISSUE:
-    return newHearingIssueState(state, action, { destroyed: { $set: true } });
+    return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
   case Constants.TOGGLE_DOCKET_SAVING:
     return update(state, { docketIsSaving: { $set: !state.isSaving }
