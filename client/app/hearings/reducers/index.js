@@ -156,9 +156,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_ISSUE_ID:
-    console.log(state);
-    console.log(action.payload.appealIndex);
-    console.log(action.payload.issueIndex);
     return update(state, {
       worksheet: {
         appeals_ready_for_hearing: {
