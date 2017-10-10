@@ -1,9 +1,6 @@
 import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
-import Button from '../../components/Button';
-import { bindActionCreators } from 'redux';
-import { onAddIssue } from '../actions/Issue';
 import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
@@ -12,8 +9,6 @@ import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 class HearingWorksheetIssues extends PureComponent {
 
   getKeyForRow = (index) => index;
-
-  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey);
 
   render() {
     let {
@@ -119,12 +114,6 @@ class HearingWorksheetIssues extends PureComponent {
               summary={'Worksheet Issues'}
               getKeyForRow={this.getKeyForRow}
           />
-          <Button
-                classNames={['usa-button-outline', 'hearings-add-issue']}
-                name="+ Add Issue"
-                id={`button-addIssue-${appealKey}`}
-                onClick={this.onAddIssue(appealKey)}
-              />
         </div>;
   }
 }
@@ -133,13 +122,9 @@ const mapStateToProps = (state) => ({
   HearingWorksheetIssues: state
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onAddIssue
-}, dispatch);
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
 )(HearingWorksheetIssues);
 
 HearingWorksheetIssues.propTypes = {
