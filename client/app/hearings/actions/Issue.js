@@ -119,10 +119,11 @@ export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => (
 export const saveIssues = (worksheet) => ((dispatch) => {
   worksheet.appeals_ready_for_hearing.map((appeal) => {
     appeal.worksheet_issues.map((issue) => {
-        ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal } }).
-        then(() => {},
-            () => {
-            });
+      ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal: {
+      worksheet_issues_attributes: [issue]} } }).
+      then(() => {},
+          () => {
+          });
     });
   });
 });
