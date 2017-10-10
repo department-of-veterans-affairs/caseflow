@@ -138,7 +138,6 @@ class ApplicationController < ApplicationBaseController
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
     session["return_to"] = request.original_url
-    puts 'verify_authorized_roles unauthorized'
     redirect_to "/unauthorized"
   end
 
@@ -147,12 +146,10 @@ class ApplicationController < ApplicationBaseController
     return true if current_user == user
 
     session["return_to"] = request.original_url
-    puts 'verify_user unauthorized'
     redirect_to "/unauthorized"
   end
 
   def verify_system_admin
-    puts 'verify_system_admin unauthorized'
     redirect_to "/unauthorized" unless current_user.admin?
   end
 

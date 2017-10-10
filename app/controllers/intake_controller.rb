@@ -10,7 +10,6 @@ class IntakeController < ApplicationController
   end
 
   def verify_feature_enabled
-    puts 'verify_feature_enabled unauthorized'
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
