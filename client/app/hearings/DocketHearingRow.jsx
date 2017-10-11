@@ -66,6 +66,8 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
+    const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
+
     return <tbody>
       <tr>
         <td className="cf-hearings-docket-date">
@@ -78,7 +80,7 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{hearing.appellant_last_first_mi}</b>
+          <b>{appellantDisplay}</b>
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
