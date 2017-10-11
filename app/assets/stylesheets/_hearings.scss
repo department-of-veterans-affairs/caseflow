@@ -281,6 +281,10 @@ $color-hearings-saving: #777;
     font-size: 17px;
   }
 
+  textarea {
+    resize: vertical;
+  }
+
   .saving {
     position: absolute;
     top: 0;
