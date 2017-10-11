@@ -26,12 +26,14 @@ class EditComment extends React.Component {
     }
   }
 
+  getActiveEditingComment = () => this.props.comment.id;
+
   handleAltEnter = () => {
     this.shouldAutosave = false;
     if (this.props.placedButUnsavedAnnotation) {
       this.props.createAnnotation(this.props.placedButUnsavedAnnotation);
     } else if (this.props.editingAnnotations) {
-      this.props.requestEditAnnotation(this.props.editingAnnotations);
+      this.props.requestEditAnnotation(this.props.editingAnnotations[this.getActiveEditingComment()]);
     }
   }
 
@@ -78,6 +80,7 @@ class EditComment extends React.Component {
           className="comment-container comment-textarea"
           name="Edit Comment"
           aria-label="Edit Comment"
+          onFocus={this.getActiveEditingComment}
           id={this.props.id}
           onChange={this.onChange}
           value={this.props.comment.comment}
