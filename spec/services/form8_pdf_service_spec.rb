@@ -41,69 +41,7 @@ describe Form8PdfService do
     )
   end
 
-  context ".pdf_values_for_form8_v1" do
-    let(:form_fields) { Form8PdfService::FIELD_LOCATIONS_FORM8_V1 }
-    let(:pdf_form8_values) do
-      Form8PdfService.pdf_values_for(form8, form_fields)
-    end
-    it "goes through the fields" do
-    end
-
-    # there's no reason to test all the possible fields as we would be recreating the logic from the class itself
-    it "populates string fields correctly" do
-      expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].TextField1[0]" => "Brad Pitt",
-                                          "form1[0].#subform[0].#area[0].TextField1[1]" => "Fancy man",
-                                          "form1[0].#subform[0].#area[0].TextField1[2]" => "1234QWERTY",
-                                          "form1[0].#subform[0].#area[0].TextField1[3]" => "Joe Patriot")
-    end
-
-    it "populates check box fields correctly" do
-      expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].CheckBox21[0]" => "1",
-                                          "form1[0].#subform[0].#area[0].CheckBox23[4]" => "1",
-                                          "form1[0].#subform[0].#area[0].CheckBox23[13]" => "1")
-    end
-
-    it "populates a date field correctly" do
-      expect(pdf_form8_values).to include("form1[0].#subform[0].#area[0].TextField1[15]" => "11/23/2001")
-    end
-
-    it "populates 2nd page when remarks roll over" do
-      expect(pdf_form8_values
-            ).to include("form1[0].#subform[1].TextField1[26]" => "\n \nContinued:\n(see continued remarks page 2)\n"\
-                                                                  " \nContinued:\nParty presidential primaries. The"\
-                                                                  " field narrowed to a duel between Obama and"\
-                                                                  " Senator Hillary Clinton after early contests,"\
-                                                                  " with the race remaining close throughout the"\
-                                                                  " primary process but with Obama gaining a steady"\
-                                                                  " lead in pledged delegates due to better"\
-                                                                  " long-range planning, superior fundraising,"\
-                                                                  " dominant organizing in caucus states, and better"\
-                                                                  " exploitation of delegate allocation rules.[109]"\
-                                                                  " On June 7, 2008, Clinton ended her campaign and"\
-                                                                  " endorsed Obama.[110]")
-    end
-
-    it "uses the other specified title if official title is 'Other'" do
-      form8[:certifying_official_title] = "Other"
-      expect(
-        pdf_form8_values["form1[0].#subform[0].#area[0].TextField1[21]"]
-      ).to eq("Mugatu")
-    end
-
-    it "does not populate empty fields" do
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[19]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[25]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[15]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[20]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[16]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[17]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[22]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].CheckBox23[26]"]).to be_nil
-      expect(pdf_form8_values["form1[0].#subform[0].#area[0].TextField1[16]"]).to be_nil
-    end
-  end
-
-  context ".pdf_values_for_form8_v2" do
+  context ".pdf_values_for_form8" do
     let(:form_fields) { Form8PdfService::FIELD_LOCATIONS_FORM8_V2 }
     let(:pdf_form8_values) do
       Form8PdfService.pdf_values_for(form8, form_fields)
