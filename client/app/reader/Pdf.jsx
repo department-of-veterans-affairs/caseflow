@@ -176,16 +176,14 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltEnter = () => {
-    if (this.props.isPlacingAnnotation) {
-      this.props.placeAnnotation(
+    this.props.placeAnnotation(
         pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
-        {
-          xPosition: this.props.placingAnnotationIconPageCoords.x,
-          yPosition: this.props.placingAnnotationIconPageCoords.y
-        },
+      {
+        xPosition: this.props.placingAnnotationIconPageCoords.x,
+        yPosition: this.props.placingAnnotationIconPageCoords.y
+      },
         this.props.documentId
       );
-    }
   }
 
   keyListener = (event) => {
