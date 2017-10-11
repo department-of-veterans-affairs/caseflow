@@ -45,6 +45,8 @@ export class HearingWorksheet extends React.PureComponent {
     let { worksheet } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
+    const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
+
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -69,7 +71,7 @@ export class HearingWorksheet extends React.PureComponent {
           />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
-            <div><b>{worksheet.appellant_last_first_mi}</b></div>
+            <div><b>{appellant}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
