@@ -179,9 +179,9 @@ class Generators::Appeal
       vacols_record[:vbms_id] = attrs[:vbms_id]
       vacols_record = vacols_record.merge(attrs.select { |attr| Appeal.vacols_field?(attr) })
 
-      issues_from_template = vacols_record.delete(:issues)
-      set_vacols_issues(appeal: appeal,
-                        issues: issues || issues_from_template)
+      # issues_from_template = vacols_record.delete(:issues)
+      # set_vacols_issues(appeal: appeal,
+      #                   issues: issues || issues_from_template)
 
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
