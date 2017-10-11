@@ -76,20 +76,14 @@ class Hearing < ActiveRecord::Base
   def to_hash
     serializable_hash(
       methods: [
-        :date,
-        :request_type,
-        :disposition,
-        :aod,
-        :transcript_requested,
-        :hold_open,
-        :notes,
-        :add_on,
-        :master_record,
-        :representative,
-        :representative_name,
-        :regional_office_name,
-        :venue,
-        :vbms_id
+        :date, :request_type,
+        :disposition, :aod,
+        :appellant_last_first_mi, :transcript_requested,
+        :hold_open, :notes,
+        :add_on, :master_record,
+        :representative, :representative_name,
+        :regional_office_name, :venue,
+        :veteran_name, :vbms_id
       ],
       except: :military_service
     )
