@@ -6,7 +6,7 @@ class RampIntake < Intake
   private
 
   def validate_detail_on_start
-    @error_code = :didnt_receive_ramp_election if !matching_ramp_election
+    @error_code = :did_not_receive_ramp_election if !matching_ramp_election
   end
 
   def matching_ramp_election

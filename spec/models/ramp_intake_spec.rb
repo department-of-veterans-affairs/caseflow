@@ -35,11 +35,11 @@ describe RampIntake do
     end
   end
 
-  context "#valid_to_start?" do
-    subject { intake.valid_to_start? }
+  context "#validate_start" do
+    subject { intake.validate_start }
 
     context "there is not a ramp election for veteran" do
-      it "adds didnt_receive_ramp_election and returns false" do
+      it "adds did_not_receive_ramp_election and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq(:didnt_receive_ramp_election)
       end

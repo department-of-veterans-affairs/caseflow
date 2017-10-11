@@ -6,7 +6,7 @@ class Intake < ActiveRecord::Base
 
   def start!
     # TODO: trim the file number
-    return false unless valid_to_start?
+    return false unless validate_start
 
     update_attributes(
       started_at: Time.zone.now,
@@ -14,7 +14,7 @@ class Intake < ActiveRecord::Base
     )
   end
 
-  def valid_to_start?
+  def validate_start
     if !file_number_valid?
       @error_code = :invalid_file_number
 

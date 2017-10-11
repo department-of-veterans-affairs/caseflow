@@ -7,8 +7,8 @@ describe Intake do
 
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
 
-  context "#valid_to_start?" do
-    subject { intake.valid_to_start? }
+  context "#validate_start" do
+    subject { intake.validate_start }
 
     context "veteran_file_number is null" do
       let(:veteran_file_number) { nil }

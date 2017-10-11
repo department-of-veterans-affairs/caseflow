@@ -8,12 +8,15 @@ import { REQUEST_STATE } from '../constants';
 
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => {
-    this.props.doFileNumberSearch(this.props.fileNumberSearchInput).
-      then(() => this.props.history.push('/review-request'));
+    this.props.doFileNumberSearch(this.props.fileNumberSearchInput).then(() => {
+      if (this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED) {
+        this.props.history.push('/review-request');
+      }
+    });
   }
 
   render() {
-    let searchError = this.props.searchError;
+    const searchError = this.props.searchError;
 
     return <div>
       { searchError &&
@@ -21,7 +24,11 @@ class Begin extends React.PureComponent {
           <Alert title={searchError.title} type="error">
             {searchError.body}
           </Alert>
+
+          // This is required to give the necessary spacing.
+          // TODO: we should fix styleguide to make this unnecessary
           <p></p>
+
         </div>
       }
 
