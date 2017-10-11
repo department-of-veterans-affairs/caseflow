@@ -18,6 +18,8 @@ class Begin extends React.PureComponent {
   render() {
     const searchError = this.props.searchError;
 
+    // The extra <p></p> is required to give the necessary spacing.
+    // TODO: we should fix styleguide to make this unnecessary
     return <div>
       { searchError &&
         <div>
@@ -25,8 +27,6 @@ class Begin extends React.PureComponent {
             {searchError.body}
           </Alert>
 
-          // This is required to give the necessary spacing.
-          // TODO: we should fix styleguide to make this unnecessary
           <p></p>
 
         </div>
