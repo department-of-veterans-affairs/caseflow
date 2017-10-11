@@ -19,6 +19,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
 
   onDeleteIssue = (appealKey, issueKey) => () => {
     this.props.onDeleteIssue(appealKey, issueKey);
+    this.props.toggleIssueDeleteModal(appealKey, issueKey, false);
   };
 
   render() {

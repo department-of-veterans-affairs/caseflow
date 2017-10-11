@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
+import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,12 +36,13 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
-const getDate = (date, timezone) => {
-  return moment.tz(date, timezone).
-    format('h:mm a z').
+const getDate = (date) => {
+  return moment(date).
+    format('LT').
     replace('AM', 'a.m.').
     replace('PM', 'p.m.');
 };
+
 
 export class DocketHearingRow extends React.PureComponent {
 
@@ -64,19 +66,21 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
+    const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
+
     return <tbody>
       <tr>
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, 'America/New_York')}
+            {getDate(hearing.date)} EDT
           </span>
           <span>
             {hearing.regional_office_name}
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{hearing.appellant_last_first_mi}</b>
+          <b>{appellantDisplay}</b>
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
@@ -126,12 +130,13 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
+         <div>
+          <label htmlFor={`${hearing.id}.notes`}>Notes</label>
           <div>
-            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
-            <div>
-              <textarea
+              <Textarea
                 id={`${hearing.id}.notes`}
-                defaultValue={hearing.notes}
+                value={hearing.notes || ''}
+                name="Notes"
                 onChange={this.setNotes}
                 maxLength="100"
               />
