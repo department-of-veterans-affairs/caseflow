@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
 import Button from '../components/Button';
+import _ from 'lodash';
+
+import { connect } from 'react-redux';
+
+import { createAnnotation, requestEditAnnotation } from '../reader/actions';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
-export default class EditComment extends React.Component {
+class EditComment extends React.Component {
 
   constructor(props) {
     super(props);
@@ -20,6 +26,23 @@ export default class EditComment extends React.Component {
     }
   }
 
+  handleAltEnter = () => {
+    this.shouldAutosave = false;
+    if (this.props.placedButUnsavedAnnotation) {
+      this.props.createAnnotation(this.props.placedButUnsavedAnnotation);
+    } else if (this.props.editingAnnotations) {
+      this.props.requestEditAnnotation(this.props.editingAnnotations);
+    }
+  }
+
+  keyListener = (event) => {
+    if (event.altKey) {
+      if (event.code === 'Enter') {
+        this.handleAltEnter();
+      }
+    }
+  }
+
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
@@ -27,10 +50,12 @@ export default class EditComment extends React.Component {
 
     // ensure we autosave if we ever exit
     window.addEventListener('beforeunload', this.handleAutoSave);
+    window.addEventListener('keydown', this.keyListener);
   }
 
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.handleAutoSave);
+    window.removeEventListener('keydown', this.keyListener);
     this.handleAutoSave();
   }
 
@@ -77,6 +102,21 @@ export default class EditComment extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation'),
+    ..._.pick(state.readerReducer, 'editingAnnotations')
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    createAnnotation,
+    requestEditAnnotation
+  }, dispatch)
+});
+
+
 EditComment.defaultProps = {
   id: 'commentEditBox'
 };
@@ -88,3 +128,7 @@ EditComment.propTypes = {
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func
 };
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(EditComment);

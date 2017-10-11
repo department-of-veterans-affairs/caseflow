@@ -7,7 +7,7 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { createAnnotation, requestEditAnnotation, placeAnnotation, startPlacingAnnotation,
+import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
@@ -176,7 +176,6 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltEnter = () => {
-    // TODO: fix why the comment doesn't save in focus
     if (this.props.isPlacingAnnotation) {
       this.props.placeAnnotation(
         pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
@@ -186,11 +185,6 @@ export class Pdf extends React.PureComponent {
         },
         this.props.documentId
       );
-    } else if (this.props.placedButUnsavedAnnotation) {
-      // TODO: fix why this creates 2 annotations
-      this.props.createAnnotation(this.props.placedButUnsavedAnnotation);
-    } else if (this.props.editingAnnotations) {
-      this.props.requestEditAnnotation(this.props.editingAnnotations);
     }
   }
 
@@ -357,16 +351,12 @@ const mapStateToProps = (state, props) => {
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation'),
-    ..._.pick(state.readerReducer, 'editingAnnotations'),
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    createAnnotation,
-    requestEditAnnotation,
     placeAnnotation,
     startPlacingAnnotation,
     stopPlacingAnnotation,
