@@ -41,7 +41,7 @@ describe RampIntake do
     context "there is not a ramp election for veteran" do
       it "adds did_not_receive_ramp_election and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:didnt_receive_ramp_election)
+        expect(intake.error_code).to eq(:did_not_receive_ramp_election)
       end
     end
 
