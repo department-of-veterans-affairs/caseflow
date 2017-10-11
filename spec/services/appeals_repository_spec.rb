@@ -54,21 +54,6 @@ describe AppealRepository do
     )
   end
 
-  context ".issues" do
-    before { Appeal.repository = Fakes::AppealRepository }    
-    let(:vacols_record) { :partial_grant_decided }
-    
-    let(:appeal) do
-      Generators::Appeal.build({ vacols_record: vacols_record }.merge({issues: []}))
-    end
-
-    subject { AppealRepository.issues(appeal.vacols_id) }
-
-    it "returns a new appeal" do
-      is_expected.to eq([])
-    end
-  end
-
   context ".build_appeal" do
     before do
       allow_any_instance_of(Appeal).to receive(:check_and_load_vacols_data!).and_return(nil)
