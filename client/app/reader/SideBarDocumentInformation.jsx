@@ -44,7 +44,7 @@ class SideBarDocumentInformation extends PureComponent {
         <div className="cf-pdf-meta-title">
           <strong>Issues:</strong> {_.size(appeal.issues) ?
             <ol className="cf-pdf-meta-doc-info-issues">
-              {<IssueList appeal={appeal} />}
+              <IssueList appeal={appeal} />
             </ol> :
             'No issues on appeal'
           }
