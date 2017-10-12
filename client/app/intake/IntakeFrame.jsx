@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -15,6 +16,7 @@ import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { toggleCancelModal } from './redux/actions';
 
 class IntakeFrame extends React.PureComponent {
   render() {
@@ -29,7 +31,7 @@ class IntakeFrame extends React.PureComponent {
 
     if (this.props.cancelModalVisible) {
       confirmButton = <Button dangerStyling>Cancel Intake</Button>;
-      cancelButton = <Button linkStyling>Close</Button>;
+      cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal}>Close</Button>;
     }
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
@@ -37,6 +39,7 @@ class IntakeFrame extends React.PureComponent {
         { this.props.cancelModalVisible &&
           <Modal
             title="Cancel Intake?"
+            closeHandler={this.props.toggleCancelModal}
             confirmButton={confirmButton}
             cancelButton={cancelButton}
           >
@@ -107,5 +110,8 @@ export default connect(
     veteran,
     cancelModalVisible,
     fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    toggleCancelModal
+  }, dispatch)
 )(IntakeFrame);
