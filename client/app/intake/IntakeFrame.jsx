@@ -31,7 +31,7 @@ class IntakeFrame extends React.PureComponent {
 
     if (this.props.cancelModalVisible) {
       confirmButton = <Button dangerStyling>Cancel Intake</Button>;
-      cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal}>Close</Button>;
+      cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
     }
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
