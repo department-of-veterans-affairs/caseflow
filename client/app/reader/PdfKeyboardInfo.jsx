@@ -46,7 +46,7 @@ export const documentsInstructions = [
     shortcut: <span><code>alt</code> + <code>m</code></span> }
 ];
 
-export const documentsColumns = [{ header: 'View documents',
+export const documentsColumns = [{ header: 'Navigate Reader',
   valueName: 'documentsInstruction',
   align: 'left' },
 { header: 'Shortcut',
