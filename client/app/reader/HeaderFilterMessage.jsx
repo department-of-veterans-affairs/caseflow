@@ -20,21 +20,22 @@ class HeaderFilterMessage extends React.PureComponent {
     const categoryCount = getTruthyCount(props.docFilterCriteria.category);
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
 
-    const filteredCategories = _.compact([
+    let filteredCategories = _.compact([
       categoryCount && `Categories (${categoryCount})`,
       tagCount && `Issue tags (${tagCount})`,
       props.viewingDocumentsOrComments === 'comments' && 'Comments'
     ]).join(', ');
 
     if (!filteredCategories.length) {
-      return null;
+      filteredCategories = 'None';
     }
 
     return <p className="document-list-filter-message">Filtering by: {filteredCategories}.<Button
       id="clear-filters"
       name="clear-filters"
       classNames={['cf-btn-link']}
-      onClick={props.clearAllFilters}>
+      onClick={props.clearAllFilters}
+      disabled={!(categoryCount || tagCount)}>
       Clear all filters.</Button></p>;
   }
 }

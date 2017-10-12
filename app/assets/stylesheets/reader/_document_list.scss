@@ -42,6 +42,7 @@ $tag-backgrond-color: #d6d7d9;
 
   .documents-table {
     min-width: 810px;
+    margin-top: 0;
   }
 
   $last-read-column-width: 41px;
@@ -286,7 +287,8 @@ $tag-backgrond-color: #d6d7d9;
 
 
 .document-list-filter-message {
-  margin-top: 10px;
+  margin-top: 15px;
+  margin-bottom: 0;
 }
 
 .document-list-header {
