@@ -54,6 +54,8 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   componentDidMount = () => {
+    global.featureToggles = this.props.featureToggles;
+
     window.addEventListener('click', this.clearPlacingAnnotationState);
     if (this.props.singleDocumentMode) {
       fireSingleDocumentModeEvent();
