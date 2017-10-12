@@ -70,7 +70,7 @@ describe Hearing do
       end
 
       context "when appeal is set" do
-        let(:appeal) { Appeal.create(vacols_id: "1234", vbms_id: "1234567") }
+        let(:appeal) { Generators::Appeal.create(vacols_id: "1234", vbms_id: "1234567") }
 
         it "should load military service from appeal" do
           hearing.update(appeal: appeal)
