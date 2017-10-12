@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import _ from 'lodash';
 
 export default class Button extends React.Component {
   componentDidMount() {
@@ -11,17 +13,21 @@ export default class Button extends React.Component {
   }
 
   render() {
+    let propClassNames = this.props.classNames;
     let {
       ariaLabel,
       app,
       loadingText,
-      classNames,
       children,
       id,
       name,
       disabled,
       loading,
       onClick,
+      linkStyling,
+      dangerStyling,
+      legacyStyling = true,
+      willNeverBeLoading,
       type
     } = this.props;
 
@@ -33,7 +39,7 @@ export default class Button extends React.Component {
       return <span>
         <button
           id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
-          className={`${classNames.join(' ')} cf-${app} cf-loading`}
+          className={`${propClassNames.join(' ')} cf-${app} cf-loading`}
           type={type}
           disabled={true}
           aria-label={ariaLabel}>
@@ -52,21 +58,43 @@ export default class Button extends React.Component {
 
     if (disabled || loading) {
       // remove any usa-button styling and then add disabled styling
-      classNames = classNames.filter((className) => !className.includes('usa-button'));
-      classNames.push('usa-button-disabled');
+      propClassNames = propClassNames.filter((className) => !className.includes('usa-button'));
+      propClassNames.push('usa-button-disabled');
     }
 
-    return <span>
-      <button
+    const buttonClasses = classnames(propClassNames, {
+      'hidden-field': loading,
+      'cf-btn-link': linkStyling,
+      'usa-button-secondary': dangerStyling,
+      'usa-button': !legacyStyling && !dangerStyling
+    });
+
+    const button = <button
         id={id || (name && `${type}-${name.replace(/\s/g, '-')}`)}
-        className={classNames.join(' ') + (loading ? ' hidden-field' : '')}
+        className={buttonClasses}
         type={type}
         disabled={disabled}
         onClick={onClick}
         aria-label={ariaLabel}>
           {children}
-      </button>
+      </button>;
 
+    /**
+     * If we having a loading indicator, then we'll wrap the <button> in a <span>.
+     * This breaks the built-in USWDS styling, which assumes that if a button is the
+     * last child, then it should be styled differently. When we wrap every button
+     * in a span, every button is a last child.
+     *
+     * Button is used all over our codebase, and some places may rely on this behavior.
+     * So instead of changing it for everyone, we'll allow users to opt in with the
+     * willNeverBeLoading prop. This will produce the styling that USWDS intended.
+     */
+    if (willNeverBeLoading) {
+      return button;
+    }
+
+    return <span>
+      { button }
       { loading && <LoadingIndicator /> }
     </span>;
   }
@@ -84,7 +112,23 @@ Button.propTypes = {
   disabled: PropTypes.bool,
   id: PropTypes.string,
   linkStyle: PropTypes.bool,
-  loading: PropTypes.bool,
+  loading: (props, propName) => {
+    const loading = props[propName];
+
+    if (_.isUndefined(loading)) {
+      return;
+    }
+
+    if (!_.isBoolean(loading)) {
+      return new Error(`'loading' must be a boolean, but was: '${loading}'`);
+    }
+
+    if (loading && props.willNeverBeLoading) {
+      return new Error("'loading' and 'willNeverBeLoading' can't both be set to 'true'.");
+    }
+  },
+  legacyStyling: PropTypes.bool,
+  willNeverBeLoading: PropTypes.bool,
   name: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.node

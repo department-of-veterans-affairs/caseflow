@@ -86,3 +86,7 @@ export const submitReview = (rampElection) => (dispatch) => {
       }
     );
 };
+
+export const toggleCancelModal = () => ({
+  type: ACTIONS.TOGGLE_CANCEL_MODAL
+});
