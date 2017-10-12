@@ -7,7 +7,7 @@ class Fakes::Initializer
       HearingDocket.repository = Fakes::HearingRepository
       Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      User.case_assignment_repository = Fakes::CaseAssignmentRepository
+      User.appeal_repository = Fakes::AppealRepository
     end
 
     # This method is called only 1 time during application bootup
@@ -51,6 +51,15 @@ class Fakes::Initializer
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
+
+      load_ramp_election_veteran_fakes
+    end
+
+    def load_ramp_election_veteran_fakes
+      9.times do |i|
+        Generators::Veteran.build(file_number: "#{i}5555555")
+        Generators::Veteran.build(file_number: "#{i}0555555")
+      end
     end
 
     def running_rake_command?

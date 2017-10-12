@@ -29,6 +29,10 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
   moment(dateString, dateFormat).format(expectedFormat)
 );
 
+export const formatDateStringForApi = (dateString) => (
+  formatDateStr(dateString, 'MM/DD/YYYY', 'YYYY-MM-DD')
+);
+
 const YEAR_INDEX = 0;
 const MONTH_INDEX = 1;
 const DAY_INDEX = 2;

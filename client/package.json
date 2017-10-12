@@ -4,10 +4,6 @@
   "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "license": "none",
   "version": "0.0.1",
-  "engines": {
-    "node": "6.10.2",
-    "npm": "3.10.10"
-  },
   "scripts": {
     "test": "npm run test:karma && npm run test:legacy",
     "test:legacy": "NODE_ENV=test mocha --recursive test/node/setup.js test/node/* --compilers jsx:babel-core/register js:babel-core/register",
@@ -40,14 +36,14 @@
     "es5-shim": "^4.5.7",
     "expose-loader": "^0.7.3",
     "history": "^4.5.1",
-    "immutability-helper": "^2.1.2",
+    "immutability-helper": "^2.4.0",
     "imports-loader": "^0.7.1",
-    "jsdom": "^9.8.3",
+    "jsdom": "9.8.3",
     "lodash": "^4.17.2",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "^1.6.414",
+    "pdfjs-dist": "1.6.414",
     "prop-types": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz",
     "rc-collapse": "^1.7.6",
     "react": "^15.5.4",
@@ -92,8 +88,5 @@
     "react-addons-test-utils": "^15.4.2",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^2.4.2"
-  },
-  "optionalDependencies": {
-    "fsevents": "*"
   }
 }
