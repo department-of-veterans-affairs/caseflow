@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 import BareOrderedList from '../../components/BareOrderedList';
+import CancelButton from '../components/CancelButton';
 
 export default class Finish extends React.PureComponent {
   render() {
@@ -20,8 +21,16 @@ export default class Finish extends React.PureComponent {
   }
 }
 
-export class FinishNextButton extends React.PureComponent {
+class FinishNextButton extends React.PureComponent {
   handleClick = () => this.props.history.push('/completed');
 
   render = () => <Button onClick={this.handleClick} legacyStyling={false}>I've completed all the steps</Button>;
+}
+
+export class FinishButtons extends React.PureComponent {
+  render = () => 
+    <div>
+      <CancelButton />
+      <FinishNextButton />
+    </div>
 }
