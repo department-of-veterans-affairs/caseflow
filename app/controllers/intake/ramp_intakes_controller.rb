@@ -23,10 +23,7 @@ class Intake::RampIntakesController < ApplicationController
   end
 
   def destroy
-    if intake
-      intake.update!(cancelled_at: Time.zone.now)
-      render json: {}
-    end
+    intake.update!(cancelled_at: Time.zone.now)
   end
 
   private
