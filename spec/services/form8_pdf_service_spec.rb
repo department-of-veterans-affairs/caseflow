@@ -1,6 +1,4 @@
 describe Form8PdfService do
-  # TODO(alex): this file is undertested. Add more tests
-  # as we make modifications to it.
   let(:form8) do
     Form8.new(
       # regular string field
@@ -10,31 +8,12 @@ describe Form8PdfService do
       veteran_name: "Joe Patriot",
       # hash/selection fields
       power_of_attorney: "POA",
-      hearing_requested: "Yes",
-      ssoc_required: "Not required",
       # date field
       other_notification_date: "2002-11-23T04:05:06+00:00",
       soc_date: "2001-11-23T04:05:06+00:00",
       form9_date: "2003-11-23T04:05:06+00:00",
+      ssoc_date_1: "2005-11-24T04:05:06+00:00",
       ssoc_date_2: "2005-11-23T04:05:06+00:00",
-      # remarks with rollover field
-      remarks: "On February 10, 2007, Obama announced his candidacy for President of the " \
-               "United States in front of the Old State Capitol building in " \
-               "Springfield, Illinois.[104][105] The choice of the announcement site " \
-               "was viewed as symbolic because it was also where Abraham Lincoln " \
-               "delivered his historic \"House Divided\" speech in 1858.[104][106] " \
-               "Obama emphasized issues of rapidly ending the Iraq War, increasing " \
-               "energy independence, and reforming the health care system,[107] in a " \
-               "campaign that projected themes of hope and change.[108] Numerous " \
-               "candidates entered the Democratic (see continued remarks page 2)" \
-               "\n \nContinued:\nParty presidential primaries. The field narrowed to a " \
-               "duel between Obama and Senator Hillary Clinton after early " \
-               "contests, with the race remaining close throughout the primary " \
-               "process but with Obama gaining a steady lead in pledged delegates " \
-               "due to better long-range planning, superior fundraising, dominant " \
-               "organizing in caucus states, and better exploitation of delegate " \
-               "allocation rules.[109] On June 7, 2008, Clinton ended her campaign " \
-               "and endorsed Obama.[110]",
       # conditional other field
       certifying_official_title: "Attorney",
       certifying_official_title_specify_other: "Mugatu"
@@ -54,6 +33,7 @@ describe Form8PdfService do
                                           "form1[0].#subform[0].#area[0].Field32[0]" => "11/23/2002",
                                           "form1[0].#subform[0].#area[0].Field32[1]" => "11/23/2001",
                                           "form1[0].#subform[0].#area[0].Field32[2]" => "11/23/2003",
+                                          "form1[0].#subform[0].#area[0].Field32[3]" => "11/24/2005",
                                           "form1[0].#subform[0].#area[0].Field32[4]" => "11/23/2005")
     end
   end
