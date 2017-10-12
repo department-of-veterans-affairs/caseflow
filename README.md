@@ -32,6 +32,8 @@ Then run the following:
     rbenv install 2.2.4
 
     gem install bundler
+    
+    gem install foreman
 
 You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
