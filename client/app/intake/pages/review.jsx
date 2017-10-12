@@ -53,15 +53,14 @@ class Review extends React.PureComponent {
 }
 
 class ReviewNextButton extends React.PureComponent {
-  render = () => {
-    return <Button
+  render = () =>
+    <Button
       name="submit-review"
       onClick={this.props.handleClick(this.props)}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
     >
       Continue to next step
     </Button>;
-  }
 }
 
 const ReviewNextButtonConnected = connect(
