@@ -81,7 +81,8 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  resources :intake, only: :index
+  resources :intake, only: [:index, :create]
+
   match '/intake/:any' => 'intake#index', via: [:get]
 
   get "health-check", to: "health_checks#show"
