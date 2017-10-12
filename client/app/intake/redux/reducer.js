@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
-const initialState = {
+export const mapDataToInitialState = (data = {}) => ({
   veteran: {
     name: null,
     formName: null,
@@ -13,10 +13,16 @@ const initialState = {
     veteranResponse: null
   },
   requestStatus: {
-    fileNumberSearch: REQUEST_STATE.NOT_STARTED
+    fileNumberSearch: REQUEST_STATE.NOT_STARTED,
+    submitReview: REQUEST_STATE.NOT_STARTED
+  },
+  rampElection: {
+    intakeId: data.intakeId,
+    optionSelected: null,
+    receiptDate: null
   },
   searchError: null
-};
+});
 
 // The keys in this object need to be snake_case
 // because they're being matched to server response values.
@@ -45,15 +51,31 @@ const searchErrors = {
 };
 
 
-export default (state = initialState, action) => {
+export const reducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return initialState;
+    return mapDataToInitialState();
   case ACTIONS.SET_FILE_NUMBER_SEARCH:
     return update(state, {
       inputs: {
         fileNumberSearch: {
           $set: action.payload.fileNumber
+        }
+      }
+    });
+  case ACTIONS.SET_SELECTED_OPTION:
+    return update(state, {
+      rampElection: {
+        optionSelected: {
+          $set: action.payload.optionSelected
+        }
+      }
+    });
+  case ACTIONS.SET_RECEIPT_DATE:
+    return update(state, {
+      rampElection: {
+        receiptDate: {
+          $set: action.payload.receiptDate
         }
       }
     });
@@ -82,6 +104,11 @@ export default (state = initialState, action) => {
         fileNumber: {
           $set: action.payload.fileNumber
         }
+      },
+      rampElection: {
+        intakeId: {
+          $set: action.payload.intakeId
+        }
       }
     });
   case ACTIONS.FILE_NUMBER_SEARCH_FAIL:
@@ -91,6 +118,30 @@ export default (state = initialState, action) => {
       },
       requestStatus: {
         fileNumberSearch: {
+          $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.SUBMIT_REVIEW_START:
+    return update(state, {
+      requestStatus: {
+        submitReview: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.SUBMIT_REVIEW_SUCCEED:
+    return update(state, {
+      requestStatus: {
+        submitReview: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    });
+  case ACTIONS.SUBMIT_REVIEW_FAIL:
+    return update(state, {
+      requestStatus: {
+        submitReview: {
           $set: REQUEST_STATE.FAILED
         }
       }
