@@ -13,7 +13,7 @@ describe Form8PdfService do
       hearing_requested: "Yes",
       ssoc_required: "Not required",
       # date field
-      nod_date: "2002-11-23T04:05:06+00:00",
+      other_notification_date: "2002-11-23T04:05:06+00:00",
       soc_date: "2001-11-23T04:05:06+00:00",
       form9_date: "2003-11-23T04:05:06+00:00",
       ssoc_date_2: "2005-11-23T04:05:06+00:00",
