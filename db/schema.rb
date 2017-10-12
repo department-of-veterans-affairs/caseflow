@@ -11,18 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171005184519) do
+ActiveRecord::Schema.define(version: 20171012214652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
-    t.integer "document_id", null: false
-    t.string  "comment",     null: false
-    t.integer "page"
-    t.integer "x"
-    t.integer "y"
-    t.integer "user_id"
+    t.integer  "document_id",                                 null: false
+    t.string   "comment",                                     null: false
+    t.integer  "page"
+    t.integer  "x"
+    t.integer  "y"
+    t.integer  "user_id"
+    t.datetime "created_at",  default: '2017-10-12 21:46:07'
+    t.datetime "updated_at",  default: '2017-10-12 21:46:07'
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree

@@ -4,7 +4,12 @@ class AnnotationController < ApplicationController
   ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze
 
   def create
-    annotation = Annotation.create!(annotation_params.merge(user_id: current_user.id))
+    params = annotation_params.merge(
+      user_id: current_user.id,
+      created_at: Time.now.utc,
+      updated_at: Time.now.utc
+    )
+    annotation = Annotation.create!(params)
     render json: { id: annotation.id }
   end
 
@@ -14,7 +19,7 @@ class AnnotationController < ApplicationController
   end
 
   def update
-    Annotation.find(params[:id]).update!(annotation_params)
+    Annotation.find(params[:id]).update!(annotation_params.merge(updated_at: Time.now.utc))
     render json: {}
   end
 
