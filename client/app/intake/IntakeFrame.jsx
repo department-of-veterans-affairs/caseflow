@@ -8,6 +8,8 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '../components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
+import Modal from '../components/Modal';
+import Button from '../components/Button';
 import BeginPage from './pages/begin';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
@@ -23,8 +25,27 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
       `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
+    let confirmButton, cancelButton;
+
+    if (this.props.cancelModalVisible) {
+      confirmButton = <Button>Cancel Intake</Button>
+      cancelButton = <Button>Close</Button>
+    }
+
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
+        { this.props.cancelModalVisible && 
+          <Modal 
+            title="Cancel Intake?"
+            confirmButton={confirmButton}
+            cancelButton={cancelButton}
+          >
+            <p>
+              If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS, 
+              Caseflow will have no record of this work.
+            </p>
+        </Modal> 
+        }
         <NavigationBar
           appName={appName}
           userDisplayName={this.props.userDisplayName}
@@ -82,8 +103,9 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus }) => ({
+  ({ veteran, requestStatus, cancelModalVisible }) => ({
     veteran,
+    cancelModalVisible,
     fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
   })
 )(IntakeFrame);
