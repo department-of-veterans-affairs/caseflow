@@ -37,6 +37,12 @@
   border: 1px solid $color-gray-lighter;
 }
 
+div.comment-container:hover {
+  cursor: pointer;
+  background-color: $color-gray-lightest;
+  border-color: $color-gray-light;
+}
+
 .comment-horizontal-container {
   display: inline-block;
   width: 100%;

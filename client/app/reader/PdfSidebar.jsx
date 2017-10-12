@@ -77,6 +77,22 @@ export class PdfSidebar extends React.Component {
     }
   }
 
+  componentDidMount() {
+    window.addEventListener('keydown', this.keyHandler);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyHandler);
+  }
+
+  keyHandler = (e) => {
+    if (e.altKey) {
+      if (e.code === 'KeyM') {
+        this.props.togglePdfSidebar();
+      }
+    }
+  }
+
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 

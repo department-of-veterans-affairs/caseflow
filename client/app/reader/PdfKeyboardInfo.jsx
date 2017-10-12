@@ -41,7 +41,9 @@ export const documentsInstructions = [
   { documentsInstruction: 'Next document',
     shortcut: <span><ArrowRight /></span> },
   { documentsInstruction: 'Previous document',
-    shortcut: <span><ArrowLeft /></span> }
+    shortcut: <span><ArrowLeft /></span> },
+  { documentsInstruction: 'Open/Hide menu',
+    shortcut: <span><code>alt</code> + <code>m</code></span> }
 ];
 
 export const documentsColumns = [{ header: 'View documents',
