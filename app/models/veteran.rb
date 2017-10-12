@@ -32,6 +32,11 @@ class Veteran
   validates :zip_code, presence: true, if: "country_requires_zip?"
   validates :state, presence: true, if: "country_requires_state?"
 
+  # TODO: get middle initial from BGS
+  def name
+    FullName.new(first_name, "", last_name)
+  end
+
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country)
   end
@@ -46,13 +51,7 @@ class Veteran
   end
 
   def load_bgs_record!
-    BGS_ATTRIBUTES.each do |bgs_attribute|
-      instance_variable_set(
-        "@#{bgs_attribute}".to_sym,
-        bgs_record[bgs_attribute]
-      )
-    end
-
+    set_attrs_from_bgs_record if found?
     self
   end
 
@@ -76,7 +75,25 @@ class Veteran
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
+  def found?
+    bgs_record != :not_found
+  end
+
+  def accessible?
+    @accessible = self.class.bgs.can_access?(file_number) if @accessible.nil?
+    @accessible
+  end
+
   private
+
+  def set_attrs_from_bgs_record
+    BGS_ATTRIBUTES.each do |bgs_attribute|
+      instance_variable_set(
+        "@#{bgs_attribute}".to_sym,
+        bgs_record[bgs_attribute]
+      )
+    end
+  end
 
   def period_of_service(s)
     s[:branch_of_service].strip + " " +
@@ -104,7 +121,7 @@ class Veteran
   end
 
   def bgs_record
-    @bgs_record ||= fetch_bgs_record
+    @bgs_record ||= (fetch_bgs_record || :not_found)
   end
 
   def fetch_bgs_record

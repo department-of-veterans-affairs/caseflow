@@ -196,6 +196,12 @@ body {
   }
 }
 
+.cf-app-intake {
+  .cf-app-width {
+    @include app-width('intake');
+  }
+}
+
 .cf-app-reader {
   // If we add this line, an extraneous scrollbar on Windows will disappear.
   // However, this also makes a test fail on Travis (but not Jenkins).
