@@ -1,14 +1,14 @@
 import React from 'react';
 import Button from '../../components/Button';
-import {toggleCancelModal} from '../redux/actions';
+import { toggleCancelModal } from '../redux/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 class CancelButton extends React.PureComponent {
-  render = () => 
-    <Button 
-      legacyStyling={false} 
-      willNeverBeLoading 
+  render = () =>
+    <Button
+      legacyStyling={false}
+      willNeverBeLoading
       onClick={this.props.toggleCancelModal}
     >
       Cancel Intake
@@ -20,6 +20,6 @@ const ConnectedCancelButton = connect(
   (dispatch) => bindActionCreators({
     toggleCancelModal
   }, dispatch)
-)(CancelButton)
+)(CancelButton);
 
-export default ConnectedCancelButton
+export default ConnectedCancelButton;

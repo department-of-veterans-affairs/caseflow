@@ -24,6 +24,8 @@ export default class Button extends React.Component {
       disabled,
       loading,
       onClick,
+      linkStyling,
+      dangerStyling,
       legacyStyling = true,
       willNeverBeLoading,
       type
@@ -62,7 +64,9 @@ export default class Button extends React.Component {
 
     const buttonClasses = classnames(propClassNames, {
       'hidden-field': loading,
-      'usa-button': !legacyStyling
+      'cf-btn-link': linkStyling,
+      'usa-button-secondary': dangerStyling,
+      'usa-button': !legacyStyling && !dangerStyling
     });
 
     const button = <button

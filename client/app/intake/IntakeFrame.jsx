@@ -25,26 +25,26 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
       `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
-    let confirmButton, cancelButton;
+    let cancelButton, confirmButton;
 
     if (this.props.cancelModalVisible) {
-      confirmButton = <Button>Cancel Intake</Button>
-      cancelButton = <Button>Close</Button>
+      confirmButton = <Button dangerStyling>Cancel Intake</Button>;
+      cancelButton = <Button linkStyling>Close</Button>;
     }
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
-        { this.props.cancelModalVisible && 
-          <Modal 
+        { this.props.cancelModalVisible &&
+          <Modal
             title="Cancel Intake?"
             confirmButton={confirmButton}
             cancelButton={cancelButton}
           >
             <p>
-              If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS, 
+              If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS,
               Caseflow will have no record of this work.
             </p>
-        </Modal> 
+        </Modal>
         }
         <NavigationBar
           appName={appName}

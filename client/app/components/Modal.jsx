@@ -92,7 +92,7 @@ export default class Modal extends React.Component {
         <span className="cf-push-right">
           {confirmButton}
         </span>
-        {cancelButton && 
+        {cancelButton &&
           <span className="cf-push-left">
             {cancelButton}
           </span>
@@ -136,12 +136,13 @@ Modal.defaultProps = {
 Modal.propTypes = {
   buttons: (props, propName) => {
     const buttons = props[propName];
+
     if (!_.isArray(buttons)) {
-      return new Error(`'buttons' must be an array, but was: '${buttons}'`)
+      return new Error(`'buttons' must be an array, but was: '${buttons}'`);
     }
 
-    if (props.cancelButton || props.confirmButton) {
-      return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`')
+    if (buttons.length && (props.cancelButton || props.confirmButton)) {
+      return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`');
     }
   },
   confirmButton: PropTypes.element,
