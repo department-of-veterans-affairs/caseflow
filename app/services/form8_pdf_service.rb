@@ -16,9 +16,6 @@ class Form8PdfService
     file_number: "TextField1[1]",
     appellant_name: "TextField1[2]",
     insurance_loan_number: "TextField1[3]",
-    # TODO: add "notification date" as a DB field,
-    # remove the v1 form8 notification fields,
-    # and continue.
     other_notification_date: "Field32[0]",
     soc_date: "Field32[1]",
     form9_date: "Field32[2]",
@@ -50,7 +47,6 @@ class Form8PdfService
   # but IMO it's pretty clear and I don't want to break it up
   # just for the sake of it.
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def self.pdf_values_for(form8, field_locations)
     field_locations.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
