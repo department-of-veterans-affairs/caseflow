@@ -23,5 +23,5 @@ export default class Finish extends React.PureComponent {
 export class FinishNextButton extends React.PureComponent {
   handleClick = () => this.props.history.push('/completed');
 
-  render = () => <Button onClick={this.handleClick}>I've completed all the steps</Button>;
+  render = () => <Button onClick={this.handleClick} legacyStyling={false}>I've completed all the steps</Button>;
 }

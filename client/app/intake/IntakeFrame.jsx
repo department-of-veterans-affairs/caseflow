@@ -9,7 +9,7 @@ import AppSegment from '../components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import BeginPage from './pages/begin';
-import ReviewPage, { ReviewNextButton } from './pages/review';
+import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishNextButton } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
@@ -59,7 +59,7 @@ class IntakeFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}
-                component={ReviewNextButton} />
+                component={ReviewButtons} />
               <Route
                 exact
                 path={PAGE_PATHS.FINISH}
