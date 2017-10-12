@@ -51,7 +51,7 @@ RSpec.feature "RAMP Intake" do
       expect(intake.user).to eq(current_user)
     end
 
-    scenario "Review RAMP Election form", focus: true do
+    scenario "Review RAMP Election form" do
       election = RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
       RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
 
