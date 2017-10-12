@@ -53,10 +53,16 @@ class Review extends React.PureComponent {
 }
 
 class ReviewNextButton extends React.PureComponent {
+  handleClick = () => {
+    this.props.submitReview(this.props.rampElection).then(
+      () => this.props.history.push('/finish')
+    );
+  }
+
   render = () =>
     <Button
       name="submit-review"
-      onClick={this.props.handleClick(this.props)}
+      onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
     >
       Continue to next step
@@ -68,13 +74,9 @@ const ReviewNextButtonConnected = connect(
     requestState: requestStatus.submitReview,
     rampElection
   }),
-  (dispatch) => ({
-    handleClick: (props) => () => {
-      submitReview(props.rampElection, dispatch)().then(
-        () => props.history.push('/finish')
-      );
-    }
-  })
+  (dispatch) => bindActionCreators({
+    submitReview
+  }, dispatch)
 )(ReviewNextButton);
 
 export { ReviewNextButtonConnected as ReviewNextButton };

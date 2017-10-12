@@ -60,7 +60,7 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-export const submitReview = (rampElection, dispatch) => () => {
+export const submitReview = (rampElection) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START
   });
