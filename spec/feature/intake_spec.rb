@@ -65,7 +65,8 @@ RSpec.feature "RAMP Intake" do
       click_on "Continue to next step"
       expect(page).to have_content("Finish processing Supplemental Claim request")
 
-      expect(election.reload.option_selected).to eq("supplemental_claim")
+      election.reload
+      expect(election.option_selected).to eq("supplemental_claim")
       expect(election.receipt_date).to eq(Date.new(2017, 8, 9))
     end
   end
