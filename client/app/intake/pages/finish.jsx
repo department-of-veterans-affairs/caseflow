@@ -31,6 +31,6 @@ export class FinishButtons extends React.PureComponent {
   render = () => 
     <div>
       <CancelButton />
-      <FinishNextButton />
+      <FinishNextButton history={this.props.history} />
     </div>
 }

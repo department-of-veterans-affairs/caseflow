@@ -85,7 +85,7 @@ export class ReviewButtons extends React.PureComponent {
   render = () => 
     <div>
       <CancelButton />
-      <ReviewNextButtonConnected />
+      <ReviewNextButtonConnected history={this.props.history} />
     </div>
 }
 
