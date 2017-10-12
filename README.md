@@ -25,7 +25,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 [View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
 
 ## Setup
-Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
+Make sure you have [rbenv](https://github.com/rbenv/rbenv), [nvm](https://github.com/creationix/nvm), and [yarn](https://github.com/yarnpkg/yarn) installed.
 
 Then run the following:
 
