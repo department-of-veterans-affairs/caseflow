@@ -82,7 +82,7 @@ export const submitReview = (rampElection) => (dispatch) => {
           payload: {
             responseErrorCodes: responseObject.error_codes
           }
-        })
+        });
       }
     );
 };
