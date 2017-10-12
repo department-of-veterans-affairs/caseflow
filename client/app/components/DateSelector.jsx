@@ -8,7 +8,6 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 
 export default class DateSelector extends React.Component {
-
   dateFill = (initialValue) => {
     let value = initialValue || '';
     let propsValue = this.props.value || '';

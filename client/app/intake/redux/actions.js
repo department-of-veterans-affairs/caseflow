@@ -1,5 +1,6 @@
 import { ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const startNewIntake = () => ({
   type: ACTIONS.START_NEW_INTAKE
@@ -66,7 +67,7 @@ export const submitReview = (rampElection, dispatch) => () => {
 
   const data = {
     option_selected: rampElection.optionSelected,
-    receipt_date: rampElection.receiptDate
+    receipt_date: formatDateStringForApi(rampElection.receiptDate)
   };
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }).

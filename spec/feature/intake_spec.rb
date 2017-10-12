@@ -60,13 +60,13 @@ RSpec.feature "RAMP Intake" do
       within_fieldset("Which election did the Veteran select?") do
         find("label", text: "Supplemental Claim").click
       end
-      fill_in "What is the Receipt Date for this election form?", with: "08/08/2017"
+      fill_in "What is the Receipt Date for this election form?", with: "08/09/2017"
 
       click_on "Continue to next step"
       expect(page).to have_content("Finish processing Supplemental Claim request")
 
       expect(election.reload.option_selected).to eq("supplemental_claim")
-      expect(election.receipt_date).to eq(Date.new(2017, 8, 8))
+      expect(election.receipt_date).to eq(Date.new(2017, 8, 9))
     end
   end
 
