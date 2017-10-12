@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
+import _ from 'lodash';
 
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 // A regex that will match as much of a mm/dd/yyyy date as possible.
@@ -45,9 +46,8 @@ export default class DateSelector extends React.Component {
       type,
       validationError,
       value,
-      onChange, // eslint-disable-line no-unused-vars
       ...passthroughProps
-    } = this.props;
+    } = _.omit(this.props, 'onChange');
 
     return <TextField
       errorMessage={errorMessage}
