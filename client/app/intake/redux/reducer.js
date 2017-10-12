@@ -28,6 +28,21 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => ({
   searchError: null
 });
 
+const getOptionSelectedError = (responseErrorCodes) => (
+  (responseErrorCodes.option_selected || [])[0] && 'Please select an option.'
+);
+
+const getReceiptDateError = (responseErrorCodes, state) => (
+  {
+    blank:
+      'Please enter a valid receipt date.',
+    in_future:
+      'Receipt date cannot be in the future.',
+    before_notice_date: 'Receipt date cannot be earlier than the election notice ' +
+      `date of ${formatDateStr(state.rampElection.noticeDate)}`
+  }[(responseErrorCodes.receipt_date || [])[0]]
+);
+
 // The keys in this object need to be snake_case
 // because they're being matched to server response values.
 const searchErrors = {
@@ -145,24 +160,13 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.SUBMIT_REVIEW_FAIL:
-    const optionSelectedCode = (action.payload.responseErrorCodes.option_selected || [])[0];
-    const optionSelectedError = optionSelectedCode ? "Please select an option." : null;
-
-    const receiptDateCode = (action.payload.responseErrorCodes.receipt_date || [])[0];
-    const receiptDateError = {
-      blank:
-        "Please enter a valid receipt date.",
-      before_notice_date: 'Receipt date cannot be earlier than the election notice ' +
-        `date of ${formatDateStr(state.rampElection.noticeDate)}`
-    }[receiptDateCode]
-
     return update(state, {
       rampElection: {
         optionSelectedError: {
-          $set: optionSelectedError
+          $set: getOptionSelectedError(action.payload.responseErrorCodes)
         },
         receiptDateError: {
-          $set: receiptDateError
+          $set: getReceiptDateError(action.payload.responseErrorCodes, state)
         }
       },
       requestStatus: {

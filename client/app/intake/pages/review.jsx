@@ -58,7 +58,7 @@ class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.submitReview(this.props.rampElection).then(() => {
       if (this.props.requestState === REQUEST_STATE.SUCCEEDED) {
-        this.props.history.push('/finish')
+        this.props.history.push('/finish');
       }
     });
   }

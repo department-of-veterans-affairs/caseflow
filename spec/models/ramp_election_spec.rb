@@ -53,9 +53,13 @@ describe RampIntake do
         it { is_expected.to be true }
       end
 
-      context "when it is on or after notice date" do
-        let(:receipt_date) { 1.day.ago }
-        it { is_expected.to be true }
+      context "when it is after today" do
+        let(:receipt_date) { 1.day.from_now }
+
+        it "adds an error to receipt_date" do
+          is_expected.to be false
+          expect(intake.errors[:receipt_date]).to include("in_future")
+        end
       end
 
       context "when it is before notice_date" do
@@ -65,6 +69,11 @@ describe RampIntake do
           is_expected.to be false
           expect(intake.errors[:receipt_date]).to include("before_notice_date")
         end
+      end
+
+      context "when it is on or after notice date and on or before today" do
+        let(:receipt_date) { 1.day.ago }
+        it { is_expected.to be true }
       end
 
       context "when saving receipt" do

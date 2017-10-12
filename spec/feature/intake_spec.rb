@@ -66,7 +66,7 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_content("Please select an option.")
       expect(page).to have_content(
-       "Receipt date cannot be earlier than the election notice date of 08/07/2017"
+        "Receipt date cannot be earlier than the election notice date of 08/07/2017"
       )
 
       within_fieldset("Which election did the Veteran select?") do

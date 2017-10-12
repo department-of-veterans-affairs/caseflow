@@ -12,7 +12,7 @@ import BeginPage from './pages/begin';
 import ReviewPage, { ReviewNextButton } from './pages/review';
 import FinishPage, { FinishNextButton } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { PAGE_PATHS } from './constants';
 
 class IntakeFrame extends React.PureComponent {
   render() {
@@ -20,7 +20,7 @@ class IntakeFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.veteran ? 
+    const topMessage = this.props.veteran ?
     `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
