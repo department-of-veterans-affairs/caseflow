@@ -74,13 +74,13 @@ export default class Button extends React.Component {
         aria-label={ariaLabel}>
           {children}
       </button>;
-    
+
     /**
      * If we having a loading indicator, then we'll wrap the <button> in a <span>.
-     * This breaks the built-in USWDS styling, which assumes that if a button is the 
+     * This breaks the built-in USWDS styling, which assumes that if a button is the
      * last child, then it should be styled differently. When we wrap every button
-     * in a span, every button is a last child. 
-     * 
+     * in a span, every button is a last child.
+     *
      * Button is used all over our codebase, and some places may rely on this behavior.
      * So instead of changing it for everyone, we'll allow users to opt in with the
      * willNeverBeLoading prop. This will produce the styling that USWDS intended.
@@ -110,6 +110,7 @@ Button.propTypes = {
   linkStyle: PropTypes.bool,
   loading: (props, propName) => {
     const loading = props[propName];
+
     if (_.isUndefined(loading)) {
       return;
     }
@@ -119,7 +120,7 @@ Button.propTypes = {
     }
 
     if (loading && props.willNeverBeLoading) {
-      return new Error("'loading' and 'willNeverBeLoading' can't both be set to 'true'.")
+      return new Error("'loading' and 'willNeverBeLoading' can't both be set to 'true'.");
     }
   },
   legacyStyling: PropTypes.bool,

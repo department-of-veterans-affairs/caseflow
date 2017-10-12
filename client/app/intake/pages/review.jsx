@@ -82,7 +82,7 @@ const ReviewNextButtonConnected = connect(
 )(ReviewNextButton);
 
 export class ReviewButtons extends React.PureComponent {
-  render = () => 
+  render = () =>
     <div>
       <CancelButton />
       <ReviewNextButtonConnected history={this.props.history} />
