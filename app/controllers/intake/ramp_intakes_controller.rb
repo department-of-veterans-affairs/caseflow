@@ -22,6 +22,10 @@ class Intake::RampIntakesController < ApplicationController
     end
   end
 
+  def destroy
+    render json: {}
+  end
+
   private
 
   def intake

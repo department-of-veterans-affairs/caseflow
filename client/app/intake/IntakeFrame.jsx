@@ -17,8 +17,15 @@ import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
 import { toggleCancelModal } from './redux/actions';
+import ApiUtil from '../util/ApiUtil';
 
 class IntakeFrame extends React.PureComponent {
+  cancelIntake = () => {
+    this.props.toggleCancelModal();
+    // The empty then() is necessary because otherwise the request won't actually fire.
+    ApiUtil.delete(`/intake/ramp/${this.props.rampElection.intakeId}`).then(); 
+  }
+
   render() {
     const appName = 'Intake';
 
@@ -30,7 +37,7 @@ class IntakeFrame extends React.PureComponent {
     let cancelButton, confirmButton;
 
     if (this.props.cancelModalVisible) {
-      confirmButton = <Button dangerStyling>Cancel Intake</Button>;
+      confirmButton = <Button dangerStyling onClick={this.cancelIntake}>Cancel Intake</Button>;
       cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
     }
 
@@ -106,8 +113,9 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus, cancelModalVisible }) => ({
+  ({ veteran, requestStatus, cancelModalVisible, rampElection }) => ({
     veteran,
+    rampElection,
     cancelModalVisible,
     fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
   }),

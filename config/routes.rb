@@ -86,7 +86,7 @@ Rails.application.routes.draw do
   resources :intakes, path: "intake", only: [:index, :create]
 
   namespace :intake do
-    resources :ramp_intakes, path: "ramp", only: [:update]
+    resources :ramp_intakes, path: "ramp", only: [:update, :destroy]
   end
 
   get "health-check", to: "health_checks#show"
