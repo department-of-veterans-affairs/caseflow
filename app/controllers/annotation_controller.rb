@@ -19,7 +19,7 @@ class AnnotationController < ApplicationController
   end
 
   def update
-    Annotation.find(params[:id]).update!(annotation_params.merge(updated_at: Time.now.utc))
+    Annotation.find(params[:id]).update!(annotation_params)
     render json: {}
   end
 
