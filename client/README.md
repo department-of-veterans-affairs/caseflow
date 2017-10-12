@@ -16,22 +16,20 @@ The frontend code is compiled using [Webpack](https://webpack.github.io/) & [Bab
 
 ## Adding a New JS Library
 
-Caseflow's frontend uses npm to manage its JS dependencies. Similar to Rail's Gemfile, the frontend manages its dependencies via a `package.json` file located in `/client`. You can search for JS libraries on [npm's website](https://www.npmjs.com/). To add a new dependency:
+Caseflow's frontend uses yarn to manage its JS dependencies. Similar to Rail's Gemfile, the frontend manages its dependencies via a `package.json` file located in `/client`. You can search for JS libraries on [npm's website](https://www.npmjs.com/). To add a new dependency:
 
-> $ npm install <new-library> --save
+> $ yarn add <new-library>
 
-Please make sure to commit changes to the `package.json` and `npm-shrinkwrap.json` together.
+Please make sure to commit changes to the `package.json` and `yarn.lock` together.
 
-The version of `npm` we use is set in `.travis.yml`. You'll see a command that looks like:
+The version of `yarn` we use is set in `.travis.yml`. 
 
-```
-npm install -g npm@5.4.2
-```
-
-Run that same command locally, and you'll have the right version of npm.
+* [Yarn Getting Started](https://yarnpkg.com/en/docs/getting-started)
+* [Yarn Installation](https://yarnpkg.com/en/docs/install)
+* [Yarn migrating from npm](https://yarnpkg.com/lang/en/docs/migrating-from-npm/)
 
 ### Deps v. devDeps
-Dependencies needed to build the frontend JS go in `dependencies`, not `devDependencies`. `devDependencies` are only for running JS tests, like `mocha` and `karma`. This is because Travis runs tests, and uses a full `npm install`, whereas Jenkins only needs to build JS (but not run tests) and thus uses `npm install --production`. 
+Dependencies needed to build the frontend JS go in `dependencies`, not `devDependencies`. `devDependencies` are only for running JS tests, like `mocha` and `karma`. This is because Travis runs tests, and uses a full `yarn install`, whereas Jenkins only needs to build JS (but not run tests) and thus uses `yarn install --production`. 
 
 ## Styling
 
