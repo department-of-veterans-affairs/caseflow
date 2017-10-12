@@ -21,7 +21,7 @@ class IntakeFrame extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
-      `${this.props.veteran.name} (${this.props.veteran.fileNumber})` : null;
+      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
