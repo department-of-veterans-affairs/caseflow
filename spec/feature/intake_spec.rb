@@ -51,6 +51,20 @@ RSpec.feature "RAMP Intake" do
       expect(intake.user).to eq(current_user)
     end
 
+    scenario "Open cancel modal from review page" do
+      visit "/intake"
+      RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "12341234"
+      click_on "Search"
+
+      safe_click ".cf-submit.usa-button"
+      expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
+      safe_click "#close-modal"
+      expect(page).to_not have_css(".cf-modal-title")
+    end
+
     scenario "Review RAMP Election form" do
       election = RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
       RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
@@ -62,7 +76,7 @@ RSpec.feature "RAMP Intake" do
       end
       fill_in "What is the Receipt Date for this election form?", with: "08/09/2017"
 
-      click_on "Continue to next step"
+      safe_click "#button-submit-review"
       expect(page).to have_content("Finish processing Supplemental Claim request")
 
       election.reload

@@ -76,3 +76,7 @@ export const submitReview = (rampElection) => (dispatch) => {
       () => dispatch({ type: ACTIONS.SUBMIT_REVIEW_FAIL })
     );
 };
+
+export const toggleCancelModal = () => ({
+  type: ACTIONS.TOGGLE_CANCEL_MODAL
+});
