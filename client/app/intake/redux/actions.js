@@ -29,7 +29,8 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
             intakeId: responseObject.id,
             name: responseObject.veteran_name,
             formName: responseObject.veteran_form_name,
-            fileNumber: responseObject.veteran_file_number
+            fileNumber: responseObject.veteran_file_number,
+            noticeDate: responseObject.notice_date
           }
         });
       },
@@ -46,8 +47,8 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
     );
 };
 
-export const setSelectedOption = (optionSelected) => ({
-  type: ACTIONS.SET_SELECTED_OPTION,
+export const setOptionSelected = (optionSelected) => ({
+  type: ACTIONS.SET_OPTION_SELECTED,
   payload: {
     optionSelected
   }
@@ -73,6 +74,15 @@ export const submitReview = (rampElection) => (dispatch) => {
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }).
     then(
       () => dispatch({ type: ACTIONS.SUBMIT_REVIEW_SUCCEED }),
-      () => dispatch({ type: ACTIONS.SUBMIT_REVIEW_FAIL })
+      (error) => {
+        const responseObject = JSON.parse(error.response.text);
+
+        dispatch({
+          type: ACTIONS.SUBMIT_REVIEW_FAIL,
+          payload: {
+            responseErrorCodes: responseObject.error_codes
+          }
+        })
+      }
     );
 };

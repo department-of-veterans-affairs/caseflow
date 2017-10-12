@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import RadioField from '../../components/RadioField';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
-import { setSelectedOption, setReceiptDate, submitReview } from '../redux/actions';
+import { setOptionSelected, setReceiptDate, submitReview } from '../redux/actions';
 import { REQUEST_STATE } from '../constants';
 
 class Review extends React.PureComponent {
@@ -37,7 +37,8 @@ class Review extends React.PureComponent {
         label="Which election did the Veteran select?"
         strongLabel
         options={radioOptions}
-        onChange={this.props.setSelectedOption}
+        onChange={this.props.setOptionSelected}
+        errorMessage={this.props.rampElection.optionSelectedError}
         value={this.props.rampElection.optionSelected}
       />
 
@@ -46,6 +47,7 @@ class Review extends React.PureComponent {
         label="What is the Receipt Date for this election form?"
         value={this.props.rampElection.receiptDate}
         onChange={this.props.setReceiptDate}
+        errorMessage={this.props.rampElection.receiptDateError}
         strongLabel
       />
     </div>;
@@ -54,9 +56,11 @@ class Review extends React.PureComponent {
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.rampElection).then(
-      () => this.props.history.push('/finish')
-    );
+    this.props.submitReview(this.props.rampElection).then(() => {
+      if (this.props.requestState === REQUEST_STATE.SUCCEEDED) {
+        this.props.history.push('/finish')
+      }
+    });
   }
 
   render = () =>
@@ -87,7 +91,7 @@ export default connect(
     rampElection
   }),
   (dispatch) => bindActionCreators({
-    setSelectedOption,
+    setOptionSelected,
     setReceiptDate
   }, dispatch)
 )(Review);
