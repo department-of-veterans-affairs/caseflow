@@ -48,6 +48,25 @@ RSpec.feature "RAMP Intake" do
       intake = RampIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
       expect(intake.started_at).to eq(Time.zone.now)
+      expect(intake.user).to eq(current_user)
+    end
+
+    scenario "Review RAMP Election form", focus: true do
+      election = RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
+      RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
+
+      visit "/intake/review-request"
+
+      within_fieldset("Which election did the Veteran select?") do
+        find("label", text: "Supplemental Claim").click
+      end
+      fill_in "What is the Receipt Date for this election form?", with: "08/08/2017"
+
+      click_on "Continue to next step"
+      expect(page).to have_content("Finish processing Supplemental Claim request")
+
+      expect(election.reload.option_selected).to eq("supplemental_claim")
+      expect(election.receipt_date).to eq(Date.new(2017, 8, 8))
     end
   end
 

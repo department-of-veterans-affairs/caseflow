@@ -46,6 +46,7 @@ export default class DateSelector extends React.Component {
       type,
       validationError,
       value,
+      onChange, // eslint-disable-line no-unused-vars
       ...passthroughProps
     } = this.props;
 
