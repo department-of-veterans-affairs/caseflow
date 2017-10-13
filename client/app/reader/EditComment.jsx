@@ -1,15 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 
 import Button from '../components/Button';
-import _ from 'lodash';
-
-import { connect } from 'react-redux';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
-class EditComment extends React.Component {
+export default class EditComment extends React.Component {
 
   constructor(props) {
     super(props);
@@ -25,8 +21,11 @@ class EditComment extends React.Component {
   }
 
   keyListener = (event) => {
-    if (event.altKey && event.code === 'Enter') {
-      this.onSaveCommentEdit();
+    if (event.altKey) {
+      if (event.key === 'Enter') {
+        this.onSaveCommentEdit();
+        event.stopPropagation();
+      }
     }
   }
 
@@ -37,12 +36,10 @@ class EditComment extends React.Component {
 
     // ensure we autosave if we ever exit
     window.addEventListener('beforeunload', this.handleAutoSave);
-    window.addEventListener('keydown', this.keyListener);
   }
 
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.handleAutoSave);
-    window.removeEventListener('keydown', this.keyListener);
     this.handleAutoSave();
   }
 
@@ -90,13 +87,6 @@ class EditComment extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation'),
-    ..._.pick(state.readerReducer, 'editingAnnotations')
-  };
-};
-
 EditComment.defaultProps = {
   id: 'commentEditBox'
 };
@@ -108,7 +98,3 @@ EditComment.propTypes = {
   onSaveCommentEdit: PropTypes.func,
   onCancelCommentEdit: PropTypes.func
 };
-
-export default connect(
-  mapStateToProps
-)(EditComment);
