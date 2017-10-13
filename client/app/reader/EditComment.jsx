@@ -7,8 +7,6 @@ import _ from 'lodash';
 
 import { connect } from 'react-redux';
 
-import { createAnnotation, requestEditAnnotation } from '../reader/actions';
-
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
 class EditComment extends React.Component {
@@ -26,18 +24,9 @@ class EditComment extends React.Component {
     }
   }
 
-  getActiveEditingComment = () => this.props.comment.id;
-
-  handleAltEnter = () => {
-    this.shouldAutosave = false;
-    this.onSaveCommentEdit();
-  }
-
   keyListener = (event) => {
-    if (event.altKey) {
-      if (event.code === 'Enter') {
-        this.handleAltEnter();
-      }
+    if (event.altKey && event.code === 'Enter') {
+      this.onSaveCommentEdit();
     }
   }
 
@@ -76,7 +65,7 @@ class EditComment extends React.Component {
           className="comment-container comment-textarea"
           name="Edit Comment"
           aria-label="Edit Comment"
-          onFocus={this.getActiveEditingComment}
+          onKeyDown={this.keyListener}
           id={this.props.id}
           onChange={this.onChange}
           value={this.props.comment.comment}
@@ -108,14 +97,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    createAnnotation,
-    requestEditAnnotation
-  }, dispatch)
-});
-
-
 EditComment.defaultProps = {
   id: 'commentEditBox'
 };
@@ -129,5 +110,5 @@ EditComment.propTypes = {
 };
 
 export default connect(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps
 )(EditComment);
