@@ -23,6 +23,10 @@ class Intake::RampIntakesController < ApplicationController
     end
   end
 
+  def destroy
+    intake.update!(cancelled_at: Time.zone.now)
+  end
+
   private
 
   def intake
