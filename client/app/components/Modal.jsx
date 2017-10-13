@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { closeSymbolHtml } from './RenderFunctions.jsx';
 import Button from './Button.jsx';
+import _ from 'lodash';
 
 export default class Modal extends React.Component {
   constructor(props) {
@@ -77,8 +78,27 @@ export default class Modal extends React.Component {
       closeHandler,
       id,
       noDivider,
+      confirmButton,
+      cancelButton,
       title
     } = this.props;
+
+    let modalButtons;
+
+    if (!confirmButton && !cancelButton) {
+      modalButtons = this.generateButtons();
+    } else {
+      modalButtons = <div>
+        <span className="cf-push-right">
+          {confirmButton}
+        </span>
+        {cancelButton &&
+          <span className="cf-push-left">
+            {cancelButton}
+          </span>
+        }
+      </div>;
+    }
 
     return <section
             className="cf-modal active"
@@ -102,7 +122,7 @@ export default class Modal extends React.Component {
         </div>
         {noDivider ? '' : <div className="cf-modal-divider"></div>}
         <div className="cf-push-row cf-modal-controls">
-          {this.generateButtons()}
+          {modalButtons}
         </div>
       </div>
     </section>;
@@ -114,7 +134,19 @@ Modal.defaultProps = {
 };
 
 Modal.propTypes = {
-  buttons: PropTypes.arrayOf(PropTypes.object),
+  buttons: (props, propName) => {
+    const buttons = props[propName];
+
+    if (!_.isArray(buttons)) {
+      return new Error(`'buttons' must be an array, but was: '${buttons}'`);
+    }
+
+    if (buttons.length && (props.cancelButton || props.confirmButton)) {
+      return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`');
+    }
+  },
+  confirmButton: PropTypes.element,
+  cancelButton: PropTypes.element,
   id: PropTypes.string,
   label: PropTypes.string,
   noDivider: PropTypes.bool,

@@ -1,4 +1,6 @@
 import { ACTIONS } from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const startNewIntake = () => ({
   type: ACTIONS.START_NEW_INTAKE
@@ -11,20 +13,70 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
-export const doFileNumberSearch = () => (dispatch) => {
-  return new Promise((resolve) => {
-    dispatch({
-      type: ACTIONS.FILE_NUMBER_SEARCH_START
-    });
-    setTimeout(() => {
-      dispatch({
-        type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
-        payload: {
-          name: 'Joe Snuffy',
-          fileNumber: '222222222'
-        }
-      });
-      resolve();
-    }, 1000);
+export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.FILE_NUMBER_SEARCH_START
   });
+
+  return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }).
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
+        dispatch({
+          type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
+          payload: {
+            intakeId: responseObject.id,
+            name: responseObject.veteran_name,
+            formName: responseObject.veteran_form_name,
+            fileNumber: responseObject.veteran_file_number
+          }
+        });
+      },
+      (error) => {
+        const responseObject = JSON.parse(error.response.text);
+
+        dispatch({
+          type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
+          payload: {
+            errorCode: responseObject.error_code
+          }
+        });
+      }
+    );
 };
+
+export const setSelectedOption = (optionSelected) => ({
+  type: ACTIONS.SET_SELECTED_OPTION,
+  payload: {
+    optionSelected
+  }
+});
+
+export const setReceiptDate = (receiptDate) => ({
+  type: ACTIONS.SET_RECEIPT_DATE,
+  payload: {
+    receiptDate
+  }
+});
+
+export const submitReview = (rampElection) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SUBMIT_REVIEW_START
+  });
+
+  const data = {
+    option_selected: rampElection.optionSelected,
+    receipt_date: formatDateStringForApi(rampElection.receiptDate)
+  };
+
+  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }).
+    then(
+      () => dispatch({ type: ACTIONS.SUBMIT_REVIEW_SUCCEED }),
+      () => dispatch({ type: ACTIONS.SUBMIT_REVIEW_FAIL })
+    );
+};
+
+export const toggleCancelModal = () => ({
+  type: ACTIONS.TOGGLE_CANCEL_MODAL
+});

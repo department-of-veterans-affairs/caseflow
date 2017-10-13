@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170929182028) do
+ActiveRecord::Schema.define(version: 20171005184519) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -263,6 +263,25 @@ ActiveRecord::Schema.define(version: 20170929182028) do
     t.string  "military_service"
     t.string  "comments_for_attorney"
   end
+
+  create_table "intakes", force: :cascade do |t|
+    t.integer  "detail_id",           null: false
+    t.string   "detail_type",         null: false
+    t.integer  "user_id",             null: false
+    t.string   "veteran_file_number"
+    t.datetime "started_at"
+  end
+
+  add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
+
+  create_table "ramp_elections", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date   "notice_date",         null: false
+    t.date   "receipt_date"
+    t.string "option_selected"
+  end
+
+  add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"

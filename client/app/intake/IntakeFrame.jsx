@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -8,11 +9,14 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '../components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
+import Modal from '../components/Modal';
+import Button from '../components/Button';
 import BeginPage from './pages/begin';
-import ReviewPage, { ReviewNextButton } from './pages/review';
-import FinishPage, { FinishNextButton } from './pages/finish';
+import ReviewPage, { ReviewButtons } from './pages/review';
+import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { toggleCancelModal } from './redux/actions';
 
 class IntakeFrame extends React.PureComponent {
   render() {
@@ -21,10 +25,30 @@ class IntakeFrame extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
-      `${this.props.veteran.name} (${this.props.veteran.fileNumber})` : null;
+      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+
+    let cancelButton, confirmButton;
+
+    if (this.props.cancelModalVisible) {
+      confirmButton = <Button dangerStyling>Cancel Intake</Button>;
+      cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
+    }
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
+        { this.props.cancelModalVisible &&
+          <Modal
+            title="Cancel Intake?"
+            closeHandler={this.props.toggleCancelModal}
+            confirmButton={confirmButton}
+            cancelButton={cancelButton}
+          >
+            <p>
+              If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS,
+              Caseflow will have no record of this work.
+            </p>
+        </Modal>
+        }
         <NavigationBar
           appName={appName}
           userDisplayName={this.props.userDisplayName}
@@ -59,11 +83,11 @@ class IntakeFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}
-                component={ReviewNextButton} />
+                component={ReviewButtons} />
               <Route
                 exact
                 path={PAGE_PATHS.FINISH}
-                component={FinishNextButton} />
+                component={FinishButtons} />
               <Route
                 exact
                 path={PAGE_PATHS.COMPLETED}
@@ -82,8 +106,12 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus }) => ({
+  ({ veteran, requestStatus, cancelModalVisible }) => ({
     veteran,
+    cancelModalVisible,
     fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    toggleCancelModal
+  }, dispatch)
 )(IntakeFrame);
