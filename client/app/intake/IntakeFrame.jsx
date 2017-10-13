@@ -24,7 +24,7 @@ class IntakeFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.veteran ?
+    const topMessage = this.props.veteran.fileNumber ?
     `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
     let cancelButton, confirmButton;
