@@ -58,6 +58,10 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  componentWillUnmount = () => {
+    this.props.onClearSearch();
+  }
+
   render() {
     let {
       id,
@@ -100,7 +104,6 @@ export default class SearchBar extends React.Component {
         onBlur={this.onBlur}
         type="search"
         name="search"
-        value={value}
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : null}
         placeholder={placeholder}
         value={value}/>
