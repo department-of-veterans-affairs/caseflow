@@ -26,16 +26,16 @@ class HeaderFilterMessage extends React.PureComponent {
       props.viewingDocumentsOrComments === 'comments' && 'Comments'
     ]).join(', ');
 
+    let cls = 'document-list-filter-message';
     if (!filteredCategories.length) {
-      filteredCategories = 'None';
+      cls += ' hidden';
     }
 
-    return <p className="document-list-filter-message">Filtering by: {filteredCategories}.<Button
+    return <p className={cls}>Filtering by: {filteredCategories}.<Button
       id="clear-filters"
       name="clear-filters"
       classNames={['cf-btn-link']}
-      onClick={props.clearAllFilters}
-      disabled={!(categoryCount || tagCount)}>
+      onClick={props.clearAllFilters}>
       Clear all filters.</Button></p>;
   }
 }
