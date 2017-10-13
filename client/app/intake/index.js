@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import perfLogger from 'redux-perf-middleware';
 import IntakeFrame from './IntakeFrame';
-import reducer from './redux/reducer';
+import { reducer, mapDataToInitialState } from './redux/reducer';
 import { reduxAnalyticsMiddleware } from '../reader/analytics';
 
 const Intake = (props) => {
@@ -12,6 +12,7 @@ const Intake = (props) => {
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const store = createStore(
     reducer,
+    mapDataToInitialState(props),
     composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
   );
 
