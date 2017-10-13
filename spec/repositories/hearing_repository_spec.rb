@@ -51,7 +51,7 @@ describe HearingRepository do
         bfregoff: "RO36",
         hearing_pkseq: "1234",
         folder_nr: "5678",
-        hearing_date: Time.zone.now,
+        hearing_date: Time.zone.now
       )
     end
 
