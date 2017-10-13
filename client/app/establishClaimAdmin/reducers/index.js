@@ -2,7 +2,7 @@ import update from 'immutability-helper';
 import * as Constants from '../constants';
 import _ from 'lodash';
 
-export const mapDataToInitialState = function(state) {
+export const mapDataToInitialState = function() {
   return {
     loading: true,
     stuckTasks: {}
