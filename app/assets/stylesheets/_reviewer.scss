@@ -81,9 +81,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   bottom: 0;
   right: 380px;
   left: 0;
-  transition: right;
-  transition-duration: 0.1s;
-  transition-timing-function: linear;
 
   &.hidden-sidebar {
     right: 0;
@@ -145,9 +142,6 @@ svg[aria-hidden=true],
   text-align: left;
   background: $caseflow-background;
   border-top: 1px solid $color-gray-lighter;
-  transition: width;
-  transition-duration: 0.1s;
-  transition-timing-function: linear;
 
   &.hidden-sidebar {
     width: 0;
