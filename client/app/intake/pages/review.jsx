@@ -1,39 +1,101 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import RadioField from '../../components/RadioField';
 import DateSelector from '../../components/DateSelector';
+import CancelButton from '../components/CancelButton';
 import Button from '../../components/Button';
+import { setSelectedOption, setReceiptDate, submitReview } from '../redux/actions';
+import { REQUEST_STATE } from '../constants';
 
-export default class Review extends React.PureComponent {
-  onElectionChange = () => {
-    // eslint-disable-next-line no-console
-    console.log('not yet implemented');
-  }
-
+class Review extends React.PureComponent {
   render() {
     const radioOptions = [
-      { displayText: 'Supplemental Claim' },
-      { displayElem: <span>Higher Level Review <strong>with</strong> DRO hearing request</span> },
-      { displayElem: <span>Higher Level Review with<strong>out</strong> DRO hearing request</span> },
-      { displayText: 'Withdraw all pending appeals' }
+      {
+        value: 'supplemental_claim',
+        displayText: 'Supplemental Claim'
+      },
+      {
+        value: 'higher_level_review_with_hearing',
+        displayElem: <span>Higher Level Review <strong>with</strong> DRO hearing request</span>
+      },
+      {
+        value: 'higher_level_review',
+        displayElem: <span>Higher Level Review with<strong>out</strong> DRO hearing request</span>
+      },
+      {
+        value: 'withdraw',
+        displayText: 'Withdraw all pending appeals'
+      }
     ];
 
     return <div>
-      <h1>Review Joe Snuffy's opt-in request</h1>
+      <h1>Review { this.props.veteran.name }'s opt-in request</h1>
       <p>Check the Veteran's RAMP Opt-In Election form in the Centralized Portal.</p>
+
       <RadioField
         name="opt-in-election"
         label="Which election did the Veteran select?"
         strongLabel
         options={radioOptions}
-        onChange={this.onElectionChange}
+        onChange={this.props.setSelectedOption}
+        value={this.props.rampElection.optionSelected}
       />
-      <DateSelector name="receipt-date" label="What is the Receipt Date for this election form?" strongLabel />
+
+      <DateSelector
+        name="receipt-date"
+        label="What is the Receipt Date for this election form?"
+        value={this.props.rampElection.receiptDate}
+        onChange={this.props.setReceiptDate}
+        strongLabel
+      />
     </div>;
   }
 }
 
-export class ReviewNextButton extends React.PureComponent {
-  handleClick = () => this.props.history.push('/finish')
+class ReviewNextButton extends React.PureComponent {
+  handleClick = () => {
+    this.props.submitReview(this.props.rampElection).then(
+      () => this.props.history.push('/finish')
+    );
+  }
 
-  render = () => <Button onClick={this.handleClick}>Continue to next step</Button>
+  render = () =>
+    <Button
+      name="submit-review"
+      onClick={this.handleClick}
+      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+      legacyStyling={false}
+    >
+      Continue to next step
+    </Button>;
 }
+
+const ReviewNextButtonConnected = connect(
+  ({ rampElection, requestStatus }) => ({
+    requestState: requestStatus.submitReview,
+    rampElection
+  }),
+  (dispatch) => bindActionCreators({
+    submitReview
+  }, dispatch)
+)(ReviewNextButton);
+
+export class ReviewButtons extends React.PureComponent {
+  render = () =>
+    <div>
+      <CancelButton />
+      <ReviewNextButtonConnected history={this.props.history} />
+    </div>
+}
+
+export default connect(
+  ({ veteran, rampElection }) => ({
+    veteran,
+    rampElection
+  }),
+  (dispatch) => bindActionCreators({
+    setSelectedOption,
+    setReceiptDate
+  }, dispatch)
+)(Review);

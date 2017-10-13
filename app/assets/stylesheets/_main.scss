@@ -196,6 +196,12 @@ body {
   }
 }
 
+.cf-app-intake {
+  .cf-app-width {
+    @include app-width('intake');
+  }
+}
+
 .cf-app-reader {
   // If we add this line, an extraneous scrollbar on Windows will disappear.
   // However, this also makes a test fail on Travis (but not Jenkins).
@@ -507,11 +513,18 @@ select {
   }
 }
 
-.usa-alert.no-title {
-  background-position: 1rem 1.5rem;
+.usa-alert {
+  &.lower-margin {
+    // This value is copied from USWDS.
+    margin-bottom: 1.5em;
+  }
 
-  .usa-alert-text {
-    font-size: 19px;
+  &.no-title {
+    background-position: 1rem 1.5rem;
+
+    .usa-alert-text {
+      font-size: 19px;
+    }
   }
 }
 
