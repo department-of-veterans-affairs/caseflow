@@ -70,9 +70,6 @@ gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/conn
 
 gem 'redis-rails'
 
-gem 'sidekiq'
-gem "sidekiq-cron", "~> 0.4.0"
-
 # remove when upgrading to rails 5
 gem 'where-or'
 
