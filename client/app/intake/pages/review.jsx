@@ -57,9 +57,9 @@ class Review extends React.PureComponent {
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.rampElection).then(() => {
-      this.props.history.push('/finish');
-    });
+    this.props.submitReview(this.props.rampElection).then(
+      () => this.props.history.push('/finish')
+    );
   }
 
   render = () =>
