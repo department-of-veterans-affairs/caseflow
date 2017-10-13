@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument, getDocumentText } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { getTextForFile } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -36,20 +37,11 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = null;
         this.pdfDocument = pdfDocument;
         this.props.setPdfDocument(this.props.file, pdfDocument);
-        if (this.props.isVisible) {
-          this.props.getDocumentText(pdfDocument);
-        }
       }
     }).
     catch(() => {
       this.loadingTask = null;
     });
-  }
-
-  componentWillReceiveProps = (nextProps) => {
-    if (nextProps.isVisible) {
-      this.props.getDocumentText(this.pdfDocument);
-    }
   }
 
   componentWillUnmount = () => {

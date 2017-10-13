@@ -3,12 +3,22 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
 import { connect } from 'react-redux';
-import { getTextSearch } from './selectors';
+import { getTextSearch, getTextForFile } from './selectors';
 import SearchBar from '../components/SearchBar';
-import { searchText } from './actions';
+import { searchText, getDocumentText } from './actions';
 import _ from 'lodash';
 
 export class DocumentSearch extends React.PureComponent {
+  onChange = (value) => {
+    if (_.isEmpty(this.props.pdfText)) {
+      this.props.getDocumentText(this.props.pdfDocument, this.props.file);
+    } else {
+      console.log('didnt getDocumentText');
+    }
+
+    this.props.searchText(value);
+  }
+
   render() {
     const style = {
       position: 'absolute',
@@ -18,24 +28,27 @@ export class DocumentSearch extends React.PureComponent {
 
     return <div style={style}>
       <SearchBar
-        onChange={this.props.searchText}
+        onChange={this.onChange}
       />
-      Found {this.props.searchText} on pages: {this.props.textSnippets.pageIds.join(', ')}
+      Found on pages: {this.props.pageTexts.map((page) => page.pageIndex).join(', ')}
     </div>;
   }
 }
 
-const mapStateToProps = (state) => {
-  console.log('getTextSearch', getTextSearch(state));
+const mapStateToProps = (state, props) => {
+  console.log('getTextSearch', getTextSearch(state, props));
 
   return {
-    textSnippets: getTextSearch(state)
+    pdfDocument: state.readerReducer.pdfDocuments[props.file],
+    pdfText: getTextForFile(state, props),
+    pageTexts: getTextSearch(state, props)
   }
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    searchText
+    searchText,
+    getDocumentText
   }, dispatch)
 });
 

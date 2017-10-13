@@ -77,13 +77,16 @@ const {
   resourceSelector: (resourceName, state) => state.readerReducer[resourceName]
 })
 
-const pagesText = state => state.readerReducer.pagesText;
+const getPagesText = state => state.readerReducer.pagesText;
+const getFile = (state, props) => props.file;
 
 export const getTextSearch = createSelector(
-  [result, pagesText, text],
-  (pageIds, pagesText, searchText) => ({
-    pageIds,
-    pagesText,
-    searchText
-  })
+  [result, getPagesText, text, getFile],
+  (pageIds, pagesText, searchText, file) => pageIds.map((pageId) => pagesText[pageId]).
+    filter((pageText) => pageText.file === file)
+)
+
+export const getTextForFile = createSelector(
+  [getPagesText, getFile],
+  (pagesText, file) => _.filter(pagesText, (pageText) => pageText.file === file)
 )

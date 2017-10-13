@@ -815,7 +815,7 @@ export const rotateDocument = (docId) => ({
   }
 });
 
-export const getDocumentText = (pdfDocument) => (
+export const getDocumentText = (pdfDocument, file) => (
   (dispatch) => {
     const getTextForPage = (index) => {
       return pdfDocument.getPage(index + 1).then((page) => {
@@ -830,13 +830,16 @@ export const getDocumentText = (pdfDocument) => (
 
         return {
           ...acc,
-          [pageIndex]: {
-            id: pageIndex,
+          [`${file}-${pageIndex}`]: {
+            id: `${file}-${pageIndex}`,
+            file,
             text: concatenated,
             pageIndex: pageIndex
           }
         };
       }, {});
+
+      console.log('dispatching', textObject);
 
       dispatch({
         type: Constants.GET_DCOUMENT_TEXT,
