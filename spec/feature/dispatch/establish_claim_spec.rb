@@ -226,6 +226,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         page.driver.browser.close
       end
     end
+
+    scenario "View oldest unassigned tasks page" do
+      2.times do
+        Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: 1.day.ago)
+      end
+
+      visit "/dispatch/admin"
+      expect(page).to have_content("Oldest Unassigned Tasks")
+      # Expect 3 table rows, the header and 2 tasks
+      expect(page).to have_selector("tr", count: 3)
+    end
   end
 
   context "As a caseworker" do
