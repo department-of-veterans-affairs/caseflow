@@ -15,7 +15,7 @@ import BeginPage from './pages/begin';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { PAGE_PATHS } from './constants';
 import { toggleCancelModal } from './redux/actions';
 import ApiUtil from '../util/ApiUtil';
 
@@ -31,8 +31,8 @@ class IntakeFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
-      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+    const topMessage = this.props.veteran.fileNumber ?
+    `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
     let cancelButton, confirmButton;
 
