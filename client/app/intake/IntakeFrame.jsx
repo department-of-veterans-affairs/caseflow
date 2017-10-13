@@ -23,7 +23,7 @@ class IntakeFrame extends React.PureComponent {
   cancelIntake = () => {
     this.props.toggleCancelModal();
     // The empty then() is necessary because otherwise the request won't actually fire.
-    ApiUtil.delete(`/intake/ramp/${this.props.rampElection.intakeId}`).then(); 
+    ApiUtil.delete(`/intake/ramp/${this.props.rampElection.intakeId}`).then();
   }
 
   render() {
