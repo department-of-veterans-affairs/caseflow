@@ -20,14 +20,9 @@ class Begin extends React.PureComponent {
     // TODO: we should fix styleguide to make this unnecessary
     return <div>
       { searchError &&
-        <div>
-          <Alert title={searchError.title} type="error">
-            {searchError.body}
-          </Alert>
-
-          <p></p>
-
-        </div>
+        <Alert title={searchError.title} type="error" lowerMargin>
+          {searchError.body}
+        </Alert>
       }
 
       <h1>Welcome to Caseflow Intake!</h1>

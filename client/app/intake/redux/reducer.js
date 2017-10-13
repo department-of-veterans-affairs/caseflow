@@ -26,6 +26,7 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => ({
     receiptDate: null,
     receiptDateError: null
   },
+  cancelModalVisible: false,
   searchError: null
 });
 
@@ -175,6 +176,10 @@ export const reducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.FAILED
         }
       }
+    });
+  case ACTIONS.TOGGLE_CANCEL_MODAL:
+    return update(state, {
+      $toggle: ['cancelModalVisible']
     });
   default:
     return state;
