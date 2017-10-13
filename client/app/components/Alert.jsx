@@ -25,6 +25,7 @@ export default class Alert extends React.Component {
 
   render() {
     let {
+      lowerMargin,
       children,
       message,
       title,
@@ -34,6 +35,7 @@ export default class Alert extends React.Component {
     let typeClass = `usa-alert-${type}`;
 
     const className = classnames('usa-alert', typeClass, {
+      'lower-margin': lowerMargin,
       'no-title': !title
     });
 
