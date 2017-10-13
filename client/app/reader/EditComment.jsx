@@ -30,11 +30,7 @@ class EditComment extends React.Component {
 
   handleAltEnter = () => {
     this.shouldAutosave = false;
-    if (this.props.placedButUnsavedAnnotation) {
-      this.props.createAnnotation(this.props.placedButUnsavedAnnotation);
-    } else if (this.props.editingAnnotations) {
-      this.props.requestEditAnnotation(this.props.editingAnnotations[this.getActiveEditingComment()]);
-    }
+    this.onSaveCommentEdit();
   }
 
   keyListener = (event) => {
