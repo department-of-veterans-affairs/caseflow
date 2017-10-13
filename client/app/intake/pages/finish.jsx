@@ -2,9 +2,16 @@ import React from 'react';
 import Button from '../../components/Button';
 import BareOrderedList from '../../components/BareOrderedList';
 import CancelButton from '../components/CancelButton';
+import { Redirect } from 'react-router-dom';
+import { PAGE_PATHS } from '../constants';
+import { connect } from 'react-redux';
 
-export default class Finish extends React.PureComponent {
+class Finish extends React.PureComponent {
   render() {
+    if (!this.props.rampElection.intakeId) {
+      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+    }
+
     const steps = [
       <span>Upload the RAMP election form to VBMS and ensure the Document Type is <em>Correspondence</em>.</span>,
       <span>Update the Subject Line with <em>RAMP Opt-In</em>.</span>,
@@ -34,3 +41,9 @@ export class FinishButtons extends React.PureComponent {
       <FinishNextButton history={this.props.history} />
     </div>
 }
+
+export default connect(
+  ({ rampElection }) => ({
+    rampElection
+  })
+)(Finish);

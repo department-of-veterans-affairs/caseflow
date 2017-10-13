@@ -4,9 +4,15 @@ import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../redux/actions';
+import { Redirect } from 'react-router-dom';
+import { PAGE_PATHS } from '../constants';
 
-export default class Completed extends React.PureComponent {
+class Completed extends React.PureComponent {
   render() {
+    if (!this.props.rampElection.intakeId) {
+      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+    }
+
     const message = 'Joe Snuffy\'s (ID #222222222) opt-in request has been processed, ' +
       'and Caseflow closed the record in VACOLS. You can now begin processing the next opt-in letter.';
 
@@ -36,3 +42,9 @@ export const CompletedNextButton = connect(
     startNewIntake
   }, dispatch)
 )(UnconnectedCompletedNextButton);
+
+export default connect(
+  ({ rampElection }) => ({
+    rampElection
+  })
+)(Completed);
