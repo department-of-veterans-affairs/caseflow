@@ -46,6 +46,12 @@ export class PdfFile extends React.PureComponent {
     });
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.isVisible) {
+      this.props.getDocumentText(this.pdfDocument);
+    }
+  }
+
   componentWillUnmount = () => {
     if (this.loadingTask) {
       this.loadingTask.destroy();

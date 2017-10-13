@@ -824,9 +824,7 @@ export const getDocumentText = (pdfDocument) => (
     };
 
     const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
-    console.log('getTextPromises', getTextPromises);
     Promise.all(getTextPromises).then((pages) => {
-      console.log('all text from pdfjs', pages);
       const textObject = pages.reduce((acc, page, pageIndex) => {
         const concatenated = page.items.map((row) => row.str).join(' ');
 
@@ -840,7 +838,6 @@ export const getDocumentText = (pdfDocument) => (
         };
       }, {});
 
-      console.log('textObject', textObject);
       dispatch({
         type: Constants.GET_DCOUMENT_TEXT,
         payload: {
