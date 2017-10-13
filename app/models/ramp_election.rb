@@ -1,5 +1,5 @@
 class RampElection < ActiveRecord::Base
-  attr_reader saving_receipt
+  attr_reader :saving_receipt
 
   OPTIONS = %w(
     supplemental_claim

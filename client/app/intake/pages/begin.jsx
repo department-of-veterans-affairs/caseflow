@@ -9,9 +9,7 @@ import { REQUEST_STATE } from '../constants';
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => {
     this.props.doFileNumberSearch(this.props.fileNumberSearchInput).then(() => {
-      if (this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED) {
-        this.props.history.push('/review-request');
-      }
+      this.props.history.push('/review-request');
     });
   }
 

@@ -4,7 +4,7 @@ RSpec.feature "RAMP Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
-    Timecop.freeze(Time.utc(2017, 1, 1))
+    Timecop.freeze(Time.utc(2017, 8, 8))
   end
 
   let!(:veteran) do

@@ -1,6 +1,7 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
+import _ from 'lodash';
 
 export const mapDataToInitialState = (data = { currentIntake: {} }) => ({
   veteran: {
@@ -29,7 +30,7 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => ({
 });
 
 const getOptionSelectedError = (responseErrorCodes) => (
-  (responseErrorCodes.option_selected || [])[0] && 'Please select an option.'
+  _.get(responseErrorCodes.option_selected, 0) && 'Please select an option.'
 );
 
 const getReceiptDateError = (responseErrorCodes, state) => (
@@ -40,7 +41,7 @@ const getReceiptDateError = (responseErrorCodes, state) => (
       'Receipt date cannot be in the future.',
     before_notice_date: 'Receipt date cannot be earlier than the election notice ' +
       `date of ${formatDateStr(state.rampElection.noticeDate)}`
-  }[(responseErrorCodes.receipt_date || [])[0]]
+  }[_.get(responseErrorCodes.receipt_date, 0)]
 );
 
 // The keys in this object need to be snake_case

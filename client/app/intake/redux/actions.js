@@ -43,6 +43,8 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
             errorCode: responseObject.error_code
           }
         });
+
+        throw error;
       }
     );
 };
@@ -83,6 +85,8 @@ export const submitReview = (rampElection) => (dispatch) => {
             responseErrorCodes: responseObject.error_codes
           }
         });
+
+        throw error;
       }
     );
 };
