@@ -21,11 +21,9 @@ export default class EditComment extends React.Component {
   }
 
   keyListener = (event) => {
-    if (event.altKey) {
-      if (event.key === 'Enter') {
-        this.onSaveCommentEdit();
-        event.stopPropagation();
-      }
+    if (event.altKey && event.key === 'Enter') {
+      this.onSaveCommentEdit();
+      event.stopPropagation();
     }
   }
 
