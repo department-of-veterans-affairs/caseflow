@@ -25,13 +25,15 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 [View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
 
 ## Setup
-Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
+Make sure you have [rbenv](https://github.com/rbenv/rbenv), [nvm](https://github.com/creationix/nvm), and [yarn](https://github.com/yarnpkg/yarn) installed.
 
 Then run the following:
 
     rbenv install 2.2.4
 
     gem install bundler
+    
+    gem install foreman
 
 You'll need ChromeDriver, Postgres, and Redis if you don't have them.
 
