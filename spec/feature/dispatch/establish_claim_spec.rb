@@ -181,7 +181,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
       visit "/dispatch/work-assignments"
-      click_on "View Claims Missing Decisions"
+      click_on "View claims missing decisions"
 
       # should not see any tasks younger than 1 day
       page.within_window windows.last do
@@ -193,7 +193,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       unprepared_task.update!(created_at: Time.zone.now - 1.day)
 
       visit "/dispatch/work-assignments"
-      click_on "View Claims Missing Decisions"
+      click_on "View claims missing decisions"
 
       # should see the unprepared task
       page.within_window windows.last do
@@ -216,7 +216,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/work-assignments"
-      click_on "View Canceled Tasks"
+      click_on "View canceled tasks"
 
       # should see the canceled tasks
       page.within_window windows.last do
