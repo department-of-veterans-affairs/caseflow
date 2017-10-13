@@ -1,6 +1,6 @@
 describe HearingMapper do
   before do
-    Timecop.freeze(Time.utc(2017, 2, 2))
+    Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"
   end
 
@@ -55,6 +55,20 @@ describe HearingMapper do
       let(:hearing_type) { "C" }
 
       it { is_expected.to eq "5" }
+    end
+  end
+
+  context ".normalize_datetime" do
+    subject { HearingMapper.normalize_datetime(Time.zone.now, regional_office_key) }
+
+    context "uses regional office timezone to set the zone" do
+      let(:regional_office_key) { "RO58" }
+
+      it "calculates the date and hour correctly" do
+        expect(subject.day).to eq 3
+        expect(subject.hour).to eq 7
+        expect(subject.zone).to eq "EDT"
+      end
     end
   end
 

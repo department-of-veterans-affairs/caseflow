@@ -85,8 +85,13 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  resources :intake, only: :index
-  match '/intake/:any' => 'intake#index', via: [:get]
+
+  match '/intake/:any' => 'intakes#index', via: [:get]
+  resources :intakes, path: "intake", only: [:index, :create]
+
+  namespace :intake do
+    resources :ramp_intakes, path: "ramp", only: [:update]
+  end
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

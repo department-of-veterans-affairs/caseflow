@@ -27,7 +27,7 @@ class UnconnectedCompletedNextButton extends React.PureComponent {
     this.props.history.push('/');
   }
 
-  render = () => <Button onClick={this.handleClick}>Begin next intake</Button>
+  render = () => <Button onClick={this.handleClick} legacyStyling={false}>Begin next intake</Button>
 }
 
 export const CompletedNextButton = connect(

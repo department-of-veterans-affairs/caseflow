@@ -13,7 +13,7 @@ RSpec.feature "Hearings" do
 
   context "Hearings Prep" do
     let!(:current_user) do
-      User.authenticate!(roles: ["Hearing Prep"], id: "Hearing Prep")
+      User.authenticate!(roles: ["Hearing Prep"])
     end
 
     before do
@@ -71,7 +71,7 @@ RSpec.feature "Hearings" do
       # Validate help link
       find('#menu-trigger').click
       find_link("Help").click
-      expect(page).to have_content("Caseflow Hearings Help")
+      expect(page).to have_content("Welcome to the Hearings Help page!")
     end
 
     scenario "Upcoming docket days correctly handles master records" do
