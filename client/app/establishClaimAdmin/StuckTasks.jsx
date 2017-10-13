@@ -31,9 +31,7 @@ export default class StuckTasks extends Component {
 
   render() {
     return <div className="cf-app-segment--alt">
-      <div className="cf-title-meta-right">
-        <h1 className="title">Oldest Unassigned Tasks with Uploaded Decisions</h1>
-      </div>
+      <h1 className="title">Oldest Unassigned Tasks with Uploaded Decisions</h1>
 
       <Table
         className="cf-work-assignments"
