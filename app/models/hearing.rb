@@ -135,9 +135,6 @@ class Hearing < ActiveRecord::Base
     def create_from_vacols_record(vacols_record)
       transaction do
         find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
-          # If it is a master record, do not create a record in the hearings table
-          return hearing if vacols_record.master_record?
-
           hearing.update(
             appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
             user: User.find_by(css_id: vacols_record.css_id)
