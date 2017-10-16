@@ -33,6 +33,14 @@ describe Veteran do
       Fakes::BGSService.veteran_records = { "445566" => veteran_record }
     end
 
+    context "when veteran does not exist in BGS" do
+      before do
+        veteran.file_number = "DOESNOTEXIST"
+      end
+
+      it { is_expected.to_not be_found }
+    end
+
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
         file_number: "445566",
@@ -116,6 +124,26 @@ describe Veteran do
 
         it { is_expected.to include(state: "AA", city: "DPO", address_type: "OVR") }
       end
+    end
+  end
+
+  context "#accessible?" do
+    subject { veteran.accessible? }
+
+    context "when veteran is too sensitive for user" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445566"]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when veteran is not too sensitive for user" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445567"]
+      end
+
+      it { is_expected.to eq(true) }
     end
   end
 
