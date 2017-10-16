@@ -9,9 +9,7 @@ import { REQUEST_STATE } from '../constants';
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => {
     this.props.doFileNumberSearch(this.props.fileNumberSearchInput).then(() => {
-      if (this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED) {
-        this.props.history.push('/review-request');
-      }
+      this.props.history.push('/review-request');
     });
   }
 
@@ -22,14 +20,9 @@ class Begin extends React.PureComponent {
     // TODO: we should fix styleguide to make this unnecessary
     return <div>
       { searchError &&
-        <div>
-          <Alert title={searchError.title} type="error">
-            {searchError.body}
-          </Alert>
-
-          <p></p>
-
-        </div>
+        <Alert title={searchError.title} type="error" lowerMargin>
+          {searchError.body}
+        </Alert>
       }
 
       <h1>Welcome to Caseflow Intake!</h1>
