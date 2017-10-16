@@ -27,7 +27,7 @@ class HeaderFilterMessage extends React.PureComponent {
       props.viewingDocumentsOrComments === 'comments' && 'Comments'
     ]).join(', ');
 
-    let className = classNames('document-list-filter-message', {
+    const className = classNames('document-list-filter-message', {
       hidden: !filteredCategories.length
     });
 
