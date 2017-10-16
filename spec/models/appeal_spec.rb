@@ -862,9 +862,7 @@ describe Appeal do
         Generators::Issue.build(disposition: :remand, vacols_id: appeal.vacols_id)
         appeal
       end
-      it do
-        is_expected.to eq("Remand")
-      end
+      it { is_expected.to eq("Remand") }
     end
   end
 
