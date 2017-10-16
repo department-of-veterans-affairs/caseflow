@@ -735,9 +735,7 @@ describe Appeal do
         Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
       end
 
-      it do
-        is_expected.to be_truthy
-      end
+      it { is_expected.to be_truthy }
     end
   end
 
@@ -745,6 +743,7 @@ describe Appeal do
     let(:appeal) do
       Generators::Appeal.build(vacols_id: "123-full-grant", status: status)
     end
+
     before(:each) do
       clean_fakes_appeal_issues(appeal)
     end
@@ -843,9 +842,7 @@ describe Appeal do
         appeal
       end
 
-      it do
-        is_expected.to eq("Partial Grant")
-      end
+      it { is_expected.to eq("Partial Grant") }
     end
 
     context "when it has a non-new-material allowed issue" do

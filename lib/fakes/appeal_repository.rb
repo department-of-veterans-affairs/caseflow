@@ -408,7 +408,6 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Issue.build(
