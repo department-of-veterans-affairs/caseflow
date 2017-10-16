@@ -78,9 +78,6 @@ class Appeal < ActiveRecord::Base
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  SSN_LENGTH = 9
-  MIN_VBMS_ID_LENGTH = 3
-
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
   TYPE_CODES = {
