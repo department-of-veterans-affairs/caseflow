@@ -561,6 +561,10 @@ class Appeal < ActiveRecord::Base
 
     # This method is used for converting a file_number (also called a vbms_id)
     # to be suitable for usage to query VACOLS.
+    #
+    # File numbers max out at 9 digits, in which they represent social security
+    # numbers. They can go as low as 3 digits.
+    #
     # TODO: Move this method to AppealMapper?
     def convert_file_number_to_vacols(file_number)
       file_number = file_number.delete("^0-9")
