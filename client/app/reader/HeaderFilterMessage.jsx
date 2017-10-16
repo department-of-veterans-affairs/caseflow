@@ -27,6 +27,7 @@ class HeaderFilterMessage extends React.PureComponent {
     ]).join(', ');
 
     let cls = 'document-list-filter-message';
+
     if (!filteredCategories.length) {
       cls += ' hidden';
     }
