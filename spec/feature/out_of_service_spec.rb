@@ -90,12 +90,12 @@ RSpec.feature "Out of Service" do
     let(:appeal) do
       appeal = Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
       Generators::Issue.build(disposition: :allowed,
-        program: :compensation,
-        type: { name: :elbow, label: "Elbow" },
-        category: :service_connection,
-        levels: issue_levels,
-        vacols_id: appeal.vacols_id
-      )
+                              program: :compensation,
+                              type: { name: :elbow, label: "Elbow" },
+                              category: :service_connection,
+                              levels: issue_levels,
+                              vacols_id: appeal.vacols_id
+                             )
       appeal
     end
 

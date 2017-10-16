@@ -705,10 +705,10 @@ describe Appeal do
 
   context "#partial_grant?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123-partial-grant", status: "Remand") }
-    
+
     before(:each) do
       Fakes::AppealRepository.issue_records[appeal.vacols_id] = []
-      appeal.issues = nil   
+      appeal.issues = nil
     end
 
     subject { appeal.partial_grant? }
@@ -722,7 +722,7 @@ describe Appeal do
     end
 
     context "when the allowed issues are new material" do
-      before do 
+      before do
         Generators::Issue.build(disposition: :allowed, category: :new_material, vacols_id: appeal.vacols_id)
       end
 
@@ -746,7 +746,7 @@ describe Appeal do
       Generators::Appeal.build(vacols_id: "123-full-grant", status: status)
     end
     before(:each) do
-      clean_fakes_appeal_issues(appeal)   
+      clean_fakes_appeal_issues(appeal)
     end
     subject { appeal.full_grant? }
 
@@ -800,15 +800,13 @@ describe Appeal do
   end
 
   context "#disposition_remand_priority" do
-
-
     subject { appeal.disposition_remand_priority }
 
     context "when disposition is allowed and one of the issues is remanded" do
       let(:appeal) do
         appeal = Generators::Appeal.build(vacols_id: "1235", disposition: "Allowed")
-        clean_fakes_appeal_issues(appeal)        
-    
+        clean_fakes_appeal_issues(appeal)
+
         Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
         Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
         appeal
@@ -817,7 +815,7 @@ describe Appeal do
     end
 
     context "when disposition is allowed and none of the issues are remanded" do
-      let(:appeal) do 
+      let(:appeal) do
         appeal = Generators::Appeal.build(vacols_id: "1236", disposition: "Allowed")
         Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
         Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
@@ -839,21 +837,21 @@ describe Appeal do
     context "when it has a mix of allowed and granted issues" do
       let(:appeal) do
         appeal = Generators::Appeal.build(vacols_id: "1237", status: "Remand")
-        clean_fakes_appeal_issues(appeal)        
+        clean_fakes_appeal_issues(appeal)
         Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
         Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
         appeal
       end
-      
+
       it do
         is_expected.to eq("Partial Grant")
       end
     end
 
     context "when it has a non-new-material allowed issue" do
-      let(:appeal) do 
+      let(:appeal) do
         appeal = Generators::Appeal.build(vacols_id: "1238", status: "Complete")
-        clean_fakes_appeal_issues(appeal)        
+        clean_fakes_appeal_issues(appeal)
         Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
         appeal
       end
@@ -863,12 +861,12 @@ describe Appeal do
     context "when it has a remanded issue" do
       let(:appeal) do
         appeal = Generators::Appeal.build(vacols_id: "1239", status: "Remand")
-        clean_fakes_appeal_issues(appeal)        
+        clean_fakes_appeal_issues(appeal)
         Generators::Issue.build(disposition: :remand, vacols_id: appeal.vacols_id)
         appeal
       end
       it do
-        is_expected.to eq("Remand") 
+        is_expected.to eq("Remand")
       end
     end
   end
@@ -1336,13 +1334,12 @@ describe Appeal do
 
       before do
         Generators::Issue.build(disposition: :allowed,
-                                 program: :compensation,
-                                 type: :elbow,
-                                 category: :service_connection,
-                                 levels: issue_levels,
-                                 vacols_id: appeal.vacols_id
-                                )
-        
+                                program: :compensation,
+                                type: :elbow,
+                                category: :service_connection,
+                                levels: issue_levels,
+                                vacols_id: appeal.vacols_id
+                               )
       end
 
       it "includes viewed boolean in hash" do

@@ -358,11 +358,10 @@ class Fakes::AppealRepository
     end
   end
 
-  def self.build_appeal(appeal_hash, issues)
+  def self.build_appeal(appeal_hash)
     Generators::Appeal.build(
       appeal_hash
     )
-
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -423,7 +422,7 @@ class Fakes::AppealRepository
       ],
       program_description: "06 - Medical",
       vacols_id: "reader_id2")
-      
+
     Generators::Appeal.build(
       vacols_id: "reader_id3",
       vbms_id: "DEMO789",
