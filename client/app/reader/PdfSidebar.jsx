@@ -85,9 +85,9 @@ export class PdfSidebar extends React.Component {
     window.removeEventListener('keydown', this.keyHandler);
   }
 
-  keyHandler = (e) => {
-    if (e.altKey) {
-      if (e.code === 'KeyM') {
+  keyHandler = (event) => {
+    if (event.altKey) {
+      if (event.code === 'KeyM') {
         this.props.togglePdfSidebar();
       }
     }
