@@ -22,18 +22,26 @@ class IntakesController < ApplicationController
 
   def create
     if intake.start!
-      render json: {
-        id: intake.id,
-        veteran_file_number: intake.veteran_file_number,
-        veteran_name: intake.veteran.name.formatted(:readable_short),
-        veteran_form_name: intake.veteran.name.formatted(:form)
-      }
+      render json: ramp_intake_data(intake)
     else
       render json: { error_code: intake.error_code }, status: 422
     end
   end
 
   private
+
+  def ramp_intake_data(ramp_intake)
+    return {} unless ramp_intake
+
+    {
+      id: ramp_intake.id,
+      veteran_file_number: ramp_intake.veteran_file_number,
+      veteran_name: ramp_intake.veteran.name.formatted(:readable_short),
+      veteran_form_name: ramp_intake.veteran.name.formatted(:form),
+      notice_date: ramp_intake.detail.notice_date
+    }
+  end
+  helper_method :ramp_intake_data
 
   def fetch_current_intake
     @current_intake = RampIntake.find_by(user: current_user)

@@ -1,11 +1,13 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
+import { formatDateStr } from '../../util/DateUtil';
+import _ from 'lodash';
 
-export const mapDataToInitialState = (data = {}) => ({
+export const mapDataToInitialState = (data = { currentIntake: {} }) => ({
   veteran: {
-    name: null,
-    formName: null,
-    fileNumber: null
+    name: data.currentIntake.veteran_name,
+    formName: data.currentIntake.veteran_form_name,
+    fileNumber: data.currentIntake.veteran_file_number
   },
   inputs: {
     fileNumberSearch: '',
@@ -17,13 +19,31 @@ export const mapDataToInitialState = (data = {}) => ({
     submitReview: REQUEST_STATE.NOT_STARTED
   },
   rampElection: {
-    intakeId: data.intakeId,
+    intakeId: data.currentIntake.id,
+    noticeDate: data.currentIntake.notice_date,
     optionSelected: null,
-    receiptDate: null
+    optionSelectedError: null,
+    receiptDate: null,
+    receiptDateError: null
   },
   cancelModalVisible: false,
   searchError: null
 });
+
+const getOptionSelectedError = (responseErrorCodes) => (
+  _.get(responseErrorCodes.option_selected, 0) && 'Please select an option.'
+);
+
+const getReceiptDateError = (responseErrorCodes, state) => (
+  {
+    blank:
+      'Please enter a valid receipt date.',
+    in_future:
+      'Receipt date cannot be in the future.',
+    before_notice_date: 'Receipt date cannot be earlier than the election notice ' +
+      `date of ${formatDateStr(state.rampElection.noticeDate)}`
+  }[_.get(responseErrorCodes.receipt_date, 0)]
+);
 
 // The keys in this object need to be snake_case
 // because they're being matched to server response values.
@@ -42,7 +62,7 @@ const searchErrors = {
   },
   did_not_receive_ramp_election: {
     title: 'No opt-in letter was sent to this veteran',
-    body: "An opt-in letter was not sent to this Veteran, so this form can't be processed" +
+    body: "An opt-in letter was not sent to this Veteran, so this form can't be processed. " +
       'Please enter a valid Veteran ID below.'
   },
   default: {
@@ -50,7 +70,6 @@ const searchErrors = {
     body: 'Please try again. If the problem persists, please contact Caseflow support.'
   }
 };
-
 
 export const reducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
@@ -64,7 +83,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
         }
       }
     });
-  case ACTIONS.SET_SELECTED_OPTION:
+  case ACTIONS.SET_OPTION_SELECTED:
     return update(state, {
       rampElection: {
         optionSelected: {
@@ -109,6 +128,9 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       rampElection: {
         intakeId: {
           $set: action.payload.intakeId
+        },
+        noticeDate: {
+          $set: action.payload.noticeDate
         }
       }
     });
@@ -141,6 +163,14 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     });
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
+      rampElection: {
+        optionSelectedError: {
+          $set: getOptionSelectedError(action.payload.responseErrorCodes)
+        },
+        receiptDateError: {
+          $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+        }
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
