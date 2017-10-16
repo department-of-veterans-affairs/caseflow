@@ -28,7 +28,7 @@ class HeaderFilterMessage extends React.PureComponent {
     ]).join(', ');
 
     let className = classNames('document-list-filter-message', {
-      'hidden': !filteredCategories.length
+      hidden: !filteredCategories.length
     });
 
     return <p className={className}>Filtering by: {filteredCategories}.<Button
