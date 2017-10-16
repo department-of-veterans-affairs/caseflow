@@ -10,26 +10,30 @@ import { getRampElectionStatus } from '../redux/selectors';
 
 class Completed extends React.PureComponent {
   render() {
+    const {
+      veteran, rampElection
+    } = this.props;
+
     switch (this.props.rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN}/>;
     case RAMP_INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW}/>;
-    // TODO: uncomment when complete logic is done
-    // case RAMP_INTAKE_STATES.REVIEWED:
-    //  return <Redirect to={PAGE_PATHS.FINISH}/>;
+    case RAMP_INTAKE_STATES.REVIEWED:
+      return <Redirect to={PAGE_PATHS.FINISH}/>;
     default:
     }
 
-    const message = 'Joe Snuffy\'s (ID #222222222) opt-in request has been processed, ' +
-      'and Caseflow closed the record in VACOLS. You can now begin processing the next opt-in letter.';
+    const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
+      'opt-in request has been processed. You can now begin intake for the next opt-in letter.';
 
     return <div>
       <StatusMessage
         title="Intake completed"
         type="success"
+        leadMessageList={[message]}
+        checklist={['Caseflow closed the VACOLS record']}
         wrapInAppSegment={false}
-        messageText={message}
       />
     </div>;
   }
@@ -53,6 +57,8 @@ export const CompletedNextButton = connect(
 
 export default connect(
   (state) => ({
+    rampElection: state: rampElection,
+    veteran: state.veteran,
     rampElectionStatus: getRampElectionStatus(state)
   })
 )(Completed);

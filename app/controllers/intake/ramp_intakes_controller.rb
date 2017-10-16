@@ -24,13 +24,24 @@ class Intake::RampIntakesController < ApplicationController
   end
 
   def destroy
-    intake.update!(cancelled_at: Time.zone.now)
+    intake.complete!(:canceled)
+    render json: {}
+  end
+
+  def complete
+    begin
+      intake.complete!
+    rescue ActiveRecord::RecordNotFound
+      # Is it okay if no VACOLS appeals were found?
+    end
+
+    render json: {}
   end
 
   private
 
   def intake
-    @intake ||= RampIntake.find(params[:id])
+    @intake ||= RampIntake.where(user: current_user).find(params[:id])
   end
 
   def ramp_election

@@ -53,7 +53,8 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
     },
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
-      submitReview: REQUEST_STATE.NOT_STARTED
+      submitReview: REQUEST_STATE.NOT_STARTED,
+      completeIntake: REQUEST_STATE.NOT_STARTED
     },
     rampElection: {
       intakeId: null,
@@ -199,6 +200,30 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       },
       requestStatus: {
         submitReview: {
+          $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
           $set: REQUEST_STATE.FAILED
         }
       }

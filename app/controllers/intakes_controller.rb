@@ -46,7 +46,7 @@ class IntakesController < ApplicationController
   helper_method :ramp_intake_data
 
   def fetch_current_intake
-    @current_intake = RampIntake.find_by(user: current_user)
+    @current_intake = RampIntake.in_progress.find_by(user: current_user)
   end
 
   def intake
