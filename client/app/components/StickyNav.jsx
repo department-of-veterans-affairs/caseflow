@@ -48,16 +48,4 @@ export default class StickyNav extends React.Component {
       </div>
     );
   }
-
-  renderold() {
-    return (
-      <div className={this.state.className}>
-        <div className="cf-push-left cf-sg-nav">
-          <ul className="usa-sidenav-list">
-            { this.props.children }
-          </ul>
-        </div>
-      </div>
-    );
-  }
 }
