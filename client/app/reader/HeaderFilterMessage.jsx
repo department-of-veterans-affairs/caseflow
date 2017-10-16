@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import { clearAllFilters } from './actions';
 import Button from '../components/Button';
@@ -20,19 +21,17 @@ class HeaderFilterMessage extends React.PureComponent {
     const categoryCount = getTruthyCount(props.docFilterCriteria.category);
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
 
-    let filteredCategories = _.compact([
+    const filteredCategories = _.compact([
       categoryCount && `Categories (${categoryCount})`,
       tagCount && `Issue tags (${tagCount})`,
       props.viewingDocumentsOrComments === 'comments' && 'Comments'
     ]).join(', ');
 
-    let cls = 'document-list-filter-message';
+    let className = classNames('document-list-filter-message', {
+      'hidden': !filteredCategories.length
+    });
 
-    if (!filteredCategories.length) {
-      cls += ' hidden';
-    }
-
-    return <p className={cls}>Filtering by: {filteredCategories}.<Button
+    return <p className={className}>Filtering by: {filteredCategories}.<Button
       id="clear-filters"
       name="clear-filters"
       classNames={['cf-btn-link']}
