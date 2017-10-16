@@ -144,7 +144,7 @@ svg[aria-hidden=true],
   border-top: 1px solid $color-gray-lighter;
 
   &.hidden-sidebar {
-    visibility: hidden;
+    width: 0;
   }
 
   .usa-accordion-content {
