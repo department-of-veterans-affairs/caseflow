@@ -28,8 +28,10 @@ class Generators::Issue
       if vacols_id
         Fakes::AppealRepository.issue_records ||= {}
         Fakes::AppealRepository.issue_records[vacols_id] ||= []
-        Fakes::AppealRepository.issue_records[vacols_id].push(issue)        
+        Fakes::AppealRepository.issue_records[vacols_id].push(issue)   
       end
+
+      issue
     end
   end
 end

@@ -179,9 +179,10 @@ class Generators::Appeal
       vacols_record[:vbms_id] = attrs[:vbms_id]
       vacols_record = vacols_record.merge(attrs.select { |attr| Appeal.vacols_field?(attr) })
 
-      # issues_from_template = vacols_record.delete(:issues)
-      # set_vacols_issues(appeal: appeal,
-      #                   issues: issues || issues_from_template)
+      # issues are created only when the issues is passed an a hash object
+      issues_from_template = vacols_record.delete(:issues)
+      set_vacols_issues(appeal: appeal,
+                        issues: issues || issues_from_template)
 
       Fakes::AppealRepository.records ||= {}
       Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
@@ -201,11 +202,11 @@ class Generators::Appeal
 
     def set_vacols_issues(appeal:, issues:)
       appeal.issues = (issues || []).map do |issue|
-        issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
+        if issue.is_a?(Hash)
+          issue[:vacols_id] = appeal.vacols_id
+          Generators::Issue.build(issue)
+        end
       end
-
-      Fakes::AppealRepository.issue_records ||= {}
-      Fakes::AppealRepository.issue_records[appeal.vacols_id] = appeal.issues
     end
 
     def add_inaccessible_appeal(appeal)
