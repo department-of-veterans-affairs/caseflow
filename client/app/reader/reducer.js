@@ -764,7 +764,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-
   case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
     return update(state, {
       ui: {
