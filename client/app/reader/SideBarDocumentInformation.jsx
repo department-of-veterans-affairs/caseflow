@@ -3,6 +3,7 @@ import { formatDateStr } from '../util/DateUtil';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import IssueList from './IssueList';
 
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
@@ -43,13 +44,7 @@ class SideBarDocumentInformation extends PureComponent {
         <div className="cf-pdf-meta-title">
           <strong>Issues:</strong> {_.size(appeal.issues) ?
             <ol className="cf-pdf-meta-doc-info-issues">
-              {appeal.issues.map((issue) =>
-                <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}>
-                  <span>
-                    {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
-                  </span>
-                </li>
-              )}
+              <IssueList appeal={appeal} />
             </ol> :
             'No issues on appeal'
           }
