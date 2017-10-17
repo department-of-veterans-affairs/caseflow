@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const IssueList = ({ appeal }) => (
   <div>
     {appeal.issues.map((issue) =>
-      <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}><span>
+      <li key={`${issue.id}_${issue.vacols_sequence_id}`}><span>
         {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
       </span></li>
     )}

@@ -4,6 +4,7 @@ RSpec.feature "RAMP Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
+    Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 8, 8))
   end
 
@@ -35,10 +36,13 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
-      visit "/intake"
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
-      visit "/intake"
+      # Validate you're redirected back to the search page if you haven't started yet
+      visit "/intake/completed"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      visit "/intake/review-request"
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
@@ -52,7 +56,6 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Open cancel modal from review page" do
-      visit "/intake"
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
       visit "/intake"
@@ -65,15 +68,20 @@ RSpec.feature "RAMP Intake" do
       expect(page).to_not have_css(".cf-modal-title")
     end
 
-    scenario "Review RAMP Election form" do
+    scenario "Complete intake for RAMP Election form" do
+      appeal = Generators::Appeal.build(vbms_id: "12341234C", vacols_record: :ready_to_certify)
+
       election = RampElection.create!(
         veteran_file_number: "12341234",
         notice_date: Date.new(2017, 8, 7)
       )
 
-      RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
+      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
 
-      visit "/intake/review-request"
+      # Validate that visiting the finish page takes you back to
+      # the review request page if you haven't yet reviewed the intake
+      visit "/intake/finish"
 
       fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
       click_on "Continue to next step"
@@ -95,6 +103,29 @@ RSpec.feature "RAMP Intake" do
       election.reload
       expect(election.option_selected).to eq("supplemental_claim")
       expect(election.receipt_date).to eq(Date.new(2017, 8, 7))
+
+      # Validate the app redirects you to the appropriate location
+      visit "/intake"
+      expect(page).to have_content("Finish processing Supplemental Claim request")
+
+      expect(Fakes::AppealRepository).to receive(:close!).with(
+        appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
+        user: current_user,
+        closed_on: Time.zone.today,
+        disposition_code: "P"
+      )
+
+      click_on "I've completed all the steps"
+
+      expect(page).to have_content("Intake completed")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake).to be_success
+
+      # Validate that the intake is no longer able to be worked on
+      visit "/intake/finish"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
     end
   end
 

@@ -1,5 +1,3 @@
-
-
 class AppealRepository
   CAVC_TYPE = "7".freeze
 
