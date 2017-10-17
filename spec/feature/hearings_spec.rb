@@ -156,10 +156,10 @@ RSpec.feature "Hearings" do
       click_on "button-addIssue-0"
 
       visit "/hearings/1/worksheet"
-      expect(page).to have_field("2-issue-program")
-      expect(page).to have_field("2-issue-name")
-      expect(page).to have_field("2-issue-levels")
-      expect(page).to have_field("2-issue-description")
+      expect(page).to have_field("2-issue-program", visible: false)
+      expect(page).to have_field("2-issue-name", visible: false)
+      expect(page).to have_field("2-issue-levels", visible: false)
+      expect(page).to have_field("2-issue-description", visible: false)
       expect(page).to_not have_content("Service Connection")
       expect(page).to_not have_field("1-issue-description")
 
