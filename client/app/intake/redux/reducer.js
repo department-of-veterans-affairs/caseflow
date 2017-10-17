@@ -178,7 +178,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     return update(state, {
       rampElection: {
         isReviewed: {
-          $set: true,
+          $set: true
         }
       },
       requestStatus: {
