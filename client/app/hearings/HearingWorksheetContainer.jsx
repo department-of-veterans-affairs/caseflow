@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
+import Alert from '../components/Alert';
 import * as AppConstants from '../constants/AppConstants';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
 
-// TODO: method should get data to populate worksheet
 export const getWorksheet = (id, dispatch) => {
   ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
     then((response) => {
+
       dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {
       dispatch(Actions.handleServerError(err));
@@ -29,8 +30,12 @@ export class HearingWorksheetContainer extends React.Component {
   render() {
 
     if (this.props.serverError) {
-      return <div style={{ textAlign: 'center' }}>
-        An error occurred while retrieving your hearings.</div>;
+      return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
+        <Alert
+          title="Error Status"
+          type="error"> An error occurred while retrieving your Hearings.
+        </Alert>
+      </div>;
     }
 
     if (!this.props.worksheet) {
@@ -52,8 +57,8 @@ export class HearingWorksheetContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  // TODO: add mappings
-  worksheet: state.worksheet
+  worksheet: state.worksheet,
+  serverError: state.serverError
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -69,5 +74,6 @@ export default connect(
 
 HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  hearingId: PropTypes.string.isRequired
+  hearingId: PropTypes.string.isRequired,
+  serverError: PropTypes.object
 };

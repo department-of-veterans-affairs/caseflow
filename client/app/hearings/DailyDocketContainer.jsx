@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
+import Alert from '../components/Alert';
 import * as AppConstants from '../constants/AppConstants';
 import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from './constants/constants';
 import AutoSave from '../components/AutoSave.jsx';
@@ -21,8 +22,12 @@ export class DailyDocketContainer extends React.Component {
 
   render() {
     if (this.props.serverError) {
-      return <div style={{ textAlign: 'center' }}>
-        An error occurred while retrieving your hearings.</div>;
+      return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
+        <Alert
+          title="Error Status"
+          type="error"> An error occurred while retrieving your Daily Docket.
+        </Alert>
+      </div>;
     }
 
     if (!this.props.dockets) {
