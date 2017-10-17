@@ -1,4 +1,9 @@
 describe Appeal do
+  def clean_fakes_appeal_issues(appeal)
+    Fakes::AppealRepository.issue_records[appeal.vacols_id] = []
+    appeal.issues = nil
+  end
+
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -654,27 +659,35 @@ describe Appeal do
   end
 
   context "#partial_grant?" do
-    let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+    let(:appeal) { Generators::Appeal.build(vacols_id: "123-partial-grant", status: "Remand") }
+
+    before(:each) do
+      Fakes::AppealRepository.issue_records[appeal.vacols_id] = []
+      appeal.issues = nil
+    end
+
     subject { appeal.partial_grant? }
 
     context "when no allowed issues" do
-      let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
+      before do
+        Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
+      end
 
       it { is_expected.to be_falsey }
     end
 
     context "when the allowed issues are new material" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed, category: :new_material)] }
+      before do
+        Generators::Issue.build(disposition: :allowed, category: :new_material, vacols_id: appeal.vacols_id)
+      end
 
       it { is_expected.to be_falsey }
     end
 
     context "when there's a mix of allowed and remanded issues" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remanded)
-        ]
+      before do
+        Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+        Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
       end
 
       it { is_expected.to be_truthy }
@@ -682,9 +695,12 @@ describe Appeal do
   end
 
   context "#full_grant?" do
-    let(:issues) { [] }
     let(:appeal) do
-      Generators::Appeal.build(vacols_id: "123", status: status, issues: issues)
+      Generators::Appeal.build(vacols_id: "123-full-grant", status: status)
+    end
+
+    before(:each) do
+      clean_fakes_appeal_issues(appeal)
     end
     subject { appeal.full_grant? }
 
@@ -697,21 +713,17 @@ describe Appeal do
       let(:status) { "Complete" }
 
       context "when at least one issues is new-material allowed" do
-        let(:issues) do
-          [
-            Generators::Issue.build(disposition: :allowed, category: :new_material),
-            Generators::Issue.build(disposition: :denied)
-          ]
+        before do
+          Generators::Issue.build(disposition: :allowed, category: :new_material, vacols_id: appeal.vacols_id)
+          Generators::Issue.build(disposition: :denied, vacols_id: appeal.vacols_id)
         end
         it { is_expected.to be_falsey }
       end
 
       context "when at least one issue is not new-material allowed" do
-        let(:issues) do
-          [
-            Generators::Issue.build(disposition: :allowed),
-            Generators::Issue.build(disposition: :denied)
-          ]
+        before do
+          Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+          Generators::Issue.build(disposition: :denied, vacols_id: appeal.vacols_id)
         end
         it { is_expected.to be_truthy }
       end
@@ -731,69 +743,80 @@ describe Appeal do
     end
 
     context "is true if new-material allowed issue" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed, category: :new_material),
-          Generators::Issue.build(disposition: :remanded)
-        ]
+      let(:appeal) do
+        appeal = Generators::Appeal.build(vacols_id: "1234", status: "Remand")
+        Generators::Issue.build(disposition: :allowed, category: :new_material, vacols_id: appeal.vacols_id)
+        Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
+        appeal
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
       it { is_expected.to be_truthy }
     end
   end
 
   context "#disposition_remand_priority" do
     subject { appeal.disposition_remand_priority }
+
     context "when disposition is allowed and one of the issues is remanded" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remanded)
-        ]
+      let(:appeal) do
+        appeal = Generators::Appeal.build(vacols_id: "1235", disposition: "Allowed")
+        clean_fakes_appeal_issues(appeal)
+
+        Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+        Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
+        appeal
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
       it { is_expected.to eq("Remanded") }
     end
 
     context "when disposition is allowed and none of the issues are remanded" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :allowed)
-        ]
+      let(:appeal) do
+        appeal = Generators::Appeal.build(vacols_id: "1236", disposition: "Allowed")
+        Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+        Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+        appeal
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: issues, disposition: "Allowed") }
+
       it { is_expected.to eq("Allowed") }
     end
 
     context "when disposition is not allowed" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", issues: [], disposition: "Vacated") }
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", disposition: "Vacated") }
       it { is_expected.to eq("Vacated") }
     end
   end
 
   context "#decision_type" do
     subject { appeal.decision_type }
+
     context "when it has a mix of allowed and granted issues" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed),
-          Generators::Issue.build(disposition: :remanded)
-        ]
+      let(:appeal) do
+        appeal = Generators::Appeal.build(vacols_id: "1237", status: "Remand")
+        clean_fakes_appeal_issues(appeal)
+        Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+        Generators::Issue.build(disposition: :remanded, vacols_id: appeal.vacols_id)
+        appeal
       end
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
+
       it { is_expected.to eq("Partial Grant") }
     end
 
     context "when it has a non-new-material allowed issue" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed)] }
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete", issues: issues) }
+      let(:appeal) do
+        appeal = Generators::Appeal.build(vacols_id: "1238", status: "Complete")
+        clean_fakes_appeal_issues(appeal)
+        Generators::Issue.build(disposition: :allowed, vacols_id: appeal.vacols_id)
+        appeal
+      end
       it { is_expected.to eq("Full Grant") }
     end
 
     context "when it has a remanded issue" do
-      let(:issues) { [Generators::Issue.build(disposition: :remand)] }
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+      let(:appeal) do
+        appeal = Generators::Appeal.build(vacols_id: "1239", status: "Remand")
+        clean_fakes_appeal_issues(appeal)
+        Generators::Issue.build(disposition: :remand, vacols_id: appeal.vacols_id)
+        appeal
+      end
       it { is_expected.to eq("Remand") }
     end
   end
@@ -1246,13 +1269,12 @@ describe Appeal do
     end
 
     context "when issues and viewed attributes are provided" do
-      subject { appeal.to_hash(viewed: true, issues: issues) }
+      subject { appeal.to_hash(viewed: true, issues: appeal.issues) }
 
       let!(:appeal) do
         Generators::Appeal.build(
           vbms_id: "999887777S",
-          vacols_record: { soc_date: 4.days.ago },
-          issues: issues
+          vacols_record: { soc_date: 4.days.ago }
         )
       end
 
@@ -1260,14 +1282,14 @@ describe Appeal do
         ["Other", "Left knee", "Right knee"]
       end
 
-      let!(:issues) do
-        [Generators::Issue.build(disposition: :allowed,
-                                 program: :compensation,
-                                 type: :elbow,
-                                 category: :service_connection,
-                                 levels: issue_levels
-                                )
-        ]
+      before do
+        Generators::Issue.build(disposition: :allowed,
+                                program: :compensation,
+                                type: :elbow,
+                                category: :service_connection,
+                                levels: issue_levels,
+                                vacols_id: appeal.vacols_id
+                               )
       end
 
       it "includes viewed boolean in hash" do
@@ -1275,7 +1297,7 @@ describe Appeal do
       end
 
       it "includes issues in hash" do
-        expect(subject["issues"]).to eq(issues)
+        expect(subject["issues"]).to eq(appeal.issues)
       end
     end
   end

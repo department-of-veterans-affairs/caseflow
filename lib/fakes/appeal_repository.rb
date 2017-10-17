@@ -358,6 +358,12 @@ class Fakes::AppealRepository
     end
   end
 
+  def self.build_appeal(appeal_hash)
+    Generators::Appeal.build(
+      appeal_hash
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
     Generators::Appeal.build(
@@ -375,17 +381,18 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
-               Generators::Issue.build(disposition: "Osteomyelitis",
-                                       levels: ["Osteomyelitis"],
-                                       description: [
-                                         "15 - Compensation",
-                                         "26 - Osteomyelitis"
-                                       ],
-                                       program_description: "06 - Medical",
-                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
+    Generators::Issue.build(vacols_id: "reader_id1")
+    Generators::Issue.build(disposition: "Osteomyelitis",
+                            levels: ["Osteomyelitis"],
+                            description: [
+                              "15 - Compensation",
+                              "26 - Osteomyelitis"
+                            ],
+                            program_description: "06 - Medical",
+                            vacols_id: "reader_id1")
+
     Generators::Appeal.build(
       vacols_id: "reader_id2",
       vbms_id: "DEMO456",
@@ -401,19 +408,20 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(
-        disposition: "Remanded",
-        levels: ["Left knee", "Right knee", "Cervical strain"],
-        description: [
-          "15 - Service connection",
-          "13 - Left knee",
-          "14 - Right knee",
-          "22 - Cervical strain"
-        ],
-        program_description: "06 - Medical",
-        vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
+    Generators::Issue.build(
+      disposition: "Remanded",
+      levels: ["Left knee", "Right knee", "Cervical strain"],
+      description: [
+        "15 - Service connection",
+        "13 - Left knee",
+        "14 - Right knee",
+        "22 - Cervical strain"
+      ],
+      program_description: "06 - Medical",
+      vacols_id: "reader_id2")
+
     Generators::Appeal.build(
       vacols_id: "reader_id3",
       vbms_id: "DEMO789",
@@ -429,9 +437,10 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: redacted_reader_documents
     )
+    Generators::Issue.build(vacols_id: "reader_id3")
+
     Generators::Appeal.build(
       vacols_id: "reader_id4",
       vbms_id: "DEMO123",
@@ -447,17 +456,18 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
-               Generators::Issue.build(disposition: "Osteomyelitis",
-                                       levels: ["Osteomyelitis"],
-                                       description: [
-                                         "15 - Compensation",
-                                         "26 - Osteomyelitis"
-                                       ],
-                                       program_description: "06 - Medical",
-                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
+
+    Generators::Issue.build(vacols_id: "reader_id4")
+    Generators::Issue.build(disposition: "Osteomyelitis",
+                            levels: ["Osteomyelitis"],
+                            description: [
+                              "15 - Compensation",
+                              "26 - Osteomyelitis"
+                            ],
+                            program_description: "06 - Medical",
+                            vacols_id: "reader_id4")
   end
 
   def self.aod(_vacols_id)

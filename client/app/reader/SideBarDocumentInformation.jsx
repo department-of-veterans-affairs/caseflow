@@ -7,6 +7,7 @@ import _ from 'lodash';
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
 import Alert from '../components/Alert';
+import IssueList from './IssueList';
 
 class SideBarDocumentInformation extends PureComponent {
   render() {
@@ -43,13 +44,7 @@ class SideBarDocumentInformation extends PureComponent {
         <div className="cf-pdf-meta-title">
           <strong>Issues:</strong> {_.size(appeal.issues) ?
             <ol className="cf-pdf-meta-doc-info-issues">
-              {appeal.issues.map((issue) =>
-                <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}>
-                  <span>
-                    {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
-                  </span>
-                </li>
-              )}
+              <IssueList appeal={appeal} />
             </ol> :
             'No issues on appeal'
           }

@@ -81,18 +81,16 @@ RSpec.feature "Reader" do
     ["Other", "Left knee", "Right knee"]
   end
 
-  let!(:issues) do
-    [Generators::Issue.build(disposition: :allowed,
-                             program: :compensation,
-                             type: { name: :elbow, label: "Elbow" },
-                             category: :service_connection,
-                             levels: issue_levels
-                            )
-    ]
-  end
-
   let(:appeal) do
-    Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
+    appeal = Generators::Appeal.create(vacols_record: vacols_record, documents: documents)
+    Generators::Issue.build(disposition: :allowed,
+                            program: :compensation,
+                            type: { name: :elbow, label: "Elbow" },
+                            category: :service_connection,
+                            levels: issue_levels,
+                            vacols_id: appeal.vacols_id
+                           )
+    appeal
   end
 
   let!(:current_user) do
