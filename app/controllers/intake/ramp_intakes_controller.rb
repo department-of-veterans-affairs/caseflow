@@ -29,12 +29,7 @@ class Intake::RampIntakesController < ApplicationController
   end
 
   def complete
-    begin
-      intake.complete!
-    rescue ActiveRecord::RecordNotFound
-      # Is it okay if no VACOLS appeals were found?
-    end
-
+    intake.complete!
     render json: {}
   end
 

@@ -57,7 +57,7 @@ export const CompletedNextButton = connect(
 
 export default connect(
   (state) => ({
-    rampElection: state: rampElection,
+    rampElection: state.rampElection,
     veteran: state.veteran,
     rampElectionStatus: getRampElectionStatus(state)
   })

@@ -214,6 +214,11 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
     return update(state, {
+      rampElection: {
+        isComplete: {
+          $set: true
+        }
+      },
       requestStatus: {
         completeIntake: {
           $set: REQUEST_STATE.SUCCEEDED
