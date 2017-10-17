@@ -26,11 +26,7 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
           payload: {
-            intakeId: responseObject.id,
-            name: responseObject.veteran_name,
-            formName: responseObject.veteran_form_name,
-            fileNumber: responseObject.veteran_file_number,
-            noticeDate: responseObject.notice_date
+            intake: responseObject
           }
         });
       },

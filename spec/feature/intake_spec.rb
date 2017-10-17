@@ -35,10 +35,16 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
-      visit "/intake"
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
-      visit "/intake"
+      # Validate you're redirected back to the search page if you haven't started yet
+      visit "/intake/finish"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      visit "/intake/completed"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      visit "/intake/review-request"
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
@@ -52,7 +58,6 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Open cancel modal from review page" do
-      visit "/intake"
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
       visit "/intake"
@@ -73,7 +78,9 @@ RSpec.feature "RAMP Intake" do
 
       RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
 
-      visit "/intake/review-request"
+      # Validate that visiting the finish page takes you back to
+      # the review request page if you haven't yet reviewed the intake
+      visit "/intake/finish"
 
       fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
       click_on "Continue to next step"
@@ -95,6 +102,10 @@ RSpec.feature "RAMP Intake" do
       election.reload
       expect(election.option_selected).to eq("supplemental_claim")
       expect(election.receipt_date).to eq(Date.new(2017, 8, 7))
+
+      # Validate the app redirects you to the appropriate location
+      visit "/intake"
+      expect(page).to have_content("Finish processing Supplemental Claim request")
     end
   end
 
