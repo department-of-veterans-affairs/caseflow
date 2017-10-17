@@ -22,6 +22,7 @@ RSpec.describe Reader::AppealController, type: :controller do
         expect(issue[:type][:name]).to eq hashed_issue[index].type[:name].to_s
         expect(issue[:type][:label]).to eq hashed_issue[index].type[:label]
         expect(issue[:vacols_sequence_id]).to eq hashed_issue[index].vacols_sequence_id
+        expect(issue[:id]).to eq hashed_issue[index].id
       end
 
       expect(appeal_response[:docket_number]).to eq hashed_appeal["docket_number"]
