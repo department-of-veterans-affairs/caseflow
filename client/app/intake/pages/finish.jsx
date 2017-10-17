@@ -51,7 +51,6 @@ export class FinishButtons extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    rampElection: state.rampElection,
     rampElectionStatus: getRampElectionStatus(state)
   })
 )(Finish);
