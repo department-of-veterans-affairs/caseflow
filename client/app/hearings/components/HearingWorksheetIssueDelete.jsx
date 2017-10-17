@@ -32,6 +32,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
 
     return <div>
       <div
+        id={'cf-issue-delete-' + appealKey + issueKey}
         className="cf-issue-delete"
         onClick={this.handleModalOpen(appealKey, issueKey)}
         alt="Remove Issue Confirmation">
