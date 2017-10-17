@@ -29,12 +29,12 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.veteran.fileNumber ?
     `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
-    const submitCancel = () => (this.props.submitCancel(this.props.rampElection));
+    const handleSubmitCancel = () => (this.props.submitCancel(this.props.rampElection));
 
     let cancelButton, confirmButton;
 
     if (this.props.cancelModalVisible) {
-      confirmButton = <Button dangerStyling onClick={submitCancel}>Cancel Intake</Button>;
+      confirmButton = <Button dangerStyling onClick={handleSubmitCancel}>Cancel Intake</Button>;
       cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
     }
 
