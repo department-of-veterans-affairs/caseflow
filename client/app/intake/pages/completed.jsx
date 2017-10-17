@@ -11,10 +11,11 @@ import { getRampElectionStatus } from '../redux/selectors';
 class Completed extends React.PureComponent {
   render() {
     const {
-      veteran, rampElection
+      veteran,
+      rampElectionStatus
     } = this.props;
 
-    switch (this.props.rampElectionStatus) {
+    switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN}/>;
     case RAMP_INTAKE_STATES.STARTED:
@@ -57,7 +58,6 @@ export const CompletedNextButton = connect(
 
 export default connect(
   (state) => ({
-    rampElection: state.rampElection,
     veteran: state.veteran,
     rampElectionStatus: getRampElectionStatus(state)
   })
