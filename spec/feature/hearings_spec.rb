@@ -154,25 +154,17 @@ RSpec.feature "Hearings" do
       find("#trash-can").click
       click_on "Confirm delete"
       click_on "button-addIssue-0"
-
-      visit "/hearings/1/worksheet"
-      expect(page).to have_field("2-issue-program", visible: false)
-      expect(page).to have_field("2-issue-name", visible: false)
-      expect(page).to have_field("2-issue-levels", visible: false)
-      expect(page).to have_field("2-issue-description", visible: false)
-      expect(page).to_not have_content("Service Connection")
-      expect(page).to_not have_field("1-issue-description")
-
-      fill_in "2-issue-program", with: "This is the program"
-      fill_in "2-issue-name", with: "This is the name"
-      fill_in "2-issue-levels", with: "This is the level"
-      fill_in "2-issue-description", with: "This is the description"
+      fill_in "undefined-issue-program", with: "This is the program"
+      fill_in "undefined-issue-name", with: "This is the name"
+      fill_in "undefined-issue-levels", with: "This is the level"
+      fill_in "undefined-issue-description", with: "This is the description"
 
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is the program")
       expect(page).to have_content("This is the name")
       expect(page).to have_content("This is the level")
       expect(page).to have_content("This is the description")
+      expect(page).to_not have_content("Service Connection")
     end
 
     scenario "Can click from hearing worksheet to reader" do
