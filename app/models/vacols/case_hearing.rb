@@ -35,17 +35,9 @@ class VACOLS::CaseHearing < VACOLS::Record
     hold_open: :holddays,
     aod: :aod,
     transcript_requested: :tranreq,
-    add_on: :addon
+    add_on: :addon,
+    representative_name: :repname
   }.freeze
-
-  NOT_MASTER_RECORD = %(
-    vdkey is NOT NULL
-  ).freeze
-
-  WITHOUT_DISPOSITION = %(
-    hearing_disp IS NULL
-    -- an older hearing still awaiting a disposition
-  ).freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
   after_update :create_or_update_diaries
@@ -55,10 +47,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     def upcoming_for_judge(css_id)
       id = connection.quote(css_id)
 
-      select_hearings
-        .where("staff.sdomainid = #{id}")
-        .where(WITHOUT_DISPOSITION)
-        .where(NOT_MASTER_RECORD)
+      select_hearings.where("staff.sdomainid = #{id}")
+                     .where("hearing_date > ?", 1.week.ago)
     end
 
     def for_appeal(appeal_vacols_id)
@@ -76,24 +66,23 @@ class VACOLS::CaseHearing < VACOLS::Record
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
              "staff.sdomainid as css_id",
-             :hearing_disp,
-             :hearing_pkseq,
-             :hearing_date,
-             :hearing_type,
-             :notes1,
-             :folder_nr,
-             :vdkey,
-             :aod,
-             :holddays,
-             :tranreq,
-             :addon,
-             :board_member,
-             :mduser,
-             :mdtime,
-             :sattyid)
+             :hearing_disp, :hearing_pkseq,
+             :hearing_date, :hearing_type,
+             :notes1, :folder_nr,
+             :vdkey, :aod,
+             :holddays, :tranreq,
+             :repname, :addon,
+             :board_member, :mduser,
+             :mdtime, :sattyid,
+             :bfregoff, :bfso)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+  end
+
+  def master_record_type
+    return :video if folder_nr =~ /VIDEO/
   end
 
   def update_hearing!(hearing_info)

@@ -1,6 +1,6 @@
 describe HearingMapper do
   before do
-    Timecop.freeze(Time.utc(2017, 2, 2))
+    Timecop.freeze(Time.utc(2017, 10, 4))
     Time.zone = "America/Chicago"
   end
 
@@ -58,17 +58,32 @@ describe HearingMapper do
     end
   end
 
+  context ".normalize_datetime" do
+    subject { HearingMapper.normalize_datetime(Time.zone.now, regional_office_key) }
+
+    context "uses regional office timezone to set the zone" do
+      let(:regional_office_key) { "RO58" }
+
+      it "calculates the date and hour correctly" do
+        expect(subject.day).to eq 3
+        expect(subject.hour).to eq 7
+        expect(subject.zone).to eq "EDT"
+      end
+    end
+  end
+
   context ".hearing_fields_to_vacols_codes" do
     subject { HearingMapper.hearing_fields_to_vacols_codes(info) }
 
     context "when all values are present" do
       let(:info) do
         { notes: "test notes",
-          aod: :none,
+          aod: "none",
           transcript_requested: false,
-          disposition: :postponed,
+          disposition: "postponed",
           hold_open: 60,
-          add_on: false }
+          add_on: false,
+          representative_name: "test name" }
       end
 
       it "should convert to Vacols values" do
@@ -79,6 +94,7 @@ describe HearingMapper do
         expect(result[:disposition]).to eq :P
         expect(result[:hold_open]).to eq 60
         expect(result[:add_on]).to eq :N
+        expect(result[:representative_name]).to eq "test name"
       end
     end
 
@@ -99,14 +115,16 @@ describe HearingMapper do
     context "values with nil" do
       let(:info) do
         { notes: nil,
-          aod: :filed }
+          aod: :filed,
+          representative_name: nil }
       end
 
       it "should clear these values" do
         result = subject
-        expect(result.values.size).to eq 2
+        expect(result.values.size).to eq 3
         expect(result[:notes]).to eq nil
         expect(result[:aod]).to eq :Y
+        expect(result[:representative_name]).to eq nil
       end
     end
 
@@ -136,6 +154,15 @@ describe HearingMapper do
       end
       it "raises InvalidNotesError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidNotesError)
+      end
+    end
+
+    context "when representative name is not valid" do
+      let(:info) do
+        { representative_name: 77 }
+      end
+      it "raises InvalidNotesError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRepresentativeNameError)
       end
     end
 

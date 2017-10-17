@@ -26,11 +26,10 @@ export class DailyDocket extends React.Component {
           <thead>
             <tr>
               <th>Time/Regional Office</th>
-              <th>Appellant</th>
+              <th>Appellant/Veteran ID</th>
               <th>Representative</th>
               <th>
-                <span>Actions</span>
-                <span className="saving">Last saved at 10:30am</span>
+                Actions
               </th>
             </tr>
           </thead>

@@ -15,24 +15,14 @@ class Generators::Issue
         program: :compensation,
         type: { name: :service_connection, label: "Service Connection" },
         category: :knee,
-        note: "low back condition"
+        note: "low back condition",
+        vacols_sequence_id: 1,
+        id: generate_external_id
       }
     end
 
     def build(attrs = {})
-      attrs[:appeal_id] = attrs[:appeal].try(:id)
-
-      vacols_id ||= attrs.delete(:vacols_id) || attrs[:appeal].try(:vacols_id)
-      issue = ::Issue.new(default_attrs.merge(attrs))
-
-      if vacols_id
-        Fakes::AppealRepository.issue_records ||= {}
-        Fakes::AppealRepository.issue_records[vacols_id] ||= []
-        Fakes::AppealRepository.issue_records[vacols_id].push(issue)
-        issue.vacols_sequence_id = Fakes::AppealRepository.issue_records[vacols_id].length
-      end
-
-      issue
+      ::Issue.new(default_attrs.merge(attrs))
     end
   end
 end

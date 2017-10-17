@@ -17,10 +17,31 @@ describe HearingDocket do
       date: 7.days.from_now,
       type: :video,
       regional_office_name: hearing.regional_office_name,
+      regional_office_key: "RO31",
       hearings: [
         hearing
       ]
     )
+  end
+
+  context ".from_hearings" do
+    subject { HearingDocket.from_hearings(hearings) }
+
+    let(:hearings) do
+      [Generators::Hearing.create(date: 5.minutes.ago), Generators::Hearing.create(date: 10.minutes.ago)]
+    end
+
+    it "returns the earliest date" do
+      expect(subject.date).to eq 10.minutes.ago
+    end
+  end
+
+  context "#slots" do
+    subject { docket.slots }
+
+    context "should use the default number of slots for the regional office" do
+      it { is_expected.to eq 9 }
+    end
   end
 
   context "#to_hash" do
@@ -32,6 +53,7 @@ describe HearingDocket do
       expect(subject[:hearings_array].length).to eq(1)
       expect(subject[:type]).to eq(:video)
       expect(subject[:regional_office_name]).to eq(hearing.regional_office_name)
+      expect(subject[:slots]).to eq 9
     end
   end
 

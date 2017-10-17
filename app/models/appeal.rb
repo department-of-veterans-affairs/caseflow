@@ -1,8 +1,14 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
+  include CachedAttributes
+  include RegionalOfficeConcern
+  include CachedAttributes
+
   has_many :tasks
   has_many :appeal_views
+  has_many :worksheet_issues
+  accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class MultipleDecisionError < StandardError; end
 
@@ -37,6 +43,10 @@ class Appeal < ActiveRecord::Base
   # These are only set when you pull in a case from the Case Assignment Repository
   attr_accessor :date_assigned, :date_received, :signed_date
 
+  cache_attribute :aod do
+    self.class.repository.aod(vacols_id)
+  end
+
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
@@ -67,9 +77,6 @@ class Appeal < ActiveRecord::Base
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
   # rubocop:enable Metrics/LineLength
-
-  SSN_LENGTH = 9
-  MIN_VBMS_ID_LENGTH = 3
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
@@ -103,6 +110,10 @@ class Appeal < ActiveRecord::Base
   def number_of_documents_after_certification
     return 0 unless certification_date
     documents.count { |d| d.received_at > certification_date }
+  end
+
+  cache_attribute :cached_number_of_documents_after_certification do
+    number_of_documents_after_certification
   end
 
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
@@ -165,11 +176,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def veteran_name
-    [veteran_last_name, veteran_first_name, veteran_middle_initial].select(&:present?).join(", ")
+    veteran_name_object.formatted(:form)
   end
 
   def veteran_full_name
-    [veteran_first_name, veteran_middle_initial, veteran_last_name].select(&:present?).join(" ").titleize
+    veteran_name_object.formatted(:readable_full)
   end
 
   # When the decision is signed by an attorney at BVA, an outcoder physically stamps the date,
@@ -219,14 +230,6 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
-  def regional_office
-    { key: regional_office_key }.merge(VACOLS::RegionalOffice::CITIES[regional_office_key] || {})
-  end
-
-  def regional_office_name
-    "#{regional_office[:city]}, #{regional_office[:state]}"
-  end
-
   def attributes_for_hearing
     {
       "id" => id,
@@ -235,17 +238,17 @@ class Appeal < ActiveRecord::Base
       "soc_date" => soc_date,
       "certification_date" => certification_date,
       "prior_decision_date" => prior_decision_date,
-      "ssoc_dates" => ssoc_dates
+      "form9_date" => form9_date,
+      "ssoc_dates" => ssoc_dates,
+      "docket_number" => docket_number,
+      "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
+      "worksheet_issues" => worksheet_issues
     }
   end
 
   def station_key
     result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
     result && result.first
-  end
-
-  def aod
-    @aod ||= self.class.repository.aod(vacols_id)
   end
 
   def nod
@@ -299,6 +302,10 @@ class Appeal < ActiveRecord::Base
 
   def certify!
     Appeal.certify(self)
+  end
+
+  def close!(user:, closed_on:, disposition:)
+    Appeal.close(appeal: self, user: user, closed_on: closed_on, disposition: disposition)
   end
 
   def fetch_documents!(save:)
@@ -374,8 +381,11 @@ class Appeal < ActiveRecord::Base
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
-  def issue_by_sequence_id(sequence_id)
-    issues.find { |i| i.vacols_sequence_id == sequence_id }
+  # If we do not yet have the worksheet issues saved in Caseflow's DB, then
+  # we want to fetch it from VACOLS, save it to the DB, then return it
+  def worksheet_issues
+    issues.each { |i| WorksheetIssue.create_from_issue(self, i) } if super.empty?
+    super
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
@@ -430,6 +440,12 @@ class Appeal < ActiveRecord::Base
   end
 
   private
+
+  # TODO: this is named "veteran_name_object" to avoid name collision, refactor
+  #       the naming of the helper methods.
+  def veteran_name_object
+    FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
@@ -502,14 +518,11 @@ class Appeal < ActiveRecord::Base
       BGSService.new
     end
 
-    def fetch_appeals_by_vbms_id(vbms_id)
-      sanitized_vbms_id = ""
-      begin
-        sanitized_vbms_id = convert_vbms_id_for_vacols_query(vbms_id)
-      rescue Caseflow::Error::InvalidVBMSId
-        raise ActiveRecord::RecordNotFound
-      end
-      @repository.appeals_by_vbms_id(sanitized_vbms_id)
+    def fetch_appeals_by_file_number(file_number)
+      repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
+
+    rescue Caseflow::Error::InvalidFileNumber
+      raise ActiveRecord::RecordNotFound
     end
 
     def vbms
@@ -518,6 +531,20 @@ class Appeal < ActiveRecord::Base
 
     def repository
       @repository ||= AppealRepository
+    end
+
+    def close(appeal:, user:, closed_on:, disposition:)
+      fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      AppealRepository.close!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: disposition_code
+      )
     end
 
     def certify(appeal)
@@ -529,39 +556,23 @@ class Appeal < ActiveRecord::Base
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
-      vbms.clean_document(form8.pdf_location)
+      vbms.clean_document(form8.pdf_location) unless Rails.env.development?
     end
 
-    # TODO: Move to AppealMapper?
+    # This method is used for converting a file_number (also called a vbms_id)
+    # to be suitable for usage to query VACOLS.
+    #
+    # File numbers max out at 9 digits, in which they represent social security
+    # numbers. They can go as low as 3 digits.
+    #
+    # TODO: Move this method to AppealMapper?
     def convert_file_number_to_vacols(file_number)
+      file_number = file_number.delete("^0-9")
+
       return "#{file_number}S" if file_number.length == 9
-      return "#{file_number.gsub(/^0*/, '')}C" if file_number.length < 9
+      return "#{file_number.gsub(/^0*/, '')}C" if file_number.length.between?(3, 9)
 
       fail Caseflow::Error::InvalidFileNumber
-    end
-
-    # This method is used for converting a vbms_id to be suitable for usage
-    # to query VACOLS.
-    # This method drops all non-digit characters intially.
-    # If vbms_id is 9 digits, appending 'S' and sending to VACOLS.
-    # If vbms_id is < 9 digits, removing leading zeros, append 'C' and send to VACOLS.
-    # If vbms_id is > 9 digits, thrown an error.
-    def convert_vbms_id_for_vacols_query(vbms_id)
-      # delete non-digit characters
-      sanitized_vbms_id = vbms_id.delete("^0-9")
-      vbms_id_length = sanitized_vbms_id.length
-
-      fail Caseflow::Error::InvalidVBMSId unless
-        vbms_id_length >= MIN_VBMS_ID_LENGTH && vbms_id_length <= SSN_LENGTH
-
-      if vbms_id_length == SSN_LENGTH
-        sanitized_vbms_id << "S"
-      elsif vbms_id_length < SSN_LENGTH
-        # removing leading zeros
-        sanitized_vbms_id = sanitized_vbms_id.to_i.to_s
-        sanitized_vbms_id << "C"
-      end
-      sanitized_vbms_id
     end
 
     private

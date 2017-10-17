@@ -1,16 +1,15 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
-  belongs_to :appeal
-  belongs_to :user
+  include RegionalOfficeConcern
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes, :add_on
+                       :aod, :hold_open, :transcript_requested, :notes, :add_on,
+                       :representative_name, :regional_office_key, :master_record,
+                       :representative
 
   belongs_to :appeal
   belongs_to :user # the judge
-  has_many :issues, foreign_key: :appeal_id, primary_key: :appeal_id
-  accepts_nested_attributes_for :issues
 
   def venue
     self.class.venues[venue_key]
@@ -35,6 +34,25 @@ class Hearing < ActiveRecord::Base
     end
   end
 
+  def vacols_attributes
+    {
+      date: date,
+      type: type,
+      venue_key: venue_key,
+      vacols_record: vacols_record,
+      disposition: disposition,
+      aod: aod,
+      hold_open: hold_open,
+      transcript_requested: transcript_requested,
+      notes: notes,
+      add_on: add_on,
+      representative: representative,
+      representative_name: representative_name,
+      regional_office_key: regional_office_key,
+      master_record: master_record
+    }
+  end
+
   def request_type
     type != :central_office ? type.to_s.capitalize : "CO"
   end
@@ -43,65 +61,64 @@ class Hearing < ActiveRecord::Base
     number_of_documents
   end
 
-  cache_attribute :cached_number_of_documents_after_certification do
-    number_of_documents_after_certification
-  end
-
   delegate \
     :veteran_age, \
-    :veteran_full_name, \
-    :representative_name, \
+    :veteran_name, \
     :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
-    :regional_office_name, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
-    to: :appeal
+    :veteran,  \
+    to: :appeal, allow_nil: true
 
-  # rubocop:disable Metrics/MethodLength
   def to_hash
     serializable_hash(
       methods: [
-        :date,
-        :request_type,
-        :disposition,
-        :aod,
-        :transcript_requested,
-        :hold_open,
-        :notes,
-        :add_on,
-        :appellant_last_first_mi,
-        :appellant_city,
-        :appellant_state,
-        :representative_name,
-        :veteran_age,
-        :veteran_full_name,
-        :venue,
-        :cached_number_of_documents,
-        :cached_number_of_documents_after_certification,
-        :vbms_id
-      ]
+        :date, :request_type,
+        :disposition, :aod,
+        :appellant_last_first_mi, :transcript_requested,
+        :hold_open, :notes,
+        :add_on, :master_record,
+        :representative, :representative_name,
+        :regional_office_name, :venue,
+        :veteran_name, :vbms_id
+      ],
+      except: :military_service
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
-  def to_hash_with_all_information
+  def to_hash_for_worksheet
     serializable_hash(
-      methods: :appeals,
-      include: :issues
+      methods: [:appeal_id,
+                :appeal_vacols_id,
+                :appeals_ready_for_hearing,
+                :cached_number_of_documents,
+                :veteran_age,
+                :veteran_name,
+                :appellant_last_first_mi,
+                :appellant_city,
+                :appellant_state,
+                :military_service]
     ).merge(to_hash)
   end
 
-  def set_issues_from_appeal
-    appeal.issues.each do |issue|
-      Issue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id)
-    end if appeal
+  def appeals_ready_for_hearing
+    active_appeal_streams.map(&:attributes_for_hearing)
   end
 
-  def appeals
-    active_appeal_streams.map(&:attributes_for_hearing)
+  # If we do not yet have the military_service saved in Caseflow's DB, then
+  # we want to fetch it from BGS, save it to the DB, then return it
+  def military_service
+    super || begin
+      update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      super
+    end
+  end
+
+  def appeal_vacols_id
+    appeal.try(:vacols_id)
   end
 
   class << self
@@ -117,10 +134,11 @@ class Hearing < ActiveRecord::Base
 
     def create_from_vacols_record(vacols_record)
       transaction do
-        find_or_create_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
-          hearing.update(appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-                         user: User.find_by(css_id: vacols_record.css_id))
-          hearing.set_issues_from_appeal
+        find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
+          hearing.update(
+            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+            user: User.find_by(css_id: vacols_record.css_id)
+          ) if hearing.new_record?
         end
       end
     end

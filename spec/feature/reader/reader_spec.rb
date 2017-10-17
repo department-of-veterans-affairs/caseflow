@@ -29,10 +29,12 @@ def scroll_to_bottom(element)
   EOS
 end
 
-# This utility function returns true if an element is currently visible on the page
-def in_viewport(element)
-  page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
-  " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+# Returns true if an element is currently visible on the page.
+def expect_in_viewport(element)
+  expect do
+    page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
+      " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+  end.to become_truthy(wait: 10)
 end
 
 def get_size(element)
@@ -68,9 +70,6 @@ end
 
 RSpec.feature "Reader" do
   before do
-    FeatureToggle.disable!(:reader)
-    FeatureToggle.enable!(:reader)
-
     Fakes::Initializer.load!
   end
 
@@ -207,7 +206,7 @@ RSpec.feature "Reader" do
       end
 
       before do
-        Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
+        Fakes::AppealRepository.appeal_records = [appeal, appeal2]
       end
 
       scenario "Enter a case" do
@@ -231,8 +230,11 @@ RSpec.feature "Reader" do
         # Test that the title changed. Functionality in PageRoute.jsx
         expect(page).to have_title("Claims Folder | Caseflow Reader")
 
-        click_on "Caseflow Reader"
-        expect(page).to have_current_path("/reader/appeal")
+        # Test that the header has breadcrumbs.
+        expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
+
+        click_on "Caseflow"
+        expect(page).to have_current_path("/reader/appeal/")
         expect(page).to have_title("Assignments | Caseflow Reader")
 
         click_on "Continue"
@@ -261,12 +263,12 @@ RSpec.feature "Reader" do
         expect(appeal_options[0]).to have_content("Veteran " + appeal3.veteran_full_name)
         expect(appeal_options[0]).to have_content("Veteran ID " + appeal3.vbms_id)
         expect(appeal_options[0]).to have_content("Issues")
-        expect(appeal_options[0].find_all("li").count).to eq(1)
+        expect(appeal_options[0].find_all("li").count).to eq(appeal3.issues.size)
 
         expect(appeal_options[1]).to have_content("Veteran " + appeal4.veteran_full_name)
         expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
         expect(appeal_options[1]).to have_content("Issues")
-        expect(appeal_options[1].find_all("li").count).to eq(1)
+        expect(appeal_options[1].find_all("li").count).to eq(appeal4.issues.count)
         expect(find("button", text: "Okay")).to be_disabled
 
         appeal_options[0].click
@@ -344,7 +346,7 @@ RSpec.feature "Reader" do
 
     scenario "User visits help page" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      find('#menu-trigger').click
+      find_link("DSUSER (DSUSER)").click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
     end
@@ -671,7 +673,7 @@ RSpec.feature "Reader" do
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
 
-        expect { in_viewport(comment_icon_id) }.to become_truthy
+        expect_in_viewport(comment_icon_id)
       end
 
       scenario "Scroll to comment" do
@@ -737,6 +739,8 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[1].type
+        expect(page).to have_content("IN THE APPEAL", wait: 10)
+
         expect(page).to have_css(".page")
         scroll_element_to_view("pageContainer3")
         expect(find_field("page-progress-indicator-input").value).to eq "3"
@@ -761,19 +765,16 @@ RSpec.feature "Reader" do
 
           click_on documents[3].type
 
-          # Expect the 23 page to only be rendered once scrolled to.
-          expect(find("#pageContainer23")).to_not have_content("Rating Decision")
-
           fill_in "page-progress-indicator-input", with: "23\n"
 
-          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 4)
+          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
 
-          expect(in_viewport("pageContainer23")).to be true
+          expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
 
           # Entering invalid values leaves the viewer on the same page.
           fill_in "page-progress-indicator-input", with: "abcd\n"
-          expect(in_viewport("pageContainer23")).to be true
+          expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
         end
       end
@@ -933,11 +934,11 @@ RSpec.feature "Reader" do
       end
 
       doc_0_categories =
-        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li", count: 1)
+        get_aria_labels all(".cf-wide-app table tr:first-child .cf-document-category-icons li", count: 1)
       expect(doc_0_categories).to eq(["Case Summary"])
 
       doc_1_categories =
-        get_aria_labels all(".section--document-list table tr:nth-child(2) .cf-document-category-icons li", count: 3)
+        get_aria_labels all(".cf-wide-app table tr:nth-child(2) .cf-document-category-icons li", count: 3)
       expect(doc_1_categories).to eq(["Medical", "Other Evidence", "Case Summary"])
 
       click_on documents[0].type
@@ -952,7 +953,7 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       doc_0_categories =
-        get_aria_labels all(".section--document-list table tr:first-child .cf-document-category-icons li", count: 1)
+        get_aria_labels all(".cf-wide-app table tr:first-child .cf-document-category-icons li", count: 1)
       expect(doc_0_categories).to eq(["Case Summary"])
 
       click_on documents[1].type
@@ -1177,7 +1178,7 @@ RSpec.feature "Reader" do
       click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
-      expect(in_viewport("read-indicator")).to be true
+      expect_in_viewport("read-indicator")
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
@@ -1188,18 +1189,7 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      expect(in_viewport("read-indicator")).to be true
-    end
-  end
-
-  context "When user is not whitelisted" do
-    before do
-      FeatureToggle.enable!(:reader, users: ["FAKE_CSS_ID"])
-    end
-
-    scenario "it redirects to unauthorized" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Unauthorized")
+      expect_in_viewport("read-indicator")
     end
   end
 end

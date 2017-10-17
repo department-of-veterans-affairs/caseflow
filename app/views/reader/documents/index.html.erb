@@ -2,7 +2,11 @@
 
 <% content_for :full_page_content do %>
   <%= react_component("BaseContainer", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
     page: "DecisionReviewer",
-    pdfWorker: asset_path('pdf.worker.js')
+    pdfWorker: asset_path('pdf.worker.js'),
+    feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+    buildDate: build_date
   }) %>
 <% end %>

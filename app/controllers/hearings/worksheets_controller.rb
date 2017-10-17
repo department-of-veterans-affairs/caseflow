@@ -5,55 +5,33 @@ class Hearings::WorksheetsController < HearingsController
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
-        render json: hearing_worksheet(params[:id])
+        render json: hearing_worksheet
       end
     end
   end
 
-  # Until the frontend makes a PUT request, code coverage is at risk, so...
-  # def update
-  #  worksheet.update!(worksheet_params)
-  #  render json: { worksheet: worksheet.to_hash }
-  # end
+  def update
+    worksheet.update!(worksheet_params)
+    render json: { worksheet: hearing_worksheet }
+  end
 
   private
 
-  # Until the frontend makes a PUT request, code coverage is at risk, so...
-  # def worksheet
-  #  @worksheet ||= hearing
-  # end
+  def worksheet_params
+    params.require("worksheet").permit(:representative_name,
+                                       :witness,
+                                       :contentions,
+                                       :military_service,
+                                       :evidence,
+                                       :comments_for_attorney)
+  end
 
-  # Until the frontend makes a PUT request, code coverage is at risk, so...
-  # def worksheet_params
-  #  params.require(:worksheet).permit(:worksheet_witness, :worksheet_contentions, :worksheet_evidence,
-  #                                    :worksheet_coments_for_attorney, :worksheet_military_service,
-  #                                    issues_attributes: [
-  #                                      :id, :hearing_worksheet_status,
-  #                                      :hearing_worksheet_reopen, :hearing_worksheet_vha
-  #                                    ])
-  # end
+  def worksheet
+    Hearing.find(params[:hearing_id])
+  end
+  helper_method :worksheet
 
-  def hearing_worksheet(_vbms_id)
-    # Appeal.where(vmbs_id: _vbms_id)??? TBD
-    # possible API
-    {
-      veteran: {},
-      appeal: {},
-      streams: {
-        appeal_0: {
-          issues: {
-            issue_0: {
-              program: "Compensation",
-              description: "Left Elbow"
-            }
-          },
-          nod: 99,
-          soc: 10,
-          docs_in_efolder: 88,
-          contentions: "This is a contentions comment",
-          periods: "This is a periods comment"
-        }
-      }
-    }
+  def hearing_worksheet
+    worksheet.to_hash_for_worksheet
   end
 end

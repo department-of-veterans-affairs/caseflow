@@ -1,7 +1,8 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
+import { update } from '../util/ReducerUtil';
+import { categoryFieldNameOfCategoryName, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
@@ -19,34 +20,10 @@ const updateFilteredDocIds = (nextState) => {
         map(([key]) => key).
         value();
 
-  const updateListComments = (state, id, foundComment) => {
-    return update(state, {
-      documents: {
-        [id]: {
-          listComments: {
-            $set: foundComment
-          }
-        }
-      }
-    });
-  };
-
-  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
-    return update(state, {
-      ui: {
-        searchCategoryHighlights: {
-          $merge: {
-            [docId]: {
-              ...categoryMatches
-            }
-          }
-        }
-      }
-    });
-  };
-
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
-  let updatedNextState = nextState;
+
+  // ensure we have a deep clone so we are not mutating the original state
+  let updatedNextState = update(nextState, {});
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -74,13 +51,12 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
-        doc.id, matchesCategories);
+      updatedNextState.ui.searchCategoryHighlights[doc.id] = matchesCategories;
     }
 
     // updating the state of all annotations for expanded comments
     if (containsWords !== doc.listComments) {
-      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+      updatedNextState.documents[doc.id].listComments = containsWords;
     }
   });
 
@@ -207,7 +183,8 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  documentsByFile: {}
+  pages: {},
+  pdfDocuments: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -391,18 +368,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.SET_PDF_READY_TO_SHOW:
-    return update(state, {
-      ui: {
-        pdf: {
-          pdfsReadyToShow: {
-            $set: {
-              [action.payload.docId]: true
-            }
-          }
-        }
-      }
-    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
       hideErrorMessage(state, 'category'),
@@ -521,6 +486,23 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.ROTATE_PDF_DOCUMENT: {
+    const rotation = (_.get(state.documents, [action.payload.docId, 'rotation'], 0) +
+      Constants.ROTATION_INCREMENTS) % Constants.COMPLETE_ROTATION;
+
+    return update(
+      state,
+      {
+        documents: {
+          [action.payload.docId]: {
+            rotation: {
+              $set: rotation
+            }
+          }
+        }
+      }
+    );
+  }
   case Constants.SET_CATEGORY_FILTER:
     return updateFilteredDocIds(update(
       state,
@@ -1041,24 +1023,69 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_PDF_PAGE_DIMENSIONS:
+  case Constants.SET_UP_PDF_PAGE:
     return update(
       state,
       {
-        documentsByFile: {
-          [action.payload.file]: {
-            $apply: (file) => ({
-              pages: {
-                ..._.get(file, ['pages'], {}),
-                [action.payload.pageIndex]: {
-                  ...action.payload.dimensions
-                }
-              }
-            })
+        pages: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $set: action.payload.page
           }
         }
       }
     );
+  case Constants.CLEAR_PDF_PAGE: {
+    // We only want to remove the page and container if we're cleaning up the same page that is
+    // currently stored here. This is to avoid a race condition where a user returns to this
+    // page and the new page object is stored here before we have a chance to destroy the
+    // old object.
+    const FILE_PAGE_INDEX = `${action.payload.file}-${action.payload.pageIndex}`;
+
+    if (action.payload.page &&
+      _.get(state.pages, [FILE_PAGE_INDEX, 'page']) === action.payload.page) {
+      return update(
+        state,
+        {
+          pages: {
+            [FILE_PAGE_INDEX]: {
+              $merge: {
+                page: null,
+                container: null
+              }
+            }
+          }
+        }
+      );
+    }
+
+    return state;
+  }
+  case Constants.SET_PDF_DOCUMENT:
+    return update(
+      state,
+      {
+        pdfDocuments: {
+          [action.payload.file]: {
+            $set: action.payload.doc
+          }
+        }
+      }
+    );
+  case Constants.CLEAR_PDF_DOCUMENT:
+    if (action.payload.doc && _.get(state.pdfDocuments, [action.payload.file]) === action.payload.doc) {
+      return update(
+        state,
+        {
+          pdfDocuments: {
+            [action.payload.file]: {
+              $set: null
+            }
+          }
+        });
+    }
+
+    return state;
+
   default:
     return state;
   }

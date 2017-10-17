@@ -4,6 +4,17 @@ import * as Constants from '../../../app/reader/constants';
 
 describe('PdfViewer', () => {
   describe('getNextAnnotationIconPageCoords', () => {
+    const pages = {
+      'test-1': {
+        dimensions: {
+          width: 1000,
+          height: 2000
+        }
+      }
+    };
+    const file = 'test';
+    const noRotation = 0;
+
     describe('allowing movement', () => {
       it('up in the middle of the page', () => {
         expect(
@@ -14,12 +25,9 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 100,
@@ -36,12 +44,9 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 100,
@@ -58,12 +63,9 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 95,
@@ -80,12 +82,9 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 105,
@@ -103,12 +102,9 @@ describe('PdfViewer', () => {
               x: 100,
               y: 0
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 100,
@@ -125,12 +121,9 @@ describe('PdfViewer', () => {
               x: 0,
               y: 100
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 0,
@@ -147,12 +140,9 @@ describe('PdfViewer', () => {
               x: 960,
               y: 300
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 960,
@@ -169,12 +159,9 @@ describe('PdfViewer', () => {
               x: 0,
               y: 1960
             },
-            {
-              1: {
-                width: 1000,
-                height: 2000
-              }
-            }
+            pages,
+            file,
+            noRotation
           )
         ).to.deep.equal({
           x: 0,
@@ -182,6 +169,85 @@ describe('PdfViewer', () => {
         });
       });
 
+    });
+    describe('when rotated 90 degrees', () => {
+      const oneRotation = 90;
+
+      it('up in the middle of the page', () => {
+        expect(
+          getNextAnnotationIconPageCoords(
+            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.UP,
+            {
+              pageIndex: 1,
+              x: 100,
+              y: 200
+            },
+            pages,
+            file,
+            oneRotation
+          )
+        ).to.deep.equal({
+          x: 95,
+          y: 200
+        });
+      });
+
+      it('down in the middle of the page', () => {
+        expect(
+          getNextAnnotationIconPageCoords(
+            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN,
+            {
+              pageIndex: 1,
+              x: 100,
+              y: 200
+            },
+            pages,
+            file,
+            oneRotation
+          )
+        ).to.deep.equal({
+          x: 105,
+          y: 200
+        });
+      });
+
+      it('left in the middle of the page', () => {
+        expect(
+          getNextAnnotationIconPageCoords(
+            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT,
+            {
+              pageIndex: 1,
+              x: 100,
+              y: 200
+            },
+            pages,
+            file,
+            oneRotation
+          )
+        ).to.deep.equal({
+          x: 100,
+          y: 205
+        });
+      });
+
+      it('right in the middle of the page', () => {
+        expect(
+          getNextAnnotationIconPageCoords(
+            Constants.MOVE_ANNOTATION_ICON_DIRECTIONS.RIGHT,
+            {
+              pageIndex: 1,
+              x: 100,
+              y: 200
+            },
+            pages,
+            file,
+            oneRotation
+          )
+        ).to.deep.equal({
+          x: 100,
+          y: 195
+        });
+      });
     });
   });
 });

@@ -1,4 +1,5 @@
 import * as Constants from '../constants/constants';
+import ApiUtil from '../../util/ApiUtil';
 
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,
@@ -35,12 +36,6 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const onDescriptionChange = (description) => ({
-  type: Constants.SET_DESCRIPTIONS,
-  payload: {
-    description
-  }
-});
 
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
@@ -103,10 +98,10 @@ export const onContentionsChange = (contentions) => ({
   }
 });
 
-export const onPeriodsChange = (periods) => ({
-  type: Constants.SET_PERIODS,
+export const onMilitaryServiceChange = (militaryService) => ({
+  type: Constants.SET_MILITARY_SERVICE,
   payload: {
-    periods
+    militaryService
   }
 });
 
@@ -117,9 +112,35 @@ export const onEvidenceChange = (evidence) => ({
   }
 });
 
-export const onCommentsChange = (comments) => ({
-  type: Constants.SET_COMMENTS,
+export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
+  type: Constants.SET_COMMENTS_FOR_ATTORNEY,
   payload: {
-    comments
+    commentsForAttorney
   }
 });
+
+export const toggleWorksheetSaving = () => ({
+  type: Constants.TOGGLE_WORKSHEET_SAVING
+});
+
+export const setWorksheetSaveFailedStatus = (saveFailed) => ({
+  type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
+  payload: {
+    saveFailed
+  }
+});
+
+export const saveWorksheet = (worksheet) => (dispatch) => {
+  if (!worksheet.edited) {
+    return;
+  }
+
+  ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
+  then(() => {
+    dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
+  },
+  () => {
+    dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
+      payload: { saveFailed: true } });
+  });
+};

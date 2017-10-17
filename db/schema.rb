@@ -11,7 +11,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170815120508) do
+ActiveRecord::Schema.define(version: 20171005184519) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -245,6 +246,9 @@ ActiveRecord::Schema.define(version: 20170815120508) do
     t.string   "hearing_preference"
     t.date     "nod_date"
     t.date     "form9_date"
+    t.date     "ssoc_date_1"
+    t.date     "ssoc_date_2"
+    t.date     "ssoc_date_3"
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
@@ -252,24 +256,32 @@ ActiveRecord::Schema.define(version: 20170815120508) do
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"
     t.integer "appeal_id"
-    t.string  "vacols_id",                       null: false
-    t.string  "worksheet_witness"
-    t.string  "worksheet_contentions"
-    t.string  "worksheet_evidence"
-    t.string  "worksheet_military_service"
-    t.string  "worksheet_comments_for_attorney"
+    t.string  "vacols_id",             null: false
+    t.string  "witness"
+    t.string  "contentions"
+    t.string  "evidence"
+    t.string  "military_service"
+    t.string  "comments_for_attorney"
   end
 
-  create_table "issues", force: :cascade do |t|
-    t.integer "appeal_id"
-    t.string  "vacols_sequence_id"
-    t.boolean "hearing_worksheet_reopen", default: false
-    t.boolean "hearing_worksheet_vha",    default: false
-    t.boolean "allow",                    default: false
-    t.boolean "deny",                     default: false
-    t.boolean "remand",                   default: false
-    t.boolean "dismiss",                  default: false
+  create_table "intakes", force: :cascade do |t|
+    t.integer  "detail_id",           null: false
+    t.string   "detail_type",         null: false
+    t.integer  "user_id",             null: false
+    t.string   "veteran_file_number"
+    t.datetime "started_at"
   end
+
+  add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
+
+  create_table "ramp_elections", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date   "notice_date",         null: false
+    t.date   "receipt_date"
+    t.string "option_selected"
+  end
+
+  add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
@@ -325,6 +337,25 @@ ActiveRecord::Schema.define(version: 20170815120508) do
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
+
+  create_table "worksheet_issues", force: :cascade do |t|
+    t.integer  "appeal_id"
+    t.string   "vacols_sequence_id"
+    t.boolean  "reopen",             default: false
+    t.boolean  "vha",                default: false
+    t.boolean  "allow",              default: false
+    t.boolean  "deny",               default: false
+    t.boolean  "remand",             default: false
+    t.boolean  "dismiss",            default: false
+    t.string   "program"
+    t.string   "name"
+    t.string   "levels"
+    t.string   "description"
+    t.boolean  "from_vacols"
+    t.datetime "deleted_at"
+  end
+
+  add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
   add_foreign_key "certifications", "users"

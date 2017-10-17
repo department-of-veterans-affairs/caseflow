@@ -11,6 +11,38 @@
     <% end %>
   </title>
 
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto', {
+      siteSpeedSampleRate: 100,
+      userId: '<%= current_user ? current_user.id : "" %>'
+    });
+
+    window.analyticsPageView = function(page) {
+      ga('send', 'pageview', page);
+    }
+
+    window.analyticsEvent = function(category, action, label) {
+      ga('send', 'event', category, action, label)
+    }
+
+    window.analyticsTiming = function(fieldsObject) {
+      var clonedFieldsObject = JSON.parse(JSON.stringify(fieldsObject));
+      clonedFieldsObject.hitType = 'timing';
+      // Apparently, GA does not like fractional values.
+      clonedFieldsObject.timingValue = Math.floor(clonedFieldsObject.timingValue);
+      ga('send', clonedFieldsObject);
+    };
+
+    <% unless @react_routed %>
+      analyticsPageView('<%= current_ga_path %>');
+    <% end %>
+  </script>
+
   <% if ENV["PUBLIC_SENTRY_DSN"] %>
     <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
     <script>
@@ -67,101 +99,64 @@
 
 -->
 
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-    ga('create', '<%= Rails.configuration.google_analytics_account %>', 'auto', {
-      userId: '<%= current_user ? current_user.id : "" %>'
-    });
-
-    window.analyticsPageView = function(page) {
-      ga('send', 'pageview', page);
-    }
-
-    window.analyticsEvent = function(category, action, label) {
-      ga('send', 'event', category, action, label)
-    }
-
-    <% unless @react_routed %>
-      analyticsPageView('<%= current_ga_path %>');
-    <% end %>
-  </script>
-
-  <script>
-    // Used to track events in the header, where we don't have React to stub
-    window.tryAnalyticsEvent = function(category, action, label) {
-      if(window.analyticsEvent) { analyticsEvent(category, action, label) }
-      else { console.log("EVENT: " + category + " " + action + " " + label) }
-    }
-  </script>
-
   <%= favicon_link_tag %>
 
 </head>
 <body class="cf-app-<%= application %>">
   <div class="cf-content">
     <div class="cf-content-inside<%= ' full-page' if content_for?(:full_page_content) %>">
-      <header class="cf-app-header">
-        <div>
-          <div class="cf-app-width">
-            <div class="cf-push-left">
+      <% if !content_for?(:full_page_content) %>
+        <header class="cf-app-header">
+          <div>
+            <div class="cf-app-width">
               <div class="cf-push-left">
-                <h1 class="cf-logo <%= logo_class %>">
-                  <a id="cf-logo-link" href="<%= logo_path %>">
-                    Caseflow <span class="cf-logo-name"><%= logo_name %></span>
-                  </a>
-                </h1>
-                <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
+                <div class="cf-push-left">
+                  <h1 class="cf-logo <%= logo_class %>">
+                    <a id="cf-logo-link" href="<%= logo_path %>">
+                      Caseflow <span class="cf-logo-name"><%= logo_name %></span>
+                    </a>
+                  </h1>
+                  <h2 id="page-title" class="cf-application-title"><%= yield :page_title %></h2>
+                </div>
+              </div>
+              <div class="cf-push-right">
+                <% unless current_user.nil? %>
+                  <div class="cf-nav cf-dropdown">
+                    <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
+                      <%= current_user.display_name %>
+                    </a>
+
+                    <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
+                      <li><a href="<%= help_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickHelp', eventLabel: 'Help', eventValue: 1});">Help</a></li>
+                      <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
+                      <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: '/whats_new', action: 'show'%>">What's New?</a></li>
+
+                      <% if ApplicationController.dependencies_faked? %>
+                        <li>
+                          <a href="<%= url_for controller: '/test/users', action: 'index'%>">Switch User</a>
+                        </li>
+                      <% end %>
+
+                      <li>
+                        <div class="dropdown-border"></div>
+                        <a href="<%= url_for controller: '/sessions', action: 'destroy'%>">Sign out</a>
+                      </li>
+                    </ul>
+                  </div>
+                <% end %>
               </div>
             </div>
-            <div class="cf-push-right">
-              <% unless current_user.nil? %>
-                <div class="cf-nav cf-dropdown">
-                  <a href="#menu" class="cf-dropdown-trigger" id="menu-trigger">
-                    <%= current_user.display_name %>
-                  </a>
-
-                  <ul id="menu" class="cf-dropdown-menu" aria-labelledby="menu-trigger">
-                    <li><a href="<%= help_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickHelp', eventLabel: 'Help', eventValue: 1});">Help</a></li>
-                    <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
-                    <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: '/whats_new', action: 'show'%>">What's New?</a></li>
-
-                    <% if ApplicationController.dependencies_faked? %>
-                      <li>
-                        <a href="<%= url_for controller: '/test/users', action: 'index'%>">Switch User</a>
-                      </li>
-                    <% end %>
-
-                    <% if current_user.admin? %>
-                      <li>
-                        <a href="<%= url_for controller: '/functions', action: 'index'%>">Change Functions</a>
-                      </li>
-                    <% end %>
-
-                    <li>
-                      <div class="dropdown-border"></div>
-                      <a href="<%= url_for controller: '/sessions', action: 'destroy'%>">Sign out</a>
-                    </li>
-                  </ul>
-                </div>
-              <% end %>
-            </div>
           </div>
-        </div>
 
-       <% if current_user && current_user.authenticated? %>
-         <%= react_component("PerformanceDegradationBanner") %>
-       <% end %>
+         <% if current_user && current_user.authenticated? %>
+           <%= react_component("PerformanceDegradationBanner") %>
+         <% end %>
 
-      </header>
+        </header>
+      <% end %>
       <% if content_for?(:full_page_content) %>
-      <main class="cf-app-width cf-full-page-app">
         <%= yield(:full_page_content) if content_for?(:full_page_content) %>
         <%= yield %>
-      </main>
       <% else %>
       <main class="cf-app-width">
         <%= yield(:content) if content_for?(:content) %>
@@ -172,7 +167,7 @@
   <footer class="cf-app-footer">
     <div class="cf-app-width">
       <div class="cf-push-left">
-        <span<% if Rails.application.config.build_version %> title="<%= Rails.application.config.build_version[:date] %>"<% end %>>Built</span> with <abbr title="love">&#9825;</abbr> by the
+        <span title="<%= build_date %>">Built</span> with <abbr title="love">&#9825;</abbr> by the
         <a href="https://www.usds.gov/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
       </div>
       <div class="cf-push-right">

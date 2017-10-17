@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :appeals, only: :index
+      resources :jobs, only: :create
     end
   end
 
@@ -61,7 +62,8 @@ Rails.application.routes.draw do
   end
 
   namespace :reader do
-    get 'appeal/veteran-id/:veteran_id', to: "appeal#find_appeals_by_veteran_id", constraints: { veteran_id: /[a-zA-Z0-9]{2,12}/ }
+    get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
+      constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
@@ -70,23 +72,22 @@ Rails.application.routes.draw do
 
   namespace :hearings do
     resources :dockets, only: [:index, :show]
-    resources :worksheets, only: [:update, :show]
+    resources :worksheets, only: [:update, :show], param: :hearing_id
+    resources :appeals, only: [:update], param: :appeal_id
   end
-  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
+  get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
   resources :hearings, only: [:update]
 
   patch "certifications" => "certifications#create"
 
-  namespace :admin do
-    post "establish-claim", to: "establish_claims#create"
-    get "establish-claim", to: "establish_claims#show"
+
+  match '/intake/:any' => 'intakes#index', via: [:get]
+  resources :intakes, path: "intake", only: [:index, :create]
+
+  namespace :intake do
+    resources :ramp_intakes, path: "ramp", only: [:update, :destroy]
   end
-
-  resources :functions, only: :index
-  patch '/functions/change', to: 'functions#change'
-
-  resources :offices, only: :index
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
@@ -108,7 +109,6 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
 
-  post 'jobs/start_async' => 'jobs#start_async'
 
   # alias root to help; make sure to keep this below the canonical route so url_for works
   root 'help#index'
@@ -123,15 +123,6 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
-    # Only allow data_setup routes if TEST_USER is set
-    if ENV["TEST_USER_ID"]
-      resources :setup, only: [:index]
-      post "setup-uncertify-appeal" => "setup#uncertify_appeal"
-      post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset"
-      post "setup-toggle-features" => "setup#toggle_features"
-      get "setup-delete-test-data" => "setup#delete_test_data"
-    end
-
     if ApplicationController.dependencies_faked?
       resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"

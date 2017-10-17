@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
+import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -18,25 +19,30 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [{ value: 30,
-  label: '30 days' },
-{ value: 60,
-  label: '60 days' },
-{ value: 90,
-  label: '90 days' }];
+const holdOptions = [
+  { value: 0,
+    label: '0 days' },
+  { value: 30,
+    label: '30 days' },
+  { value: 60,
+    label: '60 days' },
+  { value: 90,
+    label: '90 days' }];
 
-const aodOptions = [{ value: 'grant',
-  label: 'Grant' },
+const aodOptions = [{ value: 'granted',
+  label: 'Granted' },
 { value: 'filed',
   label: 'Filed' },
 { value: 'none',
   label: 'None' }];
 
-const getDate = (date, timezone) => {
-  return moment.tz(date, timezone).
-    format('h:mm a z').
-    replace(/(p|a)m/, '$1.m.');
+const getDate = (date) => {
+  return moment(date).
+    format('LT').
+    replace('AM', 'a.m.').
+    replace('PM', 'p.m.');
 };
+
 
 export class DocketHearingRow extends React.PureComponent {
 
@@ -60,21 +66,24 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
+    const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
+
     return <tbody>
       <tr>
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date, hearing.venue.timezone)}
-            <br/>
-            {`${hearing.venue.city}, ${hearing.venue.state}`}
+            {getDate(hearing.date)} EDT
+          </span>
+          <span>
+            {hearing.regional_office_name}
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{hearing.appellant_last_first_mi}</b>
-          <Link to={`/hearings/${hearing.id}/worksheet`}>{hearing.vbms_id}</Link>
+          <b>{appellantDisplay}</b>
+          <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
-        <td className="cf-hearings-docket-rep">{hearing.representative_name}</td>
+        <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
           <SearchableDropdown
             label="Disposition"
@@ -104,7 +113,7 @@ export class DocketHearingRow extends React.PureComponent {
             <Checkbox
               label="Add on"
               name={`${hearing.id}.addon`}
-              value={hearing.addon}
+              value={hearing.add_on}
               onChange={this.setAddOn}
             />
           </div>
@@ -121,12 +130,13 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
+         <div>
+          <label htmlFor={`${hearing.id}.notes`}>Notes</label>
           <div>
-            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
-            <div>
-              <textarea
+              <Textarea
                 id={`${hearing.id}.notes`}
-                defaultValue={hearing.notes}
+                value={hearing.notes || ''}
+                name="Notes"
                 onChange={this.setNotes}
                 maxLength="100"
               />

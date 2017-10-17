@@ -22,6 +22,8 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
+[View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
+
 ## Setup
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 
@@ -54,9 +56,10 @@ The version on the website does not work on recent versions of OSX (Sierra and E
 
 For the frontend, you'll need to install Node and the relevant npm modules
 
-    nvm install v6.10.2
+    # Use the version of Node defined in .nvmrc.
+    nvm use
 
-    cd client && nvm use && npm install
+    cd client && yarn
 
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
@@ -76,24 +79,9 @@ Or to run the rails server and frontend webpack server separately:
 
     REACT_ON_RAILS_ENV=hot bundle exec rails s
 
-    cd client && nvm use && npm run dev
+    cd client && nvm use && yarn run dev
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
-
-## Certification (Dev Mode)
-
-To log in, you can use the following credentials:
-
-Username: "DSUSER"
-Password: "DSUSER"
-
-To get to the various pages in the workflow we have a set of five URLs of dummy data.
-
-[http://localhost:3000/certifications/new/123C](http://localhost:3000/certifications/new/123C) is an appeal that is ready to certify.
-[http://localhost:3000/certifications/new/456C](http://localhost:3000/certifications/new/456C) is an appeal with mismatched docs.
-[http://localhost:3000/certifications/new/789C](http://localhost:3000/certifications/new/789C) is an appeal that is already certified.
-[http://localhost:3000/certifications/new/000ERR](http://localhost:3000/certifications/new/000ERR) is an appeal that raises a vbms error.
-[http://localhost:3000/certifications/new/001ERR](http://localhost:3000/certifications/new/001ERR) is an appeal that is missing data.
 
 ## Roles
 
@@ -199,45 +187,9 @@ You can run any one of the parallel categories on its own via (where `CATEGORY` 
 
     rake spec:parallel:CATEGORY
 
-## Feature Toggle
+## Feature Toggle and Functions
 
-To enable and disable features using `rails c`. Example usage:
-
-```
-# users
-user1 = User.new(regional_office: "RO03")
-user2 = User.new(regional_office: "RO04")
-
-# enable for everyone
-FeatureToggle.enable!(:apple)
-=> true
-FeatureToggle.enabled?(:apple, user1)
-=> true
-
-# enable for a list of regional offices
-FeatureToggle.enable!(:apple, regional_offices: ["RO03", "RO08"])
-=> true
-
-# add more regional offices to the same feature
-FeatureToggle.enable!(:apple, regional_offices: ["RO03", "RO09"])
-=> true
-
-# view the details
-FeatureToggle.details_for(:apple)
-=> { :regional_offices => ["RO03", "RO08", "RO09"] }
-
-# check if the feature is enabled for a given user
-FeatureToggle.enabled?(:apple, user1)
-=> true
-FeatureToggle.enabled?(:apple, user2)
-=> false
-
-# disable a few regional offices
-FeatureToggle.disable!(:apple, regional_offices: ["RO03", "RO09"])
-=> true
-FeatureToggle.details_for(:apple)
-=> { :regional_offices =>["RO08"] }
-```
+See [Caseflow Commons](https://github.com/department-of-veterans-affairs/caseflow-commons)
 
 ## Out of Service
 

@@ -7,11 +7,12 @@ describe User do
   let(:user) { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
 
   before(:all) do
-    User.case_assignment_repository = Fakes::CaseAssignmentRepository
+    User.appeal_repository = Fakes::AppealRepository
+    Functions.client.del("System Admin")
   end
 
   after(:all) do
-    Functions.redis.flushall
+    Functions.delete_all_keys!
   end
 
   before do
@@ -74,45 +75,12 @@ describe User do
     end
   end
 
-  context "#admin functions" do
-    subject { user.functions }
-
-    context "user has only system admin role" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
-
-      before { session["user"]["admin_roles"] = [] }
-      it "disables other roles" do
-        expect(subject["Reader"][:enabled]).to be_falsey
-        expect(subject["Establish Claim"][:enabled]).to be_falsey
-        expect(subject["Certify Appeal"][:enabled]).to be_falsey
-      end
-    end
-
-    context "user has more than a system admin role" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
-      before { session["user"]["admin_roles"] = ["Manage Claim Establishment"] }
-
-      it "enables only selected roles" do
-        expect(subject["Manage Claim Establishment"][:enabled]).to be_truthy
-        expect(subject["Reader"][:enabled]).to be_falsey
-      end
-    end
-  end
-
   context "CSUM/CSEM users with 'System Admin' function" do
     before { user.roles = ["System Admin"] }
+    before { Functions.client.del("System Admin") }
 
     it "are not admins" do
       expect(user.admin?).to be_falsey
-    end
-  end
-
-  context "#toggle_admin_roles" do
-    it "adds a function and then removes" do
-      user.toggle_admin_roles(role: "Establish Claim", enable: true)
-      expect(user.admin_roles).to eq ["Establish Claim"]
-      user.toggle_admin_roles(role: "Establish Claim", enable: false)
-      expect(user.admin_roles).to eq []
     end
   end
 
@@ -135,7 +103,7 @@ describe User do
 
   context "#can?" do
     subject { user.can?("Do the thing") }
-    before { Functions.grant!("System Admin", users: ["123"]) }
+    before { Functions.client.del("System Admin") }
 
     context "when roles are nil" do
       before { session["user"]["roles"] = nil }
@@ -152,13 +120,21 @@ describe User do
       it { is_expected.to be_truthy }
     end
 
-    context "when system admin roles don't contain the thing" do
-      before { session["user"]["admin_roles"] = ["System Admin"] }
+    context "when roles don't contain the thing but user is granted the function" do
+      before { session["user"]["roles"] = ["Do the other thing!"] }
+      before { Functions.grant!("Do the thing", users: ["123"]) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when roles contains the thing but user is denied" do
+      before { session["user"]["roles"] = ["Do the thing"] }
+      before { Functions.deny!("Do the thing", users: ["123"]) }
       it { is_expected.to be_falsey }
     end
 
-    context "when system admin roles contain the thing" do
-      before { session["user"]["admin_roles"] = ["System Admin", "Do the thing"] }
+    context "when system admin and roles don't contain the thing" do
+      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { session["user"]["roles"] = ["Do the other thing"] }
       it { is_expected.to be_truthy }
     end
   end
@@ -166,7 +142,7 @@ describe User do
   context "#admin?" do
     subject { user.admin? }
     before { session["user"]["roles"] = nil }
-    before { Functions.redis.flushall }
+    before { Functions.client.del("System Admin") }
 
     context "when user with roles that are nil" do
       it { is_expected.to be_falsey }
@@ -215,16 +191,16 @@ describe User do
     let(:appeal) { Generators::Appeal.create }
 
     before do
-      User.case_assignment_repository = Fakes::CaseAssignmentRepository
+      User.appeal_repository = Fakes::AppealRepository
     end
 
     it "returns empty array when no cases are assigned" do
-      Fakes::CaseAssignmentRepository.appeal_records = []
+      Fakes::AppealRepository.appeal_records = []
       is_expected.to be_empty
     end
 
     it "returns appeal assigned to user" do
-      Fakes::CaseAssignmentRepository.appeal_records = [appeal]
+      Fakes::AppealRepository.appeal_records = [appeal]
       is_expected.to match_array([appeal])
     end
   end
@@ -235,7 +211,7 @@ describe User do
     let(:appeal) { Generators::Appeal.create }
 
     before do
-      Fakes::CaseAssignmentRepository.appeal_records = [appeal]
+      Fakes::AppealRepository.appeal_records = [appeal]
     end
 
     it "returns nil when no cases have been viewed" do
@@ -266,7 +242,6 @@ describe User do
     context "gets a user object from a session" do
       before do
         session["user"]["roles"] = ["Do the thing"]
-        session["user"]["admin_roles"] = ["Do even more"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
         session["user"]["ip_address"] = "127.0.0.1"
@@ -277,7 +252,6 @@ describe User do
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
-        expect(subject.admin_roles).to eq(["Do even more"])
       end
 
       it "persists user to DB" do

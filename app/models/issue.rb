@@ -1,14 +1,11 @@
 # Note: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent
-class Issue < ActiveRecord::Base
-  include AssociatedVacolsModel
+class Issue
+  include ActiveModel::Model
 
-  vacols_attr_accessor :program, :type, :category, :description, :disposition, :levels,
-                       :program_description, :note
-
-  belongs_to :appeal
-  belongs_to :hearing, foreign_key: :appeal_id, primary_key: :appeal_id
+  attr_accessor :id, :program, :type, :category, :description, :disposition, :levels,
+                :program_description, :note, :vacols_sequence_id
 
   PROGRAMS = {
     "02" => :compensation
@@ -49,11 +46,8 @@ class Issue < ActiveRecord::Base
   end
 
   def attributes
-    super.merge(vacols_attributes)
-  end
-
-  def vacols_attributes
     {
+      vacols_sequence_id: vacols_sequence_id,
       levels: levels,
       program: program,
       type: type,
@@ -89,7 +83,9 @@ class Issue < ActiveRecord::Base
 
       disposition = (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other")
                     .parameterize.underscore.to_sym
+
       new(
+        id: hash["isskey"],
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],

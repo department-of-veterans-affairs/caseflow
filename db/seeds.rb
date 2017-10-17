@@ -81,11 +81,21 @@ class SeedDB
     @users.push(User.create(css_id: "System Admin", station_id: "283", full_name: "Angelina Smith"))
     @users.push(User.create(css_id: "Reader", station_id: "283", full_name: "Angelina Smith"))
     @users.push(User.create(css_id: "Hearing Prep", station_id: "283", full_name: "Lauren Roth"))
+    @users.push(User.create(css_id: "Mail Intake", station_id: "283", full_name: "Kwame Nkrumah"))
   end
 
   def create_annotations
     Generators::Annotation.create(comment: "Hello World!", document_id: 1, x: 300, y: 400)
     Generators::Annotation.create(comment: "This is an example comment", document_id: 2)
+  end
+
+  def create_ramp_elections(number)
+    number.times do |i|
+      RampElection.create!(
+        veteran_file_number: "#{i}5555555",
+        notice_date: i.weeks.ago
+      )
+    end
   end
 
   def create_tags
@@ -109,22 +119,17 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
   end
 
-   def set_up_feature_toggles
-     FeatureToggle.disable!(:reader)
-     FeatureToggle.enable!(:reader, users: ["Reader"])
-   end
-
   def seed
     clean_db
     create_default_users
     create_appeals(50)
     create_users(3)
     create_tasks(50)
+    create_ramp_elections(9)
     create_annotations
     create_tags
     create_hearings
     create_api_key
-    set_up_feature_toggles
   end
 end
 

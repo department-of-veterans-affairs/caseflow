@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
+import _ from 'lodash';
 
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 // A regex that will match as much of a mm/dd/yyyy date as possible.
@@ -8,7 +9,6 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 
 export default class DateSelector extends React.Component {
-
   dateFill = (initialValue) => {
     let value = initialValue || '';
     let propsValue = this.props.value || '';
@@ -45,8 +45,9 @@ export default class DateSelector extends React.Component {
       required,
       type,
       validationError,
-      value
-    } = this.props;
+      value,
+      ...passthroughProps
+    } = _.omit(this.props, 'onChange');
 
     return <TextField
       errorMessage={errorMessage}
@@ -59,6 +60,7 @@ export default class DateSelector extends React.Component {
       onChange={this.dateFill}
       placeholder={DEFAULT_TEXT}
       required={required}
+      {...passthroughProps}
     />;
 
   }

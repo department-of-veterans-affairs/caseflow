@@ -7,6 +7,7 @@ class Fakes::AppealRepository
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
     attr_accessor :certified_appeal
+    cattr_accessor :appeal_records
 
     def records
       @records ||= {}
@@ -14,6 +15,10 @@ class Fakes::AppealRepository
 
     def clean!
       @records = {}
+    end
+
+    def load_user_case_assignments_from_vacols(_css_id)
+      appeal_records || Fakes::Data::AppealData.default_records
     end
   end
 
@@ -97,6 +102,9 @@ class Fakes::AppealRepository
     Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
   end
 
+  def self.close!(*)
+  end
+
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")
@@ -141,10 +149,6 @@ class Fakes::AppealRepository
 
   def self.amc_full_grants(*)
     []
-  end
-
-  def self.uncertify(_appeal)
-    # noop
   end
 
   def self.issues(vacols_id)
@@ -371,15 +375,14 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+      issues: [Generators::Issue.build,
                Generators::Issue.build(disposition: "Osteomyelitis",
                                        levels: ["Osteomyelitis"],
                                        description: [
                                          "15 - Compensation",
                                          "26 - Osteomyelitis"
                                        ],
-                                       program_description: "06 - Medical",
-                                       vacols_id: "reader_id2")],
+                                       program_description: "06 - Medical")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -406,8 +409,7 @@ class Fakes::AppealRepository
           "14 - Right knee",
           "22 - Cervical strain"
         ],
-        program_description: "06 - Medical",
-        vacols_id: "reader_id2")],
+        program_description: "06 - Medical")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -425,7 +427,7 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
+      issues: [Generators::Issue.build],
       documents: redacted_reader_documents
     )
     Generators::Appeal.build(
@@ -443,15 +445,14 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+      issues: [Generators::Issue.build,
                Generators::Issue.build(disposition: "Osteomyelitis",
                                        levels: ["Osteomyelitis"],
                                        description: [
                                          "15 - Compensation",
                                          "26 - Osteomyelitis"
                                        ],
-                                       program_description: "06 - Medical",
-                                       vacols_id: "reader_id2")],
+                                       program_description: "06 - Medical")],
       documents: static_reader_documents
     )
   end

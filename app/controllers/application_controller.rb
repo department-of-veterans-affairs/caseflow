@@ -1,12 +1,4 @@
-class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
-
-  force_ssl if: :ssl_enabled?
-  before_action :check_out_of_service
-  before_action :strict_transport_security
-
+class ApplicationController < ApplicationBaseController
   before_action :set_application
   before_action :set_timezone,
                 :setup_fakes,
@@ -17,35 +9,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
-  def unauthorized
-    render status: 403
-  end
-
   private
-
-  def check_out_of_service
-    render "out_of_service", layout: "application" if Rails.cache.read("out_of_service")
-  end
-
-  def ssl_enabled?
-    Rails.env.production? && !(request.path =~ /health-check/)
-  end
-
-  def strict_transport_security
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains" if request.ssl?
-  end
-
-  def not_found
-    respond_to do |format|
-      format.html do
-        render "errors/404", layout: "application", status: 404
-      end
-      format.json do
-        render json: {
-          errors: ["Response not found"] }, status: 404
-      end
-    end
-  end
 
   def current_user
     @current_user ||= begin
@@ -92,6 +56,28 @@ class ApplicationController < ActionController::Base
     root_path
   end
   helper_method :logo_path
+
+  def dropdown_urls
+    urls = [
+      {
+        title: "Help",
+        link: help_url
+      },
+      {
+        title: "Send Feedback",
+        link: feedback_url,
+        target: "_blank"
+      }
+    ]
+
+    urls.append(title: "Switch User",
+                link: url_for(controller: "/test/users", action: "index")) if ApplicationController.dependencies_faked?
+    urls.append(title: "Sign Out",
+                link: url_for(controller: "/sessions", action: "destroy"))
+
+    urls
+  end
+  helper_method :dropdown_urls
 
   def certification_header(title)
     "&nbsp &gt &nbsp".html_safe + title
@@ -146,14 +132,6 @@ class ApplicationController < ActionController::Base
     "&nbsp &#124 &nbsp".html_safe + title
   end
   helper_method :page_title
-
-  def verify_feature_enabled(feature)
-    return true if FeatureToggle.enabled?(feature, user: current_user)
-    Rails.logger.info("User id #{current_user.id} attempted to access #{feature} "\
-                      " feature but it was not enabled for them #{request.original_url}")
-    session["return_to"] = request.original_url
-    redirect_to "/unauthorized"
-  end
 
   def verify_authorized_roles(*roles)
     return true if current_user && roles.all? { |r| current_user.can?(r) }
@@ -211,6 +189,8 @@ class ApplicationController < ActionController::Base
                 "Caseflow Certification"
               elsif request.original_fullpath.include? "reader"
                 "Caseflow Reader"
+              elsif request.original_fullpath.include? "hearings"
+                "Caseflow Hearing Prep"
               else
                 # default to just plain Caseflow.
                 "Caseflow"
@@ -221,6 +201,11 @@ class ApplicationController < ActionController::Base
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
   helper_method :feedback_url
+
+  def build_date
+    return Rails.application.config.build_version[:date] if Rails.application.config.build_version
+  end
+  helper_method :build_date
 
   class << self
     def dependencies_faked?

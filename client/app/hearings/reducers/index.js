@@ -27,6 +27,29 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
+// TODO move to issue reducer
+export const newHearingIssueState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
+
+  return update(state, {
+    worksheet: {
+      appeals_ready_for_hearing: {
+        [action.payload.appealKey]: {
+          worksheet_issues: {
+            [action.payload.issueKey]: spec
+          }
+        }
+      }
+    }
+  });
+};
+
+export const newHearingWorksheetState = (state, action, spec) => {
+  _.extend(spec, { edited: { $set: true } });
+
+  return update(state, { worksheet: spec });
+};
+
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
   case Constants.POPULATE_DOCKETS:
@@ -45,13 +68,27 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_REPNAME:
-    return update(state, {
-      worksheet: { repName: { $set: action.payload.repName } }
-    });
+    return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
   case Constants.SET_WITNESS:
-    return update(state, {
-      worksheet: { witness: { $set: action.payload.witness } }
+    return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
+
+  case Constants.SET_CONTENTIONS:
+    return newHearingWorksheetState(state, action, { contentions: { $set: action.payload.contentions } });
+
+  case Constants.SET_MILITARY_SERVICE:
+    return newHearingWorksheetState(state, action, {
+      military_service: { $set: action.payload.militaryService }
+    });
+
+  case Constants.SET_EVIDENCE:
+    return newHearingWorksheetState(state, action, {
+      evidence: { $set: action.payload.evidence }
+    });
+
+  case Constants.SET_COMMENTS_FOR_ATTORNEY:
+    return newHearingWorksheetState(state, action, {
+      comments_for_attorney: { $set: action.payload.commentsForAttorney }
     });
 
   case Constants.SET_NOTES:
@@ -67,22 +104,65 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingState(state, action, { aod: { $set: action.payload.aod } });
 
   case Constants.SET_ADD_ON:
-    return newHearingState(state, action, { addon: { $set: action.payload.addOn } });
+    return newHearingState(state, action, { add_on: { $set: action.payload.addOn } });
 
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
-  case Constants.SET_DESCRIPTIONS:
+  case Constants.SET_DESCRIPTION:
+    return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
+
+  case Constants.SET_PROGRAM:
+    return newHearingIssueState(state, action, { program: { $set: action.payload.program } });
+
+  case Constants.SET_NAME:
+    return newHearingIssueState(state, action, { name: { $set: action.payload.name } });
+
+  case Constants.SET_LEVELS:
+    return newHearingIssueState(state, action, { levels: { $set: action.payload.levels } });
+
+  case Constants.SET_REOPEN:
+    return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
+
+  case Constants.SET_ALLOW:
+    return newHearingIssueState(state, action, { allow: { $set: action.payload.allow } });
+
+  case Constants.SET_DENY:
+    return newHearingIssueState(state, action, { deny: { $set: action.payload.deny } });
+
+  case Constants.SET_REMAND:
+    return newHearingIssueState(state, action, { remand: { $set: action.payload.remand } });
+
+  case Constants.SET_DISMISS:
+    return newHearingIssueState(state, action, { dismiss: { $set: action.payload.dismiss } });
+
+  case Constants.SET_VHA:
+    return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
+
+  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
+    return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });
+
+  case Constants.ADD_ISSUE:
     return update(state, {
-      // TODO make reusable for all issues fields
       worksheet: {
-        streams: {
-          appeal_0: {
-            issues: {
-              issue_0: {
-                description: {
-                  $set: action.payload.description
-                }
+        appeals_ready_for_hearing: {
+          [action.payload.appealKey]: {
+            worksheet_issues: { $push: [{ from_vacols: false,
+              edited: true,
+              vacols_sequence_id: action.payload.vacolsSequenceId }] }
+          }
+        }
+      }
+    });
+
+  case Constants.SET_ISSUE_ID:
+    return update(state, {
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: {
+                id: { $set: action.payload.id }
               }
             }
           }
@@ -90,24 +170,54 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       }
     });
 
-  case Constants.SET_CONTENTIONS:
-    return update(state, {
-      worksheet: { contentions: { $set: action.payload.contentions } }
+  case Constants.DELETE_ISSUE:
+    return newHearingIssueState(state, action, { _destroy: { $set: true } });
+
+  case Constants.TOGGLE_DOCKET_SAVING:
+    return update(state, { docketIsSaving: { $set: !state.isSaving }
     });
 
-  case Constants.SET_PERIODS:
-    return update(state, {
-      worksheet: { periods: { $set: action.payload.periods } }
+  case Constants.TOGGLE_WORKSHEET_SAVING:
+    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
     });
 
-  case Constants.SET_EVIDENCE:
+  case Constants.SET_DOCKET_SAVE_FAILED:
     return update(state, {
-      worksheet: { evidence: { $set: action.payload.evidence } }
+      saveDocketFailed: { $set: action.payload.saveFailed }
     });
 
-  case Constants.SET_COMMENTS:
+  case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {
-      worksheet: { comments: { $set: action.payload.comments } }
+      saveWorksheetFailed: { $set: action.payload.saveFailed }
+    });
+
+  case Constants.SET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      dockets: {
+        [action.payload.date]: {
+          hearings_array: {
+            [action.payload.index]: { edited: { $set: false } }
+          }
+        }
+      }
+    });
+
+  case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: { edited: { $set: false } }
+            }
+          }
+        }
+      }
+    });
+
+  case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: { edited: { $set: false } }
     });
 
   default: return state;
@@ -115,5 +225,3 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 };
 
 export default hearingsReducers;
-
-

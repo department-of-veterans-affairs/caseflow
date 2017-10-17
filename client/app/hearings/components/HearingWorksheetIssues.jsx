@@ -1,19 +1,22 @@
-import React, { Component } from 'react';
-import Checkbox from '../../components/Checkbox';
-import TextareaField from '../../components/TextareaField';
+import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
+import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
+import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
-class HearingWorksheetIssues extends Component {
+class HearingWorksheetIssues extends PureComponent {
 
-  getKeyForRow = (index) => {
-    return index;
-  }
+  getKeyForRow = (index) => index;
 
   render() {
     let {
-     worksheetStreamsIssues
+      worksheetStreamsIssues,
+      worksheetStreamsAppeal,
+      appealKey
     } = this.props;
+
 
     const columns = [
       {
@@ -44,108 +47,95 @@ class HearingWorksheetIssues extends Component {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
-      }
-    ];
-    // Temp Placeholder issues
-    const issues = [
+      },
       {
-        program: 'Compensation',
-        issue: 'Service connection',
-        levels: 'All Others, 5010 - Arthritis, due to trauma',
-        description: worksheetStreamsIssues.description,
-        reopen: true,
-        remand: true,
-        allow: true,
-        dismiss: true,
-        deny: true,
-        vha: true
+        header: '',
+        align: 'left',
+        valueName: 'deleteIssue'
       }
     ];
 
-    const rowObjects = issues.map((issue) => {
+    // Maps over all issues inside stream
+    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue, key) => {
+
+      let issueRow = worksheetStreamsIssues[issue];
+
+      // Deleted issues can't be removed from Redux because we need to send them
+      // to the backend with their ID information. We need to filter them from
+      // the display.
+      // eslint-disable-next-line no-underscore-dangle
+      if (issueRow._destroy) {
+        return {};
+      }
 
       return {
-        counter: <b>1.</b>,
-        program: issue.program,
-        issue: issue.issue,
-        issueID: issue.issueID,
-        levels: issue.levels,
-        description: <div>
-          <h4 className="cf-hearings-worksheet-desc-label">Description</h4>
-          <TextareaField
-            aria-label="Description"
-            // TODO Update placeholder loop | new structure
-            name="Description"
-            id={'issue-description'}
-            value={issue.description}
-            onChange={this.props.onDescriptionChange}
-            />
-        </div>,
-        actions: <div className="cf-hearings-worksheet-actions">
-          <Checkbox
-            label="Re-Open"
-            name={'chk_reopen'}
-             onChange={() => {
-               return true;
-             }}
-            value={issues.reopen}
-          ></Checkbox>
-          <Checkbox
-            label="Allow"
-            name={'chk_allow'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.allow}
-          ></Checkbox>
-          <Checkbox
-            label="Deny"
-            name={'chk_deny'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.deny}
-          ></Checkbox>
-          <Checkbox
-            label="Remand"
-            name={'chk_remand'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.remand}
-          ></Checkbox>
-          <Checkbox
-            label="Dismiss"
-            name={'chk_dismiss'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.dismiss}
-          ></Checkbox>
-          <Checkbox
-            label="VHA"
-            name={'chk_vha'}
-            onChange={() => {
-              return true;
-            }}
-            value={issues.vha}
-          ></Checkbox>
-        </div>
+        counter: <b>{key + 1}.</b>,
+        program: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="program"
+            appealKey={appealKey}
+            issueKey={key}
+        />,
+        issue: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="name"
+            appealKey={appealKey}
+            issueKey={key}
+        />,
+        levels: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="levels"
+            appealKey={appealKey}
+            issueKey={key}
+        />,
+        description: <HearingWorksheetIssueFields
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="description"
+            appealKey={appealKey}
+            issueKey={key}
+        />,
+        actions: <HearingWorksheetPreImpressions
+                    appeal={worksheetStreamsAppeal}
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
+        />,
+        deleteIssue: <HearingWorksheetIssueDelete
+                    appeal={worksheetStreamsAppeal}
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
+        />
       };
     });
 
-    return <Table
-            className="cf-hearings-worksheet-issues"
-            columns={columns}
-            rowObjects={rowObjects}
-            summary={'Worksheet Issues'}
-            getKeyForRow={this.getKeyForRow}
-          />;
+    return <div>
+          <Table
+              className="cf-hearings-worksheet-issues"
+              columns={columns}
+              rowObjects={rowObjects}
+              summary={'Worksheet Issues'}
+              getKeyForRow={this.getKeyForRow}
+          />
+        </div>;
   }
 }
 
-HearingWorksheetIssues.propTypes = {
-  worksheetStreamsIssues: PropTypes.object.isRequired
-};
+const mapStateToProps = (state) => ({
+  HearingWorksheetIssues: state
+});
 
-export default HearingWorksheetIssues;
+
+export default connect(
+  mapStateToProps,
+)(HearingWorksheetIssues);
+
+HearingWorksheetIssues.propTypes = {
+  appealKey: PropTypes.number.isRequired,
+  worksheetStreamsIssues: PropTypes.array.isRequired,
+  worksheetStreamsAppeal: PropTypes.object.isRequired
+};

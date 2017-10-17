@@ -14,7 +14,8 @@ describe Appeal do
       video_hearing_requested: video_hearing_requested,
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
-      appellant_last_name: "Tester"
+      appellant_last_name: "Tester",
+      decision_date: nil
     )
   end
 
@@ -26,7 +27,10 @@ describe Appeal do
       ssoc_dates: ssoc_dates,
       documents: documents,
       hearing_request_type: hearing_request_type,
-      video_hearing_requested: video_hearing_requested
+      video_hearing_requested: video_hearing_requested,
+      appellant_first_name: nil,
+      appellant_middle_initial: nil,
+      appellant_last_name: nil
     )
   end
 
@@ -464,6 +468,49 @@ describe Appeal do
     end
   end
 
+  context "#close!" do
+    let(:vacols_record) { :ready_to_certify }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:user) { Generators::User.build }
+
+    subject { appeal.close!(user: user, closed_on: 4.days.ago, disposition: disposition) }
+
+    context "when disposition is not valid" do
+      let(:disposition) { "I'm not a disposition" }
+
+      it "should raise error" do
+        expect { subject }.to raise_error(/Disposition/)
+      end
+    end
+
+    context "when disposition is valid" do
+      let(:disposition) { "RAMP Opt-in" }
+
+      context "when appeal is not active" do
+        let(:vacols_record) { :full_grant_decided }
+
+        it "should raise error" do
+          expect { subject }.to raise_error(/active/)
+        end
+      end
+
+      context "when appeal is active" do
+        let(:vacols_record) { :ready_to_certify }
+
+        it "closes the appeal in VACOLS" do
+          expect(AppealRepository).to receive(:close!).with(
+            appeal: appeal,
+            user: user,
+            closed_on: 4.days.ago,
+            disposition_code: "P"
+          )
+
+          subject
+        end
+      end
+    end
+  end
+
   context "#certify!" do
     let(:appeal) { Appeal.new(vacols_id: "765") }
     subject { appeal.certify! }
@@ -533,14 +580,14 @@ describe Appeal do
     end
   end
 
-  context "#fetch_appeals_by_vbms_id" do
-    subject { Appeal.fetch_appeals_by_vbms_id(vbms_id) }
+  context "#fetch_appeals_by_file_number" do
+    subject { Appeal.fetch_appeals_by_file_number(file_number) }
     let!(:appeal) do
       Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789S")
     end
 
     context "when passed with valid vbms id" do
-      let(:vbms_id) { "123456789" }
+      let(:file_number) { "123456789" }
 
       it "returns an appeal" do
         expect(subject.length).to eq(1)
@@ -550,7 +597,7 @@ describe Appeal do
 
     context "when passed an invalid vbms id" do
       context "length greater than 9" do
-        let(:vbms_id) { "1234567890" }
+        let(:file_number) { "1234567890" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
@@ -558,65 +605,10 @@ describe Appeal do
       end
 
       context "length less than 3" do
-        let(:vbms_id) { "12" }
+        let(:file_number) { "12" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-        end
-      end
-    end
-  end
-
-  context "#convert_vbms_id_for_vacols_query" do
-    subject { Appeal.convert_vbms_id_for_vacols_query(vbms_id) }
-
-    context "when passed a vbms id with a valid ssn" do
-      let(:vbms_id) { "123456789" }
-      it { is_expected.to eq("123456789S") }
-    end
-
-    context "when passed a vbms id with a valid ssn and appended alphabets" do
-      let(:vbms_id) { "123456789S" }
-      it { is_expected.to eq("123456789S") }
-    end
-
-    context "when passed a vbms id with a less than 9 digits" do
-      let(:vbms_id) { "1234567" }
-      it { is_expected.to eq("1234567C") }
-    end
-
-    context "when passed a vbms id less than 9 digits with leading zeros" do
-      let(:vbms_id) { "0012347" }
-      it { is_expected.to eq("12347C") }
-    end
-
-    context "when passed a vbms id less than 9 digits with leading zeros and alphabets" do
-      let(:vbms_id) { "00123C00S9S" }
-      it { is_expected.to eq("123009C") }
-    end
-
-    context "invalid vbms id" do
-      context "when passed a vbms_id greater than 9 digits" do
-        let(:vbms_id) { "1234567890" }
-
-        it "raises RecordNotFound error" do
-          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
-        end
-      end
-
-      context "when passed a vbms_id less than 3 digits" do
-        let(:vbms_id) { "12" }
-
-        it "raises RecordNotFound error" do
-          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
-        end
-      end
-
-      context "when passed no vbms id" do
-        let(:vbms_id) { "" }
-
-        it "raises RecordNotFound error" do
-          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
         end
       end
     end
@@ -640,6 +632,16 @@ describe Appeal do
     context "for a file number with 9 digits" do
       let(:file_number) { "123456789" }
       it { is_expected.to eq("123456789S") }
+
+      context "with letters" do
+        let(:file_number) { "12ABCSD34ASDASD56789S" }
+        it { is_expected.to eq("123456789S") }
+      end
+
+      context "with leading zeros and letters" do
+        let(:file_number) { "00123C00S9S" }
+        it { is_expected.to eq("123009C") }
+      end
     end
 
     context "for a file number with more than 9 digits" do
@@ -648,26 +650,6 @@ describe Appeal do
       it "raises InvalidFileNumber error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
       end
-    end
-  end
-
-  context "#issue_by_sequence_id" do
-    let(:appeal) { Generators::Appeal.build(vacols_record: { template: :partial_grant_decided }) }
-    subject { appeal.issue_by_sequence_id(id) }
-
-    context "when appeal has an issue with the sequence id" do
-      let(:id) { "2" }
-
-      it "returns the issue" do
-        expect(subject).to_not be_nil
-        expect(subject.vacols_sequence_id).to eq "2"
-      end
-    end
-
-    context "when appeal does not have an issue with the sequence id" do
-      let(:id) { "5" }
-
-      it { is_expected.to be_nil }
     end
   end
 
@@ -1109,6 +1091,85 @@ describe Appeal do
           address_line_1: "9999 MISSION ST",
           city: "SAN FRANCISCO",
           zip: "94103")
+      end
+    end
+  end
+
+  context "#worksheet_issues" do
+    subject { appeal.worksheet_issues.size }
+
+    context "when appeal does not have any Vacols issues" do
+      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
+      it { is_expected.to eq 0 }
+    end
+
+    context "when appeal has Vacols issues" do
+      let(:appeal) { Generators::Appeal.create(vacols_record: :remand_decided) }
+      it { is_expected.to eq 2 }
+    end
+  end
+
+  context "#update" do
+    subject { appeal.update(appeals_hash) }
+    let(:appeal) { Generators::Appeal.create(vacols_record: :form9_not_submitted) }
+
+    context "when Vacols does not need an update" do
+      let(:appeals_hash) do
+        { worksheet_issues_attributes: [{
+          remand: true,
+          vha: true,
+          program: "Wheel",
+          name: "Spoon",
+          levels: "Cabbage\nPickle",
+          description: "Donkey\nCow",
+          from_vacols: true,
+          vacols_sequence_id: 1
+        }]
+         }
+      end
+
+      it "updates worksheet issues" do
+        expect(appeal.worksheet_issues.count).to eq(0)
+        subject # do update
+        expect(appeal.worksheet_issues.count).to eq(1)
+
+        issue = appeal.worksheet_issues.first
+        expect(issue.remand).to eq true
+        expect(issue.allow).to eq false
+        expect(issue.deny).to eq false
+        expect(issue.dismiss).to eq false
+        expect(issue.vha).to eq true
+        expect(issue.program).to eq "Wheel"
+        expect(issue.name).to eq "Spoon"
+        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Donkey\nCow"
+
+        # test that a 2nd save updates the same record, rather than create new one
+        id = appeal.worksheet_issues.first.id
+        appeals_hash[:worksheet_issues_attributes][0][:deny] = true
+        appeals_hash[:worksheet_issues_attributes][0][:description] = "Tomato"
+        appeals_hash[:worksheet_issues_attributes][0][:id] = id
+
+        appeal.update(appeals_hash)
+
+        expect(appeal.worksheet_issues.count).to eq(1)
+        issue = appeal.worksheet_issues.first
+        expect(issue.id).to eq(id)
+        expect(issue.deny).to eq(true)
+        expect(issue.remand).to eq(true)
+        expect(issue.allow).to eq(false)
+        expect(issue.dismiss).to eq(false)
+        expect(issue.program).to eq "Wheel"
+        expect(issue.name).to eq "Spoon"
+        expect(issue.levels).to eq "Cabbage\nPickle"
+        expect(issue.description).to eq "Tomato"
+
+        # soft delete an issue
+        appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
+        appeal.update(appeals_hash)
+        expect(appeal.worksheet_issues.count).to eq(0)
+        expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
+        expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
       end
     end
   end

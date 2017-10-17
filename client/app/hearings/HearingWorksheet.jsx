@@ -1,28 +1,52 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import Link from '../components/Link';
 import TextField from '../components/TextField';
-import TextareaField from '../components/TextareaField';
+import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
+import AutoSave from '../components/AutoSave';
+import * as AppConstants from '../constants/AppConstants';
+
+// TODO Move all stream related to streams container
+import HearingWorksheetDocs from './components/HearingWorksheetDocs';
+import { saveIssues } from './actions/Issue';
 
 import {
-  onDescriptionChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange,
+  toggleWorksheetSaving,
+  setWorksheetSaveFailedStatus,
+  saveWorksheet
        } from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
 
-  render() {
+  save = (worksheet) => () => {
+    this.props.toggleWorksheetSaving();
+    this.props.setWorksheetSaveFailedStatus(false);
+    this.props.saveWorksheet(worksheet);
+    this.props.saveIssues(worksheet);
+    this.props.toggleWorksheetSaving();
+  };
 
-    // TODO(sharon): We need to update the reader link to use the appeal's vacols_id.
+  onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
+  onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
+  onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
+  onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
+  onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
+
+  render() {
+    let { worksheet } = this.props;
+    let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
+
+    const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
+
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -32,155 +56,132 @@ export class HearingWorksheet extends React.PureComponent {
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
           <div className="meta">
-            <div>{moment(this.props.date).format('ddd l')}</div>
-            <div>Hearing Type: {this.props.hearingType}</div>
+            <div>{moment(worksheet.date).format('ddd l')}</div>
+            <div>Hearing Type: {worksheet.request_type}</div>
           </div>
         </div>
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <span className="saving">Saving...</span>
+          <AutoSave
+            save={this.save(worksheet)}
+            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+            isSaving={this.props.worksheetIsSaving}
+            saveFailed={this.props.saveWorksheetFailed}
+          />
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
-            <div><b>Somebody Mad</b></div>
+            <div><b>{appellant}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>City/State:</div>
-            <div>Lansing, MI</div>
+            <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Regional Office:</div>
-            <div>Detroit, MI</div>
+            <div>{worksheet.regional_office_name}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Representative Org:</div>
-            <div>Veterans of Foreign Wars</div>
+            <div>{worksheet.representative}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-5">
             <TextField
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={this.props.worksheet.repName || ''}
+              value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
              />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
-            <div><b>Somebody Madder</b></div>
+            <div><b>{worksheet.veteran_name}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Veteran ID:</div>
-            <div><b>{this.props.vbms_id}</b></div>
+            <div><b>{worksheet.vbms_id}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Docket Number:</div>
-            <div>1234567</div>
+            <div>Veteran's Age:</div>
+            <div>{worksheet.veteran_age}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>Veteran's Age:</div>
-            <div>32</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
-             <TextareaField
+             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
+             <Textarea
                 name="Witness (W)/Observer (O):"
                 id="appellant-vet-witness"
-                aria-label="Representative Name"
-                value={this.props.worksheet.witness || ''}
-                onChange={this.props.onWitnessChange}
+                aria-label="Witness Observer"
+                value={worksheet.witness || ''}
+                onChange={this.onWitnessChange}
              />
           </div>
         </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
-          <h4>Docs in eFolder: 80</h4>
-          <p className="cf-appeal-stream-label">APPEAL STREAM 1</p>
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>NOD:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Form 9:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Prior BVA Decision:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>&nbsp;</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-            <div>Docs since Certification:</div>
-            <div>23</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>SOC:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Certification:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>SSOC:</div>
-            <div>01/01/1990</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>&nbsp;</div>
-          </div>
-        </div>
+        <HearingWorksheetDocs
+          {...this.props}
+        />
 
-           <HearingWorksheetStream
-              worksheetStreams={this.props.worksheet.streams}
+        <HearingWorksheetStream
+           worksheetStreams={worksheet.appeals_ready_for_hearing}
               {...this.props}
-            />
+        />
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+            <label htmlFor="worksheet-contentions">Contentions</label>
+            <Textarea
               name="Contentions"
-              value={this.props.worksheet.contentions || ''}
-              onChange={this.props.onContentionsChange}
+              value={worksheet.contentions || ''}
+              onChange={this.onContentionsChange}
               id="worksheet-contentions"
+              minRows={3}
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+             <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
+            <Textarea
               name="Periods and circumstances of service"
-              value={this.props.worksheet.periods || ''}
-              onChange={this.props.onPeriodsChange}
-              id="worksheet-periods"
+              value={worksheet.military_service || ''}
+              onChange={this.onMilitaryServiceChange}
+              id="worksheet-military-service"
+              minRows={3}
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+          <label htmlFor="worksheet-evidence">Evidence</label>
+            <Textarea
               name="Evidence"
-              value={this.props.worksheet.evidence || ''}
-              onChange={this.props.onEvidenceChange}
+              value={worksheet.evidence || ''}
+              onChange={this.onEvidenceChange}
               id="worksheet-evidence"
+              minRows={3}
               />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <TextareaField
+             <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+            <Textarea
               name="Comments and special instructions to attorneys"
-              value={this.props.worksheet.comments || ''}
-              id="worksheet-comments"
-              onChange={this.props.onCommentsChange}
+              value={worksheet.comments_for_attorney || ''}
+              id="worksheet-comments-for-attorney"
+              onChange={this.onCommentsForAttorneyChange}
+              minRows={3}
               />
           </div>
         </form>
       </div>
       <div className="cf-push-right">
         <Link
-          name="signup-1"
-          href="/reader/appeal"
+          name="review-efolder"
+          href={`${readerLink}?category=case_summary`}
           button="primary"
-        >Review eFolder</Link>
+          target="_blank">
+            Review eFolder</Link>
       </div>
     </div>;
   }
@@ -190,24 +191,20 @@ const mapStateToProps = (state) => ({
   worksheet: state.worksheet
 });
 
-// TODO to move the default value to the backend
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onDescriptionChange,
   onRepNameChange,
   onWitnessChange,
   onContentionsChange,
-  onPeriodsChange,
+  onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsChange
+  onCommentsForAttorneyChange,
+  toggleWorksheetSaving,
+  saveWorksheet,
+  setWorksheetSaveFailedStatus,
+  saveIssues
 }, dispatch);
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheet);
-
-HearingWorksheet.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
-  date: PropTypes.string,
-  vbms_id: PropTypes.string
-};
