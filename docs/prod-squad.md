@@ -76,13 +76,13 @@ Monday - Friday: 9a-5p EST
 
 ### When you're on prod squad
 
-You must respond to every error logged in #appeals-devops-alerts. You are not expected the fix everything, but you are the first line of defense to determine if we have a serious problem or not. This is a painful job if there are many alerts, so it's on all of us to silence alerts that are not meaningful.
+You must respond to every error logged in #appeals-app-alerts. You are not expected the fix everything, but you are the first line of defense to determine if we have a serious problem or not. This is a painful job if there are many alerts, so it's on all of us to silence alerts that are not meaningful.
 
-When you're on prod squad, it's expected that you will make less progress than usual on normal sprint work, because of your prod squad duties. Take this into account during sprint planning. You are expected to be constantly monitoring the #appeals-devops-alerts channel to be responsive to alerts.
+When you're on prod squad, it's expected that you will make less progress than usual on normal sprint work, because of your prod squad duties. Take this into account during sprint planning. You are expected to be constantly monitoring the #appeals-app-alerts channel to be responsive to alerts.
 
 ### Sentry Errors
 
-The procedure for responding to a new alert in #appeals-devops-alerts is:
+The procedure for responding to a new alert in #appeals-app-alerts is:
 
 1. Leave a threaded comment in Slack on the issue in question to say that you're looking at it. When you finish the steps here, post the result on that thread. (For example, if you create a new GitHub issue, link to it.)
 1. Make a ticket for the error. Label it with `prod-alert`. 
