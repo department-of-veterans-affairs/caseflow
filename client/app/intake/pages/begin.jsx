@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../redux/actions';
-import { REQUEST_STATE, PAGE_PATHS } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { getRampElectionStatus } from '../redux/selectors';
 
 class Begin extends React.PureComponent {
@@ -18,11 +18,11 @@ class Begin extends React.PureComponent {
     } = this.props;
 
     switch (rampElectionStatus) {
-    case 'started':
+    case RAMP_INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW}/>;
-    case 'reviewed':
+    case RAMP_INTAKE_STATES.REVIEWED:
       return <Redirect to={PAGE_PATHS.FINISH}/>;
-    case 'completed':
+    case RAMP_INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED}/>;
     default:
     }

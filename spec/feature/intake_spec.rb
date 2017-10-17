@@ -78,7 +78,9 @@ RSpec.feature "RAMP Intake" do
 
       RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
 
-      visit "/intake"
+      # Validate that visiting the finish page takes you back to
+      # the review request page if you haven't yet reviewed the intake
+      visit "/intake/finish"
 
       fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
       click_on "Continue to next step"

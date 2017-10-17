@@ -3,13 +3,20 @@ import Button from '../../components/Button';
 import BareOrderedList from '../../components/BareOrderedList';
 import CancelButton from '../components/CancelButton';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS } from '../constants';
+import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
+import { getRampElectionStatus } from '../redux/selectors';
 
 class Finish extends React.PureComponent {
   render() {
-    if (!this.props.rampElection.intakeId) {
+    switch (this.props.rampElectionStatus) {
+    case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN}/>;
+    case RAMP_INTAKE_STATES.STARTED:
+      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+    case RAMP_INTAKE_STATES.COMPLETED:
+      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+    default:
     }
 
     const steps = [
@@ -43,7 +50,8 @@ export class FinishButtons extends React.PureComponent {
 }
 
 export default connect(
-  ({ rampElection }) => ({
-    rampElection
+  (state) => ({
+    rampElection: state.rampElection,
+    rampElectionStatus: getRampElectionStatus(state)
   })
 )(Finish);

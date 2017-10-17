@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { RAMP_INTAKE_STATES } from '../constants';
 
 const getRampElection = (state) => state.rampElection;
 
@@ -6,13 +7,13 @@ export const getRampElectionStatus = createSelector(
   [getRampElection],
   (rampElection) => {
     if (rampElection.isComplete) {
-      return 'completed';
+      return RAMP_INTAKE_STATES.COMPLETED;
     } else if (rampElection.isReviewed) {
-      return 'reviewed';
+      return RAMP_INTAKE_STATES.REVIEWED;
     } else if (rampElection.intakeId) {
-      return 'started';
+      return RAMP_INTAKE_STATES.STARTED;
     }
 
-    return 'none';
+    return RAMP_INTAKE_STATES.NONE;
   }
 );

@@ -5,12 +5,20 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../redux/actions';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS } from '../constants';
+import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
+import { getRampElectionStatus } from '../redux/selectors';
 
 class Completed extends React.PureComponent {
   render() {
-    if (!this.props.rampElection.intakeId) {
+    switch (this.props.rampElectionStatus) {
+    case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN}/>;
+    case RAMP_INTAKE_STATES.STARTED:
+      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+    // TODO: uncomment when complete logic is done
+    // case RAMP_INTAKE_STATES.REVIEWED:
+    //  return <Redirect to={PAGE_PATHS.FINISH}/>;
+    default:
     }
 
     const message = 'Joe Snuffy\'s (ID #222222222) opt-in request has been processed, ' +
@@ -44,7 +52,8 @@ export const CompletedNextButton = connect(
 )(UnconnectedCompletedNextButton);
 
 export default connect(
-  ({ rampElection }) => ({
-    rampElection
+  (state) => ({
+    rampElection: state.rampElection,
+    rampElectionStatus: getRampElectionStatus(state)
   })
 )(Completed);

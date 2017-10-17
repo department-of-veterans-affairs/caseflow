@@ -21,13 +21,13 @@ const updateStateWithSavedIntake = (state, intake) => {
         $set: intake.id
       },
       noticeDate: {
-        $set: formatDateStr(intake.notice_date)
+        $set: intake.notice_date && formatDateStr(intake.notice_date)
       },
       optionSelected: {
         $set: intake.option_selected
       },
       receiptDate: {
-        $set: formatDateStr(intake.receipt_date)
+        $set: intake.receipt_date && formatDateStr(intake.receipt_date)
       },
       isReviewed: {
         $set: Boolean(intake.option_selected && intake.receipt_date)
@@ -176,6 +176,11 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     });
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
     return update(state, {
+      rampElection: {
+        isReviewed: {
+          $set: true,
+        }
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
