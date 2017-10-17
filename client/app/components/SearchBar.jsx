@@ -59,7 +59,9 @@ export default class SearchBar extends React.Component {
   }
 
   componentWillUnmount = () => {
-    if (this.props.hasOwnProperty('onClearSearch')) this.props.onClearSearch();
+    if (this.props.onClearSearch) {
+      this.props.onClearSearch();
+    }
   }
 
   render() {
