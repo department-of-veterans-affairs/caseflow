@@ -26,11 +26,7 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
           payload: {
-            intakeId: responseObject.id,
-            name: responseObject.veteran_name,
-            formName: responseObject.veteran_form_name,
-            fileNumber: responseObject.veteran_file_number,
-            noticeDate: responseObject.notice_date
+            intake: responseObject
           }
         });
       },
@@ -86,6 +82,21 @@ export const submitReview = (rampElection) => (dispatch) => {
           }
         });
 
+        throw error;
+      }
+    );
+};
+
+export const completeIntake = (rampElection) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.COMPLETE_INTAKE_START
+  });
+
+  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
+    then(
+      () => dispatch({ type: ACTIONS.COMPLETE_INTAKE_SUCCEED }),
+      (error) => {
+        dispatch({ type: ACTIONS.COMPLETE_INTAKE_FAIL });
         throw error;
       }
     );
