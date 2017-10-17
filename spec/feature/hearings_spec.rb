@@ -145,18 +145,34 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("These are comments")
     end
 
-    scenario "Worksheet adds user created issues" do
+    scenario "Worksheet adds, deletes, edits, and saves user created issues" do
       visit "/hearings/1/worksheet"
       expect(page).to_not have_field("1-issue-program")
       expect(page).to_not have_field("1-issue-name")
       expect(page).to_not have_field("1-issue-levels")
       expect(page).to have_field("1-issue-description")
+      find("#trash-can").click
+      click_on "Confirm delete"
       click_on "button-addIssue-0"
-      # These IDs will be updated when we save edits to the backend
-      expect(page).to have_field("undefined-issue-program")
-      expect(page).to have_field("undefined-issue-name")
-      expect(page).to have_field("undefined-issue-levels")
-      expect(page).to have_field("undefined-issue-description")
+
+      visit "/hearings/1/worksheet"
+      expect(page).to have_field("2-issue-program")
+      expect(page).to have_field("2-issue-name")
+      expect(page).to have_field("2-issue-levels")
+      expect(page).to have_field("2-issue-description")
+      expect(page).to_not have_content("Service Connection")
+      expect(page).to_not have_field("1-issue-description")
+
+      fill_in "2-issue-program", with: "This is the program"
+      fill_in "2-issue-name", with: "This is the name"
+      fill_in "2-issue-levels", with: "This is the level"
+      fill_in "2-issue-description", with: "This is the description"
+
+      visit "/hearings/1/worksheet"
+      expect(page).to have_content("This is the program")
+      expect(page).to have_content("This is the name")
+      expect(page).to have_content("This is the level")
+      expect(page).to have_content("This is the description")
     end
 
     scenario "Can click from hearing worksheet to reader" do
