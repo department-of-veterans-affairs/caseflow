@@ -75,11 +75,6 @@ $color-hearings-saving: #777;
     }
 
     // TODO: see if this can become a part of the general style
-    .Select-arrow {
-      width: 1.7em;
-    }
-
-    // TODO: see if this can become a part of the general style
     .Select-menu-outer {
       border: 1px solid $color-gray-medium;
       border-top: none;
@@ -173,7 +168,7 @@ $color-hearings-saving: #777;
         min-height: 4em;
         resize: vertical;
         margin-left: 3em;
-        width: 88%;
+        width: 84%;
       }
     }
 
@@ -428,3 +423,22 @@ $color-hearings-saving: #777;
   position: absolute;
   left: -99999px;
 }
+
+//TODO move breakpoint to _hearings_variables
+@media only screen and (max-width : 1024px){
+
+  .cf-hearings {
+    .cf-hearings-docket {
+      .cf-hearings-docket-notes {
+        textarea {
+          width: 80%
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
