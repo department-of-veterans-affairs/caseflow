@@ -40,13 +40,14 @@ class IntakesController < ApplicationController
       veteran_form_name: ramp_intake.veteran.name.formatted(:form),
       notice_date: ramp_intake.detail.notice_date,
       option_selected: ramp_intake.detail.option_selected,
-      receipt_date: ramp_intake.detail.receipt_date
+      receipt_date: ramp_intake.detail.receipt_date,
+      completed_at: ramp_intake.completed_at
     }
   end
   helper_method :ramp_intake_data
 
   def fetch_current_intake
-    @current_intake = RampIntake.find_by(user: current_user)
+    @current_intake = RampIntake.in_progress.find_by(user: current_user)
   end
 
   def intake

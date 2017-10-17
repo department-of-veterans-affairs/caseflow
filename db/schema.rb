@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171005184519) do
+ActiveRecord::Schema.define(version: 20171013213546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -270,8 +270,11 @@ ActiveRecord::Schema.define(version: 20171005184519) do
     t.integer  "user_id",             null: false
     t.string   "veteran_file_number"
     t.datetime "started_at"
+    t.datetime "completed_at"
+    t.string   "completion_status"
   end
 
+  add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
   create_table "ramp_elections", force: :cascade do |t|
