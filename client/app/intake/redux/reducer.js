@@ -54,7 +54,8 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
       submitReview: REQUEST_STATE.NOT_STARTED,
-      completeIntake: REQUEST_STATE.NOT_STARTED
+      completeIntake: REQUEST_STATE.NOT_STARTED,
+      cancelIntake: REQUEST_STATE.NOT_STARTED
     },
     rampElection: {
       intakeId: null,
@@ -230,6 +231,39 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       requestStatus: {
         completeIntake: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.CLEAR_CANCEL_ERROR:
+    return update(state, {
+      requestStatus: {
+        cancelIntake: {
+          $set: REQUEST_STATE.NOT_STARTED
+        }
+      }
+    });
+  case ACTIONS.CANCEL_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        cancelIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.CANCEL_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        cancelIntake: {
+          $set: REQUEST_STATE.FAILED
+        }
+      },
+      $toggle: ['cancelModalVisible']
+    });
+  case ACTIONS.CANCEL_INTAKE_SUCCEED:
+    return update(mapDataToInitialState(), {
+      requestStatus: {
+        cancelIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
         }
       }
     });

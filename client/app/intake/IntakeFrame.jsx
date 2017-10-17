@@ -10,22 +10,17 @@ import AppSegment from '../components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import Modal from '../components/Modal';
+import Alert from '../components/Alert';
 import Button from '../components/Button';
 import BeginPage from './pages/begin';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS } from './constants';
-import { toggleCancelModal } from './redux/actions';
-import ApiUtil from '../util/ApiUtil';
+import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { toggleCancelModal, clearCancelError, submitCancel } from './redux/actions';
+
 
 class IntakeFrame extends React.PureComponent {
-  cancelIntake = () => {
-    this.props.toggleCancelModal();
-    // The empty then() is necessary because otherwise the request won't actually fire.
-    ApiUtil.delete(`/intake/ramp/${this.props.rampElection.intakeId}`).then();
-  }
-
   render() {
     const appName = 'Intake';
 
@@ -34,10 +29,12 @@ class IntakeFrame extends React.PureComponent {
     const topMessage = this.props.veteran.fileNumber ?
     `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
+    const submitCancel = () => (this.props.submitCancel(this.props.rampElection));
+
     let cancelButton, confirmButton;
 
     if (this.props.cancelModalVisible) {
-      confirmButton = <Button dangerStyling onClick={this.cancelIntake}>Cancel Intake</Button>;
+      confirmButton = <Button dangerStyling onClick={submitCancel}>Cancel Intake</Button>;
       cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
     }
 
@@ -65,6 +62,18 @@ class IntakeFrame extends React.PureComponent {
           <AppFrame>
             <IntakeProgressBar />
             <PrimaryAppContent>
+              { (this.props.requestStatus.cancelIntake === REQUEST_STATE.FAILED) &&
+                <Alert
+                  type="error"
+                  title="Error"
+                  message={
+                    'There was an error while canceling the current intake.' +
+                    ' Please try again later'
+                  }
+                  handleClear={this.props.clearCancelError}
+                  lowerMargin
+                />
+              }
               <PageRoute
                 exact
                 path={PAGE_PATHS.BEGIN}
@@ -117,9 +126,11 @@ export default connect(
     veteran,
     rampElection,
     cancelModalVisible,
-    fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
+    requestStatus
   }),
   (dispatch) => bindActionCreators({
-    toggleCancelModal
+    toggleCancelModal,
+    clearCancelError,
+    submitCancel
   }, dispatch)
 )(IntakeFrame);

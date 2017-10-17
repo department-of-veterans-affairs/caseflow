@@ -105,3 +105,22 @@ export const completeIntake = (rampElection) => (dispatch) => {
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL
 });
+
+export const submitCancel = (rampElection) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CANCEL_INTAKE_START
+  });
+
+  return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`).
+    then(
+      () => dispatch({ type: ACTIONS.CANCEL_INTAKE_SUCCEED }),
+      (error) => {
+        dispatch({ type: ACTIONS.CANCEL_INTAKE_FAIL });
+        throw error;
+      }
+    );
+};
+
+export const clearCancelError = () => ({
+  type: ACTIONS.CLEAR_CANCEL_ERROR
+});
