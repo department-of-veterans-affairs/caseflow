@@ -375,15 +375,14 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+      issues: [Generators::Issue.build,
                Generators::Issue.build(disposition: "Osteomyelitis",
                                        levels: ["Osteomyelitis"],
                                        description: [
                                          "15 - Compensation",
                                          "26 - Osteomyelitis"
                                        ],
-                                       program_description: "06 - Medical",
-                                       vacols_id: "reader_id2")],
+                                       program_description: "06 - Medical")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -410,8 +409,7 @@ class Fakes::AppealRepository
           "14 - Right knee",
           "22 - Cervical strain"
         ],
-        program_description: "06 - Medical",
-        vacols_id: "reader_id2")],
+        program_description: "06 - Medical")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -429,7 +427,7 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
+      issues: [Generators::Issue.build],
       documents: redacted_reader_documents
     )
     Generators::Appeal.build(
@@ -447,15 +445,14 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
+      issues: [Generators::Issue.build,
                Generators::Issue.build(disposition: "Osteomyelitis",
                                        levels: ["Osteomyelitis"],
                                        description: [
                                          "15 - Compensation",
                                          "26 - Osteomyelitis"
                                        ],
-                                       program_description: "06 - Medical",
-                                       vacols_id: "reader_id2")],
+                                       program_description: "06 - Medical")],
       documents: static_reader_documents
     )
   end
