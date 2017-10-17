@@ -3,8 +3,10 @@ import Button from '../../components/Button';
 import BareOrderedList from '../../components/BareOrderedList';
 import CancelButton from '../components/CancelButton';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
+import { completeIntake } from '../redux/actions';
+import { bindActionCreators } from 'redux';
 import { getRampElectionStatus } from '../redux/selectors';
 
 class Finish extends React.PureComponent {
@@ -36,16 +38,38 @@ class Finish extends React.PureComponent {
 }
 
 class FinishNextButton extends React.PureComponent {
-  handleClick = () => this.props.history.push('/completed');
+  handleClick = () => {
+    this.props.completeIntake(this.props.rampElection).then(
+      () => this.props.history.push('/completed')
+    );
+  }
 
-  render = () => <Button onClick={this.handleClick} legacyStyling={false}>I've completed all the steps</Button>;
+  render = () =>
+    <Button
+      name="submit-review"
+      onClick={this.handleClick}
+      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+      legacyStyling={false}
+    >
+      { "I've completed all the steps" }
+    </Button>;
 }
+
+const FinishNextButtonConnected = connect(
+  ({ rampElection, requestStatus }) => ({
+    requestState: requestStatus.completeIntake,
+    rampElection
+  }),
+  (dispatch) => bindActionCreators({
+    completeIntake
+  }, dispatch)
+)(FinishNextButton);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
-      <FinishNextButton history={this.props.history} />
+      <FinishNextButtonConnected history={this.props.history} />
     </div>
 }
 

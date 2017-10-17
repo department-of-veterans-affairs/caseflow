@@ -498,7 +498,7 @@ describe Appeal do
         let(:vacols_record) { :ready_to_certify }
 
         it "closes the appeal in VACOLS" do
-          expect(AppealRepository).to receive(:close!).with(
+          expect(Fakes::AppealRepository).to receive(:close!).with(
             appeal: appeal,
             user: user,
             closed_on: 4.days.ago,
