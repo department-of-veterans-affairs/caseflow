@@ -32,10 +32,6 @@ class Review extends React.PureComponent {
       {
         value: 'higher_level_review',
         displayElem: <span>Higher Level Review with<strong>out</strong> DRO hearing request</span>
-      },
-      {
-        value: 'withdraw',
-        displayText: 'Withdraw all pending appeals'
       }
     ];
 
