@@ -7,35 +7,16 @@ import _ from 'lodash';
 import { getClaimTypeDetailInfo } from '../reader/utils';
 
 import CaseSelectSearch from './CaseSelectSearch';
+import IssueList from './IssueList';
 
 class CaseSelect extends React.PureComponent {
 
-  renderIssuesColumnData = (appeal) => {
-    const issues = appeal.issues || [];
+  renderIssuesColumnData = (appeal) => <ol className="issue-list">
+    <IssueList appeal={appeal} formatLevelsInNewLine={true} />
+  </ol>;
 
-    return (
-      <ol className="issue-list">
-        {issues.map((issue) => {
-          const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
-
-          return <li key={issue.vacols_sequence_id}>
-            {descriptionLabel}
-            {this.renderIssueLevels(issue)}
-          </li>;
-        })}
-      </ol>
-    );
-  }
-
-  renderIssueLevels = (issue) => {
-    const levels = issue.levels || [];
-
-    return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
-  }
-
-  getVeteranNameAndClaimType = (appeal) => {
-    return <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
-  }
+  getVeteranNameAndClaimType = (appeal) =>
+    <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
 
   getAssignmentColumn = () => [
     {

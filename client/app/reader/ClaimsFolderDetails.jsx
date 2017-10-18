@@ -45,7 +45,7 @@ class ClaimsFolderDetails extends React.PureComponent {
             <div className="usa-width-one-whole claims-folder-issues">
                 <b>Issues</b><br />
                 <ol>
-                  {<IssueList appeal={appeal} />}
+                  <IssueList appeal={appeal} />
                 </ol>
             </div>
           </div>}
