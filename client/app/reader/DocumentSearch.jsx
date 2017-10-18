@@ -33,7 +33,7 @@ export class DocumentSearch extends React.PureComponent {
   }
 }
 
-PdfFile.propTypes = {
+DocumentSearch.propTypes = {
   file: PropTypes.string
 };
 
