@@ -55,17 +55,28 @@ RSpec.feature "RAMP Intake" do
       expect(intake.user).to eq(current_user)
     end
 
-    scenario "Open cancel modal from review page" do
-      RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
+    scenario "Cancel an intake" do
+      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+
+      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
 
       visit "/intake"
-      fill_in "Search small", with: "12341234"
-      click_on "Search"
 
       safe_click ".cf-submit.usa-button"
       expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
       safe_click "#close-modal"
       expect(page).to_not have_css(".cf-modal-title")
+
+      safe_click ".cf-submit.usa-button"
+      safe_click ".cf-modal-body .cf-submit"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to_not have_css(".cf-modal-title")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake).to be_canceled
     end
 
     scenario "Complete intake for RAMP Election form" do
