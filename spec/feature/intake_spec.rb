@@ -126,7 +126,13 @@ RSpec.feature "RAMP Intake" do
         disposition_code: "P"
       )
 
-      click_on "I've completed all the steps"
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("You must confirm you've completed the steps")
+      expect(page).to_not have_content("Intake completed")
+
+      click_label("confirm-finish")
+      safe_click "button#button-submit-review"
 
       expect(page).to have_content("Intake completed")
 

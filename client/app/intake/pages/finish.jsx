@@ -2,15 +2,20 @@ import React from 'react';
 import Button from '../../components/Button';
 import BareOrderedList from '../../components/BareOrderedList';
 import CancelButton from '../components/CancelButton';
+import Checkbox from '../../components/Checkbox';
 import { Redirect } from 'react-router-dom';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
-import { completeIntake } from '../redux/actions';
+import { completeIntake, confirmFinishIntake } from '../redux/actions';
 import { bindActionCreators } from 'redux';
 import { getRampElectionStatus } from '../redux/selectors';
 
+const submitText = "I've completed all steps";
+
 class Finish extends React.PureComponent {
   render() {
+    const { rampElection } = this.props;
+
     switch (this.props.rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN}/>;
@@ -33,6 +38,21 @@ class Finish extends React.PureComponent {
       <h1>Finish processing Supplemental Claim request</h1>
       <p>Please complete the following 4 steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
+      <Checkbox
+        label={
+          <span>
+            I confirm that I have completed all of the steps above.
+            I understand that selecting the
+            <b> { submitText } </b>
+            button below will close the VACOLS record.
+          </span>
+        }
+        name="confirm-finish"
+        required={true}
+        value={rampElection.finishConfirmed}
+        onChange={this.props.confirmFinishIntake}
+        errorMessage={rampElection.finishConfirmedError}
+      />
     </div>;
   }
 }
@@ -51,7 +71,7 @@ class FinishNextButton extends React.PureComponent {
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
     >
-      { "I've completed all the steps" }
+      { submitText }
     </Button>;
 }
 
@@ -75,6 +95,10 @@ export class FinishButtons extends React.PureComponent {
 
 export default connect(
   (state) => ({
+    rampElection: state.rampElection,
     rampElectionStatus: getRampElectionStatus(state)
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    confirmFinishIntake
+  }, dispatch)
 )(Finish);

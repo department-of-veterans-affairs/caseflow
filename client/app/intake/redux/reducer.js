@@ -65,7 +65,9 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
       receiptDate: null,
       receiptDateError: null,
       isReviewed: false,
-      isComplete: false
+      isComplete: false,
+      finishConfirmed: false,
+      finishConfirmedError: null
     },
     cancelModalVisible: false,
     searchError: null
@@ -202,6 +204,22 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.CONFIRM_FINISH_INTAKE:
+    return update(state, {
+      rampElection: {
+        finishConfirmed: {
+          $set: action.payload.isConfirmed
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED:
+    return update(state, {
+      rampElection: {
+        finishConfirmedError: {
+          $set: "You must confirm you've completed the steps"
         }
       }
     });
