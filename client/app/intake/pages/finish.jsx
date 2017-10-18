@@ -26,17 +26,33 @@ class Finish extends React.PureComponent {
     default:
     }
 
+    let epName, optionName;
+
+    if (this.props.rampElection.optionSelected === 'supplemental_claim') {
+      optionName = 'Supplemental Claim';
+      epName = '683 RAMP – Supplemental Claim Review Rating';
+    } else {
+      optionName = 'Higher-Level Review';
+      epName = '682 RAMP – Higher Level Review Rating';
+    }
+
     const steps = [
-      <span>Upload the RAMP election form to VBMS and ensure the Document Type is <em>Correspondence</em>.</span>,
-      <span>Update the Subject Line with <em>RAMP Opt-In</em>.</span>,
-      <span>Create an EP <strong>030 RAMP Supplemental</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of <em>RAMP</em>.</span>
+      <span>
+        Upload the RAMP Election form to the VBMS eFolder and ensure the
+        Document Type is <b>Correspondence</b>.
+      </span>,
+      <span>Update the Subject Line with "Ramp Election".</span>,
+      <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
+      <span>Add a placeholder contention of "RAMP".</span>,
+      <span>Send a <strong>RAMP Withdrawal Letter</strong> using <em>Letter Creator</em>.</span>
     ];
-    const stepFns = steps.map((step, index) => () => <span><strong>Step {index}.</strong> {step}</span>);
+    const stepFns = steps.map((step, index) =>
+      () => <span><strong>Step {index + 1}.</strong> {step}</span>
+    );
 
     return <div>
-      <h1>Finish processing Supplemental Claim request</h1>
-      <p>Please complete the following 4 steps outside Caseflow.</p>
+      <h1>Finish processing { optionName } election</h1>
+      <p>Please complete the following steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
       <Checkbox
         label={
