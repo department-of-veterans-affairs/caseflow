@@ -327,6 +327,7 @@ class AppealRepository
 
         # fetching Issue objects using the issue hash
         appeal.issues = assignment_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
+        appeal.save
         appeal
       end
     end
