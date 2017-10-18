@@ -4,8 +4,7 @@ class RampElection < ActiveRecord::Base
   enum option_selected: {
     supplemental_claim: "supplemental_claim",
     higher_level_review: "higher_level_review",
-    higher_level_review_with_hearing: "higher_level_review_with_hearing",
-    withdraw: "withdraw"
+    higher_level_review_with_hearing: "higher_level_review_with_hearing"
   }
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_receipt
