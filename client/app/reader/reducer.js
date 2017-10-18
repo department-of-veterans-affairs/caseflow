@@ -187,7 +187,7 @@ export const initialState = {
   pdfDocuments: {},
   text: [],
   documentSearchString: null,
-  pagesText: {}
+  extractedText: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1092,7 +1092,7 @@ export const reducer = (state = initialState, action = {}) => {
     return update(
       state,
       {
-        pagesText: {
+        extractedText: {
           $merge: action.payload.textObject
         }
       }
@@ -1105,7 +1105,7 @@ export const reducer = (state = initialState, action = {}) => {
           $set: action.payload.searchString
         }
       }
-    );  
+    );
   default:
     return state;
   }

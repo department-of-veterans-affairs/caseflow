@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
-import { getSearchSelectors } from 'redux-search'
+import { getSearchSelectors } from 'redux-search';
 
 const getFilteredDocIds = (state) => state.ui.filteredDocIds;
 const getAllDocs = (state) => state.documents;
@@ -70,23 +70,23 @@ export const docListIsFiltered = createSelector(
 // text is a selector that returns the text Pages are currently filtered by
 // result is an Array of Page ids that match the current search :text
 const {
-  text, // search text
-  result // page ids
+  text,
+  result
 } = getSearchSelectors({
-  resourceName: 'pagesText',
+  resourceName: 'extractedText',
   resourceSelector: (resourceName, state) => state.readerReducer[resourceName]
-})
+});
 
-const getPagesText = state => state.readerReducer.pagesText;
+const getExtractedText = (state) => state.readerReducer.extractedText;
 const getFile = (state, props) => props.file;
 
 export const getTextSearch = createSelector(
-  [result, getPagesText, text, getFile],
-  (pageIds, pagesText, searchText, file) => pageIds.map((pageId) => pagesText[pageId]).
+  [result, getExtractedText, text, getFile],
+  (pageIds, extractedText, searchText, file) => pageIds.map((pageId) => extractedText[pageId]).
     filter((pageText) => pageText.file === file)
-)
+);
 
 export const getTextForFile = createSelector(
-  [getPagesText, getFile],
-  (pagesText, file) => _.filter(pagesText, (pageText) => pageText.file === file)
-)
+  [getExtractedText, getFile],
+  (extractedText, file) => _.filter(extractedText, (pageText) => pageText.file === file)
+);

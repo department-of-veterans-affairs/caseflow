@@ -6,7 +6,7 @@ import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
-import { createSearchAction, getSearchSelectors } from 'redux-search'
+import { createSearchAction } from 'redux-search';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -822,10 +822,12 @@ export const getDocumentText = (pdfDocument, file) => (
         return page.getTextContent();
       });
     };
-
     const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
+
     Promise.all(getTextPromises).then((pages) => {
       const textObject = pages.reduce((acc, page, pageIndex) => {
+        // PDFJS textObjects have an array of items. Each item has a str.
+        // concatenating all of these gets us to the page text.
         const concatenated = page.items.map((row) => row.str).join(' ');
 
         return {
@@ -834,12 +836,10 @@ export const getDocumentText = (pdfDocument, file) => (
             id: `${file}-${pageIndex}`,
             file,
             text: concatenated,
-            pageIndex: pageIndex
+            pageIndex
           }
         };
       }, {});
-
-      console.log('dispatching', textObject);
 
       dispatch({
         type: Constants.GET_DCOUMENT_TEXT,
@@ -858,4 +858,4 @@ export const setDocumentSearch = (searchString) => ({
   }
 });
 
-export const searchText = createSearchAction('pagesText');
+export const searchText = createSearchAction('extractedText');

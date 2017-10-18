@@ -33,15 +33,15 @@ export class DocumentSearch extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, props) => {
-  console.log('getTextSearch', getTextSearch(state, props));
-
-  return {
-    pdfDocument: state.readerReducer.pdfDocuments[props.file],
-    pdfText: getTextForFile(state, props),
-    pageTexts: getTextSearch(state, props)
-  }
+PdfFile.propTypes = {
+  file: PropTypes.string
 };
+
+const mapStateToProps = (state, props) => ({
+  pdfDocument: state.readerReducer.pdfDocuments[props.file],
+  pdfText: getTextForFile(state, props),
+  pageTexts: getTextSearch(state, props)
+});
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
