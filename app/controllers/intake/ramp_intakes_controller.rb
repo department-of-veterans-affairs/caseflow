@@ -24,7 +24,7 @@ class Intake::RampIntakesController < ApplicationController
   end
 
   def destroy
-    intake.complete!(:canceled)
+    intake.cancel!
     render json: {}
   end
 
