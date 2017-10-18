@@ -64,7 +64,7 @@ class Finish extends React.PureComponent {
           </span>
         }
         name="confirm-finish"
-        required={true}
+        required
         value={rampElection.finishConfirmed}
         onChange={this.props.confirmFinishIntake}
         errorMessage={rampElection.finishConfirmedError}
