@@ -33,7 +33,7 @@ module HearingMapper
       end
     end
 
-    # The TB abd Video hearing datetime reflect the timezone of the local RO,
+    # The TB and Video hearing datetime reflect the timezone of the local RO,
     # So we append the timezone based on the regional office location
     # And then convert the date to Eastern Time
     # asctime - returns a canonical string representation of time
