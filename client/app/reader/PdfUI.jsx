@@ -251,6 +251,7 @@ export class PdfUI extends React.Component {
       <div>
         <Pdf
           documentId={this.props.doc.id}
+          documentPathBase={this.props.documentPathBase}
           file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
