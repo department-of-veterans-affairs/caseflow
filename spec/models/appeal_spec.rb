@@ -1058,7 +1058,7 @@ describe Appeal do
   context "#veteran" do
     subject { appeal.veteran }
 
-    let(:veteran_record) { { first_name: "Ed", last_name: "Merica" } }
+    let(:veteran_record) { { file_number: "123", first_name: "Ed", last_name: "Merica" } }
 
     before do
       Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }

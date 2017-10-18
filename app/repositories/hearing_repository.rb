@@ -72,7 +72,7 @@ class HearingRepository
       values = MasterRecordHelper.values_based_on_type(vacols_record)
       # Travel Board master records have a date range, so we create a master record for each day
       values[:dates].inject([]) do |result, date|
-        result << Hearing.new(date: HearingMapper.normalize_datetime(date, values[:ro]),
+        result << Hearing.new(date: VacolsHelper.normalize_vacols_datetime(date),
                               type: values[:type],
                               master_record: true,
                               regional_office_key: values[:ro])
@@ -81,6 +81,10 @@ class HearingRepository
     end
 
     def vacols_attributes(vacols_record)
+      type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
+      date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
+                                                  regional_office_key: vacols_record.bfregoff,
+                                                  type: type)
       {
         vacols_record: vacols_record,
         venue_key: vacols_record.hearing_venue,
@@ -93,8 +97,8 @@ class HearingRepository
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
         regional_office_key: vacols_record.bfregoff,
-        type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym],
-        date: HearingMapper.normalize_datetime(vacols_record.hearing_date, vacols_record.bfregoff),
+        type: type,
+        date: date,
         master_record: false
       }
     end
