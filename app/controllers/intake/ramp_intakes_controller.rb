@@ -14,18 +14,29 @@ class Intake::RampIntakesController < ApplicationController
   end
 
   def update
+    ramp_election.start_saving_receipt
+
     if ramp_election.update_attributes(update_params)
       render json: {}
     else
-      # TODO: Make this more granular, and able to report multiple errors?
-      render json: { error_code: :invalid }, status: 422
+      render json: { error_codes: ramp_election.errors.messages }, status: 422
     end
+  end
+
+  def destroy
+    intake.complete!(:canceled)
+    render json: {}
+  end
+
+  def complete
+    intake.complete!
+    render json: {}
   end
 
   private
 
   def intake
-    @intake ||= RampIntake.find(params[:id])
+    @intake ||= RampIntake.where(user: current_user).find(params[:id])
   end
 
   def ramp_election

@@ -41,13 +41,7 @@ class HearingDocket
       regional_office_key: regional_office_key,
       type: type,
       date: date
-    ) || SLOTS_BY_TIMEZONE[timezone]
-  end
-
-  private
-
-  def timezone
-    VACOLS::RegionalOffice::CITIES[regional_office_key][:timezone] if regional_office_key
+    ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
   end
 
   class << self
