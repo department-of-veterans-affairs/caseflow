@@ -21,24 +21,26 @@ class Finish extends React.PureComponent {
     default:
     }
 
-    let ep, optionName;
+    let epName, optionName;
 
     if (this.props.rampElection.optionSelected === 'supplemental_claim') {
       optionName = 'Supplemental Claim';
-      ep = '683 RAMP – Supplemental Claim Review Rating';
+      epName = '683 RAMP – Supplemental Claim Review Rating';
     } else {
       optionName = 'Higher-Level Review';
-      ep = '682 RAMP – Higher Level Review Rating';
+      epName = '682 RAMP – Higher Level Review Rating';
     }
 
     const steps = [
       <span>Upload the RAMP Election form to the VBMS eFolder and ensure the Document Type is <b>Correspondence</b>.</span>,
       <span>Update the Subject Line with "Ramp Election."</span>,
-      <span>Create an EP <strong>{ ep }</strong> in VBMS.</span>,
+      <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
       <span>Add a placeholder contention of "RAMP."</span>,
       <span>Send a RAMP Withdrawal Letter using Letter Creator.</span>
     ];
-    const stepFns = steps.map((step, index) => () => <span><strong>Step {index}.</strong> {step}</span>);
+    const stepFns = steps.map((step, index) =>
+      () => <span><strong>Step {index}.</strong> {step}</span>
+    );
 
     return <div>
       <h1>Finish processing { optionName } election</h1>
