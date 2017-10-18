@@ -2,7 +2,6 @@ class HearingRepository
   class << self
     # :nocov:
     def upcoming_hearings_for_judge(css_id)
-      css_id = "CASEFLOW_283"
       records = VACOLS::CaseHearing.upcoming_for_judge(css_id) +
                 VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
       hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
