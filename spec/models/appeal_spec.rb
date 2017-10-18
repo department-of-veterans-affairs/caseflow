@@ -498,7 +498,7 @@ describe Appeal do
         let(:vacols_record) { :ready_to_certify }
 
         it "closes the appeal in VACOLS" do
-          expect(AppealRepository).to receive(:close!).with(
+          expect(Fakes::AppealRepository).to receive(:close!).with(
             appeal: appeal,
             user: user,
             closed_on: 4.days.ago,
@@ -580,14 +580,14 @@ describe Appeal do
     end
   end
 
-  context "#fetch_appeals_by_vbms_id" do
-    subject { Appeal.fetch_appeals_by_vbms_id(vbms_id) }
+  context "#fetch_appeals_by_file_number" do
+    subject { Appeal.fetch_appeals_by_file_number(file_number) }
     let!(:appeal) do
       Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789S")
     end
 
     context "when passed with valid vbms id" do
-      let(:vbms_id) { "123456789" }
+      let(:file_number) { "123456789" }
 
       it "returns an appeal" do
         expect(subject.length).to eq(1)
@@ -597,7 +597,7 @@ describe Appeal do
 
     context "when passed an invalid vbms id" do
       context "length greater than 9" do
-        let(:vbms_id) { "1234567890" }
+        let(:file_number) { "1234567890" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
@@ -605,65 +605,10 @@ describe Appeal do
       end
 
       context "length less than 3" do
-        let(:vbms_id) { "12" }
+        let(:file_number) { "12" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-        end
-      end
-    end
-  end
-
-  context "#convert_vbms_id_for_vacols_query" do
-    subject { Appeal.convert_vbms_id_for_vacols_query(vbms_id) }
-
-    context "when passed a vbms id with a valid ssn" do
-      let(:vbms_id) { "123456789" }
-      it { is_expected.to eq("123456789S") }
-    end
-
-    context "when passed a vbms id with a valid ssn and appended alphabets" do
-      let(:vbms_id) { "123456789S" }
-      it { is_expected.to eq("123456789S") }
-    end
-
-    context "when passed a vbms id with a less than 9 digits" do
-      let(:vbms_id) { "1234567" }
-      it { is_expected.to eq("1234567C") }
-    end
-
-    context "when passed a vbms id less than 9 digits with leading zeros" do
-      let(:vbms_id) { "0012347" }
-      it { is_expected.to eq("12347C") }
-    end
-
-    context "when passed a vbms id less than 9 digits with leading zeros and alphabets" do
-      let(:vbms_id) { "00123C00S9S" }
-      it { is_expected.to eq("123009C") }
-    end
-
-    context "invalid vbms id" do
-      context "when passed a vbms_id greater than 9 digits" do
-        let(:vbms_id) { "1234567890" }
-
-        it "raises RecordNotFound error" do
-          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
-        end
-      end
-
-      context "when passed a vbms_id less than 3 digits" do
-        let(:vbms_id) { "12" }
-
-        it "raises RecordNotFound error" do
-          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
-        end
-      end
-
-      context "when passed no vbms id" do
-        let(:vbms_id) { "" }
-
-        it "raises RecordNotFound error" do
-          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
         end
       end
     end
@@ -687,6 +632,16 @@ describe Appeal do
     context "for a file number with 9 digits" do
       let(:file_number) { "123456789" }
       it { is_expected.to eq("123456789S") }
+
+      context "with letters" do
+        let(:file_number) { "12ABCSD34ASDASD56789S" }
+        it { is_expected.to eq("123456789S") }
+      end
+
+      context "with leading zeros and letters" do
+        let(:file_number) { "00123C00S9S" }
+        it { is_expected.to eq("123009C") }
+      end
     end
 
     context "for a file number with more than 9 digits" do
@@ -1103,7 +1058,7 @@ describe Appeal do
   context "#veteran" do
     subject { appeal.veteran }
 
-    let(:veteran_record) { { first_name: "Ed", last_name: "Merica" } }
+    let(:veteran_record) { { file_number: "123", first_name: "Ed", last_name: "Merica" } }
 
     before do
       Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }

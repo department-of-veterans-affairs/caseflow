@@ -4,12 +4,22 @@ import { bindActionCreators } from 'redux';
 import RadioField from '../../components/RadioField';
 import DateSelector from '../../components/DateSelector';
 import CancelButton from '../components/CancelButton';
+import { Redirect } from 'react-router-dom';
 import Button from '../../components/Button';
-import { setSelectedOption, setReceiptDate, submitReview } from '../redux/actions';
-import { REQUEST_STATE } from '../constants';
+import { setOptionSelected, setReceiptDate, submitReview } from '../redux/actions';
+import { REQUEST_STATE, PAGE_PATHS } from '../constants';
 
 class Review extends React.PureComponent {
   render() {
+    const {
+      rampElection,
+      veteran
+    } = this.props;
+
+    if (!rampElection.intakeId) {
+      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+    }
+
     const radioOptions = [
       {
         value: 'supplemental_claim',
@@ -22,15 +32,11 @@ class Review extends React.PureComponent {
       {
         value: 'higher_level_review',
         displayElem: <span>Higher Level Review with<strong>out</strong> DRO hearing request</span>
-      },
-      {
-        value: 'withdraw',
-        displayText: 'Withdraw all pending appeals'
       }
     ];
 
     return <div>
-      <h1>Review { this.props.veteran.name }'s opt-in request</h1>
+      <h1>Review { veteran.name }'s opt-in request</h1>
       <p>Check the Veteran's RAMP Opt-In Election form in the Centralized Portal.</p>
 
       <RadioField
@@ -38,15 +44,17 @@ class Review extends React.PureComponent {
         label="Which election did the Veteran select?"
         strongLabel
         options={radioOptions}
-        onChange={this.props.setSelectedOption}
-        value={this.props.rampElection.optionSelected}
+        onChange={this.props.setOptionSelected}
+        errorMessage={rampElection.optionSelectedError}
+        value={rampElection.optionSelected}
       />
 
       <DateSelector
         name="receipt-date"
         label="What is the Receipt Date for this election form?"
-        value={this.props.rampElection.receiptDate}
+        value={rampElection.receiptDate}
         onChange={this.props.setReceiptDate}
+        errorMessage={rampElection.receiptDateError}
         strongLabel
       />
     </div>;
@@ -95,7 +103,7 @@ export default connect(
     rampElection
   }),
   (dispatch) => bindActionCreators({
-    setSelectedOption,
+    setOptionSelected,
     setReceiptDate
   }, dispatch)
 )(Review);

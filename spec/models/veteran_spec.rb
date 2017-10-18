@@ -41,6 +41,14 @@ describe Veteran do
       it { is_expected.to_not be_found }
     end
 
+    context "when veteran has no BIRLS record" do
+      let(:veteran_record) do
+        { file_number: nil }
+      end
+
+      it { is_expected.to_not be_found }
+    end
+
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
         file_number: "445566",

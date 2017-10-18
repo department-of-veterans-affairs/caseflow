@@ -4,7 +4,7 @@
 class Issue
   include ActiveModel::Model
 
-  attr_accessor :program, :type, :category, :description, :disposition, :levels,
+  attr_accessor :id, :program, :type, :category, :description, :disposition, :levels,
                 :program_description, :note, :vacols_sequence_id
 
   PROGRAMS = {
@@ -85,6 +85,7 @@ class Issue
                     .parameterize.underscore.to_sym
 
       new(
+        id: hash["isskey"],
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
