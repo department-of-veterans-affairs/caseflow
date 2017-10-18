@@ -21,16 +21,27 @@ class Finish extends React.PureComponent {
     default:
     }
 
+    let ep, optionName;
+
+    if (this.props.rampElection.optionSelected === 'supplemental_claim') {
+      optionName = 'Supplemental Claim';
+      ep = '683 RAMP – Supplemental Claim Review Rating';
+    } else {
+      optionName = 'Higher-Level Review';
+      ep = '682 RAMP – Higher Level Review Rating';
+    }
+
     const steps = [
-      <span>Upload the RAMP election form to VBMS and ensure the Document Type is <em>Correspondence</em>.</span>,
-      <span>Update the Subject Line with <em>RAMP Opt-In</em>.</span>,
-      <span>Create an EP <strong>030 RAMP Supplemental</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of <em>RAMP</em>.</span>
+      <span>Upload the RAMP Election form to the VBMS eFolder and ensure the Document Type is <b>Correspondence</b>.</span>,
+      <span>Update the Subject Line with "Ramp Election."</span>,
+      <span>Create an EP <strong>{ ep }</strong> in VBMS.</span>,
+      <span>Add a placeholder contention of "RAMP."</span>,
+      <span>Send a RAMP Withdrawal Letter using Letter Creator.</span>
     ];
     const stepFns = steps.map((step, index) => () => <span><strong>Step {index}.</strong> {step}</span>);
 
     return <div>
-      <h1>Finish processing Supplemental Claim request</h1>
+      <h1>Finish processing { optionName } election</h1>
       <p>Please complete the following 4 steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
     </div>;
@@ -75,6 +86,7 @@ export class FinishButtons extends React.PureComponent {
 
 export default connect(
   (state) => ({
+    rampElection: state.rampElection,
     rampElectionStatus: getRampElectionStatus(state)
   })
 )(Finish);
