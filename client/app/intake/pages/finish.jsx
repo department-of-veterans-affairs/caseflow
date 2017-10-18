@@ -32,19 +32,22 @@ class Finish extends React.PureComponent {
     }
 
     const steps = [
-      <span>Upload the RAMP Election form to the VBMS eFolder and ensure the Document Type is <b>Correspondence</b>.</span>,
-      <span>Update the Subject Line with "Ramp Election."</span>,
+      <span>
+        Upload the RAMP Election form to the VBMS eFolder and ensure the
+        Document Type is <b>Correspondence</b>.
+      </span>,
+      <span>Update the Subject Line with "Ramp Election".</span>,
       <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of "RAMP."</span>,
-      <span>Send a RAMP Withdrawal Letter using Letter Creator.</span>
+      <span>Add a placeholder contention of "RAMP".</span>,
+      <span>Send a <strong>RAMP Withdrawal Letter</strong> using <em>Letter Creator</em>.</span>
     ];
     const stepFns = steps.map((step, index) =>
-      () => <span><strong>Step {index}.</strong> {step}</span>
+      () => <span><strong>Step {index + 1}.</strong> {step}</span>
     );
 
     return <div>
       <h1>Finish processing { optionName } election</h1>
-      <p>Please complete the following 4 steps outside Caseflow.</p>
+      <p>Please complete the following steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
     </div>;
   }
