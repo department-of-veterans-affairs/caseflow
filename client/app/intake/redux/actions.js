@@ -87,6 +87,21 @@ export const submitReview = (rampElection) => (dispatch) => {
     );
 };
 
+export const completeIntake = (rampElection) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.COMPLETE_INTAKE_START
+  });
+
+  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
+    then(
+      () => dispatch({ type: ACTIONS.COMPLETE_INTAKE_SUCCEED }),
+      (error) => {
+        dispatch({ type: ACTIONS.COMPLETE_INTAKE_FAIL });
+        throw error;
+      }
+    );
+};
+
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL
 });

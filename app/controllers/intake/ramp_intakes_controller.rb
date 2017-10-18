@@ -24,13 +24,19 @@ class Intake::RampIntakesController < ApplicationController
   end
 
   def destroy
-    intake.update!(cancelled_at: Time.zone.now)
+    intake.complete!(:canceled)
+    render json: {}
+  end
+
+  def complete
+    intake.complete!
+    render json: {}
   end
 
   private
 
   def intake
-    @intake ||= RampIntake.find(params[:id])
+    @intake ||= RampIntake.where(user: current_user).find(params[:id])
   end
 
   def ramp_election
