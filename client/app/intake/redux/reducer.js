@@ -234,14 +234,6 @@ export const reducer = (state = mapDataToInitialState(), action) => {
         }
       }
     });
-  case ACTIONS.CLEAR_CANCEL_ERROR:
-    return update(state, {
-      requestStatus: {
-        cancelIntake: {
-          $set: REQUEST_STATE.NOT_STARTED
-        }
-      }
-    });
   case ACTIONS.CANCEL_INTAKE_START:
     return update(state, {
       requestStatus: {

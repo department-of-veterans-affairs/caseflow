@@ -120,7 +120,3 @@ export const submitCancel = (rampElection) => (dispatch) => {
       }
     );
 };
-
-export const clearCancelError = () => ({
-  type: ACTIONS.CLEAR_CANCEL_ERROR
-});
