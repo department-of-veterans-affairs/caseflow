@@ -11,7 +11,6 @@ import ApiUtil from '../util/ApiUtil';
 export const getWorksheet = (id, dispatch) => {
   ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
     then((response) => {
-
       dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {
       dispatch(Actions.handleServerError(err));
@@ -32,8 +31,10 @@ export class HearingWorksheetContainer extends React.Component {
     if (this.props.serverError) {
       return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
         <Alert
-          title="Error Status"
-          type="error"> An error occurred while retrieving your Hearings.
+          title="Unable to load documents"
+          type="error">
+          It looks like Caseflow was unable to load the worksheet.
+          Please refresh the page and try again.
         </Alert>
       </div>;
     }

@@ -24,8 +24,9 @@ export class DailyDocketContainer extends React.Component {
     if (this.props.serverError) {
       return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
         <Alert
-          title="Error Status"
-          type="error"> An error occurred while retrieving your Daily Docket.
+          title="Unable to load documents"
+          type="error">It looks like Caseflow was unable to load hearings.
+          Please refresh the page and try again.
         </Alert>
       </div>;
     }
