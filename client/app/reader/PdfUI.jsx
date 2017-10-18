@@ -255,6 +255,7 @@ export class PdfUI extends React.Component {
           file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
+          history={this.props.history}
           onPageClick={this.props.onPageClick}
           scale={this.state.scale}
           onPageChange={this.onPageChange}

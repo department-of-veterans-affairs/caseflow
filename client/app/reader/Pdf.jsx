@@ -189,7 +189,7 @@ export class Pdf extends React.PureComponent {
   handleAltBackspace = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
-    console.log(this.props.documentPathBase);
+    this.props.history.push(this.props.documentPathBase);
   }
 
   keyListener = (event) => {
