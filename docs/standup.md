@@ -9,5 +9,32 @@ Our standup routine has three parts:
 * **10:45a** – Optional post-standup discussion
 * **11:00a** – Hard stop.
 
+To describe each part:
+
+## Sprint Team Standup
+Each sprint team listed in [`priorities.md`](https://github.com/department-of-veterans-affairs/appeals-pm/blob/master/priorities.md) will meet:
+
+| Team | Room |
+| --- | --- |
+| Whiskey | Bespin |
+| Tango | Naboo |
+| Foxtrot | Endor | 
+| Devops | ??? |
+| Harambe | Anoat |
+| QA? | ??? |
+
+The sprint team standup can be cancelled at the team leads' discretion. Each team is responsible for their own dial-in system for remote teammates (Slack call, Google Hangout, just calling the one remote person on the phone, etc). People who are not attached to a specific team are welcome at any standup, but only as observers.
+
+Sprint team standup is a good time to discuss things like:
+
+* Blockers
+* What people should work on that day
+* Identifying potential conflicts ("my work may step on your toes; let's chat offline.")
+* Syncing on the plan for the day ("If you get me the PR by lunch, I can have it back to you by 2p.")
+
+As always, the key to a good standup is setting the stage for doing work, not actually doing work in the meeting.
+
+Sprint team standup is cross-functional. Engineers, designers, and product people all attend the same standup.
+
 ## Appendix A: Previous Notes
 * https://github.com/department-of-veterans-affairs/caseflow/issues/1703
