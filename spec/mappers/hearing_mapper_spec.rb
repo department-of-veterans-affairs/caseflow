@@ -76,6 +76,16 @@ describe HearingMapper do
     context "when video" do
       let(:type) { :video }
 
+      it "uses a regional office timezone to set the zone" do
+        expect(subject.day).to eq 5
+        expect(subject.hour).to eq 16
+        expect(subject.zone).to eq "EDT"
+      end
+    end
+
+    context "when central_office" do
+      let(:type) { :central_office }
+
       it "does not use a regional office timezone" do
         expect(subject.day).to eq 6
         expect(subject.hour).to eq 4

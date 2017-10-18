@@ -33,13 +33,13 @@ module HearingMapper
       end
     end
 
-    # The TB hearing datetime reflect the timezone of the local RO,
+    # The TB abd Video hearing datetime reflect the timezone of the local RO,
     # So we append the timezone based on the regional office location
     # And then convert the date to Eastern Time
     # asctime - returns a canonical string representation of time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
-      return datetime unless type == :travel
+      return datetime if type == :central_office
 
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end
