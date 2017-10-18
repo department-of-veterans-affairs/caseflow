@@ -25,7 +25,9 @@ Each sprint team listed in [`priorities.md`](https://github.com/department-of-ve
 | Harambe | Anoat |
 | QA? | ??? |
 
-The sprint team standup can be cancelled at the team leads' discretion. Each team is responsible for their own dial-in system for remote teammates (Slack call, Google Hangout, just calling the one remote person on the phone, etc). People who are not attached to a specific team are welcome at any standup, but only as observers.
+The team leads are responsible for running standup. Standup can be cancelled at the team leads' discretion.
+
+Each team is responsible for their own dial-in system for remote teammates (Slack call, Google Hangout, just calling the one remote person on the phone, etc). People who are not attached to a specific team are welcome at any standup, but only as observers.
 
 Sprint team standup is a good time to discuss things like:
 
