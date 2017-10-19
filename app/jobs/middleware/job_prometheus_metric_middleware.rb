@@ -7,7 +7,7 @@ class JobPrometheusMetricMiddleware
   rescue
     PrometheusService.background_jobs_error_counter.increment(name: job_class)
 
-    # reraise the same error. This lets Sidekiq's retry logic kick off
+    # reraise the same error. This lets Shoryuken's retry logic kick off
     # as normal, but we still capture the error
     raise
   ensure
