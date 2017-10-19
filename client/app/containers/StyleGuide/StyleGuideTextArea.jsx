@@ -32,7 +32,7 @@ export default class StyleGuideTextArea extends React.Component {
         onChange={(value) => {
           this.setState({ value });
         }}
-        />
+      />
     </div>;
   }
 }

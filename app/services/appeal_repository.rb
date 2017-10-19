@@ -316,7 +316,7 @@ class AppealRepository
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
       active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
       active_cases_for_user.map do |assignment|
-        assignment_issues_hash_array = active_cases_issues[assignment.vacols_id]
+        assignment_issues_hash_array = active_cases_issues[assignment.vacols_id] || []
 
         # if that appeal is not found, it intializes a new appeal with the
         # assignments vacols_id

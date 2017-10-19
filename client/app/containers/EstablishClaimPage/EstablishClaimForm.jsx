@@ -39,54 +39,54 @@ export class EstablishClaimForm extends React.Component {
       <form noValidate id="end_product">
         <div className="cf-app-segment cf-app-segment--alt">
           <h1>Route Claim</h1>
-           <h2>Create End Product</h2>
+          <h2>Create End Product</h2>
           <TextField
-           label="Benefit Type"
-           name="BenefitType"
-           value="C&P Live"
-           readOnly={true}
+            label="Benefit Type"
+            name="BenefitType"
+            value="C&P Live"
+            readOnly={true}
           />
           <TextField
-           label="Payee"
-           name="Payee"
-           value="00 - Veteran"
-           readOnly={true}
+            label="Payee"
+            name="Payee"
+            value="00 - Veteran"
+            readOnly={true}
           />
           <TextField
-           label="EP & Claim Label"
-           name="claimLabel"
-           readOnly={true}
-           value={claimLabelValue}
+            label="EP & Claim Label"
+            name="claimLabel"
+            readOnly={true}
+            value={claimLabelValue}
           />
           <TextField
-           label="Modifier"
-           name="endProductModifier"
-           readOnly={true}
-           value={establishClaimForm.endProductModifier}
+            label="Modifier"
+            name="endProductModifier"
+            readOnly={true}
+            value={establishClaimForm.endProductModifier}
           />
           <DateSelector
-           label="Decision Date"
-           name="date"
-           readOnly={true}
-           value={decisionDate}
+            label="Decision Date"
+            name="date"
+            readOnly={true}
+            value={decisionDate}
           />
           <TextField
-           label="Station of Jurisdiction"
-           name="stationOfJurisdiction"
-           readOnly={true}
-           value={this.formattedStationOfJurisdiction()}
+            label="Station of Jurisdiction"
+            name="stationOfJurisdiction"
+            readOnly={true}
+            value={this.formattedStationOfJurisdiction()}
           />
           <Checkbox
-           label="Gulf War Registry Permit"
-           name="gulfWarRegistry"
-           value={establishClaimForm.gulfWarRegistry}
-           onChange={handleFieldChange('gulfWarRegistry')}
+            label="Gulf War Registry Permit"
+            name="gulfWarRegistry"
+            value={establishClaimForm.gulfWarRegistry}
+            onChange={handleFieldChange('gulfWarRegistry')}
           />
           <Checkbox
-           label="Suppress Acknowledgement Letter"
-           name="suppressAcknowledgementLetter"
-           value={establishClaimForm.suppressAcknowledgementLetter}
-           onChange={handleFieldChange('suppressAcknowledgementLetter')}
+            label="Suppress Acknowledgement Letter"
+            name="suppressAcknowledgementLetter"
+            value={establishClaimForm.suppressAcknowledgementLetter}
+            onChange={handleFieldChange('suppressAcknowledgementLetter')}
           />
         </div>
       </form>

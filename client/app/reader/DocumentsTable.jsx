@@ -79,8 +79,8 @@ class LastReadIndicator extends React.PureComponent {
       id="read-indicator"
       ref={this.props.getRef}
       aria-label="Most recently read document indicator">
-        {rightTriangle()}
-      </span>;
+      {rightTriangle()}
+    </span>;
   }
 }
 
@@ -245,7 +245,7 @@ class DocumentsTable extends React.Component {
     this.setFilterIconPositions();
   }
 
-    // eslint-disable-next-line max-statements
+  // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
@@ -274,8 +274,8 @@ class DocumentsTable extends React.Component {
               onJumpToComment={this.props.onJumpToComment(comment)}
               uuid={comment.uuid}
               horizontalLayout={true}>
-                {comment.comment}
-              </Comment>;
+              {comment.comment}
+            </Comment>;
           });
 
           return <ul className="cf-no-styling-list" aria-label="Document comments">
@@ -341,9 +341,9 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'doc-type-column',
         header: <Button id="type-header"
-        name="Document Type"
-        classNames={['cf-document-list-button-header']}
-        onClick={() => this.props.changeSortState('type')}>
+          name="Document Type"
+          classNames={['cf-document-list-button-header']}
+          onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) => <ConnectedDocTypeColumn doc={doc}
