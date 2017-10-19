@@ -36,16 +36,14 @@ class Finish extends React.PureComponent {
       }
     ];
 
-    return _.map(appeals, (appeal) => {
-      return <div key={appeal.id}>
-        <Table
-          columns={issueColumns}
-          rowObjects={appeal.issues}
-          slowReRendersAreOk
-          summary="Appeal issues"
-        />
-      </div>;
-    });
+    return _.map(appeals, (appeal) => (
+      <Table
+        columns={issueColumns}
+        rowObjects={appeal.issues}
+        slowReRendersAreOk
+        summary="Appeal issues"
+      />
+    ));
   }
 
   render() {
