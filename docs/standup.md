@@ -21,11 +21,11 @@ Each sprint team listed in [`priorities.md`](https://github.com/department-of-ve
 | Whiskey | Bespin |
 | Tango | Naboo |
 | Foxtrot | Endor | 
-| Devops | ??? |
+| Devops | Slack call |
 | Harambe | Anoat |
 | QA? | ??? |
 
-The team leads are responsible for running standup. Standup can be cancelled at the team leads' discretion.
+The team leads are responsible for running standup. Standup can be cancelled at the team leads' discretion. Teams can use Waffle, GitHub, [Caseflow Developer](https://cold-stream-43683.herokuapp.com/sprint/standup?team=CASEFLOW), or any other tool for reviewing current tasks.
 
 Each team is responsible for their own dial-in system for remote teammates (Slack call, Google Hangout, just calling the one remote person on the phone, etc). People who are not attached to a specific team are welcome at any standup, but only as observers.
 
@@ -41,7 +41,7 @@ As always, the key to a good standup is setting the stage for doing work, not ac
 Sprint team standup is cross-functional. Engineers, designers, and product people all attend the same standup.
 
 ### Entire Team Standup
-The team-wide standup occurs in Endor. This is a good time to discuss topics like:
+The team-wide standup occurs in Endor. This is a good time for topics like:
 
 * Updates to how deployment works
 * Updates on roll-out progress
@@ -50,6 +50,7 @@ The team-wide standup occurs in Endor. This is a good time to discuss topics lik
 * Reminders about post-standup discussions
 * Notes about code changes that affect all Caseflow apps
 * Notes about design or produce decisions that affect the entire team
+* QA resolving blockers to ticket validation
 
 If there are no such announcements, then we'll end the meeting immediately and give everyone the time back.
 
