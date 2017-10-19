@@ -6,7 +6,7 @@ import _ from 'lodash';
 const formatAppeals = (appeals) => {
   return _.map(appeals, (appeal) => (
     {
-      issues: _.map(appeal.issues,
+      issues: appeal.issues.map(
         ({ description, program_description, note }) => ({
           description,
           programDescription: program_description,

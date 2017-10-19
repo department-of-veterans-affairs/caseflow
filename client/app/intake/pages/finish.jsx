@@ -16,8 +16,8 @@ import _ from 'lodash';
 const submitText = "I've completed all steps";
 
 class Finish extends React.PureComponent {
-  issuesAlertContent = (appeals) => {
-    let issueColumns = [
+  getIssuesAlertContent = (appeals) => {
+    const issueColumns = [
       {
         header: 'Program',
         valueName: 'programDescription'
@@ -36,7 +36,12 @@ class Finish extends React.PureComponent {
 
     return _.map(appeals, (appeal) => {
       return <div>
-        <Table columns={issueColumns} rowObjects={appeal.issues} summary="Appeal issues" />
+        <Table 
+          columns={issueColumns}
+          rowObjects={appeal.issues}
+          slowReRendersAreOk
+          summary="Appeal issues"
+        />
       </div>;
     });
   }
@@ -79,7 +84,8 @@ class Finish extends React.PureComponent {
     );
 
     const issuesAlertTitle = `This Veteran has ${appeals.length} ` +
-                             'active appeal(s), with the following issues';
+                             `active ${ appeals.length === 1 ? 'appeal' : 'appeals'}` +
+                             ', with the following issues';
 
     return <div>
       <h1>Finish processing { optionName } election</h1>
@@ -87,7 +93,7 @@ class Finish extends React.PureComponent {
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
 
       <Alert title={ issuesAlertTitle } type="info">
-        { this.issuesAlertContent(appeals) }
+        { this.getIssuesAlertContent(appeals) }
       </Alert>
 
       <Checkbox

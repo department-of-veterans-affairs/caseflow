@@ -130,7 +130,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
 
       # Validate the appeal & issue also shows up
-      expect(page).to have_content("This Veteran has 1 active appeal(s), with the following issues")
+      expect(page).to have_content("This Veteran has 1 active appeal, with the following issues")
       expect(page).to have_content("5252 - Knee, limitation of flexion of")
       expect(page).to have_content("knee movement")
     end
