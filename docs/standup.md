@@ -6,7 +6,7 @@ Our standup routine has three parts:
 
 * **10:15a** – Sprint team standup
 * **10:30a** – Entire team standup
-* **10:45a** – Optional post-standup discussion
+* **10:40 or earlier if entire team standup is done** – Optional post-standup discussion
 * **11:00a** – Hard stop.
 
 To describe each part:
@@ -53,6 +53,8 @@ The team-wide standup occurs in Endor. This is a good time for topics like:
 * QA resolving blockers to ticket validation
 
 If there are no such announcements, then we'll end the meeting immediately and give everyone the time back.
+
+The goal is that entire-team standup lasts 30 seconds to 10 minutes.
 
 ### Optional Post-Standup Discussion
 Post-standup discussions occur in Endor. They are announced ahead of time at other standups.
