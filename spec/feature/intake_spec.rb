@@ -32,7 +32,7 @@ RSpec.feature "RAMP Intake" do
       click_on "Search"
 
       expect(page).to have_current_path("/intake")
-      expect(page).to have_content("No opt-in letter was sent to this veteran")
+      expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
