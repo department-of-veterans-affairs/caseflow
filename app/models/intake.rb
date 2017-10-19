@@ -2,15 +2,30 @@ class Intake < ActiveRecord::Base
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
+  enum completion_status: {
+    success: "success",
+    canceled: "canceled"
+  }
+
   attr_reader :error_code
 
+  def self.in_progress
+    where(completed_at: nil).where.not(started_at: nil)
+  end
+
   def start!
-    # TODO: trim the file number
     return false unless validate_start
 
     update_attributes(
       started_at: Time.zone.now,
       detail: find_or_create_initial_detail
+    )
+  end
+
+  def complete_with_status!(status)
+    update_attributes!(
+      completed_at: Time.zone.now,
+      completion_status: status
     )
   end
 

@@ -1,9 +1,4 @@
 describe HearingMapper do
-  before do
-    Timecop.freeze(Time.utc(2017, 2, 2))
-    Time.zone = "America/Chicago"
-  end
-
   context ".bfha_vacols_code" do
     let(:hearing) do
       OpenStruct.new(
@@ -55,6 +50,47 @@ describe HearingMapper do
       let(:hearing_type) { "C" }
 
       it { is_expected.to eq "5" }
+    end
+  end
+
+  context ".datetime_based_on_type" do
+    before { Time.zone = "America/Chicago" }
+    subject do
+      HearingMapper.datetime_based_on_type(datetime: datetime,
+                                           regional_office_key: regional_office_key,
+                                           type: type)
+    end
+    let(:regional_office_key) { "RO58" }
+    let(:datetime) { Time.new(2013, 9, 5, 20, 0, 0, "-08:00") }
+
+    context "when travel board" do
+      let(:type) { :travel }
+
+      it "uses a regional office timezone to set the zone" do
+        expect(subject.day).to eq 5
+        expect(subject.hour).to eq 16
+        expect(subject.zone).to eq "EDT"
+      end
+    end
+
+    context "when video" do
+      let(:type) { :video }
+
+      it "uses a regional office timezone to set the zone" do
+        expect(subject.day).to eq 5
+        expect(subject.hour).to eq 16
+        expect(subject.zone).to eq "EDT"
+      end
+    end
+
+    context "when central_office" do
+      let(:type) { :central_office }
+
+      it "does not use a regional office timezone" do
+        expect(subject.day).to eq 6
+        expect(subject.hour).to eq 4
+        expect(subject.zone).to eq "CDT"
+      end
     end
   end
 

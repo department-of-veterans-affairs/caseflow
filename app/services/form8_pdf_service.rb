@@ -16,7 +16,7 @@ class Form8PdfService
     file_number: "TextField1[1]",
     appellant_name: "TextField1[2]",
     insurance_loan_number: "TextField1[3]",
-    nod_date: "Field32[0]",
+    other_notification_date: "Field32[0]",
     soc_date: "Field32[1]",
     form9_date: "Field32[2]",
     ssoc_date_1: "Field32[3]",
@@ -41,19 +41,12 @@ class Form8PdfService
     certification_date: "TextField1[10]"
   }.freeze
 
-  NOTIFICATION_DATE_FIELDS = {
-    service_connection_notification_date: :service_connection_for_initial,
-    increased_rating_notification_date: :increased_rating_for_initial,
-    other_notification_date: :other_for_initial
-  }.freeze
-
   PDF_CHECKBOX_SYMBOL = "1".freeze
 
   # Rubocop complains about the number of conditions here,
   # but IMO it's pretty clear and I don't want to break it up
   # just for the sake of it.
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def self.pdf_values_for(form8, field_locations)
     field_locations.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
@@ -69,7 +62,7 @@ class Form8PdfService
       end
 
       if value.is_a?(Date) || value.is_a?(Time)
-        value = clear_date_for_pdf?(attribute, form8) ? "" : value.to_formatted_s(:short_date)
+        value = value.to_formatted_s(:short_date)
       end
 
       if location.is_a?(Hash)
@@ -135,11 +128,5 @@ class Form8PdfService
     # from the pdf-forms readme: XFDF is supposed to have
     # better support for non-western encodings
     @pdf_forms ||= PdfForms.new("pdftk", data_format: "XFdf")
-  end
-
-  # if the notification text field is blank, set the corresponding
-  # notification date to blank in the PDF
-  def self.clear_date_for_pdf?(attribute, form8)
-    NOTIFICATION_DATE_FIELDS.key?(attribute) && form8.send(NOTIFICATION_DATE_FIELDS[attribute]).blank?
   end
 end

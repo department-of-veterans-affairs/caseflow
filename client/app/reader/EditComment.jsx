@@ -20,6 +20,13 @@ export default class EditComment extends React.Component {
     }
   }
 
+  keyListener = (event) => {
+    if (event.altKey && event.key === 'Enter') {
+      this.onSaveCommentEdit();
+      event.stopPropagation();
+    }
+  }
+
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
@@ -53,6 +60,7 @@ export default class EditComment extends React.Component {
           className="comment-container comment-textarea"
           name="Edit Comment"
           aria-label="Edit Comment"
+          onKeyDown={this.keyListener}
           id={this.props.id}
           onChange={this.onChange}
           value={this.props.comment.comment}

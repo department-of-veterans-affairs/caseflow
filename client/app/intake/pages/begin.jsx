@@ -3,33 +3,35 @@ import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../redux/actions';
-import { REQUEST_STATE } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
+import { getRampElectionStatus } from '../redux/selectors';
 
 class Begin extends React.PureComponent {
-  handleSearchSubmit = () => {
-    this.props.doFileNumberSearch(this.props.fileNumberSearchInput).then(() => {
-      if (this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED) {
-        this.props.history.push('/review-request');
-      }
-    });
-  }
+  handleSearchSubmit = () => this.props.doFileNumberSearch(this.props.fileNumberSearchInput)
 
   render() {
-    const searchError = this.props.searchError;
+    const {
+      searchError,
+      rampElectionStatus
+    } = this.props;
 
-    // The extra <p></p> is required to give the necessary spacing.
-    // TODO: we should fix styleguide to make this unnecessary
+    switch (rampElectionStatus) {
+    case RAMP_INTAKE_STATES.STARTED:
+      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+    case RAMP_INTAKE_STATES.REVIEWED:
+      return <Redirect to={PAGE_PATHS.FINISH}/>;
+    case RAMP_INTAKE_STATES.COMPLETED:
+      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+    default:
+    }
+
     return <div>
       { searchError &&
-        <div>
-          <Alert title={searchError.title} type="error">
-            {searchError.body}
-          </Alert>
-
-          <p></p>
-
-        </div>
+        <Alert title={searchError.title} type="error" lowerMargin>
+          {searchError.body}
+        </Alert>
       }
 
       <h1>Welcome to Caseflow Intake!</h1>
@@ -47,10 +49,11 @@ class Begin extends React.PureComponent {
 }
 
 export default connect(
-  ({ searchError, inputs, requestStatus }) => ({
-    fileNumberSearchInput: inputs.fileNumberSearch,
-    fileNumberSearchRequestStatus: requestStatus.fileNumberSearch,
-    searchError
+  (state) => ({
+    fileNumberSearchInput: state.inputs.fileNumberSearch,
+    fileNumberSearchRequestStatus: state.requestStatus.fileNumberSearch,
+    rampElectionStatus: getRampElectionStatus(state),
+    searchError: state.searchError
   }),
   (dispatch) => bindActionCreators({
     doFileNumberSearch,

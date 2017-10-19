@@ -5,8 +5,84 @@ describe RampIntake do
 
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
-  let(:intake) { RampIntake.new(user: user, veteran_file_number: veteran_file_number) }
+  let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let(:intake) do
+    RampIntake.new(
+      user: user,
+      detail: detail,
+      veteran_file_number: veteran_file_number
+    )
+  end
+
+  context "#cancel!" do
+    subject { intake.cancel! }
+
+    let(:detail) do
+      RampElection.create!(
+        veteran_file_number: "64205555",
+        notice_date: 5.days.ago,
+        option_selected: :supplemental_claim,
+        receipt_date: 3.days.ago
+      )
+    end
+
+    it "cancels and clears detail values" do
+      subject
+
+      expect(intake.reload).to be_canceled
+      expect(detail.reload).to have_attributes(
+        option_selected: nil,
+        receipt_date: nil
+      )
+    end
+  end
+
+  context "#complete!" do
+    subject { intake.complete! }
+
+    let(:detail) do
+      RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+    end
+
+    let!(:appeals_to_close) do
+      (1..2).map do
+        Generators::Appeal.create(vbms_id: "64205555C", vacols_record: :ready_to_certify)
+      end
+    end
+
+    it "closes out the appeals correctly" do
+      expect(Fakes::AppealRepository).to receive(:close!).with(
+        appeal: appeals_to_close.first,
+        user: intake.user,
+        closed_on: Time.zone.today,
+        disposition_code: "P"
+      )
+
+      expect(Fakes::AppealRepository).to receive(:close!).with(
+        appeal: appeals_to_close.last,
+        user: intake.user,
+        closed_on: Time.zone.today,
+        disposition_code: "P"
+      )
+
+      subject
+
+      expect(intake.reload).to be_success
+    end
+
+    context "if VACOLS closure fails" do
+      it "does not complete" do
+        intake.save!
+        expect(Fakes::AppealRepository).to receive(:close!).and_raise("VACOLS failz")
+
+        expect { subject }.to raise_error("VACOLS failz")
+
+        intake.reload
+        expect(intake.completed_at).to be_nil
+      end
+    end
+  end
 
   context "#start!" do
     subject { intake.start! }

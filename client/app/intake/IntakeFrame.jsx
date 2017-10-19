@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -8,23 +9,51 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '../components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
+import Modal from '../components/Modal';
+import Alert from '../components/Alert';
+import Button from '../components/Button';
 import BeginPage from './pages/begin';
-import ReviewPage, { ReviewNextButton } from './pages/review';
-import FinishPage, { FinishNextButton } from './pages/finish';
+import ReviewPage, { ReviewButtons } from './pages/review';
+import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { toggleCancelModal, submitCancel } from './redux/actions';
 
 class IntakeFrame extends React.PureComponent {
+  handleSubmitCancel = () => (
+    this.props.submitCancel(this.props.rampElection)
+  )
+
   render() {
     const appName = 'Intake';
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
-      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+    const topMessage = this.props.veteran.fileNumber ?
+    `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+
+    let cancelButton, confirmButton;
+
+    if (this.props.cancelModalVisible) {
+      confirmButton = <Button dangerStyling onClick={this.handleSubmitCancel}>Cancel Intake</Button>;
+      cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
+    }
 
     return <Router basename="/intake" {...this.props.routerTestProps}>
       <div>
+        { this.props.cancelModalVisible &&
+          <Modal
+            title="Cancel Intake?"
+            closeHandler={this.props.toggleCancelModal}
+            confirmButton={confirmButton}
+            cancelButton={cancelButton}
+          >
+            <p>
+              If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS,
+              Caseflow will have no record of this work.
+            </p>
+        </Modal>
+        }
         <NavigationBar
           appName={appName}
           userDisplayName={this.props.userDisplayName}
@@ -34,6 +63,17 @@ class IntakeFrame extends React.PureComponent {
           <AppFrame>
             <IntakeProgressBar />
             <PrimaryAppContent>
+              { this.props.requestStatus.cancelIntake === REQUEST_STATE.FAILED &&
+                <Alert
+                  type="error"
+                  title="Error"
+                  message={
+                    'There was an error while canceling the current intake.' +
+                    ' Please try again later.'
+                  }
+                  lowerMargin
+                />
+              }
               <PageRoute
                 exact
                 path={PAGE_PATHS.BEGIN}
@@ -59,11 +99,11 @@ class IntakeFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}
-                component={ReviewNextButton} />
+                component={ReviewButtons} />
               <Route
                 exact
                 path={PAGE_PATHS.FINISH}
-                component={FinishNextButton} />
+                component={FinishButtons} />
               <Route
                 exact
                 path={PAGE_PATHS.COMPLETED}
@@ -82,8 +122,14 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus }) => ({
+  ({ veteran, requestStatus, cancelModalVisible, rampElection }) => ({
     veteran,
-    fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
-  })
+    rampElection,
+    cancelModalVisible,
+    requestStatus
+  }),
+  (dispatch) => bindActionCreators({
+    toggleCancelModal,
+    submitCancel
+  }, dispatch)
 )(IntakeFrame);
