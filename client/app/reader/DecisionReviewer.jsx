@@ -106,6 +106,7 @@ export class DecisionReviewer extends React.PureComponent {
           allDocuments={_.values(this.props.storeDocuments)}
           pdfWorker={this.props.pdfWorker}
           showPdf={this.showPdf(props.history, vacolsId)}
+          history={props.history}
           onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
           documentPathBase={`/${vacolsId}/documents`}
           {...props}
