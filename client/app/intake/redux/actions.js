@@ -88,6 +88,14 @@ export const submitReview = (rampElection) => (dispatch) => {
 };
 
 export const completeIntake = (rampElection) => (dispatch) => {
+  if (!rampElection.finishConfirmed) {
+    dispatch({
+      type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED
+    });
+
+    return;
+  }
+
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START
   });
@@ -120,3 +128,8 @@ export const submitCancel = (rampElection) => (dispatch) => {
       }
     );
 };
+
+export const confirmFinishIntake = (isConfirmed) => ({
+  type: ACTIONS.CONFIRM_FINISH_INTAKE,
+  payload: { isConfirmed }
+});
