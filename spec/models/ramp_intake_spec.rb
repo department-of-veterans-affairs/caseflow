@@ -15,6 +15,29 @@ describe RampIntake do
     )
   end
 
+  context "#cancel!" do
+    subject { intake.cancel! }
+
+    let(:detail) do
+      RampElection.create!(
+        veteran_file_number: "64205555",
+        notice_date: 5.days.ago,
+        option_selected: :supplemental_claim,
+        receipt_date: 3.days.ago
+      )
+    end
+
+    it "cancels and clears detail values" do
+      subject
+
+      expect(intake.reload).to be_canceled
+      expect(detail.reload).to have_attributes(
+        option_selected: nil,
+        receipt_date: nil
+      )
+    end
+  end
+
   context "#complete!" do
     subject { intake.complete! }
 
@@ -44,6 +67,8 @@ describe RampIntake do
       )
 
       subject
+
+      expect(intake.reload).to be_success
     end
 
     context "if VACOLS closure fails" do

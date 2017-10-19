@@ -154,7 +154,6 @@ export class EstablishClaimNote extends BaseForm {
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
           label="I confirm that I have created a VBMS note to help route this claim."
-          fullWidth={true}
           name="confirmNote"
           onChange={this.handleFieldChange('noteForm', 'confirmBox')}
           {...this.state.noteForm.confirmBox}
