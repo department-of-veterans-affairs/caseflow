@@ -98,14 +98,7 @@ class Finish extends React.PureComponent {
       </Alert>
 
       <Checkbox
-        label={
-          <span>
-            I confirm that I have completed all of the steps above.
-            I understand that selecting the
-            <b> { submitText } </b>
-            button below will close the VACOLS record.
-          </span>
-        }
+        label="I’m ready to move to the next step and close the VACOLS record."
         name="confirm-finish"
         required
         value={rampElection.finishConfirmed}
