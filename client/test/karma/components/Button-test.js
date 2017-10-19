@@ -7,11 +7,11 @@ describe('Button', () => {
   it('renders loading icon instead of button when loading', () => {
     let onChange = () => true;
     const wrapper = shallow(<Button
-                              id="test-button"
-                              classNames={['usa-button-primary']}
-                              name="foo"
-                              onChange={onChange}
-                              loading={true} />);
+      id="test-button"
+      classNames={['usa-button-primary']}
+      name="foo"
+      onChange={onChange}
+      loading={true} />);
 
     expect(wrapper.find('#test-button.hidden-field')).to.have.length(1);
   });
@@ -19,10 +19,10 @@ describe('Button', () => {
   it('removes other button classes when disabled', () => {
     let onChange = () => true;
     const wrapper = shallow(<Button
-                              name="foo"
-                              onChange={onChange}
-                              classNames={['usa-button-primary']}
-                              disabled={true} />);
+      name="foo"
+      onChange={onChange}
+      classNames={['usa-button-primary']}
+      disabled={true} />);
 
     expect(wrapper.find('.usa-button-disabled')).to.have.length(1);
     expect(wrapper.find('.usa-button-primary')).to.have.length(0);

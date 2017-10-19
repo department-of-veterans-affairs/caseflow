@@ -7,15 +7,15 @@ const TagSelector = (props) => {
   const { tag, handleTagToggle, tagToggleStates } = props;
   const toggleState = tagToggleStates[tag.text] || false;
   const label = <div className="cf-tag-selector">
-      <span className="cf-tag-name">{tag.text}</span>
-    </div>;
+    <span className="cf-tag-name">{tag.text}</span>
+  </div>;
 
   const handleChange = (checked) => {
     handleTagToggle(tag.text, checked, tag.id);
   };
 
   return <Checkbox name={tag.text} onChange={handleChange}
-      label={label} value={toggleState} />;
+    label={label} value={toggleState} />;
 };
 
 TagSelector.propTypes = {
