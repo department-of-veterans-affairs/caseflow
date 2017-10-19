@@ -2,6 +2,7 @@ class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
   include RegionalOfficeConcern
+  include HearingConcern
 
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
                        :aod, :hold_open, :transcript_requested, :notes, :add_on,
@@ -51,10 +52,6 @@ class Hearing < ActiveRecord::Base
       regional_office_key: regional_office_key,
       master_record: master_record
     }
-  end
-
-  def request_type
-    type != :central_office ? type.to_s.capitalize : "CO"
   end
 
   cache_attribute :cached_number_of_documents do
