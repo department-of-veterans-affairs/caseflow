@@ -47,14 +47,9 @@ describe Intake do
     end
   end
 
-  context "#complete!" do
-    it "defaults to success" do
-      intake.complete!
-      expect(intake).to be_success
-    end
-
+  context "#complete_with_status!" do
     it "saves intake with proper tagging" do
-      intake.complete!(:canceled)
+      intake.complete_with_status!(:canceled)
       intake.reload
 
       expect(intake.completed_at).to eq(Time.zone.now)

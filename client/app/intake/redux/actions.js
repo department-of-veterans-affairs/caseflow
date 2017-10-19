@@ -88,6 +88,14 @@ export const submitReview = (rampElection) => (dispatch) => {
 };
 
 export const completeIntake = (rampElection) => (dispatch) => {
+  if (!rampElection.finishConfirmed) {
+    dispatch({
+      type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED
+    });
+
+    return;
+  }
+
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START
   });
@@ -104,4 +112,24 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL
+});
+
+export const submitCancel = (rampElection) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CANCEL_INTAKE_START
+  });
+
+  return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`).
+    then(
+      () => dispatch({ type: ACTIONS.CANCEL_INTAKE_SUCCEED }),
+      (error) => {
+        dispatch({ type: ACTIONS.CANCEL_INTAKE_FAIL });
+        throw error;
+      }
+    );
+};
+
+export const confirmFinishIntake = (isConfirmed) => ({
+  type: ACTIONS.CONFIRM_FINISH_INTAKE,
+  payload: { isConfirmed }
 });
