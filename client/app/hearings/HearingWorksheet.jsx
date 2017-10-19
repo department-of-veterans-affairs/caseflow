@@ -23,7 +23,7 @@ import {
   toggleWorksheetSaving,
   setWorksheetSaveFailedStatus,
   saveWorksheet
-       } from './actions/Dockets';
+} from './actions/Dockets';
 
 export class HearingWorksheet extends React.PureComponent {
 
@@ -92,7 +92,7 @@ export class HearingWorksheet extends React.PureComponent {
               aria-label="Representative Name"
               value={worksheet.representative_name}
               onChange={this.props.onRepNameChange}
-             />
+            />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
@@ -109,14 +109,14 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell column-4">
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
-             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-             <Textarea
-                name="Witness (W)/Observer (O):"
-                id="appellant-vet-witness"
-                aria-label="Witness Observer"
-                value={worksheet.witness}
-                onChange={this.onWitnessChange}
-             />
+            <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
+            <Textarea
+              name="Witness (W)/Observer (O):"
+              id="appellant-vet-witness"
+              aria-label="Witness Observer"
+              value={worksheet.witness}
+              onChange={this.onWitnessChange}
+            />
           </div>
         </div>
 
@@ -125,8 +125,8 @@ export class HearingWorksheet extends React.PureComponent {
         />
 
         <HearingWorksheetStream
-           worksheetStreams={worksheet.appeals_ready_for_hearing}
-              {...this.props}
+          worksheetStreams={worksheet.appeals_ready_for_hearing}
+          {...this.props}
         />
 
         <form className="cf-hearings-worksheet-form">
@@ -138,40 +138,40 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
               minRows={3}
-              />
+            />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-             <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
+            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
             <Textarea
               name="Periods and circumstances of service"
               value={worksheet.military_service}
               onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
               minRows={3}
-              />
+            />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-          <label htmlFor="worksheet-evidence">Evidence</label>
+            <label htmlFor="worksheet-evidence">Evidence</label>
             <Textarea
               name="Evidence"
               value={worksheet.evidence}
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               minRows={3}
-              />
+            />
           </div>
 
           <div className="cf-hearings-worksheet-data">
-             <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
             <Textarea
               name="Comments and special instructions to attorneys"
               value={worksheet.comments_for_attorney}
               id="worksheet-comments-for-attorney"
               onChange={this.onCommentsForAttorneyChange}
               minRows={3}
-              />
+            />
           </div>
         </form>
       </div>

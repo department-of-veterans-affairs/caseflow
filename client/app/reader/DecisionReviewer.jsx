@@ -83,16 +83,16 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-        <PdfListView
-          showPdf={this.showPdf(props.history, vacolsId)}
-          sortBy={this.state.sortBy}
-          selectedLabels={this.state.selectedLabels}
-          isCommentLabelSelected={this.state.isCommentLabelSelected}
-          documentPathBase={`/${vacolsId}/documents`}
-          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-          {...props}
-        />
-      </ReaderLoadingScreen>;
+      <PdfListView
+        showPdf={this.showPdf(props.history, vacolsId)}
+        sortBy={this.state.sortBy}
+        selectedLabels={this.state.selectedLabels}
+        isCommentLabelSelected={this.state.isCommentLabelSelected}
+        documentPathBase={`/${vacolsId}/documents`}
+        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        {...props}
+      />
+    </ReaderLoadingScreen>;
   }
 
   routedPdfViewer = (props) => {
@@ -102,60 +102,61 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-        <PdfViewer
-          allDocuments={_.values(this.props.storeDocuments)}
-          pdfWorker={this.props.pdfWorker}
-          showPdf={this.showPdf(props.history, vacolsId)}
-          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-          documentPathBase={`/${vacolsId}/documents`}
-          {...props}
-        />
-      </ReaderLoadingScreen>
+      <PdfViewer
+        allDocuments={_.values(this.props.storeDocuments)}
+        pdfWorker={this.props.pdfWorker}
+        showPdf={this.showPdf(props.history, vacolsId)}
+        history={props.history}
+        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        documentPathBase={`/${vacolsId}/documents`}
+        {...props}
+      />
+    </ReaderLoadingScreen>
     ;
   }
 
   routedCaseSelect = (props) => <CaseSelectLoadingScreen assignments={this.props.assignments}>
-      <CaseSelect history={props.history}
-          feedbackUrl={this.props.feedbackUrl}/>
-    </CaseSelectLoadingScreen>
+    <CaseSelect history={props.history}
+      feedbackUrl={this.props.feedbackUrl}/>
+  </CaseSelectLoadingScreen>
 
   render() {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-        <div>
-          <NavigationBar
-            appName="Reader"
-            userDisplayName={this.props.userDisplayName}
-            dropdownUrls={this.props.dropdownUrls}
-            defaultUrl="/">
-            <div className="cf-wide-app section--document-list">
-              <PageRoute
-                exact
-                path="/"
-                title="Assignments | Caseflow Reader"
-                render={this.routedCaseSelect}/>
-              <PageRoute
-                exact
-                title="Claims Folder | Caseflow Reader"
-                breadcrumb="Claims Folder"
-                path="/:vacolsId/documents"
-                render={this.routedPdfListView}/>
-              <PageRoute
-                exact
-                title="Document Viewer | Caseflow Reader"
-                breadcrumb="Document Viewer"
-                path="/:vacolsId/documents/:docId"
-                render={this.routedPdfViewer}
-              />
-            </div>
-          </NavigationBar>
-          <Footer
-            appName="Reader"
-            feedbackUrl={this.props.feedbackUrl}
-            buildDate={this.props.buildDate}/>
-        </div>
-      </Router>;
+      <div>
+        <NavigationBar
+          appName="Reader"
+          userDisplayName={this.props.userDisplayName}
+          dropdownUrls={this.props.dropdownUrls}
+          defaultUrl="/">
+          <div className="cf-wide-app section--document-list">
+            <PageRoute
+              exact
+              path="/"
+              title="Assignments | Caseflow Reader"
+              render={this.routedCaseSelect}/>
+            <PageRoute
+              exact
+              title="Claims Folder | Caseflow Reader"
+              breadcrumb="Claims Folder"
+              path="/:vacolsId/documents"
+              render={this.routedPdfListView}/>
+            <PageRoute
+              exact
+              title="Document Viewer | Caseflow Reader"
+              breadcrumb="Document Viewer"
+              path="/:vacolsId/documents/:docId"
+              render={this.routedPdfViewer}
+            />
+          </div>
+        </NavigationBar>
+        <Footer
+          appName="Reader"
+          feedbackUrl={this.props.feedbackUrl}
+          buildDate={this.props.buildDate}/>
+      </div>
+    </Router>;
   }
 }
 
