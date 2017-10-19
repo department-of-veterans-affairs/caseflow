@@ -38,6 +38,7 @@ class Finish extends React.PureComponent {
 
     return _.map(appeals, (appeal) => (
       <Table
+        key={appeal.id}
         columns={issueColumns}
         rowObjects={appeal.issues}
         slowReRendersAreOk
