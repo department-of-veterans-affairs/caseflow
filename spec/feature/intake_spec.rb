@@ -107,6 +107,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Finish processing Higher-Level Review election")
       expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
 
+      click_label "confirm-finish"
       page.go_back
 
       expect(page).to_not have_content("Please select an option.")
@@ -115,6 +116,8 @@ RSpec.feature "RAMP Intake" do
         find("label", text: "Supplemental Claim").click
       end
       safe_click "#button-submit-review"
+
+      expect(find("#confirm-finish", visible: false)).to_not be_checked
 
       expect(page).to have_content("Finish processing Supplemental Claim election")
       expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")

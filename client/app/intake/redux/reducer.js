@@ -156,10 +156,16 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     return update(state, {
       rampElection: {
         optionSelectedError: {
-          $set: null,
+          $set: null
         },
         receiptDateError: {
-          $set: null,
+          $set: null
+        },
+        finishConfirmed: {
+          $set: null
+        },
+        finishConfirmedError: {
+          $set: null
         },
         isReviewed: {
           $set: true
