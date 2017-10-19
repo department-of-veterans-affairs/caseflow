@@ -22,22 +22,22 @@ export class Comment extends React.Component {
 
   getControlButtons = () => {
     return <div>
-        <Button
-          name={`delete-comment-${this.props.uuid}`}
-          classNames={['cf-btn-link comment-control-button']}
-          onClick={this.onClickDelete}>
+      <Button
+        name={`delete-comment-${this.props.uuid}`}
+        classNames={['cf-btn-link comment-control-button']}
+        onClick={this.onClickDelete}>
           Delete
-        </Button>
-        <span className="comment-control-button-divider">
+      </Button>
+      <span className="comment-control-button-divider">
           |
-        </span>
-        <Button
-          name={`edit-comment-${this.props.uuid}`}
-          classNames={['cf-btn-link comment-control-button']}
-          onClick={this.onEditComment}>
+      </span>
+      <Button
+        name={`edit-comment-${this.props.uuid}`}
+        classNames={['cf-btn-link comment-control-button']}
+        onClick={this.onEditComment}>
           Edit
-        </Button>
-      </div>;
+      </Button>
+    </div>;
   }
 
   render() {
@@ -51,27 +51,27 @@ export class Comment extends React.Component {
 
     if (this.props.onJumpToComment) {
       jumpToSectionButton = <Button
-          name="jumpToComment"
-          id={`jumpToComment${this.props.uuid}`}
-          classNames={['cf-btn-link comment-control-button']}
-          onClick={this.props.onJumpToComment}>
+        name="jumpToComment"
+        id={`jumpToComment${this.props.uuid}`}
+        classNames={['cf-btn-link comment-control-button']}
+        onClick={this.props.onJumpToComment}>
           Jump to section
-        </Button>;
+      </Button>;
     }
     let commentToRender = <div>
-        <div className="comment-control-button-container">
-          <h4>Page {this.props.page} {jumpToSectionButton}</h4>
-          <span>
-            {this.getControlButtons()}
-          </span>
-        </div>
-        <div
-          className={className}
-          id={this.props.id}
-          onClick={this.onClick}>
-          {this.props.children}
-        </div>
-      </div>;
+      <div className="comment-control-button-container">
+        <h4>Page {this.props.page} {jumpToSectionButton}</h4>
+        <span>
+          {this.getControlButtons()}
+        </span>
+      </div>
+      <div
+        className={className}
+        id={this.props.id}
+        onClick={this.onClick}>
+        {this.props.children}
+      </div>
+    </div>;
 
     if (this.props.horizontalLayout) {
       className = `${className} comment-horizontal-container`;

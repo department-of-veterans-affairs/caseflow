@@ -62,7 +62,7 @@ class Fakes::HearingRepository
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     50.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
-    2.times.each { |i| Generators::Hearings::MasterRecord.build(user: user, date: Time.zone.now + (i + 6).days) }
+    2.times.each { |i| Generators::Hearings::MasterRecord.build(user_id: user.id, date: Time.zone.now + (i + 6).days) }
   end
 
   def self.random_attrs(i)
