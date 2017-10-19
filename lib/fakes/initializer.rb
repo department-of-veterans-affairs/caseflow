@@ -51,16 +51,6 @@ class Fakes::Initializer
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
-
-      load_ramp_election_fakes
-    end
-
-    def load_ramp_election_fakes
-      9.times do |i|
-        Generators::Veteran.build(file_number: "#{i}5555555")
-        Generators::Veteran.build(file_number: "#{i}0555555")
-        Generators::Appeal.build(vbms_id: "#{i}5555555C")
-      end
     end
 
     def running_rake_command?

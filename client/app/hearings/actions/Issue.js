@@ -126,26 +126,26 @@ export const saveIssues = (worksheet) => (dispatch) => {
       if (issue.edited) {
         ApiUtil.patch(`/hearings/appeals/${appeal.id}`, { data: { appeal: {
           worksheet_issues_attributes: [issue] } } }).
-        then((data) => {
-          dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
-            payload: { saveFailed: true,
-              appealIndex,
-              issueIndex } });
-          if (!issue.id) {
-            const id = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
-              return issue.vacols_sequence_id === dbIssue.vacols_sequence_id;
-            })[0].id;
-
-            dispatch({ type: Constants.SET_ISSUE_ID,
-              payload: { id,
+          then((data) => {
+            dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
+              payload: { saveFailed: true,
                 appealIndex,
                 issueIndex } });
-          }
-        },
-        () => {
-          dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-            payload: { saveFailed: true } });
-        });
+            if (!issue.id) {
+              const id = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
+                return issue.vacols_sequence_id === dbIssue.vacols_sequence_id;
+              })[0].id;
+
+              dispatch({ type: Constants.SET_ISSUE_ID,
+                payload: { id,
+                  appealIndex,
+                  issueIndex } });
+            }
+          },
+          () => {
+            dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
+              payload: { saveFailed: true } });
+          });
       }
     });
   });

@@ -9,16 +9,16 @@ import { timeFunction } from '../util/PerfDebug';
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => categoryFieldNameOfCategoryName(key)).
-        value();
+    toPairs().
+    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    map(([key]) => categoryFieldNameOfCategoryName(key)).
+    value();
 
   const activeTagFilters = _(docFilterCriteria.tag).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => key).
-        value();
+    toPairs().
+    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    map(([key]) => key).
+    value();
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 

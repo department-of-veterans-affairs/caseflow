@@ -9,11 +9,11 @@ class TagTableColumn extends PureComponent {
     return <div className="document-list-issue-tags">
       {tags && tags.map((tag) => {
         return <div className="document-list-issue-tag"
-            key={tag.id}>
-            <Highlight>
-              {tag.text}
-            </Highlight>
-          </div>;
+          key={tag.id}>
+          <Highlight>
+            {tag.text}
+          </Highlight>
+        </div>;
       })}
     </div>;
   }

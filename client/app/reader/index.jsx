@@ -42,7 +42,7 @@ if (module.hot) {
 
 const Reader = (props) => {
   return <Provider store={store}>
-      <DecisionReviewer {...props} />
+    <DecisionReviewer {...props} />
   </Provider>;
 };
 
