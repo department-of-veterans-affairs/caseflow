@@ -16,7 +16,7 @@ class Certification < ActiveRecord::Base
       loading_data_failed: false
     )
 
-    # We don't run sidekiq in development mode.
+    # Most developers don't run shoryuken in development mode.
     if Rails.env.development? || Rails.env.test?
       StartCertificationJob.perform_now(self)
     else
