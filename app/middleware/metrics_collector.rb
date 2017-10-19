@@ -43,5 +43,4 @@ class MetricsCollector
     PrometheusService.vacols_db_connections.set({ type: "dead" }, dead)
     PrometheusService.vacols_db_connections.set({ type: "idle" }, idle)
   end
-
 end
