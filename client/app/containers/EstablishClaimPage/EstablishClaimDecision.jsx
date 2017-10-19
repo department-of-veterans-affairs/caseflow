@@ -100,35 +100,35 @@ export class EstablishClaimDecision extends React.Component {
         but read out by screen readers. */
 
       tab.page = <div>
-         <a
-           className="usa-sr-only"
-           id="sr-download-link"
-           href={`${pdfLink}&decision_number=${index}`}
-           download
-           target="_blank">
+        <a
+          className="usa-sr-only"
+          id="sr-download-link"
+          href={`${pdfLink}&decision_number=${index}`}
+          download
+          target="_blank">
            The PDF viewer in your browser may not be accessible. Click to download
            the Decision PDF so you can preview it in a reader with accessibility features
            such as Adobe Acrobat.
-         </a>
-         <a className="usa-sr-only" href="#establish-claim-buttons">
+        </a>
+        <a className="usa-sr-only" href="#establish-claim-buttons">
            If you are using a screen reader and have downloaded and verified the Decision
            PDF, click this link to skip past the browser PDF viewer to the
            establish-claim buttons.
-         </a>
-         <div>
-           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
-             <iframe
-               aria-label="The PDF embedded here is not accessible. Please use the above
+        </a>
+        <div>
+          <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
+            <iframe
+              aria-label="The PDF embedded here is not accessible. Please use the above
                  link to download the PDF and view it in a PDF reader. Then use the
                  buttons below to go back and make edits or upload and certify
                  the document."
-               className="cf-doc-embed cf-iframe-with-loading"
-               title="Form8 PDF"
-               src={`${pdfjsLink}&decision_number=${index}`}>
-             </iframe>
-           </LoadingContainer>
-         </div>
-       </div>;
+              className="cf-doc-embed cf-iframe-with-loading"
+              title="Form8 PDF"
+              src={`${pdfjsLink}&decision_number=${index}`}>
+            </iframe>
+          </LoadingContainer>
+        </div>
+      </div>;
 
       return tab;
     });
@@ -178,10 +178,10 @@ export class EstablishClaimDecision extends React.Component {
 
           <div className="usa-width-one-half">
             <TextField
-             label="Decision type"
-             name="decisionType"
-             readOnly={true}
-             value={decisionType}
+              label="Decision type"
+              name="decisionType"
+              readOnly={true}
+              value={decisionType}
             />
           </div>
 
@@ -205,9 +205,9 @@ export class EstablishClaimDecision extends React.Component {
         <div className="cf-app-segment" id="establish-claim-buttons">
           <div className="cf-push-right">
             <Button
-                name="Cancel"
-                onClick={handleToggleCancelTaskModal}
-                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+              name="Cancel"
+              onClick={handleToggleCancelTaskModal}
+              classNames={['cf-btn-link', 'cf-adjacent-buttons']}
             />
             <Button
               app="dispatch"
@@ -217,7 +217,7 @@ export class EstablishClaimDecision extends React.Component {
             />
           </div>
         </div>
-    </div>
+      </div>
     );
   }
 }
@@ -252,8 +252,8 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const ConnectedEstablishClaimDecision = connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(EstablishClaimDecision);
 
 export default ConnectedEstablishClaimDecision;

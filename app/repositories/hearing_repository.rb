@@ -17,7 +17,6 @@ class HearingRepository
     end
 
     def load_vacols_data(hearing)
-      return if hearing.master_record
       vacols_record = VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       set_vacols_values(hearing, vacols_record)
       true
@@ -72,10 +71,10 @@ class HearingRepository
       values = MasterRecordHelper.values_based_on_type(vacols_record)
       # Travel Board master records have a date range, so we create a master record for each day
       values[:dates].inject([]) do |result, date|
-        result << Hearing.new(date: VacolsHelper.normalize_vacols_datetime(date),
-                              type: values[:type],
-                              master_record: true,
-                              regional_office_key: values[:ro])
+        result << Hearings::MasterRecord.new(date: VacolsHelper.normalize_vacols_datetime(date),
+                                             type: values[:type],
+                                             master_record: true,
+                                             regional_office_key: values[:ro])
         result
       end
     end

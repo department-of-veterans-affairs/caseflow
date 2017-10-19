@@ -142,33 +142,33 @@ export default class CancelCertificationModal extends BaseForm {
 
     return <div>
       <Modal
-            buttons={[
-              { classNames: ['cf-modal-link', 'cf-btn-link'],
-                name: '\u226A Go back',
-                onClick: closeHandler
-              },
-              { classNames: ['usa-button', 'usa-button-secondary'],
-                name: 'Cancel certification',
-                onClick: this.submitForm
-              }
-            ]}
-            visible={true}
-            closeHandler={closeHandler}
-            title={title}>
-            <p>
+        buttons={[
+          { classNames: ['cf-modal-link', 'cf-btn-link'],
+            name: '\u226A Go back',
+            onClick: closeHandler
+          },
+          { classNames: ['usa-button', 'usa-button-secondary'],
+            name: 'Cancel certification',
+            onClick: this.submitForm
+          }
+        ]}
+        visible={true}
+        closeHandler={closeHandler}
+        title={title}>
+        <p>
               Please explain why this case cannot be certified with Caseflow.
               Once you click <strong>Cancel certification</strong>,
               changes made to this case in Caseflow will not be saved.
-            </p>
-            <RadioField
-              name="Why can't this case be certified in Caseflow?"
-              options={cancellationReasonOptions}
-              value={this.state.cancellationReasonValue}
-              required={true}
-              onChange={this.onCancellationReasonChange}
-              errorMessage={this.state.
-                certificationCancellationForm.cancellationReason.errorMessage}/>
-            {this.state.shouldShowOtherReason &&
+        </p>
+        <RadioField
+          name="Why can't this case be certified in Caseflow?"
+          options={cancellationReasonOptions}
+          value={this.state.cancellationReasonValue}
+          required={true}
+          onChange={this.onCancellationReasonChange}
+          errorMessage={this.state.
+            certificationCancellationForm.cancellationReason.errorMessage}/>
+        {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
                 required={true}
@@ -177,13 +177,13 @@ export default class CancelCertificationModal extends BaseForm {
                   certificationCancellationForm.otherReason.errorMessage}
                 value={this.state.otherReasonValue}
               />
-            }
-            <TextField
-            name="What's your VA email address?"
-            onChange={this.onEmailChange}
-            errorMessage={this.state.certificationCancellationForm.email.errorMessage}
-            value={this.state.emailValue}
-            required={true}/>
+        }
+        <TextField
+          name="What's your VA email address?"
+          onChange={this.onEmailChange}
+          errorMessage={this.state.certificationCancellationForm.email.errorMessage}
+          value={this.state.emailValue}
+          required={true}/>
       </Modal>
     </div>;
   }

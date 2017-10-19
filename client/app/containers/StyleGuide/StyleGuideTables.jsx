@@ -79,7 +79,7 @@ export default function StyleGuideTables() {
       should be right aligned with the edge of the table.
     </p>
     <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary}
-     slowReRendersAreOk={true}/>
+      slowReRendersAreOk={true}/>
 
     <h3>Queues</h3>
     <p>

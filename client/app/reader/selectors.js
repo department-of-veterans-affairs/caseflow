@@ -8,8 +8,8 @@ export const getFilteredDocuments = createSelector(
   [getFilteredDocIds, getAllDocs],
   // eslint-disable-next-line no-confusing-arrow
   (filteredDocIds, allDocs) => filteredDocIds ?
-      _.map(filteredDocIds, (docId) => allDocs[docId]) :
-      _.values(allDocs)
+    _.map(filteredDocIds, (docId) => allDocs[docId]) :
+    _.values(allDocs)
 );
 
 const getEditingAnnotations = (state) => state.editingAnnotations;
@@ -23,20 +23,20 @@ export const makeGetAnnotationsByDocumentId = createSelector(
     _.memoize(
       (docId) =>
         _(editingAnnotations).
-        values().
-        map((annotation) => ({
-          editing: true,
-          ...annotation
-        })).
-        concat(
-          _.values(pendingEditingAnnotations),
-          _.values(annotations),
-          _.values(pendingAnnotations),
-        ).
-        uniqBy('id').
-        reject('pendingDeletion').
-        filter({ documentId: docId }).
-        value()
+          values().
+          map((annotation) => ({
+            editing: true,
+            ...annotation
+          })).
+          concat(
+            _.values(pendingEditingAnnotations),
+            _.values(annotations),
+            _.values(pendingAnnotations),
+          ).
+          uniqBy('id').
+          reject('pendingDeletion').
+          filter({ documentId: docId }).
+          value()
     )
 );
 

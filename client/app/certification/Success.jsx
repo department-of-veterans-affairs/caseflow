@@ -28,7 +28,7 @@ export class Success extends React.Component {
       leadMessageList={[message]}
       checklist={poaCorrectLocation === 'VACOLS' ? checklist : checklist.concat(updatedRepInVacols)}
       type="success"
-      />;
+    />;
   }
 }
 
