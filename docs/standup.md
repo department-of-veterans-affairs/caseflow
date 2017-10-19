@@ -27,7 +27,7 @@ Each sprint team listed in [`priorities.md`](https://github.com/department-of-ve
 
 The team leads are responsible for running standup. Standup can be cancelled at the team leads' discretion. Teams can use Waffle, GitHub, [Caseflow Developer](https://cold-stream-43683.herokuapp.com/sprint/standup?team=CASEFLOW), or any other tool for reviewing current tasks.
 
-Each team is responsible for their own dial-in system for remote teammates (Slack call, Google Hangout, just calling the one remote person on the phone, etc). People who are not attached to a specific team are welcome at any standup, but only as observers.
+Each team is responsible for their own dial-in system for remote teammates (Slack call, Google Hangout, just calling the one remote person on the phone, etc). If someone works with multiple teams, then they attend whichever standup feels most relevant to them that day.
 
 Sprint team standup is a good time to discuss things like:
 
