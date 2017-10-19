@@ -12,6 +12,19 @@ RSpec.feature "RAMP Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
+  let(:issues) do
+    [
+      Generators::Issue.build(
+        description: [
+          "15 - Service connection",
+          "03 - All Others",
+          "5252 - Knee, limitation of flexion of"
+        ],
+        note: "knee movement"
+      )
+    ]
+  end
+
   context "As a user with Mail Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Mail Intake"])
@@ -80,7 +93,12 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Start intake and go back and edit option" do
-      Generators::Appeal.build(vbms_id: "12341234C", vacols_record: :ready_to_certify)
+      Generators::Appeal.build(
+        vbms_id: "12341234C",
+        issues: issues,
+        vacols_record: :ready_to_certify
+      )
+
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
       intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
@@ -107,6 +125,11 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_content("Finish processing Supplemental Claim election")
       expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
+
+      # Validate the appeal & issue also shows up
+      expect(page).to have_content("This Veteran has 1 active appeal(s), with the following issues")
+      expect(page).to have_content("5252 - Knee, limitation of flexion of")
+      expect(page).to have_content("knee movement")
     end
 
     scenario "Complete intake for RAMP Election form" do

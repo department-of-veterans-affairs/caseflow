@@ -3,18 +3,46 @@ import Button from '../../components/Button';
 import BareOrderedList from '../../components/BareOrderedList';
 import CancelButton from '../components/CancelButton';
 import Checkbox from '../../components/Checkbox';
+import Alert from '../../components/Alert';
+import Table from '../../components/Table';
 import { Redirect } from 'react-router-dom';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../redux/actions';
 import { bindActionCreators } from 'redux';
 import { getRampElectionStatus } from '../redux/selectors';
+import _ from 'lodash';
 
 const submitText = "I've completed all steps";
 
 class Finish extends React.PureComponent {
+  issuesAlertContent = (appeals) => {
+    let issueColumns = [
+      {
+        header: 'Program',
+        valueName: 'programDescription'
+      },
+      {
+        header: 'VACOLS Issue(s)',
+        valueFunction: (issue) => (
+          issue.description.map((descriptor) => <div>{descriptor}</div>)
+        )
+      },
+      {
+        header: 'Note',
+        valueName: 'note'
+      }
+    ];
+
+    return _.map(appeals, (appeal) => {
+      return <div>
+        <Table columns={issueColumns} rowObjects={appeal.issues} summary="Appeal issues" />
+      </div>;
+    });
+  }
+
   render() {
-    const { rampElection } = this.props;
+    const { rampElection, appeals } = this.props;
 
     switch (this.props.rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
@@ -50,10 +78,18 @@ class Finish extends React.PureComponent {
       () => <span><strong>Step {index + 1}.</strong> {step}</span>
     );
 
+    const issuesAlertTitle = `This Veteran has ${appeals.length} ` +
+                             'active appeal(s), with the following issues';
+
     return <div>
       <h1>Finish processing { optionName } election</h1>
       <p>Please complete the following steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
+
+      <Alert title={ issuesAlertTitle } type="info">
+        { this.issuesAlertContent(appeals) }
+      </Alert>
+
       <Checkbox
         label={
           <span>
@@ -112,6 +148,7 @@ export class FinishButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     rampElection: state.rampElection,
+    appeals: state.appeals,
     rampElectionStatus: getRampElectionStatus(state)
   }),
   (dispatch) => bindActionCreators({

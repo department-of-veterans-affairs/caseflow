@@ -84,6 +84,67 @@ describe RampIntake do
     end
   end
 
+  context "#serialized_appeal_issues" do
+    subject { intake.serialized_appeal_issues }
+
+    let!(:appeals) do
+      [
+        Generators::Appeal.build(
+          vbms_id: "64205555C",
+          issues: [
+            Generators::Issue.build(description: [
+                                      "15 - Service connection",
+                                      "03 - All Others",
+                                      "5252 - Thigh, limitation of flexion of"
+                                    ],
+                                    note: "Broken thigh"),
+            Generators::Issue.build(description: [
+                                      "16 - Something else",
+                                      "03 - All Others",
+                                      "5252 - Knee, limitation of flexion of"
+                                    ],
+                                    note: "Broken knee")
+          ]
+        ),
+        Generators::Appeal.build(
+          vbms_id: "64205555C",
+          issues: [
+            Generators::Issue.build(description: ["15 - Last Issue"], note: "")
+          ]
+        )
+      ]
+    end
+
+    it do
+      is_expected.to eq([{
+                          issues: [{
+                            program_description: "02 - Compensation",
+                            description: [
+                              "15 - Service connection",
+                              "03 - All Others",
+                              "5252 - Thigh, limitation of flexion of"
+                            ],
+                            note: "Broken thigh"
+                          }, {
+                            program_description: "02 - Compensation",
+                            description: [
+                              "16 - Something else",
+                              "03 - All Others",
+                              "5252 - Knee, limitation of flexion of"
+                            ],
+                            note: "Broken knee"
+                          }]
+                        },
+                         {
+                           issues: [{
+                             program_description: "02 - Compensation",
+                             description: ["15 - Last Issue"],
+                             note: ""
+                           }]
+                         }])
+    end
+  end
+
   context "#start!" do
     subject { intake.start! }
 

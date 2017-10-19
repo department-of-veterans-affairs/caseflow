@@ -1,4 +1,6 @@
 class RampIntake < Intake
+  include CachedAttributes
+
   def find_or_create_initial_detail
     matching_ramp_election
   end
@@ -17,6 +19,16 @@ class RampIntake < Intake
     transaction do
       detail.update_attributes!(receipt_date: nil, option_selected: nil)
       complete_with_status!(:canceled)
+    end
+  end
+
+  cache_attribute :cached_serialized_appeal_issues, expires_in: 10.minutes do
+    serialized_appeal_issues
+  end
+
+  def serialized_appeal_issues
+    legacy_appeals_to_close.map do |appeal|
+      { issues: appeal.issues.map(&:description_attributes) }
     end
   end
 
