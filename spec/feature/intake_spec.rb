@@ -79,6 +79,36 @@ RSpec.feature "RAMP Intake" do
       expect(intake).to be_canceled
     end
 
+    scenario "Start intake and go back and edit option" do
+      Generators::Appeal.build(vbms_id: "12341234C", vacols_record: :ready_to_certify)
+      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      # Validate that visiting the finish page takes you back to
+      # the review request page if you haven't yet reviewed the intake
+      visit "/intake/completed"
+
+      within_fieldset("Which election did the Veteran select?") do
+        find("label", text: "Higher Level Review without DRO hearing request").click
+      end
+      fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Finish processing Higher-Level Review election")
+      expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
+
+      page.go_back
+
+      within_fieldset("Which election did the Veteran select?") do
+        find("label", text: "Supplemental Claim").click
+      end
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Finish processing Supplemental Claim election")
+      expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
+    end
+
     scenario "Complete intake for RAMP Election form" do
       appeal = Generators::Appeal.build(vbms_id: "12341234C", vacols_record: :ready_to_certify)
 
@@ -103,21 +133,21 @@ RSpec.feature "RAMP Intake" do
       )
 
       within_fieldset("Which election did the Veteran select?") do
-        find("label", text: "Supplemental Claim").click
+        find("label", text: "Higher Level Review with DRO hearing request").click
       end
 
       fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
       safe_click "#button-submit-review"
 
-      expect(page).to have_content("Finish processing Supplemental Claim request")
+      expect(page).to have_content("Finish processing Higher-Level Review election")
 
       election.reload
-      expect(election.option_selected).to eq("supplemental_claim")
+      expect(election.option_selected).to eq("higher_level_review_with_hearing")
       expect(election.receipt_date).to eq(Date.new(2017, 8, 7))
 
       # Validate the app redirects you to the appropriate location
       visit "/intake"
-      expect(page).to have_content("Finish processing Supplemental Claim request")
+      expect(page).to have_content("Finish processing Higher-Level Review election")
 
       expect(Fakes::AppealRepository).to receive(:close!).with(
         appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
@@ -126,7 +156,13 @@ RSpec.feature "RAMP Intake" do
         disposition_code: "P"
       )
 
-      click_on "I've completed all the steps"
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("You must confirm you've completed the steps")
+      expect(page).to_not have_content("Intake completed")
+
+      click_label("confirm-finish")
+      safe_click "button#button-submit-review"
 
       expect(page).to have_content("Intake completed")
 
