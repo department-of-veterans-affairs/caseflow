@@ -5,11 +5,18 @@ class RampIntake < Intake
 
   def complete!
     transaction do
-      super
+      complete_with_status!(:success)
 
       legacy_appeals_to_close.each do |appeal|
         appeal.close!(user: user, closed_on: Time.zone.today, disposition: "RAMP Opt-in")
       end
+    end
+  end
+
+  def cancel!
+    transaction do
+      detail.update_attributes!(receipt_date: nil, option_selected: nil)
+      complete_with_status!(:canceled)
     end
   end
 
