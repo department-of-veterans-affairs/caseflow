@@ -36,7 +36,7 @@ class Finish extends React.PureComponent {
 
     return _.map(appeals, (appeal) => {
       return <div>
-        <Table 
+        <Table
           columns={issueColumns}
           rowObjects={appeal.issues}
           slowReRendersAreOk
@@ -84,7 +84,7 @@ class Finish extends React.PureComponent {
     );
 
     const issuesAlertTitle = `This Veteran has ${appeals.length} ` +
-                             `active ${ appeals.length === 1 ? 'appeal' : 'appeals'}` +
+                             `active ${appeals.length === 1 ? 'appeal' : 'appeals'}` +
                              ', with the following issues';
 
     return <div>
