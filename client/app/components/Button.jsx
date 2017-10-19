@@ -111,7 +111,7 @@ Button.propTypes = {
   classNames: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
   id: PropTypes.string,
-  linkStyle: PropTypes.bool,
+  linkStyling: PropTypes.bool,
   loading: (props, propName) => {
     const loading = props[propName];
 
