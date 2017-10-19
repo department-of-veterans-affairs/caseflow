@@ -84,7 +84,7 @@ describe RampIntake do
     end
   end
 
-  context "#serialized_appeal_issues", focus: true do
+  context "#serialized_appeal_issues" do
     subject { intake.serialized_appeal_issues }
 
     let!(:appeals) do
