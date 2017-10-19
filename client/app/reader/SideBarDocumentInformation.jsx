@@ -42,10 +42,8 @@ class SideBarDocumentInformation extends PureComponent {
           <strong>Regional Office:</strong> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
         </p>
         <div className="cf-pdf-meta-title">
-          <strong>Issues:</strong>
-            <ol className="cf-pdf-meta-doc-info-issues">
-              <IssueList appeal={appeal} />
-            </ol>
+          <strong>Issues: </strong>
+          <IssueList appeal={appeal} className="cf-pdf-meta-doc-info-issues" />
         </div>
       </div>;
     }

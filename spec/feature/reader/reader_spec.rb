@@ -189,7 +189,7 @@ RSpec.feature "Reader" do
       let(:appeal) do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents, issues: [])
       end
-      
+
       before do
         Fakes::AppealRepository.appeal_records = [appeal]
       end
@@ -208,7 +208,7 @@ RSpec.feature "Reader" do
       scenario "pdf view sidebar shows no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         find("h3", text: "Document information").click
-        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")        
+        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
       end
     end
 

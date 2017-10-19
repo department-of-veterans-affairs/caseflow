@@ -11,9 +11,12 @@ import IssueList from './IssueList';
 
 class CaseSelect extends React.PureComponent {
 
-  renderIssuesColumnData = (appeal) => <ol className="issue-list">
-    <IssueList appeal={appeal} formatLevelsInNewLine={true} />
-  </ol>;
+  renderIssuesColumnData = (appeal) =>
+    <IssueList
+      appeal={appeal}
+      formatLevelsInNewLine={true}
+      className="issue-list"
+    />;
 
   getVeteranNameAndClaimType = (appeal) =>
     <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
