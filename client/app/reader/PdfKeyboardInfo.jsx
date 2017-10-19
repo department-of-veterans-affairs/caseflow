@@ -27,6 +27,8 @@ export const commentInstructions = [
   { commentInstruction: 'Move comment right',
     shortcut: <span><ArrowRight /></span> },
   { commentInstruction: 'Place a comment',
+    shortcut: <span><code>alt</code> + <code>enter</code></span> },
+  { commentInstruction: 'Save a comment',
     shortcut: <span><code>alt</code> + <code>enter</code></span> }
 ];
 
@@ -38,13 +40,17 @@ export const commentColumns = [{ header: 'Add/ edit comment',
   align: 'left' }];
 
 export const documentsInstructions = [
-  { documentsInstruction: 'Next document',
+  { documentsInstruction: 'View next document',
     shortcut: <span><ArrowRight /></span> },
-  { documentsInstruction: 'Previous document',
-    shortcut: <span><ArrowLeft /></span> }
+  { documentsInstruction: 'View previous document',
+    shortcut: <span><ArrowLeft /></span> },
+  { documentsInstruction: 'Open/ Hide menu',
+    shortcut: <span><code>alt</code> + <code>m</code></span> },
+  { documentsInstruction: 'Back to document list',
+    shortcut: <span><code>alt</code> + <code>backspace</code></span> }
 ];
 
-export const documentsColumns = [{ header: 'View documents',
+export const documentsColumns = [{ header: 'Navigate reader',
   valueName: 'documentsInstruction',
   align: 'left' },
 { header: 'Shortcut',

@@ -10,27 +10,32 @@ import AppSegment from '../components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import Modal from '../components/Modal';
+import Alert from '../components/Alert';
 import Button from '../components/Button';
 import BeginPage from './pages/begin';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
-import { toggleCancelModal } from './redux/actions';
+import { toggleCancelModal, submitCancel } from './redux/actions';
 
 class IntakeFrame extends React.PureComponent {
+  handleSubmitCancel = () => (
+    this.props.submitCancel(this.props.rampElection)
+  )
+
   render() {
     const appName = 'Intake';
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.fileNumberSearchRequestStatus === REQUEST_STATE.SUCCEEDED ?
-      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+    const topMessage = this.props.veteran.fileNumber ?
+    `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
     let cancelButton, confirmButton;
 
     if (this.props.cancelModalVisible) {
-      confirmButton = <Button dangerStyling>Cancel Intake</Button>;
+      confirmButton = <Button dangerStyling onClick={this.handleSubmitCancel}>Cancel Intake</Button>;
       cancelButton = <Button linkStyling onClick={this.props.toggleCancelModal} id="close-modal">Close</Button>;
     }
 
@@ -58,6 +63,17 @@ class IntakeFrame extends React.PureComponent {
           <AppFrame>
             <IntakeProgressBar />
             <PrimaryAppContent>
+              { this.props.requestStatus.cancelIntake === REQUEST_STATE.FAILED &&
+                <Alert
+                  type="error"
+                  title="Error"
+                  message={
+                    'There was an error while canceling the current intake.' +
+                    ' Please try again later.'
+                  }
+                  lowerMargin
+                />
+              }
               <PageRoute
                 exact
                 path={PAGE_PATHS.BEGIN}
@@ -106,12 +122,14 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus, cancelModalVisible }) => ({
+  ({ veteran, requestStatus, cancelModalVisible, rampElection }) => ({
     veteran,
+    rampElection,
     cancelModalVisible,
-    fileNumberSearchRequestStatus: requestStatus.fileNumberSearch
+    requestStatus
   }),
   (dispatch) => bindActionCreators({
-    toggleCancelModal
+    toggleCancelModal,
+    submitCancel
   }, dispatch)
 )(IntakeFrame);

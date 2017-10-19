@@ -1,11 +1,61 @@
 describe Intake do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
   let(:veteran_file_number) { "64205050" }
 
+  let(:detail) do
+    RampElection.new(veteran_file_number: veteran_file_number, notice_date: Time.zone.now)
+  end
+
+  let(:user) { Generators::User.build }
+
   let(:intake) do
-    Intake.new(veteran_file_number: veteran_file_number)
+    Intake.new(veteran_file_number: veteran_file_number, detail: detail, user: user)
   end
 
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
+
+  context ".in_progress" do
+    subject { Intake.in_progress }
+
+    let!(:not_started_intake) { intake }
+
+    let!(:started_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 15.minutes.ago
+      )
+    end
+
+    let!(:completed_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago
+      )
+    end
+
+    it "returns in progress intakes" do
+      expect(subject).to include(started_intake)
+      expect(subject).to_not include(not_started_intake, completed_intake)
+    end
+  end
+
+  context "#complete_with_status!" do
+    it "saves intake with proper tagging" do
+      intake.complete_with_status!(:canceled)
+      intake.reload
+
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake).to be_canceled
+    end
+  end
 
   context "#validate_start" do
     subject { intake.validate_start }

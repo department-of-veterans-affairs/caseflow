@@ -191,13 +191,13 @@ export class PdfViewer extends React.Component {
           <PdfUI
             doc={doc}
             prefetchFiles={this.getPrefetchFiles()}
-            prefetchFiles={this.getPrefetchFiles()}
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
             onPageClick={this.placeComment}
             prevDocId={this.getPrevDocId()}
             nextDocId={this.getNextDocId()}
+            history={this.props.history}
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}
