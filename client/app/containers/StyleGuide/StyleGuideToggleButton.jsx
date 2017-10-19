@@ -17,23 +17,23 @@ export default class StyleGuideToggleButton extends React.Component {
   }
   render() {
     return <div>
-     <StyleGuideComponentTitle
-       title="Toggle buttons"
-       id="toggle_buttons"
-       link="StyleGuideToggleButton.jsx"
-       isSubsection={true}
-     />
-     <ToggleButton active={this.state.active}
-       onClick={this.handleClick}>
-      <Button
-       name="view1">
+      <StyleGuideComponentTitle
+        title="Toggle buttons"
+        id="toggle_buttons"
+        link="StyleGuideToggleButton.jsx"
+        isSubsection={true}
+      />
+      <ToggleButton active={this.state.active}
+        onClick={this.handleClick}>
+        <Button
+          name="view1">
        View 1
-      </Button>
-      <Button
-       name="view2">
+        </Button>
+        <Button
+          name="view2">
        View 2
-      </Button>
-     </ToggleButton>
+        </Button>
+      </ToggleButton>
     </div>;
   }
 }

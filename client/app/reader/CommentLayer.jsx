@@ -127,7 +127,7 @@ class CommentLayer extends PureComponent {
   getCommentLayerDivRef = (ref) => this.commentLayerDiv = ref
 
   getAnnotationsForPage = () => this.props.comments.concat(this.getPlacingAnnotation()).
-      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex))
+    filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex))
 
   getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
     comment={comment}

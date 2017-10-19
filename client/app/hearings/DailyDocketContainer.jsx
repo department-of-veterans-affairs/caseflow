@@ -90,15 +90,15 @@ const mapDispatchToProps = (dispatch) => ({
       const index = docket.findIndex((x) => x.id === hearing.id);
 
       ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-      then(() => {
-        dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
-          payload: { date,
-            index } });
-      },
-      () => {
-        dispatch({ type: SET_DOCKET_SAVE_FAILED,
-          payload: { saveFailed: true } });
-      });
+        then(() => {
+          dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
+            payload: { date,
+              index } });
+        },
+        () => {
+          dispatch({ type: SET_DOCKET_SAVE_FAILED,
+            payload: { saveFailed: true } });
+        });
     });
     dispatch({ type: TOGGLE_DOCKET_SAVING });
   }

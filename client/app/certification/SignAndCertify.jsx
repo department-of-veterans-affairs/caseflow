@@ -206,11 +206,11 @@ export class SignAndCertify extends React.Component {
           />
         </div>
       </form>
-    <Footer
-      loading={loading}
-      onClickContinue={this.onClickContinue.bind(this)}
-    />
-  </div>;
+      <Footer
+        loading={loading}
+        onClickContinue={this.onClickContinue.bind(this)}
+      />
+    </div>;
   }
 }
 

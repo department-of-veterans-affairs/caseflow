@@ -23,11 +23,11 @@ const IssueList = ({ appeal, formatLevelsInNewLine, className }) => (
     { _.isEmpty(appeal.issues) ?
       NO_ISSUES_ON_APPEAL_MSG :
       <ol className={className}>
-      {appeal.issues.map((issue) =>
-        <li key={`${issue.id}_${issue.vacols_sequence_id}`}><span>
-          {issueTypeLabel(issue)} {issueLevels(issue, formatLevelsInNewLine)}
-        </span></li>
-      )}
+        {appeal.issues.map((issue) =>
+          <li key={`${issue.id}_${issue.vacols_sequence_id}`}><span>
+            {issueTypeLabel(issue)} {issueLevels(issue, formatLevelsInNewLine)}
+          </span></li>
+        )}
       </ol>
     }
   </div>

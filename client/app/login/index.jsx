@@ -42,29 +42,29 @@ export default class Login extends React.PureComponent {
 
     return <div className="cf-app-segment--alt">
       { this.state.logInHasFailed ?
-          <StatusMessage
-            title="Technical Difficulties">
+        <StatusMessage
+          title="Technical Difficulties">
             It looks like Caseflow is experiencing technical difficulties right now.<br />
             Please <a href="">refresh the page</a> and try again.
-          </StatusMessage> :
+        </StatusMessage> :
 
-          <div>
-            <h1>Welcome to Caseflow!</h1>
-            <p>Please select the regional office you are logging in from.</p>
+        <div>
+          <h1>Welcome to Caseflow!</h1>
+          <p>Please select the regional office you are logging in from.</p>
 
-            <SearchableDropdown
-              name="Regional office selector"
-              options={options} searchable={false}
-              onChange={this.handleSelectRegionalOffice}
-              value={this.state.regionalOfficeCode} />
+          <SearchableDropdown
+            name="Regional office selector"
+            options={options} searchable={false}
+            onChange={this.handleSelectRegionalOffice}
+            value={this.state.regionalOfficeCode} />
 
-            <Button
-              disabled={!this.state.regionalOfficeCode}
-              onClick={this.handleClickLogin}
-              name="Log in"
-              loading={this.state.isLoggingIn}
-              loadingText="Logging in" />
-          </div>
+          <Button
+            disabled={!this.state.regionalOfficeCode}
+            onClick={this.handleClickLogin}
+            name="Log in"
+            loading={this.state.isLoggingIn}
+            loadingText="Logging in" />
+        </div>
       }
 
     </div>;
