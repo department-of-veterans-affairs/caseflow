@@ -13,7 +13,7 @@ export const getWorksheet = (id, dispatch) => {
     then((response) => {
       dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {
-      dispatch(Actions.handleServerError(err));
+      dispatch(Actions.handleWorksheetServerError(err));
     });
 };
 
@@ -28,7 +28,7 @@ export class HearingWorksheetContainer extends React.Component {
 
   render() {
 
-    if (this.props.serverError) {
+    if (this.props.worksheetServerError) {
       return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
         <Alert
           title="Unable to load documents"
@@ -59,7 +59,7 @@ export class HearingWorksheetContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
-  serverError: state.serverError
+  worksheetServerError: state.worksheetServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -76,5 +76,5 @@ export default connect(
 HearingWorksheetContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   hearingId: PropTypes.string.isRequired,
-  serverError: PropTypes.object
+  worksheetServerError: PropTypes.object
 };

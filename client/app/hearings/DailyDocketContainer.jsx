@@ -21,7 +21,7 @@ export class DailyDocketContainer extends React.Component {
   }
 
   render() {
-    if (this.props.serverError) {
+    if (this.props.docketServerError) {
       return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
         <Alert
           title="Unable to load documents"
@@ -65,17 +65,17 @@ export class DailyDocketContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dockets: state.dockets,
-  serverError: state.serverError
+  docketServerError: state.docketServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getDockets: (dockets) => () => {
     if (!dockets) {
-      ApiUtil.get('/hearings/dockets.json', { cache: true }).
+      ApiUtil.get('/hearings/docketsd.json', { cache: true }).
         then((response) => {
           dispatch(Actions.populateDockets(response.body));
         }, (err) => {
-          dispatch(Actions.handleServerError(err));
+          dispatch(Actions.handleDocketServerError(err));
         });
     }
   },
@@ -129,5 +129,5 @@ DailyDocketContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   dockets: PropTypes.object,
   date: PropTypes.string.isRequired,
-  serverError: PropTypes.object
+  docketServerError: PropTypes.object
 };

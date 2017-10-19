@@ -15,8 +15,15 @@ export const populateWorksheet = (worksheet) => ({
   }
 });
 
-export const handleServerError = (err) => ({
-  type: Constants.HANDLE_SERVER_ERROR,
+export const handleWorksheetServerError = (err) => ({
+  type: Constants.HANDLE_WORKSHEET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const handleDocketServerError = (err) => ({
+  type: Constants.HANDLE_DOCKET_SERVER_ERROR,
   payload: {
     err
   }
