@@ -7,7 +7,7 @@ const ManageEstablishClaimWrapper = (props) => {
   const store = createManageEstablishClaimStore(props);
 
   return <Provider store={store}>
-      <ManageEstablishClaim {...props} />
+    <ManageEstablishClaim {...props} />
   </Provider>;
 };
 

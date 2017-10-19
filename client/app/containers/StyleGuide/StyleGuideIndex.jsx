@@ -125,93 +125,93 @@ export default function StyleGuideIndex() {
     }
   ];
 
-/* eslint-disable max-len */
+  /* eslint-disable max-len */
 
   return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">
-      <StickyNav>
-        {
-          componentLinks.map((link, i) => (
-            <NavLink anchor={link.anchor} name={link.name} key={i}/>
-          ))
-        }
-      </StickyNav>
-      <div className="cf-sg-content">
+    <StickyNav>
+      {
+        componentLinks.map((link, i) => (
+          <NavLink anchor={link.anchor} name={link.name} key={i}/>
+        ))
+      }
+    </StickyNav>
+    <div className="cf-sg-content">
       <h1 id="commons">Caseflow Commons</h1>
-        <p>
+      <p>
           Caseflow Commons is home to our most up to date style guide, UI Kit, and code for Caseflow products.
           The goal is to maintain consistent styling across Caseflow applications and to keep our interface predictable and familiar to the user.
           This unified system also helps us reuse common code across our apps and increase the efficiency of the design process.
-        </p>
-        <p>
-          <a className="usa-button"
-            href="https://github.com/department-of-veterans-affairs/caseflow-commons">
+      </p>
+      <p>
+        <a className="usa-button"
+          href="https://github.com/department-of-veterans-affairs/caseflow-commons">
             View on Github
-          </a>
-          <a className="usa-button usa-button-outline"
+        </a>
+        <a className="usa-button usa-button-outline"
           href="https://github.com/department-of-veterans-affairs/appeals-design-research/issues/8">
           Download UI Kit</a>
-        </p>
-        <div className="cf-help-divider"></div>
-        <StyleGuideTypography />
-        <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Headings and Body"
-          id="headings_and_body"
-          isSubsection={true} />
-        <StyleGuidePlaceholder
-          title="Styles"
-          id="styles"
-          isSubsection={true} />
-        <div className="cf-help-divider"></div>
-        <StyleGuideColors />
-        <div className="cf-help-divider"></div>
-        <StyleGuideButton />
-        <div className="cf-help-divider"></div>
-        <StyleGuideSearch />
-        <div className="cf-help-divider"></div>
-        <StyleGuideSearchableDropdown />
-        <div className="cf-help-divider"></div>
-        <StyleGuideCheckboxes />
-        <div className="cf-help-divider"></div>
-        <StyleGuideRadioField />
-        <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Date Input"
-          id="date_input" />
-        <div className="cf-help-divider"></div>
-        <StyleGuideTables />
-        <div className="cf-help-divider"></div>
-        <StyleGuideTabs />
-        <div className="cf-help-divider"></div>
-        <StyleGuideAccordions />
-        <div className="cf-help-divider"></div>
-        <StyleGuideFormFields />
-        <div className="cf-help-divider"></div>
-        <StyleGuideLoaders />
-        <div className="cf-help-divider"></div>
-        <StyleGuideSmallLoader />
-        <div className="cf-help-divider"></div>
-        <StyleGuideLoadingButton />
-        <div className="cf-help-divider"></div>
-        <StyleGuideAlerts />
-        <div className="cf-help-divider"></div>
-        <StyleGuideLayout />
-        <div className="cf-help-divider"></div>
-         <StyleGuideMessages />
-        <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Branding"
-          id="branding" />
-        <div className="cf-help-divider"></div>
-        <StyleGuideDashboard />
-        <div className="cf-help-divider"></div>
-        <StyleGuideModal />
-        <div className="cf-help-divider"></div>
-        <StyleGuideProgressBar />
-        <div className="cf-help-divider"></div>
-        <StyleGuideLogos />
+      </p>
+      <div className="cf-help-divider"></div>
+      <StyleGuideTypography />
+      <div className="cf-help-divider"></div>
+      <StyleGuidePlaceholder
+        title="Headings and Body"
+        id="headings_and_body"
+        isSubsection={true} />
+      <StyleGuidePlaceholder
+        title="Styles"
+        id="styles"
+        isSubsection={true} />
+      <div className="cf-help-divider"></div>
+      <StyleGuideColors />
+      <div className="cf-help-divider"></div>
+      <StyleGuideButton />
+      <div className="cf-help-divider"></div>
+      <StyleGuideSearch />
+      <div className="cf-help-divider"></div>
+      <StyleGuideSearchableDropdown />
+      <div className="cf-help-divider"></div>
+      <StyleGuideCheckboxes />
+      <div className="cf-help-divider"></div>
+      <StyleGuideRadioField />
+      <div className="cf-help-divider"></div>
+      <StyleGuidePlaceholder
+        title="Date Input"
+        id="date_input" />
+      <div className="cf-help-divider"></div>
+      <StyleGuideTables />
+      <div className="cf-help-divider"></div>
+      <StyleGuideTabs />
+      <div className="cf-help-divider"></div>
+      <StyleGuideAccordions />
+      <div className="cf-help-divider"></div>
+      <StyleGuideFormFields />
+      <div className="cf-help-divider"></div>
+      <StyleGuideLoaders />
+      <div className="cf-help-divider"></div>
+      <StyleGuideSmallLoader />
+      <div className="cf-help-divider"></div>
+      <StyleGuideLoadingButton />
+      <div className="cf-help-divider"></div>
+      <StyleGuideAlerts />
+      <div className="cf-help-divider"></div>
+      <StyleGuideLayout />
+      <div className="cf-help-divider"></div>
+      <StyleGuideMessages />
+      <div className="cf-help-divider"></div>
+      <StyleGuidePlaceholder
+        title="Branding"
+        id="branding" />
+      <div className="cf-help-divider"></div>
+      <StyleGuideDashboard />
+      <div className="cf-help-divider"></div>
+      <StyleGuideModal />
+      <div className="cf-help-divider"></div>
+      <StyleGuideProgressBar />
+      <div className="cf-help-divider"></div>
+      <StyleGuideLogos />
     </div>
-    </div>;
+  </div>;
 
 }
 
