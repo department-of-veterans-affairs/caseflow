@@ -155,6 +155,12 @@ export const reducer = (state = mapDataToInitialState(), action) => {
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
     return update(state, {
       rampElection: {
+        optionSelectedError: {
+          $set: null,
+        },
+        receiptDateError: {
+          $set: null,
+        },
         isReviewed: {
           $set: true
         }

@@ -89,6 +89,15 @@ RSpec.feature "RAMP Intake" do
       # the review request page if you haven't yet reviewed the intake
       visit "/intake/completed"
 
+      # Validate validation
+      fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
+      click_on "Continue to next step"
+
+      expect(page).to have_content("Please select an option.")
+      expect(page).to have_content(
+        "Receipt date cannot be earlier than the election notice date of 08/07/2017"
+      )
+
       within_fieldset("Which election did the Veteran select?") do
         find("label", text: "Higher Level Review without DRO hearing request").click
       end
@@ -99,6 +108,8 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
 
       page.go_back
+
+      expect(page).to_not have_content("Please select an option.")
 
       within_fieldset("Which election did the Veteran select?") do
         find("label", text: "Supplemental Claim").click
@@ -123,14 +134,6 @@ RSpec.feature "RAMP Intake" do
       # Validate that visiting the finish page takes you back to
       # the review request page if you haven't yet reviewed the intake
       visit "/intake/finish"
-
-      fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
-      click_on "Continue to next step"
-
-      expect(page).to have_content("Please select an option.")
-      expect(page).to have_content(
-        "Receipt date cannot be earlier than the election notice date of 08/07/2017"
-      )
 
       within_fieldset("Which election did the Veteran select?") do
         find("label", text: "Higher Level Review with DRO hearing request").click
