@@ -58,7 +58,7 @@ const Hearings = ({ hearings }) => {
                     <DocketsContainer
                       veteran_law_judge={hearings.veteran_law_judge} />
                   )}
-                  />
+                />
 
                 <Route exact path="/hearings/dockets/:date"
                   breadcrumb="Daily Docket"
@@ -67,7 +67,7 @@ const Hearings = ({ hearings }) => {
                       veteran_law_judge={hearings.veteran_law_judge}
                       date={props.match.params.date} />
                   )}
-                  />
+                />
 
                 <Route exact path="/hearings/:hearingId/worksheet"
                   breadcrumb="Daily Docket > Hearing Worksheet"
@@ -76,7 +76,7 @@ const Hearings = ({ hearings }) => {
                       veteran_law_judge={hearings.veteran_law_judge}
                       hearingId={props.match.params.hearingId} />
                   )}
-                  />
+                />
               </div>
             </div>
           </NavigationBar>

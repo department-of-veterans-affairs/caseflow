@@ -1,5 +1,5 @@
 import { mapDataToInitialState } from
-    '../../../../app/certification/reducers/index';
+  '../../../../app/certification/reducers/index';
 
 export const getBlankInitialState = () => {
   return mapDataToInitialState({

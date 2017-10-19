@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as ConfirmCaseDetails from
-    '../../../../app/certification/reducers/ConfirmCaseDetails';
+  '../../../../app/certification/reducers/ConfirmCaseDetails';
 import { getBlankInitialState } from './util';
 import * as Constants from
-    '../../../../app/certification/constants/constants';
+  '../../../../app/certification/constants/constants';
 
 describe('.changeRepresentativeType', () => {
   it('should change the representative type', () => {
@@ -16,7 +16,7 @@ describe('.changeRepresentativeType', () => {
     };
 
     expect(ConfirmCaseDetails.changeRepresentativeType(initialState, action).
-        representativeType).to.eq('new rep type');
+      representativeType).to.eq('new rep type');
   });
 });
 
@@ -31,7 +31,7 @@ describe('.changeRepresentativeName', () => {
     };
 
     expect(ConfirmCaseDetails.changeRepresentativeName(initialState, action).
-        representativeName).to.eq('new rep name');
+      representativeName).to.eq('new rep name');
   });
 });
 
@@ -46,7 +46,7 @@ describe('.changeOtherRepresentativeType', () => {
     };
 
     expect(ConfirmCaseDetails.changeOtherRepresentativeType(initialState, action).
-        otherRepresentativeType).to.eq('new other rep type');
+      otherRepresentativeType).to.eq('new other rep type');
   });
 });
 

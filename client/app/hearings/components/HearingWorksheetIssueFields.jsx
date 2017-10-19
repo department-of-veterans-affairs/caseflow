@@ -45,12 +45,12 @@ class HearingWorksheetIssueFields extends PureComponent {
         <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-${field}`}>{field}</label>
         <Textarea aria-label={field} name={field}
 
-              id={`${issue.id}-issue-${field}`}
-              value={allowedFields[field].value || ''}
-              onChange={allowedFields[field].onChange}
-              minRows={2}
-              maxRows={8}
-              />
+          id={`${issue.id}-issue-${field}`}
+          value={allowedFields[field].value || ''}
+          onChange={allowedFields[field].onChange}
+          minRows={2}
+          maxRows={8}
+        />
       </div>;
     }
 

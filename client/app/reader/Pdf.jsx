@@ -309,15 +309,15 @@ export class Pdf extends React.PureComponent {
     const scrollTop = this.scrollWindow ? this.scrollWindow.scrollTop : 0;
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
-          pdfWorker={this.props.pdfWorker}
-          scrollTop={scrollTop}
-          scrollWindowCenter={this.state.scrollWindowCenter}
-          documentId={this.props.documentId}
-          key={`${file}`}
-          file={file}
-          isVisible={this.props.file === file}
-          scale={this.props.scale}
-        />;
+        pdfWorker={this.props.pdfWorker}
+        scrollTop={scrollTop}
+        scrollWindowCenter={this.state.scrollWindowCenter}
+        documentId={this.props.documentId}
+        key={`${file}`}
+        file={file}
+        isVisible={this.props.file === file}
+        scale={this.props.scale}
+      />;
     });
 
     return <div
@@ -326,12 +326,12 @@ export class Pdf extends React.PureComponent {
       className="cf-pdf-scroll-view"
       onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
-        <div
-          id={this.props.file}
-          className={'cf-pdf-page pdfViewer singlePageView'}>
-          {pages}
-        </div>
-      </div>;
+      <div
+        id={this.props.file}
+        className={'cf-pdf-page pdfViewer singlePageView'}>
+        {pages}
+      </div>
+    </div>;
   }
 }
 

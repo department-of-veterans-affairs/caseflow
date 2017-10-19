@@ -28,20 +28,20 @@ export default class EstablishClaimCanceled extends React.Component {
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 
     casesAssigned = employeeCountInt > 0 ?
-        Math.ceil(totalCases / employeeCountInt) : 0;
+      Math.ceil(totalCases / employeeCountInt) : 0;
 
     return <div>
-        <StatusMessage
-          title="Claim Processing Discontinued"
-          leadMessageList={[secondHeader]}
-          messageText={MESSAGE_TEXT}
-          type="alert" />
-        <EstablishClaimToolbar
-            availableTasks={availableTasks}
-            buttonText={buttonText}
-            casesAssigned={casesAssigned}
-            totalCasesCompleted={totalCasesCompleted}
-        />
+      <StatusMessage
+        title="Claim Processing Discontinued"
+        leadMessageList={[secondHeader]}
+        messageText={MESSAGE_TEXT}
+        type="alert" />
+      <EstablishClaimToolbar
+        availableTasks={availableTasks}
+        buttonText={buttonText}
+        casesAssigned={casesAssigned}
+        totalCasesCompleted={totalCasesCompleted}
+      />
     </div>;
   }
 

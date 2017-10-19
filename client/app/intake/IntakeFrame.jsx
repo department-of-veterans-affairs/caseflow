@@ -30,7 +30,7 @@ class IntakeFrame extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
 
     const topMessage = this.props.veteran.fileNumber ?
-    `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
 
     let cancelButton, confirmButton;
 
@@ -52,7 +52,7 @@ class IntakeFrame extends React.PureComponent {
               If you have taken any action on this intake outside Caseflow, such as establishing an EP in VBMS,
               Caseflow will have no record of this work.
             </p>
-        </Modal>
+          </Modal>
         }
         <NavigationBar
           appName={appName}

@@ -252,16 +252,16 @@ export class ConfirmHearing extends React.Component {
       form9IsInformal;
 
     return <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Confirm Hearing</h2>
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h2>Confirm Hearing</h2>
 
-          <div>
-            {hearingCheckText}
-          </div>
+        <div>
+          {hearingCheckText}
+        </div>
 
-          <div className="cf-help-divider"></div>
+        <div className="cf-help-divider"></div>
 
-          {/*
+        {/*
             TODO: would we be better served by
             making our connected components smaller?
             we could make e.g.
@@ -272,16 +272,16 @@ export class ConfirmHearing extends React.Component {
             which would be a connected component with
             direct access to the Redux store.
           */}
-          <RadioField name="hearingChangeQuestion"
-            label={hearingChangeQuestion}
-            required={true}
-            options={hearingChangeAnswers}
-            value={hearingDocumentIsInVbms}
-            errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') ? ERRORS.hearingDocumentIsInVbms : null}
-            onChange={onHearingDocumentChange}/>
+        <RadioField name="hearingChangeQuestion"
+          label={hearingChangeQuestion}
+          required={true}
+          options={hearingChangeAnswers}
+          value={hearingDocumentIsInVbms}
+          errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') ? ERRORS.hearingDocumentIsInVbms : null}
+          onChange={onHearingDocumentChange}/>
 
-          {
-            shouldDisplayHearingChangeFound &&
+        {
+          shouldDisplayHearingChangeFound &&
             <RadioField
               name={hearingChangeFoundQuestion}
               required={true}
@@ -290,10 +290,10 @@ export class ConfirmHearing extends React.Component {
               value={hearingPreference}
               onChange={onHearingPreferenceChange}
             />
-          }
+        }
 
-          {
-            shouldDisplayTypeOfForm9Question &&
+        {
+          shouldDisplayTypeOfForm9Question &&
             <RadioField
               name={typeOfForm9Question}
               required={true}
@@ -302,10 +302,10 @@ export class ConfirmHearing extends React.Component {
               errorMessage={this.isFieldErrored('form9Type') ? ERRORS.form9Type : null}
               onChange={onTypeOfForm9Change}
             />
-          }
+        }
 
-          {
-            shouldDisplayTypeOfForm9Question &&
+        {
+          shouldDisplayTypeOfForm9Question &&
 
             /* TODO: restore the accessibility stuff here.
               also, we should stop using rails pdf viewer */
@@ -316,28 +316,28 @@ export class ConfirmHearing extends React.Component {
                 src={form9PdfPath}>
               </iframe>
             </LoadingContainer>
-          }
+        }
 
-          {
-            shouldDisplayFormalForm9Question &&
+        {
+          shouldDisplayFormalForm9Question &&
             <RadioField name={formalForm9HearingQuestion}
               options={formalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               onChange={onHearingPreferenceChange}/>
-          }
+        }
 
-          {
-            shouldDisplayInformalForm9Question &&
+        {
+          shouldDisplayInformalForm9Question &&
             <RadioField name={informalForm9HearingQuestion}
               options={informalForm9HearingAnswers}
               value={hearingPreference}
               required={true}
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               onChange={onHearingPreferenceChange}/>
-          }
-        </div>
+        }
+      </div>
       <Footer
         loading={loading}
         onClickContinue={this.onClickContinue.bind(this)}
