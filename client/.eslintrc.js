@@ -119,6 +119,7 @@ module.exports = {
     "no-extend-native": "error",
     "no-extra-bind": "error",
     "no-extra-label": "error",
+    "no-extra-parens": "warn",
     "no-floating-decimal": "error",
     "no-implicit-coercion": "error",
     "no-implicit-globals": "error",
