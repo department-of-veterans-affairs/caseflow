@@ -70,14 +70,14 @@ export default class Button extends React.Component {
     });
 
     const button = <button
-        id={id || (name && `${type}-${name.replace(/\s/g, '-')}`)}
-        className={buttonClasses}
-        type={type}
-        disabled={disabled}
-        onClick={onClick}
-        aria-label={ariaLabel}>
-          {children}
-      </button>;
+      id={id || (name && `${type}-${name.replace(/\s/g, '-')}`)}
+      className={buttonClasses}
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+      aria-label={ariaLabel}>
+      {children}
+    </button>;
 
     /**
      * If we having a loading indicator, then we'll wrap the <button> in a <span>.

@@ -27,32 +27,32 @@ export default class StyleGuideNavigationBar extends React.Component {
         link="StyleGuideNavigationBar.jsx"
         isSubsection={true}
       />
-    <p>
+      <p>
       The Navigation Bar is a simple white bar that sits on top of every application.
       Our navigation bar is non-sticky and scrolls out of view as the user scrolls
       down the page. It includes branding for the specific application on the left;
       a Caseflow logo and application name (see Application Branding for more details).
-    </p>
-    <p>
+      </p>
+      <p>
       The Navigation Bar also includes the user menu on the right.
       This menu indicates which user is signed in and contains links to submit feedback,
       view the application’s help page, see newly launched features, and log out.
-    </p>
-    <p>
+      </p>
+      <p>
       The navigation bar is a total of 90px tall with a 1px border-bottom colored
       grey-lighter.
-    </p>
+      </p>
 
-    <div className="sg-nav-wrap">
-     <Router>
-      <NavigationBar
-       appName="Hearing Prep"
-       userDisplayName="Abraham Lincoln"
-       dropdownUrls={options}
-       defaultUrl="/"
-      />
-     </Router>
-   </div>
-  </div>;
+      <div className="sg-nav-wrap">
+        <Router>
+          <NavigationBar
+            appName="Hearing Prep"
+            userDisplayName="Abraham Lincoln"
+            dropdownUrls={options}
+            defaultUrl="/"
+          />
+        </Router>
+      </div>
+    </div>;
   }
 }

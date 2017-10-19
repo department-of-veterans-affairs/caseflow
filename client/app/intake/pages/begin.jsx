@@ -43,7 +43,7 @@ class Begin extends React.PureComponent {
         onChange={this.props.setFileNumberSearch}
         value={this.props.fileNumberSearchInput}
         loading={this.props.fileNumberSearchRequestStatus === REQUEST_STATE.IN_PROGRESS}
-        />
+      />
     </div>;
   }
 }
