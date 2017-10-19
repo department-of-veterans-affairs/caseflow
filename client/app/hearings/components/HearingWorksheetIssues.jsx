@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
+import HearingWorksheetIssueCounter from './HearingWorksheetIssueCounter';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -14,7 +15,8 @@ class HearingWorksheetIssues extends PureComponent {
     let {
       worksheetStreamsIssues,
       worksheetStreamsAppeal,
-      appealKey
+      appealKey,
+      issueCounter
     } = this.props;
 
 
@@ -69,7 +71,9 @@ class HearingWorksheetIssues extends PureComponent {
       }
 
       return {
-        counter: <b>{key + 1}.</b>,
+        counter: <HearingWorksheetIssueCounter
+                  issueCounter={issueCounter + key}
+         />,
         program: <HearingWorksheetIssueFields
             appeal={worksheetStreamsAppeal}
             issue={issueRow}
@@ -136,6 +140,7 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
+  issueCounter: PropTypes.number.isRequired,
   worksheetStreamsIssues: PropTypes.array.isRequired,
   worksheetStreamsAppeal: PropTypes.object.isRequired
 };
