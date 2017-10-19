@@ -17,12 +17,14 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
-    t.integer "document_id", null: false
-    t.string  "comment",     null: false
-    t.integer "page"
-    t.integer "x"
-    t.integer "y"
-    t.integer "user_id"
+    t.integer  "document_id", null: false
+    t.string   "comment",     null: false
+    t.integer  "page"
+    t.integer  "x"
+    t.integer  "y"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree

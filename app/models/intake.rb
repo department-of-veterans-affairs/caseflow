@@ -22,7 +22,7 @@ class Intake < ActiveRecord::Base
     )
   end
 
-  def complete!(status = :success)
+  def complete_with_status!(status)
     update_attributes!(
       completed_at: Time.zone.now,
       completion_status: status
