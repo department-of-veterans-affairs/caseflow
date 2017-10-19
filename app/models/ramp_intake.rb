@@ -28,7 +28,10 @@ class RampIntake < Intake
 
   def serialized_appeal_issues
     legacy_appeals_to_close.map do |appeal|
-      { issues: appeal.issues.map(&:description_attributes) }
+      {
+        id: appeal.id,
+        issues: appeal.issues.map(&:description_attributes)
+      }
     end
   end
 

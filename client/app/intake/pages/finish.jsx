@@ -24,8 +24,10 @@ class Finish extends React.PureComponent {
       },
       {
         header: 'VACOLS Issue(s)',
-        valueFunction: (issue) => (
-          issue.description.map((descriptor) => <div>{descriptor}</div>)
+        valueFunction: (issue, index) => (
+          issue.description.map(
+            (descriptor) => <div key={`${descriptor}-${index}`}>{descriptor}</div>
+          )
         )
       },
       {
@@ -35,7 +37,7 @@ class Finish extends React.PureComponent {
     ];
 
     return _.map(appeals, (appeal) => {
-      return <div>
+      return <div key={appeal.id}>
         <Table
           columns={issueColumns}
           rowObjects={appeal.issues}

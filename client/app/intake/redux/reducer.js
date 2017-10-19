@@ -6,11 +6,11 @@ import _ from 'lodash';
 const formatAppeals = (appeals) => {
   return _.map(appeals, (appeal) => (
     {
+      id: appeal.id,
       issues: appeal.issues.map(
-        ({ description, program_description, note }) => ({
-          description,
+        ({ program_description, ...rest }) => ({
           programDescription: program_description,
-          note
+          ...rest
         })
       )
     }

@@ -84,12 +84,12 @@ describe RampIntake do
     end
   end
 
-  context "#serialized_appeal_issues" do
+  context "#serialized_appeal_issues", focus: true do
     subject { intake.serialized_appeal_issues }
 
     let!(:appeals) do
       [
-        Generators::Appeal.build(
+        Generators::Appeal.create(
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(description: [
@@ -106,7 +106,7 @@ describe RampIntake do
                                     note: "Broken knee")
           ]
         ),
-        Generators::Appeal.build(
+        Generators::Appeal.create(
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(description: ["15 - Last Issue"], note: "")
@@ -117,6 +117,7 @@ describe RampIntake do
 
     it do
       is_expected.to eq([{
+                          id: appeals.first.id,
                           issues: [{
                             program_description: "02 - Compensation",
                             description: [
@@ -136,6 +137,7 @@ describe RampIntake do
                           }]
                         },
                          {
+                           id: appeals.last.id,
                            issues: [{
                              program_description: "02 - Compensation",
                              description: ["15 - Last Issue"],
