@@ -5,6 +5,6 @@ class HeartbeatTasksJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform
-    Rails.logger.info Sidekiq::Stats.new.inspect
+    Rails.logger.info "This is a heartbeat ping"
   end
 end
