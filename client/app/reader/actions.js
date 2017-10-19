@@ -665,16 +665,16 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
     ApiUtil.get('/reader/appeal/veteran-id?json', {
       headers: { 'veteran-id': veteranId }
     },
-      ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
-    then((response) => {
-      const returnedObject = JSON.parse(response.text);
+    ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
+      then((response) => {
+        const returnedObject = JSON.parse(response.text);
 
-      if (_.size(returnedObject.appeals) === 0) {
-        dispatch(fetchedNoAppealsUsingVeteranId());
-      } else {
-        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-      }
-    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+        if (_.size(returnedObject.appeals) === 0) {
+          dispatch(fetchedNoAppealsUsingVeteranId());
+        } else {
+          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+        }
+      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
 );
 

@@ -313,34 +313,34 @@ export class ConfirmCaseDetails extends React.Component {
 
 
     return <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Confirm Case Details</h2>
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h2>Confirm Case Details</h2>
 
-          <div>
-            {`Review information about the appellant's
+        <div>
+          {`Review information about the appellant's
               representative from VBMS and VACOLS.`}
-          </div>
+        </div>
 
-          <Table
-            className="cf-borderless-rows"
-            columns={appellantInfoColumns}
-            rowObjects={appellantInfoRowObjects}
-            summary="Appellant Information"
-          />
+        <Table
+          className="cf-borderless-rows"
+          columns={appellantInfoColumns}
+          rowObjects={appellantInfoRowObjects}
+          summary="Appellant Information"
+        />
 
-          <div className="cf-help-divider"></div>
+        <div className="cf-help-divider"></div>
 
-          <RadioField
-            name="Does the representative information from VBMS and VACOLS match?"
-            required={true}
-            options={poaMatchesOptions}
-            value={poaMatches}
-            errorMessage={this.isFieldErrored('poaMatches') ? ERRORS.poaMatches : null}
-            onChange={changePoaMatches}
-          />
+        <RadioField
+          name="Does the representative information from VBMS and VACOLS match?"
+          required={true}
+          options={poaMatchesOptions}
+          value={poaMatches}
+          errorMessage={this.isFieldErrored('poaMatches') ? ERRORS.poaMatches : null}
+          onChange={changePoaMatches}
+        />
 
-          {
-            poaMatches === Constants.poaMatches.NO_MATCH &&
+        {
+          poaMatches === Constants.poaMatches.NO_MATCH &&
             <RadioField
               name="Which information source shows the correct representative for this appeal?"
               options={poaCorrectLocationOptions}
@@ -349,10 +349,10 @@ export class ConfirmCaseDetails extends React.Component {
               errorMessage={this.isFieldErrored('poaCorrectLocation') ? ERRORS.poaCorrectLocation : null}
               required={true}
             />
-          }
+        }
 
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
             <RadioField
               name="What type of representative did the appellant request for this appeal?"
               options={representativeTypeOptions}
@@ -361,10 +361,10 @@ export class ConfirmCaseDetails extends React.Component {
               errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
               required={true}
             />
-          }
+        }
 
-          {
-            (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+        {
+          (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
               representativeType === Constants.representativeTypes.ORGANIZATION) &&
             <Dropdown
               name="Service organization name"
@@ -375,55 +375,55 @@ export class ConfirmCaseDetails extends React.Component {
               errorMessage={this.isFieldErrored('organizationName') ? ERRORS.organizationName : null}
               required={true}
             />
-          }
-          {
-            organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+        }
+        {
+          organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             <TextField
               name={'Enter the service organization\'s name:'}
               value={representativeName}
               errorMessage={this.calculateErrorMessage()}
               required={true}
               onChange={changeRepresentativeName}/>
-          }
+        }
 
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.VACOLS &&
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.VACOLS &&
             'Great! Caseflow will keep the representative information as it exists now in VACOLS.'
-          }
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+        }
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === true &&
             'Great! Caseflow will update the representative name, type, and address ' +
               'in VACOLS with information from VBMS.'
-          }
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+        }
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
             'Caseflow will update the representative type in VACOLS with information from VBMS.'
-          }
-          {
-            (representativeType === Constants.representativeTypes.ATTORNEY ||
+        }
+        {
+          (representativeType === Constants.representativeTypes.ATTORNEY ||
               representativeType === Constants.representativeTypes.AGENT ||
               representativeType === Constants.representativeTypes.OTHER) &&
             representativeTypeMessage
-          }
-          {
-            organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+        }
+        {
+          organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             unlistedServiceMessage
-          }
-          {
-            // TODO: change this message when we can fetch addresses.
-            (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
+        }
+        {
+          // TODO: change this message when we can fetch addresses.
+          (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
             'Great! Caseflow will update the representative type and name information for the selected service ' +
             'organization in VACOLS.'
-          }
+        }
 
-        </div>
+      </div>
 
-        <Footer
-          loading={loading}
-          onClickContinue={this.onClickContinue.bind(this)}
-        />
+      <Footer
+        loading={loading}
+        onClickContinue={this.onClickContinue.bind(this)}
+      />
     </div>;
   }
 }

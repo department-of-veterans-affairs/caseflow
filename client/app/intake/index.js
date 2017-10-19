@@ -24,7 +24,7 @@ const Intake = (props) => {
   }
 
   return <Provider store={store}>
-      <IntakeFrame {...props} />
+    <IntakeFrame {...props} />
   </Provider>;
 };
 

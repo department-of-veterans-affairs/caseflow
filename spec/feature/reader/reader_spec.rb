@@ -185,6 +185,33 @@ RSpec.feature "Reader" do
       end
     end
 
+    context "Appeals without any issues" do
+      let(:appeal) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, issues: [])
+      end
+
+      before do
+        Fakes::AppealRepository.appeal_records = [appeal]
+      end
+
+      scenario "welcome gate issues column shows no issues message" do
+        visit "/reader/appeal"
+        expect(find("#table-row-#{appeal.vacols_id}").text).to have_content("No issues on appeal")
+      end
+
+      scenario "Claims folder details issues show no issues message" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        find(".rc-collapse-header", text: "Claims folder details").click
+        expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
+      end
+
+      scenario "pdf view sidebar shows no issues message" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        find("h3", text: "Document information").click
+        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
+      end
+    end
+
     context "Welcome gate page" do
       let(:appeal2) do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
@@ -206,7 +233,7 @@ RSpec.feature "Reader" do
       end
 
       before do
-        Fakes::AppealRepository.appeal_records = [appeal, appeal2]
+        Fakes::AppealRepository.appeal_records = [appeal, appeal2, appeal3, appeal4, appeal5]
       end
 
       scenario "Enter a case" do
