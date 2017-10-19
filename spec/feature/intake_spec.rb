@@ -8,7 +8,7 @@ RSpec.feature "RAMP Intake" do
     Timecop.freeze(Time.utc(2017, 8, 8))
   end
 
-  let!(:veteran) do
+  let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
@@ -23,6 +23,15 @@ RSpec.feature "RAMP Intake" do
         note: "knee movement"
       )
     ]
+  end
+
+  let!(:appeal) do
+    Generators::Appeal.build(
+      vbms_id: "12341234C",
+      issues: issues,
+      vacols_record: :ready_to_certify,
+      veteran: veteran
+    )
   end
 
   context "As a user with Mail Intake role" do
@@ -93,12 +102,6 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Start intake and go back and edit option" do
-      Generators::Appeal.build(
-        vbms_id: "12341234C",
-        issues: issues,
-        vacols_record: :ready_to_certify
-      )
-
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
       intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
@@ -133,8 +136,6 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Complete intake for RAMP Election form" do
-      appeal = Generators::Appeal.build(vbms_id: "12341234C", vacols_record: :ready_to_certify)
-
       election = RampElection.create!(
         veteran_file_number: "12341234",
         notice_date: Date.new(2017, 8, 7)

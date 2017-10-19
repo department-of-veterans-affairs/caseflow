@@ -16,7 +16,7 @@ module CachedAttributes
     Rails.cache.read(cache_id(attr_name))
   end
 
-  def set_cached_value(attr_name, value, write_options)
+  def set_cached_value(attr_name, value, write_options = {})
     Rails.cache.write(cache_id(attr_name), value, write_options) && value
   end
 
