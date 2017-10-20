@@ -112,7 +112,7 @@ RSpec.feature "RAMP Intake" do
 
       # Validate validation
       fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
-      click_on "Continue to next step"
+      safe_click "#button-submit-review"
 
       expect(page).to have_content("Please select an option.")
       expect(page).to have_content(
