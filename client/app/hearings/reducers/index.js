@@ -62,9 +62,14 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { $set: action.payload.worksheet }
     });
 
-  case Constants.HANDLE_SERVER_ERROR:
+  case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
     return update(state, {
-      serverError: { $set: action.payload.err }
+      worksheetServerError: { $set: action.payload.err }
+    });
+
+  case Constants.HANDLE_DOCKET_SERVER_ERROR:
+    return update(state, {
+      docketServerError: { $set: action.payload.err }
     });
 
   case Constants.SET_REPNAME:
