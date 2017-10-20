@@ -12,8 +12,7 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   nil,
       form8_started_at:    5.hours.ago,
       created_at:          5.hours.ago,
-      completed_at:        4.hours.ago,
-      v2:                  true
+      completed_at:        4.hours.ago
     )
 
     Certification.create(
@@ -24,8 +23,7 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   4.hours.ago,
       form8_started_at:    4.hours.ago,
       created_at:          5.hours.ago,
-      completed_at:        nil,
-      v2:                  true
+      completed_at:        nil
     )
 
     Certification.create(
@@ -36,8 +34,7 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   5.hours.ago,
       form8_started_at:    4.hours.ago,
       created_at:          5.hours.ago,
-      completed_at:        3.hours.ago,
-      v2:                  true
+      completed_at:        3.hours.ago
     )
 
     Certification.create(
@@ -48,8 +45,7 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   45.minutes.ago,
       form8_started_at:    45.minutes.ago,
       created_at:          45.minutes.ago,
-      completed_at:        30.minutes.ago,
-      v2:                  true
+      completed_at:        30.minutes.ago
     )
     CertificationStats.calculate_all!
 
@@ -62,6 +58,7 @@ RSpec.feature "Certification Stats Dashboard" do
 
   scenario "Switching tab intervals" do
     visit "/certification/stats"
+    pry
     expect(page).to have_content("Activity for 12:00–12:59 EST (so far)")
     expect(page).to have_content("Certifications Started 1")
     expect(page).to have_content("Certifications Completed 1")
@@ -98,8 +95,7 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   43.minutes.ago,
       form8_started_at:    nil,
       created_at:          45.minutes.ago,
-      completed_at:        nil,
-      v2:                  true
+      completed_at:        nil
     )
 
     Certification.create(
@@ -110,8 +106,7 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   45.minutes.ago,
       form8_started_at:    nil,
       created_at:          45.minutes.ago,
-      completed_at:        nil,
-      v2:                  true
+      completed_at:        nil
     )
     CertificationStats.calculate_all!
 

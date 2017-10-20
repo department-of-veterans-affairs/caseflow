@@ -14,11 +14,11 @@ describe CertificationStats do
 
   context ".calculate_all!" do
     it "calculates and saves all calculated certification_stats" do
-      Certification.create(completed_at: 40.days.ago, v2: true)
-      Certification.create(completed_at: 7.days.ago, v2: true)
-      Certification.create(completed_at: 2.days.ago, v2: true)
-      Certification.create(completed_at: 4.hours.ago, v2: true)
-      Certification.create(completed_at: 30.minutes.ago, v2: true)
+      Certification.create(completed_at: 40.days.ago)
+      Certification.create(completed_at: 7.days.ago)
+      Certification.create(completed_at: 2.days.ago)
+      Certification.create(completed_at: 4.hours.ago)
+      Certification.create(completed_at: 30.minutes.ago)
 
       CertificationStats.calculate_all!
 
@@ -30,18 +30,18 @@ describe CertificationStats do
     end
 
     it "overwrites incomplete periods" do
-      Certification.create(completed_at: 30.minutes.ago, v2: true)
+      Certification.create(completed_at: 30.minutes.ago)
       CertificationStats.calculate_all!
-      Certification.create(completed_at: 1.minute.ago, v2: true)
+      Certification.create(completed_at: 1.minute.ago)
       CertificationStats.calculate_all!
 
       expect(hourly_stats[:certifications_completed]).to eq(2)
     end
 
     it "does not recalculate complete periods" do
-      Certification.create(completed_at: 7.days.ago, v2: true)
+      Certification.create(completed_at: 7.days.ago)
       CertificationStats.calculate_all!
-      Certification.create(completed_at: 7.days.ago, v2: true)
+      Certification.create(completed_at: 7.days.ago)
       CertificationStats.calculate_all!
 
       expect(prev_weekly_stats[:certifications_completed]).to eq(1)
