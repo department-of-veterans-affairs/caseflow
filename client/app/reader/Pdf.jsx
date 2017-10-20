@@ -12,6 +12,7 @@ import { placeAnnotation, startPlacingAnnotation,
   onScrollToComment } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
+import DocumentSearch from './DocumentSearch';
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -326,6 +327,7 @@ export class Pdf extends React.PureComponent {
       className="cf-pdf-scroll-view"
       onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
+      {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
       <div
         id={this.props.file}
         className={'cf-pdf-page pdfViewer singlePageView'}>

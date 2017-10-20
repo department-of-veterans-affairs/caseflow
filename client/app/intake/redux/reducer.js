@@ -3,6 +3,20 @@ import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import _ from 'lodash';
 
+const formatAppeals = (appeals) => {
+  return _.map(appeals, (appeal) => (
+    {
+      id: appeal.id,
+      issues: appeal.issues.map(
+        ({ program_description, ...rest }) => ({
+          programDescription: program_description,
+          ...rest
+        })
+      )
+    }
+  ));
+};
+
 const updateStateWithSavedIntake = (state, intake) => {
   return update(state, {
     veteran: {
@@ -35,6 +49,9 @@ const updateStateWithSavedIntake = (state, intake) => {
       isComplete: {
         $set: Boolean(intake.completed_at)
       }
+    },
+    appeals: {
+      $set: formatAppeals(intake.appeals)
     }
   });
 };
@@ -155,6 +172,18 @@ export const reducer = (state = mapDataToInitialState(), action) => {
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
     return update(state, {
       rampElection: {
+        optionSelectedError: {
+          $set: null
+        },
+        receiptDateError: {
+          $set: null
+        },
+        finishConfirmed: {
+          $set: null
+        },
+        finishConfirmedError: {
+          $set: null
+        },
         isReviewed: {
           $set: true
         }
