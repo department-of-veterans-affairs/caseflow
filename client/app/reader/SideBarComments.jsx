@@ -32,10 +32,10 @@ class SideBarComments extends PureComponent {
           <span>{ plusIcon() } &nbsp; Add a comment</span>
         </Button>
       </span>
-    <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-      {this.props.showErrorMessage.annotation && <CannotSaveAlert />}
-      <div className="cf-pdf-comment-list">
-        {this.props.placedButUnsavedAnnotation &&
+      <div id="cf-comment-wrapper" className="cf-comment-wrapper">
+        {this.props.showErrorMessage.annotation && <CannotSaveAlert />}
+        <div className="cf-pdf-comment-list">
+          {this.props.placedButUnsavedAnnotation &&
           <EditComment
             comment={this.props.placedButUnsavedAnnotation}
             id="addComment"
@@ -43,9 +43,9 @@ class SideBarComments extends PureComponent {
             onChange={this.props.updateNewAnnotationContent}
             onCancelCommentEdit={this.stopPlacingAnnotation}
             onSaveCommentEdit={this.props.createAnnotation} />}
-        {comments}
+          {comments}
+        </div>
       </div>
-    </div>
     </div>;
   }
 }

@@ -38,9 +38,9 @@ export class PdfFile extends React.PureComponent {
         this.props.setPdfDocument(this.props.file, pdfDocument);
       }
     }).
-    catch(() => {
-      this.loadingTask = null;
-    });
+      catch(() => {
+        this.loadingTask = null;
+      });
   }
 
   componentWillUnmount = () => {
@@ -79,7 +79,7 @@ export class PdfFile extends React.PureComponent {
   render() {
     return <div>
       {this.getPages()}
-      </div>;
+    </div>;
   }
 }
 

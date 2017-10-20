@@ -8,11 +8,11 @@ import * as Constants from '../reader/constants';
 const SPACE_DELIMITER = ' ';
 
 const categoriesOfDocument = (document) => _(Constants.documentCategories).
-    filter(
-      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
-    ).
-    sortBy('renderOrder').
-    value();
+  filter(
+    (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
+  ).
+  sortBy('renderOrder').
+  value();
 
 class DocumentCategoryIcons extends React.Component {
   render() {
@@ -32,7 +32,7 @@ class DocumentCategoryIcons extends React.Component {
         _.map(categories, (category) =>
           <li
             className={searchCategoryHighlights[getCategoryName(category.humanName)] ?
-             `${listClassName} highlighted` : listClassName}
+              `${listClassName} highlighted` : listClassName}
             key={category.renderOrder}
             aria-label={category.humanName}>
             {category.svg}

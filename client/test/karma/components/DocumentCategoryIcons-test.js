@@ -19,9 +19,9 @@ describe('DocumentCategoryIcons', () => {
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
     expect(wrapper.find('.cf-document-category-icons li').
-        at(0).
-        prop('aria-label')
-      ).
+      at(0).
+      prop('aria-label')
+    ).
       to.equal('Procedural');
   });
 
@@ -34,9 +34,9 @@ describe('DocumentCategoryIcons', () => {
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
     expect(wrapper.find('.cf-document-category-icons li').
-        at(0).
-        prop('aria-label')
-      ).
+      at(0).
+      prop('aria-label')
+    ).
       to.equal('Other Evidence');
   });
 
@@ -49,9 +49,9 @@ describe('DocumentCategoryIcons', () => {
 
     expect(wrapper.find('.cf-document-category-icons li')).to.have.length(1);
     expect(wrapper.find('.cf-document-category-icons li').
-        at(0).
-        prop('aria-label')
-      ).
+      at(0).
+      prop('aria-label')
+    ).
       to.equal('Medical');
   });
 

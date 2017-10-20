@@ -8,6 +8,7 @@ class CancelButton extends React.PureComponent {
   render = () =>
     <Button
       legacyStyling={false}
+      linkStyling
       willNeverBeLoading
       onClick={this.props.toggleCancelModal}
     >

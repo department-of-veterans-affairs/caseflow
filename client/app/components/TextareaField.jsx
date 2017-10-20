@@ -39,7 +39,7 @@ export default class TextareaField extends React.Component {
         value={value}
         maxLength={maxlength}
       />
-    { characterLimitCount && <p><i>{characterLimitCount} characters left</i></p> }
+      { characterLimitCount && <p><i>{characterLimitCount} characters left</i></p> }
     </div>;
   }
 }

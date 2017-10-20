@@ -21,29 +21,29 @@ export default class StyleGuideAccordions extends React.PureComponent {
     });
 
     return <div>
-    <StyleGuideComponentTitle
-      title="Accordions"
-      id="accordions"
-      link="StyleGuideAccordions.jsx"
-    />
-  <p>Our accordion style was taken from the US Web Design Standards.
+      <StyleGuideComponentTitle
+        title="Accordions"
+        id="accordions"
+        link="StyleGuideAccordions.jsx"
+      />
+      <p>Our accordion style was taken from the US Web Design Standards.
     Accordions are a list of headers that can be clicked to hide or reveal additional
     content.</p>
 
-    <h3>Border</h3>
-    <Accordion style="bordered" accordion={true}>
-      {sgAccordionSections}
-    </Accordion>
+      <h3>Border</h3>
+      <Accordion style="bordered" accordion={true}>
+        {sgAccordionSections}
+      </Accordion>
 
-    <h3>Borderless</h3>
-    <Accordion style="borderless" accordion={true}>
-      {sgAccordionSections}
-    </Accordion>
+      <h3>Borderless</h3>
+      <Accordion style="borderless" accordion={true}>
+        {sgAccordionSections}
+      </Accordion>
 
-    <h3>Bordered Outline</h3>
-    <Accordion style="outline" accordion={true}>
-      {sgAccordionSections}
-    </Accordion>
+      <h3>Bordered Outline</h3>
+      <Accordion style="outline" accordion={true}>
+        {sgAccordionSections}
+      </Accordion>
     </div>;
   }
 }
