@@ -3,7 +3,6 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   include CachedAttributes
   include RegionalOfficeConcern
-  include CachedAttributes
 
   has_many :tasks
   has_many :appeal_views
