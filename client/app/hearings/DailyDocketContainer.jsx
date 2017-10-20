@@ -71,7 +71,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getDockets: (dockets) => () => {
     if (!dockets) {
-      ApiUtil.get('/hearings/docketsd.json', { cache: true }).
+      ApiUtil.get('/hearings/dockets.json', { cache: true }).
         then((response) => {
           dispatch(Actions.populateDockets(response.body));
         }, (err) => {
