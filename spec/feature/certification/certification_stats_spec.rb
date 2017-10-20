@@ -58,7 +58,6 @@ RSpec.feature "Certification Stats Dashboard" do
 
   scenario "Switching tab intervals" do
     visit "/certification/stats"
-    pry
     expect(page).to have_content("Activity for 12:00–12:59 EST (so far)")
     expect(page).to have_content("Certifications Started 1")
     expect(page).to have_content("Certifications Completed 1")
