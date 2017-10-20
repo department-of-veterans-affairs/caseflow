@@ -42,8 +42,8 @@ export default class Alert extends React.Component {
     return <div className={className} {...this.getRole()}>
       <div className="usa-alert-body">
         <h2 className="usa-alert-heading">{title}</h2>
-        { children ? <p className="usa-alert-text">{children}</p> :
-          <p className="usa-alert-text">{message}</p>}
+        { children ? <div className="usa-alert-text">{children}</div> :
+          <div className="usa-alert-text">{message}</div>}
       </div>
     </div>;
   }

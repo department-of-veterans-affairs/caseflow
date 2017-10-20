@@ -184,7 +184,10 @@ export const initialState = {
   annotations: {},
   documents: {},
   pages: {},
-  pdfDocuments: {}
+  pdfDocuments: {},
+  text: [],
+  documentSearchString: null,
+  extractedText: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1085,7 +1088,24 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-
+  case Constants.GET_DCOUMENT_TEXT:
+    return update(
+      state,
+      {
+        extractedText: {
+          $merge: action.payload.textObject
+        }
+      }
+    );
+  case Constants.SET_DOCUMENT_SEARCH:
+    return update(
+      state,
+      {
+        documentSearchString: {
+          $set: action.payload.searchString
+        }
+      }
+    );
   default:
     return state;
   }

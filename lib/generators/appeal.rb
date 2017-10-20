@@ -170,6 +170,7 @@ class Generators::Appeal
       vacols_record = extract_vacols_record(attrs)
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
       inaccessible = attrs.delete(:inaccessible)
+      veteran = attrs.delete(:veteran)
 
       cast_datetime_fields(attrs)
       setup_vbms_documents(attrs)
@@ -184,7 +185,7 @@ class Generators::Appeal
       appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible
-      Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
+      veteran || Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
 
       appeal
     end
