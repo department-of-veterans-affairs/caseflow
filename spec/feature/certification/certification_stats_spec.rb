@@ -12,7 +12,8 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   nil,
       form8_started_at:    5.hours.ago,
       created_at:          5.hours.ago,
-      completed_at:        4.hours.ago
+      completed_at:        4.hours.ago,
+      v2:                  true
     )
 
     Certification.create(
@@ -23,7 +24,8 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   4.hours.ago,
       form8_started_at:    4.hours.ago,
       created_at:          5.hours.ago,
-      completed_at:        nil
+      completed_at:        nil,
+      v2:                  true
     )
 
     Certification.create(
@@ -34,7 +36,8 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   5.hours.ago,
       form8_started_at:    4.hours.ago,
       created_at:          5.hours.ago,
-      completed_at:        3.hours.ago
+      completed_at:        3.hours.ago,
+      v2:                  true
     )
 
     Certification.create(
@@ -45,7 +48,8 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   45.minutes.ago,
       form8_started_at:    45.minutes.ago,
       created_at:          45.minutes.ago,
-      completed_at:        30.minutes.ago
+      completed_at:        30.minutes.ago,
+      v2:                  true
     )
     CertificationStats.calculate_all!
 
@@ -94,7 +98,8 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   43.minutes.ago,
       form8_started_at:    nil,
       created_at:          45.minutes.ago,
-      completed_at:        nil
+      completed_at:        nil,
+      v2:                  true
     )
 
     Certification.create(
@@ -105,7 +110,8 @@ RSpec.feature "Certification Stats Dashboard" do
       ssocs_matching_at:   45.minutes.ago,
       form8_started_at:    nil,
       created_at:          45.minutes.ago,
-      completed_at:        nil
+      completed_at:        nil,
+      v2:                  true
     )
     CertificationStats.calculate_all!
 
