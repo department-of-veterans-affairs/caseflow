@@ -102,7 +102,8 @@ class CommentLayer extends PureComponent {
 
     const droppedAnnotation = {
       ...this.props.allAnnotations[dragAndDropData.uuid],
-      ...coordinates
+      ...coordinates,
+      page: pageNumberOfPageIndex(this.props.pageIndex)
     };
 
     this.props.requestMoveAnnotation(droppedAnnotation);
