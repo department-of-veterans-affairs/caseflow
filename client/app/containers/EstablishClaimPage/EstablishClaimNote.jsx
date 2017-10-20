@@ -170,51 +170,51 @@ export class EstablishClaimNote extends BaseForm {
 
   render() {
     return <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Route Claim</h1><h2>{this.headerVacols()}</h2>
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h1>Route Claim</h1><h2>{this.headerVacols()}</h2>
 
-          {this.props.showNotePageAlert && <Alert
-            title="Cannot edit end product"
-            type="warning">
+        {this.props.showNotePageAlert && <Alert
+          title="Cannot edit end product"
+          type="warning">
             You cannot navigate to the previous page because the end
             product has already been created and cannot be edited.
             Please proceed with adding the note below in VBMS.
-          </Alert>}
+        </Alert>}
 
-          <ol className="cf-bold-ordered-list">
-            {this.props.displayVacolsNote &&
+        <ol className="cf-bold-ordered-list">
+          {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote}>
               {this.vacolsSection()}
             </li>}
-          </ol>
-          {(this.props.displayVacolsNote && this.props.displayVbmsNote) && <div className="cf-bottom-border"></div>}
-          <h2>{this.headerVbms()}</h2>
-          <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
-            {this.props.displayVbmsNote &&
+        </ol>
+        {(this.props.displayVacolsNote && this.props.displayVbmsNote) && <div className="cf-bottom-border"></div>}
+        <h2>{this.headerVbms()}</h2>
+        <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
+          {this.props.displayVbmsNote &&
             <li>{this.vbmsSection()}</li>}
-          </ol>
+        </ol>
 
+      </div>
+      <div className="cf-app-segment" id="establish-claim-buttons">
+        {!this.props.endProductCreated && <div className="cf-push-left">
+          <Button
+            name={this.props.backToDecisionReviewText}
+            onClick={this.props.handleBackToDecisionReview}
+            classNames={['cf-btn-link']}
+          />
+        </div>}
+        <div className="cf-push-right">
+          <Button
+            app="dispatch"
+            name="Finish routing claim"
+            classNames={['usa-button-primary']}
+            disabled={!this.state.noteForm.confirmBox.value}
+            onClick={this.handleSubmit}
+            loading={this.props.loading}
+          />
         </div>
-        <div className="cf-app-segment" id="establish-claim-buttons">
-          {!this.props.endProductCreated && <div className="cf-push-left">
-            <Button
-              name={this.props.backToDecisionReviewText}
-              onClick={this.props.handleBackToDecisionReview}
-              classNames={['cf-btn-link']}
-            />
-          </div>}
-          <div className="cf-push-right">
-            <Button
-              app="dispatch"
-              name="Finish routing claim"
-              classNames={['usa-button-primary']}
-              disabled={!this.state.noteForm.confirmBox.value}
-              onClick={this.handleSubmit}
-              loading={this.props.loading}
-            />
-          </div>
-        </div>
-      </div>;
+      </div>
+    </div>;
   }
 }
 
@@ -232,7 +232,7 @@ const mapStateToProps = (state) => {
 };
 
 const ConnectedEstablishClaimNote = connect(
-    mapStateToProps
+  mapStateToProps
 )(EstablishClaimNote);
 
 export default ConnectedEstablishClaimNote;

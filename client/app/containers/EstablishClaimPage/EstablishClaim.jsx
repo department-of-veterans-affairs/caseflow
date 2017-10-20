@@ -61,27 +61,27 @@ const CREATE_EP_ERRORS = {
             Please return
             to <a href="/dispatch/establish-claim/">Work History</a> to
             establish the next claim.
-          </span>
+    </span>
   },
   missing_ssn: {
     header: 'The EP for this claim must be created outside Caseflow.',
     body: <span>
             This veteran does not have a social security number, so their
             claim cannot be established in Caseflow.
-            <br/>
+      <br/>
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
-          </span>
+    </span>
   },
   bgs_info_invalid: {
     header: 'The EP for this claim must be created outside Caseflow.',
     body: <span>
             The veteran's profile in the corporate database is missing information
             required by Caseflow.
-            <br/>
+      <br/>
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
-          </span>
+    </span>
   },
   default: {
     header: 'System Error',
@@ -299,37 +299,37 @@ export default class EstablishClaim extends React.Component {
     return ApiUtil.put(`/dispatch/establish-claim/${this.props.task.id}/update-appeal`,
       { data }).then(() => {
 
-        this.setState({
-          loading: false
-        });
+      this.setState({
+        loading: false
+      });
 
-        if (!this.willCreateEndProduct()) {
-          if (this.props.task.appeal.decision_type === FULL_GRANT) {
-            this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
-            this.handlePageChange(EMAIL_PAGE);
-          } else {
-            this.handlePageChange(NOTE_PAGE);
-          }
-        } else if (this.shouldShowAssociatePage()) {
-          this.handlePageChange(ASSOCIATE_PAGE);
+      if (!this.willCreateEndProduct()) {
+        if (this.props.task.appeal.decision_type === FULL_GRANT) {
+          this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
+          this.handlePageChange(EMAIL_PAGE);
         } else {
-          this.handlePageChange(FORM_PAGE);
+          this.handlePageChange(NOTE_PAGE);
         }
+      } else if (this.shouldShowAssociatePage()) {
+        this.handlePageChange(ASSOCIATE_PAGE);
+      } else {
+        this.handlePageChange(FORM_PAGE);
+      }
 
-      }, (error) => {
-        let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
+    }, (error) => {
+      let errorMessage = CREATE_EP_ERRORS[error.response.body.error_code] ||
                           CREATE_EP_ERRORS.default;
 
-        this.setState({
-          loading: false
-        });
-
-        handleAlert(
-          'error',
-          errorMessage.header,
-          errorMessage.body
-        );
+      this.setState({
+        loading: false
       });
+
+      handleAlert(
+        'error',
+        errorMessage.header,
+        errorMessage.body
+      );
+    });
   }
 
   handleNotePageSubmit = (vacolsNote) => {
@@ -353,10 +353,10 @@ export default class EstablishClaim extends React.Component {
         WindowUtil.reloadPage();
       }, () => {
         handleAlert(
-        'error',
-        'Error',
-        'There was an error while routing the current claim. Please try again later'
-      );
+          'error',
+          'Error',
+          'There was an error while routing the current claim. Please try again later'
+        );
         this.setState({
           loading: false
         });
@@ -463,11 +463,11 @@ export default class EstablishClaim extends React.Component {
     return (
       <Provider store={this.store}>
         <div>
-        <EstablishClaimProgressBar
-          isReviewDecision={this.isDecisionPage()}
-          isRouteClaim={!this.isDecisionPage()}
-        />
-        { this.isDecisionPage() &&
+          <EstablishClaimProgressBar
+            isReviewDecision={this.isDecisionPage()}
+            isRouteClaim={!this.isDecisionPage()}
+          />
+          { this.isDecisionPage() &&
           <EstablishClaimDecision
             loading={this.state.loading}
             decisionType={decisionType}
@@ -477,8 +477,8 @@ export default class EstablishClaim extends React.Component {
             pdfjsLink={pdfjsLink}
             task={this.props.task}
           />
-        }
-        { this.isAssociatePage() &&
+          }
+          { this.isAssociatePage() &&
           <AssociatePage
             loading={this.state.loading}
             endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
@@ -492,8 +492,8 @@ export default class EstablishClaim extends React.Component {
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
           />
-        }
-        { this.isFormPage() &&
+          }
+          { this.isFormPage() &&
           <EstablishClaimForm
             loading={this.state.loading}
             claimLabelValue={this.getClaimTypeFromDecision().join(' - ')}
@@ -506,8 +506,8 @@ export default class EstablishClaim extends React.Component {
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
           />
-        }
-        { this.isNotePage() &&
+          }
+          { this.isNotePage() &&
           <EstablishClaimNote
             loading={this.state.loading}
             endProductCreated={this.state.endProductCreated}
@@ -521,8 +521,8 @@ export default class EstablishClaim extends React.Component {
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
-        }
-        { this.isEmailPage() &&
+          }
+          { this.isEmailPage() &&
           <EstablishClaimEmail
             appeal={this.props.task.appeal}
             handleAlertClear={this.props.handleAlertClear}
@@ -546,12 +546,12 @@ export default class EstablishClaim extends React.Component {
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
           />
-        }
-        <CancelModal
-          handleAlertClear={this.props.handleAlertClear}
-          handleAlert={this.props.handleAlert}
-          taskId={this.props.task.id}
-        />
+          }
+          <CancelModal
+            handleAlertClear={this.props.handleAlertClear}
+            handleAlert={this.props.handleAlert}
+            taskId={this.props.task.id}
+          />
         </div>
       </Provider>
     );
