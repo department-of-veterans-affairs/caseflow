@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingContainer from '../components/LoadingContainer';
+import Alert from '../components/Alert';
 import Dockets from './Dockets';
 import ApiUtil from '../util/ApiUtil';
 
