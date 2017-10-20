@@ -46,11 +46,11 @@ class CaseSelect extends React.PureComponent {
         }
 
         return <Link
-            name="view doc"
-            button={buttonType}
-            to={`/${row.vacols_id}/documents`}>
-              {buttonText}
-            </Link>;
+          name="view doc"
+          button={buttonType}
+          to={`/${row.vacols_id}/documents`}>
+          {buttonText}
+        </Link>;
       }
     }
   ];

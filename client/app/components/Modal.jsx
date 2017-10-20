@@ -61,14 +61,14 @@ export default class Modal extends React.Component {
       }
 
       return <Button
-          name={object.name}
-          onClick={object.onClick}
-          classNames={classNames}
-          loading={object.loading}
-          disabled={object.disabled}
-          key={i}
-          id={this.buttonIdPrefix + i}
-        />;
+        name={object.name}
+        onClick={object.onClick}
+        classNames={classNames}
+        loading={object.loading}
+        disabled={object.disabled}
+        key={i}
+        id={this.buttonIdPrefix + i}
+      />;
     });
   }
 
@@ -101,12 +101,12 @@ export default class Modal extends React.Component {
     }
 
     return <section
-            className="cf-modal active"
-            id="modal_id"
-            role="alertdialog"
-            aria-labelledby="modal_id-title"
-            aria-describedby="modal_id-desc"
-          >
+      className="cf-modal active"
+      id="modal_id"
+      role="alertdialog"
+      aria-labelledby="modal_id-title"
+      aria-describedby="modal_id-desc"
+    >
       <div className="cf-modal-body" id={id || ''}>
         <button
           type="button"

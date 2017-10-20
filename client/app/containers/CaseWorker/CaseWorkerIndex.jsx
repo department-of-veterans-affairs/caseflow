@@ -69,37 +69,37 @@ export default class CaseWorkerIndex extends BaseForm {
     const tasksRemaining = userQuota ? userQuota.tasks_left_count : -1;
 
     return <div className="cf-app-segment cf-app-segment--alt">
-          <div className="usa-width-one-whole task-start-wrapper">
-            <div className="cf-left-side">
-              <h1>Your Work Assignments</h1>
-              <HeaderMessage
-                availableTasks={availableTasks}
-                tasksRemaining={tasksRemaining}
-              />
-              <span className="cf-button-associated-text-right">
-                { userQuota &&
-                  `${tasksRemaining} claims in your queue, ${userQuota.tasks_completed_count} claims completed`
-                }
-              </span>
-              <Button
-                app="dispatch"
-                name={buttonText}
-                onClick={this.establishNextClaim}
-                classNames={['usa-button-primary', 'cf-push-right',
-                  'cf-button-aligned-with-textfield-right']}
-                disabled={!availableTasks || !tasksRemaining}
-                loading={this.state.loading}
-              />
-            </div>
-          </div>
-          <h1>Work History</h1>
-          <Table
-            columns={workHistoryColumns}
-            rowObjects={this.props.currentUserHistoricalTasks}
-            id="work-history-table"
-            summary="History of issues you've worked"
+      <div className="usa-width-one-whole task-start-wrapper">
+        <div className="cf-left-side">
+          <h1>Your Work Assignments</h1>
+          <HeaderMessage
+            availableTasks={availableTasks}
+            tasksRemaining={tasksRemaining}
           />
-        </div>;
+          <span className="cf-button-associated-text-right">
+            { userQuota &&
+                  `${tasksRemaining} claims in your queue, ${userQuota.tasks_completed_count} claims completed`
+            }
+          </span>
+          <Button
+            app="dispatch"
+            name={buttonText}
+            onClick={this.establishNextClaim}
+            classNames={['usa-button-primary', 'cf-push-right',
+              'cf-button-aligned-with-textfield-right']}
+            disabled={!availableTasks || !tasksRemaining}
+            loading={this.state.loading}
+          />
+        </div>
+      </div>
+      <h1>Work History</h1>
+      <Table
+        columns={workHistoryColumns}
+        rowObjects={this.props.currentUserHistoricalTasks}
+        id="work-history-table"
+        summary="History of issues you've worked"
+      />
+    </div>;
   }
 }
 
