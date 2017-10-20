@@ -69,7 +69,7 @@ describe Intake do
       end
     end
 
-    context "veteran_file_number has less than 3 digits" do
+    context "veteran_file_number has fewer than 3 digits" do
       let(:veteran_file_number) { "11" }
 
       it "adds invalid_file_number and returns false" do
