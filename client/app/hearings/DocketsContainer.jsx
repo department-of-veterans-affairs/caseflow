@@ -12,7 +12,7 @@ export const getDockets = (dispatch) => {
     then((response) => {
       dispatch(Actions.populateDockets(response.body));
     }, (err) => {
-      dispatch(Actions.handleServerError(err));
+      dispatch(Actions.handleDocketsServerError(err));
     });
 };
 
@@ -26,9 +26,14 @@ export class DocketsContainer extends React.Component {
 
   render() {
 
-    if (this.props.serverError) {
-      return <div style={{ textAlign: 'center' }}>
-        An error occurred while retrieving your hearings.</div>;
+    if (this.props.docketServerError) {
+      return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
+        <Alert
+          title="Unable to load documents"
+          type="error">It looks like Caseflow was unable to load hearings.
+          Please refresh the page and try again.
+        </Alert>
+      </div>;
     }
 
     if (!this.props.dockets) {
@@ -53,7 +58,7 @@ export class DocketsContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dockets: state.dockets,
-  serverError: state.serverError
+  docketServerError: state.docketServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -70,5 +75,5 @@ export default connect(
 DocketsContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   dockets: PropTypes.object,
-  serverError: PropTypes.object
+  docketServerError: PropTypes.object
 };
