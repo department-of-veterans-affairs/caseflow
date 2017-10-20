@@ -52,6 +52,7 @@ describe('DecisionReviewer', () => {
     wrapper = mount(
       <Provider store={store}>
         <DecisionReviewer
+          featureToggles={{}}
           userDisplayName={'Name'}
           feedbackUrl={'fakeurl'}
           dropdownUrls={[{
