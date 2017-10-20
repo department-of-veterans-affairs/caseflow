@@ -12,7 +12,7 @@ export const getDockets = (dispatch) => {
     then((response) => {
       dispatch(Actions.populateDockets(response.body));
     }, (err) => {
-      dispatch(Actions.handleDocketsServerError(err));
+      dispatch(Actions.handleDocketServerError(err));
     });
 };
 
