@@ -9,7 +9,7 @@ class RampIntake < Intake
     transaction do
       complete_with_status!(:success)
 
-      eligibile_appeals.each do |appeal|
+      eligible_appeals.each do |appeal|
         appeal.close!(user: user, closed_on: Time.zone.today, disposition: "RAMP Opt-in")
       end
     end
@@ -27,7 +27,7 @@ class RampIntake < Intake
   end
 
   def serialized_appeal_issues
-    eligibile_appeals.map do |appeal|
+    eligible_appeals.map do |appeal|
       {
         id: appeal.id,
         issues: appeal.issues.map(&:description_attributes)
@@ -39,7 +39,7 @@ class RampIntake < Intake
 
   # Appeals in VACOLS that will be closed out in favor
   # of a new format review
-  def eligibile_appeals
+  def eligible_appeals
     Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:eligible_for_ramp?)
   end
 
@@ -47,7 +47,7 @@ class RampIntake < Intake
     if !matching_ramp_election
       @error_code = :did_not_receive_ramp_election
 
-    elsif eligibile_appeals.empty?
+    elsif eligible_appeals.empty?
       @error_code = :no_eligible_appeals
     end
   end
