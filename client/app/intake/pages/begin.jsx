@@ -54,7 +54,7 @@ const searchErrors = {
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => this.props.doFileNumberSearch(this.props.fileNumberSearchInput)
 
-  clearSearch = () => this.props.setFileNumberSearch("")
+  clearSearch = () => this.props.setFileNumberSearch('')
 
   getSearchErrorAlert = (searchErrorCode) => {
     const error = searchErrors[searchErrorCode] || searchErrors.default;
