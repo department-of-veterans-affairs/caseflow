@@ -196,6 +196,13 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_content("Intake completed")
 
+      # Validate that you can not go back to previous steps
+      page.go_back
+      expect(page).to have_content("Intake completed")
+
+      page.go_back
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake).to be_success
