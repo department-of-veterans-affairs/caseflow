@@ -54,9 +54,15 @@ class Generators::Appeal
           regional_office_key: "DSUSER"
         },
         certified: {
+          status: "Advance",
           certification_date: 1.day.ago
         },
+        activated: {
+          certification_date: 4.days.ago,
+          case_review_date: 1.day.ago
+        },
         form9_not_submitted: {
+          status: "Advance",
           decision_date: nil,
           form9_date: nil
         },
