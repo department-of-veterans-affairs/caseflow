@@ -170,6 +170,7 @@ class Fakes::AppealRepository
     seed_certification_data! if app_name.nil? || app_name == "certification"
     seed_establish_claim_data! if app_name.nil? || app_name == "dispatch-arc"
     seed_reader_data! if app_name.nil? || app_name == "reader"
+    seed_intake_data! if app_name.nil? || app_name == "intake"
   end
 
   def self.certification_documents
@@ -454,6 +455,23 @@ class Fakes::AppealRepository
                                        ],
                                        program_description: "06 - Medical")],
       documents: static_reader_documents
+    )
+  end
+
+  def self.seed_intake_data!
+    9.times do |i|
+      Generators::Veteran.build(file_number: "#{i}5555555")
+      Generators::Veteran.build(file_number: "#{i}0555555")
+
+      Generators::Appeal.build(
+        vbms_id: "#{i}5555555C",
+        issues: (1..2).map { Generators::Issue.build }
+      )
+    end
+
+    Generators::Appeal.build(
+      vbms_id: "25555555C",
+      issues: (1..3).map { Generators::Issue.build }
     )
   end
 

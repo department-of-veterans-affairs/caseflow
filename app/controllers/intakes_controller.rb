@@ -41,7 +41,8 @@ class IntakesController < ApplicationController
       notice_date: ramp_intake.detail.notice_date,
       option_selected: ramp_intake.detail.option_selected,
       receipt_date: ramp_intake.detail.receipt_date,
-      completed_at: ramp_intake.completed_at
+      completed_at: ramp_intake.completed_at,
+      appeals: ramp_intake.serialized_appeal_issues
     }
   end
   helper_method :ramp_intake_data

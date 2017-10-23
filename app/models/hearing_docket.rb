@@ -56,7 +56,6 @@ class HearingDocket
         date: hearings.sort_by(&:date).first.date,
         type: hearings.first.type,
         hearings: hearings,
-        user: hearings.first.user,
         regional_office_name: hearings.first.regional_office_name,
         regional_office_key: hearings.first.regional_office_key
       )

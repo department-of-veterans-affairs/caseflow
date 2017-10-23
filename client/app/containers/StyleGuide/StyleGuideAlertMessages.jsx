@@ -13,13 +13,13 @@ export default function StyleGuideAlertMessages() {
       link="StyleGuideAlertMessages.jsx"
       isSubsection={true}
     />
-  <p>Alert messages are often shown when the user has destroyed data by canceling
+    <p>Alert messages are often shown when the user has destroyed data by canceling
     their work. These messages have red titles to reinforce that the user did not
     complete the intended task of the application, a brief explanation of what happened,
      and next steps.</p>
-   <StatusMessage
-       title="Establishment Cancelled"
-       leadMessageList={[message]}
-       type="alert" />
+    <StatusMessage
+      title="Establishment Cancelled"
+      leadMessageList={[message]}
+      type="alert" />
   </div>;
 }
