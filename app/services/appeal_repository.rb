@@ -320,8 +320,7 @@ class AppealRepository
 
         # if that appeal is not found, it intializes a new appeal with the
         # assignments vacols_id
-        appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id,
-                                              vbms_id: assignment.vbms_id)
+        appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
         appeal.attributes = assignment.attributes
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
 

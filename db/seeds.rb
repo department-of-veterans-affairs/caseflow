@@ -96,6 +96,11 @@ class SeedDB
         notice_date: i.weeks.ago
       )
     end
+
+    RampElection.create!(
+      veteran_file_number: "11555555",
+      notice_date: 3.weeks.ago
+    )
   end
 
   def create_tags
