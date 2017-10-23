@@ -1,8 +1,8 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
+  include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
-  include RegionalOfficeConcern
 
   has_many :tasks
   has_many :appeal_views
@@ -18,7 +18,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
-  vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
+  vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_city, :appellant_state
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
@@ -174,32 +174,10 @@ class Appeal < ActiveRecord::Base
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
   end
 
-  def veteran_name
-    veteran_name_object.formatted(:form)
-  end
-
-  def veteran_full_name
-    veteran_name_object.formatted(:readable_full)
-  end
-
   # When the decision is signed by an attorney at BVA, an outcoder physically stamps the date,
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
-  end
-
-  def appellant_name
-    if appellant_first_name
-      [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
-    end
-  end
-
-  def appellant_last_first_mi
-    # returns appellant name in format <last>, <first> <middle_initial>.
-    if appellant_first_name
-      name = "#{appellant_last_name}, #{appellant_first_name}"
-      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
-    end
   end
 
   def representative_name
@@ -443,12 +421,6 @@ class Appeal < ActiveRecord::Base
   end
 
   private
-
-  # TODO: this is named "veteran_name_object" to avoid name collision, refactor
-  #       the naming of the helper methods.
-  def veteran_name_object
-    FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
-  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
