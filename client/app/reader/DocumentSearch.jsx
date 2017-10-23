@@ -42,7 +42,7 @@ const mapStateToProps = (state, props) => ({
   pdfDocument: state.readerReducer.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
   pageTexts: getTextSearch(state, props),
-  totalMatchesInFile: getTotalMatchesInFile(state, props),
+  totalMatchesInFile: getTotalMatchesInFile(state, props)
 });
 
 const mapDispatchToProps = (dispatch) => ({
