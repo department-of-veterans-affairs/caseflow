@@ -69,8 +69,17 @@ describe Intake do
       end
     end
 
-    context "veteran_file_number has fewer than 3 digits" do
-      let(:veteran_file_number) { "11" }
+    context "veteran_file_number has fewer than 8 digits" do
+      let(:veteran_file_number) { "1111111" }
+
+      it "adds invalid_file_number and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq(:invalid_file_number)
+      end
+    end
+
+    context "veteran_file_number has more than 9 digits" do
+      let(:veteran_file_number) { "1234567899" }
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
