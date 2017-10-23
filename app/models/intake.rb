@@ -57,7 +57,7 @@ class Intake < ActiveRecord::Base
     return false unless veteran_file_number
 
     self.veteran_file_number = veteran_file_number.strip
-    veteran_file_number =~ /[0-9]{8,}/
+    veteran_file_number =~ /^[0-9]{3,}$/
   end
 
   # Optionally implement this methods in subclass
