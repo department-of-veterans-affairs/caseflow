@@ -94,7 +94,9 @@ export const getTextForFile = createSelector(
 export const getMatchesPerPageInFile = createSelector(
   [result, getTextSearch, text],
   (result, extractedText, text) => _(extractedText)
-    .map((page) => page.text.match(new RegExp(text, 'gi')))
+    .map((page) =>
+      ({ id: page.id, matches: page.text.match(new RegExp(text, 'gi')) })
+    )
     .value()
 )
 
