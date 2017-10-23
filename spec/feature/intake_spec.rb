@@ -34,6 +34,13 @@ RSpec.feature "RAMP Intake" do
     )
   end
 
+  let!(:ineligible_appeal) do
+    Generators::Appeal.build(
+      vbms_id: "77776666C",
+      vacols_record: :full_grant_decided
+    )
+  end
+
   context "As a user with Mail Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Mail Intake"])
@@ -55,6 +62,17 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_current_path("/intake")
       expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
+    end
+
+    scenario "Search for a veteran with an ineligible appeal" do
+      RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "77776666"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake")
+      expect(page).to have_content("This Veteran is not eligible to participate in RAMP.")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
@@ -129,6 +147,12 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
 
       click_label "confirm-finish"
+
+      ## Validate error message when complete intake fails
+      allow(Appeal).to receive(:close).and_raise("A random error. Oh no!")
+      safe_click "button#button-submit-review"
+      expect(page).to have_content("Something went wrong")
+
       page.go_back
 
       expect(page).to_not have_content("Please select an option.")
@@ -139,6 +163,7 @@ RSpec.feature "RAMP Intake" do
       safe_click "#button-submit-review"
 
       expect(find("#confirm-finish", visible: false)).to_not be_checked
+      expect(page).to_not have_content("Something went wrong")
 
       expect(page).to have_content("Finish processing Supplemental Claim election")
       expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
@@ -195,6 +220,13 @@ RSpec.feature "RAMP Intake" do
       safe_click "button#button-submit-review"
 
       expect(page).to have_content("Intake completed")
+
+      # Validate that you can not go back to previous steps
+      page.go_back
+      expect(page).to have_content("Intake completed")
+
+      page.go_back
+      expect(page).to have_content("Welcome to Caseflow Intake!")
 
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
