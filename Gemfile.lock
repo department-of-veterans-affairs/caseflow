@@ -252,7 +252,7 @@ GEM
       cliver (~> 0.3.1)
       websocket-driver (>= 0.2.0)
     powerpack (0.1.1)
-    prometheus-client (0.6.0)
+    prometheus-client (0.7.1)
       quantile (~> 0.2.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -468,7 +468,7 @@ DEPENDENCIES
   pdfjs_viewer-rails!
   pg
   poltergeist
-  prometheus-client (~> 0.6)
+  prometheus-client (~> 0.7.1)
   pry
   puma (~> 2.16.0)
   rails (= 4.2.7.1)
