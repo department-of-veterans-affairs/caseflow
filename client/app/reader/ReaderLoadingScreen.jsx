@@ -57,19 +57,19 @@ export class ReaderLoadingScreen extends React.Component {
     }
 
     return <div className="usa-grid">
-        <div className="cf-app">
-          {this.props.initialDataLoadingFail ?
-            <StatusMessage
-              title="Unable to load documents">
+      <div className="cf-app">
+        {this.props.initialDataLoadingFail ?
+          <StatusMessage
+            title="Unable to load documents">
               It looks like Caseflow was unable to load this case.<br />
               Please <a href="">refresh the page</a> and try again.
-              </StatusMessage> :
-              <LoadingScreen
-                spinnerColor={Constants.READER_COLOR}
-                message="Loading claims folder in Reader..."/>
-          }
-        </div>
-      </div>;
+          </StatusMessage> :
+          <LoadingScreen
+            spinnerColor={Constants.READER_COLOR}
+            message="Loading claims folder in Reader..."/>
+        }
+      </div>
+    </div>;
   }
 }
 

@@ -15,8 +15,15 @@ export const populateWorksheet = (worksheet) => ({
   }
 });
 
-export const handleServerError = (err) => ({
-  type: Constants.HANDLE_SERVER_ERROR,
+export const handleWorksheetServerError = (err) => ({
+  type: Constants.HANDLE_WORKSHEET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const handleDocketServerError = (err) => ({
+  type: Constants.HANDLE_DOCKET_SERVER_ERROR,
   payload: {
     err
   }
@@ -136,11 +143,11 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   }
 
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
-  then(() => {
-    dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
-  },
-  () => {
-    dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-      payload: { saveFailed: true } });
-  });
+    then(() => {
+      dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
+    },
+    () => {
+      dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
+        payload: { saveFailed: true } });
+    });
 };

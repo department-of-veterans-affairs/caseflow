@@ -73,6 +73,6 @@ export default class StyleGuideTabs extends React.Component {
         name="tabswithicons"
         tabs={tabsWithIcons}
         onChange={this.onTabSelected}/>
-  </div>;
+    </div>;
   }
 }

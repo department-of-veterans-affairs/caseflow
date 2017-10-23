@@ -37,9 +37,9 @@ export class Footer extends React.Component {
 
     return <div className="cf-app-segment">
       <Button
-            name="Cancel Certification"
-            onClick={this.handleModalOpen}
-            classNames={['cf-btn-link']}
+        name="Cancel Certification"
+        onClick={this.handleModalOpen}
+        classNames={['cf-btn-link']}
       />
       { !hideContinue && <Link to={nextPageUrl || '#'}>
         <Button type="button"

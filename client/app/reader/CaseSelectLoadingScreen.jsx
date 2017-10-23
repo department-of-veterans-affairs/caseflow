@@ -31,19 +31,19 @@ export class CaseSelectLoadingScreen extends React.Component {
     }
 
     return <div className="usa-grid">
-        <div className="cf-app">
-          {this.props.initialCaseLoadingFail ?
-            <StatusMessage
-              title="Unable to load the welcome page">
+      <div className="cf-app">
+        {this.props.initialCaseLoadingFail ?
+          <StatusMessage
+            title="Unable to load the welcome page">
               It looks like Caseflow was unable to load the welcome page.<br />
               Please <a href="">refresh the page</a> and try again.
-              </StatusMessage> :
-              <LoadingScreen
-                spinnerColor={Constants.READER_COLOR}
-                message="Loading cases in Reader..."/>
-          }
-        </div>
-      </div>;
+          </StatusMessage> :
+          <LoadingScreen
+            spinnerColor={Constants.READER_COLOR}
+            message="Loading cases in Reader..."/>
+        }
+      </div>
+    </div>;
   }
 }
 

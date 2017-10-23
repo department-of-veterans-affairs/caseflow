@@ -11,20 +11,20 @@ import * as Constants from './constants/index';
 const EmployeeCount = ({ employeeCount, handleEmployeeCountSave, handleEmployeeCountChange }) => {
   return <div>
     <InlineForm>
-        <NumberField
-          label="Enter the number of people working today"
-          name="employeeCount"
-          readOnly={false}
-          onChange={handleEmployeeCountChange}
-          value={employeeCount}
-          isInteger={true}
-          {...employeeCount}
-        />
-        <Button
-          name="Update"
-          onClick={handleEmployeeCountSave(employeeCount)}
-          disabled={!employeeCount}
-        />
+      <NumberField
+        label="Enter the number of people working today"
+        name="employeeCount"
+        readOnly={false}
+        onChange={handleEmployeeCountChange}
+        value={employeeCount}
+        isInteger={true}
+        {...employeeCount}
+      />
+      <Button
+        name="Update"
+        onClick={handleEmployeeCountSave(employeeCount)}
+        disabled={!employeeCount}
+      />
     </InlineForm>
   </div>;
 };
