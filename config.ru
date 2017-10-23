@@ -8,7 +8,7 @@ require "prometheus/middleware/exporter"
 require_relative "app/middleware/metrics_collector"
 
 # require basic auth for the /metrics route
-use MetricsAuth, "metrics" do |_username, _password|
+use MetricsAuth, "metrics" do |username, password|
   # if we mistakenly didn't set a password for this route, disable the route
   password_missing = ENV["METRICS_PASSWORD"].blank?
   password_matches = [username, password] == [ENV["METRICS_USERNAME"], ENV["METRICS_PASSWORD"]]
