@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
@@ -9,6 +9,7 @@ import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
+import { hearingsIssueReducers } from './reducers/issue';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
@@ -24,7 +25,10 @@ const configureStore = (data) => {
 
   const initialData = mapDataToInitialState(data);
   const store = createStore(
-    hearingsReducers,
+    combineReducers({
+      hearingsReducers,
+      hearingsIssueReducers
+    }),
     initialData,
     composeEnhancers(applyMiddleware(...middleware))
   );
