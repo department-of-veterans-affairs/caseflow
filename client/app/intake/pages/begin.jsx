@@ -45,6 +45,28 @@ const searchErrors = {
       </ul>
     </div>
   },
+  no_eligible_appeals: {
+    title: 'This Veteran is not eligible to participate in RAMP.',
+    body: <div>
+      <p>
+        Please check the Veteran ID entered, and if the Veteran ID
+        is correct, take the following actions outside Caseflow:
+      </p>
+      <ul>
+        <li>
+          Upload the RAMP Election to the VBMS eFolder with
+          Document Type <b>Correspondence</b> and Subject Line "RAMP Election".
+        </li>
+        <li>
+          Notify the Veteran by mail of his/her ineligibility to participate
+          in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
+        </li>
+        <li>
+          Document your actions as a permanent note in VBMS.
+        </li>
+      </ul>
+    </div>
+  },
   default: {
     title: 'Something went wrong',
     body: 'Please try again. If the problem persists, please contact Caseflow support.'
