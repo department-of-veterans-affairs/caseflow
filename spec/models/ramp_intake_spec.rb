@@ -204,7 +204,7 @@ describe RampIntake do
       context "there are no eligible appeals" do
         let(:appeal_vacols_record) { :full_grant_decided }
 
-        it "adds did_not_receive_ramp_election and returns false" do
+        it "adds no_eligible_appeals and returns false" do
           expect(subject).to eq(false)
           expect(intake.error_code).to eq(:no_eligible_appeals)
         end
