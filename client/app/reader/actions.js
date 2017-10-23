@@ -6,6 +6,7 @@ import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { createSearchAction } from 'redux-search';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -813,3 +814,48 @@ export const rotateDocument = (docId) => ({
     docId
   }
 });
+
+export const getDocumentText = (pdfDocument, file) => (
+  (dispatch) => {
+    const getTextForPage = (index) => {
+      return pdfDocument.getPage(index + 1).then((page) => {
+        return page.getTextContent();
+      });
+    };
+    const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
+
+    Promise.all(getTextPromises).then((pages) => {
+      const textObject = pages.reduce((acc, page, pageIndex) => {
+        // PDFJS textObjects have an array of items. Each item has a str.
+        // concatenating all of these gets us to the page text.
+        const concatenated = page.items.map((row) => row.str).join(' ');
+
+        return {
+          ...acc,
+          [`${file}-${pageIndex}`]: {
+            id: `${file}-${pageIndex}`,
+            file,
+            text: concatenated,
+            pageIndex
+          }
+        };
+      }, {});
+
+      dispatch({
+        type: Constants.GET_DCOUMENT_TEXT,
+        payload: {
+          textObject
+        }
+      });
+    });
+  }
+);
+
+export const setDocumentSearch = (searchString) => ({
+  type: Constants.SET_DOCUMENT_SEARCH,
+  payload: {
+    searchString
+  }
+});
+
+export const searchText = createSearchAction('extractedText');

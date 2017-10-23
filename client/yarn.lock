@@ -2410,6 +2410,10 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
+flow-bin@^0.50.0:
+  version "0.50.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.50.0.tgz#d4cdb2430dee1a3599f0eb6fe551146e3027256a"
+
 for-in@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -3157,6 +3161,13 @@ isstream@~0.1.2:
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
+
+js-worker-search@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/js-worker-search/-/js-worker-search-1.2.0.tgz#ef18d029bda0d8ef412d4f680d2d0b041b5f8e62"
+  dependencies:
+    flow-bin "^0.50.0"
+    uuid "^2.0.1"
 
 js-yaml@^3.9.1:
   version "3.10.0"
@@ -4525,11 +4536,19 @@ redux-perf-middleware@^1.2.2:
   dependencies:
     present "^1.0.0"
 
+redux-search@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/redux-search/-/redux-search-2.4.0.tgz#da21448b2d0c6508324cf4f93f66f6c6170df00d"
+  dependencies:
+    babel-runtime "^6.11.6"
+    js-worker-search "^1.2.0"
+    redux "^3.0.4"
+
 redux-thunk@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.2.0.tgz#e615a16e16b47a19a515766133d1e3e99b7852e5"
 
-redux@^3.6.0:
+redux@^3.0.4, redux@^3.6.0:
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/redux/-/redux-3.7.2.tgz#06b73123215901d25d065be342eb026bc1c8537b"
   dependencies:
@@ -5392,7 +5411,7 @@ utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
 
-uuid@^2.0.2:
+uuid@^2.0.1, uuid@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
 
