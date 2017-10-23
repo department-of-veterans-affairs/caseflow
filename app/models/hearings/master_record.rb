@@ -1,6 +1,6 @@
 class Hearings::MasterRecord
   include ActiveModel::Model
-  include RegionalOfficeConcern
+  include AppealConcern
   include HearingConcern
 
   attr_accessor :date, :type, :regional_office_key, :master_record, :user_id
