@@ -36,6 +36,9 @@ export default class StyleLogos extends React.Component {
         <Logo app="reader" /><b>Reader</b>
       </p>
       <p>
+        <Logo app="intake" /><b>Intake</b>
+      </p>
+      <p>
         <Logo app="feedback" /><b>Feedback</b>
       </p>
       <p>

@@ -12,7 +12,8 @@ const CLASS_NAME_MAPPING = {
   'hearing-prep': 'cf-logo cf-logo-image-hearing-prep',
   feedback: 'cf-logo cf-logo-image-feedback',
   efolder: 'cf-logo cf-logo-image-efolder',
-  dispatch: 'cf-logo cf-logo-image-dispatch'
+  dispatch: 'cf-logo cf-logo-image-dispatch',
+  intake: 'cf-logo cf-logo-image-intake'
 };
 
 export default class NavigationBar extends React.Component {
