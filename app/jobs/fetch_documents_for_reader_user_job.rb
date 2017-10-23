@@ -1,19 +1,19 @@
 # This job will retrieve cases from VACOLS via the AppealRepository
 # and all documents for these cases in VBMS and store them
-class FetchDocumentsForAppealJob < ActiveJob::Base
+class FetchDocumentsForReaderUserJob < ActiveJob::Base
   queue_as :low_priority
 
-  def perform(user, appeals)
+  def perform(reader_user, appeals)
     @counts = { docs_cached: 0, docs_failed: 0, appeals_successful: 0, appeals_failed: 0, consecutive_failures: 0 }
     RequestStore.store[:application] = "reader"
-    RequestStore.store[:current_user] = user
-    update_fetched_at(user)
+    RequestStore.store[:current_user] = reader_user.user
+    update_fetched_at(reader_user)
     fetch_docs_for_appeals(appeals)
     log_info
   end
 
-  def update_fetched_at(user)
-    user.update_attributes!(current_appeals_documents_fetched_at: Time.zone.now)
+  def update_fetched_at(reader_user)
+    reader_user.update_attributes!(current_appeals_documents_fetched_at: Time.zone.now)
   end
 
   def fetch_docs_for_appeals(appeals)

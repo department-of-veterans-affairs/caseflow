@@ -14,14 +14,16 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
     find_all_active_reader_appeals(limit).each do |user, appeals|
       start_fetch_job(user, appeals)
     end
+    nil
   end
 
   def start_fetch_job(user, appeals)
     if Rails.env.development? || Rails.env.test?
-      FetchDocumentsForAppealJob.perform_now(user, appeals)
+      FetchDocumentsForReaderUserJob.perform_now(user, appeals)
     else
-      # in prod, we run this asynchronously. Through shoryuken we retry and have exponential backoff
-      FetchDocumentsForAppealJob.perform_later(user, appeals)
+      # in prod, we run this asynchronously.
+      # Through shoryuken we retry and have exponential backoff
+      FetchDocumentsForReaderUserJob.perform_later(user, appeals)
     end
   end
 
@@ -30,5 +32,4 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
       active_appeals.update(user => user.user.current_case_assignments)
     end
   end
-
 end
