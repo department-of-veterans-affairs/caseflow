@@ -93,10 +93,10 @@ export const getTextForFile = createSelector(
 
 export const getMatchesPerPageInFile = createSelector(
   [getTextSearch, text],
-  (extractedText, txt) => _(extractedText).
+  (matchedPages, txt) => _(matchedPages).
     map((page) => ({
       id: page.id,
-      matches: page.text.match(new RegExp(txt, 'gi'))
+      matches: page.text.match(new RegExp(txt, 'gi')).length
     })).
     value()
 );
@@ -105,7 +105,5 @@ export const getTotalMatchesInFile = createSelector(
   [getMatchesPerPageInFile],
   (matches) => _(matches).
     map((match) => match.matches).
-    flatten().
-    value().
-    length
+    sum()
 );
