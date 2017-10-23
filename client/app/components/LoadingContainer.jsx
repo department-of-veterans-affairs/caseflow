@@ -9,19 +9,19 @@ export default class LoadingContainer extends React.Component {
     } = this.props;
 
     return <div className="loadingContainer-container">
-        <div className="loadingContainer-positioning">
-          <div className="loadingContainer-table">
-            <div className="loadingContainer-table-cell">
-              {loadingSymbolHtml('', '50%', color)}
-            </div>
+      <div className="loadingContainer-positioning">
+        <div className="loadingContainer-table">
+          <div className="loadingContainer-table-cell">
+            {loadingSymbolHtml('', '50%', color)}
           </div>
         </div>
-        <div className="loadingContainer-content">
-          <div>
-            {this.props.children}
-          </div>
+      </div>
+      <div className="loadingContainer-content">
+        <div>
+          {this.props.children}
         </div>
-      </div>;
+      </div>
+    </div>;
   }
 }
 

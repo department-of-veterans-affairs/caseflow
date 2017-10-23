@@ -11,7 +11,8 @@ import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
   onScrollToComment, togglePdfSidebar } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-import { INTERACTION_TYPES } from '../reader/analytics';
+import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
+import DocumentSearch from './DocumentSearch';
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -190,6 +191,12 @@ export class Pdf extends React.PureComponent {
     );
   }
 
+  handleAltBackspace = () => {
+    window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
+    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
+    this.props.history.push(this.props.documentPathBase);
+  }
+
   keyListener = (event) => {
     if (isUserEditingText()) {
       return;
@@ -202,6 +209,10 @@ export class Pdf extends React.PureComponent {
 
       if (event.code === 'Enter') {
         this.handleAltEnter();
+      }
+
+      if (event.code === 'Backspace') {
+        this.handleAltBackspace();
       }
     }
 
@@ -303,15 +314,15 @@ export class Pdf extends React.PureComponent {
     const scrollTop = this.scrollWindow ? this.scrollWindow.scrollTop : 0;
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
-          pdfWorker={this.props.pdfWorker}
-          scrollTop={scrollTop}
-          scrollWindowCenter={this.state.scrollWindowCenter}
-          documentId={this.props.documentId}
-          key={`${file}`}
-          file={file}
-          isVisible={this.props.file === file}
-          scale={this.props.scale}
-        />;
+        pdfWorker={this.props.pdfWorker}
+        scrollTop={scrollTop}
+        scrollWindowCenter={this.state.scrollWindowCenter}
+        documentId={this.props.documentId}
+        key={`${file}`}
+        file={file}
+        isVisible={this.props.file === file}
+        scale={this.props.scale}
+      />;
     });
 
     return <div
@@ -320,12 +331,13 @@ export class Pdf extends React.PureComponent {
       className="cf-pdf-scroll-view"
       onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
-        <div
-          id={this.props.file}
-          className={'cf-pdf-page pdfViewer singlePageView'}>
-          {pages}
-        </div>
-      </div>;
+      {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
+      <div
+        id={this.props.file}
+        className={'cf-pdf-page pdfViewer singlePageView'}>
+        {pages}
+      </div>
+    </div>;
   }
 }
 

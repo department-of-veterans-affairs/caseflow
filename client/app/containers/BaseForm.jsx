@@ -12,15 +12,15 @@ export default class BaseForm extends React.Component {
   };
 
   validateFormAndSetErrors = function(form) {
-        // This variable stays true until a validator fails
-        // in which case we return false. Otherwise all fields
-        // are valid, and we return true.
+    // This variable stays true until a validator fails
+    // in which case we return false. Otherwise all fields
+    // are valid, and we return true.
     let allValid = true;
     let formCopy = { ...form };
 
     Object.keys(form).forEach((key) => {
       let errorMessage = form[key].validator.reduce(
-                (message, validator) => message || validator(form[key].value), null);
+        (message, validator) => message || validator(form[key].value), null);
 
       allValid = allValid && !errorMessage;
 
@@ -34,8 +34,8 @@ export default class BaseForm extends React.Component {
     }
 
     this.setState(
-            formCopy
-        );
+      formCopy
+    );
 
     return allValid;
   };

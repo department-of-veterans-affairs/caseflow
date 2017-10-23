@@ -8,16 +8,16 @@ const CategorySelector = (props) => {
   const { category, categoryName, handleCategoryToggle, categoryToggleStates, allowReadOnly } = props;
   const toggleState = categoryToggleStates[categoryName] || false;
   const label = <div className="cf-category-selector">
-      {category.svg}
-      <span className="cf-category-name">{category.humanName}</span>
-    </div>;
+    {category.svg}
+    <span className="cf-category-name">{category.humanName}</span>
+  </div>;
 
   const handleChange = (checked) => {
     handleCategoryToggle(categoryName, checked);
   };
 
   return <Checkbox name={categoryName} onChange={handleChange}
-      label={label} value={toggleState} disabled={category.readOnly && allowReadOnly} />;
+    label={label} value={toggleState} disabled={category.readOnly && allowReadOnly} />;
 };
 
 CategorySelector.propTypes = {

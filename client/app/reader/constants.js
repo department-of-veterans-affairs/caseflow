@@ -70,7 +70,8 @@ export const SET_PDF_DOCUMENT = 'SET_PDF_DOCUMENT';
 export const CLEAR_PDF_PAGE = 'CLEAR_PDF_PAGE';
 export const ROTATE_PDF_DOCUMENT = 'ROTATE_PDF_DOCUMENT';
 export const CLEAR_PDF_DOCUMENT = 'CLEAR_PDF_DOCUMENT';
-
+export const GET_DCOUMENT_TEXT = 'GET_DCOUMENT_TEXT';
+export const SET_DOCUMENT_SEARCH = 'SET_DOCUMENT_SEARCH';
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
 export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
@@ -140,3 +141,6 @@ export const documentCategories = {
 
 // colors
 export const READER_COLOR = '#417505';
+
+// UI Text
+export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';

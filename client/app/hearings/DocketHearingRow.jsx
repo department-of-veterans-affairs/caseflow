@@ -53,10 +53,10 @@ export class DocketHearingRow extends React.PureComponent {
   setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
 
   setAddOn = (value) =>
-      this.props.setAddOn(this.props.index, value, this.props.hearingDate);
+    this.props.setAddOn(this.props.index, value, this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
-      this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+    this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
   setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
@@ -130,9 +130,9 @@ export class DocketHearingRow extends React.PureComponent {
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
-         <div>
-          <label htmlFor={`${hearing.id}.notes`}>Notes</label>
           <div>
+            <label htmlFor={`${hearing.id}.notes`}>Notes</label>
+            <div>
               <Textarea
                 id={`${hearing.id}.notes`}
                 value={hearing.notes || ''}
