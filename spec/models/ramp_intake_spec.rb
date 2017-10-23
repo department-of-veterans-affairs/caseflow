@@ -7,11 +7,21 @@ describe RampIntake do
   let(:user) { Generators::User.build }
   let(:detail) { nil }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let(:appeal_vacols_record) { :ready_to_certify }
+
   let(:intake) do
     RampIntake.new(
       user: user,
       detail: detail,
       veteran_file_number: veteran_file_number
+    )
+  end
+
+  let(:appeal) do
+    Generators::Appeal.build(
+      vbms_id: "64205555C",
+      vacols_record: appeal_vacols_record,
+      veteran: veteran
     )
   end
 
@@ -149,6 +159,7 @@ describe RampIntake do
 
   context "#start!" do
     subject { intake.start! }
+    let!(:ramp_appeal) { appeal }
 
     let!(:ramp_election) do
       RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
@@ -176,6 +187,7 @@ describe RampIntake do
 
   context "#validate_start" do
     subject { intake.validate_start }
+    let!(:ramp_appeal) { appeal }
 
     context "there is not a ramp election for veteran" do
       it "adds did_not_receive_ramp_election and returns false" do
@@ -189,7 +201,18 @@ describe RampIntake do
         RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
       end
 
-      it { is_expected.to eq(true) }
+      context "there are no eligible appeals" do
+        let(:appeal_vacols_record) { :full_grant_decided }
+
+        it "adds no_eligible_appeals and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq(:no_eligible_appeals)
+        end
+      end
+
+      context "there are eligible appeals" do
+        it { is_expected.to eq(true) }
+      end
     end
   end
 end

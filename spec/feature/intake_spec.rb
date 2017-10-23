@@ -34,6 +34,13 @@ RSpec.feature "RAMP Intake" do
     )
   end
 
+  let!(:ineligible_appeal) do
+    Generators::Appeal.build(
+      vbms_id: "77776666C",
+      vacols_record: :full_grant_decided
+    )
+  end
+
   context "As a user with Mail Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Mail Intake"])
@@ -55,6 +62,17 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_current_path("/intake")
       expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
+    end
+
+    scenario "Search for a veteran with an ineligible appeal" do
+      RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "77776666"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake")
+      expect(page).to have_content("This Veteran is not eligible to participate in RAMP.")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
