@@ -79,6 +79,7 @@ class HearingRepository
       end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(vacols_record)
       type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
@@ -95,6 +96,12 @@ class HearingRepository
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
+        veteran_first_name: vacols_record.snamef,
+        veteran_middle_initial: vacols_record.snamemi,
+        veteran_last_name: vacols_record.snamel,
+        appellant_first_name: vacols_record.sspare1,
+        appellant_middle_initial: vacols_record.sspare2,
+        appellant_last_name: vacols_record.sspare3,
         regional_office_key: vacols_record.bfregoff,
         type: type,
         date: date,
