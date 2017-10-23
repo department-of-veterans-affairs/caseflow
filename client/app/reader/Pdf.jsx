@@ -348,16 +348,13 @@ const mapStateToProps = (state, props) => {
     }, {});
   }
 
-  // On create comment, show sidebar if hidden
-  const sidebarHidden = state.readerReducer.ui.pdf.hidePdfSidebar;
-
   return {
     ...state.readerReducer.ui.pdf,
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation']),
-    sidebarHidden
+    sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar
   };
 };
 
