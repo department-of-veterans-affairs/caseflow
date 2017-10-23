@@ -3,8 +3,24 @@
 class FetchDocumentsForAppealJob < ActiveJob::Base
   queue_as :low_priority
 
-  def perform(appeal)
-    fetch_docs_for_appeal(appeal)
+  def perform(user, appeals)
+    @counts = { docs_cached: 0, docs_failed: 0, appeals_successful: 0, appeals_failed: 0, consecutive_failures: 0 }
+    RequestStore.store[:application] = "reader"
+    RequestStore.store[:current_user] = user
+    update_fetched_at(user)
+    fetch_docs_for_appeals(appeals)
+    log_info
+  end
+
+  def update_fetched_at(user)
+    user.update_attributes!(current_appeals_documents_fetched_at: Time.zone.now)
+  end
+
+  def fetch_docs_for_appeals(appeals)
+    appeals.each do |appeal|
+      fetch_docs_for_appeal(appeal)
+      break if @counts[:consecutive_failures] >= 5
+    end
   end
 
   def fetch_docs_for_appeal(appeal)
@@ -31,5 +47,22 @@ class FetchDocumentsForAppealJob < ActiveJob::Base
     Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{e.message}"
     @counts[:docs_failed] += 1
     @counts[:consecutive_failures] += 1
+  end
+
+  def log_info
+    output_msg = "RetrieveDocumentsForReaderJob successfully retrieved #{@counts[:docs_cached]} documents " \
+          "for #{@counts[:appeals_successful]} appeals and #{@counts[:docs_failed]} document(s) failed.\n" \
+          "Failed to retrieve documents for #{@counts[:appeals_failed]} appeal(s)."
+
+    if @counts[:consecutive_failures] >= 5
+      output_msg += "\nJob stopped after #{@counts[:consecutive_failures]} failures"
+    end
+
+    Rails.logger.info output_msg
+    SlackService.new(url: slack_url).send_notification(output_msg)
+  end
+
+  def slack_url
+    ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 end

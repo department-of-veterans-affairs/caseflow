@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171013213546) do
+ActiveRecord::Schema.define(version: 20171019214530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -279,6 +279,17 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
+  create_table "issues", force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string  "vacols_sequence_id"
+    t.boolean "reopen",             default: false
+    t.boolean "vha",                default: false
+    t.boolean "allow",              default: false
+    t.boolean "deny",               default: false
+    t.boolean "remand",             default: false
+    t.boolean "dismiss",            default: false
+  end
+
   create_table "ramp_elections", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date   "notice_date",         null: false
@@ -287,6 +298,14 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   end
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
+
+  create_table "reader_users", force: :cascade do |t|
+    t.integer  "user_id",                              null: false
+    t.datetime "current_appeals_documents_fetched_at"
+  end
+
+  add_index "reader_users", ["current_appeals_documents_fetched_at"], name: "index_reader_users_on_current_appeals_documents_fetched_at", using: :btree
+  add_index "reader_users", ["user_id"], name: "index_reader_users_on_user_id", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
@@ -332,6 +351,10 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   end
 
   add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
+
+  create_table "user_reader_details", force: :cascade do |t|
+    t.datetime "appeals_documents_fetched_at"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "station_id", null: false

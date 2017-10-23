@@ -3,49 +3,32 @@
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :low_priority
 
-  DEFAULT_DOCUMENTS_DOWNLOADED_LIMIT = 1500
+  DEFAULT_USERS_LIMIT = 10
 
   def perform(args = {})
     RequestStore.store[:application] = "reader"
 
-    limit = args["limit"] || DEFAULT_DOCUMENTS_DOWNLOADED_LIMIT
-    @counts = { docs_cached: 0, docs_failed: 0, appeals_successful: 0, appeals_failed: 0, consecutive_failures: 0 }
+    # specified limit of users we fetch for
+    limit = args["limit"] || DEFAULT_USERS_LIMIT
 
-    find_all_active_reader_appeals.each do |user, appeals|
-      RequestStore.store[:current_user] = user
-      appeals.each { |appeal| start_fetch_job(appeal) }
-
-      break if @counts[:docs_cached] >= limit || @counts[:consecutive_failures] >= 5
-    end
-
-    log_info
-  end
-
-  def start_fetch_job(appeal)
-    FetchDocumentsForAppealJob.perform_now(appeal)
-  end
-
-  def find_all_active_reader_appeals
-    User.where("'Reader' = ANY(roles)").reduce({}) do |active_appeals, user|
-      active_appeals.update(user => user.current_case_assignments)
+    find_all_active_reader_appeals(limit).each do |user, appeals|
+      start_fetch_job(user, appeals)
     end
   end
 
-  def log_info
-    output_msg = "RetrieveDocumentsForReaderJob successfully retrieved #{@counts[:docs_cached]} documents " \
-          "for #{@counts[:appeals_successful]} appeals and #{@counts[:docs_failed]} document(s) failed.\n" \
-          "Failed to retrieve documents for #{@counts[:appeals_failed]} appeal(s)."
-
-    if @counts[:consecutive_failures] >= 5
-      output_msg += "\nJob stopped after #{@counts[:consecutive_failures]} failures"
+  def start_fetch_job(user, appeals)
+    if Rails.env.development? || Rails.env.test?
+      FetchDocumentsForAppealJob.perform_now(user, appeals)
+    else
+      # in prod, we run this asynchronously. Through shoryuken we retry and have exponential backoff
+      FetchDocumentsForAppealJob.perform_later(user, appeals)
     end
-
-    Rails.logger.info output_msg
-    SlackService.new(url: slack_url).send_notification(output_msg)
   end
 
-  def slack_url
-    ENV["SLACK_DISPATCH_ALERT_URL"]
+  def find_all_active_reader_appeals(limit = 10)
+    ReaderUser.all_by_documents_fetched_at(limit).reduce({}) do |active_appeals, user|
+      active_appeals.update(user => user.user.current_case_assignments)
+    end
   end
 
 end
