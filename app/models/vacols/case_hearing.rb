@@ -29,14 +29,15 @@ class VACOLS::CaseHearing < VACOLS::Record
     Y: true
   }.freeze
 
-  TABLE_NAMES = {
+  COLUMN_NAMES = {
     notes: :notes1,
     disposition: :hearing_disp,
     hold_open: :holddays,
     aod: :aod,
     transcript_requested: :tranreq,
     add_on: :addon,
-    representative_name: :repname
+    representative_name: :repname,
+    staff_id: :mduser
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -69,7 +70,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_disp, :hearing_pkseq,
              :hearing_date, :hearing_type,
              :notes1, :folder_nr,
-             :vdkey, :aod,
+             :vdkey, :aod, :slogid,
              :holddays, :tranreq,
              :repname, :addon,
              :board_member, :mduser,
@@ -86,12 +87,11 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def update_hearing!(hearing_info)
-    slogid = staff.try(:slogid)
-    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mduser: slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 
