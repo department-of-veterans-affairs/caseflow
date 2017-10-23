@@ -57,10 +57,27 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       dockets: { $set: action.payload.dockets }
     });
 
-  case Constants.POPULATE_WORKSHEET:
+  case Constants.POPULATE_WORKSHEET: {
+    const worksheetAppeals = _.keyBy(
+      action.payload.worksheet.appeals_ready_for_hearing,
+      (appeal) => appeal.id
+    );
+    let worksheetIssues = {};
+
+    Object.keys(worksheetAppeals).forEach((key) => {
+      worksheetIssues = Object.assign(
+        {},
+        worksheetIssues,
+        _.keyBy(worksheetAppeals[key].worksheet_issues, (issue) => issue.id));
+    });
+    // TODO: After updating the reducers, we need to remove appeals_ready_for_hearing from the worksheet object
+
     return update(state, {
+      worksheetIssues: { $set: worksheetIssues },
+      worksheetAppeals: { $set: worksheetAppeals },
       worksheet: { $set: action.payload.worksheet }
     });
+  }
 
   case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
     return update(state, {
