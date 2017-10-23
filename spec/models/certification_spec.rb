@@ -45,8 +45,11 @@ describe Certification do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  context "#start!" do
-    subject { certification.start! }
+  context "#start!", focus: true do
+    before(:each) do
+      certification.async_start!
+    end
+    subject { certification.certification_status }
 
     context "when appeal has already been certified" do
       let(:vacols_record_template) { :certified }
@@ -165,7 +168,7 @@ describe Certification do
 
           it "updates the form8's certification date" do
             Timecop.freeze(new_date)
-            subject
+            certification.async_start!
 
             expect(form8.reload.certification_date).to eq(new_date.to_date)
           end
@@ -177,7 +180,7 @@ describe Certification do
           end
 
           it "updates the form8's values from appeal" do
-            subject
+            certification.async_start!
             expect(form8.reload.file_number).to eq(appeal.vbms_id)
           end
         end
@@ -249,7 +252,7 @@ describe Certification do
     subject { certification.user_id }
 
     before do
-      certification.start!
+      certification.async_start!
       certification.complete!(user.id)
     end
 
