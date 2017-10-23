@@ -438,6 +438,16 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def manifest_vbms_fetched_at
+    get_documents_from_service!
+    @manifest_vbms_fetched_at
+  end
+
+  def manifest_vva_fetched_at
+    get_documents_from_service!
+    @manifest_vbms_fetched_at
+  end
+
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor
@@ -474,8 +484,19 @@ class Appeal < ActiveRecord::Base
     @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
+  def get_documents_from_service!
+    return if @fetched_documents
+
+    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
+    @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
+    @fetched_documents = doc_struct[:documents]
+  end
+
   def fetched_documents
-    @fetched_documents ||= document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+    get_documents_from_service!
+    @fetched_documents
   end
 
   def document_service

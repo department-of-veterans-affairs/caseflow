@@ -92,6 +92,8 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+	      manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
+        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
         {...props}
       />
     </ReaderLoadingScreen>;

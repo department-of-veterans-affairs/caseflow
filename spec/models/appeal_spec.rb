@@ -46,6 +46,16 @@ describe Appeal do
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
+  let(:manifest_vbms_fetched_at) { Time.now.strftime('%D %l:%M%P %Z') }
+  let(:manifest_vva_fetched_at) { Time.now.strftime('%D %l:%M%P %Z') }
+  let(:doc_struct) do
+    {
+      documents: documents,
+      manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+      manifest_vva_fetched_at: manifest_vva_fetched_at
+    }
+  end
+
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
     before do
@@ -311,19 +321,27 @@ describe Appeal do
       end
 
       context "when efolder_docs_api is disabled" do
-        it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+        it "loads document content from the VBMS service and sets fetched_at attributes" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
           expect(EFolderService).not_to receive(:fetch_documents_for)
           expect(result).to eq(documents)
+
+          expect(VBMSService).not_to receive(:fetch_documents_for)
+          expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+          expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
         end
 
         context "when application is reader" do
           before { RequestStore.store[:application] = "reader" }
 
-          it "loads document content from the VBMS service" do
-            expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+          it "loads document content from the VBMS service and sets fetched_at attributes" do
+            expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
             expect(EFolderService).not_to receive(:fetch_documents_for)
             expect(appeal.fetch_documents!(save: save)).to eq(documents)
+
+            expect(VBMSService).not_to receive(:fetch_documents_for)
+            expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+            expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
           end
         end
       end
@@ -334,10 +352,14 @@ describe Appeal do
           RequestStore.store[:application] = "reader"
         end
 
-        it "loads document content from the efolder service" do
+        it "loads document content from the efolder service and sets fetched_at attributes" do
           expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
+
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+          expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
         end
 
         after do
@@ -361,10 +383,14 @@ describe Appeal do
       end
 
       context "when efolder_docs_api is disabled" do
-        it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
+        it "loads document content from the VBMS service and sets fetched_at attributes" do
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
           expect(EFolderService).not_to receive(:fetch_documents_for)
           expect(result).to eq(documents)
+
+          expect(VBMSService).not_to receive(:fetch_documents_for)
+          expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+          expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
         end
       end
 
@@ -374,10 +400,14 @@ describe Appeal do
           RequestStore.store[:application] = "reader"
         end
 
-        it "loads document content from the efolder service" do
+        it "loads document content from the efolder service and sets fetched_at attributes" do
           expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
+
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+          expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
         end
 
         after do
@@ -393,16 +423,34 @@ describe Appeal do
     end
   end
 
-  context "#fetched_documents" do
+  context "#manifest_vva_fetched_at" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
     end
+    let(:appeal) { Generators::Appeal.build(documents: documents) }
 
-    let(:appeal) do
-      Generators::Appeal.build(documents: documents)
+    it "returns own attribute and sets manifest_vbms_fetched_at when called" do 
+      expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
+
+      expect(EFolderService).not_to receive(:fetch_documents_for)
+      expect(VBMSService).not_to receive(:fetch_documents_for)
+      expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
     end
+  end
 
-    subject { appeal.fetched_documents }
+  context "#manifest_vbms_fetched_at" do
+    let(:documents) do
+      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
+    end
+    let(:appeal) { Generators::Appeal.build(documents: documents) }
+
+    it "returns own attribute and sets manifest_vva_fetched_at when called" do 
+      expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+
+      expect(EFolderService).not_to receive(:fetch_documents_for)
+      expect(VBMSService).not_to receive(:fetch_documents_for)
+      expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
+    end
   end
 
   context ".find_or_create_by_vacols_id" do

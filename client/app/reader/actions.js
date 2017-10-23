@@ -36,6 +36,11 @@ export const onReceiveDocs = (documents, vacolsId) => (
   }
 );
 
+export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+  type: Constants.RECEIVE_MANIFESTS,
+  payload: { manifestVbmsFetchedAt, manifestVvaFetchedAt }
+});
+
 export const onReceiveAnnotations = (annotations) => ({
   type: Constants.RECEIVE_ANNOTATIONS,
   payload: { annotations }

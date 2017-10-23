@@ -33,6 +33,8 @@ describe ExternalApi::EfolderService do
     let(:user) { Generators::User.build }
     let(:appeal) { Generators::Appeal.build }
     let(:expected_response) { HTTPI::Response.new(200, [], expected_response_map.to_json) }
+    let(:manifest_vbms_fetched_at) { Time.now.strftime('%D %l:%M%P %Z') }
+    let(:manifest_vva_fetched_at) { Time.now.strftime('%D %l:%M%P %Z') }
 
     context "metrics" do
       let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
@@ -57,42 +59,54 @@ describe ExternalApi::EfolderService do
     end
 
     context "eFolder returns HTTP response" do
+      let(:expected_response_map) { { data: { attributes: attrs_in } } }
+
       before do
         expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
         expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
       end
 
-      context "with null data" do
-        let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
+      context "with null documents field" do
+        let(:expected_result) { { documents: [], manifest_vbms_fetched_at: nil, manifest_vva_fetched_at: nil } }
+        let(:attrs_in) { { documents: nil, manifest_vbms_fetched_at: nil, manifest_vva_fetched_at: nil } }
 
-        it "returns empty array" do
-          expect(ExternalApi::EfolderService.fetch_documents_for(appeal, user)).to be_empty
+        it "returns empty array for documents and null fetched_at fields" do
+          expect(ExternalApi::EfolderService.fetch_documents_for(appeal, user)).to eq(expected_result)
         end
       end
 
-      context "with no documents" do
-        let(:expected_response_map) { { data: { attributes: { documents: [] } } } }
+      context "with empty documents array field and null fetched_at fields" do
+        let(:expected_result) { { documents: [], manifest_vbms_fetched_at: nil, manifest_vva_fetched_at: nil } }
+        let(:attrs_in) { expected_result }
 
-        it "returns empty array" do
-          expect(ExternalApi::EfolderService.fetch_documents_for(appeal, user)).to be_empty
+        it "returns empty array for documents and null fetched_at fields" do
+          expect(ExternalApi::EfolderService.fetch_documents_for(appeal, user)).to eq(expected_result)
         end
       end
 
       context "with one document" do
         let(:expected_received_at1) { Faker::Date.backward }
-        let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
-        let(:expected_response_map) do
-          { data: {
-            attributes: {
-              documents: [
-                {
-                  id: "1",
-                  type_id: "97",
-                  external_document_id: expected_document1.vbms_document_id,
-                  received_at: expected_received_at1
-                }]
-            } } }
+        let(:expected_document1) { Generators::Document.build( type: "SSOC", filename: nil ) }
+        let(:attrs_in) do
+          {
+            documents: [
+              {
+                id: "1",
+                type_id: "97",
+                external_document_id: expected_document1.vbms_document_id,
+                received_at: expected_received_at1
+              }],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
+        end
+        let(:expected_result) do
+          {
+            documents: [expected_document1.to_hash],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
         end
 
         it "returns an array with the document" do
@@ -100,29 +114,40 @@ describe ExternalApi::EfolderService do
           expected_document1.received_at = expected_received_at1.to_s
 
           # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
-          result = ExternalApi::EfolderService.fetch_documents_for(appeal, user).map(&:to_hash)
-          expect(result).to contain_exactly(expected_document1.to_hash)
+          result = ExternalApi::EfolderService.fetch_documents_for(appeal, user)
+          result[:documents] = result[:documents].map(&:to_hash)
+
+          expect(result).to eq(expected_result)
         end
       end
 
       context "with multiple documents" do
-        let(:expected_response_map) do
-          { data: {
-            attributes: {
-              documents: [
-                {
-                  id: "1",
-                  type_id: "97",
-                  external_document_id: expected_document1.vbms_document_id,
-                  received_at: expected_received_at1
-                },
-                {
-                  id: "2",
-                  type_id: "73",
-                  external_document_id: expected_document2.vbms_document_id,
-                  received_at: expected_received_at2
-                }]
-            } } }
+        let(:attrs_in) do 
+          {
+            documents: [
+              {
+                id: "1",
+                type_id: "97",
+                external_document_id: expected_document1.vbms_document_id,
+                received_at: expected_received_at1
+              },
+              {
+                id: "2",
+                type_id: "73",
+                external_document_id: expected_document2.vbms_document_id,
+                received_at: expected_received_at2
+              }
+            ],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
+        end
+        let(:expected_result) do 
+          {
+            documents: [expected_document1.to_hash, expected_document2.to_hash],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
         end
 
         let(:expected_received_at1) { Faker::Date.backward }
@@ -136,8 +161,10 @@ describe ExternalApi::EfolderService do
           expected_document2.received_at = expected_received_at2.to_s
 
           # Use to_hash to do a deep comparison and ensure all properties were deserialized correctly
-          result = ExternalApi::EfolderService.fetch_documents_for(appeal, user).map(&:to_hash)
-          expect(result).to contain_exactly(expected_document1.to_hash, expected_document2.to_hash)
+          result = ExternalApi::EfolderService.fetch_documents_for(appeal, user)
+          result[:documents] = result[:documents].map(&:to_hash)
+
+          expect(result).to eq(expected_result)
         end
       end
 

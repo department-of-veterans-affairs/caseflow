@@ -205,6 +205,12 @@ RSpec.feature "Reader" do
         expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
       end
 
+      scenario "Document source manifest retrieval times display" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        expect(find(".vbms-manifest-retrieved-at").text).to match %r!Last VBMS retrieval: \d+/\d+/\d\d \d+\:\d\d(?:am|pm) [A-Z]{3}!
+        expect(find(".vva-manifest-retrieved-at").text).to match %r!Last VVA retrieval: \d+/\d+/\d\d \d+\:\d\d(?:am|pm) [A-Z]{3}!
+      end
+
       scenario "pdf view sidebar shows no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         find("h3", text: "Document information").click

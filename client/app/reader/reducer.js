@@ -171,7 +171,9 @@ export const initialState = {
         tag: false,
         category: false
       }
-    }
+    },
+    manifestVbmsFetchedAt: null,
+    manifestVvaFetchedAt: null
   },
 
   /**
@@ -254,6 +256,17 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_MANIFESTS:
+    return update(state, {
+      ui: {
+        manifestVbmsFetchedAt: {
+          $set: action.payload.manifestVbmsFetchedAt
+        },
+        manifestVvaFetchedAt: {
+          $set: action.payload.manifestVvaFetchedAt
+        }
+      }
+    });
   case Constants.RECEIVE_ANNOTATIONS:
     return updateFilteredDocIds(update(
       state,

@@ -20,8 +20,12 @@ class ExternalApi::EfolderService
 
     documents = JSON.parse(response.body)["data"]["attributes"]["documents"] || []
     Rails.logger.info("# of Documents retrieved from efolder: #{documents.length}")
-
-    documents.map { |efolder_document| Document.from_efolder(efolder_document) }
+    
+    {
+      manifest_vbms_fetched_at: JSON.parse(response.body)["data"]["attributes"]["manifest_vbms_fetched_at"],
+      manifest_vva_fetched_at: JSON.parse(response.body)["data"]["attributes"]["manifest_vva_fetched_at"],
+      documents: documents.map { |efolder_document| Document.from_efolder(efolder_document) }
+    }
   end
 
   def self.efolder_base_url
