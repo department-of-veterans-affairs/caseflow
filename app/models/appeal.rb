@@ -229,6 +229,10 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
+  def eligible_for_ramp?
+    status == "Advance"
+  end
+
   def attributes_for_hearing
     {
       "id" => id,
