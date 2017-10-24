@@ -51,6 +51,7 @@ The team-wide standup occurs in Endor. This is a good time for topics like:
 * Notes about code changes that affect all Caseflow apps
 * Notes about design or produce decisions that affect the entire team
 * QA resolving blockers to ticket validation
+* Quick demo of cool or interesting new functionality
 
 If there are no such announcements, then we'll end the meeting immediately and give everyone the time back.
 
