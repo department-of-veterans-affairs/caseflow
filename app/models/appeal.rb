@@ -439,12 +439,12 @@ class Appeal < ActiveRecord::Base
   end
 
   def manifest_vbms_fetched_at
-    get_documents_from_service!
+    fetch_documents_from_service!
     @manifest_vbms_fetched_at
   end
 
   def manifest_vva_fetched_at
-    get_documents_from_service!
+    fetch_documents_from_service!
     @manifest_vbms_fetched_at
   end
 
@@ -484,7 +484,7 @@ class Appeal < ActiveRecord::Base
     @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
-  def get_documents_from_service!
+  def fetch_documents_from_service!
     return if @fetched_documents
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
@@ -495,7 +495,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def fetched_documents
-    get_documents_from_service!
+    fetch_documents_from_service!
     @fetched_documents
   end
 

@@ -50,12 +50,10 @@ class Fakes::VBMSService
 
   def self.fetch_documents_for(appeal, _user = nil)
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
-    docs = (document_records || {})[appeal.vbms_id] || @documents || []
-
     {
-      manifest_vbms_fetched_at: @manifest_vbms_fetched_at || Time.now.strftime('%D %l:%M%P %Z'),
-      manifest_vva_fetched_at: @manifest_vva_fetched_at || Time.now.strftime('%D %l:%M%P %Z'),
-      documents: docs
+      manifest_vbms_fetched_at: @manifest_vbms_fetched_at || Time.zone.now.strftime("%D %l:%M%P %Z"),
+      manifest_vva_fetched_at: @manifest_vva_fetched_at || Time.zone.now.strftime("%D %l:%M%P %Z"),
+      documents: (document_records || {})[appeal.vbms_id] || @documents || []
     }
   end
 

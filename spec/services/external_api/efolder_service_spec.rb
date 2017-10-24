@@ -33,8 +33,8 @@ describe ExternalApi::EfolderService do
     let(:user) { Generators::User.build }
     let(:appeal) { Generators::Appeal.build }
     let(:expected_response) { HTTPI::Response.new(200, [], expected_response_map.to_json) }
-    let(:manifest_vbms_fetched_at) { Time.now.strftime('%D %l:%M%P %Z') }
-    let(:manifest_vva_fetched_at) { Time.now.strftime('%D %l:%M%P %Z') }
+    let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+    let(:manifest_vva_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
 
     context "metrics" do
       let(:expected_response_map) { { data: { attributes: { documents: nil } } } }
@@ -87,7 +87,7 @@ describe ExternalApi::EfolderService do
 
       context "with one document" do
         let(:expected_received_at1) { Faker::Date.backward }
-        let(:expected_document1) { Generators::Document.build( type: "SSOC", filename: nil ) }
+        let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
         let(:attrs_in) do
           {
             documents: [
@@ -122,7 +122,7 @@ describe ExternalApi::EfolderService do
       end
 
       context "with multiple documents" do
-        let(:attrs_in) do 
+        let(:attrs_in) do
           {
             documents: [
               {
@@ -142,7 +142,7 @@ describe ExternalApi::EfolderService do
             manifest_vva_fetched_at: manifest_vva_fetched_at
           }
         end
-        let(:expected_result) do 
+        let(:expected_result) do
           {
             documents: [expected_document1.to_hash, expected_document2.to_hash],
             manifest_vbms_fetched_at: manifest_vbms_fetched_at,

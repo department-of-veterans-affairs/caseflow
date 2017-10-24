@@ -186,8 +186,16 @@ RSpec.feature "Reader" do
     end
 
     context "Appeals without any issues" do
+      let(:fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+
       let(:appeal) do
-        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, issues: [])
+        Generators::Appeal.build(
+          vacols_record: vacols_record,
+          documents: documents,
+          manifest_vbms_fetched_at: fetched_ts,
+          manifest_vva_fetched_at: fetched_ts,
+          issues: []
+        )
       end
 
       before do
@@ -207,8 +215,8 @@ RSpec.feature "Reader" do
 
       scenario "Document source manifest retrieval times display" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
-        expect(find(".vbms-manifest-retrieved-at").text).to match %r!Last VBMS retrieval: \d+/\d+/\d\d \d+\:\d\d(?:am|pm) [A-Z]{3}!
-        expect(find(".vva-manifest-retrieved-at").text).to match %r!Last VVA retrieval: \d+/\d+/\d\d \d+\:\d\d(?:am|pm) [A-Z]{3}!
+        expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{fetched_ts}")
+        expect(find("#vva-manifest-retrieved-at").text).to have_content("Last VVA retrieval: #{fetched_ts}")
       end
 
       scenario "pdf view sidebar shows no issues message" do
