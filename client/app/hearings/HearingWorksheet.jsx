@@ -90,7 +90,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Rep. Name:"
               id="appellant-vet-rep-name"
               aria-label="Representative Name"
-              value={worksheet.representative_name}
+              value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
             />
           </div>
@@ -114,7 +114,7 @@ export class HearingWorksheet extends React.PureComponent {
               name="Witness (W)/Observer (O):"
               id="appellant-vet-witness"
               aria-label="Witness Observer"
-              value={worksheet.witness}
+              value={worksheet.witness || ''}
               onChange={this.onWitnessChange}
             />
           </div>
