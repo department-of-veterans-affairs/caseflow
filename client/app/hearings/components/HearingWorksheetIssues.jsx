@@ -55,10 +55,17 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    // TODO: Before merging, add filter for destroy and appeal_id
     const rowObjects = Object.keys(worksheetIssues).map((issue, key) => {
 
       let issueRow = worksheetIssues[issue];
+
+      // Deleted issues can't be removed from Redux because we need to send them
+      // to the backend with their ID information. We need to filter them from
+      // the display.
+      // eslint-disable-next-line no-underscore-dangle
+      if (issueRow._destroy || issueRow.appeal_id !== worksheetStreamsAppeal.id) {
+        return {};
+      }
 
       return {
         counter: <b>{key + 1}.</b>,
@@ -90,7 +97,6 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           appealKey={appealKey}
-          issueKey={key}
         />
       };
     });

@@ -90,20 +90,18 @@ export const onAddIssue = (appealKey, vacolsSequenceId) => ({
   }
 });
 
-export const onDeleteIssue = (appealKey, issueKey) => ({
+export const onDeleteIssue = (issueId) => ({
   type: Constants.DELETE_ISSUE,
   payload: {
-    appealKey,
-    issueKey
+    issueId
   }
 });
 
 
-export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => ({
+export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
   type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
   payload: {
-    issueKey,
-    appealKey,
+    issueId,
     isShowingModal
   }
 });
