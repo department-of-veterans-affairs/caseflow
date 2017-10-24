@@ -152,30 +152,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.ADD_ISSUE:
     return update(state, {
-      worksheet: {
-        appeals_ready_for_hearing: {
-          [action.payload.appealKey]: {
-            worksheet_issues: { $push: [{ from_vacols: false,
-              edited: true,
-              vacols_sequence_id: action.payload.vacolsSequenceId }] }
-          }
-        }
-      }
-    });
-
-  case Constants.SET_ISSUE_ID:
-    return update(state, {
-      worksheet: {
-        appeals_ready_for_hearing: {
-          [action.payload.appealIndex]: {
-            worksheet_issues: {
-              [action.payload.issueIndex]: {
-                id: { $set: action.payload.id }
-              }
-            }
-          }
-        }
-      }
+      worksheetIssues: { [action.payload.issue.id]: {
+        $set: action.payload.issue
+      } }
     });
 
   case Constants.DELETE_ISSUE:

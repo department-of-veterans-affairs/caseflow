@@ -82,13 +82,24 @@ export const onToggleVHA = (vha, issueId) => ({
   }
 });
 
-export const onAddIssue = (appealKey, vacolsSequenceId) => ({
-  type: Constants.ADD_ISSUE,
-  payload: {
-    appealKey,
-    vacolsSequenceId
-  }
-});
+export const onAddIssue = (appealId, vacolsSequenceId) => (dispatch) => {
+  const outgoingIssue = {
+    appeal_id: appealId,
+    from_vacols: false,
+    vacols_sequence_id: vacolsSequenceId
+  };
+
+  ApiUtil.patch(`/hearings/appeals/${outgoingIssue.appeal_id}`, { data: { appeal: {
+    worksheet_issues_attributes: [outgoingIssue] } } }).
+    then((data) => {
+      const issue = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
+        return outgoingIssue.vacols_sequence_id === dbIssue.vacols_sequence_id;
+      })[0];
+
+      dispatch({ type: Constants.ADD_ISSUE,
+        payload: { issue } });
+    });
+};
 
 export const onDeleteIssue = (issueId) => ({
   type: Constants.DELETE_ISSUE,
@@ -111,19 +122,9 @@ export const saveIssues = (worksheetIssues) => (dispatch) => {
     if (issue.edited) {
       ApiUtil.patch(`/hearings/appeals/${issue.appeal_id}`, { data: { appeal: {
         worksheet_issues_attributes: [issue] } } }).
-        then((data) => {
+        then(() => {
           dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
             payload: { issueId: issue.id } });
-          // if (!issue.id) {
-          //   const id = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
-          //     return issue.vacols_sequence_id === dbIssue.vacols_sequence_id;
-          //   })[0].id;
-          //
-          //   dispatch({ type: Constants.SET_ISSUE_ID,
-          //     payload: { id,
-          //       appealIndex,
-          //       issueIndex } });
-          // }
         },
         () => {
           dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,

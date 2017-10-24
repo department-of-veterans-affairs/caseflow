@@ -9,7 +9,7 @@ import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
 
-  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey, this.getVacolsSequenceId());
+  onAddIssue = (appealId) => () => this.props.onAddIssue(appealId, this.getVacolsSequenceId());
 
   getMaxVacolsSequenceId = () => {
     let maxValue = 0;
@@ -52,7 +52,7 @@ class HearingWorksheetStream extends Component {
             classNames={['usa-button-outline', 'hearings-add-issue']}
             name="+ Add Issue"
             id={`button-addIssue-${appealId}`}
-            onClick={this.onAddIssue(key)}
+            onClick={this.onAddIssue(this.props.worksheet.appeals_ready_for_hearing[key].id)}
           />
           <hr />
         </div>;
