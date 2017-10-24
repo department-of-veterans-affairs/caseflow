@@ -9,7 +9,6 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
 
     # specified limit of users we fetch for
     limit = args["limit"] || DEFAULT_USERS_LIMIT
-
     find_all_reader_users_by_documents_fetched_at(limit).each do |user|
       start_fetch_job(user)
     end
