@@ -15,6 +15,8 @@ class IntakesController < ApplicationController
   end
 
   def index
+    no_cache
+
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -29,6 +31,12 @@ class IntakesController < ApplicationController
   end
 
   private
+
+  def no_cache
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
 
   def ramp_intake_data(ramp_intake)
     return {} unless ramp_intake
