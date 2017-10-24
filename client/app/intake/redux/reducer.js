@@ -1,6 +1,6 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import { formatDateStr, formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const formatAppeals = (appeals) => {
@@ -160,7 +160,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       },
       searchErrorData: {
         duplicateNoticeDate: {
-          $set: formatDate(action.payload.errorData.notice_date)
+          $set: formatDateStr(action.payload.errorData.notice_date)
         }
       },
       requestStatus: {

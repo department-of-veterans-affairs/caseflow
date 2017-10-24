@@ -78,7 +78,7 @@ RSpec.feature "RAMP Intake" do
     scenario "Search for a veteran that has a RAMP election already processed" do
       ramp_election = RampElection.create!(
         veteran_file_number: "12341234",
-        notice_date: Time.zone.now - 5.days
+        notice_date: 5.days.ago
       )
 
       RampIntake.create!(
@@ -98,7 +98,7 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to have_content(
-        "A RAMP opt-in with the notice date 08/02/2017 was already processed"
+        "A RAMP opt-in with the notice date 08/03/2017 was already processed"
       )
     end
 
