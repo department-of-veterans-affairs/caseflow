@@ -91,20 +91,20 @@ export class AssociatePage extends React.Component {
     return ApiUtil.post(
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,
       { data }).then(() => {
-        window.location.reload();
-        this.setState({
-          epLoading: null
-        });
-      }, () => {
-        handleAlert(
-          'error',
-          'Error',
-          'There was an error while assigning the EP. Please try again later'
-        );
-        this.setState({
-          epLoading: null
-        });
+      window.location.reload();
+      this.setState({
+        epLoading: null
       });
+    }, () => {
+      handleAlert(
+        'error',
+        'Error',
+        'There was an error while assigning the EP. Please try again later'
+      );
+      this.setState({
+        epLoading: null
+      });
+    });
   }
 
   sortEndProduct = (date1, date2) => {
@@ -128,7 +128,7 @@ export class AssociatePage extends React.Component {
 
     if (this.props.hasAvailableModifers) {
       title = <span> <h1>Route Claim</h1>
-             <h2> Existing End Product(s)</h2></span>;
+        <h2> Existing End Product(s)</h2></span>;
       alert = <div><h3 className="usa-alert-heading">Existing EP</h3>
         <p className="usa-alert-text">We found one or more existing EP(s)
           created within 30 days of this decision date.
@@ -138,18 +138,18 @@ export class AssociatePage extends React.Component {
       </div>;
     } else {
       title = <span><h1>Route Claim</h1>
-              <h2>Create End Product</h2></span>;
+        <h2>Create End Product</h2></span>;
       alert = <div><h3 className="usa-alert-heading">
           Existing EP, all EP & Claim Label Modifiers in use
-        </h3>
-        <p className="usa-alert-text">We found one or more existing EP(s)
+      </h3>
+      <p className="usa-alert-text">We found one or more existing EP(s)
           created within 30 days of this decision date. You may assign a
           existing EP from the table below to this claim.
-        </p>
-        <p className="usa-alert-text">
+      </p>
+      <p className="usa-alert-text">
           A new {this.props.decisionType} EP cannot be created for this Veteran
           ID as all EP modifiers are currently in use.
-        </p>
+      </p>
       </div>;
     }
 

@@ -105,21 +105,21 @@ class PrometheusService
     def background_jobs
       @background_jobs ||=
         find_or_register_gauge_and_summary(:background_jobs,
-                                           "sidekiq background jobs")
+                                           "shoryuken background jobs")
     end
 
     def background_jobs_attempt_counter
       @background_jobs_attempt_counter ||=
         find_or_register_metric(:counter,
                                 :background_jobs_attempt_counter,
-                                "counter of all sidekiq background jobs attempted (fail or succeed)")
+                                "counter of all shoryuken background jobs attempted (fail or succeed)")
     end
 
     def background_jobs_error_counter
       @background_jobs_error_counter ||=
         find_or_register_metric(:counter,
                                 :background_jobs_error_counter,
-                                "counter of all sidekiq background jobs that errored")
+                                "counter of all shoryuken background jobs that errored")
     end
 
     # This method pushes all registered metrics to the prometheus pushgateway

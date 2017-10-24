@@ -40,9 +40,9 @@ describe('Table', () => {
 
       expect(
         wrapper.
-        find('td').
-        last().
-        text()
+          find('td').
+          last().
+          text()
       ).to.eq('EstablishClaim');
     });
   });

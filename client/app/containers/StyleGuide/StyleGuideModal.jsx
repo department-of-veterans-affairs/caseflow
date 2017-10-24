@@ -34,15 +34,15 @@ export default class StyleGuideModal extends React.Component {
         id="modals"
         link="StyleGuideModal.jsx"
       />
-        <p>Modals are 490 pixels in width with 30px padding around the border and
+      <p>Modals are 490 pixels in width with 30px padding around the border and
         contain the following: a title, explanation text, a divider,
         and action buttons. There are modal-specific classes that must be included
         in your modal (see below code snippets).
         Whenever possible, use a close link as the left action.</p>
       <p><Button
-          name="Launch modal"
-          onClick={this.handleModalOpen}
-          classNames={['usa-button', 'usa-button-outline']}
+        name="Launch modal"
+        onClick={this.handleModalOpen}
+        classNames={['usa-button', 'usa-button-outline']}
       /></p>
       { styleGuideModal && <Modal
         buttons = {[
@@ -72,7 +72,7 @@ export default class StyleGuideModal extends React.Component {
           value={this.state.value}
         />
       </Modal>
-    }
+      }
     </div>;
   }
 }

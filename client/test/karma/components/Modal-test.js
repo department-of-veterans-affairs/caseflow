@@ -9,13 +9,13 @@ describe('Modal', () => {
     it('two buttons correctly', () => {
       let wrapper = mount(
         <Modal
-        buttons={[
-          { classNames: ['test-class'],
-            name: 'first'
-          }
-        ]}
-        visible={true}
-        title="Test Title">
+          buttons={[
+            { classNames: ['test-class'],
+              name: 'first'
+            }
+          ]}
+          visible={true}
+          title="Test Title">
           Test Content
         </Modal>
       );
@@ -30,19 +30,19 @@ describe('Modal', () => {
     it('three buttons correctly', () => {
       let wrapper = mount(
         <Modal
-        buttons={[
-          { classNames: ['test-class'],
-            name: 'first'
-          },
-          { classNames: ['test-class'],
-            name: 'second'
-          },
-          { classNames: ['test-class'],
-            name: 'third'
-          }
-        ]}
-        visible={true}
-        title="Test Title">
+          buttons={[
+            { classNames: ['test-class'],
+              name: 'first'
+            },
+            { classNames: ['test-class'],
+              name: 'second'
+            },
+            { classNames: ['test-class'],
+              name: 'third'
+            }
+          ]}
+          visible={true}
+          title="Test Title">
           Test Content
         </Modal>
       );

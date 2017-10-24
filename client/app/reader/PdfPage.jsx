@@ -84,11 +84,11 @@ export class PdfPage extends React.PureComponent {
         return this.drawPage();
       }
     }).
-    catch(() => {
-      this.didFailDrawing = true;
-      this.isDrawing = false;
-      this.isDrawn = false;
-    });
+      catch(() => {
+        this.didFailDrawing = true;
+        this.isDrawing = false;
+        this.isDrawn = false;
+      });
   }
 
   clearPage = () => {
@@ -239,9 +239,9 @@ export class PdfPage extends React.PureComponent {
           });
         }
       }).
-      catch(() => {
-        this.isPageSetup = false;
-      });
+        catch(() => {
+          this.isPageSetup = false;
+        });
     }
   }
 
@@ -308,29 +308,29 @@ export class PdfPage extends React.PureComponent {
       className={pageClassNames}
       style={divPageStyle}
       ref={this.getPageContainerRef}>
-        <div
-          id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
-          className={pageContentsVisibleClass}
-          style={innerDivStyle}>
-          <canvas
-            ref={this.getCanvasRef}
-            className="canvasWrapper" />
-          <div className="cf-pdf-annotationLayer">
-            <CommentLayer
-              documentId={this.props.documentId}
-              pageIndex={this.props.pageIndex}
-              scale={this.props.scale}
-              getTextLayerRef={this.getTextLayerRef}
-              file={this.props.file}
-              dimensions={{
-                width: innerDivWidth,
-                height: innerDivHeight
-              }}
-              isVisible={this.props.isVisible}
-            />
-          </div>
+      <div
+        id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+        className={pageContentsVisibleClass}
+        style={innerDivStyle}>
+        <canvas
+          ref={this.getCanvasRef}
+          className="canvasWrapper" />
+        <div className="cf-pdf-annotationLayer">
+          <CommentLayer
+            documentId={this.props.documentId}
+            pageIndex={this.props.pageIndex}
+            scale={this.props.scale}
+            getTextLayerRef={this.getTextLayerRef}
+            file={this.props.file}
+            dimensions={{
+              width: innerDivWidth,
+              height: innerDivHeight
+            }}
+            isVisible={this.props.isVisible}
+          />
         </div>
-      </div>;
+      </div>
+    </div>;
   }
 }
 

@@ -7,8 +7,8 @@ import { CaseSelectLoadingScreen } from '../../../app/reader/CaseSelectLoadingSc
 
 describe('CaseSelectLoadingScreen', () => {
   const getContext = () => mount(<CaseSelectLoadingScreen onInitialCaseLoadingFail={_.noop}>
-        <p>Show when welcome page is loaded</p>
-    </CaseSelectLoadingScreen>);
+    <p>Show when welcome page is loaded</p>
+  </CaseSelectLoadingScreen>);
 
   it('displays children when the welcome page is loaded', () => {
     const wrapper = getContext().setProps({

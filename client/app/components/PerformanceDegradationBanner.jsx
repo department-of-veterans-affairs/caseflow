@@ -28,19 +28,19 @@ export default class PerformanceDegradationBanner extends React.Component {
 
     this.setState({ isRequesting: true });
     ApiUtil.get('/dependencies-check').
-    then((data) => {
-      let outage = JSON.parse(data.text).dependencies_outage;
+      then((data) => {
+        let outage = JSON.parse(data.text).dependencies_outage;
 
-      this.setState({
-        showBanner: Boolean(outage),
-        isRequesting: false
+        this.setState({
+          showBanner: Boolean(outage),
+          isRequesting: false
+        });
+      }, () => {
+        this.setState({
+          showBanner: false,
+          isRequesting: false
+        });
       });
-    }, () => {
-      this.setState({
-        showBanner: false,
-        isRequesting: false
-      });
-    });
   }
 
   componentDidMount() {
@@ -49,7 +49,7 @@ export default class PerformanceDegradationBanner extends React.Component {
 
     // subsequent checks
     this.interval = setInterval(() =>
-     this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
+      this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
   }
 
   componentWillUnmount() {
@@ -72,6 +72,6 @@ export default class PerformanceDegradationBanner extends React.Component {
           </div>
         </div>
       }
-      </div>;
+    </div>;
   }
 }

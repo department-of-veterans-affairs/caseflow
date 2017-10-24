@@ -62,8 +62,8 @@ const getRegionalOfficeString = (regionalOfficeKey, regionalOfficeCities) => {
   }
 
   return `${regionalOfficeKey} - ${
-      regionalOfficeCities[regionalOfficeKey].city}, ${
-      regionalOfficeCities[regionalOfficeKey].state}`;
+    regionalOfficeCities[regionalOfficeKey].city}, ${
+    regionalOfficeCities[regionalOfficeKey].state}`;
 };
 
 const getEmailFromConstant = (constant, regionalOfficeKey) => {

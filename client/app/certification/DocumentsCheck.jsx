@@ -61,9 +61,9 @@ export class DocumentsCheck extends React.Component {
         <ul>The <strong>document date</strong> in VBMS. NOD and Form 9 dates must match their VACOLS dates.
         SOC and SSOC dates are considered matching if the VBMS date is the same as the VACOLS date,
         or if the VBMS date is 4 days or fewer before the VACOLS date.
-        <a href="/certification/help#cannot-find-documents"> Learn more about document dates.</a> </ul>
+          <a href="/certification/help#cannot-find-documents"> Learn more about document dates.</a> </ul>
         <p>Once you've made corrections,
-        <a href={`/certifications/${match.params.vacols_id}/check_documents`}>refresh this page.</a></p>
+          <a href={`/certifications/${match.params.vacols_id}/check_documents`}>refresh this page.</a></p>
         <p>If you can't find the document, <a href="#"
           onClick={toggleCancellationModal}>cancel this certification.</a></p>
       </div>;
@@ -75,7 +75,7 @@ export class DocumentsCheck extends React.Component {
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
         { documentsMatch ? <DocumentsMatchingBox areDatesExactlyMatching={this.areDatesExactlyMatching()}/> :
-        <DocumentsNotMatchingBox/> }
+          <DocumentsNotMatchingBox/> }
 
         <DocumentsCheckTable nod={nod} soc={soc} form9={form9} ssocs={ssocs}/>
 

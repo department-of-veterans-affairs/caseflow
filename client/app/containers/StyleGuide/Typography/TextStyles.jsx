@@ -88,26 +88,26 @@ export default class TextStyles extends React.Component {
             Body copy. A series of
             sentences together which
             make a paragraph.
-          </p>,
-        rules: <span>
-          <span>font-family: ‘Source Sans Pro’</span>
-          <span>font-weight: 400</span>
-          <span>font-size: 17px</span>
-          <span>line-height: 1.5em/26px</span>
-        </span>
+      </p>,
+      rules: <span>
+        <span>font-family: ‘Source Sans Pro’</span>
+        <span>font-weight: 400</span>
+        <span>font-size: 17px</span>
+        <span>line-height: 1.5em/26px</span>
+      </span>
       },
       { textStyle: <p><i>
             Italic body copy. A series of
             sentences together which
             make a paragraph.
-          </i></p>,
-        rules: <span>
-          <span>font-family: ‘Source Sans Pro’</span>
-          <span>font-style: Italic</span>
-          <span>font-weight: 400</span>
-          <span>font-size: 17px</span>
-          <span>line-height: 1.5em/26px</span>
-        </span>
+      </i></p>,
+      rules: <span>
+        <span>font-family: ‘Source Sans Pro’</span>
+        <span>font-style: Italic</span>
+        <span>font-weight: 400</span>
+        <span>font-size: 17px</span>
+        <span>line-height: 1.5em/26px</span>
+      </span>
       }
     ];
 

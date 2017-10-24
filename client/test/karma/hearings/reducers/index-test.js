@@ -202,7 +202,7 @@ describe.skip('hearingsReducer', () => {
         66: { description: 'Elbow Arthritis',
           edited: true }
       }
-     );
+      );
     });
   });
 
@@ -223,7 +223,7 @@ describe.skip('hearingsReducer', () => {
         66: { reopen: true,
           edited: true }
       }
-     );
+      );
     });
   });
 
@@ -244,7 +244,7 @@ describe.skip('hearingsReducer', () => {
         66: { allow: true,
           edited: true }
       }
-     );
+      );
     });
   });
 
@@ -265,7 +265,7 @@ describe.skip('hearingsReducer', () => {
         66: { deny: true,
           edited: true }
       }
-     );
+      );
     });
   });
 
@@ -286,7 +286,7 @@ describe.skip('hearingsReducer', () => {
         66: { remand: true,
           edited: true }
       }
-     );
+      );
     });
   });
 
@@ -307,7 +307,7 @@ describe.skip('hearingsReducer', () => {
         66: { dismiss: true,
           edited: true }
       }
-     );
+      );
     });
   });
 
@@ -328,7 +328,7 @@ describe.skip('hearingsReducer', () => {
         66: { vha: true,
           edited: true }
       }
-     );
+      );
     });
   });
 

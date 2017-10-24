@@ -59,6 +59,14 @@ class Issue
     }
   end
 
+  def description_attributes
+    {
+      program_description: program_description,
+      description: description,
+      note: note
+    }
+  end
+
   class << self
     attr_writer :repository
 

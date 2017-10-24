@@ -71,57 +71,57 @@ class HearingWorksheetIssues extends PureComponent {
       return {
         counter: <b>{key + 1}.</b>,
         program: <HearingWorksheetIssueFields
-            appeal={worksheetStreamsAppeal}
-            issue={issueRow}
-            field="program"
-            appealKey={appealKey}
-            issueKey={key}
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="program"
+          appealKey={appealKey}
+          issueKey={key}
         />,
         issue: <HearingWorksheetIssueFields
-            appeal={worksheetStreamsAppeal}
-            issue={issueRow}
-            field="name"
-            appealKey={appealKey}
-            issueKey={key}
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="name"
+          appealKey={appealKey}
+          issueKey={key}
         />,
         levels: <HearingWorksheetIssueFields
-            appeal={worksheetStreamsAppeal}
-            issue={issueRow}
-            field="levels"
-            appealKey={appealKey}
-            issueKey={key}
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="levels"
+          appealKey={appealKey}
+          issueKey={key}
         />,
         description: <HearingWorksheetIssueFields
-            appeal={worksheetStreamsAppeal}
-            issue={issueRow}
-            field="description"
-            appealKey={appealKey}
-            issueKey={key}
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="description"
+          appealKey={appealKey}
+          issueKey={key}
         />,
         actions: <HearingWorksheetPreImpressions
-                    appeal={worksheetStreamsAppeal}
-                    issue={issueRow}
-                    appealKey={appealKey}
-                    issueKey={key}
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          appealKey={appealKey}
+          issueKey={key}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
-                    appeal={worksheetStreamsAppeal}
-                    issue={issueRow}
-                    appealKey={appealKey}
-                    issueKey={key}
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          appealKey={appealKey}
+          issueKey={key}
         />
       };
     });
 
     return <div>
-          <Table
-              className="cf-hearings-worksheet-issues"
-              columns={columns}
-              rowObjects={rowObjects}
-              summary={'Worksheet Issues'}
-              getKeyForRow={this.getKeyForRow}
-          />
-        </div>;
+      <Table
+        className="cf-hearings-worksheet-issues"
+        columns={columns}
+        rowObjects={rowObjects}
+        summary={'Worksheet Issues'}
+        getKeyForRow={this.getKeyForRow}
+      />
+    </div>;
   }
 }
 

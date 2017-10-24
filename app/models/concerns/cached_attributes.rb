@@ -16,8 +16,8 @@ module CachedAttributes
     Rails.cache.read(cache_id(attr_name))
   end
 
-  def set_cached_value(attr_name, value)
-    Rails.cache.write(cache_id(attr_name), value) && value
+  def set_cached_value(attr_name, value, write_options = {})
+    Rails.cache.write(cache_id(attr_name), value, write_options) && value
   end
 
   def cache_id(attr_name)
@@ -25,7 +25,7 @@ module CachedAttributes
   end
 
   module ClassMethods
-    def cache_attribute(attr_name, &get_value)
+    def cache_attribute(attr_name, write_options = {}, &get_value)
       define_method "#{attr_name}=" do |value|
         set_cached_value(attr_name, value)
       end
@@ -39,7 +39,7 @@ module CachedAttributes
           return cached_value
         end
         value = instance_eval(&get_value)
-        set_cached_value(attr_name, value)
+        set_cached_value(attr_name, value, write_options)
       end
     end
   end

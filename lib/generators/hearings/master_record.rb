@@ -12,8 +12,8 @@ class Generators::Hearings::MasterRecord
     end
 
     def build(attrs = {})
-      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
-      hearing = ::Hearing.new(default_attrs.merge(attrs))
+      attrs[:user_id] ||= attrs[:user_id] || Generators::User.create.id
+      hearing = ::Hearings::MasterRecord.new(default_attrs.merge(attrs))
 
       Fakes::HearingRepository.master_records ||= []
       date = hearing.date.to_date
