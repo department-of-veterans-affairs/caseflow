@@ -199,8 +199,6 @@ class Certification < ActiveRecord::Base
     Rails.env.development? || Rails.env.demo? || !already_certified
   end
 
-  private
-
   class << self
     def find_or_create_by_vacols_id(vacols_id)
       find_by_vacols_id(vacols_id) || create!(vacols_id: vacols_id)
