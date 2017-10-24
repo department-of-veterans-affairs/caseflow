@@ -156,7 +156,7 @@ export class HearingWorksheet extends React.PureComponent {
             <label htmlFor="worksheet-evidence">Evidence</label>
             <Textarea
               name="Evidence"
-              value={worksheet.evidence}
+              value={worksheet.evidence || ''}
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               minRows={3}
