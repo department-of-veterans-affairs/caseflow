@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
-  onScrollToComment } from '../reader/actions';
+  onScrollToComment, togglePdfSidebar } from '../reader/actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import DocumentSearch from './DocumentSearch';
@@ -159,6 +159,10 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltC = () => {
+    if (this.props.sidebarHidden) {
+      this.props.togglePdfSidebar();
+    }
+
     this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
@@ -361,7 +365,8 @@ const mapStateToProps = (state, props) => {
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation']),
+    sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar
   };
 };
 
@@ -371,7 +376,8 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    onScrollToComment
+    onScrollToComment,
+    togglePdfSidebar
   }, dispatch)
 });
 
@@ -400,5 +406,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  rotation: PropTypes.number
+  rotation: PropTypes.number,
+  togglePdfSidebar: PropTypes.func
 };
