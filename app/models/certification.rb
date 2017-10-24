@@ -28,6 +28,19 @@ class Certification < ActiveRecord::Base
     !!appeal.power_of_attorney.bgs_representative_address
   end
 
+  def create_or_update_form8
+    # if we haven't yet started the form8
+    # or if we last updated it earlier than 48 hours ago,
+    # refresh it with new data.
+    if !form8 || form8.updated_at < 48.hours.ago
+      @form8 ||= Form8.new(certification_id: id)
+      @form8.assign_attributes_from_appeal(appeal)
+      @form8.save!
+    else
+      form8.update_certification_date
+    end
+  end
+
   def to_hash
     serializable_hash(
       methods: [:certification_status, :bgs_rep_address_found?],
@@ -150,9 +163,43 @@ class Certification < ActiveRecord::Base
     end
   end
 
+  def now
+    @now ||= Time.zone.now
+  end
+
+  def calculate_form9_matching_at
+    appeal.form9.try(:matching?) ? (form9_matching_at || now) : nil
+  end
+
+  def calculate_already_certified
+    already_certified || appeal.certified?
+  end
+
+  def calculate_vacols_data_missing
+    vacols_data_missing || appeal.missing_certification_data?
+  end
+
+  def calculate_nod_matching_at
+    appeal.nod.try(:matching?) ? (nod_matching_at || now) : nil
+  end
+
+  def calculate_soc_matching_at
+    appeal.soc.try(:matching?) ? (soc_matching_at || now) : nil
+  end
+
+  def calculcate_ssocs_matching_at
+    (calculate_ssocs_required && appeal.ssocs.all?(&:matching?)) ? (ssocs_matching_at || now) : nil
+  end
+
+  def calculate_ssocs_required
+    appeal.ssocs.any?
+  end
+
   def can_be_updated?
     Rails.env.development? || Rails.env.demo? || !already_certified
   end
+
+  private
 
   class << self
     def find_or_create_by_vacols_id(vacols_id)
