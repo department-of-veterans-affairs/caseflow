@@ -90,7 +90,7 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
     searchErrorCode: null,
     searchErrorData: {
       duplicateNoticeDate: null
-    },
+    }
   }, data.currentIntake)
 );
 

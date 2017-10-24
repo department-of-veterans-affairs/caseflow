@@ -52,7 +52,7 @@ class Begin extends React.PureComponent {
         </div>
       },
       ramp_election_already_complete: {
-        title: "Opt-in already processed in Caseflow",
+        title: 'Opt-in already processed in Caseflow',
         body: `A RAMP opt-in with the notice date ${searchErrorData.duplicateNoticeDate}` +
           ' was already processed in Caseflow. Please ensure this' +
           ' is a duplicate election form, and proceed to the next intake.'
