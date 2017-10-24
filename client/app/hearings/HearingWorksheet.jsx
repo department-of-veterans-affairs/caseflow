@@ -134,7 +134,7 @@ export class HearingWorksheet extends React.PureComponent {
             <label htmlFor="worksheet-contentions">Contentions</label>
             <Textarea
               name="Contentions"
-              value={worksheet.contentions}
+              value={worksheet.contentions || ''}
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
               minRows={3}
@@ -145,7 +145,7 @@ export class HearingWorksheet extends React.PureComponent {
             <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
             <Textarea
               name="Periods and circumstances of service"
-              value={worksheet.military_service}
+              value={worksheet.military_service || ''}
               onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
               minRows={3}
@@ -167,7 +167,7 @@ export class HearingWorksheet extends React.PureComponent {
             <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
             <Textarea
               name="Comments and special instructions to attorneys"
-              value={worksheet.comments_for_attorney}
+              value={worksheet.comments_for_attorney || ''}
               id="worksheet-comments-for-attorney"
               onChange={this.onCommentsForAttorneyChange}
               minRows={3}
