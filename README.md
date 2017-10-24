@@ -48,7 +48,7 @@ to skip production gems when installing.
 
     bundle install --without production staging
 
-Setup and seed the DB
+Set up and seed the DB
 
     rake db:setup
 
