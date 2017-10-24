@@ -1,13 +1,15 @@
 class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
-  include RegionalOfficeConcern
   include HearingConcern
+  include AppealConcern
 
-  vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition,
-                       :aod, :hold_open, :transcript_requested, :notes, :add_on,
-                       :representative_name, :regional_office_key, :master_record,
-                       :representative
+  vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
+  vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
+  vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
+  vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
+  vacols_attr_accessor :representative_name, :representative
+  vacols_attr_accessor :regional_office_key, :master_record
 
   belongs_to :appeal
   belongs_to :user # the judge
@@ -35,6 +37,7 @@ class Hearing < ActiveRecord::Base
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
       date: date,
@@ -50,7 +53,13 @@ class Hearing < ActiveRecord::Base
       representative: representative,
       representative_name: representative_name,
       regional_office_key: regional_office_key,
-      master_record: master_record
+      master_record: master_record,
+      veteran_first_name: veteran_first_name,
+      veteran_middle_initial: veteran_middle_initial,
+      veteran_last_name: veteran_last_name,
+      appellant_first_name: appellant_first_name,
+      appellant_middle_initial: appellant_middle_initial,
+      appellant_last_name: appellant_last_name
     }
   end
 
@@ -60,8 +69,6 @@ class Hearing < ActiveRecord::Base
 
   delegate \
     :veteran_age, \
-    :veteran_name, \
-    :appellant_last_first_mi, \
     :appellant_city, \
     :appellant_state, \
     :vbms_id, \
@@ -75,11 +82,13 @@ class Hearing < ActiveRecord::Base
       methods: [
         :date, :request_type,
         :disposition, :aod,
-        :appellant_last_first_mi, :transcript_requested,
+        :transcript_requested,
         :hold_open, :notes,
         :add_on, :master_record,
-        :representative, :representative_name,
-        :regional_office_name, :venue,
+        :representative,
+        :representative_name,
+        :regional_office_name,
+        :venue, :appellant_last_first_mi,
         :veteran_name, :vbms_id
       ],
       except: :military_service
@@ -93,8 +102,6 @@ class Hearing < ActiveRecord::Base
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
                 :veteran_age,
-                :veteran_name,
-                :appellant_last_first_mi,
                 :appellant_city,
                 :appellant_state,
                 :military_service]

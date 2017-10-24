@@ -191,6 +191,9 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
+        },
+        completeIntake: {
+          $set: REQUEST_STATE.NOT_STARTED
         }
       }
     });
