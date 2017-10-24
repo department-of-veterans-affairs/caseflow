@@ -30,7 +30,7 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
     return;
   }
 
-  return moment(dateString, dateFormat).format(expectedFormat)
+  return moment(dateString, dateFormat).format(expectedFormat);
 };
 
 export const formatDateStringForApi = (dateString) => (
