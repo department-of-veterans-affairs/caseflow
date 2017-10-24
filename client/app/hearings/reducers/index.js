@@ -32,14 +32,8 @@ export const newHearingIssueState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
 
   return update(state, {
-    worksheet: {
-      appeals_ready_for_hearing: {
-        [action.payload.appealKey]: {
-          worksheet_issues: {
-            [action.payload.issueKey]: spec
-          }
-        }
-      }
+    worksheetIssues: {
+      [action.payload.issueId]: spec
     }
   });
 };
@@ -218,14 +212,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
     return update(state, {
-      worksheet: {
-        appeals_ready_for_hearing: {
-          [action.payload.appealIndex]: {
-            worksheet_issues: {
-              [action.payload.issueIndex]: { edited: { $set: false } }
-            }
-          }
-        }
+      worksheetIssues: {
+        [action.payload.issueId]: { edited: { $set: false } }
       }
     });
 

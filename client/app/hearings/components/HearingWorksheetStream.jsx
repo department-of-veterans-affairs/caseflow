@@ -46,7 +46,6 @@ class HearingWorksheetStream extends Component {
           <HearingWorksheetIssues
             appealKey={key}
             worksheetStreamsAppeal={this.props.worksheet.appeals_ready_for_hearing[key]}
-            worksheetStreamsIssues={this.props.worksheet.appeals_ready_for_hearing[key].worksheet_issues}
             {...this.props}
           />
           <Button
