@@ -56,13 +56,9 @@ And by default, Rails will run in the development environment, which will mock o
 
     foreman start
 
-Or to run the rails server and frontend webpack server separately:
+If you want to run the Rails server and frontend webpack server separately, look at the `Procfile` to figure out what commands to run.
 
-    REACT_ON_RAILS_ENV=hot bundle exec rails s
-
-    cd client && nvm use && yarn run dev
-
-You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
+You can access the site at [http://localhost:3000/test/users](http://localhost:3000/test/users).
 
 ## Roles
 
