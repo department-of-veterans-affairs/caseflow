@@ -26,6 +26,9 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :jobs, only: :create
     end
+    namespace :v2 do
+      resources :appeals, only: :index
+    end
   end
 
   scope path: "/dispatch" do
