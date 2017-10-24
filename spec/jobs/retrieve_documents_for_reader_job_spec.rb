@@ -8,11 +8,15 @@ describe RetrieveDocumentsForReaderJob do
   end
 
   context ".perform" do
-    let!(:reader_user) do
+    let!(:user_with_reader_role) do
       Generators::User.create(roles: ["Reader"])
     end
 
-    let!(:reader_user_w_many_roles) do
+    let!(:reader_user) do
+      Generators::ReaderUser.create(user_id: user_with_reader_role.id)
+    end
+
+    let!(:user_w_reader_and_many_roles) do
       Generators::User.create(roles: ["Something else", "Reader", Faker::Zelda.character])
     end
 
