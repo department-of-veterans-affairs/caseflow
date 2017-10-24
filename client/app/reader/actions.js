@@ -851,6 +851,13 @@ export const getDocumentText = (pdfDocument, file) => (
   }
 );
 
+export const updateSearchIndex = (increment) => ({
+  type: Constants.UPDATE_SEARCH_INDEX,
+  payload: {
+    increment
+  }
+})
+
 export const setDocumentSearch = (searchString) => ({
   type: Constants.SET_DOCUMENT_SEARCH,
   payload: {
