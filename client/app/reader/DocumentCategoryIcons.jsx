@@ -8,25 +8,16 @@ import * as Constants from '../reader/constants';
 const SPACE_DELIMITER = ' ';
 
 const categoriesOfDocument = (document) => _(Constants.documentCategories).
-    filter(
-      (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
-    ).
-    sortBy('renderOrder').
-    value();
+  filter(
+    (category, categoryName) => document[categoryFieldNameOfCategoryName(categoryName)]
+  ).
+  sortBy('renderOrder').
+  value();
 
 class DocumentCategoryIcons extends React.Component {
-  shouldComponentUpdate = (nextProps) => !_.isEqual(
-    categoriesOfDocument(this.props.doc),
-    categoriesOfDocument(nextProps.doc)
-  ) || !_.isEqual(
-    this.props.searchCategoryHighlights,
-    nextProps.searchCategoryHighlights
-  )
-
   render() {
     const { searchCategoryHighlights, doc } = this.props;
     const categories = categoriesOfDocument(doc);
-    const docHighlights = searchCategoryHighlights ? searchCategoryHighlights[doc.id] : {};
 
     if (!_.size(categories)) {
       return null;
@@ -40,8 +31,8 @@ class DocumentCategoryIcons extends React.Component {
       {
         _.map(categories, (category) =>
           <li
-            className={docHighlights[getCategoryName(category.humanName)] ?
-             `${listClassName} highlighted` : listClassName}
+            className={searchCategoryHighlights[getCategoryName(category.humanName)] ?
+              `${listClassName} highlighted` : listClassName}
             key={category.renderOrder}
             aria-label={category.humanName}>
             {category.svg}
@@ -52,13 +43,18 @@ class DocumentCategoryIcons extends React.Component {
   }
 }
 
+DocumentCategoryIcons.defaultProps = {
+  searchCategoryHighlights: {}
+};
+
 DocumentCategoryIcons.propTypes = {
   doc: PropTypes.object.isRequired,
   searchCategoryHighlights: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  searchCategoryHighlights: state.readerReducer.ui.searchCategoryHighlights
+const mapStateToProps = (state, ownProps) => ({
+  searchCategoryHighlights:
+    state.readerReducer.ui.searchCategoryHighlights[ownProps.doc.id]
 });
 
 export { DocumentCategoryIcons };

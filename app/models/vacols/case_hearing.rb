@@ -47,14 +47,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     def upcoming_for_judge(css_id)
       id = connection.quote(css_id)
 
-      hearings = select_hearings.where("staff.sdomainid = #{id}")
-                                .where("hearing_date > ?", 1.week.ago)
-
-      # For a video master record, the hearing_pkseq number becomes the VDKEY that links all
-      # the child records (veterans scheduled for that video) to the parent record
-      children_ids = hearings.map(&:vdkey).compact.map(&:to_i)
-      # Filter out video master records with children
-      hearings.reject { |hearing| hearing.master_record? && children_ids.include?(hearing.hearing_pkseq) }
+      select_hearings.where("staff.sdomainid = #{id}")
+                     .where("hearing_date > ?", 1.week.ago)
     end
 
     def for_appeal(appeal_vacols_id)
@@ -72,34 +66,28 @@ class VACOLS::CaseHearing < VACOLS::Record
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
              "staff.sdomainid as css_id",
-             :hearing_disp,
-             :hearing_pkseq,
-             :hearing_date,
-             :hearing_type,
-             :notes1,
-             :folder_nr,
-             :vdkey,
-             :aod,
-             :holddays,
-             :tranreq,
-             :repname,
-             :addon,
-             :board_member,
-             :mduser,
-             :mdtime,
-             :sattyid)
+             :hearing_disp, :hearing_pkseq,
+             :hearing_date, :hearing_type,
+             :notes1, :folder_nr,
+             :vdkey, :aod,
+             :holddays, :tranreq,
+             :repname, :addon,
+             :board_member, :mduser,
+             :mdtime, :sattyid,
+             :bfregoff, :bfso,
+             :bfcorkey,
+             "corres.snamef, corres.snamemi,
+             corres.snamel, corres.sspare1,
+             corres.sspare2, corres.sspare3")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
+        .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
   end
 
   def master_record_type
     return :video if folder_nr =~ /VIDEO/
-    # TODO: return :travel_board if a record is from tb_sched
-  end
-
-  def master_record?
-    master_record_type.present?
   end
 
   def update_hearing!(hearing_info)

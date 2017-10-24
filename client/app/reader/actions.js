@@ -4,7 +4,9 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
+import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { createSearchAction } from 'redux-search';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -66,6 +68,34 @@ export const setSearch = (searchQuery) => ({
     }
   }
 });
+
+export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
+  const categoryKey = categoryFieldNameOfCategoryName(categoryName);
+
+  ApiUtil.patch(
+    `/document/${docId}`,
+    { data: { [categoryKey]: toggleState } },
+    ENDPOINT_NAMES.DOCUMENT
+  ).catch(() =>
+    dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
+  );
+
+  dispatch({
+    type: Constants.TOGGLE_DOCUMENT_CATEGORY,
+    payload: {
+      categoryKey,
+      toggleState,
+      docId
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+        action: `${toggleState ? 'set' : 'unset'} document category`,
+        label: categoryName
+      }
+    }
+  });
+};
 
 export const setCaseSelectSearch = (searchQuery) => ({
   type: Constants.SET_CASE_SELECT_SEARCH,
@@ -636,16 +666,16 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
     ApiUtil.get('/reader/appeal/veteran-id?json', {
       headers: { 'veteran-id': veteranId }
     },
-      ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
-    then((response) => {
-      const returnedObject = JSON.parse(response.text);
+    ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
+      then((response) => {
+        const returnedObject = JSON.parse(response.text);
 
-      if (_.size(returnedObject.appeals) === 0) {
-        dispatch(fetchedNoAppealsUsingVeteranId());
-      } else {
-        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-      }
-    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+        if (_.size(returnedObject.appeals) === 0) {
+          dispatch(fetchedNoAppealsUsingVeteranId());
+        } else {
+          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+        }
+      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
 );
 
@@ -784,3 +814,48 @@ export const rotateDocument = (docId) => ({
     docId
   }
 });
+
+export const getDocumentText = (pdfDocument, file) => (
+  (dispatch) => {
+    const getTextForPage = (index) => {
+      return pdfDocument.getPage(index + 1).then((page) => {
+        return page.getTextContent();
+      });
+    };
+    const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
+
+    Promise.all(getTextPromises).then((pages) => {
+      const textObject = pages.reduce((acc, page, pageIndex) => {
+        // PDFJS textObjects have an array of items. Each item has a str.
+        // concatenating all of these gets us to the page text.
+        const concatenated = page.items.map((row) => row.str).join(' ');
+
+        return {
+          ...acc,
+          [`${file}-${pageIndex}`]: {
+            id: `${file}-${pageIndex}`,
+            file,
+            text: concatenated,
+            pageIndex
+          }
+        };
+      }, {});
+
+      dispatch({
+        type: Constants.GET_DCOUMENT_TEXT,
+        payload: {
+          textObject
+        }
+      });
+    });
+  }
+);
+
+export const setDocumentSearch = (searchString) => ({
+  type: Constants.SET_DOCUMENT_SEARCH,
+  payload: {
+    searchString
+  }
+});
+
+export const searchText = createSearchAction('extractedText');

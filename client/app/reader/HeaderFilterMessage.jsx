@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import { clearAllFilters } from './actions';
 import Button from '../components/Button';
@@ -26,11 +27,11 @@ class HeaderFilterMessage extends React.PureComponent {
       props.viewingDocumentsOrComments === 'comments' && 'Comments'
     ]).join(', ');
 
-    if (!filteredCategories.length) {
-      return null;
-    }
+    const className = classNames('document-list-filter-message', {
+      hidden: !filteredCategories.length
+    });
 
-    return <p className="document-list-filter-message">Filtering by: {filteredCategories}.<Button
+    return <p className={className}>Filtering by: {filteredCategories}.<Button
       id="clear-filters"
       name="clear-filters"
       classNames={['cf-btn-link']}

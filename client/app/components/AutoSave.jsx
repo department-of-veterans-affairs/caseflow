@@ -1,18 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
 import { LOADING_INDICATOR_COLOR_DEFAULT } from '../constants/AppConstants';
 import moment from 'moment';
 
-// This may go away in favor of the timestamp from updated record
 const now = () => {
-  return moment().
+  return moment().tz('America/New_York').
     format('h:mm a').
     replace(/(p|a)m/, '$1.m.');
 };
 
-export class AutoSave extends React.Component {
+export default class AutoSave extends React.Component {
 
   constructor(props) {
     super(props);
@@ -50,15 +48,6 @@ export class AutoSave extends React.Component {
     return <span className="saving">Last saved at {now()}</span>;
   }
 }
-
-const mapStateToProps = (state) => ({
-  isSaving: state.isSaving,
-  saveFailed: state.saveFailed
-});
-
-export default connect(
-  mapStateToProps
-)(AutoSave);
 
 AutoSave.propTypes = {
   isSaving: PropTypes.bool,

@@ -4,6 +4,7 @@ import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
+import uuid from 'uuid';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
@@ -57,6 +58,12 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  componentDidMount = () => {
+    if (this.props.onClearSearch) {
+      this.props.onClearSearch();
+    }
+  }
+
   render() {
     let {
       id,
@@ -70,6 +77,8 @@ export default class SearchBar extends React.Component {
       submitUsingEnterKey,
       placeholder
     } = this.props;
+
+    id = id || uuid.v4();
 
     const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
@@ -97,7 +106,6 @@ export default class SearchBar extends React.Component {
         onBlur={this.onBlur}
         type="search"
         name="search"
-        value={value}
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : null}
         placeholder={placeholder}
         value={value}/>
@@ -118,7 +126,7 @@ export default class SearchBar extends React.Component {
 }
 
 SearchBar.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   title: PropTypes.string,
   size: PropTypes.string,
   onChange: PropTypes.func,

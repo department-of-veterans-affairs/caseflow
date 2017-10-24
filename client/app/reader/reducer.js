@@ -1,52 +1,29 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
 import _ from 'lodash';
-import { categoryFieldNameOfCategoryName, update, moveModel } from './utils';
+import { update } from '../util/ReducerUtil';
+import { categoryFieldNameOfCategoryName, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => categoryFieldNameOfCategoryName(key)).
-        value();
+    toPairs().
+    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    map(([key]) => categoryFieldNameOfCategoryName(key)).
+    value();
 
   const activeTagFilters = _(docFilterCriteria.tag).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => key).
-        value();
-
-  const updateListComments = (state, id, foundComment) => {
-    return update(state, {
-      documents: {
-        [id]: {
-          listComments: {
-            $set: foundComment
-          }
-        }
-      }
-    });
-  };
-
-  const updateSearchCategoryHighlights = (state, docId, categoryMatches) => {
-    return update(state, {
-      ui: {
-        searchCategoryHighlights: {
-          $merge: {
-            [docId]: {
-              ...categoryMatches
-            }
-          }
-        }
-      }
-    });
-  };
+    toPairs().
+    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    map(([key]) => key).
+    value();
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
-  let updatedNextState = nextState;
+
+  // ensure we have a deep clone so we are not mutating the original state
+  let updatedNextState = update(nextState, {});
 
   const filteredIds = _(nextState.documents).
     filter(
@@ -74,13 +51,12 @@ const updateFilteredDocIds = (nextState) => {
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState = updateSearchCategoryHighlights(updatedNextState,
-        doc.id, matchesCategories);
+      updatedNextState.ui.searchCategoryHighlights[doc.id] = matchesCategories;
     }
 
     // updating the state of all annotations for expanded comments
     if (containsWords !== doc.listComments) {
-      updatedNextState = updateListComments(updatedNextState, doc.id, containsWords);
+      updatedNextState.documents[doc.id].listComments = containsWords;
     }
   });
 
@@ -208,7 +184,10 @@ export const initialState = {
   annotations: {},
   documents: {},
   pages: {},
-  pdfDocuments: {}
+  pdfDocuments: {},
+  text: [],
+  documentSearchString: null,
+  extractedText: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -1121,7 +1100,24 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-
+  case Constants.GET_DCOUMENT_TEXT:
+    return update(
+      state,
+      {
+        extractedText: {
+          $merge: action.payload.textObject
+        }
+      }
+    );
+  case Constants.SET_DOCUMENT_SEARCH:
+    return update(
+      state,
+      {
+        documentSearchString: {
+          $set: action.payload.searchString
+        }
+      }
+    );
   default:
     return state;
   }

@@ -33,6 +33,22 @@ describe Veteran do
       Fakes::BGSService.veteran_records = { "445566" => veteran_record }
     end
 
+    context "when veteran does not exist in BGS" do
+      before do
+        veteran.file_number = "DOESNOTEXIST"
+      end
+
+      it { is_expected.to_not be_found }
+    end
+
+    context "when veteran has no BIRLS record" do
+      let(:veteran_record) do
+        { file_number: nil }
+      end
+
+      it { is_expected.to_not be_found }
+    end
+
     it "returns the veteran with data loaded from BGS" do
       is_expected.to have_attributes(
         file_number: "445566",
@@ -119,6 +135,26 @@ describe Veteran do
     end
   end
 
+  context "#accessible?" do
+    subject { veteran.accessible? }
+
+    context "when veteran is too sensitive for user" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445566"]
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when veteran is not too sensitive for user" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = ["445567"]
+      end
+
+      it { is_expected.to eq(true) }
+    end
+  end
+
   context "#periods_of_service" do
     subject { veteran.periods_of_service }
     let(:veteran) do
@@ -129,20 +165,26 @@ describe Veteran do
       let(:service) do
         [{ branch_of_service: "Army",
            entered_on_duty_date: "06282002",
-           released_active_duty_date: "06282003" },
+           released_active_duty_date: "06282003",
+           char_of_svc_code: "HON" },
          { branch_of_service: "Navy",
            entered_on_duty_date: "06282006",
-           released_active_duty_date: "06282008" }]
+           released_active_duty_date: "06282008",
+           char_of_svc_code: "DVA" }]
       end
 
-      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003", "Navy 06/28/2006 - 06/28/2008"] }
+      it do
+        is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable",
+                           "Navy 06/28/2006 - 06/28/2008, Dishonorable for VA Purposes"]
+      end
     end
 
     context "when a veteran is still serving" do
       let(:service) do
         [{ branch_of_service: "Army",
            entered_on_duty_date: "06282002",
-           released_active_duty_date: nil }]
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
       end
 
       it { is_expected.to eq ["Army 06/28/2002 - "] }
@@ -152,7 +194,8 @@ describe Veteran do
       let(:service) do
         [{ branch_of_service: nil,
            entered_on_duty_date: nil,
-           released_active_duty_date: nil }]
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
       end
 
       it { is_expected.to eq [] }
@@ -162,10 +205,26 @@ describe Veteran do
       let(:service) do
         [{ branch_of_service: "Army",
            entered_on_duty_date: "06282002",
-           released_active_duty_date: "06282003" },
+           released_active_duty_date: "06282003",
+           char_of_svc_code: "HVA" },
          { branch_of_service: nil,
            entered_on_duty_date: nil,
-           released_active_duty_date: nil }]
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
+      end
+      it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003, Honorable for VA Purposes"] }
+    end
+
+    context "when a character of service code is not recognized" do
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: "06282003",
+           char_of_svc_code: "TBD" },
+         { branch_of_service: nil,
+           entered_on_duty_date: nil,
+           released_active_duty_date: nil,
+           char_of_svc_code: nil }]
       end
       it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003"] }
     end

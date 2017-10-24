@@ -65,9 +65,9 @@ class CaseSelectSearch extends React.PureComponent {
           <strong>Veteran</strong> {appeal.veteran_full_name} <br />
           <strong>Veteran ID</strong> {appeal.vbms_id} <br />
           <strong>Issues</strong><br />
-            <ol className="issues">
-              <IssuesList appeal={appeal} />
-            </ol>
+          <ol className="issues">
+            <IssuesList appeal={appeal} />
+          </ol>
         </div>,
         value: appeal.vacols_id
       }));

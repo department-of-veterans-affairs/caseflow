@@ -7,7 +7,9 @@ end %>
   hearings: {
     veteran_law_judge: current_user.to_hash,
     userDisplayName: current_user.display_name,
-    dropdownUrls: dropdown_urls
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+    buildDate: build_date
   }
 }) %>
 <% end %>

@@ -56,9 +56,10 @@ The version on the website does not work on recent versions of OSX (Sierra and E
 
 For the frontend, you'll need to install Node and the relevant npm modules
 
-    nvm install v6.10.2
+    # Use the version of Node defined in .nvmrc.
+    nvm use
 
-    cd client && nvm use && npm install
+    cd client && yarn
 
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
@@ -78,7 +79,7 @@ Or to run the rails server and frontend webpack server separately:
 
     REACT_ON_RAILS_ENV=hot bundle exec rails s
 
-    cd client && nvm use && npm run dev
+    cd client && nvm use && yarn run dev
 
 You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 

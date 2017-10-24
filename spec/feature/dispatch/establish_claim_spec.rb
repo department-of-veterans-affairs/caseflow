@@ -347,7 +347,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       click_on "Route claim"
 
-      find_label_for("gulfWarRegistry").click
+      click_label("gulfWarRegistry")
       expect(page).to have_content("Create End Product")
 
       page.go_back
@@ -380,7 +380,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       # The cancel button is the same on both the review and form pages, so one test
       # can adequetly test both of them.
       visit "/dispatch/establish-claim/#{task.id}"
-      find_label_for("riceCompliance").click
+      click_label("riceCompliance")
       click_on "Cancel"
 
       expect(page).to have_css(".cf-modal")
@@ -460,10 +460,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Text on the tab
         expect(page).to have_content("Decision 1 (")
-        find("#main-tab-1").click
+        safe_click("#main-tab-1")
 
-        expect(page).to have_content("Route claim for Decision 2")
-        click_on "Route claim for Decision 2"
+        safe_click("#button-Route-claim-for-Decision-2")
 
         expect(page).to have_content("Benefit Type")
       end
@@ -489,17 +488,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("mustardGas").click
+        click_label("mustardGas")
 
         # Validate it routes correctly even if an unsupported special issue is checked
-        find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+        click_label("dicDeathOrAccruedBenefitsUnitedStates")
 
         click_on "Route claim"
 
         expect(find_field("Station of Jurisdiction").value).to eq("351 - Muskogee, OK")
 
         click_on "Create End Product"
-        find_label_for("confirmNote").click
+        click_label("confirmNote")
         click_on "Finish routing claim"
 
         expect(page).to have_content("Success!")
@@ -517,7 +516,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("riceCompliance").click
+        click_label("riceCompliance")
         click_on "Route claim"
 
         expect(find_field("Station of Jurisdiction").value).to eq("321 - New Orleans, LA")
@@ -533,7 +532,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         page.driver.go_back
         expect(page).to have_content("Cannot edit end product")
 
-        find_label_for("confirmNote").click
+        click_label("confirmNote")
         click_on "Finish routing claim"
 
         # Confirmation Page
@@ -547,7 +546,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+        click_label("dicDeathOrAccruedBenefitsUnitedStates")
         click_on "Route claim"
 
         # Validate the correct steps on the progress bar are activated
@@ -561,7 +560,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("We are unable to create an EP for claims with this Special Issue")
 
-        find_label_for("confirmEmail").click
+        click_label("confirmEmail")
         click_on "Finish routing claim"
 
         expect(page).to have_content("Sent email to: PMCAppeals.VBAMIW@va.gov, tammy.boggs@va.gov in " \
@@ -625,7 +624,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
         # Test text, radio button, & checkbox inputs
-        find_label_for("gulfWarRegistry").click
+        click_label("gulfWarRegistry")
         click_on "Create End Product"
 
         # Confirmation Page
@@ -680,17 +679,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
         # Select special issues
-        find_label_for("riceCompliance").click
-        find_label_for("privateAttorneyOrAgent").click
+        click_label("riceCompliance")
+        click_label("privateAttorneyOrAgent")
 
         # Move on to note page
-        click_on "Route claim"
+        safe_click "#button-Route-claim"
 
         expect(page).to have_content("Create End Product")
 
         # Test that special issues were saved
         expect(task.appeal.reload.rice_compliance).to be_truthy
-        click_on "Create End Product"
+        safe_click "#button-Create-End-Product"
 
         expect(page).to have_content("Add the diary note")
 
@@ -718,9 +717,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         visit "/dispatch/establish-claim/#{task.id}"
 
         expect(find(".cf-app-segment > h1")).to have_content("Route Claim")
-        find_label_for("confirmNote").click
+        click_label("confirmNote")
 
-        click_on "Finish routing claim"
+        safe_click "#button-Finish-routing-claim"
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("VACOLS Updated: Changed Location to 50")
@@ -752,7 +751,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         task.assign!(:assigned, current_user)
 
         visit "/dispatch/establish-claim/#{task.id}"
-        find_label_for("dicDeathOrAccruedBenefitsUnitedStates").click
+        click_label("dicDeathOrAccruedBenefitsUnitedStates")
         click_on "Route claim"
 
         expect(page).to have_content("Route Claim Confirm VACOLS Update")

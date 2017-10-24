@@ -20,6 +20,13 @@ export default class EditComment extends React.Component {
     }
   }
 
+  keyListener = (event) => {
+    if (event.altKey && event.key === 'Enter') {
+      this.onSaveCommentEdit();
+      event.stopPropagation();
+    }
+  }
+
   componentDidMount = () => {
     let commentBox = document.getElementById(this.props.id);
 
@@ -49,31 +56,32 @@ export default class EditComment extends React.Component {
 
   render() {
     return <div>
-        <textarea
-          className="comment-container comment-textarea"
-          name="Edit Comment"
-          aria-label="Edit Comment"
-          id={this.props.id}
-          onChange={this.onChange}
-          value={this.props.comment.comment}
-        />
-        <div className="comment-save-button-container">
-          <span className="cf-right-side">
-            <Button
-              name="cancel"
-              classNames={['cf-btn-link']}
-              onClick={this.onCancelCommentEdit}>
+      <textarea
+        className="comment-container comment-textarea"
+        name="Edit Comment"
+        aria-label="Edit Comment"
+        onKeyDown={this.keyListener}
+        id={this.props.id}
+        onChange={this.onChange}
+        value={this.props.comment.comment}
+      />
+      <div className="comment-save-button-container">
+        <span className="cf-right-side">
+          <Button
+            name="cancel"
+            classNames={['cf-btn-link']}
+            onClick={this.onCancelCommentEdit}>
               Cancel
-            </Button>
-            <Button
-              disabled={this.props.disableOnEmpty && !this.props.comment.comment}
-              name="save"
-              onClick={this.onSaveCommentEdit}>
+          </Button>
+          <Button
+            disabled={this.props.disableOnEmpty && !this.props.comment.comment}
+            name="save"
+            onClick={this.onSaveCommentEdit}>
               Save
-            </Button>
-          </span>
-        </div>
-      </div>;
+          </Button>
+        </span>
+      </div>
+    </div>;
   }
 }
 

@@ -1,4 +1,4 @@
-# This job will retrieve cases from VACOLS via the CaseAssignmentRepository
+# This job will retrieve cases from VACOLS via the AppealRepository
 # and all documents for these cases in VBMS and store them
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :low_priority
@@ -8,7 +8,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   def perform(args = {})
     RequestStore.store[:application] = "reader"
 
-    # Args should be set in sidekiq_cron.yml, but default the limit to 1500 if they aren't
+    # Args should be set in cron configuration in ansible, but default the limit to 1500 if they aren't
     limit = args["limit"] || DEFAULT_DOCUMENTS_DOWNLOADED_LIMIT
     @counts = { docs_cached: 0, docs_failed: 0, appeals_successful: 0, appeals_failed: 0, consecutive_failures: 0 }
 

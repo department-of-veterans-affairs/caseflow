@@ -199,6 +199,7 @@ class Fakes::BGSService
 
   def self.clean!
     self.ssn_not_found = false
+    self.inaccessible_appeal_vbms_ids = []
   end
 
   def get_end_products(_veteran_id)
@@ -206,7 +207,7 @@ class Fakes::BGSService
   end
 
   def fetch_veteran_info(vbms_id)
-    (self.class.veteran_records || {})[vbms_id] || default_veteran_record
+    (self.class.veteran_records || {})[vbms_id]
   end
 
   def can_access?(vbms_id)
@@ -351,10 +352,12 @@ class Fakes::BGSService
       sex: "F",
       service: [{ branch_of_service: "Army",
                   entered_on_duty_date: "02132002",
-                  released_active_duty_date: "12212003" },
+                  released_active_duty_date: "12212003",
+                  char_of_svc_code: "HON" },
                 { branch_of_service: "Navy",
                   entered_on_duty_date: "07022006",
-                  released_active_duty_date: "06282008" }]
+                  released_active_duty_date: "06282008",
+                  char_of_svc_code: "UHC" }]
     }
   end
 end

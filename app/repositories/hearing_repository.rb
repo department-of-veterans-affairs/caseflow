@@ -2,7 +2,9 @@ class HearingRepository
   class << self
     # :nocov:
     def upcoming_hearings_for_judge(css_id)
-      hearings_for(VACOLS::CaseHearing.upcoming_for_judge(css_id))
+      records = VACOLS::CaseHearing.upcoming_for_judge(css_id) +
+                VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
+      hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
     end
 
     def hearings_for_appeal(appeal_vacols_id)
@@ -22,53 +24,89 @@ class HearingRepository
       false
     end
 
+    def number_of_slots(regional_office_key:, type:, date:)
+      record = VACOLS::Staff.find_by(stafkey: regional_office_key)
+      slots_based_on_type(staff: record, type: type, date: date) if record
+    end
+
     def appeals_ready_for_hearing(vbms_id)
       AppealRepository.appeals_ready_for_hearing(vbms_id)
     end
     # :nocov:
 
     def set_vacols_values(hearing, vacols_record)
-      attrs = {
+      hearing.assign_from_vacols(vacols_attributes(vacols_record))
+      hearing
+    end
+
+    # STAFF.STC2 is the Travel Board limit for Mon and Fri
+    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
+    # STAFF.STC4 is the Video limit
+    def slots_based_on_type(staff:, type:, date:)
+      case type
+      when :central_office
+        11
+      when :video
+        staff.stc4
+      when :travel
+        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
+      end
+    end
+
+    def hearings_for(case_hearings)
+      case_hearings.map do |vacols_record|
+        next empty_dockets(vacols_record) if master_record?(vacols_record)
+        hearing = Hearing.create_from_vacols_record(vacols_record)
+        set_vacols_values(hearing, vacols_record)
+      end.flatten
+    end
+
+    private
+
+    def master_record?(record)
+      record.master_record_type.present?
+    end
+
+    def empty_dockets(vacols_record)
+      values = MasterRecordHelper.values_based_on_type(vacols_record)
+      # Travel Board master records have a date range, so we create a master record for each day
+      values[:dates].inject([]) do |result, date|
+        result << Hearings::MasterRecord.new(date: VacolsHelper.normalize_vacols_datetime(date),
+                                             type: values[:type],
+                                             master_record: true,
+                                             regional_office_key: values[:ro])
+        result
+      end
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def vacols_attributes(vacols_record)
+      type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
+      date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
+                                                  regional_office_key: vacols_record.bfregoff,
+                                                  type: type)
+      {
         vacols_record: vacols_record,
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
-        date: AppealRepository.normalize_vacols_date(vacols_record.hearing_date),
         representative_name: vacols_record.repname,
+        representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
         hold_open: vacols_record.holddays,
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
-        master_record: vacols_record.master_record?
+        veteran_first_name: vacols_record.snamef,
+        veteran_middle_initial: vacols_record.snamemi,
+        veteran_last_name: vacols_record.snamel,
+        appellant_first_name: vacols_record.sspare1,
+        appellant_middle_initial: vacols_record.sspare2,
+        appellant_last_name: vacols_record.sspare3,
+        regional_office_key: vacols_record.bfregoff,
+        type: type,
+        date: date,
+        master_record: false
       }
-      hearing.assign_from_vacols(attrs.merge(values_based_on_type(vacols_record)))
-      hearing
     end
-
-    # Fields such as 'type', 'regional_office_key' are stored in different places
-    # depending whether it is a child record or a master record (video or travel_board)
-    def values_based_on_type(vacols_record)
-      case vacols_record.master_record_type
-      when :video
-        { type: :video,
-          regional_office_key: vacols_record.folder_nr.split(" ").second
-        }
-      else
-        { type: VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym],
-          regional_office_key: vacols_record.brieff.try(:bfregoff)
-        }
-      end
-    end
-
-    private
-
-    # :nocov:
-    def hearings_for(case_hearings)
-      case_hearings.map do |vacols_record|
-        hearing = Hearing.create_from_vacols_record(vacols_record)
-        set_vacols_values(hearing, vacols_record)
-      end
-    end
-    # :nocov:
   end
 end

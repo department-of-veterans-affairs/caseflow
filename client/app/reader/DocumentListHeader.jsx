@@ -44,7 +44,7 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-        <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
+      <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
     </div>;
   }
 }

@@ -107,14 +107,14 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Primary.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
-        </div>
-      )}
+        {this.Primary.map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+            <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
+          </div>
+        )}
       </div>
 
       <h4>Secondary Colors</h4>
@@ -128,25 +128,25 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(0, 3).map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
-        </div>
-      )}
+        {this.Secondary.slice(0, 3).map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+            <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
+          </div>
+        )}
       </div>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(3).map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
-        </div>
-      )}
+        {this.Secondary.slice(3).map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+            <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
+          </div>
+        )}
       </div>
 
       <h3>Logos</h3>
@@ -158,26 +158,26 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Logos.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-        </div>
-      )}
+        {this.Logos.map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+          </div>
+        )}
       </div>
 
       <h3>Reader Categories</h3>
 
       <div className="sg-colors-swatches">
-      {this.Reader.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}>
+        {this.Reader.map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}>
+            </div>
+            <b>{this.Colors[name]}</b>
+            <p>{name === 'CertificationCategory' ? 'Certification' : name}</p>
           </div>
-          <b>{this.Colors[name]}</b>
-          <p>{name === 'CertificationCategory' ? 'Certification' : name}</p>
-        </div>
-      )}
+        )}
       </div>
 
       <h3>Text Accessibility</h3>

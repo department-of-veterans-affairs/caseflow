@@ -11,18 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170921182723) do
+ActiveRecord::Schema.define(version: 20171013213546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
-    t.integer "document_id", null: false
-    t.string  "comment",     null: false
-    t.integer "page"
-    t.integer "x"
-    t.integer "y"
-    t.integer "user_id"
+    t.integer  "document_id", null: false
+    t.string   "comment",     null: false
+    t.integer  "page"
+    t.integer  "x"
+    t.integer  "y"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
@@ -264,6 +266,28 @@ ActiveRecord::Schema.define(version: 20170921182723) do
     t.string  "comments_for_attorney"
   end
 
+  create_table "intakes", force: :cascade do |t|
+    t.integer  "detail_id",           null: false
+    t.string   "detail_type",         null: false
+    t.integer  "user_id",             null: false
+    t.string   "veteran_file_number"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.string   "completion_status"
+  end
+
+  add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
+  add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
+
+  create_table "ramp_elections", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.date   "notice_date",         null: false
+    t.date   "receipt_date"
+    t.string "option_selected"
+  end
+
+  add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
+
   create_table "tags", force: :cascade do |t|
     t.string   "text"
     t.datetime "created_at", null: false
@@ -330,8 +354,8 @@ ActiveRecord::Schema.define(version: 20170921182723) do
     t.boolean  "dismiss",            default: false
     t.string   "program"
     t.string   "name"
-    t.string   "levels",                             array: true
-    t.string   "description",                        array: true
+    t.string   "levels"
+    t.string   "description"
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
   end

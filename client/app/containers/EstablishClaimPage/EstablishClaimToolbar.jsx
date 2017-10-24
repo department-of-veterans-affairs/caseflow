@@ -70,19 +70,19 @@ export default class EstablishClaimToolbar extends React.Component {
     });
 
     ApiUtil.patch('/dispatch/establish-claim/assign').
-    then((response) => {
-      window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
-    }, () => {
-      this.props.handleAlert(
-        'error',
-        'Error',
-        'There was an error establishing the next claim. Please try again later'
-      );
+      then((response) => {
+        window.location = `/dispatch/establish-claim/${response.body.next_task_id}`;
+      }, () => {
+        this.props.handleAlert(
+          'error',
+          'Error',
+          'There was an error establishing the next claim. Please try again later'
+        );
 
-      this.setState({
-        loading: false
+        this.setState({
+          loading: false
+        });
       });
-    });
   };
 
 }

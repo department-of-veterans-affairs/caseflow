@@ -73,6 +73,7 @@ Rails.application.routes.draw do
   namespace :hearings do
     resources :dockets, only: [:index, :show]
     resources :worksheets, only: [:update, :show], param: :hearing_id
+    resources :appeals, only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
 
@@ -80,12 +81,15 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
-  namespace :admin do
-    post "establish-claim", to: "establish_claims#create"
-    get "establish-claim", to: "establish_claims#show"
-  end
 
-  resources :offices, only: :index
+  match '/intake/:any' => 'intakes#index', via: [:get]
+  resources :intakes, path: "intake", only: [:index, :create]
+
+  namespace :intake do
+    resources :ramp_intakes, path: "ramp", only: [:update, :destroy] do
+      patch 'complete', on: :member
+    end
+  end
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
@@ -121,34 +125,12 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
-    # Only allow data_setup routes if TEST_USER is set
-    if ENV["TEST_USER_ID"]
-      resources :setup, only: [:index]
-      post "setup-uncertify-appeal" => "setup#uncertify_appeal"
-      post "setup-appeal-location-date-reset" => "setup#appeal_location_date_reset"
-      post "setup-toggle-features" => "setup#toggle_features"
-      get "setup-delete-test-data" => "setup#delete_test_data"
-    end
-
     if ApplicationController.dependencies_faked?
       resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
     end
   end
-
-  require "sidekiq/web"
-  require "sidekiq/cron/web"
-  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-    # Protect against timing attacks:
-        # - See https://codahale.com/a-lesson-in-timing-attacks/
-        # - See https://thisdata.com/blog/timing-attacks-against-string-comparison/
-        # - Use & (do not use &&) so that it doesn't short circuit.
-        # - Use digests to stop length information leaking (see also ActiveSupport::SecurityUtils.variable_size_secure_compare)
-    ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
-      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
-  end
-  mount Sidekiq::Web, at: "/sidekiq"
 
   # :nocov:
 end

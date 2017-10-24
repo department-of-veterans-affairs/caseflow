@@ -33,10 +33,10 @@ export const newHearingIssueState = (state, action, spec) => {
 
   return update(state, {
     worksheet: {
-      streams: {
-        [action.payload.appealId]: {
-          issues: {
-            [action.payload.issueId]: spec
+      appeals_ready_for_hearing: {
+        [action.payload.appealKey]: {
+          worksheet_issues: {
+            [action.payload.issueKey]: spec
           }
         }
       }
@@ -62,13 +62,18 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       worksheet: { $set: action.payload.worksheet }
     });
 
-  case Constants.HANDLE_SERVER_ERROR:
+  case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
     return update(state, {
-      serverError: { $set: action.payload.err }
+      worksheetServerError: { $set: action.payload.err }
+    });
+
+  case Constants.HANDLE_DOCKET_SERVER_ERROR:
+    return update(state, {
+      docketServerError: { $set: action.payload.err }
     });
 
   case Constants.SET_REPNAME:
-    return newHearingWorksheetState(state, action, { repName: { $set: action.payload.repName } });
+    return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
   case Constants.SET_WITNESS:
     return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
@@ -112,6 +117,15 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_DESCRIPTION:
     return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
 
+  case Constants.SET_PROGRAM:
+    return newHearingIssueState(state, action, { program: { $set: action.payload.program } });
+
+  case Constants.SET_NAME:
+    return newHearingIssueState(state, action, { name: { $set: action.payload.name } });
+
+  case Constants.SET_LEVELS:
+    return newHearingIssueState(state, action, { levels: { $set: action.payload.levels } });
+
   case Constants.SET_REOPEN:
     return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
 
@@ -130,14 +144,56 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_VHA:
     return newHearingIssueState(state, action, { vha: { $set: action.payload.vha } });
 
-  case Constants.TOGGLE_SAVING:
+  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
+    return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });
+
+  case Constants.ADD_ISSUE:
     return update(state, {
-      isSaving: { $set: !state.isSaving }
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealKey]: {
+            worksheet_issues: { $push: [{ from_vacols: false,
+              edited: true,
+              vacols_sequence_id: action.payload.vacolsSequenceId }] }
+          }
+        }
+      }
     });
 
-  case Constants.SET_SAVE_FAILED:
+  case Constants.SET_ISSUE_ID:
     return update(state, {
-      saveFailed: { $set: action.payload.saveFailed }
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: {
+                id: { $set: action.payload.id }
+              }
+            }
+          }
+        }
+      }
+    });
+
+  case Constants.DELETE_ISSUE:
+    return newHearingIssueState(state, action, { _destroy: { $set: true } });
+
+  case Constants.TOGGLE_DOCKET_SAVING:
+    return update(state, { docketIsSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.TOGGLE_WORKSHEET_SAVING:
+    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
+    });
+
+  case Constants.SET_DOCKET_SAVE_FAILED:
+    return update(state, {
+      saveDocketFailed: { $set: action.payload.saveFailed }
+    });
+
+  case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
+    return update(state, {
+      saveWorksheetFailed: { $set: action.payload.saveFailed }
     });
 
   case Constants.SET_EDITED_FLAG_TO_FALSE:
@@ -149,6 +205,24 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
           }
         }
       }
+    });
+
+  case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: {
+        appeals_ready_for_hearing: {
+          [action.payload.appealIndex]: {
+            worksheet_issues: {
+              [action.payload.issueIndex]: { edited: { $set: false } }
+            }
+          }
+        }
+      }
+    });
+
+  case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      worksheet: { edited: { $set: false } }
     });
 
   default: return state;

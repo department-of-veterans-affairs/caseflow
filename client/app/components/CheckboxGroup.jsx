@@ -41,19 +41,19 @@ export default class CheckboxGroup extends React.Component {
 
       {options.map((option) =>
 
-      <div className="checkbox" key={option.id}>
-        <input
-          name={option.id}
-          onChange={onChange}
-          type="checkbox"
-          id={option.id}
-          checked={values[option.id]}
-          disabled={option.disabled ? 'disabled' : ''}
-        />
-        <label className="question-label" htmlFor={option.id}>
-          {option.label}
-        </label>
-      </div>
+        <div className="checkbox" key={option.id}>
+          <input
+            name={option.id}
+            onChange={onChange}
+            type="checkbox"
+            id={option.id}
+            checked={values[option.id]}
+            disabled={option.disabled ? 'disabled' : ''}
+          />
+          <label className="question-label" htmlFor={option.id}>
+            {option.label}
+          </label>
+        </div>
 
       )}
     </fieldset>;

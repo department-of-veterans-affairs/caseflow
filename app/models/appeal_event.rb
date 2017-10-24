@@ -25,7 +25,8 @@ class AppealEvent
       "Advance Withdrawn Death of Veteran",
       "Advance Withdrawn by Appellant/Rep",
       "Advance Failure to Respond",
-      "Remand Failure to Respond"
+      "Remand Failure to Respond",
+      "RAMP Opt-in"
     ],
     merged: [
       "Merged Appeal"

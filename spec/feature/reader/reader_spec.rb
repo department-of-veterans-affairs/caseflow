@@ -29,10 +29,12 @@ def scroll_to_bottom(element)
   EOS
 end
 
-# This utility function returns true if an element is currently visible on the page
-def in_viewport(element)
-  page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
-  " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+# Returns true if an element is currently visible on the page.
+def expect_in_viewport(element)
+  expect do
+    page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
+      " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
+  end.to become_truthy(wait: 10)
 end
 
 def get_size(element)
@@ -183,6 +185,33 @@ RSpec.feature "Reader" do
       end
     end
 
+    context "Appeals without any issues" do
+      let(:appeal) do
+        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, issues: [])
+      end
+
+      before do
+        Fakes::AppealRepository.appeal_records = [appeal]
+      end
+
+      scenario "welcome gate issues column shows no issues message" do
+        visit "/reader/appeal"
+        expect(find("#table-row-#{appeal.vacols_id}").text).to have_content("No issues on appeal")
+      end
+
+      scenario "Claims folder details issues show no issues message" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents"
+        find(".rc-collapse-header", text: "Claims folder details").click
+        expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
+      end
+
+      scenario "pdf view sidebar shows no issues message" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        find("h3", text: "Document information").click
+        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
+      end
+    end
+
     context "Welcome gate page" do
       let(:appeal2) do
         Generators::Appeal.build(vacols_record: vacols_record, documents: documents)
@@ -204,7 +233,7 @@ RSpec.feature "Reader" do
       end
 
       before do
-        Fakes::CaseAssignmentRepository.appeal_records = [appeal, appeal2]
+        Fakes::AppealRepository.appeal_records = [appeal, appeal2, appeal3, appeal4, appeal5]
       end
 
       scenario "Enter a case" do
@@ -671,7 +700,7 @@ RSpec.feature "Reader" do
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
 
-        expect { in_viewport(comment_icon_id) }.to become_truthy
+        expect_in_viewport(comment_icon_id)
       end
 
       scenario "Scroll to comment" do
@@ -763,19 +792,16 @@ RSpec.feature "Reader" do
 
           click_on documents[3].type
 
-          # Expect the 23 page to only be rendered once scrolled to.
-          expect(find("#pageContainer23")).to_not have_content("Rating Decision")
-
           fill_in "page-progress-indicator-input", with: "23\n"
 
           expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
 
-          expect(in_viewport("pageContainer23")).to be true
+          expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
 
           # Entering invalid values leaves the viewer on the same page.
           fill_in "page-progress-indicator-input", with: "abcd\n"
-          expect(in_viewport("pageContainer23")).to be true
+          expect_in_viewport("pageContainer23")
           expect(find_field("page-progress-indicator-input").value).to eq "23"
         end
       end
@@ -1179,7 +1205,7 @@ RSpec.feature "Reader" do
       click_on "Back to claims folder"
 
       expect(page).to have_content("#{num_documents} Documents")
-      expect(in_viewport("read-indicator")).to be true
+      expect_in_viewport("read-indicator")
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
@@ -1190,7 +1216,7 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("#{num_documents} Documents")
 
-      expect(in_viewport("read-indicator")).to be true
+      expect_in_viewport("read-indicator")
     end
   end
 end

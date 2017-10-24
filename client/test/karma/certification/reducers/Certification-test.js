@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as Certification from
-    '../../../../app/certification/reducers/Certification';
+  '../../../../app/certification/reducers/Certification';
 import { getBlankInitialState } from './util';
 import * as Constants from
-    '../../../../app/certification/constants/constants';
+  '../../../../app/certification/constants/constants';
 
 describe('.updateProgressBar', () => {
   it('should update the progress bar', () => {
@@ -16,7 +16,7 @@ describe('.updateProgressBar', () => {
     };
 
     expect(Certification.updateProgressBar(initialState, action).
-        currentSection).to.eq('current section');
+      currentSection).to.eq('current section');
   });
 });
 

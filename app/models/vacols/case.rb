@@ -6,8 +6,9 @@ class VACOLS::Case < VACOLS::Record
   has_one    :folder,          foreign_key: :ticknum
   has_one    :representative,  foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
-  has_many   :issues,          foreign_key: :isskey
+  has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
+  has_many   :case_hearings,   foreign_key: :folder_nr
 
   class InvalidLocationError < StandardError; end
 
@@ -39,6 +40,7 @@ class VACOLS::Case < VACOLS::Record
     "G" => "Advance Failure to Respond",
     "L" => "Manlincon Remand",
     "M" => "Merged Appeal",
+    "P" => "RAMP Opt-in",
     "Q" => "Recon Motion Withdrawn",
     "R" => "Reconsideration by Letter",
     "V" => "Motion to Vacate Withdrawn",
@@ -117,7 +119,7 @@ class VACOLS::Case < VACOLS::Record
   # NOTE(jd): This is a list of the valid locations that Caseflow
   # supports updating an appeal to. This is a subset of the overall locations
   # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w(50 51 53 54 98).freeze
+  VALID_UPDATE_LOCATIONS = %w(50 51 53 54 77 98 99).freeze
 
   JOIN_ISSUE_COUNT = "
     inner join
@@ -234,13 +236,15 @@ class VACOLS::Case < VACOLS::Record
     end
   end
 
-  def self.aod(vacols_id)
+  ##
+  # This method takes an array of vacols ids and fetches their aod status.
+  #
+  def self.aod(vacols_ids)
     conn = connection
-    vacols_id = conn.quote(vacols_id)
 
     conn.transaction do
       query = <<-SQL
-        SELECT (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
+        SELECT BRIEFF.BFKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
         FROM BRIEFF
 
         LEFT JOIN (
@@ -258,14 +262,18 @@ class VACOLS::Case < VACOLS::Record
           GROUP BY FOLDER_NR
         ) AOD_HEARINGS
         ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-        WHERE BRIEFF.BFKEY = #{vacols_id}
+        WHERE BRIEFF.BFKEY IN (?)
       SQL
 
-      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_id}", name: "Case.aod",
-                                                                              service: :vacols) do
-        conn.exec_query(query)
+      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
+                                                                               service: :vacols) do
+        conn.exec_query(sanitize_sql_array([query, vacols_ids]))
       end
-      aod_result.to_hash.first["aod"]
+
+      aod_result.to_hash.reduce({}) do |memo, result|
+        memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
+        memo
+      end
     end
   end
 
