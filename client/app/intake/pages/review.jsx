@@ -7,17 +7,23 @@ import CancelButton from '../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../components/Button';
 import { setOptionSelected, setReceiptDate, submitReview } from '../redux/actions';
-import { REQUEST_STATE, PAGE_PATHS } from '../constants';
+import { getRampElectionStatus } from '../redux/selectors';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 
 class Review extends React.PureComponent {
   render() {
     const {
       rampElection,
-      veteran
+      veteranName,
+      rampElectionStatus
     } = this.props;
 
-    if (!rampElection.intakeId) {
+    switch (rampElectionStatus) {
+    case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN}/>;
+    case RAMP_INTAKE_STATES.COMPLETED:
+      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+    default:
     }
 
     const radioOptions = [
@@ -36,7 +42,7 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      <h1>Review { veteran.name }'s opt-in request</h1>
+      <h1>Review { veteranName }'s opt-in request</h1>
       <p>Check the Veteran's RAMP Opt-In Election form in the Centralized Portal.</p>
 
       <RadioField
@@ -98,9 +104,10 @@ export class ReviewButtons extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, rampElection }) => ({
-    veteran,
-    rampElection
+  (state) => ({
+    veteranName: state.veteran.name,
+    rampElection: state.rampElection,
+    rampElectionStatus: getRampElectionStatus(state)
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
