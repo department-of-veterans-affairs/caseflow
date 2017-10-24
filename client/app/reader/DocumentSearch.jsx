@@ -9,9 +9,16 @@ import { searchText, getDocumentText } from './actions';
 import _ from 'lodash';
 
 export class DocumentSearch extends React.PureComponent {
+  constructor() {
+    super();
+    
+    this.sentAction = {};
+  }
+
   onChange = (value) => {
-    if (_.isEmpty(this.props.pdfText)) {
+    if (_.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
+      this.sentAction[this.props.file] = true;
     }
 
     this.props.searchText(value);

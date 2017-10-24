@@ -334,7 +334,11 @@ export class Pdf extends React.PureComponent {
       {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
       <div
         id={this.props.file}
-        className={'cf-pdf-page pdfViewer singlePageView'}>
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%'
+        }}>
         {pages}
       </div>
     </div>;

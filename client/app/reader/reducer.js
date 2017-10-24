@@ -183,7 +183,7 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  pages: {},
+  pageDimensions: {},
   pdfDocuments: {},
   text: [],
   documentSearchString: null,
@@ -1026,55 +1026,17 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_UP_PDF_PAGE: {
-    let innerObject = {
-      [action.payload.pageIndex]: {
-        $set: action.payload.page
-      }
-    };
-
-    if (!state.pages[action.payload.file]) {
-      innerObject = {
-        $set: {
-          [action.payload.pageIndex]: action.payload.page
-        }
-      };
-    }
+  case Constants.SET_UP_PAGE_DIMENSIONS:
     return update(
       state,
       {
-        pages: {
-          [action.payload.file]: innerObject
+        pageDimensions: {
+          [`${action.payload.file}-${action.payload.pageIndex}`]: {
+            $set: action.payload.dimensions
+          }
         }
       }
     );
-  }
-  case Constants.CLEAR_PDF_PAGE: {
-    // We only want to remove the page and container if we're cleaning up the same page that is
-    // currently stored here. This is to avoid a race condition where a user returns to this
-    // page and the new page object is stored here before we have a chance to destroy the
-    // old object.
-    if (action.payload.page &&
-      _.get(state.pages, [action.payload.file, action.payload.pageIndex, 'page']) === action.payload.page) {
-      return update(
-        state,
-        {
-          pages: {
-            [action.payload.file]: {
-              [action.payload.pageIndex]: {
-                $merge: {
-                  page: null,
-                  container: null
-                }
-              }
-            }
-          }
-        }
-      );
-    }
-
-    return state;
-  }
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,

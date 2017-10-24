@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
-import { List, CellMeasurer, AutoSizer } from 'react-virtualized';
+import { List, CellMeasurer, AutoSizer, CellMeasurerCache } from 'react-virtualized';
 
 const PAGE_HEIGHT = 1056;
 
@@ -21,6 +21,10 @@ export class PdfFile extends React.PureComponent {
     this.loadingTask = null;
     this.pdfDocument = null;
     this.list = null;
+
+    this._cache = new CellMeasurerCache({
+      fixedWidth: true
+    });
   }
 
   componentDidMount = () => {
@@ -57,24 +61,34 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = ({ index, key, style }) => {
-    return <div style={style} key={key}>
-      <PdfPage
-        scrollTop={this.props.scrollTop}
-        scrollWindowCenter={this.props.scrollWindowCenter}
-        documentId={this.props.documentId}
-        file={this.props.file}
-        pageIndex={index}
-        isVisible={this.props.isVisible}
-        scale={this.props.scale}
-        pdfDocument={this.props.pdfDocument}
-      />
-    </div>;
+  getPage = ({ index, key, style, parent }) => {
+    return <CellMeasurer
+        cache={this._cache}
+        columnIndex={0}
+        key={key}
+        rowIndex={index}
+        parent={parent}>
+        {({ measure }) => (
+          <div style={style}>
+            <PdfPage
+              scrollTop={this.props.scrollTop}
+              scrollWindowCenter={this.props.scrollWindowCenter}
+              documentId={this.props.documentId}
+              file={this.props.file}
+              pageIndex={index}
+              isVisible={this.props.isVisible}
+              scale={this.props.scale}
+              pdfDocument={this.props.pdfDocument}
+              measure={measure}
+            />
+          </div>
+        )}
+      </CellMeasurer>;
     // return <div key={key} , background: '#FFFFFF'}}></div>;
   }
 
   getRowHeight = ({ index }) => {
-    return (_.get(this.props.pages, [index, 'dimensions', 'height'], PAGE_HEIGHT) + 25) * this.props.scale
+    return 1000;//(_.get(this.props.pages, [index, 'dimensions', 'height'], PAGE_HEIGHT) + 25) * this.props.scale
   }
 
   getList = (list) => this.list = list
@@ -98,10 +112,9 @@ export class PdfFile extends React.PureComponent {
       return <AutoSizer>{({ width, height }) =>
           <List
             ref={this.getList}
-            estimatedRowSize={780}
             height={height}
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
-            rowHeight={this.getRowHeight}
+            rowHeight={this._cache.rowHeight}
             rowRenderer={this.getPage}
             width={width}
           />}
