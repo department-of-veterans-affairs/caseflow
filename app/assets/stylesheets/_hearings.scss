@@ -361,6 +361,22 @@ $color-hearings-saving: #777;
     vertical-align: top;
     padding: .5em;
 
+    &:nth-of-type(1) {
+      width: 45px;
+    }
+
+    &:nth-of-type(2) {
+      width: 180px;
+    }
+
+    &:nth-of-type(3) {
+      width: 140px;
+    }
+
+    &:nth-of-type(4) {
+      width: 190px;
+    }
+
     &:nth-of-type(5) {
       width: 20%;
     }
