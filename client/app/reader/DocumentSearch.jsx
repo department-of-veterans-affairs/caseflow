@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
 import { connect } from 'react-redux';
-import { getTextSearch, getTextForFile } from './selectors';
+import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
 import { searchText, getDocumentText, updateSearchIndex } from './actions';
 import _ from 'lodash';
@@ -35,8 +35,9 @@ export class DocumentSearch extends React.PureComponent {
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
       />
-      Found on pages: {this.props.pageTexts.map((page) => page.pageIndex).join(', ')}
-      Index: {this.props.searchIndex}
+      Found on pages: {this.props.pageTexts.map((page) => page.pageIndex).join(', ')}<br />
+      Index: {this.props.getCurrentMatch}<br />
+      Total matches: {this.props.totalMatchesInFile}
     </div>;
   }
 }
@@ -46,10 +47,11 @@ DocumentSearch.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
-  searchIndex: state.readerReducer.documentSearchIndex,
   pdfDocument: state.readerReducer.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
-  pageTexts: getTextSearch(state, props)
+  pageTexts: getTextSearch(state, props),
+  totalMatchesInFile: getTotalMatchesInFile(state, props),
+  getCurrentMatch: getCurrentMatchIndex(state, props)
 });
 
 const mapDispatchToProps = (dispatch) => ({

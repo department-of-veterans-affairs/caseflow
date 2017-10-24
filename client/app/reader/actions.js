@@ -858,11 +858,11 @@ export const updateSearchIndex = (increment) => ({
   }
 })
 
-export const setDocumentSearch = (searchString) => ({
-  type: Constants.SET_DOCUMENT_SEARCH,
-  payload: {
-    searchString
-  }
+export const zeroSearchIndex = () => ({
+  type: Constants.ZERO_SEARCH_INDEX
 });
 
-export const searchText = createSearchAction('extractedText');
+export const searchText = (searchText) => (dispatch) => {
+  dispatch(zeroSearchIndex());
+  dispatch(createSearchAction('extractedText')(searchText));
+}

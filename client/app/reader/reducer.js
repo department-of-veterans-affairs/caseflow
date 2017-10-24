@@ -1098,13 +1098,10 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_DOCUMENT_SEARCH:
+  case Constants.ZERO_SEARCH_INDEX:
     return update(
       state,
       {
-        documentSearchString: {
-          $set: action.payload.searchString
-        },
         documentSearchIndex: {
           $set: 0
         }

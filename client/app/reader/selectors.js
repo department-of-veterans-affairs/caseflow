@@ -90,3 +90,27 @@ export const getTextForFile = createSelector(
   [getExtractedText, getFile],
   (extractedText, file) => _.filter(extractedText, (pageText) => pageText.file === file)
 );
+
+export const getMatchesPerPageInFile = createSelector(
+  [getTextSearch, text],
+  (matchedPages, txt) => _(matchedPages).
+    map((page) => ({
+      id: page.id,
+      matches: (page.text.match(new RegExp(txt, 'gi')) || []).length
+    })).
+    value()
+);
+
+export const getTotalMatchesInFile = createSelector(
+  [getMatchesPerPageInFile],
+  (matches) => _(matches).
+    map((match) => match.matches).
+    sum()
+);
+
+const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
+
+export const getCurrentMatchIndex = createSelector(
+  [getTotalMatchesInFile, getSelectedIndex],
+  (totalMatchesInFile, selectedIndex) => (selectedIndex + totalMatchesInFile) % totalMatchesInFile
+)
