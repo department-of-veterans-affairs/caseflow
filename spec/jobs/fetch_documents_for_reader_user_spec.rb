@@ -83,7 +83,6 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when a reader user with 1 appeal is provided" do
-
       let!(:expected_slack_msg) do
         "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. It retrieved 1 documents for 1 / 1 appeals and 0 document(s) failed.\n" \
       end
@@ -93,7 +92,6 @@ describe FetchDocumentsForReaderUserJob do
           reader_user.user.id
         end
         it "retrieves the appeal document" do
-
           expect_all_calls_for_user(reader_user.user, appeal_with_doc1, expected_doc1, doc1_expected_content)
           FetchDocumentsForReaderUserJob.perform_now(reader_user)
 
@@ -107,7 +105,6 @@ describe FetchDocumentsForReaderUserJob do
           reader_user_w_many_roles.user.id
         end
         it "retrieves the appeal document" do
-
           expect_all_calls_for_user(reader_user_w_many_roles.user, appeal_with_doc2, expected_doc2, doc2_expected_content)
           FetchDocumentsForReaderUserJob.perform_now(reader_user_w_many_roles)
 
@@ -118,7 +115,6 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when VBMS exception is thrown" do
-
       context "on the first appeal" do
         let!(:expected_slack_msg) do
           "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. It retrieved 0 documents for 0 / 2 appeals and 0 document(s) failed.\n"
@@ -128,7 +124,6 @@ describe FetchDocumentsForReaderUserJob do
         end
 
         it "returns an ERROR log with status when a VBMS client error occurs" do
-
           expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
             .with(reader_user.user.css_id)
             .and_return([appeal_with_doc1, appeal_with_doc2]).once
@@ -155,7 +150,6 @@ describe FetchDocumentsForReaderUserJob do
         end
 
         it "throws an error and logs an error with status when a VBMS client error occurs" do
-
           expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
             .with(reader_user_w_many_roles.user.css_id)
             .and_return([appeal_with_doc1, appeal_with_doc2]).once
@@ -202,7 +196,6 @@ describe FetchDocumentsForReaderUserJob do
           FetchDocumentsForReaderUserJob.perform_now(reader_user)
         rescue HTTPClient::KeepAliveDisconnected
         end
-
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
         expect(S3Service.files[expected_doc2.vbms_document_id]).to be_nil

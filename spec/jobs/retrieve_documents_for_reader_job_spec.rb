@@ -9,7 +9,6 @@ describe RetrieveDocumentsForReaderJob do
 
   context ".perform" do
     context "A user exists with reader privileges" do
-
       let!(:user_with_reader_role) do
         Generators::User.create(roles: ["Reader"])
       end
@@ -43,10 +42,10 @@ describe RetrieveDocumentsForReaderJob do
       context "with a limit parameter of 5 passed in" do
         before do
           # create 10 users
-          10.times {
+          10.times do
             u = Generators::User.create(roles: ["Reader"])
             Generators::ReaderUser.create(user_id: u.id)
-          }
+          end
         end
         it "should only run FetchDocumentsForReaderUserJob 5 times" do
           expect(FetchDocumentsForReaderUserJob).to receive(:perform_now).with(anything).exactly(5).times
