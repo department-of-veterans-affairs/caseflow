@@ -18,7 +18,9 @@ Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://git
 
 Then run the following:
 
-    rbenv install <the version of Ruby defined in .travis.yml>
+    # rbenv install <the version of Ruby defined in .travis.yml>
+    # For example:
+    # rbenv install 2.2.4
 
     gem install bundler
 
