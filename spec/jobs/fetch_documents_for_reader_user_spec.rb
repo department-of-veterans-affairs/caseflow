@@ -69,10 +69,6 @@ describe FetchDocumentsForReaderUserJob do
       Faker::Pokemon.name
     end
 
-    let!(:current_user_id) do
-      nil
-    end
-
     before do
       # Reset S3 mock files
       S3Service.files = nil
@@ -239,7 +235,37 @@ describe FetchDocumentsForReaderUserJob do
         expect(S3Service.files).to be_nil
       end
     end
+    context "when S3 throws an exception" do
+      let!(:expected_slack_msg) do
+        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. It retrieved 1 documents for 1 / 2 appeals and 1 document(s) failed.\n"
+      end
 
+      let!(:current_user_id) do
+        reader_user.user.id
+      end
+
+      it "throws an exception and properly logs this" do
+        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.user.css_id)
+          .and_return([appeal_with_doc1, appeal_with_doc2]).once
+
+        expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
+
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user.user)
+          .and_return([expected_doc2]).once
+
+        expect(expected_doc2).to receive(:fetch_content)
+          .and_raise(Aws::S3::Errors::ServiceError.new("Error", nil)).once
+
+        begin
+          FetchDocumentsForReaderUserJob.perform_now(reader_user)
+        rescue Aws::S3::Errors::ServiceError
+        end
+
+        expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
+        expect(S3Service.files[expected_doc2.vbms_document_id]).to be_nil
+        expect(S3Service.files[unexpected_document.vbms_document_id]).to be_nil
+      end
+    end
   end
 
   def dont_expect_calls_for_appeal(appeal, doc)
@@ -263,13 +289,5 @@ describe FetchDocumentsForReaderUserJob do
   def expect_calls_for_doc(doc, content)
     expect(S3Service).to receive(:exists?).with(doc.vbms_document_id).and_return(false).once
     expect(EFolderService).to receive(:fetch_document_file).with(doc).and_return(content).once
-  end
-
-  def create_doc_and_appeal
-    doc = Generators::Document.build(type: "BVA Decision", received_at: 10.days.ago)
-    Generators::Appeal.create(
-      vbms_id: doc.vbms_document_id,
-      vacols_record: { template: :remand_decided, decision_date: 7.days.ago }
-    )
   end
 end
