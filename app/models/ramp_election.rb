@@ -1,6 +1,8 @@
 class RampElection < ActiveRecord::Base
   attr_reader :saving_receipt
 
+  has_many :ramp_intakes, as: :detail
+
   enum option_selected: {
     supplemental_claim: "supplemental_claim",
     higher_level_review: "higher_level_review",
@@ -12,6 +14,10 @@ class RampElection < ActiveRecord::Base
 
   def start_saving_receipt
     @saving_receipt = true
+  end
+
+  def successfully_received?
+    ramp_intakes.where(completion_status: "success").where.not(completed_at: nil).any?
   end
 
   private

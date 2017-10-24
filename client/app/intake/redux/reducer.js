@@ -1,6 +1,6 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, formatDate } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const formatAppeals = (appeals) => {
@@ -87,7 +87,10 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
       finishConfirmedError: null
     },
     cancelModalVisible: false,
-    searchErrorCode: null
+    searchErrorCode: null,
+    searchErrorData: {
+      duplicateNoticeDate: null
+    },
   }, data.currentIntake)
 );
 
@@ -154,6 +157,11 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     return update(state, {
       searchErrorCode: {
         $set: action.payload.errorCode
+      },
+      searchErrorData: {
+        duplicateNoticeDate: {
+          $set: formatDate(action.payload.errorData.notice_date)
+        }
       },
       requestStatus: {
         fileNumberSearch: {

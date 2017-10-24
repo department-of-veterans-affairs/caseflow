@@ -201,6 +201,22 @@ describe RampIntake do
         RampElection.create!(veteran_file_number: "64205555", notice_date: 6.days.ago)
       end
 
+      context "the ramp election is complete" do
+        let!(:complete_intake) do
+          RampIntake.create!(
+            user: user,
+            detail: ramp_election,
+            completed_at: Time.zone.now,
+            completion_status: :success
+          )
+        end
+
+        it "adds no_eligible_appeals and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq(:ramp_election_already_complete)
+        end
+      end
+
       context "there are no eligible appeals" do
         let(:appeal_vacols_record) { :full_grant_decided }
 

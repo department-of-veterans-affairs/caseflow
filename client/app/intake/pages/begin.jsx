@@ -8,77 +8,83 @@ import { doFileNumberSearch, setFileNumberSearch } from '../redux/actions';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { getRampElectionStatus } from '../redux/selectors';
 
-// The values in this switch statement need to be snake_case
-// because they're being matched to server response values.
-const searchErrors = {
-  invalid_file_number: {
-    title: 'Veteran ID not found',
-    body: 'Please enter a valid Veteran ID and try again.'
-  },
-  veteran_not_found: {
-    title: 'Veteran ID not found',
-    body: 'Please enter a valid Veteran ID and try again.'
-  },
-  veteran_not_accessible: {
-    title: 'You don\'t have permission to view this veteran\'s information​',
-    body: 'Please enter a valid Veteran ID and try again.'
-  },
-  did_not_receive_ramp_election: {
-    title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
-    body: <div>
-      <p>
-        Please check the Veteran ID entered, and if the Veteran ID
-        is correct, take the following actions outside Caseflow:
-      </p>
-      <ul>
-        <li>
-          Upload the RAMP Election to the VBMS eFolder with
-          Document Type <b>Correspondence</b> and Subject Line "RAMP Election".
-        </li>
-        <li>
-          Notify the Veteran by mail of his/her ineligibility to participate
-          in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
-        </li>
-        <li>
-          Document your actions as a permanent note in VBMS.
-        </li>
-      </ul>
-    </div>
-  },
-  no_eligible_appeals: {
-    title: 'This Veteran is not eligible to participate in RAMP.',
-    body: <div>
-      <p>
-        Please check the Veteran ID entered, and if the Veteran ID
-        is correct, take the following actions outside Caseflow:
-      </p>
-      <ul>
-        <li>
-          Upload the RAMP Election to the VBMS eFolder with
-          Document Type <b>Correspondence</b> and Subject Line "RAMP Election".
-        </li>
-        <li>
-          Notify the Veteran by mail of his/her ineligibility to participate
-          in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
-        </li>
-        <li>
-          Document your actions as a permanent note in VBMS.
-        </li>
-      </ul>
-    </div>
-  },
-  default: {
-    title: 'Something went wrong',
-    body: 'Please try again. If the problem persists, please contact Caseflow support.'
-  }
-};
-
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => this.props.doFileNumberSearch(this.props.fileNumberSearchInput)
 
   clearSearch = () => this.props.setFileNumberSearch('')
 
-  getSearchErrorAlert = (searchErrorCode) => {
+  getSearchErrorAlert = (searchErrorCode, searchErrorData) => {
+    // The values in this switch statement need to be snake_case
+    // because they're being matched to server response values.
+    const searchErrors = {
+      invalid_file_number: {
+        title: 'Veteran ID not found',
+        body: 'Please enter a valid Veteran ID and try again.'
+      },
+      veteran_not_found: {
+        title: 'Veteran ID not found',
+        body: 'Please enter a valid Veteran ID and try again.'
+      },
+      veteran_not_accessible: {
+        title: 'You don\'t have permission to view this veteran\'s information​',
+        body: 'Please enter a valid Veteran ID and try again.'
+      },
+      did_not_receive_ramp_election: {
+        title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
+        body: <div>
+          <p>
+            Please check the Veteran ID entered, and if the Veteran ID
+            is correct, take the following actions outside Caseflow:
+          </p>
+          <ul>
+            <li>
+              Upload the RAMP Election to the VBMS eFolder with
+              Document Type <b>Correspondence</b> and Subject Line "RAMP Election".
+            </li>
+            <li>
+              Notify the Veteran by mail of his/her ineligibility to participate
+              in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
+            </li>
+            <li>
+              Document your actions as a permanent note in VBMS.
+            </li>
+          </ul>
+        </div>
+      },
+      ramp_election_already_complete: {
+        title: "Opt-in already processed in Caseflow",
+        body: `A RAMP opt-in with the notice date ${searchErrorData.duplicateNoticeDate}` +
+          ' was already processed in Caseflow. Please ensure this' +
+          ' is a duplicate election form, and proceed to the next intake.'
+      },
+      no_eligible_appeals: {
+        title: 'This Veteran is not eligible to participate in RAMP.',
+        body: <div>
+          <p>
+            Please check the Veteran ID entered, and if the Veteran ID
+            is correct, take the following actions outside Caseflow:
+          </p>
+          <ul>
+            <li>
+              Upload the RAMP Election to the VBMS eFolder with
+              Document Type <b>Correspondence</b> and Subject Line "RAMP Election".
+            </li>
+            <li>
+              Notify the Veteran by mail of his/her ineligibility to participate
+              in RAMP using the <b>RAMP Ineligible Letter</b> in <em>Letter Creator</em>.
+            </li>
+            <li>
+              Document your actions as a permanent note in VBMS.
+            </li>
+          </ul>
+        </div>
+      },
+      default: {
+        title: 'Something went wrong',
+        body: 'Please try again. If the problem persists, please contact Caseflow support.'
+      }
+    };
+
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 
     return <Alert title={error.title} type="error" lowerMargin>
@@ -89,6 +95,7 @@ class Begin extends React.PureComponent {
   render() {
     const {
       searchErrorCode,
+      searchErrorData,
       rampElectionStatus
     } = this.props;
 
@@ -103,7 +110,7 @@ class Begin extends React.PureComponent {
     }
 
     return <div>
-      { searchErrorCode && this.getSearchErrorAlert(searchErrorCode) }
+      { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
       <h1>Welcome to Caseflow Intake!</h1>
       <p>To begin processing this opt-in request, please enter the Veteran ID below.</p>
@@ -126,7 +133,8 @@ export default connect(
     fileNumberSearchInput: state.inputs.fileNumberSearch,
     fileNumberSearchRequestStatus: state.requestStatus.fileNumberSearch,
     rampElectionStatus: getRampElectionStatus(state),
-    searchErrorCode: state.searchErrorCode
+    searchErrorCode: state.searchErrorCode,
+    searchErrorData: state.searchErrorData
   }),
   (dispatch) => bindActionCreators({
     doFileNumberSearch,

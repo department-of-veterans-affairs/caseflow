@@ -75,6 +75,33 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("This Veteran is not eligible to participate in RAMP.")
     end
 
+    scenario "Search for a veteran that has a RAMP election already processed" do
+      ramp_election = RampElection.create!(
+        veteran_file_number: "12341234",
+        notice_date: 5.days.ago
+      )
+
+      RampIntake.create!(
+        user: current_user,
+        detail: ramp_election,
+        completed_at: Time.zone.now,
+        completion_status: :success
+      )
+
+      # Validate you're redirected back to the search page if you haven't started yet
+      visit "/intake/completed"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      visit "/intake/review-request"
+      fill_in "Search small", with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to have_content(
+        "A RAMP opt-in with the notice date 08/01/2017 was already processed"
+      )
+    end
+
     scenario "Search for a veteran that has received a RAMP election" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
