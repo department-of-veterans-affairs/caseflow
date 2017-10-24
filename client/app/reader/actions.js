@@ -115,20 +115,6 @@ export const setDocListScrollPosition = (scrollTop) => ({
   }
 });
 
-export const toggleDropdownFilterVisibility = (filterName) => ({
-  type: Constants.TOGGLE_FILTER_DROPDOWN,
-  payload: {
-    filterName
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'toggle-dropdown-filter',
-      label: filterName
-    }
-  }
-});
-
 export const changeSortState = (sortBy) => ({
   type: Constants.SET_SORT,
   payload: {
@@ -152,19 +138,6 @@ export const onScrollToComment = (scrollToComment) => ({
   payload: { scrollToComment }
 });
 
-export const startEditAnnotation = (annotationId) => ({
-  type: Constants.START_EDIT_ANNOTATION,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'start-edit-annotation'
-    }
-  }
-});
-
 export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
   type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
   payload: {
@@ -178,15 +151,7 @@ export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
     }
   }
 });
-export const closeAnnotationDeleteModal = () => ({
-  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'close-annotation-delete-modal'
-    }
-  }
-});
+
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
   payload: {
@@ -265,18 +230,6 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
     );
 };
 
-export const cancelEditAnnotation = (annotationId) => ({
-  type: Constants.CANCEL_EDIT_ANNOTATION,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'cancel-edit-annotation'
-    }
-  }
-});
 export const updateAnnotationContent = (content, annotationId) => ({
   type: Constants.UPDATE_ANNOTATION_CONTENT,
   payload: {
@@ -316,47 +269,6 @@ export const resetJumpToPage = () => ({
   type: Constants.RESET_JUMP_TO_PAGE
 });
 
-export const requestEditAnnotation = (annotation) => (dispatch) => {
-  // If the user removed all text content in the annotation, ask them if they're
-  // intending to delete it.
-  if (!annotation.comment) {
-    dispatch(openAnnotationDeleteModal(annotation.id, 'open-by-deleting-all-annotation-content'));
-
-    return;
-  }
-
-  dispatch({
-    type: Constants.REQUEST_EDIT_ANNOTATION,
-    payload: {
-      annotationId: annotation.id
-    },
-    meta: {
-      analytics: {
-        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-        action: 'request-edit-annotation'
-      }
-    }
-  });
-
-  const data = ApiUtil.convertToSnakeCase({ annotation });
-
-  ApiUtil.patch(`/document/${annotation.documentId}/annotation/${annotation.id}`, { data }, ENDPOINT_NAMES.ANNOTATION).
-    then(
-      () => dispatch({
-        type: Constants.REQUEST_EDIT_ANNOTATION_SUCCESS,
-        payload: {
-          annotationId: annotation.id
-        }
-      }),
-      () => dispatch({
-        type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
-        payload: {
-          annotationId: annotation.id
-        }
-      })
-    );
-};
-
 export const startPlacingAnnotation = (interactionType) => ({
   type: Constants.START_PLACING_ANNOTATION,
   meta: {
@@ -383,17 +295,6 @@ export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
     x: coordinates.xPosition,
     y: coordinates.yPosition,
     documentId
-  }
-});
-
-export const stopPlacingAnnotation = (interactionType) => ({
-  type: Constants.STOP_PLACING_ANNOTATION,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'stop-placing-annotation',
-      label: interactionType
-    }
   }
 });
 
@@ -481,25 +382,6 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   }
 });
 
-export const selectCurrentPdfLocally = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
-});
-
-export const selectCurrentPdf = (docId) => (dispatch) => {
-  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
-    catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Error marking as read', docId, err);
-    });
-
-  dispatch(
-    selectCurrentPdfLocally(docId)
-  );
-};
-
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
   payload: {
@@ -538,20 +420,7 @@ export const setTagFilter = (text, checked, tagId) => ({
   }
 });
 
-export const setCategoryFilter = (categoryName, checked) => ({
-  type: Constants.SET_CATEGORY_FILTER,
-  payload: {
-    categoryName,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'select' : 'unselect'}-category-filter`,
-      label: categoryName
-    }
-  }
-});
+
 
 export const clearTagFilters = () => ({
   type: Constants.CLEAR_TAG_FILTER,
@@ -626,16 +495,6 @@ export const fetchedNoAppealsUsingVeteranId = () => ({
   type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
 });
 
-export const fetchAppealDetails = (vacolsId) => (
-  (dispatch) => {
-    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-
-      dispatch(onReceiveAppealDetails(returnedObject.appeal));
-    }, () => dispatch(onAppealDetailsLoadingFail()));
-  }
-);
-
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
   payload: { appeals }
@@ -706,26 +565,6 @@ export const addNewTag = (doc, tags) => (
   }
 );
 
-export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
-  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
-  payload: {
-    openedAccordionSections
-  },
-  meta: {
-    analytics: (triggerEvent) => {
-      const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
-      const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
-
-      addedSectionKeys.forEach(
-        (newKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
-      );
-      removedSectionKeys.forEach(
-        (oldKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
-      );
-    }
-  }
-});
-
 export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
   payload: {
@@ -739,18 +578,6 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
     }
   }
 });
-
-export const togglePdfSidebar = () => ({
-  type: Constants.TOGGLE_PDF_SIDEBAR,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'toggle-pdf-sidebar',
-      label: (nextState) => nextState.readerReducer.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
-    }
-  }
-});
-
 
 export const handleToggleCommentOpened = (docId) => ({
   type: Constants.TOGGLE_COMMENT_LIST,
