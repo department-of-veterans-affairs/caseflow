@@ -3,7 +3,7 @@
     {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 86,
-      "fingerprint": "108b511c30dd04b89bb7f85ddf0c0603f46405bcc7d8dec11a864eff909ed1b7",
+      "fingerprint": "2494532c77b2833cf67088a95d0a7b9b9c66b4b2277cbfa04ea936cd0bb25c24",
       "check_name": "ForgerySetting",
       "message": "protect_from_forgery should be configured with 'with: :exception'",
       "file": "app/controllers/api/application_controller.rb",
