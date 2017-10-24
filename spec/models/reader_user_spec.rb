@@ -8,7 +8,7 @@ describe ReaderUser do
         Generators::User.create(roles: ["NotReaderUser"])
       end
 
-      @users_with_reader_roles = 10.times.map do |_i|
+      @users_with_reader_roles = Array.new(10) do
         Generators::User.create(roles: ["Reader"])
       end
     end

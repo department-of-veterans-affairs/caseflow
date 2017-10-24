@@ -84,7 +84,8 @@ describe FetchDocumentsForReaderUserJob do
 
     context "when a reader user with 1 appeal is provided" do
       let!(:expected_slack_msg) do
-        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. It retrieved 1 documents for 1 / 1 appeals and 0 document(s) failed.\n" \
+        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
+        "It retrieved 1 documents for 1 / 1 appeals and 0 document(s) failed.\n" \
       end
 
       context "the user has one reader role" do
@@ -105,7 +106,12 @@ describe FetchDocumentsForReaderUserJob do
           reader_user_w_many_roles.user.id
         end
         it "retrieves the appeal document" do
-          expect_all_calls_for_user(reader_user_w_many_roles.user, appeal_with_doc2, expected_doc2, doc2_expected_content)
+          expect_all_calls_for_user(
+            reader_user_w_many_roles.user,
+            appeal_with_doc2,
+            expected_doc2,
+            doc2_expected_content
+          )
           FetchDocumentsForReaderUserJob.perform_now(reader_user_w_many_roles)
 
           expect(S3Service.files[expected_doc2.vbms_document_id]).to eq(doc2_expected_content)
@@ -117,7 +123,8 @@ describe FetchDocumentsForReaderUserJob do
     context "when VBMS exception is thrown" do
       context "on the first appeal" do
         let!(:expected_slack_msg) do
-          "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. It retrieved 0 documents for 0 / 2 appeals and 0 document(s) failed.\n"
+          "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. " \
+            "It retrieved 0 documents for 0 / 2 appeals and 0 document(s) failed.\n"
         end
         let!(:current_user_id) do
           reader_user.user.id
@@ -131,18 +138,16 @@ describe FetchDocumentsForReaderUserJob do
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
             .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>")).once
 
-          begin
-            FetchDocumentsForReaderUserJob.perform_now(reader_user)
-          rescue
-          end
-
+          expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
+            .to raise_error(VBMS::ClientError)
           expect(S3Service.files).to be_nil
         end
       end
 
       context "on second appeal" do
         let!(:expected_slack_msg) do
-          "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. It retrieved 1 documents for 1 / 2 appeals and 0 document(s) failed.\n"
+          "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. " \
+            "It retrieved 1 documents for 1 / 2 appeals and 0 document(s) failed.\n"
         end
 
         let!(:current_user_id) do
@@ -160,10 +165,8 @@ describe FetchDocumentsForReaderUserJob do
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, anything)
             .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>")).once
 
-          begin
-            FetchDocumentsForReaderUserJob.perform_now(reader_user_w_many_roles)
-          rescue VBMS::ClientError
-          end
+          expect { FetchDocumentsForReaderUserJob.perform_now(reader_user_w_many_roles) }
+            .to raise_error(VBMS::ClientError)
 
           expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
           expect(S3Service.files[expected_doc2.vbms_document_id]).to be_nil
@@ -174,7 +177,8 @@ describe FetchDocumentsForReaderUserJob do
 
     context "when HTTP Timeout occurs" do
       let!(:expected_slack_msg) do
-        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. It retrieved 1 documents for 1 / 2 appeals and 0 document(s) failed.\n"
+        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. " \
+          "It retrieved 1 documents for 1 / 2 appeals and 0 document(s) failed.\n"
       end
 
       let!(:current_user_id) do
@@ -192,10 +196,8 @@ describe FetchDocumentsForReaderUserJob do
         expect(VBMSService).to receive(:fetch_documents_for).with(appeal_with_doc2, anything)
           .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).once
 
-        begin
-          FetchDocumentsForReaderUserJob.perform_now(reader_user)
-        rescue HTTPClient::KeepAliveDisconnected
-        end
+        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
+          .to raise_error(HTTPClient::KeepAliveDisconnected)
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
         expect(S3Service.files[expected_doc2.vbms_document_id]).to be_nil
@@ -205,7 +207,8 @@ describe FetchDocumentsForReaderUserJob do
 
     context "when files exist in S3" do
       let!(:expected_slack_msg) do
-        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. It retrieved 0 documents for 2 / 2 appeals and 0 document(s) failed.\n"
+        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) SUCCESS. " \
+          "It retrieved 0 documents for 2 / 2 appeals and 0 document(s) failed.\n"
       end
 
       let!(:current_user_id) do
@@ -215,7 +218,8 @@ describe FetchDocumentsForReaderUserJob do
       it "does not fetch content" do
         allow(S3Service).to receive(:exists?).with(any_args).and_return(true)
 
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.user.css_id)
+        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
+          .with(reader_user.user.css_id)
           .and_return([appeal_with_doc1, appeal_with_doc2]).once
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user.user)
@@ -230,7 +234,8 @@ describe FetchDocumentsForReaderUserJob do
     end
     context "when S3 throws an exception" do
       let!(:expected_slack_msg) do
-        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. It retrieved 1 documents for 1 / 2 appeals and 1 document(s) failed.\n"
+        "FetchDocumentsForReaderUserJob (user_id: #{current_user_id}) ERROR. " \
+          "It retrieved 1 documents for 1 / 2 appeals and 1 document(s) failed.\n"
       end
 
       let!(:current_user_id) do
@@ -238,7 +243,8 @@ describe FetchDocumentsForReaderUserJob do
       end
 
       it "throws an exception and properly logs this" do
-        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.user.css_id)
+        expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
+          .with(reader_user.user.css_id)
           .and_return([appeal_with_doc1, appeal_with_doc2]).once
 
         expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
@@ -249,10 +255,8 @@ describe FetchDocumentsForReaderUserJob do
         expect(expected_doc2).to receive(:fetch_content)
           .and_raise(Aws::S3::Errors::ServiceError.new("Error", nil)).once
 
-        begin
-          FetchDocumentsForReaderUserJob.perform_now(reader_user)
-        rescue Aws::S3::Errors::ServiceError
-        end
+        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
+          .to raise_error(Aws::S3::Errors::ServiceError)
 
         expect(S3Service.files[expected_doc1.vbms_document_id]).to eq(doc1_expected_content)
         expect(S3Service.files[expected_doc2.vbms_document_id]).to be_nil
