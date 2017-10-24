@@ -106,7 +106,6 @@ export default class SearchBar extends React.Component {
         onBlur={this.onBlur}
         type="search"
         name="search"
-        value={value}
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value}/>

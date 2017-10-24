@@ -1112,7 +1112,7 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         documentSearchIndex: {
-          $apply: (index) => action.payload.increment ? index + 1 : index -1
+          $apply: (index) => action.payload.increment ? index + 1 : index - 1
         }
       }
     );  
