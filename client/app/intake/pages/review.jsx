@@ -37,7 +37,7 @@ class Review extends React.PureComponent {
       },
       {
         value: 'higher_level_review',
-        displayText: ’Higher Level Review’
+        displayText: 'Higher Level Review’
       }
     ];
 
