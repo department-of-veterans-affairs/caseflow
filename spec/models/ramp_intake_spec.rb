@@ -211,7 +211,7 @@ describe RampIntake do
           )
         end
 
-        it "adds no_eligible_appeals and returns false" do
+        it "adds ramp_election_already_complete and returns false" do
           expect(subject).to eq(false)
           expect(intake.error_code).to eq(:ramp_election_already_complete)
         end
