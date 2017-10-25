@@ -15,8 +15,8 @@ class HearingWorksheetStream extends Component {
     let maxValue = 0;
 
     _.forEach(this.props.worksheetIssues, (issue) => {
-      if (issue.vacols_sequence_id > maxValue) {
-        maxValue = issue.vacols_sequence_id;
+      if (Number(issue.vacols_sequence_id) > maxValue) {
+        maxValue = Number(issue.vacols_sequence_id);
       }
     });
 
@@ -24,7 +24,7 @@ class HearingWorksheetStream extends Component {
   };
 
   getVacolsSequenceId = () => {
-    return this.getMaxVacolsSequenceId() + 1;
+    return (this.getMaxVacolsSequenceId() + 1).toString();
   };
 
   render() {
