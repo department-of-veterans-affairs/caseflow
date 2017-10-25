@@ -11,21 +11,14 @@ task :lint do
   puts "running rubocop..."
   rubocop_result = ShellCommand.run("rubocop #{opts} --color")
 
-  if defined? JRUBY_VERSION
-    # fake a passing result
-    jshint_result = true
-  else
-    puts "\nrunning jshint..."
-    jshint_result = ShellCommand.run("rake jshint")
-  end
-
   puts "\nrunning eslint..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
-  eslint_result = ShellCommand.run("cd ./client && npm run #{eslint_cmd}")
+  eslint_result = ShellCommand.run("cd ./client && yarn run #{eslint_cmd}")
 
   puts "\n"
-  if scss_result && rubocop_result && jshint_result && eslint_result
-    puts Rainbow("Passed. Everything looks stylish!").green
+  if scss_result && rubocop_result && eslint_result
+    puts Rainbow("Passed. Everything looks stylish! " \
+      "But there may have been auto-corrections that you now need to check in.").green
   else
     puts Rainbow("Failed. Linting issues were found.").red
     exit!(1)
