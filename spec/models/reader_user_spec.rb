@@ -31,6 +31,21 @@ describe ReaderUser do
           expect(reader_user.user.id).to eq(@users_with_reader_roles[i].id)
         end
       end
+
+      context "when reader_users have been fetched at within 24 hours" do
+        before do
+          ReaderUser.all_by_documents_fetched_at
+          ReaderUser.first.update_attributes!(:current_appeals_documents_fetched_at => 25.hours.ago)
+          ReaderUser.second.update_attributes!(:current_appeals_documents_fetched_at => 2.hours.ago)
+          ReaderUser.third.update_attributes!(:current_appeals_documents_fetched_at => 2.hours.ago)
+        end
+
+        it "should return only readers who fetched documents over 24 hours ago" do
+          ReaderUser.all_by_documents_fetched_at.each do |reader_user|
+            expect(reader_user.current_appeals_documents_fetched_at).to eq(nil).or be < 24.hours.ago
+          end
+        end
+      end
     end
   end
 end
