@@ -7,7 +7,7 @@ class Intake < ActiveRecord::Base
     canceled: "canceled"
   }
 
-  attr_reader :error_code
+  attr_reader :error_code, :error_data
 
   def self.in_progress
     where(completed_at: nil).where.not(started_at: nil)

@@ -9,6 +9,7 @@ class EstablishClaimsController < TasksController
     :canceled_tasks,
     :work_assignments
   ]
+  skip_before_action :verify_admin_access, only: [:index]
 
   def update_appeal
     task.appeal.update!(special_issues_params)
@@ -39,6 +40,9 @@ class EstablishClaimsController < TasksController
 
     return not_found unless assigned_task
     render json: { next_task_id: assigned_task.id }
+  end
+
+  def index
   end
 
   def perform

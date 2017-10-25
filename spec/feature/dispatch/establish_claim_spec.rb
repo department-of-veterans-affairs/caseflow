@@ -181,7 +181,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
 
       visit "/dispatch/work-assignments"
-      click_on "View Claims Missing Decisions"
+      click_on "View claims missing decisions"
 
       # should not see any tasks younger than 1 day
       page.within_window windows.last do
@@ -193,7 +193,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       unprepared_task.update!(created_at: Time.zone.now - 1.day)
 
       visit "/dispatch/work-assignments"
-      click_on "View Claims Missing Decisions"
+      click_on "View claims missing decisions"
 
       # should see the unprepared task
       page.within_window windows.last do
@@ -216,7 +216,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/work-assignments"
-      click_on "View Canceled Tasks"
+      click_on "View canceled tasks"
 
       # should see the canceled tasks
       page.within_window windows.last do
@@ -225,6 +225,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(find(:xpath, "//tbody/tr[1]/td[5]").text).to eql(reason)
         page.driver.browser.close
       end
+    end
+
+    scenario "View oldest unassigned tasks page" do
+      2.times do
+        Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: 1.day.ago)
+      end
+
+      visit "/dispatch/admin"
+      expect(page).to have_content("Oldest Unassigned Tasks")
+      # Expect 3 table rows, the header and 2 tasks
+      expect(page).to have_selector("tr", count: 3)
     end
   end
 
