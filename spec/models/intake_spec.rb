@@ -70,7 +70,7 @@ describe Intake do
     end
 
     context "veteran_file_number has fewer than 8 digits" do
-      let(:veteran_file_number) { "1111111" }
+      let(:veteran_file_number) { "1234567" }
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
