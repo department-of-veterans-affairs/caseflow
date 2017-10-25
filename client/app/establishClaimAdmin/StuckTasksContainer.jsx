@@ -19,8 +19,8 @@ export class StuckTasksContainer extends Component {
       return <div className="loading-dispatch">
         <div className="cf-sg-loader">
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
-              <div className="cf-image-loader">
-              </div>
+            <div className="cf-image-loader">
+            </div>
             <p className="cf-txt-c">Loading, please wait...</p>
           </LoadingContainer>
         </div>
