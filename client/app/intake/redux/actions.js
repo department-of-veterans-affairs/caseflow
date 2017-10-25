@@ -36,7 +36,8 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
           payload: {
-            errorCode: responseObject.error_code
+            errorCode: responseObject.error_code,
+            errorData: responseObject.error_data || {}
           }
         });
 
