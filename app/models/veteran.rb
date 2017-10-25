@@ -28,7 +28,7 @@ class Veteran
 
   COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
 
-  validates :ssn, :first_name, :last_name, :city, :address_line1, :country, presence: true
+  validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: "country_requires_zip?"
   validates :state, presence: true, if: "country_requires_state?"
 
@@ -82,6 +82,11 @@ class Veteran
   def accessible?
     @accessible = self.class.bgs.can_access?(file_number) if @accessible.nil?
     @accessible
+  end
+
+  # Postal code might be stored in address line 3 for international addresses
+  def zip_code
+    @zip_code || @address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/
   end
 
   private
