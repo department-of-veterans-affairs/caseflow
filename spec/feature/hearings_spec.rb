@@ -151,15 +151,16 @@ RSpec.feature "Hearings" do
       expect(page).to_not have_field("1-issue-name")
       expect(page).to_not have_field("1-issue-levels")
       expect(page).to have_field("1-issue-description")
-      click_on "button-addIssue-0"
 
-      visit "/hearings/1/worksheet"
-      find("#cf-issue-delete-00").click
-      click_on "Confirm delete"
+      click_on "button-addIssue-0"
       fill_in "2-issue-program", with: "This is the program"
       fill_in "2-issue-name", with: "This is the name"
       fill_in "2-issue-levels", with: "This is the level"
       fill_in "2-issue-description", with: "This is the description"
+
+      find("#cf-issue-delete-21").click
+      click_on "Confirm delete"
+      expect(page).to_not have_content("Service Connection")
 
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is the program")
