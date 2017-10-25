@@ -65,7 +65,8 @@ class SeedDB
 
     # Create one task with no decision documents
     EstablishClaim.create(
-      appeal: tasks[2].appeal
+      appeal: tasks[2].appeal,
+      created_at: 5.days.ago
     )
 
     @tasks.push(*tasks)

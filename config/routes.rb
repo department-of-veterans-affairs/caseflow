@@ -26,11 +26,15 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :jobs, only: :create
     end
+    namespace :v2 do
+      resources :appeals, only: :index
+    end
   end
 
   scope path: "/dispatch" do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
+    get 'admin', to: 'establish_claims#admin'
     get 'canceled', to: 'establish_claims#canceled_tasks'
     get 'work-assignments', to: 'establish_claims#work_assignments'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
@@ -53,6 +57,9 @@ Rails.application.routes.draw do
       put 'update-appeal', on: :member
     end
   end
+
+
+  resources :tasks, only: [:index]
 
   resources :document, only: [:update] do
     get :pdf, on: :member
@@ -99,7 +106,6 @@ Rails.application.routes.draw do
   get 'whats-new' => 'whats_new#show'
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
-  get 'certification_v2/stats(/:interval)', to: 'certification_v2_stats#show', as: 'certification_v2_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
   get 'stats', to: 'stats#show'
 
