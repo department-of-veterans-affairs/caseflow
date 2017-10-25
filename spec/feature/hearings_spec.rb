@@ -152,7 +152,7 @@ RSpec.feature "Hearings" do
       expect(page).to_not have_field("1-issue-levels")
       expect(page).to have_field("1-issue-description")
 
-      click_on "button-addIssue-0"
+      click_on "button-addIssue-2"
       fill_in "2-issue-program", with: "This is the program"
       fill_in "2-issue-name", with: "This is the name"
       fill_in "2-issue-levels", with: "This is the level"

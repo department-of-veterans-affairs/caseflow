@@ -37,22 +37,22 @@ class HearingWorksheetStream extends Component {
 
     return <div className="cf-hearings-worksheet-data">
       <h2 className="cf-hearings-worksheet-header">Issues</h2>
-      {Object.keys(worksheetStreams).map((appeal, key) => {
+      {Object.keys(worksheetStreams).map((key) => {
         // Iterates over all appeals to create appeal streams inside worksheet
-        let appealId = appeal;
+        const appeal = this.props.worksheet.appeals_ready_for_hearing[key];
 
-        return <div key={appealId} id={appealId}>
+        return <div key={appeal.id} id={appeal.id}>
           <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
           <HearingWorksheetIssues
             appealKey={key}
-            worksheetStreamsAppeal={this.props.worksheet.appeals_ready_for_hearing[key]}
+            worksheetStreamsAppeal={appeal}
             {...this.props}
           />
           <Button
             classNames={['usa-button-outline', 'hearings-add-issue']}
             name="+ Add Issue"
-            id={`button-addIssue-${appealId}`}
-            onClick={this.onAddIssue(this.props.worksheet.appeals_ready_for_hearing[key].id)}
+            id={`button-addIssue-${appeal.id}`}
+            onClick={this.onAddIssue(appeal.id)}
           />
           <hr />
         </div>;
