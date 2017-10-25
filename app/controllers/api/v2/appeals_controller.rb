@@ -1,4 +1,4 @@
-class Api::V1::AppealsController < Api::ApplicationController
+class Api::V2::AppealsController < Api::ApplicationController
   before_action :verify_feature_enabled
 
   rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn
@@ -16,10 +16,10 @@ class Api::V1::AppealsController < Api::ApplicationController
   end
 
   def json_appeals
-    Rails.cache.fetch("appeals/v1/#{ssn}", expires_in: 24.hours, force: reload?) do
+    Rails.cache.fetch("appeals/v2/#{ssn}", expires_in: 24.hours, force: reload?) do
       ActiveModelSerializers::SerializableResource.new(
         appeals,
-        each_serializer: ::V1::AppealSerializer,
+        each_serializer: ::V2::AppealSerializer,
         include: "scheduled_hearings"
       ).as_json
     end

@@ -1,4 +1,4 @@
-class Api::V1::JobsController < Api::V1::ApplicationController
+class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
     "heartbeat" => HeartbeatTasksJob,
