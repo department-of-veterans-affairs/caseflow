@@ -15,7 +15,9 @@ describe Appeal do
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
       appellant_last_name: "Tester",
-      decision_date: nil
+      decision_date: nil,
+      manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
+      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at
     )
   end
 
@@ -46,13 +48,17 @@ describe Appeal do
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
-  let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
-  let(:manifest_vva_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+  let(:appeal_manifest_vbms_fetched_at) { Time.zone.local(1954, "mar", 16, 8, 2, 55).strftime("%D %l:%M%P %Z") }
+  let(:appeal_manifest_vva_fetched_at) { Time.zone.local(1987, "mar", 15, 20, 15, 1).strftime("%D %l:%M%P %Z") }
+
+  let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime("%D %l:%M%P %Z") }
+  let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime("%D %l:%M%P %Z") }
+
   let(:doc_struct) do
     {
       documents: documents,
-      manifest_vbms_fetched_at: manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: manifest_vva_fetched_at
+      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at,
+      manifest_vva_fetched_at: service_manifest_vva_fetched_at
     }
   end
 
@@ -350,8 +356,8 @@ describe Appeal do
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
 
           expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
-          expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
+          expect(appeal.manifest_vbms_fetched_at).to eq(service_manifest_vbms_fetched_at)
+          expect(appeal.manifest_vva_fetched_at).to eq(service_manifest_vva_fetched_at)
         end
 
         after do
@@ -411,35 +417,13 @@ describe Appeal do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
     end
-
-    context "instance variables for appeal already set" do
-      let(:appeal) { Generators::Appeal.build(documents: documents) }
-
-      it "returns own attribute and sets manifest_vbms_fetched_at when called" do
-        expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
-
-        expect(EFolderService).not_to receive(:fetch_documents_for)
-        expect(VBMSService).not_to receive(:fetch_documents_for)
-        expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
-      end
-    end
-
     context "instance variables for appeal not yet set" do
-      let(:mocked_fetch_time) { Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime("%D %l:%M%P %Z") }
-      let(:appeal) do
-        Generators::Appeal.build(
-          documents: documents,
-          manifest_vbms_fetched_at: mocked_fetch_time,
-          manifest_vva_fetched_at: mocked_fetch_time
-        )
-      end
-
       it "returns own attribute and sets manifest_vbms_fetched_at when called" do
-        expect(appeal.manifest_vva_fetched_at).to eq(mocked_fetch_time)
+        expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
 
         expect(EFolderService).not_to receive(:fetch_documents_for)
         expect(VBMSService).not_to receive(:fetch_documents_for)
-        expect(appeal.manifest_vbms_fetched_at).to eq(mocked_fetch_time)
+        expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
       end
     end
   end
@@ -448,14 +432,13 @@ describe Appeal do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
     end
-    let(:appeal) { Generators::Appeal.build(documents: documents) }
 
     it "returns own attribute and sets manifest_vva_fetched_at when called" do
-      expect(appeal.manifest_vbms_fetched_at).to eq(manifest_vbms_fetched_at)
+      expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
 
       expect(EFolderService).not_to receive(:fetch_documents_for)
       expect(VBMSService).not_to receive(:fetch_documents_for)
-      expect(appeal.manifest_vva_fetched_at).to eq(manifest_vva_fetched_at)
+      expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
     end
   end
 
