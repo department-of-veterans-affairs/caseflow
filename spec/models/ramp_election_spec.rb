@@ -6,7 +6,7 @@ describe RampIntake do
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:notice_date) { 1.day.ago }
-  let(:receipt_date) { nil }
+  let(:receipt_date) { 1.day.ago }
   let(:option_selected) { nil }
 
   let(:intake) do
@@ -22,22 +22,15 @@ describe RampIntake do
     subject { intake.valid? }
 
     context "option_selected" do
-      context "when it is not a valid option" do
-        let(:option_selected) { "what? another secret option" }
-
-        it "adds error to receipt_date" do
-          is_expected.to be false
-          expect(intake.errors[:option_selected]).to include("invalid")
-        end
-      end
-
-      context "when it is a valid option" do
-        let(:option_selected) { "higher_level_review_with_hearing" }
-        it { is_expected.to be true }
-      end
-
       context "when saving receipt" do
         before { intake.start_saving_receipt }
+
+        context "when it is set" do
+          context "when it is a valid option" do
+            let(:option_selected) { "higher_level_review_with_hearing" }
+            it { is_expected.to be true }
+          end
+        end
 
         context "when it is nil" do
           it "adds error to receipt_date" do
@@ -80,6 +73,8 @@ describe RampIntake do
         before { intake.start_saving_receipt }
 
         context "when it is nil" do
+          let(:receipt_date) { nil }
+
           it "adds error to receipt_date" do
             is_expected.to be false
             expect(intake.errors[:receipt_date]).to include("blank")

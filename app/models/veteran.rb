@@ -76,7 +76,7 @@ class Veteran
   end
 
   def found?
-    bgs_record != :not_found
+    bgs_record != :not_found && bgs_record[:file_number]
   end
 
   def accessible?

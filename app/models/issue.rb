@@ -4,7 +4,7 @@
 class Issue
   include ActiveModel::Model
 
-  attr_accessor :program, :type, :category, :description, :disposition, :levels,
+  attr_accessor :id, :program, :type, :category, :description, :disposition, :levels,
                 :program_description, :note, :vacols_sequence_id
 
   PROGRAMS = {
@@ -59,6 +59,14 @@ class Issue
     }
   end
 
+  def description_attributes
+    {
+      program_description: program_description,
+      description: description,
+      note: note
+    }
+  end
+
   class << self
     attr_writer :repository
 
@@ -85,6 +93,7 @@ class Issue
                     .parameterize.underscore.to_sym
 
       new(
+        id: hash["isskey"],
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],

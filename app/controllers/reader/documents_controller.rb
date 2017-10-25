@@ -1,7 +1,7 @@
 class Reader::DocumentsController < Reader::ApplicationController
   def index
     respond_to do |format|
-      format.html { return render(:index) }
+      format.html { return render "reader/appeal/index" }
       format.json do
         AppealView.find_or_create_by(
           appeal_id: appeal.id,
@@ -19,7 +19,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def show
-    render(:index)
+    render "reader/appeal/index"
   end
 
   private

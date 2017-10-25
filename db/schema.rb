@@ -11,18 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171005184519) do
+ActiveRecord::Schema.define(version: 20171013213546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
-    t.integer "document_id", null: false
-    t.string  "comment",     null: false
-    t.integer "page"
-    t.integer "x"
-    t.integer "y"
-    t.integer "user_id"
+    t.integer  "document_id", null: false
+    t.string   "comment",     null: false
+    t.integer  "page"
+    t.integer  "x"
+    t.integer  "y"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
@@ -270,8 +272,11 @@ ActiveRecord::Schema.define(version: 20171005184519) do
     t.integer  "user_id",             null: false
     t.string   "veteran_file_number"
     t.datetime "started_at"
+    t.datetime "completed_at"
+    t.string   "completion_status"
   end
 
+  add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
   create_table "ramp_elections", force: :cascade do |t|

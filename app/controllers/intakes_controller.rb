@@ -15,6 +15,8 @@ class IntakesController < ApplicationController
   end
 
   def index
+    no_cache
+
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -30,6 +32,12 @@ class IntakesController < ApplicationController
 
   private
 
+  def no_cache
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
+
   def ramp_intake_data(ramp_intake)
     return {} unless ramp_intake
 
@@ -38,13 +46,17 @@ class IntakesController < ApplicationController
       veteran_file_number: ramp_intake.veteran_file_number,
       veteran_name: ramp_intake.veteran.name.formatted(:readable_short),
       veteran_form_name: ramp_intake.veteran.name.formatted(:form),
-      notice_date: ramp_intake.detail.notice_date
+      notice_date: ramp_intake.detail.notice_date,
+      option_selected: ramp_intake.detail.option_selected,
+      receipt_date: ramp_intake.detail.receipt_date,
+      completed_at: ramp_intake.completed_at,
+      appeals: ramp_intake.serialized_appeal_issues
     }
   end
   helper_method :ramp_intake_data
 
   def fetch_current_intake
-    @current_intake = RampIntake.find_by(user: current_user)
+    @current_intake = RampIntake.in_progress.find_by(user: current_user)
   end
 
   def intake

@@ -75,11 +75,6 @@ $color-hearings-saving: #777;
     }
 
     // TODO: see if this can become a part of the general style
-    .Select-arrow {
-      width: 1.7em;
-    }
-
-    // TODO: see if this can become a part of the general style
     .Select-menu-outer {
       border: 1px solid $color-gray-medium;
       border-top: none;
@@ -173,7 +168,7 @@ $color-hearings-saving: #777;
         min-height: 4em;
         resize: vertical;
         margin-left: 3em;
-        width: 88%;
+        width: 84%;
       }
     }
 
@@ -214,15 +209,8 @@ $color-hearings-saving: #777;
 }
 
 .loading-hearings {
-  width: 50vh;
-  height: 60vh;
   margin: 100px auto 0;
   text-align: center;
-
-  .cf-image-loader {
-    height: 55vh;
-    width: 35vh;
-  }
 }
 
 .cf-hearings-worksheet {
@@ -373,6 +361,22 @@ $color-hearings-saving: #777;
     vertical-align: top;
     padding: .5em;
 
+    &:nth-of-type(1) {
+      width: 4.5em;
+    }
+
+    &:nth-of-type(2) {
+      width: 18em;
+    }
+
+    &:nth-of-type(3) {
+      width: 14em;
+    }
+
+    &:nth-of-type(4) {
+      width: 19em;
+    }
+
     &:nth-of-type(5) {
       width: 20%;
     }
@@ -427,4 +431,17 @@ $color-hearings-saving: #777;
 .cf-hearings-worksheet-desc-label {
   position: absolute;
   left: -99999px;
+}
+
+@media only screen and (max-width : 1024px){
+
+  .cf-hearings {
+    .cf-hearings-docket {
+      .cf-hearings-docket-notes {
+        textarea {
+          width: 80%;
+        }
+      }
+    }
+  }
 }

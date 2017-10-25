@@ -13,9 +13,9 @@ export class Dockets extends React.Component {
 
   getDate = (date) => {
     return moment(date).
-    format('LT').
-    replace('AM', 'a.m.').
-    replace('PM', 'p.m.');
+      format('LT').
+      replace('AM', 'a.m.').
+      replace('PM', 'p.m.');
   };
 
   getKeyForRow = (index) => {
@@ -32,7 +32,7 @@ export class Dockets extends React.Component {
     }
 
     return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-        {moment(docket.date).format('l')}
+      {moment(docket.date).format('l')}
     </Link>;
   }
 

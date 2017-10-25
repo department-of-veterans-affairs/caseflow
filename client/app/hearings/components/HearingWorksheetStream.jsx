@@ -36,29 +36,29 @@ class HearingWorksheetStream extends Component {
     } = this.props;
 
     return <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Issues</h2>
-            {Object.keys(worksheetStreams).map((appeal, key) => {
-                // Iterates over all appeals to create appeal streams inside worksheet
-              let appealId = appeal;
+      <h2 className="cf-hearings-worksheet-header">Issues</h2>
+      {Object.keys(worksheetStreams).map((appeal, key) => {
+        // Iterates over all appeals to create appeal streams inside worksheet
+        let appealId = appeal;
 
-              return <div key={appealId} id={appealId}>
-              <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
-              <HearingWorksheetIssues
-                appealKey={key}
-                worksheetStreamsAppeal={this.props.worksheet.appeals_ready_for_hearing[key]}
-                worksheetStreamsIssues={this.props.worksheet.appeals_ready_for_hearing[key].worksheet_issues}
-                {...this.props}
-              />
-              <Button
-                classNames={['usa-button-outline', 'hearings-add-issue']}
-                name="+ Add Issue"
-                id={`button-addIssue-${appealId}`}
-                onClick={this.onAddIssue(key)}
-              />
-              <hr />
-              </div>;
-            })}
+        return <div key={appealId} id={appealId}>
+          <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
+          <HearingWorksheetIssues
+            appealKey={key}
+            worksheetStreamsAppeal={this.props.worksheet.appeals_ready_for_hearing[key]}
+            worksheetStreamsIssues={this.props.worksheet.appeals_ready_for_hearing[key].worksheet_issues}
+            {...this.props}
+          />
+          <Button
+            classNames={['usa-button-outline', 'hearings-add-issue']}
+            name="+ Add Issue"
+            id={`button-addIssue-${appealId}`}
+            onClick={this.onAddIssue(key)}
+          />
+          <hr />
         </div>;
+      })}
+    </div>;
   }
 }
 

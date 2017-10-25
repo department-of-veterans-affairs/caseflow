@@ -12,15 +12,16 @@ const CLASS_NAME_MAPPING = {
   'hearing-prep': 'cf-logo cf-logo-image-hearing-prep',
   feedback: 'cf-logo cf-logo-image-feedback',
   efolder: 'cf-logo cf-logo-image-efolder',
-  dispatch: 'cf-logo cf-logo-image-dispatch'
+  dispatch: 'cf-logo cf-logo-image-dispatch',
+  intake: 'cf-logo cf-logo-image-intake'
 };
 
 export default class NavigationBar extends React.Component {
 
   getClassName = (appName) => {
     const app = appName.split(' ').
-    join('-').
-    toLowerCase();
+      join('-').
+      toLowerCase();
 
     if (app in CLASS_NAME_MAPPING) {
       return CLASS_NAME_MAPPING[app];
@@ -39,34 +40,34 @@ export default class NavigationBar extends React.Component {
     } = this.props;
 
     return <div><header className="cf-app-header">
-        <div>
-          <div className="cf-app-width">
-            <span className="cf-push-left">
-              <h1 className={this.getClassName(appName)}>
-                <Link id="cf-logo-link" to={defaultUrl}>
+      <div>
+        <div className="cf-app-width">
+          <span className="cf-push-left">
+            <h1 className={this.getClassName(appName)}>
+              <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
-                  <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
-                </Link>
-              </h1>
-              <Breadcrumbs>
-                {this.props.children}
-              </Breadcrumbs>
-              {topMessage && <h2 className="cf-application-title"> &nbsp; | &nbsp; {topMessage}</h2>}
-            </span>
-            <span className="cf-dropdown cf-push-right">
-              <DropdownMenu
-                analyticsTitle={`${appName} Navbar`}
-                options={dropdownUrls}
-                onClick={this.handleMenuClick}
-                onBlur={this.handleOnBlur}
-                label={userDisplayName}
-                />
-            </span>
-          </div>
+                <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
+              </Link>
+            </h1>
+            <Breadcrumbs>
+              {this.props.children}
+            </Breadcrumbs>
+            {topMessage && <h2 className="cf-application-title"> &nbsp; | &nbsp; {topMessage}</h2>}
+          </span>
+          <span className="cf-dropdown cf-push-right">
+            <DropdownMenu
+              analyticsTitle={`${appName} Navbar`}
+              options={dropdownUrls}
+              onClick={this.handleMenuClick}
+              onBlur={this.handleOnBlur}
+              label={userDisplayName}
+            />
+          </span>
         </div>
-        <PerformanceDegradationBanner />
-      </header>
-      {this.props.children}
+      </div>
+      <PerformanceDegradationBanner />
+    </header>
+    {this.props.children}
     </div>;
   }
 }

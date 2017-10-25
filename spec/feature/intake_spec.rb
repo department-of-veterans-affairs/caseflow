@@ -4,11 +4,41 @@ RSpec.feature "RAMP Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
+    Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 8, 8))
   end
 
-  let!(:veteran) do
+  let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+  end
+
+  let(:issues) do
+    [
+      Generators::Issue.build(
+        description: [
+          "15 - Service connection",
+          "03 - All Others",
+          "5252 - Knee, limitation of flexion of"
+        ],
+        note: "knee movement"
+      )
+    ]
+  end
+
+  let!(:appeal) do
+    Generators::Appeal.build(
+      vbms_id: "12341234C",
+      issues: issues,
+      vacols_record: :ready_to_certify,
+      veteran: veteran
+    )
+  end
+
+  let!(:ineligible_appeal) do
+    Generators::Appeal.build(
+      vbms_id: "77776666C",
+      vacols_record: :full_grant_decided
+    )
   end
 
   context "As a user with Mail Intake role" do
@@ -31,14 +61,28 @@ RSpec.feature "RAMP Intake" do
       click_on "Search"
 
       expect(page).to have_current_path("/intake")
-      expect(page).to have_content("No opt-in letter was sent to this veteran")
+      expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
+    end
+
+    scenario "Search for a veteran with an ineligible appeal" do
+      RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "77776666"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake")
+      expect(page).to have_content("This Veteran is not eligible to participate in RAMP.")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
-      visit "/intake"
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
-      visit "/intake"
+      # Validate you're redirected back to the search page if you haven't started yet
+      visit "/intake/completed"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      visit "/intake/review-request"
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
@@ -51,32 +95,42 @@ RSpec.feature "RAMP Intake" do
       expect(intake.user).to eq(current_user)
     end
 
-    scenario "Open cancel modal from review page" do
-      visit "/intake"
-      RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
+    scenario "Cancel an intake" do
+      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+
+      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
 
       visit "/intake"
-      fill_in "Search small", with: "12341234"
-      click_on "Search"
 
       safe_click ".cf-submit.usa-button"
       expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
       safe_click "#close-modal"
       expect(page).to_not have_css(".cf-modal-title")
+
+      safe_click ".cf-submit.usa-button"
+      safe_click ".cf-modal-body .cf-submit"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to_not have_css(".cf-modal-title")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake).to be_canceled
     end
 
-    scenario "Review RAMP Election form" do
-      election = RampElection.create!(
-        veteran_file_number: "12341234",
-        notice_date: Date.new(2017, 8, 7)
-      )
+    scenario "Start intake and go back and edit option" do
+      RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
 
-      RampIntake.new(veteran_file_number: "12341234", user: current_user).start!
+      # Validate that visiting the finish page takes you back to
+      # the review request page if you haven't yet reviewed the intake
+      visit "/intake/completed"
 
-      visit "/intake/review-request"
-
+      # Validate validation
       fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
-      click_on "Continue to next step"
+      safe_click "#button-submit-review"
 
       expect(page).to have_content("Please select an option.")
       expect(page).to have_content(
@@ -84,17 +138,103 @@ RSpec.feature "RAMP Intake" do
       )
 
       within_fieldset("Which election did the Veteran select?") do
+        find("label", text: "Higher Level Review without DRO hearing request").click
+      end
+      fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
+      safe_click "#button-submit-review"
+
+      expect(page).to have_content("Finish processing Higher-Level Review election")
+      expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
+
+      click_label "confirm-finish"
+
+      ## Validate error message when complete intake fails
+      allow(Appeal).to receive(:close).and_raise("A random error. Oh no!")
+      safe_click "button#button-submit-review"
+      expect(page).to have_content("Something went wrong")
+
+      page.go_back
+
+      expect(page).to_not have_content("Please select an option.")
+
+      within_fieldset("Which election did the Veteran select?") do
         find("label", text: "Supplemental Claim").click
+      end
+      safe_click "#button-submit-review"
+
+      expect(find("#confirm-finish", visible: false)).to_not be_checked
+      expect(page).to_not have_content("Something went wrong")
+
+      expect(page).to have_content("Finish processing Supplemental Claim election")
+      expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
+
+      # Validate the appeal & issue also shows up
+      expect(page).to have_content("This Veteran has 1 active appeal, with the following issues")
+      expect(page).to have_content("5252 - Knee, limitation of flexion of")
+      expect(page).to have_content("knee movement")
+    end
+
+    scenario "Complete intake for RAMP Election form" do
+      election = RampElection.create!(
+        veteran_file_number: "12341234",
+        notice_date: Date.new(2017, 8, 7)
+      )
+
+      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake.start!
+
+      # Validate that visiting the finish page takes you back to
+      # the review request page if you haven't yet reviewed the intake
+      visit "/intake/finish"
+
+      within_fieldset("Which election did the Veteran select?") do
+        find("label", text: "Higher Level Review with DRO hearing request").click
       end
 
       fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
       safe_click "#button-submit-review"
 
-      expect(page).to have_content("Finish processing Supplemental Claim request")
+      expect(page).to have_content("Finish processing Higher-Level Review election")
 
       election.reload
-      expect(election.option_selected).to eq("supplemental_claim")
+      expect(election.option_selected).to eq("higher_level_review_with_hearing")
       expect(election.receipt_date).to eq(Date.new(2017, 8, 7))
+
+      # Validate the app redirects you to the appropriate location
+      visit "/intake"
+      expect(page).to have_content("Finish processing Higher-Level Review election")
+
+      expect(Fakes::AppealRepository).to receive(:close!).with(
+        appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
+        user: current_user,
+        closed_on: Time.zone.today,
+        disposition_code: "P"
+      )
+
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("You must confirm you've completed the steps")
+      expect(page).to_not have_content("Intake completed")
+
+      click_label("confirm-finish")
+      safe_click "button#button-submit-review"
+
+      expect(page).to have_content("Intake completed")
+
+      # Validate that you can not go back to previous steps
+      page.go_back
+      expect(page).to have_content("Intake completed")
+
+      page.go_back
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake).to be_success
+
+      # Validate that the intake is no longer able to be worked on
+      visit "/intake/finish"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
     end
   end
 

@@ -1,14 +1,12 @@
 class RampElection < ActiveRecord::Base
   attr_reader :saving_receipt
 
-  OPTIONS = %w(
-    supplemental_claim
-    higher_level_review
-    higher_level_review_with_hearing
-    withdraw
-  ).freeze
+  enum option_selected: {
+    supplemental_claim: "supplemental_claim",
+    higher_level_review: "higher_level_review",
+    higher_level_review_with_hearing: "higher_level_review_with_hearing"
+  }
 
-  validates :option_selected, inclusion: { in: OPTIONS, message: "invalid" }, allow_nil: true
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_receipt
   validate :validate_receipt_date
 

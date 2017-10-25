@@ -13,6 +13,7 @@ $color-tab-text-hover: #1f5593;
     width: 10em;
     height: 100%;
     clip: rect(0, auto, auto, 0);
+    box-sizing: border-box;
 
     &.re-topped {
       top: -120px;
@@ -263,4 +264,8 @@ pre {
 
 .sg-nav-wrap .cf-app-width {
   width: 100%;
+}
+
+.cf-form-checkbox .cf-required {
+  float: none;
 }
