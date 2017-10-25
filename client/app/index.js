@@ -13,10 +13,15 @@ import Hearings from './hearings/index';
 import Login from './login';
 import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
+import EstablishClaimAdmin from './establishClaimAdmin';
 
 const COMPONENTS = {
   BaseContainer,
   Certification,
+  // New SPA wrapper for multiple admin pages
+  EstablishClaimAdmin,
+  // This is the older admin page that should eventually get merged into
+  // the above EstablishClaimAdmin
   ManageEstablishClaim,
   Login,
   TestUsers,
@@ -50,7 +55,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './test/TestUsers',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
-      './hearings/index'
+      './hearings/index',
+      './establishClaimAdmin/index'
     ], () => renderApp(component));
   }
 };
