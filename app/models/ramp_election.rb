@@ -17,7 +17,7 @@ class RampElection < ActiveRecord::Base
   end
 
   def successfully_received?
-    ramp_intakes.where(completion_status: "success").where.not(completed_at: nil).any?
+    ramp_intakes.where(completion_status: "success").any?
   end
 
   private
