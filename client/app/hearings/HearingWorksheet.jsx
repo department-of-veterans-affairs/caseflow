@@ -125,7 +125,6 @@ export class HearingWorksheet extends React.PureComponent {
         />
 
         <HearingWorksheetStream
-          worksheetStreams={worksheet.appeals_ready_for_hearing}
           {...this.props}
         />
 
@@ -189,7 +188,8 @@ export class HearingWorksheet extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
-  worksheetIssues: state.worksheetIssues
+  worksheetIssues: state.worksheetIssues,
+  worksheetAppeals: state.worksheetAppeals
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -123,6 +123,6 @@ export default connect(
 )(HearingWorksheetIssues);
 
 HearingWorksheetIssues.propTypes = {
-  appealKey: PropTypes.string.isRequired,
+  appealKey: PropTypes.number.isRequired,
   worksheetStreamsAppeal: PropTypes.object.isRequired
 };
