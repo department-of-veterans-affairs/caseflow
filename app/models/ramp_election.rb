@@ -14,7 +14,35 @@ class RampElection < ActiveRecord::Base
     @saving_receipt = true
   end
 
+  def create_end_product!(end_product_params)
+    end_product = EndProduct.new(
+      claim_date: Time.zone.now,
+      claim_type_code: hash[:end_product_code],
+      modifier: hash[:end_product_modifier],
+      suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
+      gulf_war_registry: hash[:gulf_war_registry],
+      station_of_jurisdiction: hash[:station_of_jurisdiction]
+    )
+
+    fail InvalidEndProductError unless end_product.valid?
+
+
+    establish_claim_in_vbms(end_product).tap do |result|
+      ## SAVE THE EP ID
+    end
+
+  rescue VBMS::HTTPError => error
+    raise parse_vbms_error(error)
+  end
+
   private
+
+  def establish_claim_in_vbms(end_product)
+    VBMSService.establish_claim!(
+      claim_hash: end_product.to_vbms_hash,
+      veteran_hash: appeal.veteran.to_vbms_hash
+    )
+  end
 
   def validate_receipt_date
     return unless notice_date && receipt_date
