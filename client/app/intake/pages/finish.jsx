@@ -77,7 +77,7 @@ class Finish extends React.PureComponent {
       </span>,
       <span>Update the Subject Line with "Ramp Election".</span>,
       <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of "RAMP".</span>,
+      <span>Add a placeholder contention of "RAMP".</span>
     ];
     const stepFns = steps.map((step, index) =>
       () => <span><strong>Step {index + 1}.</strong> {step}</span>
