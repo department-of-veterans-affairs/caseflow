@@ -51,7 +51,9 @@ export class PdfListView extends React.Component {
         </div>
       </div>
       <div id={'vbms-manifest-retrieved-at'}>Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
-      <div id={'vva-manifest-retrieved-at'}>Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div>
+      { this.props.manifestVvaFetchedAt
+        ? <div id={'vva-manifest-retrieved-at'}>Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div>
+        : '' }
     </div>;
   }
 }

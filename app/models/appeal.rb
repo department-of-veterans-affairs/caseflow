@@ -427,7 +427,7 @@ class Appeal < ActiveRecord::Base
 
   def manifest_vva_fetched_at
     fetch_documents_from_service!
-    @manifest_vbms_fetched_at
+    @manifest_vva_fetched_at
   end
 
   private
