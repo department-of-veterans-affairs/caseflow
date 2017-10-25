@@ -6,13 +6,13 @@ class HearingWorksheetDocs extends Component {
 
   render() {
 
-    let { worksheet } = this.props;
+    let { worksheet, worksheetAppeals } = this.props;
 
     return <div className="cf-hearings-worksheet-data">
       <h2 className="cf-hearings-worksheet-header">Relevant Documents</h2>
       <h4>Docs in eFolder: {worksheet.cached_number_of_documents}</h4>
 
-      {worksheet.appeals_ready_for_hearing.map((appeal, key) => {
+      {Object.values(worksheetAppeals).map((appeal, key) => {
 
         return <div key={appeal.id} id={appeal.id}><div>
           <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
