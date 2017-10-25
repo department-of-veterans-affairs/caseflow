@@ -9,32 +9,30 @@ import { TrashCan } from '../../components/RenderFunctions';
 
 class HearingWorksheetIssueDelete extends PureComponent {
 
-  handleModalOpen = (appealKey, issueKey) => () => {
-    this.props.toggleIssueDeleteModal(appealKey, issueKey, true);
+  handleModalOpen = (issueId) => () => {
+    this.props.toggleIssueDeleteModal(issueId, true);
   };
 
-  handleModalClose = (appealKey, issueKey) => () => {
-    this.props.toggleIssueDeleteModal(appealKey, issueKey, false);
+  handleModalClose = (issueId) => () => {
+    this.props.toggleIssueDeleteModal(issueId, false);
   };
 
-  onDeleteIssue = (appealKey, issueKey) => () => {
-    this.props.onDeleteIssue(appealKey, issueKey);
-    this.props.toggleIssueDeleteModal(appealKey, issueKey, false);
+  onDeleteIssue = (issueId) => () => {
+    this.props.onDeleteIssue(issueId);
+    this.props.toggleIssueDeleteModal(issueId, false);
   };
 
   render() {
     let {
-      appealKey,
-      issueKey
+      issue,
+      appealKey
     } = this.props;
-
-    const issue = this.props.worksheet.appeals_ready_for_hearing[appealKey].worksheet_issues[issueKey];
 
     return <div>
       <div
-        id={`cf-issue-delete-${appealKey}${issueKey}`}
+        id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
         className="cf-issue-delete"
-        onClick={this.handleModalOpen(appealKey, issueKey)}
+        onClick={this.handleModalOpen(issue.id)}
         alt="Remove Issue Confirmation">
         <TrashCan />
       </div>
@@ -42,13 +40,13 @@ class HearingWorksheetIssueDelete extends PureComponent {
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
-            onClick: this.handleModalClose(appealKey, issueKey)
+            onClick: this.handleModalClose(issue.id)
           },
           { classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Confirm delete',
-            onClick: this.onDeleteIssue(appealKey, issueKey)
+            onClick: this.onDeleteIssue(issue.id)
           }]}
-        closeHandler={this.handleModalClose(appealKey, issueKey)}
+        closeHandler={this.handleModalClose(issue.id)}
         title = "Delete Issue Row">
         <p>Are you sure you want to remove this issue from Appeal Stream {appealKey + 1} on the worksheet? </p>
         { issue.from_vacols && <p>This issue will be removed from the worksheet, but will remain in VACOLS.</p> }
