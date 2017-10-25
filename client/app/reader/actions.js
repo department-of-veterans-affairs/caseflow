@@ -8,43 +8,7 @@ import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 import { createSearchAction } from 'redux-search';
 
-export const collectAllTags = (documents) => ({
-  type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
-  payload: documents
-});
 
-export const onInitialDataLoadingFail = (value = true) => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE,
-  payload: { value }
-});
-
-export const onInitialCaseLoadingFail = (value = true) => ({
-  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
-  payload: { value }
-});
-
-export const onReceiveDocs = (documents, vacolsId) => (
-  (dispatch) => {
-    dispatch(collectAllTags(documents));
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: {
-        documents,
-        vacolsId
-      }
-    });
-  }
-);
-
-export const onReceiveAnnotations = (annotations) => ({
-  type: Constants.RECEIVE_ANNOTATIONS,
-  payload: { annotations }
-});
-
-export const onReceiveAssignments = (assignments) => ({
-  type: Constants.RECEIVE_ASSIGNMENTS,
-  payload: { assignments }
-});
 
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
   type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
@@ -52,20 +16,6 @@ export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRe
     docId,
     categoryKey,
     categoryValueToRevertTo
-  }
-});
-
-export const setSearch = (searchQuery) => ({
-  type: Constants.SET_SEARCH,
-  payload: {
-    searchQuery
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'search',
-      debounceMs: 500
-    }
   }
 });
 
@@ -129,25 +79,6 @@ export const changeSortState = (sortBy) => ({
 
         return `${sortBy}-${direction}`;
       }
-    }
-  }
-});
-
-export const onScrollToComment = (scrollToComment) => ({
-  type: Constants.SCROLL_TO_COMMENT,
-  payload: { scrollToComment }
-});
-
-export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'open-annotation-delete-modal',
-      label: analyticsLabel
     }
   }
 });
@@ -269,32 +200,11 @@ export const resetJumpToPage = () => ({
   type: Constants.RESET_JUMP_TO_PAGE
 });
 
-export const startPlacingAnnotation = (interactionType) => ({
-  type: Constants.START_PLACING_ANNOTATION,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'start-placing-annotation',
-      label: interactionType
-    }
-  }
-});
-
 export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   type: Constants.SHOW_PLACE_ANNOTATION_ICON,
   payload: {
     pageIndex,
     pageCoords
-  }
-});
-
-export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
-  type: Constants.PLACE_ANNOTATION,
-  payload: {
-    page: pageNumber,
-    x: coordinates.xPosition,
-    y: coordinates.yPosition,
-    documentId
   }
 });
 
@@ -486,10 +396,6 @@ export const onReceiveAppealDetails = (appeal) => ({
   payload: { appeal }
 });
 
-export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
-  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
-  payload: { failedToLoad }
-});
 
 export const fetchedNoAppealsUsingVeteranId = () => ({
   type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
@@ -669,7 +575,7 @@ export const getDocumentText = (pdfDocument, file) => (
       }, {});
 
       dispatch({
-        type: Constants.GET_DCOUMENT_TEXT,
+        type: Constants.GET_DOCUMENT_TEXT,
         payload: {
           textObject
         }

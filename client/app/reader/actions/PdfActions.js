@@ -2,6 +2,9 @@
 // stopPlacingAnnotation, showPlaceAnnotationIcon,
 // onScrollToComment
 
+import * as Constants from './constants';
+import { CATEGORIES } from './analytics';
+
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
   type: Constants.PLACE_ANNOTATION,
   payload: {
@@ -32,4 +35,9 @@ export const stopPlacingAnnotation = (interactionType) => ({
       label: interactionType
     }
   }
+});
+
+export const onScrollToComment = (scrollToComment) => ({
+  type: Constants.SCROLL_TO_COMMENT,
+  payload: { scrollToComment }
 });

@@ -1,24 +1,28 @@
 // Pdf actions
 
-export const selectCurrentPdfLocally = (docId) => ({
-    type: Constants.SELECT_CURRENT_VIEWER_PDF,
-    payload: {
-      docId
-    }
-  });
-  
-  export const selectCurrentPdf = (docId) => (dispatch) => {
-    ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
-      catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log('Error marking as read', docId, err);
-      });
-  
-    dispatch(
-      selectCurrentPdfLocally(docId)
-    );
-  };
+import * as Constants from './constants';
+import ApiUtil from '../util/ApiUtil';
+import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import _ from 'lodash';
 
+export const selectCurrentPdfLocally = (docId) => ({
+  type: Constants.SELECT_CURRENT_VIEWER_PDF,
+  payload: {
+    docId
+  }
+});
+
+export const selectCurrentPdf = (docId) => (dispatch) => {
+  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
+    catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Error marking as read', docId, err);
+    });
+
+  dispatch(
+    selectCurrentPdfLocally(docId)
+  );
+};
 
 export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
   type: Constants.SET_OPENED_ACCORDION_SECTIONS,
@@ -39,4 +43,3 @@ export const setOpenedAccordionSections = (openedAccordionSections, prevSections
     }
   }
 });
-

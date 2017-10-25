@@ -1,6 +1,9 @@
 // setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
 // setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility
-//setSearch, clearSearch, clearAllFilters
+// setSearch, clearSearch, clearAllFilters
+
+import * as Constants from './constants';
+import { CATEGORIES } from './analytics';
 
 // Table header actions
 
@@ -98,10 +101,9 @@ export const clearTagFilters = () => ({
 export const setDocListScrollPosition = (scrollTop) => ({
   type: Constants.SET_DOC_LIST_SCROLL_POSITION,
   payload: {
-      scrollTop
+    scrollTop
   }
 });
-
 
 // Document header
 
@@ -138,5 +140,3 @@ export const clearAllFilters = () => ({
     }
   }
 });
-
-

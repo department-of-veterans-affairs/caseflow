@@ -1,39 +1,44 @@
 // closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
 // selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation
 
+import * as Constants from './constants';
+import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import ApiUtil from '../util/ApiUtil';
+import _ from 'lodash';
+
 // Annotations
 
 export const deleteAnnotation = (docId, annotationId) =>
-(dispatch) => {
-  dispatch({
-    type: Constants.REQUEST_DELETE_ANNOTATION,
-    payload: {
-      annotationId
-    },
-    meta: {
-      analytics: {
-        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-        action: 'request-delete-annotation'
+  (dispatch) => {
+    dispatch({
+      type: Constants.REQUEST_DELETE_ANNOTATION,
+      payload: {
+        annotationId
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+          action: 'request-delete-annotation'
+        }
       }
-    }
-  });
+    });
 
-  ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`, {}, ENDPOINT_NAMES.ANNOTATION).
-    then(
-      () => dispatch({
-        type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
-        payload: {
-          annotationId
-        }
-      }),
-      () => dispatch({
-        type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
-        payload: {
-          annotationId
-        }
-      })
-    );
-};
+    ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`, {}, ENDPOINT_NAMES.ANNOTATION).
+      then(
+        () => dispatch({
+          type: Constants.REQUEST_DELETE_ANNOTATION_SUCCESS,
+          payload: {
+            annotationId
+          }
+        }),
+        () => dispatch({
+          type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
+          payload: {
+            annotationId
+          }
+        })
+      );
+  };
 
 export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
   type: Constants.SHOW_PLACE_ANNOTATION_ICON,
@@ -41,6 +46,18 @@ export const showPlaceAnnotationIcon = (pageIndex, pageCoords) => ({
     pageIndex,
     pageCoords
   }
+});
+
+// Fetching appeals
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { failedToLoad }
 });
 
 export const fetchAppealDetails = (vacolsId) => (
@@ -64,13 +81,12 @@ export const stopPlacingAnnotation = (interactionType) => ({
   }
 });
 
-
 // Modal
 
 export const closeAnnotationDeleteModal = () => ({
   type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
   meta: {
-      analytics: {
+    analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'close-annotation-delete-modal'
     }
@@ -110,7 +126,6 @@ export const startEditAnnotation = (annotationId) => ({
   }
 });
 
-
 export const cancelEditAnnotation = (annotationId) => ({
   type: Constants.CANCEL_EDIT_ANNOTATION,
   payload: {
@@ -124,6 +139,19 @@ export const cancelEditAnnotation = (annotationId) => ({
   }
 });
 
+export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
+  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
+  payload: {
+    annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'open-annotation-delete-modal',
+      label: analyticsLabel
+    }
+  }
+});
 
 export const requestEditAnnotation = (annotation) => (dispatch) => {
   // If the user removed all text content in the annotation, ask them if they're
@@ -165,7 +193,6 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
       })
     );
 };
-
 
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
