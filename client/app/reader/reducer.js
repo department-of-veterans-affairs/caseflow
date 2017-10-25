@@ -1032,7 +1032,11 @@ export const reducer = (state = initialState, action = {}) => {
       {
         pageDimensions: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $set: action.payload.dimensions
+            $set: {
+              ...action.payload.dimensions,
+              file: action.payload.file,
+              pageIndex: action.payload.pageIndex
+            }
           }
         }
       }

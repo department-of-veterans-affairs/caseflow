@@ -62,33 +62,22 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPage = ({ index, key, style, parent }) => {
-    return <CellMeasurer
-        cache={this._cache}
-        columnIndex={0}
-        key={key}
-        rowIndex={index}
-        parent={parent}>
-        {({ measure }) => (
-          <div style={style}>
-            <PdfPage
-              scrollTop={this.props.scrollTop}
-              scrollWindowCenter={this.props.scrollWindowCenter}
-              documentId={this.props.documentId}
-              file={this.props.file}
-              pageIndex={index}
-              isVisible={this.props.isVisible}
-              scale={this.props.scale}
-              pdfDocument={this.props.pdfDocument}
-              measure={measure}
-            />
-          </div>
-        )}
-      </CellMeasurer>;
-    // return <div key={key} , background: '#FFFFFF'}}></div>;
+    return <div key={key} style={style}>
+        <PdfPage
+          scrollTop={this.props.scrollTop}
+          scrollWindowCenter={this.props.scrollWindowCenter}
+          documentId={this.props.documentId}
+          file={this.props.file}
+          pageIndex={index}
+          isVisible={this.props.isVisible}
+          scale={this.props.scale}
+          pdfDocument={this.props.pdfDocument}
+        />
+      </div>;
   }
 
   getRowHeight = ({ index }) => {
-    return 1000;//(_.get(this.props.pages, [index, 'dimensions', 'height'], PAGE_HEIGHT) + 25) * this.props.scale
+    return (_.get(this.props.pageDimensions, [`${this.props.file}-${index}`, 'height'], this.props.baseHeight) + 25) * this.props.scale
   }
 
   getList = (list) => this.list = list
@@ -113,22 +102,14 @@ export class PdfFile extends React.PureComponent {
           <List
             ref={this.getList}
             height={height}
+            estimatedRowSize={this.props.baseHeight}
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
-            rowHeight={this._cache.rowHeight}
+            rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
             width={width}
           />}
       </AutoSizer>
     }
-
-
-    // <Collection
-    //       cellCount={this.props.pdfDocument.pdfInfo.numPages}
-    //       cellRenderer={this.getPage}
-    //       cellSizeAndPositionGetter={this.cellSizeAndPosition}
-    //       height={height}
-    //       width={width}
-    //     />
 
     return null;
   }
@@ -146,11 +127,15 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-  const pages = _.get(state.readerReducer.pages, [props.file]) || {};
+  const dimensionValues = _(state.readerReducer.pageDimensions).
+    filter((dimension) => dimensions.file === props.file).
+    values();
+  const baseHeight = _.get(dimensionValues, [0, 'height'], PAGE_HEIGHT);
 
   return {
     pdfDocument: state.readerReducer.pdfDocuments[props.file],
-    pages
+    pageDimensions: state.readerReducer.pageDimensions,
+    baseHeight
   }
 };
 
