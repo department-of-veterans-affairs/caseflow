@@ -236,6 +236,20 @@ describe EstablishClaim do
           end
         end
       end
+
+      context "Veteran missing Postal Code error" do
+        let(:vbms_error) do
+          VBMS::HTTPError.new("500", "<faultstring>The PersonalInfo " \
+            "Address ForeignMailCode (PostalCode) must not be empty.</faultstring>")
+        end
+
+        it "raises bgs_info_invalid VBMSError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error.error_code).to eq("bgs_info_invalid")
+          end
+        end
+      end
     end
   end
 

@@ -33,3 +33,9 @@ export const onReceiveAssignments = (assignments) => ({
   type: Constants.RECEIVE_ASSIGNMENTS,
   payload: { assignments }
 });
+
+export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+  type: Constants.RECEIVE_MANIFESTS,
+  payload: { manifestVbmsFetchedAt,
+    manifestVvaFetchedAt }
+});

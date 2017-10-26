@@ -373,7 +373,7 @@ export const removeTagRequestFailure = (docId, tagId) => ({
   }
 });
 
-export const removeTagRequestSuccess = (docId, tagId) => (
+export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
@@ -385,8 +385,7 @@ export const removeTagRequestSuccess = (docId, tagId) => (
     const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
-  }
-);
+  };
 
 export const newTagRequestSuccess = (docId, createdTags) => (
   (dispatch, getState) => {
@@ -411,7 +410,7 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   }
 });
 
-export const addNewTag = (doc, tags) => (
+export const addNewTag = (doc, tags) =>
   (dispatch) => {
     const currentTags = doc.tags;
 
@@ -435,8 +434,7 @@ export const addNewTag = (doc, tags) => (
           dispatch(newTagRequestFailed(doc.id, newTags));
         });
     }
-  }
-);
+  };
 
 export const removeTag = (doc, tagId) => (
   (dispatch) => {
