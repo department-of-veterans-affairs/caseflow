@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { onScrollToComment } from './Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon,
-  togglePdfSidebar } from './PdfViewer/PdfViewerActions';
+  togglePdfSidebar } from './actions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import DocumentSearch from './DocumentSearch';

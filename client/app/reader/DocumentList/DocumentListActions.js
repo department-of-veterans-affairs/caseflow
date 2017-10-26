@@ -1,7 +1,3 @@
-// setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
-// setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility
-// setSearch, clearSearch, clearAllFilters
-
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';

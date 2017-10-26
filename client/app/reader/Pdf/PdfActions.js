@@ -1,7 +1,3 @@
-// placeAnnotation, startPlacingAnnotation,
-// stopPlacingAnnotation, showPlaceAnnotationIcon,
-// onScrollToComment
-
 import { createSearchAction } from 'redux-search';
 
 import * as Constants from '../constants';

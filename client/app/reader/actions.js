@@ -1,5 +1,3 @@
-// closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-// selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation
 import _ from 'lodash';
 import uuid from 'uuid';
 
@@ -25,7 +23,7 @@ export const rotateDocument = (docId) => ({
   }
 });
 
-// PDF Selection
+/* PDF Selection */
 
 export const selectCurrentPdfLocally = (docId) => ({
   type: Constants.SELECT_CURRENT_VIEWER_PDF,
@@ -46,7 +44,7 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
   );
 };
 
-// Fetching appeals
+/* Fetching appeals */
 
 export const onReceiveAppealDetails = (appeal) => ({
   type: Constants.RECEIVE_APPEAL_DETAILS,
@@ -68,7 +66,7 @@ export const fetchAppealDetails = (vacolsId) => (
   }
 );
 
-// Modal
+/* Modal */
 
 export const closeAnnotationDeleteModal = () => ({
   type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
@@ -80,7 +78,7 @@ export const closeAnnotationDeleteModal = () => ({
   }
 });
 
-// Annotations
+/* Annotations */
 
 export const deleteAnnotation = (docId, annotationId) =>
   (dispatch) => {
@@ -154,10 +152,7 @@ export const startPlacingAnnotation = (interactionType) => ({
   }
 });
 
-// SIDEBAR
-//
-// updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
-//  selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
+/* Sidebar */
 
 export const updateAnnotationContent = (content, annotationId) => ({
   type: Constants.UPDATE_ANNOTATION_CONTENT,
@@ -268,97 +263,7 @@ export const selectAnnotation = (annotationId) => ({
   }
 });
 
-// Accordions
-
-export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
-  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
-  payload: {
-    openedAccordionSections
-  },
-  meta: {
-    analytics: (triggerEvent) => {
-      const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
-      const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
-
-      addedSectionKeys.forEach(
-        (newKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
-      );
-      removedSectionKeys.forEach(
-        (oldKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
-      );
-    }
-  }
-});
-
-
-export const updateNewAnnotationContent = (content) => ({
-  type: Constants.UPDATE_NEW_ANNOTATION_CONTENT,
-  payload: {
-    content
-  }
-});
-
-export const createAnnotation = (annotation) => (dispatch) => {
-  const temporaryId = uuid.v4();
-
-  dispatch({
-    type: Constants.REQUEST_CREATE_ANNOTATION,
-    payload: {
-      annotation: {
-        ...annotation,
-        id: temporaryId
-      }
-    }
-  });
-
-  const data = ApiUtil.convertToSnakeCase({ annotation });
-
-  ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }, ENDPOINT_NAMES.ANNOTATION).
-    then(
-      (response) => {
-        const responseObject = JSON.parse(response.text);
-
-        dispatch({
-          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
-          payload: {
-            annotation: {
-              ...annotation,
-              ...responseObject
-            },
-            annotationTemporaryId: temporaryId
-          }
-        });
-      },
-      () => dispatch({
-        type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
-        payload: {
-          annotationTemporaryId: temporaryId
-        }
-      })
-    );
-};
-
-// JUMP TO PAGE
-
-export const jumpToPage = (pageNumber, docId) => ({
-  type: Constants.JUMP_TO_PAGE,
-  payload: {
-    pageNumber,
-    docId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'jump-to-page'
-    }
-  }
-});
-
-export const resetJumpToPage = () => ({
-  type: Constants.RESET_JUMP_TO_PAGE
-});
-
-// SIDEBAR TAGS
+/* Sidebar Tags */
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -453,3 +358,93 @@ export const removeTag = (doc, tagId) => (
       });
   }
 );
+
+/* Jump to Page */
+
+export const jumpToPage = (pageNumber, docId) => ({
+  type: Constants.JUMP_TO_PAGE,
+  payload: {
+    pageNumber,
+    docId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'jump-to-page'
+    }
+  }
+});
+
+export const resetJumpToPage = () => ({
+  type: Constants.RESET_JUMP_TO_PAGE
+});
+
+/* Accordions */
+
+export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
+  type: Constants.SET_OPENED_ACCORDION_SECTIONS,
+  payload: {
+    openedAccordionSections
+  },
+  meta: {
+    analytics: (triggerEvent) => {
+      const addedSectionKeys = _.difference(openedAccordionSections, prevSections);
+      const removedSectionKeys = _.difference(prevSections, openedAccordionSections);
+
+      addedSectionKeys.forEach(
+        (newKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'opened-accordion-section', newKey)
+      );
+      removedSectionKeys.forEach(
+        (oldKey) => triggerEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'closed-accordion-section', oldKey)
+      );
+    }
+  }
+});
+
+
+export const updateNewAnnotationContent = (content) => ({
+  type: Constants.UPDATE_NEW_ANNOTATION_CONTENT,
+  payload: {
+    content
+  }
+});
+
+export const createAnnotation = (annotation) => (dispatch) => {
+  const temporaryId = uuid.v4();
+
+  dispatch({
+    type: Constants.REQUEST_CREATE_ANNOTATION,
+    payload: {
+      annotation: {
+        ...annotation,
+        id: temporaryId
+      }
+    }
+  });
+
+  const data = ApiUtil.convertToSnakeCase({ annotation });
+
+  ApiUtil.post(`/document/${annotation.documentId}/annotation`, { data }, ENDPOINT_NAMES.ANNOTATION).
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
+        dispatch({
+          type: Constants.REQUEST_CREATE_ANNOTATION_SUCCESS,
+          payload: {
+            annotation: {
+              ...annotation,
+              ...responseObject
+            },
+            annotationTemporaryId: temporaryId
+          }
+        });
+      },
+      () => dispatch({
+        type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
+        payload: {
+          annotationTemporaryId: temporaryId
+        }
+      })
+    );
+};
