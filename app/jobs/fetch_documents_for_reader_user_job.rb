@@ -43,7 +43,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   #
   # Returns a boolean if the content has been cached without errors
   def cache_document(doc)
-    if !FeatureToggle.enabled?(:efolder_docs_api) && !S3Service.exists?(doc.file_name)
+    if !S3Service.exists?(doc.file_name)
       doc.fetch_content
       @counts[:docs_cached] += 1
     end
