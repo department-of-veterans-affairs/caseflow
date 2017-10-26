@@ -25,7 +25,7 @@ describe Certification do
   let(:poa_matches) { true }
   let(:poa_correct_in_bgs) { false }
   let(:certification) do
-    Certification.new(
+    Certification.create(
       vacols_id: appeal.vacols_id,
       completed_at: certification_completed_at,
       poa_correct_in_bgs: poa_correct_in_bgs,
@@ -45,14 +45,15 @@ describe Certification do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  context "#start!" do
-    subject { certification.start! }
+  context "#async_start!" do
+    subject { certification.async_start! }
 
     context "when appeal has already been certified" do
       let(:vacols_record_template) { :certified }
 
       it "returns already_certified and sets the flag" do
-        expect(subject).to eq(:already_certified)
+        subject
+        expect(certification.certification_status).to eq(:already_certified)
         expect(certification.reload.already_certified).to be_truthy
         expect(certification.form8_started_at).to be_nil
       end
@@ -69,7 +70,8 @@ describe Certification do
       let(:vacols_record) { {} }
 
       it "returns data_missing and sets the flag" do
-        expect(subject).to eq(:data_missing)
+        subject
+        expect(certification.certification_status).to eq(:data_missing)
         expect(certification.reload.vacols_data_missing).to be_truthy
         expect(certification.form8_started_at).to be_nil
       end
@@ -79,7 +81,8 @@ describe Certification do
       let(:documents) { [soc, form9] }
 
       it "returns mismatched_documents and sets the flag" do
-        expect(subject).to eq(:mismatched_documents)
+        subject
+        expect(certification.certification_status).to eq(:mismatched_documents)
 
         expect(certification.reload.nod_matching_at).to be_nil
         expect(certification.soc_matching_at).to eq(Time.zone.now)
@@ -131,7 +134,8 @@ describe Certification do
 
     context "when appeal is ready to start" do
       it "returns success and sets timestamps" do
-        expect(subject).to eq(:started)
+        subject
+        expect(certification.certification_status).to eq(:started)
 
         expect(certification.reload.nod_matching_at).to eq(Time.zone.now)
         expect(certification.soc_matching_at).to eq(Time.zone.now)
@@ -152,7 +156,8 @@ describe Certification do
         let(:documents) { [nod, soc, form9, ssoc] }
 
         it "returns success and sets ssoc_required" do
-          expect(subject).to eq(:started)
+          subject
+          expect(certification.certification_status).to eq(:started)
           expect(certification.ssocs_required).to be_truthy
           expect(certification.ssocs_matching_at).to eq(Time.zone.now)
         end
@@ -166,7 +171,6 @@ describe Certification do
           it "updates the form8's certification date" do
             Timecop.freeze(new_date)
             subject
-
             expect(form8.reload.certification_date).to eq(new_date.to_date)
           end
         end
@@ -231,8 +235,12 @@ describe Certification do
     context "when completed" do
       let(:certification_completed_at) { 1.hour.from_now }
 
-      context "when not created" do
-        it { is_expected.to be_nil }
+      context "when not created (in db)" do
+        let(:certification) { Certification.new }
+
+        it "is_expected to be_nil" do
+          expect(subject).to eq nil
+        end
       end
 
       context "when created" do
@@ -249,7 +257,7 @@ describe Certification do
     subject { certification.user_id }
 
     before do
-      certification.start!
+      certification.async_start!
       certification.complete!(user.id)
     end
 
@@ -329,7 +337,7 @@ describe Certification do
     subject { certification }
 
     it "returns true when bgs address is found" do
-      certification.fetch_power_of_attorney!
+      certification.async_start!
       expect(subject.bgs_rep_city).to eq "SAN FRANCISCO"
       expect(subject.bgs_representative_type).to eq "Attorney"
       expect(subject.bgs_representative_name).to eq "Clarence Darrow"

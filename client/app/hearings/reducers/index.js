@@ -56,12 +56,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     const worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
       keyBy('id').
       value();
-    // TODO: After updating the reducers, we need to remove appeals_ready_for_hearing from the worksheet object
+    const worksheet = _.omit(action.payload.worksheet, ['appeals_ready_for_hearing']);
 
     return update(state, {
       worksheetIssues: { $set: worksheetIssues },
       worksheetAppeals: { $set: worksheetAppeals },
-      worksheet: { $set: action.payload.worksheet }
+      worksheet: { $set: worksheet }
     });
   }
 

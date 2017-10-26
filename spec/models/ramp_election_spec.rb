@@ -1,4 +1,4 @@
-describe RampIntake do
+describe RampElection do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -9,7 +9,7 @@ describe RampIntake do
   let(:receipt_date) { 1.day.ago }
   let(:option_selected) { nil }
 
-  let(:intake) do
+  let(:ramp_election) do
     RampElection.new(
       veteran_file_number: veteran_file_number,
       notice_date: notice_date,
@@ -18,12 +18,46 @@ describe RampIntake do
     )
   end
 
+  context "#successfully_received?" do
+    subject { ramp_election.successfully_received? }
+
+    context "when there is a successful intake referencing the election" do
+      let!(:intake) do
+        RampIntake.create!(
+          user: Generators::User.build,
+          detail: ramp_election,
+          completed_at: Time.zone.now,
+          completion_status: :success
+        )
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when there is a canceled intake referencing the election" do
+      let!(:intake) do
+        RampIntake.create!(
+          user: Generators::User.build,
+          detail: ramp_election,
+          completed_at: Time.zone.now,
+          completion_status: :canceled
+        )
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when there is no intake referencing the election" do
+      it { is_expected.to eq(false) }
+    end
+  end
+
   context "#valid?" do
-    subject { intake.valid? }
+    subject { ramp_election.valid? }
 
     context "option_selected" do
       context "when saving receipt" do
-        before { intake.start_saving_receipt }
+        before { ramp_election.start_saving_receipt }
 
         context "when it is set" do
           context "when it is a valid option" do
@@ -35,7 +69,7 @@ describe RampIntake do
         context "when it is nil" do
           it "adds error to receipt_date" do
             is_expected.to be false
-            expect(intake.errors[:option_selected]).to include("blank")
+            expect(ramp_election.errors[:option_selected]).to include("blank")
           end
         end
       end
@@ -51,7 +85,7 @@ describe RampIntake do
 
         it "adds an error to receipt_date" do
           is_expected.to be false
-          expect(intake.errors[:receipt_date]).to include("in_future")
+          expect(ramp_election.errors[:receipt_date]).to include("in_future")
         end
       end
 
@@ -60,7 +94,7 @@ describe RampIntake do
 
         it "adds an error to receipt_date" do
           is_expected.to be false
-          expect(intake.errors[:receipt_date]).to include("before_notice_date")
+          expect(ramp_election.errors[:receipt_date]).to include("before_notice_date")
         end
       end
 
@@ -70,14 +104,14 @@ describe RampIntake do
       end
 
       context "when saving receipt" do
-        before { intake.start_saving_receipt }
+        before { ramp_election.start_saving_receipt }
 
         context "when it is nil" do
           let(:receipt_date) { nil }
 
           it "adds error to receipt_date" do
             is_expected.to be false
-            expect(intake.errors[:receipt_date]).to include("blank")
+            expect(ramp_election.errors[:receipt_date]).to include("blank")
           end
         end
       end

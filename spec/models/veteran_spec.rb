@@ -80,11 +80,11 @@ describe Veteran do
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
-        address_line3: "Daisies",
+        address_line3: address_line3,
         city: "San Francisco",
         state: "CA",
         country: country,
-        zip_code: "94117",
+        zip_code: zip_code,
         military_post_office_type_code: military_post_office_type_code,
         military_postal_type_code: military_postal_type_code,
         service: [{ branch_of_service: "army" }]
@@ -94,6 +94,8 @@ describe Veteran do
     let(:military_post_office_type_code) { nil }
     let(:military_postal_type_code) { nil }
     let(:country) { "USA" }
+    let(:zip_code) { "94117" }
+    let(:address_line3) { "Daisies" }
 
     it "returns the correct values" do
       is_expected.to eq(
@@ -119,6 +121,22 @@ describe Veteran do
       let(:military_post_office_type_code) { "APO" }
 
       it { is_expected.to include(state: "AA", city: "APO", address_type: "OVR") }
+    end
+
+    context "when a zip code is nil" do
+      let(:zip_code) { nil }
+
+      context "when address line 3 contains a zip code" do
+        let(:address_line3) { "055411-177" }
+
+        it { is_expected.to include(zip_code: "055411-177") }
+      end
+
+      context "when address line 3 does not contain a zip code" do
+        let(:address_line3) { ".4646-99" }
+
+        it { is_expected.to include(zip_code: nil) }
+      end
     end
 
     context "when country is not USA" do
