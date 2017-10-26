@@ -1,4 +1,5 @@
 import * as Constants from '../constants';
+import { collectAllTags } from '../PdfViewer/PdfViewerActions';
 
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,

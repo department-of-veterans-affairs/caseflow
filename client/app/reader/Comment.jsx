@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { openAnnotationDeleteModal } from '../reader/actions';
+import { openAnnotationDeleteModal } from './PdfViewer/PdfViewerActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import Highlight from '../components/Highlight';
 

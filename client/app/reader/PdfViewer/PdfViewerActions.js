@@ -18,6 +18,13 @@ export const togglePdfSidebar = () => ({
   }
 });
 
+export const rotateDocument = (docId) => ({
+  type: Constants.ROTATE_PDF_DOCUMENT,
+  payload: {
+    docId
+  }
+});
+
 // PDF Selection
 
 export const selectCurrentPdfLocally = (docId) => ({
@@ -121,6 +128,27 @@ export const stopPlacingAnnotation = (interactionType) => ({
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'stop-placing-annotation',
+      label: interactionType
+    }
+  }
+});
+
+export const placeAnnotation = (pageNumber, coordinates, documentId) => ({
+  type: Constants.PLACE_ANNOTATION,
+  payload: {
+    page: pageNumber,
+    x: coordinates.xPosition,
+    y: coordinates.yPosition,
+    documentId
+  }
+});
+
+export const startPlacingAnnotation = (interactionType) => ({
+  type: Constants.START_PLACING_ANNOTATION,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'startplacing-annotation',
       label: interactionType
     }
   }
@@ -331,6 +359,11 @@ export const resetJumpToPage = () => ({
 });
 
 // SIDEBAR TAGS
+
+export const collectAllTags = (documents) => ({
+  type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
+  payload: documents
+});
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,

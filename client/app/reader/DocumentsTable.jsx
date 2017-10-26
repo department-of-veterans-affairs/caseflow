@@ -17,7 +17,9 @@ import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
-  setTagFilter, setCategoryFilter, selectCurrentPdfLocally, toggleDropdownFilterVisibility } from './actions';
+  setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility
+} from './DocumentList/DocumentListActions';
+import { selectCurrentPdfLocally } from './PdfViewer/PdfViewerActions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SelectedFilterIcon, UnselectedFilterIcon, rightTriangle,

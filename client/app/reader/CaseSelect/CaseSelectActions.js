@@ -3,7 +3,6 @@ import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import * as Constants from '../constants';
 import _ from 'lodash';
 
-
 // CaseSelect search
 
 export const clearCaseSelectSearch = () => ({
@@ -21,7 +20,6 @@ export const caseSelectAppeal = (appeal) => ({
   type: Constants.CASE_SELECT_APPEAL,
   payload: { appeal }
 });
-
 
 export const caseSelectModalSelectVacolsId = (vacolsId) => ({
   type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,

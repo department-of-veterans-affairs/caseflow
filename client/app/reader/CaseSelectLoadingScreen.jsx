@@ -1,13 +1,16 @@
 import React from 'react';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
+
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialCaseLoadingFail } from './actions';
+import {
+  onReceiveAssignments, onInitialCaseLoadingFail
+} from './LoadingScreen/LoadingScreenActions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
-import _ from 'lodash';
 
 export class CaseSelectLoadingScreen extends React.Component {
   componentDidMount = () => {

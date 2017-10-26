@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { ENDPOINT_NAMES } from './analytics';
 
 import ApiUtil from '../util/ApiUtil';
-import { setSearch, clearSearch, clearAllFilters } from './actions';
+import { setSearch, clearSearch, clearAllFilters } from './DocumentList/DocumentListActions';
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
