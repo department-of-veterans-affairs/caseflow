@@ -9,11 +9,15 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails } from './actions';
+import { fetchAppealDetails, clearSearch } from './actions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
+    if (!this.props.previousRoute.includes('documents')) {
+      // if coming from case list, clear search on mount
+      this.props.clearSearch();
+    }
 
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
@@ -59,13 +63,15 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
-    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal
+    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal,
+    previousRoute: state.readerReducer.previousRoute
   };
 };
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    fetchAppealDetails
+    fetchAppealDetails,
+    clearSearch
   }, dispatch)
 );
 

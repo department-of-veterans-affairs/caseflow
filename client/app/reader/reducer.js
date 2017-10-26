@@ -124,6 +124,7 @@ export const initialState = {
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
+  route: '',
   ui: {
     tagOptions: [],
     caseSelect: {
@@ -1104,6 +1105,13 @@ export const reducer = (state = initialState, action = {}) => {
         documentSearchString: {
           $set: action.payload.searchString
         }
+      }
+    );
+  case Constants.ROUTE_CHANGE:
+    return _.extend({},
+      state,
+      {
+        previousRoute: action.payload.previousRoute
       }
     );
   default:

@@ -58,12 +58,6 @@ export default class SearchBar extends React.Component {
     }
   }
 
-  componentDidMount = () => {
-    if (this.props.onClearSearch) {
-      this.props.onClearSearch();
-    }
-  }
-
   render() {
     let {
       id,
