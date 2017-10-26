@@ -1,5 +1,5 @@
 class ReaderUser < ActiveRecord::Base
-  has_one :user, foreign_key: :id, primary_key: :user_id
+  belongs_to :user
 
   class << self
     def all_by_documents_fetched_at(limit = 10)
