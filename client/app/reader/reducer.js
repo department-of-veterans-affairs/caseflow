@@ -10,13 +10,13 @@ const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
-    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
     map(([key]) => categoryFieldNameOfCategoryName(key)).
     value();
 
   const activeTagFilters = _(docFilterCriteria.tag).
     toPairs().
-    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
     map(([key]) => key).
     value();
 
