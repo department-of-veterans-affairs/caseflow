@@ -3,6 +3,7 @@ class Document < ActiveRecord::Base
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
+  before_save { self.document_type = type }
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
