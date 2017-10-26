@@ -67,7 +67,7 @@ export const timeFunctionPromise = (fn, onTimeElapsed, label = '') => (...args) 
   const returnPromise = fn(...args);
 
   if (startMs !== 'RUNNING_IN_NODE') {
-    returnPromise.then(() => {
+    const onFunctionComplete = () => {
       const endMs = window.performance.now();
 
       const timeElapsedMs = endMs - startMs;
@@ -77,7 +77,22 @@ export const timeFunctionPromise = (fn, onTimeElapsed, label = '') => (...args) 
       if (label) {
         console.log(`${label} took ${getTimeLabel(timeElapsedMs)}.`);
       }
-    });
+    };
+
+    returnPromise.then(
+      (returnValue) => {
+        onFunctionComplete();
+        return returnValue;
+      },
+      (err) => {
+        onFunctionComplete();
+        if (err) {
+          throw err;
+        } else {
+          throw new Error('Promise rejected without passing a reason');
+        }
+      }
+    );
   }
 
   return returnPromise;

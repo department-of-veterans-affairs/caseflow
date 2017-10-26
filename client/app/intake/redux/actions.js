@@ -5,6 +5,12 @@ import _ from 'lodash';
 
 const analytics = true;
 
+const ENDPOINT_NAMES = {
+  INTAKE: 'intake',
+  INTAKE_RAMP: 'intake-ramp',
+  INTAKE_RAMP_COMPLETE: 'intake-ramp-complete'
+};
+
 export const startNewIntake = () => ({
   type: ACTIONS.START_NEW_INTAKE,
   meta: { analytics }
@@ -23,7 +29,7 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }).
+  return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }, ENDPOINT_NAMES.INTAKE).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);
@@ -88,7 +94,7 @@ export const submitReview = (rampElection) => (dispatch) => {
     receipt_date: formatDateStringForApi(rampElection.receiptDate)
   };
 
-  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }).
+  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }, ENDPOINT_NAMES.INTAKE_RAMP).
     then(
       () => dispatch({
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
@@ -135,13 +141,14 @@ export const completeIntake = (rampElection) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
+  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`, {}, ENDPOINT_NAMES.INTAKE_RAMP_COMPLETE).
     then(
       () => {
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
           meta: { analytics }
-        })
+        });
+
         return true;
       },
       (error) => {
@@ -169,7 +176,7 @@ export const submitCancel = (rampElection) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`).
+  return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`, {}, ENDPOINT_NAMES.INTAKE_RAMP).
     then(
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
