@@ -37,14 +37,18 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
       },
       (error) => {
         const responseObject = JSON.parse(error.response.text);
-
+        const errorCode = responseObject.error_code;
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
           payload: {
-            errorCode: responseObject.error_code,
+            errorCode,
             errorData: responseObject.error_data || {}
           },
-          meta: { analytics }
+          meta: { 
+            analytics: {
+              label: errorCode
+            }
+          }
         });
 
         throw error;
@@ -57,10 +61,10 @@ export const setOptionSelected = (optionSelected) => ({
   payload: {
     optionSelected
   },
-  meta: { 
+  meta: {
     analytics: {
       label: optionSelected
-    } 
+    }
   }
 });
 
@@ -84,7 +88,7 @@ export const submitReview = (rampElection) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }).
     then(
-      () => dispatch({ 
+      () => dispatch({
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
         meta: { analytics }
       }),
@@ -120,14 +124,14 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
     then(
-      () => dispatch({ 
+      () => dispatch({
         type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
-        meta: { analytics } 
+        meta: { analytics }
       }),
       (error) => {
-        dispatch({ 
+        dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
-          meta: { analytics } 
+          meta: { analytics }
         });
         throw error;
       }
@@ -136,10 +140,10 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
 export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL,
-  meta: { 
+  meta: {
     analytics: {
       label: (nextState) => nextState.cancelModalVisible ? 'show' : 'hide'
-    } 
+    }
   }
 });
 
@@ -151,14 +155,14 @@ export const submitCancel = (rampElection) => (dispatch) => {
 
   return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`).
     then(
-      () => dispatch({ 
+      () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
         meta: { analytics }
-       }),
+      }),
       (error) => {
-        dispatch({ 
+        dispatch({
           type: ACTIONS.CANCEL_INTAKE_FAIL,
-          meta: { analytics } 
+          meta: { analytics }
         });
         throw error;
       }
@@ -168,9 +172,9 @@ export const submitCancel = (rampElection) => (dispatch) => {
 export const confirmFinishIntake = (isConfirmed) => ({
   type: ACTIONS.CONFIRM_FINISH_INTAKE,
   payload: { isConfirmed },
-  meta: { 
+  meta: {
     analytics: {
       label: isConfirmed ? 'confirmed' : 'not-confirmed'
-    } 
+    }
   }
 });
