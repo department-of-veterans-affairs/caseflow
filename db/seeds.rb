@@ -93,7 +93,7 @@ class SeedDB
   def create_ramp_elections(number)
     number.times do |i|
       RampElection.create!(
-        veteran_file_number: "#{i}5555555",
+        veteran_file_number: "#{i + 1}5555555",
         notice_date: i.weeks.ago
       )
     end

@@ -54,6 +54,10 @@ export class PdfListView extends React.Component {
             />}
         </div>
       </div>
+      <div id={'vbms-manifest-retrieved-at'}>Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
+      { this.props.manifestVvaFetchedAt ?
+        <div id={'vva-manifest-retrieved-at'}>Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
+        '' }
     </div>;
   }
 }
@@ -64,7 +68,9 @@ const mapStateToProps = (state, props) => {
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
     caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal,
-    previousRoute: state.readerReducer.previousRoute
+    previousRoute: state.readerReducer.previousRoute,
+    manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
+    manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
   };
 };
 
