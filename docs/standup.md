@@ -66,9 +66,9 @@ At 11am, we stop any post-standup discussion. If we can't resolve an issue in th
 ### Tech Leads and Product Owners Standup
 On the first day of the sprint, when there is no normal standup because there's sprint planning, the tech leads and product owners will meet instead. 
 
-**Time:** 10:30a
-**Location:** Anoat
-**Topics:** Cross-team coordination issues to inform sprint planning
+* **Time:** 10:30a
+* **Location:** Anoat
+* **Topics:** Cross-team coordination issues to inform sprint planning
 
 ## Daily Schedule
 | Day | Schedule | 
