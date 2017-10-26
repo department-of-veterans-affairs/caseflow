@@ -864,11 +864,18 @@ export const getDocumentText = (pdfDocument, file) =>
   }
 ;
 
-export const setDocumentSearch = (searchString) => ({
-  type: Constants.SET_DOCUMENT_SEARCH,
+export const updateSearchIndex = (increment) => ({
+  type: Constants.UPDATE_SEARCH_INDEX,
   payload: {
-    searchString
+    increment
   }
 });
 
-export const searchText = createSearchAction('extractedText');
+export const zeroSearchIndex = () => ({
+  type: Constants.ZERO_SEARCH_INDEX
+});
+
+export const searchText = (searchTerm) => (dispatch) => {
+  dispatch(zeroSearchIndex());
+  dispatch(createSearchAction('extractedText')(searchTerm));
+};
