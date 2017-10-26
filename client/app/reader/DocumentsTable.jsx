@@ -16,13 +16,8 @@ import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
-<<<<<<< HEAD
   setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility
 } from './DocumentList/DocumentListActions';
-import { selectCurrentPdfLocally } from './PdfViewer/PdfViewerActions';
-=======
-  setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility } from './actions';
->>>>>>> master
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';

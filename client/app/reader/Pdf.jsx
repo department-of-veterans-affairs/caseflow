@@ -9,12 +9,8 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { onScrollToComment } from './Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
-<<<<<<< HEAD
-  stopPlacingAnnotation, showPlaceAnnotationIcon } from './PdfViewer/PdfViewerActions';
-=======
   stopPlacingAnnotation, showPlaceAnnotationIcon,
-  onScrollToComment, togglePdfSidebar } from '../reader/actions';
->>>>>>> master
+  togglePdfSidebar } from './PdfViewer/PdfViewerActions';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import DocumentSearch from './DocumentSearch';
