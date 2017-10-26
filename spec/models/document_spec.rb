@@ -5,6 +5,7 @@ describe Document do
   let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
   let(:file) { document.default_path }
   let(:received_at) { nil }
+  let(:case_file_number) { Random.rand(999_999_999) }
 
   context "#type?" do
     subject { document.type?("NOD") }
@@ -158,7 +159,7 @@ describe Document do
   end
 
   context ".from_vbms_document" do
-    subject { Document.from_vbms_document(vbms_document) }
+    subject { Document.from_vbms_document(vbms_document, case_file_number) }
 
     context "when has alt doc types" do
       let(:vbms_document) do

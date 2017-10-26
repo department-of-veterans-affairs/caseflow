@@ -78,19 +78,21 @@ class Document < ActiveRecord::Base
       :other
   end
 
-  def self.from_efolder(hash)
+  def self.from_efolder(hash, file_number)
     new(efolder_id: hash["id"],
         type: type_from_vbms_type(hash["type_id"]),
         received_at: hash["received_at"],
-        vbms_document_id: hash["external_document_id"])
+        vbms_document_id: hash["external_document_id"],
+        file_number: file_number)
   end
 
-  def self.from_vbms_document(vbms_document)
+  def self.from_vbms_document(vbms_document, file_number)
     new(type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
-        filename: vbms_document.filename)
+        filename: vbms_document.filename,
+        file_number: file_number)
   end
 
   def self.type_id(type)
