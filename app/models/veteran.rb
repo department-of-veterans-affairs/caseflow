@@ -86,7 +86,7 @@ class Veteran
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || @address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/
+    @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
 
   private
