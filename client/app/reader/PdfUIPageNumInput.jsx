@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { jumpToPage } from './PdfViewer/PdfViewerActions';
+import { jumpToPage } from './actions';
 import { isValidWholeNumber } from './utils';
 import TextField from '../components/TextField';
 

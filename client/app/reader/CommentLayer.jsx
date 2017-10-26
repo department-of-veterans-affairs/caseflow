@@ -9,7 +9,7 @@ import CommentIcon from './CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import { handleSelectCommentIcon,
   requestMoveAnnotation } from './Pdf/PdfActions';
-import { showPlaceAnnotationIcon, placeAnnotation } from '../reader/PdfViewer/PdfViewerActions';
+import { showPlaceAnnotationIcon, placeAnnotation } from '../reader/actions';
 import { CATEGORIES } from '../reader/analytics';
 
 const DIV_STYLING = {

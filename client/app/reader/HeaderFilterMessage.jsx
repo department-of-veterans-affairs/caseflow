@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 
-import { clearAllFilters } from './DocumentList/DocumentListActions';
+import { clearAllFilters } from './actions';
 import Button from '../components/Button';
 
 class HeaderFilterMessage extends React.PureComponent {

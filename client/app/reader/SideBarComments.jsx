@@ -8,7 +8,7 @@ import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
 import { updateNewAnnotationContent, createAnnotation, stopPlacingAnnotation,
-  startPlacingAnnotation } from '../reader/PdfViewer/PdfViewerActions';
+  startPlacingAnnotation } from '../reader/actions';
 
 class SideBarComments extends PureComponent {
   handleAddClick = (event) => {

@@ -19,7 +19,7 @@ import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
 import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
   selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
-} from './PdfViewer/PdfViewerActions';
+} from './actions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
