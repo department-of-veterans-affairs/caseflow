@@ -35,9 +35,9 @@ describe ReaderUser do
       context "when reader_users have been fetched at within 24 hours" do
         before do
           ReaderUser.all_by_documents_fetched_at
-          ReaderUser.first.update_attributes!(:current_appeals_documents_fetched_at => 25.hours.ago)
-          ReaderUser.second.update_attributes!(:current_appeals_documents_fetched_at => 2.hours.ago)
-          ReaderUser.third.update_attributes!(:current_appeals_documents_fetched_at => 2.hours.ago)
+          ReaderUser.first.update_attributes!(current_appeals_documents_fetched_at: 25.hours.ago)
+          ReaderUser.second.update_attributes!(current_appeals_documents_fetched_at: 2.hours.ago)
+          ReaderUser.third.update_attributes!(current_appeals_documents_fetched_at: 2.hours.ago)
         end
 
         it "should return only readers who fetched documents over 24 hours ago" do
