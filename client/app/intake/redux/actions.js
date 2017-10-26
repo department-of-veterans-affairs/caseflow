@@ -127,7 +127,7 @@ export const completeIntake = (rampElection) => (dispatch) => {
       meta: { analytics }
     });
 
-    return;
+    return Promise.resolve(false);
   }
 
   dispatch({
@@ -137,10 +137,13 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
     then(
-      () => dispatch({
-        type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
-        meta: { analytics }
-      }),
+      () => {
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+          meta: { analytics }
+        })
+        return true;
+      },
       (error) => {
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
