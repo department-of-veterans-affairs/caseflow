@@ -66,8 +66,7 @@ export const setReceiptDate = (receiptDate) => ({
   type: ACTIONS.SET_RECEIPT_DATE,
   payload: {
     receiptDate
-  },
-  meta: { analytics: {} }
+  }
 });
 
 export const submitReview = (rampElection) => (dispatch) => {
