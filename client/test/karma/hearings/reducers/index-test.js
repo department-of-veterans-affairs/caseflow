@@ -227,7 +227,7 @@ describe('hearingsReducer', () => {
       });
     });
 
-    it('sets evidences', () => {
+    it('sets evidence', () => {
       expect(state.worksheet.evidence).to.deep.equal('filled');
     });
   });
