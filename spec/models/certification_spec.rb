@@ -236,7 +236,7 @@ describe Certification do
       let(:certification_completed_at) { 1.hour.from_now }
 
       context "when not created (in db)" do
-        let(:certification) { Certification.new() }
+        let(:certification) { Certification.new }
 
         it "is_expected to be_nil" do
           expect(subject).to eq nil
