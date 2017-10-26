@@ -17,11 +17,11 @@ export class ReaderLoadingScreen extends React.Component {
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
 
-
     const downloadDocumentList = () => {
       ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
 
         const returnedObject = JSON.parse(response.text);
+
         if (returnedObject.stillFetchingDocuments) {
           setTimeout(function(){
             downloadDocumentList();
@@ -55,6 +55,7 @@ export class ReaderLoadingScreen extends React.Component {
       }, this.props.onInitialDataLoadingFail);
 
     }
+    downloadDocumentList();
   }
 
   render() {
