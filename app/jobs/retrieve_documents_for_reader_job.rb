@@ -15,13 +15,7 @@ class RetrieveDocumentsForReaderJob < ActiveJob::Base
   end
 
   def start_fetch_job(user)
-    if Rails.env.development? || Rails.env.test?
-      FetchDocumentsForReaderUserJob.perform_now(user)
-    else
-      # in prod, we run this asynchronously.
-      # Through shoryuken we retry and have exponential backoff
-      FetchDocumentsForReaderUserJob.perform_later(user)
-    end
+    FetchDocumentsForReaderUserJob.perform_later(user)
   end
 
   def find_all_reader_users_by_documents_fetched_at(limit = 10)

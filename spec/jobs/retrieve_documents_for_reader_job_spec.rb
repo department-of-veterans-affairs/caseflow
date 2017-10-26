@@ -19,7 +19,7 @@ describe RetrieveDocumentsForReaderJob do
 
       context "without a reader_user" do
         it "should create a reader_user and run FindDocumentsForReaderUserJob for this user" do
-          expect(FetchDocumentsForReaderUserJob).to receive(:perform_now).once do |reader_user|
+          expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).once do |reader_user|
             expect(reader_user.user.id).to eq(user_with_reader_role.id)
           end
           RetrieveDocumentsForReaderJob.perform_now
@@ -32,7 +32,7 @@ describe RetrieveDocumentsForReaderJob do
         end
 
         it "should FindDocumentsForReaderUserJob for this user" do
-          expect(FetchDocumentsForReaderUserJob).to receive(:perform_now).once do |reader_user|
+          expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).once do |reader_user|
             expect(reader_user.user.id).to eq(user_with_reader_role.id)
           end
           RetrieveDocumentsForReaderJob.perform_now
@@ -48,7 +48,7 @@ describe RetrieveDocumentsForReaderJob do
           end
         end
         it "should only run FetchDocumentsForReaderUserJob 5 times" do
-          expect(FetchDocumentsForReaderUserJob).to receive(:perform_now).with(anything).exactly(5).times
+          expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).with(anything).exactly(5).times
           RetrieveDocumentsForReaderJob.perform_now("limit" => 5)
         end
       end
