@@ -113,4 +113,4 @@ const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
 export const getCurrentMatchIndex = createSelector(
   [getTotalMatchesInFile, getSelectedIndex],
   (totalMatchesInFile, selectedIndex) => (selectedIndex + totalMatchesInFile) % totalMatchesInFile
-)
+);

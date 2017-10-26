@@ -1115,7 +1115,7 @@ export const reducer = (state = initialState, action = {}) => {
           $apply: (index) => action.payload.increment ? index + 1 : index - 1
         }
       }
-    );  
+    );
   default:
     return state;
   }

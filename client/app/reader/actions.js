@@ -856,13 +856,13 @@ export const updateSearchIndex = (increment) => ({
   payload: {
     increment
   }
-})
+});
 
 export const zeroSearchIndex = () => ({
   type: Constants.ZERO_SEARCH_INDEX
 });
 
-export const searchText = (searchText) => (dispatch) => {
+export const searchText = (searchTerm) => (dispatch) => {
   dispatch(zeroSearchIndex());
-  dispatch(createSearchAction('extractedText')(searchText));
-}
+  dispatch(createSearchAction('extractedText')(searchTerm));
+};
