@@ -2,9 +2,11 @@ import { ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
+const analytics = true;
+
 export const startNewIntake = () => ({
   type: ACTIONS.START_NEW_INTAKE,
-  meta: { analytics: {} }
+  meta: { analytics }
 });
 
 export const setFileNumberSearch = (fileNumber) => ({
@@ -17,7 +19,7 @@ export const setFileNumberSearch = (fileNumber) => ({
 export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
   dispatch({
     type: ACTIONS.FILE_NUMBER_SEARCH_START,
-    meta: { analytics: {} }
+    meta: { analytics }
   });
 
   return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }).
@@ -30,7 +32,7 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
           payload: {
             intake: responseObject
           },
-          meta: { analytics: {} }
+          meta: { analytics }
         });
       },
       (error) => {
@@ -42,7 +44,7 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
             errorCode: responseObject.error_code,
             errorData: responseObject.error_data || {}
           },
-          meta: { analytics: {} }
+          meta: { analytics }
         });
 
         throw error;
@@ -72,7 +74,7 @@ export const setReceiptDate = (receiptDate) => ({
 export const submitReview = (rampElection) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
-    meta: { analytics: {} }
+    meta: { analytics }
   });
 
   const data = {
@@ -84,7 +86,7 @@ export const submitReview = (rampElection) => (dispatch) => {
     then(
       () => dispatch({ 
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
-        meta: { analytics: {} }
+        meta: { analytics }
       }),
       (error) => {
         const responseObject = JSON.parse(error.response.text);
@@ -94,7 +96,7 @@ export const submitReview = (rampElection) => (dispatch) => {
           payload: {
             responseErrorCodes: responseObject.error_codes
           },
-          meta: { analytics: {} }
+          meta: { analytics }
         });
 
         throw error;
@@ -113,19 +115,19 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
   dispatch({
     type: ACTIONS.COMPLETE_INTAKE_START,
-    meta: { analytics: {} }
+    meta: { analytics }
   });
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
     then(
       () => dispatch({ 
         type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
-        meta: { analytics: {} } 
+        meta: { analytics } 
       }),
       (error) => {
         dispatch({ 
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
-          meta: { analytics: {} } 
+          meta: { analytics } 
         });
         throw error;
       }
@@ -144,19 +146,19 @@ export const toggleCancelModal = () => ({
 export const submitCancel = (rampElection) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,
-    meta: { analytics: {} }
+    meta: { analytics }
   });
 
   return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`).
     then(
       () => dispatch({ 
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
-        meta: { analytics: {} }
+        meta: { analytics }
        }),
       (error) => {
         dispatch({ 
           type: ACTIONS.CANCEL_INTAKE_FAIL,
-          meta: { analytics: {} } 
+          meta: { analytics } 
         });
         throw error;
       }
