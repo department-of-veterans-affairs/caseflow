@@ -1,6 +1,8 @@
 class EstablishClaim < Task
   include CachedAttributes
 
+  ADMIN_FUNCTION = "Manage Claim Establishment".freeze
+
   class InvalidEndProductError < StandardError; end
 
   class VBMSError < StandardError

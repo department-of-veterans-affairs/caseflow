@@ -16,7 +16,9 @@ class Test::UsersController < ApplicationController
       name: "Dispatch",
       links: {
         work_history: "/dispatch/establish-claim",
-        work_assignments: "/dispatch/work-assignments"
+        work_assignments: "/dispatch/work-assignments",
+        missing_decision: "/dispatch/missing-decision",
+        oldest_unassigned_tasks: "/dispatch/admin"
       }
     },
     {
