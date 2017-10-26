@@ -62,4 +62,4 @@ export default PageRoute;
 
 PageRoute.defaultProps = {
   callback: _.noop
-}
+};
