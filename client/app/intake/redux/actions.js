@@ -39,13 +39,14 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
       (error) => {
         const responseObject = JSON.parse(error.response.text);
         const errorCode = responseObject.error_code;
+
         dispatch({
           type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
           payload: {
             errorCode,
             errorData: responseObject.error_data || {}
           },
-          meta: { 
+          meta: {
             analytics: {
               label: errorCode
             }
@@ -102,7 +103,7 @@ export const submitReview = (rampElection) => (dispatch) => {
           payload: {
             responseErrorCodes
           },
-          meta: { 
+          meta: {
             analytics: (triggerEvent, category, actionName) => {
               triggerEvent(category, actionName, 'any-error');
 
@@ -123,7 +124,7 @@ export const completeIntake = (rampElection) => (dispatch) => {
   if (!rampElection.finishConfirmed) {
     dispatch({
       type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED,
-      meta: {analytics}
+      meta: { analytics }
     });
 
     return;
