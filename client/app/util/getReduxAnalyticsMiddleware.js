@@ -8,7 +8,7 @@ export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next
 
   if (meta) {
     if (_.isFunction(meta.analytics)) {
-      meta.analytics(window.analyticsEvent);
+      meta.analytics(window.analyticsEvent, defaultCategory, action.type);
     } else {
       const label = _.isFunction(meta.analytics.label) ? meta.analytics.label(store.getState()) : meta.analytics.label;
 

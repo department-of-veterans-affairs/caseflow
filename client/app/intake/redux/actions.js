@@ -1,6 +1,7 @@
 import { ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatDateStringForApi } from '../../util/DateUtil';
+import _ from 'lodash';
 
 const analytics = true;
 
@@ -94,13 +95,23 @@ export const submitReview = (rampElection) => (dispatch) => {
       }),
       (error) => {
         const responseObject = JSON.parse(error.response.text);
+        const responseErrorCodes = responseObject.error_codes;
 
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
-            responseErrorCodes: responseObject.error_codes
+            responseErrorCodes
           },
-          meta: { analytics }
+          meta: { 
+            analytics: (triggerEvent, category, actionName) => {
+              triggerEvent(category, actionName, 'any-error');
+
+              _.forEach(
+                responseErrorCodes,
+                (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
+              );
+            }
+          }
         });
 
         throw error;
