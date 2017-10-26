@@ -96,7 +96,7 @@ export const getMatchesPerPageInFile = createSelector(
   (matchedPages, txt) => _(matchedPages).
     map((page) => ({
       id: page.id,
-      matches: page.text.match(new RegExp(txt, 'gi')).length
+      matches: (page.text.match(new RegExp(txt, 'gi')) || []).length
     })).
     value()
 );
@@ -106,4 +106,11 @@ export const getTotalMatchesInFile = createSelector(
   (matches) => _(matches).
     map((match) => match.matches).
     sum()
+);
+
+const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
+
+export const getCurrentMatchIndex = createSelector(
+  [getTotalMatchesInFile, getSelectedIndex],
+  (totalMatchesInFile, selectedIndex) => (selectedIndex + totalMatchesInFile) % totalMatchesInFile
 );
