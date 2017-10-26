@@ -165,12 +165,11 @@ describe Document do
         OpenStruct.new(
           vbms_document_id: "1",
           doc_type: "179",
-          received_at: "TEST",
           alt_doc_types: ["Appeals - Notice of Disagreement (NOD)", "Appeals - Statement of the Case (SOC)"]
         )
       end
 
-      it { is_expected.to have_attributes(type: "Form 9", received_at: "TEST", alt_types: %w(NOD SOC)) }
+      it { is_expected.to have_attributes(type: "Form 9", alt_types: %w(NOD SOC)) }
     end
 
     context "when doesn't have alt doc types" do
@@ -178,12 +177,11 @@ describe Document do
         OpenStruct.new(
           vbms_document_id: "1",
           doc_type: "179",
-          received_at: "TEST",
           alt_doc_types: nil
         )
       end
 
-      it { is_expected.to have_attributes(type: "Form 9", received_at: "TEST") }
+      it { is_expected.to have_attributes(type: "Form 9") }
     end
   end
 
