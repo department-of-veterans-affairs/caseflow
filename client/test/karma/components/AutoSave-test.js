@@ -11,7 +11,7 @@ describe('AutoSave', () => {
   context('when isSaving is not true', () => {
     it('renders "Last saved at"', () => {
       const wrapper = mount(
-          <AutoSave save={saveFunction} />
+        <AutoSave save={saveFunction} />
       );
 
       expect(wrapper.find('.saving').text()).to.include('Last saved at');
@@ -21,10 +21,10 @@ describe('AutoSave', () => {
   context('when isSaving is true', () => {
     it('renders default spinner', () => {
       const wrapper = mount(
-          <AutoSave
-            isSaving
-            save={saveFunction}
-          />
+        <AutoSave
+          isSaving
+          save={saveFunction}
+        />
       );
 
       const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_DEFAULT}"]`).first();

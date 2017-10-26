@@ -1,4 +1,4 @@
-class Api::V1::AppealsController < Api::V1::ApplicationController
+class Api::V1::AppealsController < Api::ApplicationController
   before_action :verify_feature_enabled
 
   rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn

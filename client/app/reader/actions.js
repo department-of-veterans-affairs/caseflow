@@ -6,6 +6,7 @@ import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { createSearchAction } from 'redux-search';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -22,7 +23,7 @@ export const onInitialCaseLoadingFail = (value = true) => ({
   payload: { value }
 });
 
-export const onReceiveDocs = (documents, vacolsId) => (
+export const onReceiveDocs = (documents, vacolsId) =>
   (dispatch) => {
     dispatch(collectAllTags(documents));
     dispatch({
@@ -33,7 +34,13 @@ export const onReceiveDocs = (documents, vacolsId) => (
       }
     });
   }
-);
+;
+
+export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+  type: Constants.RECEIVE_MANIFESTS,
+  payload: { manifestVbmsFetchedAt,
+    manifestVvaFetchedAt }
+});
 
 export const onReceiveAnnotations = (annotations) => ({
   type: Constants.RECEIVE_ANNOTATIONS,
@@ -457,7 +464,7 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
-export const newTagRequestSuccess = (docId, createdTags) => (
+export const newTagRequestSuccess = (docId, createdTags) =>
   (dispatch, getState) => {
     dispatch({
       type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
@@ -470,7 +477,7 @@ export const newTagRequestSuccess = (docId, createdTags) => (
 
     dispatch(collectAllTags(documents));
   }
-);
+;
 
 export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
   type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
@@ -507,7 +514,7 @@ export const removeTagRequestFailure = (docId, tagId) => ({
   }
 });
 
-export const removeTagRequestSuccess = (docId, tagId) => (
+export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
@@ -520,7 +527,7 @@ export const removeTagRequestSuccess = (docId, tagId) => (
 
     dispatch(collectAllTags(documents));
   }
-);
+;
 
 export const setTagFilter = (text, checked, tagId) => ({
   type: Constants.SET_TAG_FILTER,
@@ -592,7 +599,7 @@ export const clearSearch = () => ({
   }
 });
 
-export const removeTag = (doc, tagId) => (
+export const removeTag = (doc, tagId) =>
   (dispatch) => {
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG,
@@ -608,7 +615,7 @@ export const removeTag = (doc, tagId) => (
         dispatch(removeTagRequestFailure(doc.id, tagId));
       });
   }
-);
+;
 
 
 export const onReceiveAppealDetails = (appeal) => ({
@@ -625,7 +632,7 @@ export const fetchedNoAppealsUsingVeteranId = () => ({
   type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
 });
 
-export const fetchAppealDetails = (vacolsId) => (
+export const fetchAppealDetails = (vacolsId) =>
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
       const returnedObject = JSON.parse(response.text);
@@ -633,7 +640,7 @@ export const fetchAppealDetails = (vacolsId) => (
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => dispatch(onAppealDetailsLoadingFail()));
   }
-);
+;
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
@@ -659,26 +666,26 @@ export const requestAppealUsingVeteranId = () => ({
   }
 });
 
-export const fetchAppealUsingVeteranId = (veteranId) => (
+export const fetchAppealUsingVeteranId = (veteranId) =>
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/reader/appeal/veteran-id?json', {
       headers: { 'veteran-id': veteranId }
     },
-      ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
-    then((response) => {
-      const returnedObject = JSON.parse(response.text);
+    ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
+      then((response) => {
+        const returnedObject = JSON.parse(response.text);
 
-      if (_.size(returnedObject.appeals) === 0) {
-        dispatch(fetchedNoAppealsUsingVeteranId());
-      } else {
-        dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-      }
-    }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+        if (_.size(returnedObject.appeals) === 0) {
+          dispatch(fetchedNoAppealsUsingVeteranId());
+        } else {
+          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+        }
+      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
   }
-);
+;
 
-export const addNewTag = (doc, tags) => (
+export const addNewTag = (doc, tags) =>
   (dispatch) => {
     const currentTags = doc.tags;
 
@@ -703,7 +710,7 @@ export const addNewTag = (doc, tags) => (
         });
     }
   }
-);
+;
 
 export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
   type: Constants.SET_OPENED_ACCORDION_SECTIONS,
@@ -813,3 +820,48 @@ export const rotateDocument = (docId) => ({
     docId
   }
 });
+
+export const getDocumentText = (pdfDocument, file) =>
+  (dispatch) => {
+    const getTextForPage = (index) => {
+      return pdfDocument.getPage(index + 1).then((page) => {
+        return page.getTextContent();
+      });
+    };
+    const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
+
+    Promise.all(getTextPromises).then((pages) => {
+      const textObject = pages.reduce((acc, page, pageIndex) => {
+        // PDFJS textObjects have an array of items. Each item has a str.
+        // concatenating all of these gets us to the page text.
+        const concatenated = page.items.map((row) => row.str).join(' ');
+
+        return {
+          ...acc,
+          [`${file}-${pageIndex}`]: {
+            id: `${file}-${pageIndex}`,
+            file,
+            text: concatenated,
+            pageIndex
+          }
+        };
+      }, {});
+
+      dispatch({
+        type: Constants.GET_DCOUMENT_TEXT,
+        payload: {
+          textObject
+        }
+      });
+    });
+  }
+;
+
+export const setDocumentSearch = (searchString) => ({
+  type: Constants.SET_DOCUMENT_SEARCH,
+  payload: {
+    searchString
+  }
+});
+
+export const searchText = createSearchAction('extractedText');

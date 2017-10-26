@@ -17,9 +17,9 @@ export default class TestUsers extends React.PureComponent {
   }
 
   handleEpSeed = (type) => ApiUtil.post(`/test/set_end_products?type=${type}`).
-                                   catch((err) => {
-                                     console.warn(err);
-                                   });
+    catch((err) => {
+      console.warn(err);
+    });
   handleUserSelect = ({ value }) => this.setState({ userSelect: value });
   handleUserSwitch = () => {
     this.setState({ isSwitching: true });
@@ -27,9 +27,9 @@ export default class TestUsers extends React.PureComponent {
       window.location.reload();
       this.setState({ isSwitching: false });
     }).
-    catch((err) => {
-      console.warn(err);
-    });
+      catch((err) => {
+        console.warn(err);
+      });
   }
 
   render() {
@@ -50,24 +50,24 @@ export default class TestUsers extends React.PureComponent {
               <a href={app.links[name]}>{StringUtil.snakeCaseToCapitalized(name)}</a>
             </li>;
           })}
-          </ul>
-          { app.name === 'Dispatch' && <div>
-              <p>
+        </ul>
+        { app.name === 'Dispatch' && <div>
+          <p>
                 For Dispatch we are processing different types of grants,
                 here you can select which type you want to preload.</p>
-              <ul>
-                { this.props.epTypes.map((type) => {
-                  const label = `Seed ${type} grants`;
+          <ul>
+            { this.props.epTypes.map((type) => {
+              const label = `Seed ${type} grants`;
 
-                  return <li key={type}>
-                    <Button
-                      onClick={() => this.handleEpSeed(type)}
-                      name={label} />
-                  </li>;
-                })}
-              </ul>
-          </div>
-          }
+              return <li key={type}>
+                <Button
+                  onClick={() => this.handleEpSeed(type)}
+                  name={label} />
+              </li>;
+            })}
+          </ul>
+        </div>
+        }
       </div>;
 
       return tab;
@@ -83,17 +83,17 @@ export default class TestUsers extends React.PureComponent {
           Some of our users come from different stations acorss the country,
           therefore selecting station 405 might lead to an extra Login screen.</p>
         <strong>User Selector:</strong>
-          <SearchableDropdown
-            name=""
-            options={userOptions} searchable={false}
-            onChange={this.handleUserSelect}
-            value={this.state.userSelect} />
+        <SearchableDropdown
+          name=""
+          options={userOptions} searchable={false}
+          onChange={this.handleUserSelect}
+          value={this.state.userSelect} />
 
-          <Button
-            onClick={this.handleUserSwitch}
-            name="Switch user"
-            loading={this.state.isSwitching}
-            loadingText="Switching users" />
+        <Button
+          onClick={this.handleUserSwitch}
+          name="Switch user"
+          loading={this.state.isSwitching}
+          loadingText="Switching users" />
       </div>
       <p>
         Not all applications are available to every user. Additionally,

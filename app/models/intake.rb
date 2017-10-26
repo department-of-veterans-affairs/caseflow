@@ -7,7 +7,7 @@ class Intake < ActiveRecord::Base
     canceled: "canceled"
   }
 
-  attr_reader :error_code
+  attr_reader :error_code, :error_data
 
   def self.in_progress
     where(completed_at: nil).where.not(started_at: nil)
@@ -57,7 +57,7 @@ class Intake < ActiveRecord::Base
     return false unless veteran_file_number
 
     self.veteran_file_number = veteran_file_number.strip
-    veteran_file_number =~ /[0-9]{8,}/
+    veteran_file_number =~ /^[0-9]{8,9}$/
   end
 
   # Optionally implement this methods in subclass

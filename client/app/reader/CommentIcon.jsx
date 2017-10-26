@@ -39,8 +39,8 @@ export class CommentIcon extends React.Component {
       onClick={this.onClick}
       draggable={this.props.onDrag !== null}
       onDragStart={this.onDragStart}>
-        {commentIcon(selected, this.props.comment.uuid)}
-      </div>;
+      {commentIcon(selected, this.props.comment.uuid)}
+    </div>;
   }
 }
 

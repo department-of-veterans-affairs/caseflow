@@ -39,17 +39,21 @@ export class PdfListView extends React.Component {
             noDocuments={noDocuments}
           />
           { noDocuments ?
-          <NoSearchResults /> :
-          <DocumentsTable
-            documents={this.props.documents}
-            documentPathBase={this.props.documentPathBase}
-            onJumpToComment={this.props.onJumpToComment}
-            sortBy={this.props.sortBy}
-            docFilterCriteria={this.props.docFilterCriteria}
-            showPdf={this.props.showPdf}
-          />}
+            <NoSearchResults /> :
+            <DocumentsTable
+              documents={this.props.documents}
+              documentPathBase={this.props.documentPathBase}
+              onJumpToComment={this.props.onJumpToComment}
+              sortBy={this.props.sortBy}
+              docFilterCriteria={this.props.docFilterCriteria}
+              showPdf={this.props.showPdf}
+            />}
         </div>
       </div>
+      <div id={'vbms-manifest-retrieved-at'}>Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
+      { this.props.manifestVvaFetchedAt ?
+        <div id={'vva-manifest-retrieved-at'}>Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
+        '' }
     </div>;
   }
 }
@@ -59,7 +63,9 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
-    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal
+    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal,
+    manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
+    manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
   };
 };
 

@@ -79,7 +79,7 @@ export default class BaseContainer extends React.Component {
 
     return <div>
       {alert && <div className="cf-app-segment">
-          <Alert
+        <Alert
           type={alert.type}
           title={alert.title}
           message={alert.message}

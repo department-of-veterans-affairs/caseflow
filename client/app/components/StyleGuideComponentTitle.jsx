@@ -15,7 +15,7 @@ export default class StyleGuideComponentTitle extends React.Component {
     let baseUrl;
 
     let getBaseUrl = () => {
-        /* eslint-disable max-len */
+      /* eslint-disable max-len */
       if (isExternalLink) {
         // isExternalLink is for any code sample that's outside the StyleGuide container directory
         baseUrl = 'https://github.com/department-of-veterans-affairs/caseflow';

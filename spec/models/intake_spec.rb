@@ -69,8 +69,17 @@ describe Intake do
       end
     end
 
-    context "veteran_file_number has less than 8 digits" do
-      let(:veteran_file_number) { "1111222" }
+    context "veteran_file_number has fewer than 8 digits" do
+      let(:veteran_file_number) { "1234567" }
+
+      it "adds invalid_file_number and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq(:invalid_file_number)
+      end
+    end
+
+    context "veteran_file_number has more than 9 digits" do
+      let(:veteran_file_number) { "1234567899" }
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
@@ -80,6 +89,15 @@ describe Intake do
 
     context "veteran_file_number has non-digit characters" do
       let(:veteran_file_number) { "HAXHAXHAX" }
+
+      it "adds invalid_file_number and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq(:invalid_file_number)
+      end
+    end
+
+    context "veteran_file_number is VACOLS style" do
+      let(:veteran_file_number) { "12341234C" }
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)

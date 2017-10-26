@@ -14,7 +14,7 @@ export default {
   changeObjectInArray: (array, action) => {
     return array.map((object, index) => {
       if (index !== action.index) {
-          // This isn't the item we care about - keep it as-is
+        // This isn't the item we care about - keep it as-is
         return object;
       }
 

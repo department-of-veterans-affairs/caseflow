@@ -59,9 +59,9 @@ export class EstablishClaimEmail extends BaseForm {
   renderRegionalOfficeEmaillist() {
     return this.props.regionalOfficeEmail.map((regionalOfficeEmailMailto, index, arr) => {
       return (
-                  <a key={regionalOfficeEmailMailto} href={`mailto:${regionalOfficeEmailMailto}`}>
-                      {regionalOfficeEmailMailto}{index === arr.length - 1 ? '' : '; '}
-                  </a>
+        <a key={regionalOfficeEmailMailto} href={`mailto:${regionalOfficeEmailMailto}`}>
+          {regionalOfficeEmailMailto}{index === arr.length - 1 ? '' : '; '}
+        </a>
       );
     });
   }
@@ -70,83 +70,83 @@ export class EstablishClaimEmail extends BaseForm {
     return <div>
       { this.props.regionalOfficeEmail &&
         <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h1>Route Claim</h1>
+          <div className="cf-app-segment cf-app-segment--alt">
+            <h1>Route Claim</h1>
             <h2>Send Email Notification</h2>
-          <div className="cf-email-header">
-            <Alert
-              title="We are unable to create an
+            <div className="cf-email-header">
+              <Alert
+                title="We are unable to create an
                 EP for claims with this Special Issue"
-              type="info">
+                type="info">
               Follow the instructions below to route this claim.
-            </Alert>
-            <p>Please send the following email message to the office
+              </Alert>
+              <p>Please send the following email message to the office
               responsible for implementing this grant.</p>
-            <aside>
-              <p><b>RO:</b> {this.props.regionalOffice}</p>
-              <p><b>RO email:</b> {this.renderRegionalOfficeEmaillist()}</p>
-            </aside>
-          </div>
+              <aside>
+                <p><b>RO:</b> {this.props.regionalOffice}</p>
+                <p><b>RO email:</b> {this.renderRegionalOfficeEmaillist()}</p>
+              </aside>
+            </div>
 
-          <div className ="cf-vbms-note">
-            <TextareaField
+            <div className ="cf-vbms-note">
+              <TextareaField
                 label="Message:"
                 name="emailMessage"
                 onChange={this.handleFieldChange('emailForm', 'emailField')}
                 {...this.state.emailForm.emailField}
-            />
+              />
 
-            <div className="cf-app-segment copy-note-button">
-              <div className="cf-push-left">
-                <CopyToClipboard text={this.state.emailForm.emailField.value}>
-                  <Button
-                   name="copyNote"
-                   classNames={['usa-button-outline usa-button-hover']}>
-                   <i className="fa fa-files-o" aria-hidden="true"></i>
+              <div className="cf-app-segment copy-note-button">
+                <div className="cf-push-left">
+                  <CopyToClipboard text={this.state.emailForm.emailField.value}>
+                    <Button
+                      name="copyNote"
+                      classNames={['usa-button-outline usa-button-hover']}>
+                      <i className="fa fa-files-o" aria-hidden="true"></i>
                    Copy note
-                  </Button>
-                </CopyToClipboard>
+                    </Button>
+                  </CopyToClipboard>
+                </div>
               </div>
             </div>
+
+            <div className="route-claim-confirmNote-wrapper">
+              <Checkbox
+                label="I confirm that I have sent an email to route this claim."
+                name="confirmEmail"
+                onChange={this.handleFieldChange('emailForm', 'confirmBox')}
+                {...this.state.emailForm.confirmBox}
+                required={true}
+              />
+            </div>
+
           </div>
 
-          <div className="route-claim-confirmNote-wrapper">
-          <Checkbox
-              label="I confirm that I have sent an email to route this claim."
-              name="confirmEmail"
-              onChange={this.handleFieldChange('emailForm', 'confirmBox')}
-              {...this.state.emailForm.confirmBox}
-              required={true}
-          />
-         </div>
-
+          <div className="cf-app-segment" id="establish-claim-buttons">
+            <div className="cf-push-left">
+              <Button
+                name={this.props.backToDecisionReviewText}
+                onClick={this.props.handleBackToDecisionReview}
+                classNames={['cf-btn-link']}
+              />
+            </div>
+            <div className="cf-push-right">
+              <Button
+                name="Cancel"
+                onClick={this.props.handleToggleCancelTaskModal}
+                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+              />
+              <Button
+                app="dispatch"
+                name="Finish routing claim"
+                classNames={['usa-button-primary']}
+                disabled={!this.state.emailForm.confirmBox.value}
+                onClick={this.props.handleEmailSubmit}
+                loading={this.props.loading}
+              />
+            </div>
+          </div>
         </div>
-
-        <div className="cf-app-segment" id="establish-claim-buttons">
-          <div className="cf-push-left">
-            <Button
-              name={this.props.backToDecisionReviewText}
-              onClick={this.props.handleBackToDecisionReview}
-              classNames={['cf-btn-link']}
-            />
-          </div>
-          <div className="cf-push-right">
-            <Button
-            name="Cancel"
-            onClick={this.props.handleToggleCancelTaskModal}
-            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
-            />
-            <Button
-              app="dispatch"
-              name="Finish routing claim"
-              classNames={['usa-button-primary']}
-              disabled={!this.state.emailForm.confirmBox.value}
-              onClick={this.props.handleEmailSubmit}
-              loading={this.props.loading}
-            />
-          </div>
-        </div>
-      </div>
       }
     </div>;
   }

@@ -11,8 +11,8 @@ export class Header extends React.Component {
 
     return <div>
       { !serverError && <div id="certifications-header" className="cf-app-segment">
-      <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
-         {veteranName} &nbsp;
+        <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
+          {veteranName} &nbsp;
         </div>
 
         <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
@@ -34,11 +34,11 @@ export class Header extends React.Component {
             0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0
             12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
             fill="#5B616B" fillRule="evenodd"/></svg>
-            {/*eslint-enable */}
+            {/* eslint-enable */}
           </button>
         </div>
       </div>}
-     <div className="cf-help-divider"></div>
+      <div className="cf-help-divider"></div>
     </div>;
   }
 }

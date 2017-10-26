@@ -9,16 +9,16 @@ import { timeFunction } from '../util/PerfDebug';
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => categoryFieldNameOfCategoryName(key)).
-        value();
+    toPairs().
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
+    map(([key]) => categoryFieldNameOfCategoryName(key)).
+    value();
 
   const activeTagFilters = _(docFilterCriteria.tag).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => key).
-        value();
+    toPairs().
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
+    map(([key]) => key).
+    value();
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
@@ -171,7 +171,9 @@ export const initialState = {
         tag: false,
         category: false
       }
-    }
+    },
+    manifestVbmsFetchedAt: null,
+    manifestVvaFetchedAt: null
   },
 
   /**
@@ -184,7 +186,10 @@ export const initialState = {
   annotations: {},
   documents: {},
   pages: {},
-  pdfDocuments: {}
+  pdfDocuments: {},
+  text: [],
+  documentSearchString: null,
+  extractedText: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -251,6 +256,17 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_MANIFESTS:
+    return update(state, {
+      ui: {
+        manifestVbmsFetchedAt: {
+          $set: action.payload.manifestVbmsFetchedAt
+        },
+        manifestVvaFetchedAt: {
+          $set: action.payload.manifestVvaFetchedAt
+        }
+      }
+    });
   case Constants.RECEIVE_ANNOTATIONS:
     return updateFilteredDocIds(update(
       state,
@@ -1085,7 +1101,24 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-
+  case Constants.GET_DCOUMENT_TEXT:
+    return update(
+      state,
+      {
+        extractedText: {
+          $merge: action.payload.textObject
+        }
+      }
+    );
+  case Constants.SET_DOCUMENT_SEARCH:
+    return update(
+      state,
+      {
+        documentSearchString: {
+          $set: action.payload.searchString
+        }
+      }
+    );
   default:
     return state;
   }

@@ -15,6 +15,8 @@ class IntakesController < ApplicationController
   end
 
   def index
+    no_cache
+
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -24,11 +26,20 @@ class IntakesController < ApplicationController
     if intake.start!
       render json: ramp_intake_data(intake)
     else
-      render json: { error_code: intake.error_code }, status: 422
+      render json: {
+        error_code: intake.error_code,
+        error_data: intake.error_data
+      }, status: 422
     end
   end
 
   private
+
+  def no_cache
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
 
   def ramp_intake_data(ramp_intake)
     return {} unless ramp_intake
@@ -41,7 +52,8 @@ class IntakesController < ApplicationController
       notice_date: ramp_intake.detail.notice_date,
       option_selected: ramp_intake.detail.option_selected,
       receipt_date: ramp_intake.detail.receipt_date,
-      completed_at: ramp_intake.completed_at
+      completed_at: ramp_intake.completed_at,
+      appeals: ramp_intake.serialized_appeal_issues
     }
   end
   helper_method :ramp_intake_data

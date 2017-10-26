@@ -15,7 +15,7 @@ let StyleGuideFormFields = () => {
       <StyleGuideTextArea />
       <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />
-  </div>
+    </div>
 
   );
 };

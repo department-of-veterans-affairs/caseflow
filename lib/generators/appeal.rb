@@ -6,7 +6,9 @@ class Generators::Appeal
       {
         vbms_id: generate_external_id,
         vacols_id: generate_external_id,
-        vacols_record: :ready_to_certify
+        vacols_record: :ready_to_certify,
+        manifest_vbms_fetched_at: Time.zone.now.strftime("%D %l:%M%P %Z"),
+        manifest_vva_fetched_at: Time.zone.now.strftime("%D %l:%M%P %Z")
       }
     end
 
@@ -54,9 +56,15 @@ class Generators::Appeal
           regional_office_key: "DSUSER"
         },
         certified: {
+          status: "Advance",
           certification_date: 1.day.ago
         },
+        activated: {
+          certification_date: 4.days.ago,
+          case_review_date: 1.day.ago
+        },
         form9_not_submitted: {
+          status: "Advance",
           decision_date: nil,
           form9_date: nil
         },
@@ -170,6 +178,7 @@ class Generators::Appeal
       vacols_record = extract_vacols_record(attrs)
       appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
       inaccessible = attrs.delete(:inaccessible)
+      veteran = attrs.delete(:veteran)
 
       cast_datetime_fields(attrs)
       setup_vbms_documents(attrs)
@@ -184,7 +193,7 @@ class Generators::Appeal
       appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible
-      Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
+      veteran || Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
 
       appeal
     end
@@ -198,9 +207,11 @@ class Generators::Appeal
 
     def setup_vbms_documents(attrs)
       documents = attrs.delete(:documents)
-
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
+
+      Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
+      Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
     end
 
     def set_vacols_issues(appeal:, vacols_record:, attrs:)
