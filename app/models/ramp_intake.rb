@@ -35,6 +35,10 @@ class RampIntake < Intake
     end
   end
 
+  def veteran_ramp_elections
+    @veteran_ramp_elections ||= RampElection.where(veteran_file_number: veteran_file_number).all
+  end
+
   private
 
   # Appeals in VACOLS that will be closed out in favor
@@ -44,8 +48,12 @@ class RampIntake < Intake
   end
 
   def validate_detail_on_start
-    if !matching_ramp_election
+    if veteran_ramp_elections.empty?
       @error_code = :did_not_receive_ramp_election
+
+    elsif !matching_ramp_election
+      @error_code = :ramp_election_already_complete
+      @error_data = { notice_date: veteran_ramp_elections.last.notice_date }
 
     elsif eligible_appeals.empty?
       @error_code = :no_eligible_appeals
@@ -53,6 +61,6 @@ class RampIntake < Intake
   end
 
   def matching_ramp_election
-    @matching_ramp_election ||= RampElection.find_by(veteran_file_number: veteran_file_number)
+    @matching_ramp_election ||= veteran_ramp_elections.reject(&:successfully_received?).first
   end
 end
