@@ -25,7 +25,7 @@ describe('hearingsReducer', () => {
     });
   });
 
-  //Dockets
+  // Dockets
   context(Constants.SET_NOTES, () => {
     let state;
 
@@ -146,7 +146,7 @@ describe('hearingsReducer', () => {
     });
   });
 
-  //Worksheet
+  // Worksheet
   context(Constants.SET_REPNAME, () => {
     let state;
 
@@ -249,7 +249,7 @@ describe('hearingsReducer', () => {
     });
   });
 
- // Issues
+  // Issues
   context(Constants.SET_DESCRIPTION, () => {
     let state;
 
