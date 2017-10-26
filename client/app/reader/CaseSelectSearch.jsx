@@ -8,7 +8,7 @@ import { fetchAppealUsingVeteranId,
   clearCaseSelectSearch, caseSelectAppeal,
   caseSelectModalSelectVacolsId
 } from './CaseSelect/CaseSelectActions';
-import { onReceiveAppealDetails } from './PdfViewer/PdfViewerActions';
+import { onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 
 import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
