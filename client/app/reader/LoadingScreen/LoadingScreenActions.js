@@ -1,3 +1,5 @@
+import * as Constants from '../constants';
+
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,
   payload: { value }
