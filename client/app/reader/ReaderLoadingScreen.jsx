@@ -17,32 +17,44 @@ export class ReaderLoadingScreen extends React.Component {
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
 
-    ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-      const documents = returnedObject.appealDocuments;
-      const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-      this.props.onReceiveDocs(documents, this.props.vacolsId);
-      this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
-      this.props.onReceiveAnnotations(annotations);
+    const downloadDocumentList = () => {
+      ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
 
-      const downloadDocuments = (documentUrls, index) => {
-        if (index >= documentUrls.length) {
+        const returnedObject = JSON.parse(response.text);
+        if (returnedObject.stillFetchingDocuments) {
+          setTimeout(function(){
+            downloadDocumentList();
+          }, 2000);
           return;
         }
 
-        ApiUtil.get(documentUrls[index], {
-          cache: true,
-          withCredentials: true
-        }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
-          () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-        );
-      };
+        const documents = returnedObject.appealDocuments;
+        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-      for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-        downloadDocuments(_.map(documents, 'content_url'), i);
-      }
-    }, this.props.onInitialDataLoadingFail);
+        this.props.onReceiveDocs(documents, this.props.vacolsId);
+        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+        this.props.onReceiveAnnotations(annotations);
+
+        const downloadDocuments = (documentUrls, index) => {
+          if (index >= documentUrls.length) {
+            return;
+          }
+
+          ApiUtil.get(documentUrls[index], {
+            cache: true,
+            withCredentials: true
+          }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
+            () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
+          );
+        };
+
+        for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+          downloadDocuments(_.map(documents, 'content_url'), i);
+        }
+      }, this.props.onInitialDataLoadingFail);
+
+    }
   }
 
   render() {

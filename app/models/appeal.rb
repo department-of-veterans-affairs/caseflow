@@ -99,6 +99,7 @@ class Appeal < ActiveRecord::Base
   # in the database
   attr_writer :saved_documents
   def saved_documents
+    if fetch_documents!(save: true)
     @saved_documents ||= fetch_documents!(save: true)
   end
 
@@ -465,9 +466,15 @@ class Appeal < ActiveRecord::Base
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
+    @still_fetching_documents = !!doc_struct[:still_fetching_documents]
     @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
     @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
     @fetched_documents = doc_struct[:documents]
+  end
+
+  def still_fetching_documents?
+    fetch_documents_from_service!
+    !!@still_fetching_documents
   end
 
   def fetched_documents
