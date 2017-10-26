@@ -463,7 +463,7 @@ class Fakes::AppealRepository
       Generators::Veteran.build(file_number: "#{i + 1}0555555")
 
       Generators::Appeal.build(
-        vbms_id: "#{i}5555555C",
+        vbms_id: "#{i + 1}5555555C",
         issues: (1..2).map { Generators::Issue.build }
       )
     end

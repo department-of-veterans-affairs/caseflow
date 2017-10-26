@@ -65,7 +65,8 @@ class SeedDB
 
     # Create one task with no decision documents
     EstablishClaim.create(
-      appeal: tasks[2].appeal
+      appeal: tasks[2].appeal,
+      created_at: 5.days.ago
     )
 
     @tasks.push(*tasks)
@@ -92,7 +93,7 @@ class SeedDB
   def create_ramp_elections(number)
     number.times do |i|
       RampElection.create!(
-        veteran_file_number: "#{i}5555555",
+        veteran_file_number: "#{i + 1}5555555",
         notice_date: i.weeks.ago
       )
     end
