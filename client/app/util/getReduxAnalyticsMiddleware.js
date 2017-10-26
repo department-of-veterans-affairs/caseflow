@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 const debounceFns = {};
 
-export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
+export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next) => (action) => {
   const dispatchedAction = next(action);
   const { meta } = action;
 
@@ -13,8 +13,11 @@ export const reduxAnalyticsMiddleware = (store) => (next) => (action) => {
       const label = _.isFunction(meta.analytics.label) ? meta.analytics.label(store.getState()) : meta.analytics.label;
 
       if (!debounceFns[action.type]) {
+        const category = meta.analytics.category || defaultCategory;
+        const actionName = meta.analytics.action || action.type;
+
         debounceFns[action.type] = _.debounce(
-          (eventLabel) => window.analyticsEvent(meta.analytics.category, meta.analytics.action, eventLabel),
+          (eventLabel) => window.analyticsEvent(category, actionName, eventLabel),
           meta.analytics.debounceMs || 0
         );
       }

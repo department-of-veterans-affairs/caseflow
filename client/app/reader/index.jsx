@@ -5,7 +5,7 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
-import { reduxAnalyticsMiddleware } from '../utils/ReduxAnalyticsMiddleware';
+import { getReduxAnalyticsMiddleware } from '../utils/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 
 // eslint-disable-next-line no-underscore-dangle
@@ -16,7 +16,7 @@ const store = createStore(
     search: searchReducer
   }),
   composeEnhancers(
-    applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware),
+    applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware()),
     reduxSearch({
       // Configure redux-search by telling it which resources to index for searching
       resourceIndexes: {

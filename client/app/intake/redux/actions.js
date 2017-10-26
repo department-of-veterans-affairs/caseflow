@@ -3,7 +3,8 @@ import ApiUtil from '../../util/ApiUtil';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const startNewIntake = () => ({
-  type: ACTIONS.START_NEW_INTAKE
+  type: ACTIONS.START_NEW_INTAKE,
+  meta: { analytics: {} }
 });
 
 export const setFileNumberSearch = (fileNumber) => ({
@@ -15,7 +16,8 @@ export const setFileNumberSearch = (fileNumber) => ({
 
 export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
   dispatch({
-    type: ACTIONS.FILE_NUMBER_SEARCH_START
+    type: ACTIONS.FILE_NUMBER_SEARCH_START,
+    meta: { analytics: {} }
   });
 
   return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }).
@@ -27,7 +29,8 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
           type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
           payload: {
             intake: responseObject
-          }
+          },
+          meta: { analytics: {} }
         });
       },
       (error) => {
@@ -38,7 +41,8 @@ export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
           payload: {
             errorCode: responseObject.error_code,
             errorData: responseObject.error_data || {}
-          }
+          },
+          meta: { analytics: {} }
         });
 
         throw error;
@@ -50,6 +54,11 @@ export const setOptionSelected = (optionSelected) => ({
   type: ACTIONS.SET_OPTION_SELECTED,
   payload: {
     optionSelected
+  },
+  meta: { 
+    analytics: {
+      label: optionSelected
+    } 
   }
 });
 
@@ -57,12 +66,14 @@ export const setReceiptDate = (receiptDate) => ({
   type: ACTIONS.SET_RECEIPT_DATE,
   payload: {
     receiptDate
-  }
+  },
+  meta: { analytics: {} }
 });
 
 export const submitReview = (rampElection) => (dispatch) => {
   dispatch({
-    type: ACTIONS.SUBMIT_REVIEW_START
+    type: ACTIONS.SUBMIT_REVIEW_START,
+    meta: { analytics: {} }
   });
 
   const data = {
@@ -72,7 +83,10 @@ export const submitReview = (rampElection) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }).
     then(
-      () => dispatch({ type: ACTIONS.SUBMIT_REVIEW_SUCCEED }),
+      () => dispatch({ 
+        type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
+        meta: { analytics: {} }
+      }),
       (error) => {
         const responseObject = JSON.parse(error.response.text);
 
@@ -80,7 +94,8 @@ export const submitReview = (rampElection) => (dispatch) => {
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
             responseErrorCodes: responseObject.error_codes
-          }
+          },
+          meta: { analytics: {} }
         });
 
         throw error;
@@ -98,33 +113,52 @@ export const completeIntake = (rampElection) => (dispatch) => {
   }
 
   dispatch({
-    type: ACTIONS.COMPLETE_INTAKE_START
+    type: ACTIONS.COMPLETE_INTAKE_START,
+    meta: { analytics: {} }
   });
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`).
     then(
-      () => dispatch({ type: ACTIONS.COMPLETE_INTAKE_SUCCEED }),
+      () => dispatch({ 
+        type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+        meta: { analytics: {} } 
+      }),
       (error) => {
-        dispatch({ type: ACTIONS.COMPLETE_INTAKE_FAIL });
+        dispatch({ 
+          type: ACTIONS.COMPLETE_INTAKE_FAIL,
+          meta: { analytics: {} } 
+        });
         throw error;
       }
     );
 };
 
 export const toggleCancelModal = () => ({
-  type: ACTIONS.TOGGLE_CANCEL_MODAL
+  type: ACTIONS.TOGGLE_CANCEL_MODAL,
+  meta: { 
+    analytics: {
+      label: (nextState) => nextState.cancelModalVisible ? 'show' : 'hide'
+    } 
+  }
 });
 
 export const submitCancel = (rampElection) => (dispatch) => {
   dispatch({
-    type: ACTIONS.CANCEL_INTAKE_START
+    type: ACTIONS.CANCEL_INTAKE_START,
+    meta: { analytics: {} }
   });
 
   return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`).
     then(
-      () => dispatch({ type: ACTIONS.CANCEL_INTAKE_SUCCEED }),
+      () => dispatch({ 
+        type: ACTIONS.CANCEL_INTAKE_SUCCEED,
+        meta: { analytics: {} }
+       }),
       (error) => {
-        dispatch({ type: ACTIONS.CANCEL_INTAKE_FAIL });
+        dispatch({ 
+          type: ACTIONS.CANCEL_INTAKE_FAIL,
+          meta: { analytics: {} } 
+        });
         throw error;
       }
     );
@@ -132,5 +166,10 @@ export const submitCancel = (rampElection) => (dispatch) => {
 
 export const confirmFinishIntake = (isConfirmed) => ({
   type: ACTIONS.CONFIRM_FINISH_INTAKE,
-  payload: { isConfirmed }
+  payload: { isConfirmed },
+  meta: { 
+    analytics: {
+      label: isConfirmed ? 'confirmed' : 'not-confirmed'
+    } 
+  }
 });
