@@ -8,16 +8,16 @@ import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } fr
 class HearingWorksheetIssueFields extends PureComponent {
 
   onProgramChange = (event) =>
-    this.props.onProgramChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onProgramChange(event.target.value, this.props.issue.id);
 
   onNameChange = (event) =>
-    this.props.onNameChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onNameChange(event.target.value, this.props.issue.id);
 
   onLevelsChange = (event) =>
-    this.props.onLevelsChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onLevelsChange(event.target.value, this.props.issue.id);
 
   onDescriptionChange = (event) =>
-    this.props.onDescriptionChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onDescriptionChange(event.target.value, this.props.issue.id);
 
   render() {
     let { issue, field } = this.props;
@@ -72,9 +72,7 @@ const mapStateToProps = (state) => ({
 HearingWorksheetIssueFields.propTypes = {
   issue: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
-  field: PropTypes.string.isRequired,
-  appealKey: PropTypes.number.isRequired,
-  issueKey: PropTypes.number.isRequired
+  field: PropTypes.string.isRequired
 };
 
 export default connect(
