@@ -420,6 +420,16 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def manifest_vbms_fetched_at
+    fetch_documents_from_service!
+    @manifest_vbms_fetched_at
+  end
+
+  def manifest_vva_fetched_at
+    fetch_documents_from_service!
+    @manifest_vva_fetched_at
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -450,8 +460,19 @@ class Appeal < ActiveRecord::Base
     @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
+  def fetch_documents_from_service!
+    return if @fetched_documents
+
+    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
+    @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
+    @fetched_documents = doc_struct[:documents]
+  end
+
   def fetched_documents
-    @fetched_documents ||= document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+    fetch_documents_from_service!
+    @fetched_documents
   end
 
   def document_service

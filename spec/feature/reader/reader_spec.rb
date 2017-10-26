@@ -186,8 +186,17 @@ RSpec.feature "Reader" do
     end
 
     context "Appeals without any issues" do
+      let(:vbms_fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+      let(:vva_fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+
       let(:appeal) do
-        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, issues: [])
+        Generators::Appeal.build(
+          vacols_record: vacols_record,
+          documents: documents,
+          manifest_vbms_fetched_at: vbms_fetched_ts,
+          manifest_vva_fetched_at: vva_fetched_ts,
+          issues: []
+        )
       end
 
       before do
@@ -203,6 +212,23 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
         expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
+      end
+
+      context "When both document source manifest retrieval times are set" do
+        scenario "Both times display on the page" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{vbms_fetched_ts}")
+          expect(find("#vva-manifest-retrieved-at").text).to have_content("Last VVA retrieval: #{vva_fetched_ts}")
+        end
+      end
+
+      context "When VVA manifest retrieval time is nil" do
+        let(:vva_fetched_ts) { nil }
+        scenario "Only VBMS time displays on the page" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{vbms_fetched_ts}")
+          expect(page).to_not have_css("#vva-manifest-retrieved-at")
+        end
       end
 
       scenario "pdf view sidebar shows no issues message" do
