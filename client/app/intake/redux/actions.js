@@ -122,7 +122,8 @@ export const submitReview = (rampElection) => (dispatch) => {
 export const completeIntake = (rampElection) => (dispatch) => {
   if (!rampElection.finishConfirmed) {
     dispatch({
-      type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED
+      type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED,
+      meta: {analytics}
     });
 
     return;
