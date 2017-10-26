@@ -93,7 +93,6 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    console.log('Mounting', this.props.pageIndex);
     this.setUpPage();
 
     // We only want to setUpPage immediately if it's either on a visible page, or if that page
@@ -108,12 +107,17 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentWillUnmount = () => {
-    console.log('UnMounting', this.props.pageIndex);
     this.isDrawing = false;
     this.isDrawn = false;
     this.isUnmounting = true;
     if (this.page) {
       this.page.cleanup();
+    }
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.scale !== this.props.scale) {
+      this.drawPage(this.page);
     }
   }
 

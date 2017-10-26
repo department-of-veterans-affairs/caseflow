@@ -77,16 +77,18 @@ export class PdfFile extends React.PureComponent {
   }
 
   getRowHeight = ({ index }) => {
-    return (_.get(this.props.pageDimensions, [`${this.props.file}-${index}`, 'height'], this.props.baseHeight) + 25) * this.props.scale
+    return PAGE_HEIGHT;//(_.get(this.props.pageDimensions, [`${this.props.file}-${index}`, 'height'], this.props.baseHeight) + 25) * this.props.scale
   }
 
-  getList = (list) => this.list = list
+  getList = (list) => {
+    this.list = list;
+    this.list.recomputeRowHeights();
+  }
 
-  componentDidUpdate = () => {
-    if (this.list) {
-      console.log(this.list);
-      this.list.recomputeRowHeights();
-    }
+  componentDidUpdate = (prevProps) => {
+    // if (this.list) {
+    //   this.list.recomputeRowHeights();
+    // }
   }
 
   render() {
@@ -101,12 +103,14 @@ export class PdfFile extends React.PureComponent {
       return <AutoSizer>{({ width, height }) =>
           <List
             ref={this.getList}
+            onRowsRendered={this.props.onRowsRendered}
             height={height}
-            estimatedRowSize={this.props.baseHeight}
+            estimatedRowSize={PAGE_HEIGHT}
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
             rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
             width={width}
+            scale={this.props.scale}
           />}
       </AutoSizer>
     }
@@ -127,9 +131,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-  const dimensionValues = _(state.readerReducer.pageDimensions).
-    filter((dimension) => dimensions.file === props.file).
-    values();
+  const dimensionValues = _.filter(state.readerReducer.pageDimensions, (dimension) => dimension.file === props.file);
   const baseHeight = _.get(dimensionValues, [0, 'height'], PAGE_HEIGHT);
 
   return {

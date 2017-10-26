@@ -73,12 +73,7 @@ export class Pdf extends React.PureComponent {
     // filename of the drawn PDF. This way, if PDFs are changed
     // we know which pages are stale.
     this.state = {
-      numPages: {},
-      scrollTop: 0,
-      scrollWindowCenter: {
-        x: 0,
-        y: 0
-      }
+      numPages: {}
     };
 
     this.scrollLocation = {
@@ -91,28 +86,28 @@ export class Pdf extends React.PureComponent {
     this.scrollWindow = null;
   }
 
-  scrollEvent = () => {
-    this.setState({
-      scrollTop: this.scrollWindow.scrollTop
-    });
+  onRowsRendered = ({ startIndex, stopIndex }) => {
+    this.onPageChange(startIndex + 1);
+    // this.performFunctionOnEachPage((boundingRect, index) => {
+    //   // You are on this page, if the top of the page is above the middle
+    //   // and the bottom of the page is below the middle
+    //   // jumpToPageNumber check is added to not update the page number when the
+    //   // jump to page scroll is activated.
+    //   if (!this.props.jumpToPageNumber && boundingRect.top < this.scrollWindow.clientHeight / 2 &&
+    //       boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
+    //     this.onPageChange(index + 1);
+    //   }
+    // });
+  }
 
+  scrollEvent = () => {
+    debugger;
     // Now that the user is scrolling we reset the scroll location
     // so that we do not keep scrolling the user back.
     this.scrollLocation = {
       page: null,
       locationOnPage: 0
     };
-
-    this.performFunctionOnEachPage((boundingRect, index) => {
-      // You are on this page, if the top of the page is above the middle
-      // and the bottom of the page is below the middle
-      // jumpToPageNumber check is added to not update the page number when the
-      // jump to page scroll is activated.
-      if (!this.props.jumpToPageNumber && boundingRect.top < this.scrollWindow.clientHeight / 2 &&
-          boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
-        this.onPageChange(index + 1);
-      }
-    });
 
     if (this.props.scrollToComment) {
       this.props.onScrollToComment(null);
@@ -155,7 +150,7 @@ export class Pdf extends React.PureComponent {
     this.currentPage = currentPage;
     this.props.onPageChange(
       currentPage,
-      this.scrollWindow.offsetHeight / unscaledHeight);
+      0);
   }
 
   handleAltC = () => {
@@ -315,22 +310,21 @@ export class Pdf extends React.PureComponent {
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
         pdfWorker={this.props.pdfWorker}
-        scrollTop={scrollTop}
-        scrollWindowCenter={this.state.scrollWindowCenter}
         documentId={this.props.documentId}
         key={`${file}`}
         file={file}
+        onRowsRendered={this.onRowsRendered}
         isVisible={this.props.file === file}
         scale={this.props.scale}
       />;
     });
-
-    return <div
-      id="scrollWindow"
-      tabIndex="0"
-      className="cf-pdf-scroll-view"
-      onScroll={this.scrollEvent}
-      ref={this.getScrollWindowRef}>
+// <div
+//       id="scrollWindow"
+//       tabIndex="0"
+//       className="cf-pdf-scroll-view"
+//       onScroll={this.scrollEvent}
+//       ref={this.getScrollWindowRef}>
+    return <div className="cf-pdf-scroll-view">
       {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
       <div
         id={this.props.file}
