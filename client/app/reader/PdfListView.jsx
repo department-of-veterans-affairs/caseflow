@@ -9,7 +9,7 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails, clearSearch } from './actions';
+import { fetchAppealDetails, clearSearch, clearAllFilters } from './actions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
@@ -17,6 +17,7 @@ export class PdfListView extends React.Component {
     if (!this.props.previousRoute.includes('documents')) {
       // if coming from case list, clear search on mount
       this.props.clearSearch();
+      this.props.clearAllFilters();
     }
 
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
@@ -77,7 +78,8 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     fetchAppealDetails,
-    clearSearch
+    clearSearch,
+    clearAllFilters
   }, dispatch)
 );
 
