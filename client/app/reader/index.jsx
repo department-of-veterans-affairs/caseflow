@@ -5,7 +5,7 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
-import { reduxAnalyticsMiddleware } from './analytics';
+import { reduxAnalyticsMiddleware } from '../utils/ReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 
 // eslint-disable-next-line no-underscore-dangle

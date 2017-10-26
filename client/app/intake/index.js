@@ -5,7 +5,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import perfLogger from 'redux-perf-middleware';
 import IntakeFrame from './IntakeFrame';
 import { reducer, mapDataToInitialState } from './redux/reducer';
-import { reduxAnalyticsMiddleware } from '../reader/analytics';
+import { reduxAnalyticsMiddleware } from '../utils/ReduxAnalyticsMiddleware';
 
 const Intake = (props) => {
   // eslint-disable-next-line no-underscore-dangle
