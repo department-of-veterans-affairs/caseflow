@@ -60,8 +60,6 @@ export class PdfPage extends React.PureComponent {
     });
   };
 
-  debouncedMarkText = _.debounce((txt) => this.markText(txt));
-
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
@@ -193,7 +191,7 @@ export class PdfPage extends React.PureComponent {
     this.previousShouldDraw = shouldDraw;
 
     if (this.markInstance) {
-      this.debouncedMarkText(this.props.searchText);
+      this.markText(this.props.searchText);
     }
   }
 
