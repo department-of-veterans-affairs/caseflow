@@ -33,7 +33,7 @@ class Review extends React.PureComponent {
       },
       {
         value: 'higher_level_review_with_hearing',
-        displayText: ‘Higher Level Review with Informal Conference’
+        displayText: 'Higher Level Review with Informal Conference'
       },
       {
         value: 'higher_level_review',
