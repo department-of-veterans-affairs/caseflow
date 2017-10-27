@@ -118,7 +118,11 @@ class Finish extends React.PureComponent {
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.rampElection).then(
-      () => this.props.history.push('/completed')
+      (completeWasSuccessful) => {
+        if (completeWasSuccessful) {
+          this.props.history.push('/completed');
+        }
+      }
     );
   }
 
