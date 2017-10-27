@@ -13,45 +13,6 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
-export const onInitialDataLoadingFail = (value = true) => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE,
-  payload: { value }
-});
-
-export const onInitialCaseLoadingFail = (value = true) => ({
-  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
-  payload: { value }
-});
-
-export const onReceiveDocs = (documents, vacolsId) =>
-  (dispatch) => {
-    dispatch(collectAllTags(documents));
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: {
-        documents,
-        vacolsId
-      }
-    });
-  }
-;
-
-export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
-  type: Constants.RECEIVE_MANIFESTS,
-  payload: { manifestVbmsFetchedAt,
-    manifestVvaFetchedAt }
-});
-
-export const onReceiveAnnotations = (annotations) => ({
-  type: Constants.RECEIVE_ANNOTATIONS,
-  payload: { annotations }
-});
-
-export const onReceiveAssignments = (assignments) => ({
-  type: Constants.RECEIVE_ASSIGNMENTS,
-  payload: { assignments }
-});
-
 export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
   type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
   payload: {
@@ -102,17 +63,6 @@ export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispa
     }
   });
 };
-
-export const setCaseSelectSearch = (searchQuery) => ({
-  type: Constants.SET_CASE_SELECT_SEARCH,
-  payload: {
-    searchQuery
-  }
-});
-
-export const clearCaseSelectSearch = () => ({
-  type: Constants.CLEAR_CASE_SELECT_SEARCH
-});
 
 export const setDocListScrollPosition = (scrollTop) => ({
   type: Constants.SET_DOC_LIST_SCROLL_POSITION,
@@ -628,10 +578,6 @@ export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
   payload: { failedToLoad }
 });
 
-export const fetchedNoAppealsUsingVeteranId = () => ({
-  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
-});
-
 export const fetchAppealDetails = (vacolsId) =>
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
@@ -639,51 +585,7 @@ export const fetchAppealDetails = (vacolsId) =>
 
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => dispatch(onAppealDetailsLoadingFail()));
-  }
-;
-
-export const onReceiveAppealsUsingVeteranId = (appeals) => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
-  payload: { appeals }
-});
-
-export const fetchAppealUsingVeteranIdFailed = () => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE
-});
-
-export const caseSelectAppeal = (appeal) => ({
-  type: Constants.CASE_SELECT_APPEAL,
-  payload: { appeal }
-});
-
-export const requestAppealUsingVeteranId = () => ({
-  type: Constants.REQUEST_APPEAL_USING_VETERAN_ID,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CASE_SELECTION_PAGE,
-      action: 'case-search'
-    }
-  }
-});
-
-export const fetchAppealUsingVeteranId = (veteranId) =>
-  (dispatch) => {
-    dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/reader/appeal/veteran-id?json', {
-      headers: { 'veteran-id': veteranId }
-    },
-    ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
-      then((response) => {
-        const returnedObject = JSON.parse(response.text);
-
-        if (_.size(returnedObject.appeals) === 0) {
-          dispatch(fetchedNoAppealsUsingVeteranId());
-        } else {
-          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-        }
-      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
-  }
-;
+  };
 
 export const addNewTag = (doc, tags) =>
   (dispatch) => {
@@ -772,13 +674,6 @@ export const handleToggleCommentOpened = (docId) => ({
   }
 });
 
-export const caseSelectModalSelectVacolsId = (vacolsId) => ({
-  type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,
-  payload: {
-    vacolsId
-  }
-});
-
 export const setUpPdfPage = (file, pageIndex, page) => ({
   type: Constants.SET_UP_PDF_PAGE,
   payload: {
@@ -848,7 +743,7 @@ export const getDocumentText = (pdfDocument, file) =>
       }, {});
 
       dispatch({
-        type: Constants.GET_DCOUMENT_TEXT,
+        type: Constants.GET_DOCUMENT_TEXT,
         payload: {
           textObject
         }
