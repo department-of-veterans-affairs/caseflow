@@ -22,6 +22,8 @@ export class ReaderLoadingScreen extends React.Component {
 
         const returnedObject = JSON.parse(response.text);
 
+        debugger;
+
         if (returnedObject.stillFetchingDocuments) {
           setTimeout(function(){
             downloadDocumentList();
