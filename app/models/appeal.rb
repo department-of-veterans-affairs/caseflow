@@ -467,15 +467,13 @@ class Appeal < ActiveRecord::Base
 
     @fetched_documents = doc_struct[:documents]
 
-    # rubocop:disable Rails/Date
     if doc_struct[:manifest_vbms_fetched_at].is_a?(String)
-      @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].to_time
+      @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].in_time_zone
     end
 
     if doc_struct[:manifest_vva_fetched_at].is_a?(String)
-      @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].to_time
+      @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].in_time_zone
     end
-    # rubocop:enable Rails/Date
   end
 
   def fetched_documents
