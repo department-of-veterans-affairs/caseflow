@@ -743,7 +743,7 @@ export const getDocumentText = (pdfDocument, file) =>
       }, {});
 
       dispatch({
-        type: Constants.GET_DCOUMENT_TEXT,
+        type: Constants.GET_DOCUMENT_TEXT,
         payload: {
           textObject
         }
