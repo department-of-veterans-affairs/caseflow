@@ -7,9 +7,8 @@ import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from './CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
-import { handleSelectCommentIcon,
-  requestMoveAnnotation } from './actions';
-import { showPlaceAnnotationIcon, placeAnnotation } from '../reader/actions';
+import { handleSelectCommentIcon, placeAnnotation,
+  requestMoveAnnotation, showPlaceAnnotationIcon } from '../reader/actions';
 import { CATEGORIES } from '../reader/analytics';
 
 const DIV_STYLING = {
