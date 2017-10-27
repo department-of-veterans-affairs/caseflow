@@ -99,7 +99,6 @@ class Appeal < ActiveRecord::Base
   # in the database
   attr_writer :saved_documents
   def saved_documents
-    if fetch_documents!(save: true)
     @saved_documents ||= fetch_documents!(save: true)
   end
 
