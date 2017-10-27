@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setUpPdfPage, clearPdfPage } from './Pdf/PdfActions';
+import { setUpPdfPage, clearPdfPage } from './actions';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';

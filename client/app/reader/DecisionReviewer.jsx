@@ -11,7 +11,7 @@ import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
-import { onScrollToComment } from '../reader/Pdf/PdfActions';
+import { onScrollToComment } from '../reader/actions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
