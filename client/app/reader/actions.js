@@ -581,7 +581,7 @@ export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
 export const fetchAppealDetails = (vacolsId) =>
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
-      const returdnedObject = JSON.parse(response.text);
+      const returnedObject = JSON.parse(response.text);
 
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => dispatch(onAppealDetailsLoadingFail()));
