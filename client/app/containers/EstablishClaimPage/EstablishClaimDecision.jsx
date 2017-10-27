@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
 import * as Constants from '../../establishClaim/constants';
 import moment from 'moment';
 import * as AppConstants from '../../constants/AppConstants';
+import { bindActionCreators } from 'redux';
+import { handleToggleCancelTaskModal } from '../../establishClaim/actions';
 
 export class EstablishClaimDecision extends React.Component {
   constructor(props) {
@@ -237,9 +239,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  handleToggleCancelTaskModal: () => {
-    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
-  },
+  ...bindActionCreators({
+    handleToggleCancelTaskModal
+  }, dispatch),
+
   handleSpecialIssueFieldChange: (specialIssue) => (value) => {
     dispatch({
       type: Constants.CHANGE_SPECIAL_ISSUE,
