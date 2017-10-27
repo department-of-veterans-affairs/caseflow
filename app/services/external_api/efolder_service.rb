@@ -20,8 +20,7 @@ class ExternalApi::EfolderService
     Rails.logger.error "eFolder HTTP status code: #{response.code} for appeal: #{appeal}. " if response.error?
     fail Caseflow::Error::DocumentRetrievalError if response.error?
 
-    data = JSON.parse(response.body)["data"] || {}
-    response_attrs = data["attributes"] || {}
+    response_attrs = JSON.parse(response.body)["data"]["attributes"]
     documents = response_attrs["documents"] || []
     Rails.logger.info("# of Documents retrieved from efolder: #{documents.length}")
 

@@ -431,7 +431,6 @@ class Appeal < ActiveRecord::Base
   end
 
   def still_fetching_documents?
-    puts "still_fetching_documents called"
     fetch_documents_from_service!
     @still_fetching_documents
   end
