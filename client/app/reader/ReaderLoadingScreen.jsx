@@ -45,6 +45,7 @@ export class ReaderLoadingScreen extends React.Component {
         this.props.onReceiveDocs(documents, this.props.vacolsId);
         this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
         this.props.onReceiveAnnotations(annotations);
+        this.props.onInitialDataStillLoading(false);
 
         const downloadDocuments = (documentUrls, index) => {
           if (index >= documentUrls.length) {
@@ -98,6 +99,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     onInitialDataLoadingFail,
+    onInitialDataStillLoading,
     onReceiveDocs,
     onReceiveManifests,
     onReceiveAnnotations

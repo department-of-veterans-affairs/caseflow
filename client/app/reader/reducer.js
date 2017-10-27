@@ -263,9 +263,6 @@ export const reducer = (state = initialState, action = {}) => {
               ...assignment,
               viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
             }))
-        },
-        initialDataStillLoading: {
-          $set: false
         }
       }
     ));
