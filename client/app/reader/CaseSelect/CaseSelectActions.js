@@ -51,7 +51,7 @@ export const fetchAppealUsingVeteranIdFailed = () => ({
   type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE
 });
 
-export const fetchAppealUsingVeteranId = (veteranId) => (
+export const fetchAppealUsingVeteranId = (veteranId) =>
   (dispatch) => {
     dispatch(requestAppealUsingVeteranId());
     ApiUtil.get('/reader/appeal/veteran-id?json', {
@@ -67,5 +67,4 @@ export const fetchAppealUsingVeteranId = (veteranId) => (
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }
       }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
-  }
-);
+  };
