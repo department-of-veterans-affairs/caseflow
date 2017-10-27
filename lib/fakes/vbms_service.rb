@@ -50,25 +50,12 @@ class Fakes::VBMSService
 
   def self.fetch_documents_for(appeal, _user = nil)
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
-    return { still_fetching_documents: true } if is_still_fetching?
 
     {
       manifest_vbms_fetched_at: @manifest_vbms_fetched_at,
       manifest_vva_fetched_at: @manifest_vva_fetched_at,
       documents: (document_records || {})[appeal.vbms_id] || @documents || []
     }
-  end
-
-  def self.is_still_fetching?
-    still_fetching_docs = Rails.cache.read("fetching_docs_counter") || 1
-
-    if still_fetching_docs == 5
-      still_fetching_docs = Rails.cache.write("fetching_docs_counter", 1)
-      return false
-    end
-
-    Rails.cache.write("fetching_docs_counter", still_fetching_docs += 1)
-    true
   end
 
   def self.upload_document_to_vbms(appeal, form8)
