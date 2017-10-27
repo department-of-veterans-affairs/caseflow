@@ -63,7 +63,6 @@ const mapStateToProps = (state, props) => {
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
     caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal,
-    previousRoute: state.readerReducer.previousRoute,
     manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
     manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
   };
