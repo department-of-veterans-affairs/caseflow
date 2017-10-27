@@ -2,7 +2,8 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations, onInitialDataLoadingFail } from './actions';
+import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations, onInitialDataLoadingFail
+} from './LoadingScreen/LoadingScreenActions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';

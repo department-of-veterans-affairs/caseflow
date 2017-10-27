@@ -14,7 +14,6 @@ import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
       // information.
