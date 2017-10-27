@@ -7,7 +7,6 @@ import { plusIcon } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
-
 import { updateNewAnnotationContent, createAnnotation, stopPlacingAnnotation,
   startPlacingAnnotation } from '../reader/actions';
 
