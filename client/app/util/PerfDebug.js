@@ -62,12 +62,20 @@ export const timeFunction = (fn, getLabel) => (...args) => {
   return returnValue;
 };
 
-export const timeFunctionPromise = (fn, onTimeElapsed, label = '') => (...args) => {
+/**
+ * Time an asynchronous function for perf debugging purposes.
+ * 
+ * @param {function(...args): Promise} fn the async function to time.
+ * @param {function(timeElapsedMs, ...args)} onTimeElapsed a function to call when the async function is complete. 
+ *  It will be passed the time the function took to complete, and the args that were passed to the function.
+ * @param {string?} label Providing label will cause the timing information to be logged to the console.
+ */
+export const timeFunctionPromise = (fn, onTimeElapsed, label) => (...args) => {
   const startMs = window.performance.now();
   const returnPromise = fn(...args);
 
   if (startMs !== 'RUNNING_IN_NODE') {
-    returnPromise.then(() => {
+    const onFunctionComplete = () => {
       const endMs = window.performance.now();
 
       const timeElapsedMs = endMs - startMs;
@@ -77,7 +85,23 @@ export const timeFunctionPromise = (fn, onTimeElapsed, label = '') => (...args) 
       if (label) {
         console.log(`${label} took ${getTimeLabel(timeElapsedMs)}.`);
       }
-    });
+    };
+
+    returnPromise.then(
+      (returnValue) => {
+        onFunctionComplete();
+
+        return returnValue;
+      },
+      (err) => {
+        onFunctionComplete();
+        if (err) {
+          throw err;
+        } else {
+          throw new Error('Promise rejected without passing a reason');
+        }
+      }
+    );
   }
 
   return returnPromise;
