@@ -465,9 +465,17 @@ class Appeal < ActiveRecord::Base
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
-    @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
     @fetched_documents = doc_struct[:documents]
+
+    # rubocop:disable Rails/Date
+    if doc_struct[:manifest_vbms_fetched_at].is_a?(String)
+      @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].to_time
+    end
+
+    if doc_struct[:manifest_vva_fetched_at].is_a?(String)
+      @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].to_time
+    end
+    # rubocop:enable Rails/Date
   end
 
   def fetched_documents

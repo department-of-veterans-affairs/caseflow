@@ -186,8 +186,12 @@ RSpec.feature "Reader" do
     end
 
     context "Appeals without any issues" do
-      let(:vbms_fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
-      let(:vva_fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+      let(:fetched_at_format) { "%D %l:%M%P %Z" }
+      let(:vbms_fetched_ts) { Time.zone.now }
+      let(:vva_fetched_ts) { Time.zone.now }
+
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
 
       let(:appeal) do
         Generators::Appeal.build(
@@ -217,8 +221,8 @@ RSpec.feature "Reader" do
       context "When both document source manifest retrieval times are set" do
         scenario "Both times display on the page" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{vbms_fetched_ts}")
-          expect(find("#vva-manifest-retrieved-at").text).to have_content("Last VVA retrieval: #{vva_fetched_ts}")
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
         end
       end
 
@@ -226,7 +230,7 @@ RSpec.feature "Reader" do
         let(:vva_fetched_ts) { nil }
         scenario "Only VBMS time displays on the page" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{vbms_fetched_ts}")
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(page).to_not have_css("#vva-manifest-retrieved-at")
         end
       end
