@@ -2,13 +2,17 @@ import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
 class HearingWorksheetIssues extends PureComponent {
 
+
   getKeyForRow = (index) => index;
+
+
 
   render() {
     let {
@@ -55,19 +59,19 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    const rowObjects = Object.keys(worksheetIssues).map((issue, key) => {
+
+
+    const rowObjects = Object.keys(worksheetIssues).filter((issue, key ) => {
 
       let issueRow = worksheetIssues[issue];
-
+      // eslint-disable-next-line no-underscore-dangle
+      let destroyFilter = issueRow._destroy || issueRow.appeal_id !== worksheetStreamsAppeal.id;
+      console.log(issueRow);
       // Deleted issues can't be removed from Redux because we need to send them
       // to the backend with their ID information. We need to filter them from
       // the display.
-      // eslint-disable-next-line no-underscore-dangle
-      if (issueRow._destroy || issueRow.appeal_id !== worksheetStreamsAppeal.id) {
-        return {};
-      }
-
-      return {
+      return !destroyFilter ? issue : undefined;
+    }).map((issue, key) => ({
         counter: <b>{key + 1}.</b>,
         program: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
@@ -98,8 +102,8 @@ class HearingWorksheetIssues extends PureComponent {
           issue={issueRow}
           appealKey={appealKey}
         />
-      };
-    });
+      })
+    );
 
     return <div>
       <Table
