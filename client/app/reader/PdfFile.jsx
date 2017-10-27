@@ -60,9 +60,7 @@ export class PdfFile extends React.PureComponent {
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
   }
-
-  getPage = ({ index, key, style, parent }) => {
-    return <div key={key} style={style}>
+/*
         <PdfPage
           scrollTop={this.props.scrollTop}
           scrollWindowCenter={this.props.scrollWindowCenter}
@@ -72,7 +70,10 @@ export class PdfFile extends React.PureComponent {
           isVisible={this.props.isVisible}
           scale={this.props.scale}
           pdfDocument={this.props.pdfDocument}
-        />
+        /> */
+  getPage = ({ index, key, style, parent }) => {
+    return <div key={key} style={style}>
+        Hello World!
       </div>;
   }
 
