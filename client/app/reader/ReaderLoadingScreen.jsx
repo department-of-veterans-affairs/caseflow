@@ -15,6 +15,7 @@ import * as Constants from './constants';
 import _ from 'lodash';
 
 const PARALLEL_DOCUMENT_REQUESTS = 3;
+const MANIFEST_POLLING_INTERVAL = 2000;
 
 export class ReaderLoadingScreen extends React.Component {
 
@@ -22,20 +23,16 @@ export class ReaderLoadingScreen extends React.Component {
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
 
-    let counter = 0;
-
     const downloadDocumentList = () => {
       ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
 
         const returnedObject = JSON.parse(response.text);
 
         if (returnedObject.stillFetchingDocuments) {
-          console.log('still waiting on docs, try ' + counter);
           this.props.onInitialDataStillLoading();
-          counter++;
           setTimeout(function(){
             downloadDocumentList();
-          }, 2000);
+          }, MANIFEST_POLLING_INTERVAL);
           return;
         }
 
