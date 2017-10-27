@@ -215,7 +215,7 @@ RSpec.feature "RAMP Intake" do
       visit "/intake/finish"
 
       within_fieldset("Which election did the Veteran select?") do
-        find("label", text: "Higher Level Review with Informal Conference”).click
+        find("label", text: "Higher Level Review with Informal Conference").click
       end
 
       fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
