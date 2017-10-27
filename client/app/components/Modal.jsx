@@ -50,6 +50,7 @@ export default class Modal extends React.Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.keyHandler);
+    document.getElementById(this.getModalId()).focus();
   }
 
   generateButtons() {
@@ -114,7 +115,7 @@ export default class Modal extends React.Component {
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
     >
-      <div className="cf-modal-body" id={this.getModalId()}>
+      <div className="cf-modal-body" tabIndex="0" id={this.getModalId()}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
