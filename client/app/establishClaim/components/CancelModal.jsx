@@ -120,6 +120,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
           let errorMessage = CANCEL_ERRORS[error.response.body.error_code] ||
                              CANCEL_ERRORS.default;
+
           ownProps.handleAlert(
             'error',
             errorMessage.header,
