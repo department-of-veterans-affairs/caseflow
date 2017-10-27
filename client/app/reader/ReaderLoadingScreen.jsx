@@ -22,47 +22,51 @@ export class ReaderLoadingScreen extends React.Component {
   componentDidMount = () => {
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
+    this.downloadDocumentList();
+  }
 
-    const downloadDocumentList = () => {
-      ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
-        const returnedObject = JSON.parse(response.text);
+  downloadDocumentList = () => {
+    ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
+      const returnedObject = JSON.parse(response.text);
 
-        if (returnedObject.stillFetchingDocuments) {
-          this.props.onInitialDataStillLoading();
-          setTimeout(function(){
-            downloadDocumentList();
-          }, MANIFEST_POLLING_INTERVAL);
-          return;
-        }
+      if (returnedObject.stillFetchingDocuments) {
+        this.props.onInitialDataStillLoading();
+        setTimeout(() => {
+          this.downloadDocumentList();
+        }, MANIFEST_POLLING_INTERVAL);
 
-        const documents = returnedObject.appealDocuments;
-        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
+        return;
+      }
+      this.processDocumentList(returnedObject);
 
-        this.props.onReceiveDocs(documents, this.props.vacolsId);
-        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
-        this.props.onReceiveAnnotations(annotations);
-        this.props.onInitialDataStillLoading(false);
+    }, this.props.onInitialDataLoadingFail);
+  }
 
-        const downloadDocuments = (documentUrls, index) => {
-          if (index >= documentUrls.length) {
-            return;
-          }
+  processDocumentList = (returnedObject) => {
+    const documents = returnedObject.appealDocuments;
+    const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-          ApiUtil.get(documentUrls[index], {
-            cache: true,
-            withCredentials: true
-          }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
-            () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-          );
-        };
+    this.props.onReceiveDocs(documents, this.props.vacolsId);
+    this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+    this.props.onReceiveAnnotations(annotations);
+    this.props.onInitialDataStillLoading(false);
 
-        for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-          downloadDocuments(_.map(documents, 'content_url'), i);
-        }
-      }, this.props.onInitialDataLoadingFail);
+    const downloadDocuments = (documentUrls, index) => {
+      if (index >= documentUrls.length) {
+        return;
+      }
 
+      ApiUtil.get(documentUrls[index], {
+        cache: true,
+        withCredentials: true
+      }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
+        () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
+      );
+    };
+
+    for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
+      downloadDocuments(_.map(documents, 'content_url'), i);
     }
-    downloadDocumentList();
   }
 
   render() {
