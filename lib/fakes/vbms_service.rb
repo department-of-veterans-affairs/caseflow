@@ -50,8 +50,6 @@ class Fakes::VBMSService
 
   def self.fetch_documents_for(appeal, _user = nil)
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
-    puts "Fake fetch_documents_for"
-
     return { still_fetching_documents: true } if is_still_fetching?
 
     {
