@@ -189,6 +189,7 @@ export const initialState = {
   pdfDocuments: {},
   text: [],
   documentSearchString: null,
+  documentSearchIndex: 0,
   extractedText: {}
 };
 
@@ -1110,12 +1111,21 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_DOCUMENT_SEARCH:
+  case Constants.ZERO_SEARCH_INDEX:
     return update(
       state,
       {
-        documentSearchString: {
-          $set: action.payload.searchString
+        documentSearchIndex: {
+          $set: 0
+        }
+      }
+    );
+  case Constants.UPDATE_SEARCH_INDEX:
+    return update(
+      state,
+      {
+        documentSearchIndex: {
+          $apply: (index) => action.payload.increment ? index + 1 : index - 1
         }
       }
     );
