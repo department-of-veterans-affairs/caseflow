@@ -18,6 +18,11 @@ export const onInitialDataLoadingFail = (value = true) => ({
   payload: { value }
 });
 
+export const onInitialDataStillLoading = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_DATA_LOADING,
+  payload: { value }
+});
+
 export const onInitialCaseLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_CASE_FAILURE,
   payload: { value }
