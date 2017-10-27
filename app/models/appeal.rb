@@ -407,7 +407,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def latest_event_date
-    events.last.try(:date)
+    events.last.try(:date) || Date.new(1900,1,1)
   end
 
   def to_hash(viewed: nil, issues: nil)
