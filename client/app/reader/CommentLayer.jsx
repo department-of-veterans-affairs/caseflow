@@ -8,7 +8,7 @@ import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from './CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
 import { handleSelectCommentIcon,
-  requestMoveAnnotation } from './Pdf/PdfActions';
+  requestMoveAnnotation } from './actions';
 import { showPlaceAnnotationIcon, placeAnnotation } from '../reader/actions';
 import { CATEGORIES } from '../reader/analytics';
 
