@@ -30,7 +30,6 @@ export class EstablishClaimForm extends React.Component {
       decisionDate,
       establishClaimForm,
       handleSubmit,
-      handleToggleCancelTaskModal,
       handleFieldChange,
       handleBackToDecisionReview,
       backToDecisionReviewText

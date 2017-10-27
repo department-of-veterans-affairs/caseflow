@@ -41,7 +41,11 @@ export default class Modal extends React.Component {
     if (this.props.id) {
       return this.props.id;
     }
-    return this.props.title.split(" ").join("-").toLowerCase();
+
+    return this.props.title.
+      split(' ').
+      join('-').
+      toLowerCase();
   }
 
   componentWillUnmount() {
@@ -84,7 +88,6 @@ export default class Modal extends React.Component {
     let {
       children,
       closeHandler,
-      id,
       noDivider,
       confirmButton,
       cancelButton,

@@ -47,7 +47,6 @@ export class EstablishClaimDecision extends React.Component {
       loading,
       decisionType,
       handleSubmit,
-      handleToggleCancelTaskModal,
       handleSpecialIssueFieldChange,
       pdfLink,
       pdfjsLink,
