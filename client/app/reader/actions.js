@@ -821,13 +821,6 @@ export const rotateDocument = (docId) => ({
   }
 });
 
-export const changeRoute = (route) => ({
-  type: Constants.ROUTE_CHANGE,
-  payload: {
-    previousRoute: route
-  }
-});
-
 export const getDocumentText = (pdfDocument, file) =>
   (dispatch) => {
     const getTextForPage = (index) => {

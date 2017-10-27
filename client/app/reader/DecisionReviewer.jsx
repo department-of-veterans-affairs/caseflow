@@ -139,22 +139,19 @@ export class DecisionReviewer extends React.PureComponent {
               exact
               path="/"
               title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect}
-              callback={this.props.changeRoute}/>
+              render={this.routedCaseSelect}/>
             <PageRoute
               exact
               title="Claims Folder | Caseflow Reader"
               breadcrumb="Claims Folder"
               path="/:vacolsId/documents"
-              render={this.routedPdfListView}
-              callback={this.props.changeRoute}/>
+              render={this.routedPdfListView}/>
             <PageRoute
               exact
               title="Document Viewer | Caseflow Reader"
               breadcrumb="Document Viewer"
               path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer}
-              callback={this.props.changeRoute}/>
+              render={this.routedPdfViewer}/>
           </div>
         </NavigationBar>
         <Footer

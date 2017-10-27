@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
 // Route augmented with application specific callbacks to change
 // the page title and call google analytics
@@ -32,19 +31,18 @@ class PageRoute extends React.Component {
   // Only run callback if the location is changing. See if location has changed by
   // looking at the router here.
   componentWillReceiveProps(nextProps, nextContext) {
-    this.currentLocation = this.context.router.route.location.pathname;
+    const currentLocation = this.context.router.route.location.pathname;
     const nextLocation = nextContext.router.route.location.pathname;
 
-    this.locationChanging = this.currentLocation !== nextLocation;
+    this.locationChanging = currentLocation !== nextLocation;
   }
 
   renderWithCallback = (params) => {
-    const { title, render, component, callback } = this.props;
+    const { title, render, component } = this.props;
 
     if (this.locationChanging) {
       document.title = title;
       window.analyticsPageView(window.location.pathname);
-      callback(this.currentLocation || window.location.pathname);
     }
 
     return component ? React.createElement(component, params) : render(params);
@@ -59,7 +57,3 @@ class PageRoute extends React.Component {
 }
 
 export default PageRoute;
-
-PageRoute.defaultProps = {
-  callback: _.noop
-};

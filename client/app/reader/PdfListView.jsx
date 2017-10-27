@@ -9,17 +9,11 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails, clearSearch, clearAllFilters } from './actions';
+import { fetchAppealDetails } from './actions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-    if (!this.props.previousRoute.includes('documents')) {
-      // if coming from case list, clear search on mount
-      this.props.clearSearch();
-      this.props.clearAllFilters();
-    }
-
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
       // information.
@@ -77,9 +71,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    fetchAppealDetails,
-    clearSearch,
-    clearAllFilters
+    fetchAppealDetails
   }, dispatch)
 );
 
