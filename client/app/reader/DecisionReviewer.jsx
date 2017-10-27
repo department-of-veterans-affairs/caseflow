@@ -151,8 +151,7 @@ export class DecisionReviewer extends React.PureComponent {
               title="Document Viewer | Caseflow Reader"
               breadcrumb="Document Viewer"
               path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer}
-            />
+              render={this.routedPdfViewer}/>
           </div>
         </NavigationBar>
         <Footer
