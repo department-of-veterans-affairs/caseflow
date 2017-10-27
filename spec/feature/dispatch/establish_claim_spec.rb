@@ -424,6 +424,20 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(task.appeal.reload.rice_compliance).to be_falsey
     end
 
+    scenario "Cancel a claim after it has already been completed" do
+      task.assign!(:assigned, current_user)
+      task.start!(:started)
+      visit "/dispatch/establish-claim/#{task.id}"
+      task.complete!(status: 0)
+
+      click_on "Cancel"
+      page.fill_in "Explanation", with: "Test"
+      click_on "Stop processing claim"
+
+      expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+      expect(page).to have_content("This task was already completed")
+    end
+
     scenario "Error establishing claim" do
       # Duplicate EP error
       allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
