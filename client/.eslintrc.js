@@ -152,7 +152,6 @@ module.exports = {
     "no-sequences": "warn",
     "no-shadow": "warn",
     "no-shadow-restricted-names": "warn",
-    "func-call-spacing": ["warn", "never"],
     "no-tabs": "warn",
     "no-template-curly-in-string": "warn",
     "no-throw-literal": "warn",
