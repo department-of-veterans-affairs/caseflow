@@ -3,6 +3,9 @@
 class FetchDocumentsForReaderUserJob < ActiveJob::Base
   queue_as :low_priority
 
+  # if a user has experienced more than DOCUMENT_FAILURE_COUNT, we consider this job as failed
+  DOCUMENT_FAILURE_COUNT = 5
+
   def perform(reader_user)
     @counts = { docs_cached: 0, docs_failed: 0, appeals_total: 0, appeals_successful: 0, consecutive_failures: 0 }
     RequestStore.store[:application] = "reader"
@@ -32,7 +35,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def fetch_docs_for_appeal(appeal)
     appeal.fetch_documents!(save: true).try(:each) { |doc| cache_document(doc) }
     @counts[:appeals_successful] += 1
-  rescue HTTPClient::KeepAliveDisconnected, VBMS::ClientError => e
+  rescue HTTPClient::KeepAliveDisconnected, VBMS::ClientError, Caseflow::Error::DocumentRetrievalError => e
     # VBMS connection may die when attempting to retrieve list of docs for appeal
     Rails.logger.error "Failed to retrieve appeal id #{appeal.id}:\n#{e.message}"
     raise e
@@ -48,9 +51,16 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
       @counts[:docs_cached] += 1
     end
   rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
-    Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{e.message}"
+    log_doc_failure(doc, e)
+  end
+
+  # Logs an error on doc failure
+  def log_doc_failure(doc, error)
+    Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{error.message}"
     @counts[:docs_failed] += 1
-    raise e
+    if @counts[:docs_failed] > DOCUMENT_FAILURE_COUNT
+        raise error
+    end
   end
 
   def log_info(status = "SUCCESS")
