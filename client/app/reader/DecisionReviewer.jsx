@@ -11,7 +11,7 @@ import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
-import * as ReaderActions from './actions';
+import { onScrollToComment, setCategoryFilter } from '../reader/actions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
@@ -151,8 +151,7 @@ export class DecisionReviewer extends React.PureComponent {
               title="Document Viewer | Caseflow Reader"
               breadcrumb="Document Viewer"
               path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer}
-            />
+              render={this.routedPdfViewer}/>
           </div>
         </NavigationBar>
         <Footer
@@ -169,8 +168,6 @@ DecisionReviewer.propTypes = {
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
   onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func,
-  handleSetLastRead: PropTypes.func.isRequired,
   singleDocumentMode: PropTypes.bool,
 
   // These two properties are exclusively for testing purposes
@@ -187,8 +184,10 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(ReaderActions, dispatch),
-  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+  ...bindActionCreators({
+    onScrollToComment,
+    setCategoryFilter
+  }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);
