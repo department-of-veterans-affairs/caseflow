@@ -11,6 +11,8 @@ import * as Constants from '../../establishClaim/constants';
 import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { handleToggleCancelTaskModal } from '../../establishClaim/actions';
 
 export class EstablishClaimForm extends React.Component {
   formattedStationOfJurisdiction() {
@@ -28,7 +30,6 @@ export class EstablishClaimForm extends React.Component {
       decisionDate,
       establishClaimForm,
       handleSubmit,
-      handleToggleCancelTaskModal,
       handleFieldChange,
       handleBackToDecisionReview,
       backToDecisionReviewText
@@ -144,9 +145,9 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  handleToggleCancelTaskModal: () => {
-    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
-  },
+  ...bindActionCreators({
+    handleToggleCancelTaskModal
+  }, dispatch),
   handleFieldChange: (field) => (value) => {
     dispatch({
       type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,

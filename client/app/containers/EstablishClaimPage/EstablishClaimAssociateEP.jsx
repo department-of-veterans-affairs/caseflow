@@ -7,7 +7,9 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import * as Constants from '../../establishClaim/constants';
+
+import { bindActionCreators } from 'redux';
+import { handleToggleCancelTaskModal } from '../../establishClaim/actions';
 
 
 export class AssociatePage extends React.Component {
@@ -117,7 +119,6 @@ export class AssociatePage extends React.Component {
   render() {
     let {
       handleSubmit,
-      handleToggleCancelTaskModal,
       handleBackToDecisionReview,
       backToDecisionReviewText,
       hasAvailableModifers,
@@ -214,9 +215,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  handleToggleCancelTaskModal: () => {
-    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
-  }
+  ...bindActionCreators({
+    handleToggleCancelTaskModal
+  }, dispatch)
 });
 
 const ConnectedEstablishClaimAssociateEP = connect(

@@ -17,6 +17,9 @@ import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import * as Constants from '../../establishClaim/constants';
 import { getSpecialIssuesRegionalOfficeCode } from '../../establishClaim/util';
 
+import { bindActionCreators } from 'redux';
+import { handleToggleCancelTaskModal } from '../../establishClaim/actions';
+
 export class EstablishClaimEmail extends BaseForm {
   constructor(props) {
     super(props);
@@ -168,9 +171,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleToggleCancelTaskModal: () => {
-    dispatch({ type: Constants.TOGGLE_CANCEL_TASK_MODAL });
-  },
+  ...bindActionCreators({
+    handleToggleCancelTaskModal
+  }, dispatch),
   handleEmailSubmit: () => {
     ownProps.handleAlertClear();
     dispatch({ type: Constants.TRIGGER_LOADING,

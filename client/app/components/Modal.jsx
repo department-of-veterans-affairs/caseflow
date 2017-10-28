@@ -37,12 +37,24 @@ export default class Modal extends React.Component {
     }
   }
 
+  getModalId = () => {
+    if (this.props.id) {
+      return this.props.id;
+    }
+
+    return this.props.title.
+      split(' ').
+      join('-').
+      toLowerCase();
+  }
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.keyHandler);
+    document.getElementById(this.getModalId()).focus();
   }
 
   generateButtons() {
@@ -76,7 +88,6 @@ export default class Modal extends React.Component {
     let {
       children,
       closeHandler,
-      id,
       noDivider,
       confirmButton,
       cancelButton,
@@ -107,7 +118,7 @@ export default class Modal extends React.Component {
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
     >
-      <div className="cf-modal-body" id={id || ''}>
+      <div className="cf-modal-body" tabIndex="0" id={this.getModalId()}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
