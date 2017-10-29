@@ -7,7 +7,13 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   DOCUMENT_FAILURE_COUNT = 5
 
   def perform(reader_user)
-    @counts = { docs_cached: 0, docs_failed: 0, appeals_total: 0, appeals_successful: 0, consecutive_failures: 0 }
+    @counts = {
+      docs_cached: 0,
+      docs_failed: 0,
+      appeals_total: 0,
+      appeals_successful: 0,
+      consecutive_failures: 0
+    }
     RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = reader_user.user
     update_fetched_at(reader_user)
