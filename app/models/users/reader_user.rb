@@ -8,9 +8,9 @@ class ReaderUser < ActiveRecord::Base
 
       ReaderUser
         .all
-        .where("current_appeals_documents_fetched_at <= ? " \
-               "OR current_appeals_documents_fetched_at IS NULL", 24.hours.ago)
-        .order("current_appeals_documents_fetched_at IS NULL DESC, current_appeals_documents_fetched_at ASC")
+        .where("appeals_docs_fetched_at <= ? " \
+               "OR appeals_docs_fetched_at IS NULL", 24.hours.ago)
+        .order("appeals_docs_fetched_at IS NULL DESC, appeals_docs_fetched_at ASC")
         .limit(limit)
     end
 

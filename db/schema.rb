@@ -290,10 +290,10 @@ ActiveRecord::Schema.define(version: 20171019214530) do
 
   create_table "reader_users", force: :cascade do |t|
     t.integer  "user_id",                              null: false
-    t.datetime "current_appeals_documents_fetched_at"
+    t.datetime "appeals_docs_fetched_at"
   end
 
-  add_index "reader_users", ["current_appeals_documents_fetched_at"], name: "index_reader_users_on_current_appeals_documents_fetched_at", using: :btree
+  add_index "reader_users", ["appeals_docs_fetched_at"], name: "index_reader_users_on_appeals_docs_fetched_at", using: :btree
   add_index "reader_users", ["user_id"], name: "index_reader_users_on_user_id", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|

@@ -28,7 +28,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   end
 
   def update_fetched_at(reader_user)
-    reader_user.update_attributes!(current_appeals_documents_fetched_at: Time.zone.now)
+    reader_user.update_attributes!(appeals_docs_fetched_at: Time.zone.now)
   end
 
   def fetch_docs_for_appeals(appeals)
@@ -52,10 +52,9 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   #
   # Returns a boolean if the content has been cached without errors
   def cache_document(doc)
-    if !S3Service.exists?(doc.file_name)
-      doc.fetch_content
-      @counts[:docs_cached] += 1
-    end
+    return unless !S3Service.exists?(doc.file_name)
+    doc.fetch_content
+    @counts[:docs_cached] += 1
   rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
     log_doc_failure(doc, e)
   end
@@ -78,6 +77,6 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   end
 
   def slack_url
-    ENV["SLACK_DISPATCH_ALERT_URL"]
+    ENV["SLACK_READER_ALERT_URL"]
   end
 end
