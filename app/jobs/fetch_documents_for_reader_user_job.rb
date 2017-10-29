@@ -39,7 +39,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   end
 
   def fetch_docs_for_appeal(appeal)
-    appeal.fetch_documents!(save: true).try(:each) { |doc| cache_document(doc) }
+    (appeal.saved_documents || []).each { |doc| cache_document(doc) }
     @counts[:appeals_successful] += 1
   rescue HTTPClient::KeepAliveDisconnected, VBMS::ClientError, Caseflow::Error::DocumentRetrievalError => e
     # VBMS connection may die when attempting to retrieve list of docs for appeal
