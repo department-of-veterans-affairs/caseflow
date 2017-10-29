@@ -13,14 +13,14 @@ describe ReaderUser do
       end
     end
 
-    context "all_reader_users_without_details" do
+    context "all_without_records" do
       it "should return only users without associated reader_users" do
-        users = ReaderUser.all_reader_users_without_details
+        users = ReaderUser.all_without_records
         expect(users).to eq(@users_with_reader_roles)
       end
 
       it "should only return 5 users if 5 is provided as a limit" do
-        users = ReaderUser.all_reader_users_without_details(5)
+        users = ReaderUser.all_without_records(5)
         expect(users).to eq(@users_with_reader_roles[0..4])
       end
     end

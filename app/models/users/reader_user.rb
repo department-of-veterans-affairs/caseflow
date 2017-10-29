@@ -4,7 +4,7 @@ class ReaderUser < ActiveRecord::Base
   class << self
     def all_by_documents_fetched_at(limit = 10)
       # at this point, let's also make sure that we've created ReaderUser records
-      create_reader_user_details(limit)
+      create_records(limit)
 
       ReaderUser
         .all
@@ -14,15 +14,15 @@ class ReaderUser < ActiveRecord::Base
         .limit(limit)
     end
 
-    def create_reader_user_details(limit = 10)
-      # find all users that don't have reader details
-      # create ReaderUser records for these users
-      all_reader_users_without_details(limit).each do |user|
+    def create_records(limit = 10)
+      # find all reader users that don't have reader_user records
+      all_without_records(limit).each do |user|
+        # create ReaderUser records for these users
         ReaderUser.create(user_id: user.id)
       end
     end
 
-    def all_reader_users_without_details(limit = 10)
+    def all_without_records(limit = 10)
       User.joins("LEFT JOIN reader_users ON users.id=reader_users.user_id")
           .where("'Reader' = ANY(roles)")
           .where(reader_users: { user_id: nil })

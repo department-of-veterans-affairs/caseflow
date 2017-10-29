@@ -289,7 +289,7 @@ ActiveRecord::Schema.define(version: 20171019214530) do
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
   create_table "reader_users", force: :cascade do |t|
-    t.integer  "user_id",                              null: false
+    t.integer  "user_id",                 null: false
     t.datetime "appeals_docs_fetched_at"
   end
 
