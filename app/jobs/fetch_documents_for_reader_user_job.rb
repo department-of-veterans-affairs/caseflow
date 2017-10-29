@@ -64,9 +64,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def log_doc_failure(doc, error)
     Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{error.message}"
     @counts[:docs_failed] += 1
-    if @counts[:docs_failed] > DOCUMENT_FAILURE_COUNT
-        raise error
-    end
+    fail error if @counts[:docs_failed] > DOCUMENT_FAILURE_COUNT
   end
 
   def log_info(status = "SUCCESS")
