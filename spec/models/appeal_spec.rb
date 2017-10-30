@@ -1350,11 +1350,15 @@ describe Appeal do
         Generators::Appeal.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: 3.days.ago }
+        ),
+        Generators::Appeal.build(
+          vbms_id: "999887777S",
+          vacols_record: { form9_date: nil }
         )
       ]
     end
 
-    it "returns filtered appeals for veteran sorted by latest event date" do
+    it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
     end
