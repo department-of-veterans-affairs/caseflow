@@ -1358,7 +1358,7 @@ describe Appeal do
     end
 
     it "returns filtered appeals for veteran sorted by latest event date" do
-      expect(subject.length).to eq(3)
+      expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
     end
 
