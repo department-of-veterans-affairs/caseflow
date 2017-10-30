@@ -8,11 +8,8 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
 
   def perform(reader_user)
     @counts = {
-      docs_cached: 0,
-      docs_failed: 0,
       appeals_total: 0,
       appeals_successful: 0,
-      consecutive_failures: 0
     }
     RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = reader_user.user
@@ -22,7 +19,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     log_info
 
   rescue => e
-    log_info("ERROR")
+    log_error
     # trigger retry
     raise e
   end
@@ -34,49 +31,22 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def fetch_docs_for_appeals(appeals)
     @counts[:appeals_total] = appeals.count
     appeals.each do |appeal|
-      fetch_docs_for_appeal(appeal)
+      # signal to efolder X to fetch and save all documents
+      appeal.saved_documents
+      @counts[:appeals_successful] += 1
     end
   end
 
-  def fetch_docs_for_appeal(appeal)
-    (appeal.saved_documents || []).each { |doc| cache_document(doc) }
-    @counts[:appeals_successful] += 1
-  rescue HTTPClient::KeepAliveDisconnected, VBMS::ClientError, Caseflow::Error::DocumentRetrievalError => e
-    # VBMS connection may die when attempting to retrieve list of docs for appeal
-    Rails.logger.error "Failed to retrieve appeal id #{appeal.id}:\n#{e.message}"
-    raise e
+  def log_info
+    Rails.logger.info log_message
   end
 
-  # Checks if the doc is already stored in S3 and fetches it from VBMS if necessary.  If eFolder is enabled,
-  # skip this check since the call to eFolder in fetch_docs_for_appeal is supposed to cache the doc for us
-  #
-  # Returns a boolean if the content has been cached without errors
-  def cache_document(doc)
-    return unless !S3Service.exists?(doc.file_name)
-    doc.fetch_content
-    @counts[:docs_cached] += 1
-  rescue Aws::S3::Errors::ServiceError, VBMS::ClientError => e
-    log_doc_failure(doc, e)
+  def log_error
+    Rails.logger.error log_message("ERROR")
   end
 
-  # Logs an error on doc failure
-  def log_doc_failure(doc, error)
-    Rails.logger.error "Failed to retrieve #{doc.file_name}:\n#{error.message}"
-    @counts[:docs_failed] += 1
-    fail error if @counts[:docs_failed] > DOCUMENT_FAILURE_COUNT
-  end
-
-  def log_info(status = "SUCCESS")
-    output_msg = "FetchDocumentsForReaderUserJob (user_id: #{RequestStore[:current_user].id}) #{status}. " \
-      "It retrieved #{@counts[:docs_cached]} documents " \
-      "for #{@counts[:appeals_successful]} / #{@counts[:appeals_total]} appeals " \
-      "and #{@counts[:docs_failed]} document(s) failed.\n"
-
-    Rails.logger.info output_msg
-    SlackService.new(url: slack_url).send_notification(output_msg)
-  end
-
-  def slack_url
-    ENV["SLACK_READER_ALERT_URL"]
+  def log_message(status = "SUCCESS")
+    "FetchDocumentsForReaderUserJob (user_id: #{RequestStore[:current_user].id}) #{status}. " \
+      "Retrieved #{@counts[:appeals_successful]} / #{@counts[:appeals_total]} appeals"
   end
 end
