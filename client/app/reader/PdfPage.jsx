@@ -130,7 +130,9 @@ export class PdfPage extends React.PureComponent {
     this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();
-      this.markInstance.unmark();
+      if (this.markInstance) {
+        this.markInstance.unmark();
+      }
     }
     // Cleaning up this page from the Redux store should happen when we have idle time.
     // We don't want to block showing pages because we're too busy cleaning old pages.
