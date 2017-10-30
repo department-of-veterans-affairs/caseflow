@@ -76,7 +76,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :board_member, :mduser,
              :mdtime, :sattyid,
              :bfregoff, :bfso,
-             :bfcorkey,
+             :bfcorkey, :bfddec, :bfdc,
              "staff.slogid",
              "corres.snamef, corres.snamemi",
              "corres.snamel, corres.sspare1",
@@ -85,6 +85,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
+        .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
   end
 
