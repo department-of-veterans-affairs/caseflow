@@ -58,6 +58,10 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  setInputRef = (node) => this.input = node
+
+  setInputFocus = () => this.input.focus()
+
   render() {
     let {
       id,
@@ -69,7 +73,8 @@ export default class SearchBar extends React.Component {
       title,
       onSubmit,
       submitUsingEnterKey,
-      placeholder
+      placeholder,
+      internalText
     } = this.props;
 
     id = id || uuid.v4();
@@ -77,7 +82,8 @@ export default class SearchBar extends React.Component {
     const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
       'usa-search-small': size === 'small',
-      'cf-search-ahead': isSearchAhead
+      'cf-search-ahead': isSearchAhead,
+      'cf-has-internal-text': Boolean(internalText)
     });
 
     const buttonClassNames = classnames({
@@ -89,12 +95,17 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
+    const searchClasses = classnames('cf-search-input-with-close', {
+      'cf-search-with-internal-text': Boolean(internalText)
+    });
+
     return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
       <input
-        className="cf-search-input-with-close"
+        ref={this.setInputRef}
+        className={searchClasses}
         id={id}
         onChange={this.onChange}
         onBlur={this.onBlur}
@@ -103,6 +114,12 @@ export default class SearchBar extends React.Component {
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value}/>
+      {_.size(internalText) > 0 &&
+        <input
+          type="text"
+          value={internalText}
+          onClick={this.setInputFocus}
+          className="cf-search-internal-text" /> }
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
@@ -132,5 +149,6 @@ SearchBar.propTypes = {
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
-  submitUsingEnterKey: PropTypes.bool
+  submitUsingEnterKey: PropTypes.bool,
+  staticText: PropTypes.string
 };

@@ -235,6 +235,13 @@ export class PdfUI extends React.Component {
             ariaLabel="download pdf">
             <DownloadIcon/>
           </Button>
+          {false && <Button
+            name="search"
+            classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
+            ariaLabel="search text"
+            type="submit">
+            <span className='usa-sr-only'></span>
+          </Button>}
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
               <Button

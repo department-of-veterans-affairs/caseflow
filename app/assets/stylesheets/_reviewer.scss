@@ -737,5 +737,19 @@ input[type="search"].cf-search-input-with-close {
     }
 
   }
+}
 
+.cf-increment-search-match {
+  height: 3.3rem;
+  padding-top: 0.5rem;
+  width: 4rem;
+
+  &.cf-prev-match {
+    border-radius: 1rem 0 0 1rem;
+  }
+
+  &.cf-next-match {
+    border-radius: 0 1rem 1rem 0;
+    margin-left: 5px !important;
+  }
 }

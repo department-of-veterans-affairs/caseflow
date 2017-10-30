@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
+import { LeftChevron, RightChevron } from '../components/RenderFunctions';
+import Button from '../components/Button';
 import { searchText, getDocumentText, updateSearchIndex } from './actions';
 import _ from 'lodash';
 
@@ -23,21 +25,58 @@ export class DocumentSearch extends React.PureComponent {
     }
   }
 
+  shortcutHandler = (event) => {
+    const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
+
+    if (event[metaKey] && event.code === 'KeyG') {
+      event.preventDefault();
+      this.props.updateSearchIndex(!event.shiftKey);
+    }
+  }
+
+  componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
+  componentWillUnmount = () => window.removeEventListener('keydown', this.shortcutHandler)
+
+  nextMatch = () => this.props.updateSearchIndex(true)
+  prevMatch = () => this.props.updateSearchIndex(false)
+
   render() {
+    // todo: use built-in styles
     const style = {
       position: 'absolute',
-      background: 'white',
-      zIndex: '20'
+      background: '#333B45',
+      zIndex: '20',
+      color: 'white',
+      right: '2rem',
+      borderBottomLeftRadius: '6px',
+      borderBottomRightRadius: '6px',
+      padding: '0.5rem 1rem 1rem 1rem'
     };
+
+    let internalText = this.props.totalMatchesInFile > 0 ?
+      `${this.props.getCurrentMatch} of ${this.props.totalMatchesInFile}` : ' ';
 
     return <div style={style}>
       <SearchBar
+        isSearchAhead={true}
+        size="small"
+        id="search-ahead"
+        placeholder="Type to search..."
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
+        internalText={internalText}
       />
-      Found on pages: {this.props.pageTexts.map((page) => page.pageIndex).join(', ')}<br />
-      Index: {this.props.getCurrentMatch}<br />
-      Total matches: {this.props.totalMatchesInFile}
+      <Button
+        classNames={['cf-increment-search-match', 'cf-prev-match']}
+        // todo: better centering
+        children={<div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><LeftChevron/></div>}
+        onClick={this.prevMatch}
+      />
+      <Button
+        classNames={['cf-increment-search-match', 'cf-next-match']}
+        children={<div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><RightChevron/></div>}
+        onClick={this.nextMatch}
+      />
     </div>;
   }
 }

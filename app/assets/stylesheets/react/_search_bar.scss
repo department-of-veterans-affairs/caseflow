@@ -1,6 +1,8 @@
 // TODO(marian): add all styles in this file to commons
 @import 'uswds/lib/addons/font-stacks';
 @import 'uswds/core/variables';
+// todo: importing components/search throws Undefined mixin 'clearfix'.
+//@import 'uswds/components/search';
 
 .usa-search {
   &.usa-search-big {
@@ -17,6 +19,10 @@
       margin-top: 6px;
       position: absolute;
     }
+  }
+
+  &.cf-has-internal-text {
+    display: inline-flex;
   }
 
   &.usa-search-small {
@@ -41,6 +47,30 @@
 
   [type="search"] {
     border: 1px solid $color-gray-dark;
+  }
+
+  // todo: use uswds/components/search/$usa-btn-medium-width
+  [type="search"].cf-search-with-internal-text {
+    border-right: 0;
+    -webkit-appearance: none !important;
+    outline: none;
+    width: calc(100% - 8.5rem);
+  }
+
+  .cf-search-internal-text {
+    -webkit-appearance: none !important;
+    text-align: right;
+    width: 8.5rem;
+    border: 1px solid $color-gray-dark;
+    border-left: 0;
+    margin: 0 0 0 -7px;
+    color: $color-gray;
+    height: 3.3rem;
+    font-size: medium;
+
+    &:hover {
+      cursor: text;
+    }
   }
 }
 
