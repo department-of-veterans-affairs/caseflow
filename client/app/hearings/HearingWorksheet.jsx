@@ -92,6 +92,7 @@ export class HearingWorksheet extends React.PureComponent {
               aria-label="Representative Name"
               value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
+              maxLength={30}
             />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
@@ -116,6 +117,7 @@ export class HearingWorksheet extends React.PureComponent {
               aria-label="Witness Observer"
               value={worksheet.witness || ''}
               onChange={this.onWitnessChange}
+              maxLength={120}
             />
           </div>
         </div>
@@ -137,6 +139,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
               minRows={3}
+              maxLength={1024}
             />
           </div>
 
@@ -148,6 +151,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
               minRows={3}
+              maxLength={1024}
             />
           </div>
 
@@ -159,6 +163,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               minRows={3}
+              maxLength={1024}
             />
           </div>
 
@@ -170,6 +175,7 @@ export class HearingWorksheet extends React.PureComponent {
               id="worksheet-comments-for-attorney"
               onChange={this.onCommentsForAttorneyChange}
               minRows={3}
+              maxLength={1024}
             />
           </div>
         </form>
