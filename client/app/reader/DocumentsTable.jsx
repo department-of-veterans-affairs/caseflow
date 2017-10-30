@@ -17,7 +17,7 @@ import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
   setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility
-} from '../reader/actions';
+} from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
