@@ -79,7 +79,16 @@
 }
 
 .cf-search-bar {
-  transition: top .2s linear;
+  top: 0;
+  transition: top .1s linear;
+  position: absolute;
+  background: $color-gray-dark;
+  z-index: 20;
+  color: white;
+  right: 2rem;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: 0.5rem 1rem 1rem 1rem;
 
   &.hidden {
     top: -10rem;

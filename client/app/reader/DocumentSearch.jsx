@@ -46,18 +46,6 @@ export class DocumentSearch extends React.PureComponent {
   prevMatch = () => this.props.updateSearchIndex(false)
 
   render() {
-    // todo: use built-in styles
-    const style = {
-      position: 'absolute',
-      background: '#333B45',
-      zIndex: '20',
-      color: 'white',
-      right: '2rem',
-      borderBottomLeftRadius: '6px',
-      borderBottomRightRadius: '6px',
-      padding: '0.5rem 1rem 1rem 1rem'
-    };
-
     let internalText = this.props.totalMatchesInFile > 0 ?
       `${this.props.getCurrentMatch} of ${this.props.totalMatchesInFile}` : ' ';
 
@@ -65,7 +53,7 @@ export class DocumentSearch extends React.PureComponent {
       hidden: !this.props.visibility
     });
 
-    return <div className={classes} style={style}>
+    return <div className={classes}>
       <SearchBar
         isSearchAhead={true}
         size="small"
