@@ -99,6 +99,17 @@ RSpec.feature "Reader" do
     User.authenticate!(roles: ["Reader"])
   end
 
+  context "User on blacklist" do
+    before do
+      FeatureToggle.enable!(:reader_blacklist, users: [current_user.css_id])
+    end
+
+    scenario "it redirects to unauthorized" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Unauthorized")
+    end
+  end
+
   context "Short list of documents" do
     # Currently the vbms_document_ids need to be set since they correspond to specific
     # files to load when we fetch content.
