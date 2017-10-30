@@ -16,7 +16,7 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
-import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
+import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
 
 const vacolsId = 'reader_id1';
 

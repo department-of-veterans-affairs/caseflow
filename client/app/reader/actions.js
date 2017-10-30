@@ -4,153 +4,12 @@ import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
 import uuid from 'uuid';
-import { categoryFieldNameOfCategoryName } from './utils';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 import { createSearchAction } from 'redux-search';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
-});
-
-export const onInitialDataLoadingFail = (value = true) => ({
-  type: Constants.REQUEST_INITIAL_DATA_FAILURE,
-  payload: { value }
-});
-
-export const onInitialCaseLoadingFail = (value = true) => ({
-  type: Constants.REQUEST_INITIAL_CASE_FAILURE,
-  payload: { value }
-});
-
-export const onReceiveDocs = (documents, vacolsId) =>
-  (dispatch) => {
-    dispatch(collectAllTags(documents));
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: {
-        documents,
-        vacolsId
-      }
-    });
-  }
-;
-
-export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
-  type: Constants.RECEIVE_MANIFESTS,
-  payload: { manifestVbmsFetchedAt,
-    manifestVvaFetchedAt }
-});
-
-export const onReceiveAnnotations = (annotations) => ({
-  type: Constants.RECEIVE_ANNOTATIONS,
-  payload: { annotations }
-});
-
-export const onReceiveAssignments = (assignments) => ({
-  type: Constants.RECEIVE_ASSIGNMENTS,
-  payload: { assignments }
-});
-
-export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
-  type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
-  payload: {
-    docId,
-    categoryKey,
-    categoryValueToRevertTo
-  }
-});
-
-export const setSearch = (searchQuery) => ({
-  type: Constants.SET_SEARCH,
-  payload: {
-    searchQuery
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'search',
-      debounceMs: 500
-    }
-  }
-});
-
-export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
-  const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-  ApiUtil.patch(
-    `/document/${docId}`,
-    { data: { [categoryKey]: toggleState } },
-    ENDPOINT_NAMES.DOCUMENT
-  ).catch(() =>
-    dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
-  );
-
-  dispatch({
-    type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-    payload: {
-      categoryKey,
-      toggleState,
-      docId
-    },
-    meta: {
-      analytics: {
-        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-        action: `${toggleState ? 'set' : 'unset'} document category`,
-        label: categoryName
-      }
-    }
-  });
-};
-
-export const setCaseSelectSearch = (searchQuery) => ({
-  type: Constants.SET_CASE_SELECT_SEARCH,
-  payload: {
-    searchQuery
-  }
-});
-
-export const clearCaseSelectSearch = () => ({
-  type: Constants.CLEAR_CASE_SELECT_SEARCH
-});
-
-export const setDocListScrollPosition = (scrollTop) => ({
-  type: Constants.SET_DOC_LIST_SCROLL_POSITION,
-  payload: {
-    scrollTop
-  }
-});
-
-export const toggleDropdownFilterVisibility = (filterName) => ({
-  type: Constants.TOGGLE_FILTER_DROPDOWN,
-  payload: {
-    filterName
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'toggle-dropdown-filter',
-      label: filterName
-    }
-  }
-});
-
-export const changeSortState = (sortBy) => ({
-  type: Constants.SET_SORT,
-  payload: {
-    sortBy
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'change-sort-by',
-      label: (nextState) => {
-        const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
-
-        return `${sortBy}-${direction}`;
-      }
-    }
-  }
 });
 
 export const onScrollToComment = (scrollToComment) => ({
@@ -526,78 +385,7 @@ export const removeTagRequestSuccess = (docId, tagId) =>
     const { documents } = getState().readerReducer;
 
     dispatch(collectAllTags(documents));
-  }
-;
-
-export const setTagFilter = (text, checked, tagId) => ({
-  type: Constants.SET_TAG_FILTER,
-  payload: {
-    text,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'set' : 'unset'}-tag-filter`,
-      label: tagId
-    }
-  }
-});
-
-export const setCategoryFilter = (categoryName, checked) => ({
-  type: Constants.SET_CATEGORY_FILTER,
-  payload: {
-    categoryName,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'select' : 'unselect'}-category-filter`,
-      label: categoryName
-    }
-  }
-});
-
-export const clearTagFilters = () => ({
-  type: Constants.CLEAR_TAG_FILTER,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-tag-filters'
-    }
-  }
-});
-
-export const clearCategoryFilters = () => ({
-  type: Constants.CLEAR_CATEGORY_FILTER,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-category-filters'
-    }
-  }
-});
-
-export const clearAllFilters = () => ({
-  type: Constants.CLEAR_ALL_FILTERS,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-all-filters'
-    }
-  }
-});
-
-export const clearSearch = () => ({
-  type: Constants.CLEAR_ALL_SEARCH,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-search'
-    }
-  }
-});
+  };
 
 export const removeTag = (doc, tagId) =>
   (dispatch) => {
@@ -628,10 +416,6 @@ export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
   payload: { failedToLoad }
 });
 
-export const fetchedNoAppealsUsingVeteranId = () => ({
-  type: Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID
-});
-
 export const fetchAppealDetails = (vacolsId) =>
   (dispatch) => {
     ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
@@ -639,51 +423,7 @@ export const fetchAppealDetails = (vacolsId) =>
 
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => dispatch(onAppealDetailsLoadingFail()));
-  }
-;
-
-export const onReceiveAppealsUsingVeteranId = (appeals) => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS,
-  payload: { appeals }
-});
-
-export const fetchAppealUsingVeteranIdFailed = () => ({
-  type: Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE
-});
-
-export const caseSelectAppeal = (appeal) => ({
-  type: Constants.CASE_SELECT_APPEAL,
-  payload: { appeal }
-});
-
-export const requestAppealUsingVeteranId = () => ({
-  type: Constants.REQUEST_APPEAL_USING_VETERAN_ID,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CASE_SELECTION_PAGE,
-      action: 'case-search'
-    }
-  }
-});
-
-export const fetchAppealUsingVeteranId = (veteranId) =>
-  (dispatch) => {
-    dispatch(requestAppealUsingVeteranId());
-    ApiUtil.get('/reader/appeal/veteran-id?json', {
-      headers: { 'veteran-id': veteranId }
-    },
-    ENDPOINT_NAMES.APPEAL_DETAILS_BY_VET_ID).
-      then((response) => {
-        const returnedObject = JSON.parse(response.text);
-
-        if (_.size(returnedObject.appeals) === 0) {
-          dispatch(fetchedNoAppealsUsingVeteranId());
-        } else {
-          dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
-        }
-      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
-  }
-;
+  };
 
 export const addNewTag = (doc, tags) =>
   (dispatch) => {
@@ -732,20 +472,6 @@ export const setOpenedAccordionSections = (openedAccordionSections, prevSections
   }
 });
 
-export const setViewingDocumentsOrComments = (documentsOrComments) => ({
-  type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
-  payload: {
-    documentsOrComments
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'set-viewing-documents-or-comments',
-      label: documentsOrComments
-    }
-  }
-});
-
 export const togglePdfSidebar = () => ({
   type: Constants.TOGGLE_PDF_SIDEBAR,
   meta: {
@@ -754,28 +480,6 @@ export const togglePdfSidebar = () => ({
       action: 'toggle-pdf-sidebar',
       label: (nextState) => nextState.readerReducer.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
     }
-  }
-});
-
-
-export const handleToggleCommentOpened = (docId) => ({
-  type: Constants.TOGGLE_COMMENT_LIST,
-  payload: {
-    docId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'toggle-comment-list',
-      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
-    }
-  }
-});
-
-export const caseSelectModalSelectVacolsId = (vacolsId) => ({
-  type: Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID,
-  payload: {
-    vacolsId
   }
 });
 
@@ -848,7 +552,7 @@ export const getDocumentText = (pdfDocument, file) =>
       }, {});
 
       dispatch({
-        type: Constants.GET_DCOUMENT_TEXT,
+        type: Constants.GET_DOCUMENT_TEXT,
         payload: {
           textObject
         }
