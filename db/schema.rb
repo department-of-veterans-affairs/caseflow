@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171027230229) do
+ActiveRecord::Schema.define(version: 20171026190504) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -167,9 +167,6 @@ ActiveRecord::Schema.define(version: 20171027230229) do
     t.boolean "category_procedural"
     t.boolean "category_medical"
     t.boolean "category_other"
-    t.string  "document_type"
-    t.string  "file_number"
-    t.date    "received_at"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
