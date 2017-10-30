@@ -9,7 +9,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def perform(reader_user)
     @counts = {
       appeals_total: 0,
-      appeals_successful: 0,
+      appeals_successful: 0
     }
     RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = reader_user.user

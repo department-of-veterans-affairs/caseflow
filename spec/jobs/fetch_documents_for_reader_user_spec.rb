@@ -209,7 +209,6 @@ describe FetchDocumentsForReaderUserJob do
           .to raise_error(HTTPClient::KeepAliveDisconnected)
       end
     end
-
   end
 
   def dont_expect_calls_for_appeal(appeal, doc)
@@ -225,10 +224,9 @@ describe FetchDocumentsForReaderUserJob do
     expect_calls_for_appeal(appeal, doc, content)
   end
 
-  def expect_calls_for_appeal(appeal, doc, content)
+  def expect_calls_for_appeal(appeal, doc, _content)
     struct = doc_struct.clone
     struct[:documents] = [doc]
     expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return(struct).once
   end
-
 end
