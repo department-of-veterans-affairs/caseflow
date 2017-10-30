@@ -56,11 +56,11 @@ class HearingWorksheetIssues extends PureComponent {
     ];
 
     // Deleted issues can't be removed from Redux because we need to send them
-    // to the backend with their ID information. Ww filter them from the display.
-    /* eslint-disable */
-    const filteredIssues = Object.entries(worksheetIssues).filter(([key, value]) => !value._destroy).
+    // to the backend with their ID information. We filter them from the display.
+    const filteredIssues = Object.entries(worksheetIssues).filter(
+      // eslint-disable-next-line no-underscore-dangle
+      ([key, value]) => !value._destroy). // eslint-disable-line no-unused-vars
       reduce((obj, [key, value]) => (obj[key] = value) && obj, {});
-    /* eslint-enable */
 
     const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
 
