@@ -61,7 +61,7 @@ export const resetJumpToPage = () => ({
 
 export const handleSelectCommentIcon = (comment) => (dispatch) => {
   // Normally, we would not want to fire two actions here.
-  // I think that SCROLL_TO_SIDEBAR_COMMENT needs cleanupp
+  // I think that SCROLL_TO_SIDEBAR_COMMENT needs cleanup
   // more generally, so I'm just going to leave it alone for now,
   // and hack this in here.
   dispatch(selectAnnotation(comment.id));
