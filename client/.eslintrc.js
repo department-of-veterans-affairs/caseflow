@@ -78,6 +78,11 @@ module.exports = {
     // This rule is largely to prevent syntax errors that feel fairly easy to catch, 
     // and it makes our code less readable.
     "react/no-unescaped-entities": 0,
+    "react/no-typos": 1,
+    "react/self-closing-comp": [1, {
+      component: true,
+      html: false
+    }],
     "jsx-quotes": "warn",
     "key-spacing": "warn",
     "keyword-spacing": "warn",

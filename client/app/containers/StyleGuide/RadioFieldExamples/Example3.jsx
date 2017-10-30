@@ -33,6 +33,6 @@ export default class Example3 extends React.Component {
       vertical
       value={this.state.value}
       onChange={this.onChange}
-    ></RadioField>;
+    />;
   }
 }

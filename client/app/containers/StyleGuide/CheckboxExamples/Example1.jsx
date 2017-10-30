@@ -25,6 +25,6 @@ export default class Example1 extends React.Component {
       name="checkbox_example_1"
       onChange={this.onChange}
       value={this.state.value}
-    ></Checkbox>;
+    />;
   }
 }
