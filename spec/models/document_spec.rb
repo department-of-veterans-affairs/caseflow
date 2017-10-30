@@ -5,14 +5,19 @@ describe Document do
   let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
   let(:file) { document.default_path }
   let(:received_at) { nil }
-  let(:case_file_number) { Random.rand(999_999_999) }
+  let(:case_file_number) { Random.rand(999_999_999).to_s }
 
   context "#type?" do
     subject { document.type?("NOD") }
 
     context "when primary type matches" do
-      let(:document) { Document.new(type: "NOD") }
+      let(:document_type) { "NOD" }
+      let(:document) { Generators::Document.build(type: document_type) }
       it { is_expected.to be_truthy }
+      it "persists in database" do
+        document.save
+        expect(Document.find_by(vbms_document_id: document.vbms_document_id).document_type).to eq(document_type)
+      end
     end
 
     context "when an alt type matches" do
@@ -31,11 +36,19 @@ describe Document do
 
     context "when received_at is nil" do
       it { is_expected.to be_nil }
+      it "persists in database" do
+        document.save
+        expect(Document.find_by(vbms_document_id: document.vbms_document_id).received_at).to eq(nil)
+      end
     end
 
     context "when received_at is a datetime" do
       let(:received_at) { Time.zone.now }
       it { is_expected.to eq(Time.zone.today) }
+      it "persists in database" do
+        document.save
+        expect(Document.find_by(vbms_document_id: document.vbms_document_id).received_at).to eq(Time.zone.today)
+      end
     end
   end
 
@@ -159,18 +172,23 @@ describe Document do
   end
 
   context ".from_vbms_document" do
-    subject { Document.from_vbms_document(vbms_document, case_file_number) }
+    let(:document) { Document.from_vbms_document(vbms_document, case_file_number) }
+    subject { document }
 
     context "when has alt doc types" do
       let(:vbms_document) do
         OpenStruct.new(
-          vbms_document_id: "1",
+          document_id: "1",
           doc_type: "179",
           alt_doc_types: ["Appeals - Notice of Disagreement (NOD)", "Appeals - Statement of the Case (SOC)"]
         )
       end
 
       it { is_expected.to have_attributes(type: "Form 9", alt_types: %w(NOD SOC)) }
+      it "persists in database" do
+        document.save
+        expect(Document.find_by(vbms_document_id: document.vbms_document_id).file_number).to eq(case_file_number)
+      end
     end
 
     context "when doesn't have alt doc types" do
