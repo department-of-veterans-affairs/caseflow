@@ -9,10 +9,10 @@ import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage,
-  togglePdfSidebar, rotateDocument } from './actions';
+  togglePdfSidebar, rotateDocument, toggleSearchBar } from './actions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  ExternalLink, FitToScreen, Rotate } from '../components/RenderFunctions';
+  ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
@@ -235,13 +235,14 @@ export class PdfUI extends React.Component {
             ariaLabel="download pdf">
             <DownloadIcon/>
           </Button>
-          {false && <Button
+          <Button
             name="search"
             classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
             ariaLabel="search text"
-            type="submit">
-            <span className='usa-sr-only'></span>
-          </Button>}
+            type="submit"
+            onClick={this.props.toggleSearchBar}>
+            <SearchIcon/>
+          </Button>
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
               <Button
@@ -292,7 +293,8 @@ const mapDispatchToProps = (dispatch) => (
     togglePdfSidebar,
     resetJumpToPage,
     rotateDocument,
-    selectCurrentPdf
+    selectCurrentPdf,
+    toggleSearchBar
   }, dispatch)
 );
 

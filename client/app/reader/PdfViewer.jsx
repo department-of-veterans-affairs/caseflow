@@ -7,7 +7,7 @@ import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation
+  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation, toggleSearchBar
 } from './actions';
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import { update } from '../util/ReducerUtil';
@@ -116,6 +116,13 @@ export class PdfViewer extends React.Component {
       );
       this.props.showPdf(this.getNextDocId())();
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
+    }
+
+    const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
+
+    if (event[metaKey] && event.code === 'KeyF') {
+      event.preventDefault();
+      this.props.toggleSearchBar();
     }
   }
 
@@ -248,7 +255,8 @@ const mapDispatchToProps = (dispatch) => ({
     closeAnnotationDeleteModal,
     deleteAnnotation,
     stopPlacingAnnotation,
-    fetchAppealDetails
+    fetchAppealDetails,
+    toggleSearchBar
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))

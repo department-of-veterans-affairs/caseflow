@@ -7,8 +7,9 @@ import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIn
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { searchText, getDocumentText, updateSearchIndex } from './actions';
+import { searchText, getDocumentText, updateSearchIndex, toggleSearchBar } from './actions';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 export class DocumentSearch extends React.PureComponent {
   onChange = (value) => {
@@ -31,6 +32,10 @@ export class DocumentSearch extends React.PureComponent {
     if (event[metaKey] && event.code === 'KeyG') {
       event.preventDefault();
       this.props.updateSearchIndex(!event.shiftKey);
+    }
+
+    if (event.key === 'Escape') {
+      this.props.toggleSearchBar();
     }
   }
 
@@ -56,7 +61,11 @@ export class DocumentSearch extends React.PureComponent {
     let internalText = this.props.totalMatchesInFile > 0 ?
       `${this.props.getCurrentMatch} of ${this.props.totalMatchesInFile}` : ' ';
 
-    return <div style={style}>
+    const classes = classNames('cf-search-bar', {
+      hidden: !this.props.visibility
+    });
+
+    return <div className={classes} style={style}>
       <SearchBar
         isSearchAhead={true}
         size="small"
@@ -90,14 +99,16 @@ const mapStateToProps = (state, props) => ({
   pdfText: getTextForFile(state, props),
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
-  getCurrentMatch: getCurrentMatchIndex(state, props)
+  getCurrentMatch: getCurrentMatchIndex(state, props),
+  visibility: state.readerReducer.ui.pdf.hideSearchBar
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     searchText,
     getDocumentText,
-    updateSearchIndex
+    updateSearchIndex,
+    toggleSearchBar
   }, dispatch)
 });
 

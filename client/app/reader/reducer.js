@@ -159,7 +159,8 @@ export const initialState = {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
-      jumpToPageNumber: null
+      jumpToPageNumber: null,
+      hideSearchBar: false
     },
     pdfSidebar: {
       showErrorMessage: initialShowErrorMessageState
@@ -996,6 +997,18 @@ export const reducer = (state = initialState, action = {}) => {
         ui: {
           pdf: {
             hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
+          }
+        }
+      }
+    );
+  case Constants.TOGGLE_SEARCH_BAR:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            hideSearchBar: !state.ui.pdf.hideSearchBar
           }
         }
       }

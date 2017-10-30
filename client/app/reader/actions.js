@@ -659,6 +659,9 @@ export const togglePdfSidebar = () => ({
   }
 });
 
+export const toggleSearchBar = () => ({
+  type: Constants.TOGGLE_SEARCH_BAR
+});
 
 export const handleToggleCommentOpened = (docId) => ({
   type: Constants.TOGGLE_COMMENT_LIST,

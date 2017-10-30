@@ -77,3 +77,11 @@
 .cf-search-ahead-parent {
   display: flex;
 }
+
+.cf-search-bar {
+  transition: top .2s linear;
+
+  &.hidden {
+    top: -10rem;
+  }
+}
