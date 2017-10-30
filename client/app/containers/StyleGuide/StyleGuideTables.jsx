@@ -45,13 +45,13 @@ export default function StyleGuideTables() {
     return rowObject.likesSports ? 'cf-success' : '';
   };
 
-  const Cell = (person, rowNumber) => <a href={`#poke-${rowNumber}`}>Poke {person.name} »</a>;
-
   let columnsWithAction = _.concat(columns, [
     {
       header: 'Poke',
       align: 'right',
-      valueFunction: Cell
+      valueFunction: (person, rowNumber) => {
+        return <a href={`#poke-${rowNumber}`}>Poke {person.name} »</a>;
+      }
     }
   ]);
 
