@@ -69,6 +69,21 @@ describe FetchDocumentsForReaderUserJob do
       Faker::Pokemon.name
     end
 
+    let!(:service_manifest_vbms_fetched_at) do
+      Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime("%D %l:%M%P %Z")
+    end
+
+    let!(:service_manifest_vva_fetched_at) do
+      Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime("%D %l:%M%P %Z")
+    end
+
+    let!(:doc_struct) do
+      {
+        manifest_vbms_fetched_at: service_manifest_vbms_fetched_at,
+        manifest_vva_fetched_at: service_manifest_vva_fetched_at
+      }
+    end
+
     before do
       # Reset S3 mock files
       S3Service.files = nil
@@ -222,11 +237,15 @@ describe FetchDocumentsForReaderUserJob do
           .with(reader_user.user.css_id)
           .and_return([appeal_with_doc1, appeal_with_doc2]).once
 
-        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user.user)
-          .and_return([expected_doc1]).once
+        struct = doc_struct.clone
+        struct[:documents] = [expected_doc1]
 
+        expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user.user)
+          .and_return(struct).once
+
+        struct[:documents] = [expected_doc2]
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user.user)
-          .and_return([expected_doc2]).once
+          .and_return(struct).once
 
         FetchDocumentsForReaderUserJob.perform_now(reader_user)
         expect(S3Service.files).to be_nil
@@ -249,8 +268,12 @@ describe FetchDocumentsForReaderUserJob do
 
         expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
 
+
+        struct = doc_struct.clone
+        struct[:documents] = [expected_doc2]
+
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user.user)
-          .and_return([expected_doc2]).once
+          .and_return(struct).once
 
         expect(expected_doc2).to receive(:fetch_content)
           .and_raise(VBMS::ClientError.new("Error")).once
@@ -279,7 +302,9 @@ describe FetchDocumentsForReaderUserJob do
   end
 
   def expect_calls_for_appeal(appeal, doc, content)
-    expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return([doc]).once
+    struct = doc_struct.clone
+    struct[:documents] = [doc]
+    expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return(struct).once
     expect_calls_for_doc(doc, content)
   end
 
