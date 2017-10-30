@@ -6,10 +6,11 @@ import { connect } from 'react-redux';
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
-import { closeAnnotationDeleteModal, deleteAnnotation,
+import {
   selectCurrentPdf, fetchAppealDetails
 } from './actions';
-import { stopPlacingAnnotation, showPlaceAnnotationIcon
+import { stopPlacingAnnotation, showPlaceAnnotationIcon,
+  deleteAnnotation, closeAnnotationDeleteModal
 } from '../reader/PdfViewer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
