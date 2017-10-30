@@ -504,8 +504,12 @@ class Appeal < ActiveRecord::Base
     def for_api(appellant_ssn:)
       fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
+      # Some appeals that are early on in the process
+      # have no events recorded. We are not showing these.
+      # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
+                .reject { |a| a.latest_event_date.nil? }
                 .sort_by(&:latest_event_date)
                 .reverse
     end
