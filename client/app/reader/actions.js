@@ -3,9 +3,9 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import ApiUtil from '../util/ApiUtil';
-import uuid from 'uuid';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 import { createSearchAction } from 'redux-search';
+import { selectAnnotation } from '../reader/PdfViewer/AnnotationActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -15,6 +15,30 @@ export const collectAllTags = (documents) => ({
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,
   payload: { scrollToComment }
+});
+
+export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
+  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
+  payload: {
+    annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'open-annotation-delete-modal',
+      label: analyticsLabel
+    }
+  }
+});
+
+export const closeAnnotationDeleteModal = () => ({
+  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'close-annotation-delete-modal'
+    }
+  }
 });
 
 export const jumpToPage = (pageNumber, docId) => ({
@@ -34,6 +58,20 @@ export const jumpToPage = (pageNumber, docId) => ({
 export const resetJumpToPage = () => ({
   type: Constants.RESET_JUMP_TO_PAGE
 });
+
+export const handleSelectCommentIcon = (comment) => (dispatch) => {
+  // Normally, we would not want to fire two actions here.
+  // I think that SCROLL_TO_SIDEBAR_COMMENT needs cleanupp
+  // more generally, so I'm just going to leave it alone for now,
+  // and hack this in here.
+  dispatch(selectAnnotation(comment.id));
+  dispatch({
+    type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+    payload: {
+      scrollToSidebarComment: comment
+    }
+  });
+};
 
 export const handleSetLastRead = (docId) => ({
   type: Constants.LAST_READ_DOCUMENT,

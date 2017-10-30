@@ -3,6 +3,7 @@ import uuid from 'uuid';
 import * as Constants from '../constants';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../../util/ApiUtil';
+import { openAnnotationDeleteModal } from '../../reader/actions';
 
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
@@ -122,20 +123,6 @@ export const requestMoveAnnotation = (annotation) => (dispatch) => {
     );
 };
 
-export const handleSelectCommentIcon = (comment) => (dispatch) => {
-  // Normally, we would not want to fire two actions here.
-  // I think that SCROLL_TO_SIDEBAR_COMMENT needs cleanupp
-  // more generally, so I'm just going to leave it alone for now,
-  // and hack this in here.
-  dispatch(selectAnnotation(comment.id));
-  dispatch({
-    type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-    payload: {
-      scrollToSidebarComment: comment
-    }
-  });
-};
-
 export const startEditAnnotation = (annotationId) => ({
   type: Constants.START_EDIT_ANNOTATION,
   payload: {
@@ -181,30 +168,6 @@ export const updateNewAnnotationContent = (content) => ({
   type: Constants.UPDATE_NEW_ANNOTATION_CONTENT,
   payload: {
     content
-  }
-});
-
-export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'open-annotation-delete-modal',
-      label: analyticsLabel
-    }
-  }
-});
-
-export const closeAnnotationDeleteModal = () => ({
-  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'close-annotation-delete-modal'
-    }
   }
 });
 
