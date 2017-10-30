@@ -34,7 +34,7 @@ export default class Example4 extends React.Component {
       options={options}
       value={this.state.value}
       onChange={this.onChange}
-      required={true}
+      required
       errorMessage={this.state.errorMessage}
     ></RadioField>;
   }

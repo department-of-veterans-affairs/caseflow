@@ -11,7 +11,7 @@ export default function StyleGuideAlertMessages() {
       title="Alert Messages"
       id="alert_messages"
       link="StyleGuideAlertMessages.jsx"
-      isSubsection={true}
+      isSubsection
     />
     <p>Alert messages are often shown when the user has destroyed data by canceling
     their work. These messages have red titles to reinforce that the user did not

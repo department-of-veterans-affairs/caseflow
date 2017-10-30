@@ -41,7 +41,7 @@ export default class Example5 extends React.Component {
       options={options}
       onChange={this.onChange}
       values={this.state.values}
-      vertical={true}
+      vertical
     ></CheckboxGroup>;
   }
 }

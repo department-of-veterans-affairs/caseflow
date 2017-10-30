@@ -11,7 +11,7 @@ export default function StyleGuideStatusMessages() {
       title="Status Messages"
       id="status_messages"
       link="StyleGuideStatusMessages.jsx"
-      isSubsection={true}
+      isSubsection
     />
     <p>Status messages are shown when Caseflow encounters an error such as 500 or 400
     http error codes. They are also shown when a user doesn’t have access to view a

@@ -21,7 +21,7 @@ export default class Example2 extends React.Component {
   render = () => {
     return <Checkbox
       label="Option"
-      vertical={true}
+      vertical
       name="checkbox_example_2"
       onChange={this.onChange}
       value={this.state.value}

@@ -116,7 +116,7 @@ export class EstablishClaimEmail extends BaseForm {
                 name="confirmEmail"
                 onChange={this.handleFieldChange('emailForm', 'confirmBox')}
                 {...this.state.emailForm.confirmBox}
-                required={true}
+                required
               />
             </div>
 

@@ -38,7 +38,7 @@ class SideBarComments extends PureComponent {
           <EditComment
             comment={this.props.placedButUnsavedAnnotation}
             id="addComment"
-            disableOnEmpty={true}
+            disableOnEmpty
             onChange={this.props.updateNewAnnotationContent}
             onCancelCommentEdit={this.stopPlacingAnnotation}
             onSaveCommentEdit={this.props.createAnnotation} />}

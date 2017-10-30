@@ -194,23 +194,23 @@ export class PdfSidebar extends React.Component {
             ]}
             closeHandler={this.handleKeyboardModalClose}
             title="Keyboard shortcuts"
-            noDivider={true}
+            noDivider
             id="cf-keyboard-modal">
             <div className="cf-keyboard-modal-scroll">
               <Table
                 columns={scrollColumns}
                 rowObjects={scrollInstructions}
-                slowReRendersAreOk={true}
+                slowReRendersAreOk
                 className="cf-keyboard-modal-table"/>
               <Table
                 columns={commentColumns}
                 rowObjects={commentInstructions}
-                slowReRendersAreOk={true}
+                slowReRendersAreOk
                 className="cf-keyboard-modal-table"/>
               <Table
                 columns={documentsColumns}
                 rowObjects={documentsInstructions}
-                slowReRendersAreOk={true}
+                slowReRendersAreOk
                 className="cf-keyboard-modal-table"/>
             </div>
           </Modal>
