@@ -48,13 +48,15 @@ export default class Modal extends React.Component {
       toLowerCase();
   }
 
+  modalCloseFocus = (modalClose) => this.modalClose = modalClose
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.keyHandler);
-    document.getElementById(this.getModalId()).focus();
+    this.modalClose.focus();
   }
 
   generateButtons() {
@@ -124,6 +126,7 @@ export default class Modal extends React.Component {
           id={`${this.buttonIdPrefix}close`}
           className="cf-modal-close"
           onClick={closeHandler}
+          ref={this.modalCloseFocus}
         >
           {closeSymbolHtml()}
         </button>
