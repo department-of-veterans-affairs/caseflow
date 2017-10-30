@@ -4,6 +4,7 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   include CachedAttributes
 
+  belongs_to :appeal_series
   has_many :tasks
   has_many :appeal_views
   has_many :worksheet_issues
