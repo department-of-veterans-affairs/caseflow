@@ -465,15 +465,11 @@ class Appeal < ActiveRecord::Base
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
+    # rubocop:disable Metrics/LineLength
     @fetched_documents = doc_struct[:documents]
-
-    if doc_struct[:manifest_vbms_fetched_at].is_a?(String)
-      @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].in_time_zone
-    end
-
-    if doc_struct[:manifest_vva_fetched_at].is_a?(String)
-      @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].in_time_zone
-    end
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].in_time_zone if doc_struct[:manifest_vbms_fetched_at]
+    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].in_time_zone if doc_struct[:manifest_vva_fetched_at]
+    # rubocop:enable Metrics/LineLength
   end
 
   def fetched_documents
