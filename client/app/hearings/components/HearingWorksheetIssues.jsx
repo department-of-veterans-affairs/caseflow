@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
@@ -57,10 +58,10 @@ class HearingWorksheetIssues extends PureComponent {
 
     // Deleted issues can't be removed from Redux because we need to send them
     // to the backend with their ID information. We filter them from the display.
-    const filteredIssues = Object.entries(worksheetIssues).filter(
+    const filteredIssues = _.pickBy(worksheetIssues, (issue) => {
       // eslint-disable-next-line no-underscore-dangle
-      ([key, value]) => !value._destroy). // eslint-disable-line no-unused-vars
-      reduce((obj, [key, value]) => (obj[key] = value) && obj, {});
+      return !issue._destroy && issue.appeal_id === worksheetStreamsAppeal.id;
+    });
 
     const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
 
