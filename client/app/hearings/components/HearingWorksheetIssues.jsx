@@ -17,6 +17,7 @@ class HearingWorksheetIssues extends PureComponent {
       appealKey
     } = this.props;
 
+
     const columns = [
       {
         header: '',
@@ -54,52 +55,55 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    const rowObjects = Object.keys(worksheetIssues).filter((issue) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const filteredIssues = Object.entries(worksheetIssues).filter(([key, value]) => !value._destroy).
+      reduce((obj, [key, value]) => (obj[key] = value) && obj, {});
+
+    const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
 
       let issueRow = worksheetIssues[issue];
-
-      // eslint-disable-next-line no-underscore-dangle
-      let destroyFilter = issueRow._destroy || issueRow.appeal_id !== worksheetStreamsAppeal.id;
 
       // Deleted issues can't be removed from Redux because we need to send them
       // to the backend with their ID information. We need to filter them from
       // the display.
-      return !destroyFilter ? issue : null;
+      // eslint-disable-next-line no-underscore-dangle
+      if (issueRow._destroy || issueRow.appeal_id !== worksheetStreamsAppeal.id) {
+        return {};
+      }
 
-    }).
-      map((issue, key) => ({
+      return {
         counter: <b>{key + 1}.</b>,
         program: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
-          issue={worksheetIssues[issue]}
+          issue={issueRow}
           field="program"
         />,
         issue: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
-          issue={worksheetIssues[issue]}
+          issue={issueRow}
           field="name"
         />,
         levels: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
-          issue={worksheetIssues[issue]}
+          issue={issueRow}
           field="levels"
         />,
         description: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
-          issue={worksheetIssues[issue]}
+          issue={issueRow}
           field="description"
         />,
         actions: <HearingWorksheetPreImpressions
           appeal={worksheetStreamsAppeal}
-          issue={worksheetIssues[issue]}
+          issue={issueRow}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
           appeal={worksheetStreamsAppeal}
-          issue={worksheetIssues[issue]}
+          issue={issueRow}
           appealKey={appealKey}
         />
-      })
-      );
+      };
+    });
 
     return <div>
       <Table
