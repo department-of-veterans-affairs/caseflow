@@ -71,7 +71,6 @@ class StyleGuideSearchableDropdown extends Component {
           required={true}
           multi={true}
           placeholder="Select options"
-          creatable={true}
           creatableOptions={creatableOptions}
         />
       </div>

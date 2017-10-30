@@ -6,7 +6,7 @@ module.exports = {
     "mocha": true,
     "node": true
   },
-  "extends": "eslint:recommended",
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
@@ -66,6 +66,8 @@ module.exports = {
     "indent": ["warn", 2],
     "react/jsx-uses-react": "warn",
     "react/jsx-uses-vars": "warn",
+    "react/prop-types": 0,
+    "react/no-unescaped-entities": 0,
     "jsx-quotes": "warn",
     "key-spacing": "warn",
     "keyword-spacing": "warn",
