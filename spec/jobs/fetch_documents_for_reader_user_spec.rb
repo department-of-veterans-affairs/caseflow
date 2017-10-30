@@ -268,7 +268,6 @@ describe FetchDocumentsForReaderUserJob do
 
         expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
 
-
         struct = doc_struct.clone
         struct[:documents] = [expected_doc2]
 
