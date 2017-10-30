@@ -1111,7 +1111,7 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-  case Constants.GET_DCOUMENT_TEXT:
+  case Constants.GET_DOCUMENT_TEXT:
     return update(
       state,
       {

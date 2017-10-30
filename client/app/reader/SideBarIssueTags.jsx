@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
-import CannotSaveAlert from '../reader/CannotSaveAlert';
 import { connect } from 'react-redux';
-import SearchableDropdown from '../components/SearchableDropdown';
 import _ from 'lodash';
 
+import CannotSaveAlert from '../reader/CannotSaveAlert';
+import SearchableDropdown from '../components/SearchableDropdown';
 import { addNewTag, removeTag } from '../reader/actions';
 
 class SideBarIssueTags extends PureComponent {
