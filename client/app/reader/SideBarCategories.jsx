@@ -6,7 +6,7 @@ import DocCategoryPicker from '../reader/DocCategoryPicker';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
-import { handleCategoryToggle } from '../reader/actions';
+import { handleCategoryToggle } from '../reader/DocumentList/DocumentListActions';
 
 class SideBarCategories extends PureComponent {
   render() {
