@@ -73,7 +73,7 @@ gem 'redis-rails'
 # remove when upgrading to rails 5
 gem 'where-or'
 
-gem 'prometheus-client', "~> 0.6"
+gem 'prometheus-client', '~> 0.7.1'
 
 gem 'request_store'
 

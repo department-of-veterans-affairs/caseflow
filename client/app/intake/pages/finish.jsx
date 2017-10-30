@@ -48,7 +48,7 @@ class Finish extends React.PureComponent {
   }
 
   render() {
-    const { rampElection, appeals } = this.props;
+    const { rampElection, appeals, requestState } = this.props;
 
     switch (this.props.rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
@@ -77,8 +77,7 @@ class Finish extends React.PureComponent {
       </span>,
       <span>Update the Subject Line with "Ramp Election".</span>,
       <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of "RAMP".</span>,
-      <span>Send a <strong>RAMP Withdrawal Letter</strong> using <em>Letter Creator</em>.</span>
+      <span>Add a placeholder contention of "RAMP".</span>
     ];
     const stepFns = steps.map((step, index) =>
       () => <span><strong>Step {index + 1}.</strong> {step}</span>
@@ -90,6 +89,13 @@ class Finish extends React.PureComponent {
 
     return <div>
       <h1>Finish processing { optionName } election</h1>
+
+      { requestState === REQUEST_STATE.FAILED &&
+        <Alert title="Something went wrong" type="error" lowerMargin>
+          Please try again. If the problem persists, please contact Caseflow support.
+        </Alert>
+      }
+
       <p>Please complete the following steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
 
@@ -112,7 +118,11 @@ class Finish extends React.PureComponent {
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.rampElection).then(
-      () => this.props.history.push('/completed')
+      (completeWasSuccessful) => {
+        if (completeWasSuccessful) {
+          this.props.history.push('/completed');
+        }
+      }
     );
   }
 
@@ -149,6 +159,7 @@ export default connect(
   (state) => ({
     rampElection: state.rampElection,
     appeals: state.appeals,
+    requestState: state.requestStatus.completeIntake,
     rampElectionStatus: getRampElectionStatus(state)
   }),
   (dispatch) => bindActionCreators({

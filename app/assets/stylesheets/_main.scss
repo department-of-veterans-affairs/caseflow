@@ -262,6 +262,13 @@ body {
   background-size: 32px 32px;
 }
 
+.cf-logo-image-intake {
+  background-image: url(asset-path('caseflow-intake-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
 .cf-stats {
   margin-top: 0;
 
@@ -648,7 +655,7 @@ select {
 }
 
 .vbms-id {
-  color: $color-gray-light;
+  color: $color-gray;
 }
 
 //candidate for commons
