@@ -55,6 +55,13 @@ export default class BaseForm extends React.Component {
   }
 
   scrollToAndFocusFirstError = function() {
+
+    /**
+     * Tech debt: ReactDOM.findDOMNode will eventually be deprecated.
+     * https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-find-dom-node.md
+     * We should use ref callbacks instead to get an instance to the rendered element node.
+     */
+    // eslint-disable-next-line react/no-find-dom-node
     let erroredForm = ReactDOM.findDOMNode(this.state.validating);
     let errors = erroredForm.getElementsByClassName('usa-input-error-message');
 
