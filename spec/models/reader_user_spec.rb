@@ -2,7 +2,6 @@ require "rails_helper"
 
 describe ReaderUser do
   context "when a reader users do not exist for a user with a reader role" do
-
     let!(:users_with_reader_roles) do
       Array.new(10) do
         Generators::User.create(roles: ["Reader"])
