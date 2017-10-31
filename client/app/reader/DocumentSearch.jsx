@@ -78,14 +78,13 @@ export class DocumentSearch extends React.PureComponent {
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
-        // todo: better centering
         onClick={this.prevMatch}>
-        <div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><LeftChevron/></div>
+        <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}><LeftChevron/></div>
       </Button>
       <Button
         classNames={['cf-increment-search-match', 'cf-next-match']}
         onClick={this.nextMatch}>
-        <div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><RightChevron/></div>
+        <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}><RightChevron/></div>
       </Button>
     </div>;
   }
