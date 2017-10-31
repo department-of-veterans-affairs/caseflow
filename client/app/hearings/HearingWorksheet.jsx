@@ -139,7 +139,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
               minRows={3}
-              maxLength={1024}
+              maxLength={5000}
             />
           </div>
 
@@ -151,7 +151,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
               minRows={3}
-              maxLength={1024}
+              maxLength={5000}
             />
           </div>
 
@@ -163,7 +163,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               minRows={3}
-              maxLength={1024}
+              maxLength={5000}
             />
           </div>
 
@@ -175,7 +175,7 @@ export class HearingWorksheet extends React.PureComponent {
               id="worksheet-comments-for-attorney"
               onChange={this.onCommentsForAttorneyChange}
               minRows={3}
-              maxLength={1024}
+              maxLength={5000}
             />
           </div>
         </form>
