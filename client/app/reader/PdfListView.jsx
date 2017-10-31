@@ -9,7 +9,7 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails } from './actions';
+import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
