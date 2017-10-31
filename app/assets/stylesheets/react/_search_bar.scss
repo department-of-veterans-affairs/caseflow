@@ -47,14 +47,14 @@
 
   [type="search"] {
     border: 1px solid $color-gray-dark;
-  }
 
-  // todo: use uswds/components/search/$usa-btn-medium-width
-  [type="search"].cf-search-with-internal-text {
-    border-right: 0;
-    -webkit-appearance: none !important;
-    outline: none;
-    width: calc(100% - 8.5rem);
+    // todo: use uswds/components/search/$usa-btn-medium-width
+    &.cf-search-with-internal-text {
+      border-right: 0;
+      -webkit-appearance: none !important;
+      outline: none;
+      width: calc(100% - 8.5rem);
+    }
   }
 
   .cf-search-internal-text {
@@ -84,11 +84,11 @@
   position: absolute;
   background: $color-gray-dark;
   z-index: 20;
-  color: white;
+  color: #ffffff;
   right: 2rem;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  padding: 0.5rem 1rem 1rem 1rem;
+  padding: 0.5rem 1rem 1rem;
 
   &.hidden {
     top: -10rem;

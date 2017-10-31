@@ -68,7 +68,7 @@ export class DocumentSearch extends React.PureComponent {
     return <div className={classes}>
       <SearchBar
         ref={this.searchBarRef}
-        isSearchAhead={true}
+        isSearchAhead
         size="small"
         id="search-ahead"
         placeholder="Type to search..."
@@ -79,14 +79,14 @@ export class DocumentSearch extends React.PureComponent {
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
         // todo: better centering
-        children={<div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><LeftChevron/></div>}
-        onClick={this.prevMatch}
-      />
+        onClick={this.prevMatch}>
+        <div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><LeftChevron/></div>
+      </Button>
       <Button
         classNames={['cf-increment-search-match', 'cf-next-match']}
-        children={<div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><RightChevron/></div>}
-        onClick={this.nextMatch}
-      />
+        onClick={this.nextMatch}>
+        <div style={{ transform: 'translateY(3px) translateX(-0.5rem)' }}><RightChevron/></div>
+      </Button>
     </div>;
   }
 }
