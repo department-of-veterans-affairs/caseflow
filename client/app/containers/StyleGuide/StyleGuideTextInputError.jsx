@@ -28,7 +28,7 @@ export default class StyleGuideTextInputError extends React.Component {
         title="Text Input Error"
         id="text_input_error"
         link="StyleGuideTextInputError.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <p>Similar to the USWDS we mark fields with a “required” or “optional” label
        to the top fight of the form input type. Our required text is <code>secondary</code>
@@ -38,7 +38,7 @@ export default class StyleGuideTextInputError extends React.Component {
       <TextField
         name="Text Input Label (with error)"
         value={this.state.value}
-        required={true}
+        required
         onChange={(value) => {
           this.setState({ value });
         }}

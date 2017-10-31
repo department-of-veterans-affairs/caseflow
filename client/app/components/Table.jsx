@@ -111,7 +111,7 @@ class FooterRow extends React.PureComponent {
     const hasFooters = _.some(props.columns, 'footer');
 
     return <tfoot>
-      {hasFooters && <Row columns={props.columns} footer={true}/>}
+      {hasFooters && <Row columns={props.columns} footer/>}
     </tfoot>;
   }
 }

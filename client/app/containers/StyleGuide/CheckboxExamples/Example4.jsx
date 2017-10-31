@@ -41,6 +41,6 @@ export default class Example4 extends React.Component {
       options={options}
       onChange={this.onChange}
       values={this.state.values}
-    ></CheckboxGroup>;
+    />;
   }
 }
