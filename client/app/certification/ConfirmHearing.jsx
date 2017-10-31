@@ -274,7 +274,7 @@ export class ConfirmHearing extends React.Component {
           */}
         <RadioField name="hearingChangeQuestion"
           label={hearingChangeQuestion}
-          required={true}
+          required
           options={hearingChangeAnswers}
           value={hearingDocumentIsInVbms}
           errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') ? ERRORS.hearingDocumentIsInVbms : null}
@@ -284,7 +284,7 @@ export class ConfirmHearing extends React.Component {
           shouldDisplayHearingChangeFound &&
             <RadioField
               name={hearingChangeFoundQuestion}
-              required={true}
+              required
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               options={hearingChangeFoundAnswers}
               value={hearingPreference}
@@ -296,7 +296,7 @@ export class ConfirmHearing extends React.Component {
           shouldDisplayTypeOfForm9Question &&
             <RadioField
               name={typeOfForm9Question}
-              required={true}
+              required
               options={typeOfForm9Answers}
               value={form9Type}
               errorMessage={this.isFieldErrored('form9Type') ? ERRORS.form9Type : null}
@@ -323,7 +323,7 @@ export class ConfirmHearing extends React.Component {
             <RadioField name={formalForm9HearingQuestion}
               options={formalForm9HearingAnswers}
               value={hearingPreference}
-              required={true}
+              required
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               onChange={onHearingPreferenceChange}/>
         }
@@ -333,7 +333,7 @@ export class ConfirmHearing extends React.Component {
             <RadioField name={informalForm9HearingQuestion}
               options={informalForm9HearingAnswers}
               value={hearingPreference}
-              required={true}
+              required
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               onChange={onHearingPreferenceChange}/>
         }

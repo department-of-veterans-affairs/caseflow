@@ -180,7 +180,7 @@ export class EstablishClaimDecision extends React.Component {
             <TextField
               label="Decision type"
               name="decisionType"
-              readOnly={true}
+              readOnly
               value={decisionType}
             />
           </div>
