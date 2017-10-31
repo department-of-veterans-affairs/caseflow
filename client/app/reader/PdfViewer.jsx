@@ -269,7 +269,6 @@ PdfViewer.propTypes = {
     id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
-  onScrollToComment: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,

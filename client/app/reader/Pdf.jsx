@@ -8,7 +8,8 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { onScrollToComment, togglePdfSidebar } from '../reader/actions';
+import { togglePdfSidebar } from '../reader/actions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/PdfViewer/AnnotationActions';
