@@ -17,9 +17,11 @@ import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
-import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
-  selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
-} from '../reader/actions';
+import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/actions';
+import {
+  selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
+  updateAnnotationContent
+} from '../reader/PdfViewer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
