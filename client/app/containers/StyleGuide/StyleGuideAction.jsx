@@ -10,7 +10,7 @@ let StyleGuideAction = () => {
       title="Actions"
       id="actions"
       link="StyleGuideAction.jsx"
-      isSubsection={true}
+      isSubsection
     />
     <p>
       For most task-based pages, Primary and Secondary Actions sit under the App Canvas.

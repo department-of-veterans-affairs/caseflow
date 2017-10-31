@@ -56,7 +56,7 @@ class Finish extends React.PureComponent {
     case RAMP_INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW}/>;
     case RAMP_INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
@@ -118,7 +118,11 @@ class Finish extends React.PureComponent {
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.rampElection).then(
-      () => this.props.history.push('/completed')
+      (completeWasSuccessful) => {
+        if (completeWasSuccessful) {
+          this.props.history.push('/completed');
+        }
+      }
     );
   }
 

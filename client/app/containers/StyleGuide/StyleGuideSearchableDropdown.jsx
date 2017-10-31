@@ -47,7 +47,7 @@ class StyleGuideSearchableDropdown extends Component {
           name="no-search-select-countries"
           options={options}
           onChange={this.onChange}
-          required={true}
+          required
           searchable={false}
         />
         <p>The searchable dropdowns provide more context to users' choices.
@@ -60,18 +60,17 @@ class StyleGuideSearchableDropdown extends Component {
           name="single-select-countries"
           options={options}
           onChange={this.onChange}
-          required={true}
+          required
         />
         <h3>Creatable Searchable Multiselect Dropdown</h3>
         <SearchableDropdown
-          creatable={true}
+          creatable
           label="Click in the box below to select, type, or add issue(s)"
           name="multi-select-countries"
           options={options}
-          required={true}
-          multi={true}
+          required
+          multi
           placeholder="Select options"
-          creatable={true}
           creatableOptions={creatableOptions}
         />
       </div>

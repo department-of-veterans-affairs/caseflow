@@ -4,10 +4,11 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { fetchAppealUsingVeteranId,
-  onReceiveAppealDetails, setCaseSelectSearch,
+  setCaseSelectSearch,
   clearCaseSelectSearch, caseSelectAppeal,
   caseSelectModalSelectVacolsId
-} from './actions';
+} from './CaseSelect/CaseSelectActions';
+import { onReceiveAppealDetails } from '../reader/actions';
 
 import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
