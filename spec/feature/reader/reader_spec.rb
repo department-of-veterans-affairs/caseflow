@@ -71,6 +71,7 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
+    FeatureToggle.disable!(:reader_blacklist)
   end
 
   let(:vacols_record) { :remand_decided }
@@ -97,6 +98,17 @@ RSpec.feature "Reader" do
 
   let!(:current_user) do
     User.authenticate!(roles: ["Reader"])
+  end
+
+  context "User on blacklist" do
+    before do
+      FeatureToggle.enable!(:reader_blacklist, users: [current_user.css_id])
+    end
+
+    scenario "it redirects to unauthorized" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Unauthorized")
+    end
   end
 
   context "Short list of documents" do
