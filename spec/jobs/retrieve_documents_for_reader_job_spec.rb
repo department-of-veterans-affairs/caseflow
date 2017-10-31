@@ -3,7 +3,6 @@ require "faker"
 
 describe RetrieveDocumentsForReaderJob do
   before(:all) do
-    S3Service = Caseflow::Fakes::S3Service
     User.appeal_repository = Fakes::AppealRepository
   end
 

@@ -4,7 +4,6 @@ require "faker"
 describe FetchDocumentsForReaderUserJob do
   before(:all) do
     User.appeal_repository = Fakes::AppealRepository
-    S3Service = Caseflow::Fakes::S3Service
   end
 
   context ".perform" do
@@ -87,9 +86,6 @@ describe FetchDocumentsForReaderUserJob do
     let!(:log_type) { :info }
 
     before do
-      # Reset S3 mock files
-      S3Service.files = nil
-
       # Fail test if Mock is called for non-reader user
       expect(Fakes::AppealRepository).not_to receive(:load_user_case_assignments_from_vacols)
         .with(non_reader_user.css_id)
@@ -213,7 +209,6 @@ describe FetchDocumentsForReaderUserJob do
 
   def dont_expect_calls_for_appeal(appeal, doc)
     expect(EFolderService).not_to receive(:fetch_documents_for).with(appeal, anything)
-    expect(S3Service).not_to receive(:exists?).with(doc.vbms_document_id)
     expect(EFolderService).not_to receive(:fetch_document_file).with(doc)
   end
 
