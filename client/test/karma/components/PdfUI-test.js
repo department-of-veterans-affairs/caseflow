@@ -55,6 +55,10 @@ describe('PdfUI', () => {
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
       });
 
+      it('renders the search button', () => {
+        expect(wrapper.find({ name: 'search' })).to.have.length(1);
+      });
+
       context('when showClaimsFolderNavigation is true', () => {
         it('renders the back to claims folder button', () => {
           expect(wrapper.find({ name: 'backToClaimsFolder' })).to.have.length(0);

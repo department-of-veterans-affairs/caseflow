@@ -7,7 +7,7 @@ import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIn
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { searchText, getDocumentText, updateSearchIndex, toggleSearchBar } from './actions';
+import { searchText, getDocumentText, updateSearchIndex, hideSearchBar } from './actions';
 import _ from 'lodash';
 import classNames from 'classnames';
 
@@ -35,7 +35,17 @@ export class DocumentSearch extends React.PureComponent {
     }
 
     if (event.key === 'Escape') {
-      this.props.toggleSearchBar();
+      this.props.hideSearchBar();
+    }
+  }
+
+  componentDidUpdate = () => {
+    // if focus is set on a hidden element, we can't prevent default
+    // ctrl+f behavior, and other window-bound shortcuts stop working
+    if (this.props.hidden) {
+      this.searchBar.releaseInputFocus();
+    } else {
+      this.searchBar.setInputFocus();
     }
   }
 
@@ -45,16 +55,19 @@ export class DocumentSearch extends React.PureComponent {
   nextMatch = () => this.props.updateSearchIndex(true)
   prevMatch = () => this.props.updateSearchIndex(false)
 
+  searchBarRef = (node) => this.searchBar = node
+
   render() {
-    let internalText = this.props.totalMatchesInFile > 0 ?
+    const internalText = this.props.totalMatchesInFile > 0 ?
       `${this.props.getCurrentMatch} of ${this.props.totalMatchesInFile}` : ' ';
 
     const classes = classNames('cf-search-bar', {
-      hidden: !this.props.visibility
+      hidden: this.props.hidden
     });
 
     return <div className={classes}>
       <SearchBar
+        ref={this.searchBarRef}
         isSearchAhead={true}
         size="small"
         id="search-ahead"
@@ -88,7 +101,7 @@ const mapStateToProps = (state, props) => ({
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   getCurrentMatch: getCurrentMatchIndex(state, props),
-  visibility: state.readerReducer.ui.pdf.hideSearchBar
+  hidden: state.readerReducer.ui.pdf.hideSearchBar
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -96,7 +109,7 @@ const mapDispatchToProps = (dispatch) => ({
     searchText,
     getDocumentText,
     updateSearchIndex,
-    toggleSearchBar
+    hideSearchBar
   }, dispatch)
 });
 

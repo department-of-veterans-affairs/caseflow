@@ -487,6 +487,14 @@ export const toggleSearchBar = () => ({
   type: Constants.TOGGLE_SEARCH_BAR
 });
 
+export const showSearchBar = () => ({
+  type: Constants.SHOW_SEARCH_BAR
+});
+
+export const hideSearchBar = () => ({
+  type: Constants.HIDE_SEARCH_BAR
+});
+
 export const setUpPdfPage = (file, pageIndex, page) => ({
   type: Constants.SET_UP_PDF_PAGE,
   payload: {

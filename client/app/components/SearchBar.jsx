@@ -61,6 +61,7 @@ export default class SearchBar extends React.Component {
   setInputRef = (node) => this.input = node
 
   setInputFocus = () => this.input.focus()
+  releaseInputFocus = () => this.input.blur();
 
   render() {
     let {
@@ -150,5 +151,6 @@ SearchBar.propTypes = {
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
   submitUsingEnterKey: PropTypes.bool,
-  staticText: PropTypes.string
+  staticText: PropTypes.string,
+  internalText: PropTypes.string
 };

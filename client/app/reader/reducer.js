@@ -160,7 +160,7 @@ export const initialState = {
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
       jumpToPageNumber: null,
-      hideSearchBar: false
+      hideSearchBar: true
     },
     pdfSidebar: {
       showErrorMessage: initialShowErrorMessageState
@@ -1009,6 +1009,30 @@ export const reducer = (state = initialState, action = {}) => {
         ui: {
           pdf: {
             hideSearchBar: !state.ui.pdf.hideSearchBar
+          }
+        }
+      }
+    );
+  case Constants.SHOW_SEARCH_BAR:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            hideSearchBar: false
+          }
+        }
+      }
+    );
+  case Constants.HIDE_SEARCH_BAR:
+    return _.merge(
+      {},
+      state,
+      {
+        ui: {
+          pdf: {
+            hideSearchBar: true
           }
         }
       }
