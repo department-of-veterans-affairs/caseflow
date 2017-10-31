@@ -16,7 +16,7 @@ class CaseSelect extends React.PureComponent {
   renderIssuesColumnData = (appeal) =>
     <IssueList
       appeal={appeal}
-      formatLevelsInNewLine={true}
+      formatLevelsInNewLine
       className="issue-list"
     />;
 

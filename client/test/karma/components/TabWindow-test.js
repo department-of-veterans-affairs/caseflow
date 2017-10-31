@@ -52,7 +52,7 @@ describe('TabWindow', () => {
           page: <div id="pageTwo">page two</div>
         }
       ]}
-      fullPage={true}/>);
+      fullPage/>);
 
     expect(wrapper.find('.cf-tab-navigation-full-screen')).to.have.length(1);
   });
