@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { createSearchAction } from 'redux-search';
 
 import * as Constants from '../constants';
