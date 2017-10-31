@@ -71,6 +71,7 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
+    FeatureToggle.disable!(:reader_blacklist)
   end
 
   let(:vacols_record) { :remand_decided }
