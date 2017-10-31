@@ -50,6 +50,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings.where("staff.sdomainid = #{id}")
                      .where("hearing_date > ?", 1.week.ago)
+                     .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -76,7 +77,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :board_member, :mduser,
              :mdtime, :sattyid,
              :bfregoff, :bfso,
-             :bfcorkey,
+             :bfcorkey, :bfddec, :bfdc,
              "staff.slogid",
              "corres.snamef, corres.snamemi",
              "corres.snamel, corres.sspare1",
