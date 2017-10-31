@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
-import { searchText, getDocumentText, updateSearchIndex } from './actions';
+import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 
 export class DocumentSearch extends React.PureComponent {
