@@ -19,7 +19,7 @@ export default function StyleGuideSuccessMessages() {
       title="Success Messages"
       id="success_messages"
       link="StyleGuideSuccessMessages.jsx"
-      isSubsection={true}
+      isSubsection
     />
     <p>Success messages are shown when the user has successfully completed the intended
     task of the application. The title is green, and these messages contain a checklist
@@ -27,7 +27,7 @@ export default function StyleGuideSuccessMessages() {
     Caseflow in the background, such as automatically sending a letter or changing
     the location of a claim.</p>
     <StatusMessage
-      example={true}
+      example
       checklist={successChecklist}
       title="Success!"
       leadMessageList={messageList}

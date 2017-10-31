@@ -38,6 +38,7 @@ describe HearingRepository do
       expect(subject.notes).to eq "test notes"
       expect(subject.representative_name).to eq "test rep name"
       expect(subject.representative).to eq "Jewish War Veterans"
+      expect(subject.regional_office_key).to eq "SO62"
     end
   end
 

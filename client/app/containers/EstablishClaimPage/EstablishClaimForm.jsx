@@ -44,36 +44,36 @@ export class EstablishClaimForm extends React.Component {
             label="Benefit Type"
             name="BenefitType"
             value="C&P Live"
-            readOnly={true}
+            readOnly
           />
           <TextField
             label="Payee"
             name="Payee"
             value="00 - Veteran"
-            readOnly={true}
+            readOnly
           />
           <TextField
             label="EP & Claim Label"
             name="claimLabel"
-            readOnly={true}
+            readOnly
             value={claimLabelValue}
           />
           <TextField
             label="Modifier"
             name="endProductModifier"
-            readOnly={true}
+            readOnly
             value={establishClaimForm.endProductModifier}
           />
           <DateSelector
             label="Decision Date"
             name="date"
-            readOnly={true}
+            readOnly
             value={decisionDate}
           />
           <TextField
             label="Station of Jurisdiction"
             name="stationOfJurisdiction"
-            readOnly={true}
+            readOnly
             value={this.formattedStationOfJurisdiction()}
           />
           <Checkbox

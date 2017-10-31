@@ -18,7 +18,7 @@ export default class StyleGuideTextArea extends React.Component {
         title="Text Area"
         id="text_area"
         link="StyleGuideTextArea.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <p>
         A text area allows multiple lines of text so that users can enter detailed
