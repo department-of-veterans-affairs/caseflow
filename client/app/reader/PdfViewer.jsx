@@ -123,6 +123,7 @@ export class PdfViewer extends React.Component {
     if (event[metaKey] && event.code === 'KeyF') {
       event.preventDefault();
       this.props.toggleSearchBar();
+      // todo: set focus on searchbar
     }
   }
 

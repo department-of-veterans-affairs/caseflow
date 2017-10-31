@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
+
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   pageCoordsOfRootCoords, rotateCoordinates } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
