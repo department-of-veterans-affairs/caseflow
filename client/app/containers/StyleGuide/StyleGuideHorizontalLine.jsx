@@ -8,7 +8,7 @@ export default class StyleGuideHorizontalLine extends React.Component {
         title="Horizontal Line"
         id="horizontal_line"
         link="StyleGuideHorizontalLine.jsx"
-        isSubsection={true}
+        isSubsection
       />
 
       <p>The horizontal line helps provide clarity and improve legibility

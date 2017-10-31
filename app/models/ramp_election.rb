@@ -1,6 +1,8 @@
 class RampElection < ActiveRecord::Base
   attr_reader :saving_receipt
 
+  has_many :ramp_intakes, as: :detail
+
   enum option_selected: {
     supplemental_claim: "supplemental_claim",
     higher_level_review: "higher_level_review",
@@ -14,6 +16,7 @@ class RampElection < ActiveRecord::Base
     @saving_receipt = true
   end
 
+<<<<<<< HEAD
   def create_end_product!(end_product_params)
     end_product = EndProduct.new(
       claim_date: Time.zone.now,
@@ -33,6 +36,10 @@ class RampElection < ActiveRecord::Base
 
   rescue VBMS::HTTPError => error
     raise parse_vbms_error(error)
+=======
+  def successfully_received?
+    ramp_intakes.where(completion_status: "success").any?
+>>>>>>> master
   end
 
   private

@@ -31,7 +31,7 @@ export default class EstablishClaimToolbar extends React.Component {
         <Button
           name={buttonText}
           classNames={['cf-push-right']}
-          disabled={true}
+          disabled
         />
       </div>;
     };

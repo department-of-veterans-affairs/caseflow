@@ -87,7 +87,10 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
       finishConfirmedError: null
     },
     cancelModalVisible: false,
-    searchErrorCode: null
+    searchErrorCode: null,
+    searchErrorData: {
+      duplicateNoticeDate: null
+    }
   }, data.currentIntake)
 );
 
@@ -154,6 +157,11 @@ export const reducer = (state = mapDataToInitialState(), action) => {
     return update(state, {
       searchErrorCode: {
         $set: action.payload.errorCode
+      },
+      searchErrorData: {
+        duplicateNoticeDate: {
+          $set: formatDateStr(action.payload.errorData.notice_date)
+        }
       },
       requestStatus: {
         fileNumberSearch: {

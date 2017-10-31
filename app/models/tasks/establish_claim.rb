@@ -205,6 +205,8 @@ class EstablishClaim < Task
       return VBMSError.new("duplicate_ep")
     when /The PersonalInfo SSN must not be empty./
       return VBMSError.new("missing_ssn")
+    when /The PersonalInfo.+must not be empty/
+      return VBMSError.new("bgs_info_invalid")
     else
       return error
     end

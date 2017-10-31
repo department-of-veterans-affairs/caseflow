@@ -157,7 +157,7 @@ export class EstablishClaimNote extends BaseForm {
           name="confirmNote"
           onChange={this.handleFieldChange('noteForm', 'confirmBox')}
           {...this.state.noteForm.confirmBox}
-          required={true}
+          required
         />
       </div>
     </div>;

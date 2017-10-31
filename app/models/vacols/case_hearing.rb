@@ -50,6 +50,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings.where("staff.sdomainid = #{id}")
                      .where("hearing_date > ?", 1.week.ago)
+                     .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -70,16 +71,17 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_disp, :hearing_pkseq,
              :hearing_date, :hearing_type,
              :notes1, :folder_nr,
-             :vdkey, :aod, :slogid,
+             :vdkey, :aod,
              :holddays, :tranreq,
              :repname, :addon,
              :board_member, :mduser,
              :mdtime, :sattyid,
              :bfregoff, :bfso,
-             :bfcorkey,
-             "corres.snamef, corres.snamemi,
-             corres.snamel, corres.sspare1,
-             corres.sspare2, corres.sspare3")
+             :bfcorkey, :bfddec, :bfdc,
+             "staff.slogid",
+             "corres.snamef, corres.snamemi",
+             "corres.snamel, corres.sspare1",
+             "corres.sspare2, corres.sspare3")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
