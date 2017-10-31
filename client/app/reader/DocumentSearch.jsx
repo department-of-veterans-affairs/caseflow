@@ -59,7 +59,7 @@ export class DocumentSearch extends React.PureComponent {
 
   render() {
     const internalText = this.props.totalMatchesInFile > 0 ?
-      `${this.props.getCurrentMatch} of ${this.props.totalMatchesInFile}` : ' ';
+      `${this.props.getCurrentMatch + 1} of ${this.props.totalMatchesInFile}` : ' ';
 
     const classes = classNames('cf-search-bar', {
       hidden: this.props.hidden
