@@ -1,5 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
+import { CATEGORIES, ACTIONS } from '../analytics';
 
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,
@@ -50,6 +51,12 @@ export const setNotes = (hearingIndex, notes, date) => ({
     hearingIndex,
     notes,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.SET_NOTES
+    }
   }
 });
 
@@ -102,6 +109,12 @@ export const onContentionsChange = (contentions) => ({
   type: Constants.SET_CONTENTIONS,
   payload: {
     contentions
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.EDIT_CONTENTIONS
+    }
   }
 });
 
@@ -109,6 +122,12 @@ export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
     militaryService
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.EDIT_MILITARY_SERVICE
+    }
   }
 });
 
@@ -116,6 +135,12 @@ export const onEvidenceChange = (evidence) => ({
   type: Constants.SET_EVIDENCE,
   payload: {
     evidence
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.EDIT_EVIDENCE
+    }
   }
 });
 
@@ -123,6 +148,12 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   type: Constants.SET_COMMENTS_FOR_ATTORNEY,
   payload: {
     commentsForAttorney
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.EDIT_COMMENTS_FOR_ATTORNEY
+    }
   }
 });
 
