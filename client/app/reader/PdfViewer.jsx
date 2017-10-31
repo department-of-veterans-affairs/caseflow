@@ -7,10 +7,10 @@ import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import {
-  selectCurrentPdf, fetchAppealDetails
+  selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal
 } from './actions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon,
-  deleteAnnotation, closeAnnotationDeleteModal
+  deleteAnnotation
 } from '../reader/PdfViewer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
