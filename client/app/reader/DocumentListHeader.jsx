@@ -32,7 +32,7 @@ class DocumentListHeader extends React.Component {
             onChange={props.setSearch}
             onClearSearch={props.clearSearch}
             recordSearch={this.recordSearch}
-            isSearchAhead={true}
+            isSearchAhead
             placeholder="Type to search..."
             value={props.docFilterCriteria.searchQuery}
             size="small"

@@ -81,9 +81,11 @@ class HearingRepository
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(vacols_record)
+      # use venue location on the hearing if it exists
+      ro = vacols_record.hearing_venue || vacols_record.bfregoff
       type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
-                                                  regional_office_key: vacols_record.bfregoff,
+                                                  regional_office_key: ro,
                                                   type: type)
       {
         vacols_record: vacols_record,
@@ -102,7 +104,7 @@ class HearingRepository
         appellant_first_name: vacols_record.sspare1,
         appellant_middle_initial: vacols_record.sspare2,
         appellant_last_name: vacols_record.sspare3,
-        regional_office_key: vacols_record.bfregoff,
+        regional_office_key: ro,
         type: type,
         date: date,
         master_record: false
