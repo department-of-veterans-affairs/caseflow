@@ -85,10 +85,9 @@
   position: absolute;
   background: $color-gray-dark;
   z-index: 20;
-  color: #ffffff;
+  color: $color-white;
   right: 2rem;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-radius: 0 0 6px 6px;
   padding: 0.5rem 1rem 1rem;
   width: 440px;
 
