@@ -9,7 +9,7 @@ let StyleGuideDashboard = () => {
         title="Dashboard"
         id="dashboard"
         link="-efolder/blob/master/app/views/stats/show.html.erb"
-        isExternalLink={true}
+        isExternalLink
       />
       <p>
       Each Caseflow application has a business dashboard to help the team and our

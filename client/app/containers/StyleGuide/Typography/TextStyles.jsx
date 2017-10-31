@@ -116,14 +116,14 @@ export default class TextStyles extends React.Component {
         title="Text Styles"
         id="text_styles"
         link="Typography/TextStyles.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <Table
         className="cf-sg-typography-text-styles"
         columns={columns}
         rowObjects={rowObjects}
         summary="Caseflow Typography - Text Styles"
-        slowReRendersAreOk={true} />
+        slowReRendersAreOk />
     </div>;
   };
 }
