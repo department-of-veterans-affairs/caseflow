@@ -194,7 +194,7 @@ describe Document do
     context "when doesn't have alt doc types" do
       let(:vbms_document) do
         OpenStruct.new(
-          vbms_document_id: "1",
+          document_id: "1",
           doc_type: "179",
           alt_doc_types: nil
         )
