@@ -170,7 +170,14 @@ describe RampIntake do
 
       it "does not save intake and returns false" do
         expect(subject).to be_falsey
-        expect(intake).to_not be_persisted
+
+        expect(intake).to have_attributes(
+          started_at: Time.zone.now,
+          completed_at: Time.zone.now,
+          completion_status: "error",
+          error_code: "invalid_file_number",
+          detail: nil
+        )
       end
     end
 
@@ -178,7 +185,6 @@ describe RampIntake do
       it "saves intake and sets detail to ramp election" do
         expect(subject).to be_truthy
 
-        expect(intake).to be_persisted
         expect(intake.started_at).to eq(Time.zone.now)
         expect(intake.detail).to eq(ramp_election)
       end
