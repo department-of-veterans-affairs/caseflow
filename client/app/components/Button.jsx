@@ -41,7 +41,7 @@ export default class Button extends React.Component {
           id={`${id || `${type}-${name.replace(/\s/g, '-')}`}-loading`}
           className={`${propClassNames.join(' ')} cf-${app} cf-loading`}
           type={type}
-          disabled={true}
+          disabled
           aria-label={ariaLabel}>
           <span className="cf-loading-icon-container">
             <span className="cf-loading-icon-front">
