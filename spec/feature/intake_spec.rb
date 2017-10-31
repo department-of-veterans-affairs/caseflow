@@ -165,7 +165,7 @@ RSpec.feature "RAMP Intake" do
       )
 
       within_fieldset("Which election did the Veteran select?") do
-        find("label", text: "Higher Level Review").click
+        find("label", text: "Higher Level Review", match: :prefer_exact).click
       end
       fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
       safe_click "#button-submit-review"
