@@ -38,3 +38,8 @@ export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) 
   payload: { manifestVbmsFetchedAt,
     manifestVvaFetchedAt }
 });
+
+export const onInitialDataStillLoading = (value = true) => ({
+  type: Constants.REQUEST_INITIAL_DATA_LOADING,
+  payload: { value }
+});

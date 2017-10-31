@@ -221,6 +221,15 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       initialDataLoadingFail: {
         $set: action.payload.value
+      },
+      initialDataStillLoading: {
+        $set: false
+      }
+    });
+  case Constants.REQUEST_INITIAL_DATA_LOADING:
+    return update(state, {
+      initialDataStillLoading: {
+        $set: action.payload.value
       }
     });
   case Constants.REQUEST_INITIAL_CASE_FAILURE:

@@ -11,6 +11,13 @@ describe('ReaderLoadingScreen', () => {
   </ReaderLoadingScreen>);
   const vacolsId = 1;
 
+
+  it('displays still loading message when initial data is still loading', () => {
+    const wrapper = getContext().setProps({ initialDataStillLoading: true });
+
+    expect(wrapper.text()).to.include('Loading claims folder in Reader');
+  });
+
   it('displays children when the documents are loaded', () => {
     const wrapper = getContext().setProps({
       documentsLoaded: true,

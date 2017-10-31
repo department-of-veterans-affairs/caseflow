@@ -9,6 +9,8 @@ class Reader::DocumentsController < Reader::ApplicationController
           t.update!(last_viewed_at: Time.zone.now)
         end
         MetricsService.record "Get appeal #{appeal_id} document data" do
+          return render json: { stillFetchingDocuments: true } if appeal.still_fetching_documents?
+
           render json: {
             appealDocuments: documents,
             annotations: annotations,
@@ -41,6 +43,12 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   def manifest_vbms_fetched_at
     appeal.manifest_vbms_fetched_at
+  end
+
+  def still_fetching_documents?
+    # Kick off a document fetch
+    appeal.saved_documents
+    appeal.still_fetching_documents?
   end
 
   def documents

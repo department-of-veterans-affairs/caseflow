@@ -430,6 +430,11 @@ class Appeal < ActiveRecord::Base
     @manifest_vva_fetched_at
   end
 
+  def still_fetching_documents?
+    fetch_documents_from_service!
+    @still_fetching_documents
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -465,6 +470,7 @@ class Appeal < ActiveRecord::Base
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
+    @still_fetching_documents = !!doc_struct[:still_fetching_documents]
     @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
     @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
     @fetched_documents = doc_struct[:documents]
