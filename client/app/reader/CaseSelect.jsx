@@ -6,7 +6,7 @@ import Link from '../components/Link';
 import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
-import { clearSearch, clearAllFilters } from './actions';
+import { clearSearch, clearAllFilters } from './DocumentList/DocumentListActions';
 
 import CaseSelectSearch from './CaseSelectSearch';
 import IssueList from './IssueList';
