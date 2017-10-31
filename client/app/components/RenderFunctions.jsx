@@ -103,7 +103,7 @@ export let closeSymbolHtml = function() {
 
 export const successSymbolHtml = function() {
   return (
-    <svg width="55" height="55" class="cf-icon-found"
+    <svg width="55" height="55" className="cf-icon-found"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50">
       <title>success</title>
       <path d="M57 13.3L29.9 41.7 24.8 47c-.7.7-1.6 1.1-2.5 1.1-.9 0-1.9-.4-2.5-1.1l-5.1-5.3L1
@@ -116,7 +116,7 @@ export const successSymbolHtml = function() {
 
 export const missingSymbolHtml = function() {
   return (
-    <svg width="55" height="55" class="cf-icon-missing"
+    <svg width="55" height="55" className="cf-icon-missing"
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
       <title>missing icon</title>
       <path d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13

@@ -6,7 +6,7 @@ module.exports = {
     "mocha": true,
     "node": true
   },
-  "extends": "eslint:recommended",
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
@@ -64,8 +64,25 @@ module.exports = {
     "id-length": ["warn", { "exceptions": ["i", "_", "x", "y"] }],
     "id-match": "warn",
     "indent": ["warn", 2],
+    // This rule will catch some cases that we don't care about.
+    "react/display-name": 0,
+    "react/jsx-boolean-value": 1,
+    // This rule is too aggressive. It will catch an array of JSX elements, but just because
+    // we have an array of elements doesn't mean we're going to put them into the DOM that way.
+    // We don't always need to set a key.
+    "react/jsx-key": 0,
     "react/jsx-uses-react": "warn",
     "react/jsx-uses-vars": "warn",
+    // We have so many places where we have missing PropTypes that it's not worth it to fix this now.
+    "react/prop-types": 0,
+    // This rule is largely to prevent syntax errors that feel fairly easy to catch, 
+    // and it makes our code less readable.
+    "react/no-unescaped-entities": 0,
+    "react/no-typos": 1,
+    "react/self-closing-comp": [1, {
+      component: true,
+      html: false
+    }],
     "jsx-quotes": "warn",
     "key-spacing": "warn",
     "keyword-spacing": "warn",

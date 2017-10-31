@@ -169,25 +169,25 @@ export class SignAndCertify extends React.Component {
           <TextField
             name={'Name and location of certifying office:'}
             value={certifyingOffice}
-            readOnly={true}
+            readOnly
           />
           <TextField
             name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
-            readOnly={true}
+            readOnly
           />
           <TextField
             name={'Name of certifying official:'}
             value={certifyingOfficialName}
             errorMessage={this.certifyingOfficialNameError()}
-            required={true}
+            required
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
-            required={true}
+            required
             onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           {
             shouldDisplayCertifyingOfficialTitleOther &&
@@ -195,14 +195,14 @@ export class SignAndCertify extends React.Component {
               name={'Specify other title of certifying official:'}
               value={certifyingOfficialTitleOther}
               errorMessage={this.certifyingOfficialTitleOtherError()}
-              required={true}
+              required
               onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
             />
           }
           <DateSelector
             name={'Date:'}
             value={formatDateStr(certificationDate)}
-            readOnly={true}
+            readOnly
           />
         </div>
       </form>

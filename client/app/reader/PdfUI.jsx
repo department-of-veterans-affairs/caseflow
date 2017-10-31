@@ -8,8 +8,9 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { selectCurrentPdf, stopPlacingAnnotation, resetJumpToPage,
-  togglePdfSidebar, rotateDocument, toggleSearchBar } from './actions';
+import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar,
+  rotateDocument, toggleSearchBar } from './actions';
+import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';

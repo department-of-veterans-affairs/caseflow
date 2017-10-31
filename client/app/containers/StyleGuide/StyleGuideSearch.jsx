@@ -110,7 +110,7 @@ class StyleGuideSearch extends Component {
             onClearSearch={this.clearSmallValue}
             loading={this.state.small}
             value={this.state.smallValue}
-            submitUsingEnterKey={true}
+            submitUsingEnterKey
           />
         </div>
         <div className="cf-sg-searchbar-example cf-search-ahead-parent">
@@ -121,7 +121,7 @@ class StyleGuideSearch extends Component {
             onChange={this.changeSearchAheadValue}
             onClearSearch={this.clearSearchAheadValue}
             placeholder="Type to search..."
-            isSearchAhead={true}
+            isSearchAhead
             value={this.state.searchAheadValue}
           />
         </div>
