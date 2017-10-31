@@ -466,8 +466,8 @@ class Appeal < ActiveRecord::Base
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
     @fetched_documents = doc_struct[:documents]
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:to_time)
-    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:to_time)
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
+    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
   end
 
   def fetched_documents
