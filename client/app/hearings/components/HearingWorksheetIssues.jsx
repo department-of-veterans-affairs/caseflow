@@ -73,7 +73,7 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="program"
-          maxLength={100}
+          maxLength={30}
         />,
         issue: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
