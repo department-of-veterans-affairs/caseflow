@@ -13,6 +13,7 @@ import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import { onScrollToComment } from '../reader/actions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
+import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
@@ -168,8 +169,12 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
-  onScrollToComment: PropTypes.func,
   singleDocumentMode: PropTypes.bool,
+
+  // Required actions
+  onScrollToComment: PropTypes.func,
+  stopPlacingAnnotation: PropTypes.func,
+  setCategoryFilter: PropTypes.func,
 
   // These two properties are exclusively for testing purposes
   router: PropTypes.func,
@@ -187,7 +192,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     onScrollToComment,
-    setCategoryFilter
+    setCategoryFilter,
+    stopPlacingAnnotation
   }, dispatch)
 });
 
