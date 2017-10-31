@@ -23,6 +23,7 @@
 
   &.cf-has-internal-text {
     display: inline-flex;
+    margin-right: 0.5rem;
   }
 
   &.usa-search-small {
@@ -53,7 +54,7 @@
       border-right: 0;
       -webkit-appearance: none !important;
       outline: none;
-      width: calc(100% - 8.5rem);
+      width: 250px;
     }
   }
 
@@ -89,6 +90,7 @@
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   padding: 0.5rem 1rem 1rem;
+  width: 440px;
 
   &.hidden {
     top: -10rem;
