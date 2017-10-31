@@ -4,7 +4,7 @@ class Document < ActiveRecord::Base
   has_many :documents_tags
   has_many :tags, through: :documents_tags
 
-  self.inheritance_column = "currently_no_inheritance"
+  self.inheritance_column = nil
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
