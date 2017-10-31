@@ -2,14 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
+
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   pageCoordsOfRootCoords, rotateCoordinates } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { onScrollToComment, togglePdfSidebar } from '../reader/actions';
 import { placeAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon,
-  onScrollToComment, togglePdfSidebar } from '../reader/actions';
+  stopPlacingAnnotation, showPlaceAnnotationIcon
+} from '../reader/PdfViewer/AnnotationActions';
+
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import DocumentSearch from './DocumentSearch';

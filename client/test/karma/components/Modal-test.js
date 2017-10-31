@@ -14,7 +14,7 @@ describe('Modal', () => {
               name: 'first'
             }
           ]}
-          visible={true}
+          visible
           title="Test Title">
           Test Content
         </Modal>
@@ -41,7 +41,7 @@ describe('Modal', () => {
               name: 'third'
             }
           ]}
-          visible={true}
+          visible
           title="Test Title">
           Test Content
         </Modal>
