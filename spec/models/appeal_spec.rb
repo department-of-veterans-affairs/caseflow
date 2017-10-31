@@ -58,8 +58,8 @@ describe Appeal do
   let(:doc_struct) do
     {
       documents: documents,
-      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at.strftime(efolder_fetched_at_format),
-      manifest_vva_fetched_at: service_manifest_vva_fetched_at.strftime(efolder_fetched_at_format)
+      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at.utc.strftime(efolder_fetched_at_format),
+      manifest_vva_fetched_at: service_manifest_vva_fetched_at.utc.strftime(efolder_fetched_at_format)
     }
   end
 
