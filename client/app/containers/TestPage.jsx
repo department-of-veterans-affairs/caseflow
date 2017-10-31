@@ -25,7 +25,7 @@ export default class TestPage extends React.Component {
         onChange={(value) => {
           this.setState({ testDate: value });
         }}
-        required={true}
+        required
         value={this.state.testDate}
       />
     </div>;

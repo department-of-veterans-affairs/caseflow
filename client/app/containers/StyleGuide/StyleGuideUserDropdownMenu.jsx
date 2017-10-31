@@ -40,7 +40,7 @@ export default class StyleGuideUserDropdownMenu extends React.Component {
         title="User dropdown menu"
         id="user_dropdown_menu"
         link="StyleGuideUserDropdownMenu.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <p>This menu indicates which user is signed in and contains links to submit feedback,
       view the application’s help page, see newly launched features, and log out.
