@@ -26,11 +26,11 @@ export default class StyleGuideColors extends React.Component {
     Feedback: '#73e5d4',
     Certification: '#459fd7',
     Reader: '#417505',
-    Hearing: '#ffcc4e',
+    'Case Summary': '#ffcc4e',
     Intake: '#ffcc4e',
     Procedural: '#5a94ec',
     Medical: '#ff6868',
-    'Other Evidence': '#3ad2cf'
+   'Other Evidence': '#3ad2cf'
   };
 
   Primary = [
@@ -72,7 +72,7 @@ export default class StyleGuideColors extends React.Component {
   ];
 
   Reader = [
-    'Hearing',
+    'Case Summary',
     'Procedural',
     'Medical',
     'Other Evidence'
