@@ -1,8 +1,9 @@
-import * as Constants from './constants';
 import _ from 'lodash';
-import ApiUtil from '../util/ApiUtil';
-import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
-import { selectAnnotation } from '../reader/PdfViewer/AnnotationActions';
+
+import * as Constants from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
+import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
