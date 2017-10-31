@@ -55,8 +55,7 @@ export class Footer extends React.Component {
       {showCancellationModal && <CancelCertificationModal
         title="Cancel Certification"
         certificationId={certificationId}
-        closeHandler={this.handleModalClose}>
-      </CancelCertificationModal>
+        closeHandler={this.handleModalClose} />
       }
     </div>;
   }

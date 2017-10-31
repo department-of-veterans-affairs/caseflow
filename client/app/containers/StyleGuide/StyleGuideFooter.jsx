@@ -28,7 +28,7 @@ export default class StyleGuideFooter extends React.Component {
         title="Footer"
         id="footer"
         link="StyleGuideFooter.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <p>
      All of Caseflow Apps feature a minimal footer that contains the text
