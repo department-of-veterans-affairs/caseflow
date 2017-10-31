@@ -3,7 +3,8 @@ class Document < ActiveRecord::Base
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
-  before_save { self.document_type = type }
+
+  self.inheritance_column = "currently_no_inheritance"
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
@@ -48,7 +49,7 @@ class Document < ActiveRecord::Base
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :efolder_id, :type, :alt_types, :filename, :vacols_date
+  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)

@@ -16,7 +16,7 @@ describe Document do
       it { is_expected.to be_truthy }
       it "persists in database" do
         document.save
-        expect(Document.find_by(vbms_document_id: document.vbms_document_id).document_type).to eq(document_type)
+        expect(Document.find_by(vbms_document_id: document.vbms_document_id).type).to eq(document_type)
       end
     end
 
