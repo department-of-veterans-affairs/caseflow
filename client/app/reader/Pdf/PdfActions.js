@@ -49,7 +49,7 @@ export const clearPdfDocument = (file, pageIndex, doc) => ({
 
 /** Document Search **/
 
-export const getDocumentText = (pdfDocument, file) => (
+export const getDocumentText = (pdfDocument, file) =>
   (dispatch) => {
     const getTextForPage = (index) => {
       return pdfDocument.getPage(index + 1).then((page) => {
@@ -83,7 +83,7 @@ export const getDocumentText = (pdfDocument, file) => (
       });
     });
   }
-);
+;
 
 export const updateSearchIndex = (increment) => ({
   type: Constants.UPDATE_SEARCH_INDEX,
