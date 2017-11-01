@@ -127,7 +127,7 @@ describe FetchDocumentsForReaderUserJob do
       end
     end
 
-    context "when VBMS exception is thrown" do
+    context "when eFolder exception is thrown" do
       context "on the first appeal" do
         let!(:log_type) { :error }
         let!(:expected_log_msg) do
@@ -138,7 +138,7 @@ describe FetchDocumentsForReaderUserJob do
           reader_user.user.id
         end
 
-        it "returns an ERROR log with status when a VBMS client error occurs" do
+        it "returns an ERROR log with status when a eFolder client error occurs" do
           expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
             .with(reader_user.user.css_id)
             .and_return([appeal_with_doc1, appeal_with_doc2]).once
