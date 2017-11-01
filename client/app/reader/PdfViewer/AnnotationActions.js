@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import * as Constants from '../constants';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
-import { openAnnotationDeleteModal } from '../../reader/actions';
+import { openAnnotationDeleteModal } from '../../reader/PdfViewer/PdfViewerActions';
 
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
