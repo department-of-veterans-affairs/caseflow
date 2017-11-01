@@ -98,10 +98,12 @@ class SeedDB
       )
     end
 
-    RampElection.create!(
-      veteran_file_number: "11555555",
-      notice_date: 3.weeks.ago
-    )
+    ["11555555", "12555555"].each do |number|
+      RampElection.create!(
+        veteran_file_number: number,
+        notice_date: 3.weeks.ago
+      )
+    end
   end
 
   def create_tags
