@@ -363,6 +363,11 @@ class Appeal < ActiveRecord::Base
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
+  # A uniqued list of issue codes on appeal, that is the combination of ISSPROG and ISSCODE
+  def issue_codes
+    issues.map(&:issue_code).uniq
+  end
+
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def worksheet_issues
