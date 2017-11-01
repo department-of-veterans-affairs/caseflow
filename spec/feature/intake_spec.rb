@@ -96,7 +96,6 @@ RSpec.feature "RAMP Intake" do
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
-      pry
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to have_content(
         "A RAMP opt-in with the notice date 08/02/2017 was already processed"
