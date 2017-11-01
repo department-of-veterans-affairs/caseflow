@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { getCurrentMatchIndex } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -51,6 +52,9 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+    if (this.marks) {
+      this.marks = [];
+    }
   }
 
   getPages = () => {
@@ -81,6 +85,34 @@ export class PdfFile extends React.PureComponent {
       {this.getPages()}
     </div>;
   }
+
+  componentDidUpdate = () => {
+    if (!this.marks) {
+      this.marks = document.getElementsByTagName('mark');
+    }
+
+    _(this.marks).
+      filter((mark) => {
+        return mark.classList.contains('highlighted');
+      }).
+      each((mark) => {
+        mark.classList.remove('highlighted');
+      });
+
+    const selectedMark = this.marks[this.props.currentMatchIndex];
+
+    if (selectedMark) {
+      selectedMark.classList.add('highlighted');
+
+      // mark parent elements are absolutely-positioned divs
+      // todo: selectedMark.parentElement.top is relative to page, doesn't consider stacked pages
+      // let scrollTop = parseInt(selectedMark.parentElement.style.top, 10);
+
+      // if scrolling to < 100px, just scroll to top
+      // scrollTop = scrollTop < 100 ? 0 : scrollTop;
+      // this.props.scrollWindow.scrollTo(0, scrollTop);
+    }
+  }
 }
 
 PdfFile.propTypes = {
@@ -95,7 +127,8 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file]
+  pdfDocument: state.readerReducer.pdfDocuments[props.file],
+  currentMatchIndex: getCurrentMatchIndex(state, props)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);

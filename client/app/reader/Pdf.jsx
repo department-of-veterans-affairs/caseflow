@@ -320,6 +320,7 @@ export class Pdf extends React.PureComponent {
       return <PdfFile
         pdfWorker={this.props.pdfWorker}
         scrollTop={scrollTop}
+        scrollWindow={this.scrollWindow}
         scrollWindowCenter={this.state.scrollWindowCenter}
         documentId={this.props.documentId}
         key={`${file}`}
