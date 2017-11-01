@@ -20,7 +20,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
 
   rescue => e
     log_error
-    # trigger retry
+    # raising an exception here triggers a retry through shoryuken
     raise e
   end
 
