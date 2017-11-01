@@ -238,7 +238,7 @@ export class PdfUI extends React.Component {
             ariaLabel="download pdf">
             <DownloadIcon/>
           </Button>
-          {global.featureToggles.search && <Button
+          {this.props.featureToggles.search && <Button
             name="search"
             classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
             ariaLabel="search text"
@@ -260,7 +260,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
-        {global.featureToggles.search && <DocumentSearch file={this.props.doc.content_url}/>}
+        {this.props.featureToggles.search && <DocumentSearch file={this.props.doc.content_url}/>}
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}

@@ -212,6 +212,7 @@ export class PdfViewer extends React.Component {
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
             onViewPortCreated={this.onViewPortCreated}
             onViewPortsCleared={this.onViewPortsCleared}
+            featureToggles={this.props.featureToggles}
           />
           <PdfSidebar
             doc={doc}

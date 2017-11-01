@@ -29,6 +29,7 @@ describe('PdfUI', () => {
         pdfWorker="noworker"
         documentPathBase={DOCUMENT_PATH_BASE}
         showClaimsFolderNavigation={false}
+        featureToggles={{ search: true }}
       />);
     });
 
