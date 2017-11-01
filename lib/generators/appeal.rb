@@ -7,8 +7,8 @@ class Generators::Appeal
         vbms_id: generate_external_id,
         vacols_id: generate_external_id,
         vacols_record: :ready_to_certify,
-        manifest_vbms_fetched_at: Time.zone.now.strftime("%D %l:%M%P %Z"),
-        manifest_vva_fetched_at: Time.zone.now.strftime("%D %l:%M%P %Z")
+        manifest_vbms_fetched_at: Time.zone.now,
+        manifest_vva_fetched_at: Time.zone.now
       }
     end
 

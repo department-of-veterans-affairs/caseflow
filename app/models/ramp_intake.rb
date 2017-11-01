@@ -6,8 +6,8 @@ class RampIntake < Intake
     ramp_election_already_complete: "ramp_election_already_complete",
     no_eligible_appeals: "no_eligible_appeals",
     no_active_appeals: "no_active_appeals"
-  }.merge(Intake::ERROR_CODES)
-
+  }.merge(Intake::ERROR_CODES).freeze
+  
   def find_or_create_initial_detail
     matching_ramp_election
   end
