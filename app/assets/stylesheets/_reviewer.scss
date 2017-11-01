@@ -203,6 +203,8 @@ svg[aria-hidden=true],
   position: absolute;
   opacity: 1;
   padding: 15px 23px 15px 15px;
+  // .cf-pdf-scroll-view is 5, .cf-search-bar is 6
+  z-index: 7;
 
   .category-icons-and-doc-type {
     display: flex;

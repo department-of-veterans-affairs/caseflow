@@ -80,18 +80,19 @@
 }
 
 .cf-search-bar {
-  top: 0;
+  top: 5rem;
   transition: top .1s linear;
   position: absolute;
   background: $color-gray-dark;
-  z-index: 20;
+  // .cf-pdf-scroll-view is 5, .cf-pdf-header is 7
+  z-index: 6;
   color: $color-white;
-  right: 2rem;
+  right: 3rem;
   border-radius: 0 0 6px 6px;
   padding: 0.5rem 1rem 1rem;
   width: 440px;
 
   &.hidden {
-    top: -10rem;
+    top: 0;
   }
 }

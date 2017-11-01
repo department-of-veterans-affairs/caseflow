@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
+import DocumentSearch from './DocumentSearch';
 import Button from '../components/Button';
 import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
@@ -259,6 +260,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
+        {global.featureToggles.search && <DocumentSearch file={this.props.doc.content_url}/>}
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
