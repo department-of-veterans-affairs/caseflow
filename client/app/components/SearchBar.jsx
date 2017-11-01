@@ -151,6 +151,5 @@ SearchBar.propTypes = {
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
   submitUsingEnterKey: PropTypes.bool,
-  staticText: PropTypes.string,
   internalText: PropTypes.string
 };
