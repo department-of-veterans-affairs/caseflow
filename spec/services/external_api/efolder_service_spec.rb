@@ -179,7 +179,7 @@ describe ExternalApi::EfolderService do
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, "eFolder HTTP status code: 404 for appeal: #{appeal}.")
         end
       end
     end
