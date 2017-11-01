@@ -145,7 +145,8 @@ export const onAddIssue = (appealId, vacolsSequenceId) => (dispatch) => {
           analytics: {
             category: CATEGORIES.HEARING_WORKSHEET_PAGE
           }
-        } });
+        }
+      });
     });
 };
 
@@ -183,7 +184,8 @@ export const saveIssues = (worksheetIssues) => (dispatch) => {
                 category: CATEGORIES.HEARING_WORKSHEET_PAGE,
                 action: ACTIONS.EDIT_ISSUE
               }
-            } });
+            }
+          });
         },
         () => {
           dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
