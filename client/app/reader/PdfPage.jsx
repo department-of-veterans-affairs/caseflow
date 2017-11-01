@@ -90,16 +90,6 @@ export class PdfPage extends React.PureComponent {
       });
   }
 
-  clearPage = () => {
-    return;
-    if (this.isDrawn) {
-      this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.props.page.cleanup();
-    }
-
-    this.isDrawn = false;
-  }
-
   componentDidMount = () => {
     this.setUpPage();
   }
@@ -134,7 +124,7 @@ export class PdfPage extends React.PureComponent {
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
     this.textLayer.innerHTML = '';
-    console.log('drawing text');
+
     PDFJS.renderTextLayer({
       textContent: text,
       container: this.textLayer,
@@ -161,11 +151,9 @@ export class PdfPage extends React.PureComponent {
         this.drawPage(page);
         this.getDimensions(page);
       }).
-      catch(() => {
-        this.isPageSetup = false;
-      });
-    } else {
-      console.log('not setup');
+        catch(() => {
+          this.isPageSetup = false;
+        });
     }
   }
 
@@ -175,7 +163,8 @@ export class PdfPage extends React.PureComponent {
     this.props.setPageDimensions(
       this.props.file,
       this.props.pageIndex,
-      { width: viewport.width, height: viewport.height });
+      { width: viewport.width,
+        height: viewport.height });
   }
 
   getDivDimensions = () => {

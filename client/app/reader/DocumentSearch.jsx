@@ -11,7 +11,7 @@ import _ from 'lodash';
 export class DocumentSearch extends React.PureComponent {
   constructor() {
     super();
-    
+
     this.sentAction = {};
   }
 

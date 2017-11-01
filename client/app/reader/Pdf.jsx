@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  pageCoordsOfRootCoords, rotateCoordinates } from '../reader/utils';
+  pageCoordsOfRootCoords } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -56,8 +56,6 @@ export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWi
     y: pageCoords.y - annotationIconOffset
   };
 };
-
-const COVER_SCROLL_HEIGHT = 120;
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
@@ -138,7 +136,6 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const scrollTop = this.scrollWindow ? this.scrollWindow.scrollTop : 0;
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
         pdfWorker={this.props.pdfWorker}
