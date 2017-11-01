@@ -19,14 +19,6 @@ class HearingWorksheetIssueFields extends PureComponent {
   onDescriptionChange = (event) =>
     this.props.onDescriptionChange(event.target.value, this.props.issue.id);
 
-  truncateTextToMaxLength = (string, maxLength) => {
-    if (string.length >= maxLength) {
-      return string.substring(0, maxLength);
-    }
-
-    return string;
-  }
-
   render() {
     let { issue, field, maxLength } = this.props;
 
@@ -63,7 +55,7 @@ class HearingWorksheetIssueFields extends PureComponent {
       </div>;
     }
 
-    return <div id={field}>{this.truncateTextToMaxLength(allowedFields[field].value, maxLength)}</div>;
+    return <div>{allowedFields[field].value}</div>;
   }
 }
 
