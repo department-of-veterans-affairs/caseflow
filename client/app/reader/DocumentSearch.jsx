@@ -13,12 +13,20 @@ import _ from 'lodash';
 import classNames from 'classnames';
 
 export class DocumentSearch extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.searchTerm = '';
+  }
+
   onChange = (value) => {
+    this.searchTerm = value;
+
     if (_.isEmpty(this.props.pdfText)) {
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
     }
 
-    this.props.searchText(value);
+    // todo: add guard to PdfActions.searchText to abort if !searchTerm.length
+    this.props.searchText(this.searchTerm);
   }
 
   onKeyPress = (value) => {
@@ -67,8 +75,17 @@ export class DocumentSearch extends React.PureComponent {
   searchBarRef = (node) => this.searchBar = node
 
   render() {
-    const internalText = this.props.totalMatchesInFile > 0 ?
-      `${this.props.getCurrentMatch + 1} of ${this.props.totalMatchesInFile}` : ' ';
+    let internalText = ' ';
+
+    if (this.searchTerm.length) {
+      if (this.props.totalMatchesInFile > 0) {
+        internalText = `${this.props.getCurrentMatch + 1} of ${this.props.totalMatchesInFile}`;
+      } else if (this.props.totalMatchesInFile > 9999) {
+        internalText = `${this.props.getCurrentMatch + 1} of many`;
+      } else {
+        internalText = '0 of 0';
+      }
+    }
 
     const classes = classNames('cf-search-bar', {
       hidden: this.props.hidden
