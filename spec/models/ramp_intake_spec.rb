@@ -198,7 +198,7 @@ describe RampIntake do
     context "there is not a ramp election for veteran" do
       it "adds did_not_receive_ramp_election and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:did_not_receive_ramp_election)
+        expect(intake.error_code).to eq("did_not_receive_ramp_election")
       end
     end
 
@@ -219,7 +219,7 @@ describe RampIntake do
 
         it "adds ramp_election_already_complete and returns false" do
           expect(subject).to eq(false)
-          expect(intake.error_code).to eq(:ramp_election_already_complete)
+          expect(intake.error_code).to eq("ramp_election_already_complete")
         end
       end
 
@@ -228,7 +228,7 @@ describe RampIntake do
 
         it "adds no_eligible_appeals and returns false" do
           expect(subject).to eq(false)
-          expect(intake.error_code).to eq(:no_eligible_appeals)
+          expect(intake.error_code).to eq("no_eligible_appeals")
         end
       end
 
