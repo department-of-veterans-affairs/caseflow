@@ -177,7 +177,7 @@ describe ExternalApi::EfolderService do
       context "with error code" do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
-        err_msg = "eFolder HTTP status code: 404 for appeal: #{appeal}."
+        let(:err_msg) { "eFolder HTTP status code: 404 for appeal: #{appeal}." }
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError, err_msg)
