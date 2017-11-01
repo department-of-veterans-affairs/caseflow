@@ -117,7 +117,9 @@ export class PdfFile extends React.PureComponent {
   }
 
   scrollToPosition = (pageIndex, locationOnPage) => {
-    this.list.scrollToPosition(Math.max(this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage, 0));
+    const position = this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage;
+
+    this.list.scrollToPosition(Math.max(position, 0));
   }
 
   jumpToPage = () => {

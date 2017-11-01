@@ -32,11 +32,6 @@ export class PdfPage extends React.PureComponent {
     super(props);
 
     this.isDrawing = false;
-    this.isDrawn = false;
-    this.didFailDrawing = false;
-    this.previousShouldDraw = false;
-    this.isUnmounting = false;
-    this.isPageSetup = false;
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -75,8 +70,6 @@ export class PdfPage extends React.PureComponent {
       viewport
     }).then(() => {
       this.isDrawing = false;
-      this.isDrawn = true;
-      this.didFailDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
       if (currentScale !== this.props.scale && page) {
@@ -84,9 +77,8 @@ export class PdfPage extends React.PureComponent {
       }
     }).
       catch(() => {
-        this.didFailDrawing = true;
+        // We might need to do something else here.
         this.isDrawing = false;
-        this.isDrawn = false;
       });
   }
 
@@ -96,8 +88,6 @@ export class PdfPage extends React.PureComponent {
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    this.isDrawn = false;
-    this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();
       if (this.markInstance) {
@@ -152,7 +142,7 @@ export class PdfPage extends React.PureComponent {
         this.getDimensions(page);
       }).
         catch(() => {
-          this.isPageSetup = false;
+          // We might need to do something else here.
         });
     }
   }

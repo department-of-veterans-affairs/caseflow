@@ -166,8 +166,6 @@ export class Pdf extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     ...state.readerReducer.ui.pdf,
-    arePageDimensionsSet: false,
-    pageContainers: null,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation']),
     sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar
