@@ -1,6 +1,12 @@
 class RampIntake < Intake
   include CachedAttributes
 
+  enum error_code: {
+    did_not_receive_ramp_election: "did_not_receive_ramp_election",
+    ramp_election_already_complete: "ramp_election_already_complete",
+    no_eligible_appeals: "no_eligible_appeals"
+  }.merge(Intake::ERROR_CODES).freeze
+
   def find_or_create_initial_detail
     matching_ramp_election
   end
@@ -49,14 +55,14 @@ class RampIntake < Intake
 
   def validate_detail_on_start
     if veteran_ramp_elections.empty?
-      @error_code = :did_not_receive_ramp_election
+      self.error_code = :did_not_receive_ramp_election
 
     elsif !matching_ramp_election
-      @error_code = :ramp_election_already_complete
+      self.error_code = :ramp_election_already_complete
       @error_data = { notice_date: veteran_ramp_elections.last.notice_date }
 
     elsif eligible_appeals.empty?
-      @error_code = :no_eligible_appeals
+      self.error_code = :no_eligible_appeals
     end
   end
 
