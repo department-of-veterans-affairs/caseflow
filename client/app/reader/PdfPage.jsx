@@ -5,7 +5,7 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setUpPdfPage, clearPdfPage } from '../reader/actions';
+import { setUpPdfPage, clearPdfPage } from '../reader/Pdf/PdfActions';
 import { text as searchText } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
