@@ -30,7 +30,7 @@ export default class StyleGuideColors extends React.Component {
     Intake: '#ffcc4e',
     Procedural: '#5a94ec',
     Medical: '#ff6868',
-   'Other Evidence': '#3ad2cf'
+    'Other Evidence': '#3ad2cf'
   };
 
   Primary = [
