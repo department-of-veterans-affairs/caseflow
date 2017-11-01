@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
-import { selectCurrentPdf, fetchAppealDetails, showSearchBar, closeAnnotationDeleteModal
-} from './actions';
+import { selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal, showSearchBar
+} from '../reader/PdfViewer/PdfViewerActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation
 } from '../reader/PdfViewer/AnnotationActions';
 
@@ -275,7 +275,6 @@ PdfViewer.propTypes = {
     id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
-  onScrollToComment: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,

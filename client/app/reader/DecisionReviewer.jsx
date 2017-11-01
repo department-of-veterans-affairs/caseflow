@@ -11,7 +11,7 @@ import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
-import { onScrollToComment } from '../reader/actions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
 import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
 import { CATEGORIES } from './analytics';

@@ -7,7 +7,8 @@ import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIn
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { searchText, getDocumentText, updateSearchIndex, hideSearchBar } from './actions';
+import { hideSearchBar } from './PdfViewer/PdfViewerActions';
+import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 
