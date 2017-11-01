@@ -37,17 +37,6 @@ export default class Modal extends React.Component {
     }
   }
 
-  getModalId = () => {
-    if (this.props.id) {
-      return this.props.id;
-    }
-
-    return this.props.title.
-      split(' ').
-      join('-').
-      toLowerCase();
-  }
-
   modalCloseFocus = (modalClose) => this.modalClose = modalClose
 
   componentWillUnmount() {
@@ -90,6 +79,7 @@ export default class Modal extends React.Component {
     let {
       children,
       closeHandler,
+      id,
       noDivider,
       confirmButton,
       cancelButton,
@@ -120,7 +110,7 @@ export default class Modal extends React.Component {
       aria-labelledby="modal_id-title"
       aria-describedby="modal_id-desc"
     >
-      <div className="cf-modal-body" id={this.getModalId()}>
+      <div className="cf-modal-body" id={id || ''}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
