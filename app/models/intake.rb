@@ -12,7 +12,7 @@ class Intake < ActiveRecord::Base
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
     veteran_not_accessible: "veteran_not_accessible"
-  }
+  }.freeze
 
   attr_reader :error_data
 
