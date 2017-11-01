@@ -1,4 +1,4 @@
-As we roll out Reader to 700 users we've noticed some pain points in the way engineering and support communicate. This doc seeks to outline some ways in which we can more effectively collaborate.
+As we roll out Reader to 700 users, we've noticed some pain points in the way engineering and support communicate. This doc seeks to outline some ways in which we can more effectively collaborate.
 
 # Motivations
 1) As our products scale linearly, the amount of feedback we receive increases linearly. While pinging tech leads with 1-2 issues a week is manageable, pinging tech leads with 1-2 issues per day is not. This leads to a lot of context switching, and inevitably, difficulty prioritizing.
