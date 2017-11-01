@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171013213546) do
+ActiveRecord::Schema.define(version: 20171101214530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -167,6 +167,9 @@ ActiveRecord::Schema.define(version: 20171013213546) do
     t.boolean "category_procedural"
     t.boolean "category_medical"
     t.boolean "category_other"
+    t.date    "received_at"
+    t.string  "type"
+    t.string  "file_number"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
@@ -287,6 +290,14 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   end
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
+
+  create_table "reader_users", force: :cascade do |t|
+    t.integer  "user_id",              null: false
+    t.datetime "documents_fetched_at"
+  end
+
+  add_index "reader_users", ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at", using: :btree
+  add_index "reader_users", ["user_id"], name: "index_reader_users_on_user_id", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
