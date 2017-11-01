@@ -18,6 +18,8 @@ class Reader::DocumentsController < Reader::ApplicationController
         end
       end
     end
+  rescue Caseflow::Error::DocumentRetrievalError => e
+    respond_to_doc_retrieval_error(e)
   end
 
   def show
@@ -63,6 +65,10 @@ class Reader::DocumentsController < Reader::ApplicationController
         object[:tags] = document.tags
       end
     end
+  end
+
+  def respond_to_doc_retrieval_error(e)
+    render json: { "errors": ["status": 502, "title": e.to_s, "detail": e.message] }, status: 502
   end
 
   def appeal_id
