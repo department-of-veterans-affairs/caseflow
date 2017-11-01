@@ -100,6 +100,10 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content(
         "A RAMP opt-in with the notice date 08/02/2017 was already processed"
       )
+
+      error_intake = Intake.last
+      expect(error_intake.completion_status).to eq("error")
+      expect(error_intake.error_code).to eq("ramp_election_already_complete")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do
