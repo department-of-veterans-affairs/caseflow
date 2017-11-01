@@ -25,7 +25,7 @@ class ExternalApi::EfolderService
     {
       manifest_vbms_fetched_at: response_attrs["manifest_vbms_fetched_at"],
       manifest_vva_fetched_at: response_attrs["manifest_vva_fetched_at"],
-      documents: documents.map { |efolder_document| Document.from_efolder(efolder_document) }
+      documents: documents.map { |efolder_document| Document.from_efolder(efolder_document, sanitized_vbms_id) }
     }
   end
 
