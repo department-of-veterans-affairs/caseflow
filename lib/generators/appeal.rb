@@ -60,6 +60,7 @@ class Generators::Appeal
           certification_date: 1.day.ago
         },
         activated: {
+          status: "Active",
           certification_date: 4.days.ago,
           case_review_date: 1.day.ago
         },

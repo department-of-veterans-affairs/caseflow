@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { addNewTag, removeTag } from '../reader/actions';
+import { addNewTag, removeTag } from '../reader/PdfViewer/PdfViewerActions';
 
 class SideBarIssueTags extends PureComponent {
   render() {

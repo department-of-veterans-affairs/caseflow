@@ -1,15 +1,16 @@
-/* eslint-disable max-lines */
-
-import * as Constants from './constants';
 import _ from 'lodash';
-import ApiUtil from '../util/ApiUtil';
-import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
-import { selectAnnotation } from '../reader/PdfViewer/AnnotationActions';
+
+import * as Constants from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
+import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
 });
+
+/** Annotation Modal **/
 
 export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
   type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
@@ -34,6 +35,8 @@ export const closeAnnotationDeleteModal = () => ({
     }
   }
 });
+
+/** Jump To Page **/
 
 export const jumpToPage = (pageNumber, docId) => ({
   type: Constants.JUMP_TO_PAGE,
@@ -74,6 +77,8 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
+/** Tags **/
+
 export const newTagRequestSuccess = (docId, createdTags) =>
   (dispatch, getState) => {
     dispatch({
@@ -96,25 +101,6 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
     tagsThatWereAttemptedToBeCreated
   }
 });
-
-export const selectCurrentPdfLocally = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
-});
-
-export const selectCurrentPdf = (docId) => (dispatch) => {
-  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
-    catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Error marking as read', docId, err);
-    });
-
-  dispatch(
-    selectCurrentPdfLocally(docId)
-  );
-};
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
@@ -155,25 +141,6 @@ export const removeTag = (doc, tagId) =>
       });
   };
 
-export const onReceiveAppealDetails = (appeal) => ({
-  type: Constants.RECEIVE_APPEAL_DETAILS,
-  payload: { appeal }
-});
-
-export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
-  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
-  payload: { failedToLoad }
-});
-
-export const fetchAppealDetails = (vacolsId) =>
-  (dispatch) => {
-    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-
-      dispatch(onReceiveAppealDetails(returnedObject.appeal));
-    }, () => dispatch(onAppealDetailsLoadingFail()));
-  };
-
 export const addNewTag = (doc, tags) =>
   (dispatch) => {
     const currentTags = doc.tags;
@@ -198,8 +165,30 @@ export const addNewTag = (doc, tags) =>
           dispatch(newTagRequestFailed(doc.id, newTags));
         });
     }
-  }
-;
+  };
+
+/** Getting Appeal Details **/
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { failedToLoad }
+});
+
+export const fetchAppealDetails = (vacolsId) =>
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+    }, () => dispatch(onAppealDetailsLoadingFail()));
+  };
+
+/** Sidebar and Accordion controls **/
 
 export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
   type: Constants.SET_OPENED_ACCORDION_SECTIONS,
@@ -231,3 +220,24 @@ export const togglePdfSidebar = () => ({
     }
   }
 });
+
+/** Set current PDF **/
+
+export const selectCurrentPdfLocally = (docId) => ({
+  type: Constants.SELECT_CURRENT_VIEWER_PDF,
+  payload: {
+    docId
+  }
+});
+
+export const selectCurrentPdf = (docId) => (dispatch) => {
+  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
+    catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Error marking as read', docId, err);
+    });
+
+  dispatch(
+    selectCurrentPdfLocally(docId)
+  );
+};
