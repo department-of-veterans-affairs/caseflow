@@ -68,12 +68,14 @@ describe FetchDocumentsForReaderUserJob do
       Faker::Pokemon.name
     end
 
+    let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
+
     let!(:service_manifest_vbms_fetched_at) do
-      Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime("%D %l:%M%P %Z")
+      Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime(efolder_fetched_at_format)
     end
 
     let!(:service_manifest_vva_fetched_at) do
-      Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime("%D %l:%M%P %Z")
+      Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime(efolder_fetched_at_format)
     end
 
     let!(:doc_struct) do

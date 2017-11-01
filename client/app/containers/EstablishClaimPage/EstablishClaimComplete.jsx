@@ -55,7 +55,7 @@ export default class EstablishClaimComplete extends React.Component {
 
     return <div>
       <EstablishClaimProgressBar
-        isConfirmation={true}
+        isConfirmation
       />
 
       <StatusMessage

@@ -34,6 +34,6 @@ export default class Example1 extends React.Component {
       options={options}
       value={this.state.value}
       onChange={this.onChange}
-    ></RadioField>;
+    />;
   }
 }

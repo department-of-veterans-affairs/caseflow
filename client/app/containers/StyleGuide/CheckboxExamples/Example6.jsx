@@ -44,8 +44,8 @@ export default class Example6 extends React.Component {
       options={options}
       onChange={this.onChange}
       values={this.state.values}
-      required={true}
+      required
       errorMessage={this.state.errorMessage}
-    ></CheckboxGroup>;
+    />;
   }
 }

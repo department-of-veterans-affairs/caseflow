@@ -8,9 +8,12 @@ import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { togglePdfSidebar } from '../reader/actions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon,
-  onScrollToComment, togglePdfSidebar } from '../reader/actions';
+  stopPlacingAnnotation, showPlaceAnnotationIcon
+} from '../reader/PdfViewer/AnnotationActions';
+
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import DocumentSearch from './DocumentSearch';

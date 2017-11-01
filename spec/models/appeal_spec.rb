@@ -48,17 +48,18 @@ describe Appeal do
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
-  let(:appeal_manifest_vbms_fetched_at) { Time.zone.local(1954, "mar", 16, 8, 2, 55).strftime("%D %l:%M%P %Z") }
-  let(:appeal_manifest_vva_fetched_at) { Time.zone.local(1987, "mar", 15, 20, 15, 1).strftime("%D %l:%M%P %Z") }
+  let(:appeal_manifest_vbms_fetched_at) { Time.zone.local(1954, "mar", 16, 8, 2, 55) }
+  let(:appeal_manifest_vva_fetched_at) { Time.zone.local(1987, "mar", 15, 20, 15, 1) }
 
-  let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime("%D %l:%M%P %Z") }
-  let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime("%D %l:%M%P %Z") }
+  let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55) }
+  let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1) }
 
+  let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
   let(:doc_struct) do
     {
       documents: documents,
-      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: service_manifest_vva_fetched_at
+      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at.utc.strftime(efolder_fetched_at_format),
+      manifest_vva_fetched_at: service_manifest_vva_fetched_at.utc.strftime(efolder_fetched_at_format)
     }
   end
 
@@ -1349,11 +1350,15 @@ describe Appeal do
         Generators::Appeal.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: 3.days.ago }
+        ),
+        Generators::Appeal.build(
+          vbms_id: "999887777S",
+          vacols_record: { form9_date: nil }
         )
       ]
     end
 
-    it "returns filtered appeals for veteran sorted by latest event date" do
+    it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
     end
