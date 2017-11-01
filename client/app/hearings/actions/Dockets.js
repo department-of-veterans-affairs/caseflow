@@ -55,7 +55,8 @@ export const setNotes = (hearingIndex, notes, date) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.SET_NOTES
+      action: ACTIONS.SET_NOTES,
+      debounceMs: 1000
     }
   }
 });
@@ -113,7 +114,8 @@ export const onContentionsChange = (contentions) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.EDIT_CONTENTIONS
+      action: ACTIONS.EDIT_CONTENTIONS,
+      debounceMs: 1000
     }
   }
 });
@@ -126,7 +128,8 @@ export const onMilitaryServiceChange = (militaryService) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.EDIT_MILITARY_SERVICE
+      action: ACTIONS.EDIT_MILITARY_SERVICE,
+      debounceMs: 1000
     }
   }
 });
@@ -139,7 +142,8 @@ export const onEvidenceChange = (evidence) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.EDIT_EVIDENCE
+      action: ACTIONS.EDIT_EVIDENCE,
+      debounceMs: 1000
     }
   }
 });
@@ -152,7 +156,8 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.EDIT_COMMENTS_FOR_ATTORNEY
+      action: ACTIONS.EDIT_COMMENTS_FOR_ATTORNEY,
+      debounceMs: 1000
     }
   }
 });
