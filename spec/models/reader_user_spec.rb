@@ -36,7 +36,9 @@ describe ReaderUser do
 
       context "when reader_users have been fetched at within 24 hours" do
         before do
-          ReaderUser.all_by_documents_fetched_at
+          # at this point, we've generated users with the reader role
+          # now also create reader_user records
+          ReaderUser.create_records
           ReaderUser.first.update_attributes!(appeals_docs_fetched_at: 25.hours.ago)
           ReaderUser.second.update_attributes!(appeals_docs_fetched_at: 2.hours.ago)
           ReaderUser.third.update_attributes!(appeals_docs_fetched_at: 2.hours.ago)
