@@ -1,8 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES } from '../analytics';
-
-const debounceMs = 1000;
+import { CATEGORIES, debounceMs } from '../analytics';
 
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,

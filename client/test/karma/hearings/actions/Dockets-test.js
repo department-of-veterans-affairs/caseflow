@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import * as Actions from '../../../../app/hearings/actions/Dockets';
 import * as Constants from '../../../../app/hearings/constants/constants';
-import { CATEGORIES } from '../../../../app/hearings/analytics';
+import { CATEGORIES, debounceMs } from '../../../../app/hearings/analytics';
 
 describe('.setNotes', () => {
   it('sets notes', () => {
@@ -19,7 +19,7 @@ describe('.setNotes', () => {
       meta: {
         analytics: {
           category: CATEGORIES.DAILY_DOCKET_PAGE,
-          debounceMs: 1000
+          debounceMs
         }
       }
     };
@@ -112,7 +112,7 @@ describe('.onContentionsChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs: 1000
+          debounceMs
         }
       }
     };
@@ -133,7 +133,7 @@ describe('.onMilitaryServiceChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs: 1000
+          debounceMs
         }
       }
     };
@@ -154,7 +154,7 @@ describe('.onEvidenceChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs: 1000
+          debounceMs
         }
       }
     };
@@ -175,7 +175,7 @@ describe('.onCommentsForAttorneyChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs: 1000
+          debounceMs
         }
       }
     };

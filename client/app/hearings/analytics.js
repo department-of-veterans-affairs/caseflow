@@ -1,3 +1,5 @@
+export const debounceMs = 1000;
+
 export const CATEGORIES = {
   UPCOMING_HEARINGS_PAGE: 'Upcoming Hearings',
   DAILY_DOCKET_PAGE: 'Daily Docket',
