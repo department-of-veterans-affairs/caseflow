@@ -6,7 +6,9 @@ class Generators::Document
       {
         vbms_document_id: generate_external_id,
         filename: "filename.pdf",
-        received_at: 3.days.ago
+        received_at: 3.days.ago,
+        type: ["Form 8", "Form 9", "NOD", "SOC", "SSOC"].sample,
+        file_number: Random.rand(999_999_999).to_s
       }
     end
 

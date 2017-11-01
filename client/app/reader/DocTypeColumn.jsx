@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { selectCurrentPdfLocally } from './actions';
+import { selectCurrentPdfLocally } from '../reader/PdfViewer/PdfViewerActions';
 
 import { bindActionCreators } from 'redux';
 import Link from '../components/Link';
