@@ -28,6 +28,10 @@ export class DocumentSearch extends React.PureComponent {
   }
 
   shortcutHandler = (event) => {
+    // handle global shortcuts:
+    // -navigating between results
+    // -closing search
+    // -preventing native search widget
     const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
 
     if (event[metaKey] && event.code === 'KeyG') {
@@ -37,6 +41,10 @@ export class DocumentSearch extends React.PureComponent {
 
     if (event.key === 'Escape') {
       this.props.hideSearchBar();
+    }
+
+    if (event[metaKey] && event.code === 'KeyF') {
+      event.preventDefault();
     }
   }
 
