@@ -26,7 +26,7 @@ const rampIneligibleInstructions = <div>
       Document your actions as a permanent note in VBMS.
     </li>
   </ul>
-</div>
+</div>;
 
 class Begin extends React.PureComponent {
   handleSearchSubmit = () => this.props.doFileNumberSearch(this.props.fileNumberSearchInput)
