@@ -102,16 +102,6 @@ export class PdfPage extends React.PureComponent {
 
   componentDidMount = () => {
     this.setUpPage();
-
-    // We only want to setUpPage immediately if it's either on a visible page, or if that page
-    // is in a non-visible page but within the first NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER pages.
-    // These are the pages we are most likely to show to the user. All other pages can wait
-    // until we have idle time.
-    // if (this.props.isVisible || this.props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
-    //   this.setUpPage();
-    // } else {
-    //   window.requestIdleCallback(this.setUpPage);
-    // }
   }
 
   componentWillUnmount = () => {
@@ -124,9 +114,6 @@ export class PdfPage extends React.PureComponent {
         this.markInstance.unmark();
       }
     }
-    // Cleaning up this page from the Redux store should happen when we have idle time.
-    // We don't want to block showing pages because we're too busy cleaning old pages.
-    window.requestIdleCallback(this.clearPdfPage);
   }
 
   componentDidUpdate = (prevProps) => {
@@ -140,6 +127,10 @@ export class PdfPage extends React.PureComponent {
   }
 
   drawText = (page, text) => {
+    if (!this.textLayer) {
+      return;
+    }
+
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
     this.textLayer.innerHTML = '';

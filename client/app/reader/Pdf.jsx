@@ -63,100 +63,6 @@ const COVER_SCROLL_HEIGHT = 120;
 // The component will speed up drawing by only drawing pages when
 // they become visible.
 export class Pdf extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    // We use two variables to maintain the state of drawing.
-    // isDrawing below is outside of the state variable.
-    // isDrawing[pageNumber] is true when a page is currently
-    // being drawn by PDFJS. It is set to false when drawing
-    // is either successful or aborts.
-    // isDrawn is in the state variable, since an update to
-    // isDrawn should trigger a render update since we need to
-    // draw comments after a page is drawn. Once a page is
-    // successfully drawn we set isDrawn[pageNumber] to be the
-    // filename of the drawn PDF. This way, if PDFs are changed
-    // we know which pages are stale.
-    this.state = {
-      numPages: {}
-    };
-
-    this.scrollLocation = {
-      page: null,
-      locationOnPage: 0
-    };
-
-    this.currentPage = 1;
-
-    this.scrollWindow = null;
-  }
-
-  onRowsRendered = ({ startIndex, stopIndex }) => {
-    this.onPageChange(startIndex + 1);
-    // this.performFunctionOnEachPage((boundingRect, index) => {
-    //   // You are on this page, if the top of the page is above the middle
-    //   // and the bottom of the page is below the middle
-    //   // jumpToPageNumber check is added to not update the page number when the
-    //   // jump to page scroll is activated.
-    //   if (!this.props.jumpToPageNumber && boundingRect.top < this.scrollWindow.clientHeight / 2 &&
-    //       boundingRect.bottom > this.scrollWindow.clientHeight / 2) {
-    //     this.onPageChange(index + 1);
-    //   }
-    // });
-  }
-
-  scrollEvent = () => {
-    debugger;
-    // Now that the user is scrolling we reset the scroll location
-    // so that we do not keep scrolling the user back.
-    this.scrollLocation = {
-      page: null,
-      locationOnPage: 0
-    };
-
-    if (this.props.scrollToComment) {
-      this.props.onScrollToComment(null);
-    }
-
-    if (this.props.jumpToPageNumber) {
-      this.props.resetJumpToPage();
-    }
-  }
-
-  performFunctionOnEachPage = (func) => {
-    _.forEach(this.props.pageContainers, (ele, index) => {
-      if (ele) {
-        const boundingRect = ele.getBoundingClientRect();
-
-        func(boundingRect, Number(index));
-      }
-    });
-  }
-
-  scrollToPageLocation = (pageIndex, yPosition = 0) => {
-    if (this.props.pageContainers) {
-      const boundingBox = this.scrollWindow.getBoundingClientRect();
-      const height = (boundingBox.bottom - boundingBox.top);
-      const halfHeight = height / 2;
-
-      this.scrollWindow.scrollTop =
-        this.props.pageContainers[pageIndex].getBoundingClientRect().top +
-        yPosition + this.scrollWindow.scrollTop - halfHeight;
-
-      return true;
-    }
-
-    return false;
-  }
-
-  onPageChange = (currentPage) => {
-    const unscaledHeight = (_.get(this.props.pageContainers, [currentPage - 1, 'offsetHeight']) / this.props.scale);
-
-    this.currentPage = currentPage;
-    this.props.onPageChange(
-      currentPage,
-      0);
-  }
-
   handleAltC = () => {
     if (this.props.sidebarHidden) {
       this.props.togglePdfSidebar();
@@ -220,27 +126,9 @@ export class Pdf extends React.PureComponent {
     }
   }
 
-  updateScrollWindowCenter = () => {
-    if (!this.scrollWindow) {
-      return;
-    }
-
-    const rect = this.scrollWindow.getBoundingClientRect();
-
-    this.setState({
-      scrollWindowCenter: {
-        x: rect.left + (rect.width / 2),
-        y: rect.top + (rect.height / 2)
-      }
-    });
-  }
-
   componentDidMount() {
     window.addEventListener('keydown', this.keyListener);
     window.addEventListener('resize', this.updateScrollWindowCenter);
-
-    // focus the scroll window when the component initially loads.
-    this.scrollWindow.focus();
   }
 
   componentWillUnmount() {
@@ -285,8 +173,9 @@ export class Pdf extends React.PureComponent {
     // safe to jump to the pages since their positioning won't change.
     if (this.props.arePageDimensionsSet) {
       if (this.props.jumpToPageNumber) {
-        this.scrollToPage(this.props.jumpToPageNumber);
-        this.onPageChange(this.props.jumpToPageNumber);
+
+        // this.scrollToPage(this.props.jumpToPageNumber);
+        // this.onPageChange(this.props.jumpToPageNumber);
       }
       if (this.props.scrollToComment) {
         const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
@@ -317,7 +206,7 @@ export class Pdf extends React.PureComponent {
         documentId={this.props.documentId}
         key={`${file}`}
         file={file}
-        onRowsRendered={this.onRowsRendered}
+        onPageChange={this.props.onPageChange}
         isVisible={this.props.file === file}
         scale={this.props.scale}
       />;
