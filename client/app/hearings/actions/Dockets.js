@@ -2,6 +2,8 @@ import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES } from '../analytics';
 
+const debounceMs = 1000;
+
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,
   payload: {
@@ -55,7 +57,7 @@ export const setNotes = (hearingIndex, notes, date) => ({
   meta: {
     analytics: {
       category: CATEGORIES.DAILY_DOCKET_PAGE,
-      debounceMs: 1000
+      debounceMs
     }
   }
 });
@@ -113,7 +115,7 @@ export const onContentionsChange = (contentions) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs: 1000
+      debounceMs
     }
   }
 });
@@ -126,7 +128,7 @@ export const onMilitaryServiceChange = (militaryService) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs: 1000
+      debounceMs
     }
   }
 });
@@ -139,7 +141,7 @@ export const onEvidenceChange = (evidence) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs: 1000
+      debounceMs
     }
   }
 });
@@ -152,7 +154,7 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   meta: {
     analytics: {
       category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs: 1000
+      debounceMs
     }
   }
 });
