@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import * as Actions from '../../../../app/hearings/actions/Dockets';
 import * as Constants from '../../../../app/hearings/constants/constants';
-import { CATEGORIES, ACTIONS } from '../../../../app/hearings/analytics';
+import { CATEGORIES } from '../../../../app/hearings/analytics';
 
 describe('.setNotes', () => {
   it('sets notes', () => {
@@ -19,7 +19,6 @@ describe('.setNotes', () => {
       meta: {
         analytics: {
           category: CATEGORIES.DAILY_DOCKET_PAGE,
-          action: ACTIONS.SET_NOTES,
           debounceMs: 1000
         }
       }
@@ -113,7 +112,6 @@ describe('.onContentionsChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          action: ACTIONS.EDIT_CONTENTIONS,
           debounceMs: 1000
         }
       }
@@ -135,7 +133,6 @@ describe('.onMilitaryServiceChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          action: ACTIONS.EDIT_MILITARY_SERVICE,
           debounceMs: 1000
         }
       }
@@ -157,7 +154,6 @@ describe('.onEvidenceChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          action: ACTIONS.EDIT_EVIDENCE,
           debounceMs: 1000
         }
       }
@@ -179,7 +175,6 @@ describe('.onCommentsForAttorneyChange', () => {
       meta: {
         analytics: {
           category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          action: ACTIONS.EDIT_COMMENTS_FOR_ATTORNEY,
           debounceMs: 1000
         }
       }

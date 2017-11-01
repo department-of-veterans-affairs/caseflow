@@ -143,8 +143,7 @@ export const onAddIssue = (appealId, vacolsSequenceId) => (dispatch) => {
         payload: { issue },
         meta: {
           analytics: {
-            category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-            action: ACTIONS.ADD_ISSUE
+            category: CATEGORIES.HEARING_WORKSHEET_PAGE
           }
         } });
     });
@@ -157,8 +156,7 @@ export const onDeleteIssue = (issueId) => ({
   },
   meta: {
     analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.DELETE_ISSUE
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE
     }
   }
 });
