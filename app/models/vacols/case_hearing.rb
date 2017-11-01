@@ -29,14 +29,15 @@ class VACOLS::CaseHearing < VACOLS::Record
     Y: true
   }.freeze
 
-  TABLE_NAMES = {
+  COLUMN_NAMES = {
     notes: :notes1,
     disposition: :hearing_disp,
     hold_open: :holddays,
     aod: :aod,
     transcript_requested: :tranreq,
     add_on: :addon,
-    representative_name: :repname
+    representative_name: :repname,
+    staff_id: :mduser
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -49,6 +50,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings.where("staff.sdomainid = #{id}")
                      .where("hearing_date > ?", 1.week.ago)
+                     .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -75,10 +77,11 @@ class VACOLS::CaseHearing < VACOLS::Record
              :board_member, :mduser,
              :mdtime, :sattyid,
              :bfregoff, :bfso,
-             :bfcorkey,
-             "corres.snamef, corres.snamemi,
-             corres.snamel, corres.sspare1,
-             corres.sspare2, corres.sspare3")
+             :bfcorkey, :bfddec, :bfdc,
+             "staff.slogid",
+             "corres.snamef, corres.snamemi",
+             "corres.snamel, corres.sspare1",
+             "corres.sspare2, corres.sspare3")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
@@ -91,12 +94,11 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def update_hearing!(hearing_info)
-    slogid = staff.try(:slogid)
-    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mduser: slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 

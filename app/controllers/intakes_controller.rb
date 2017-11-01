@@ -26,7 +26,10 @@ class IntakesController < ApplicationController
     if intake.start!
       render json: ramp_intake_data(intake)
     else
-      render json: { error_code: intake.error_code }, status: 422
+      render json: {
+        error_code: intake.error_code,
+        error_data: intake.error_data
+      }, status: 422
     end
   end
 

@@ -426,6 +426,16 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def manifest_vbms_fetched_at
+    fetch_documents_from_service!
+    @manifest_vbms_fetched_at
+  end
+
+  def manifest_vva_fetched_at
+    fetch_documents_from_service!
+    @manifest_vva_fetched_at
+  end
+
   private
 
   def matched_document(type, vacols_datetime)
@@ -456,8 +466,19 @@ class Appeal < ActiveRecord::Base
     @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
+  def fetch_documents_from_service!
+    return if @fetched_documents
+
+    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+
+    @fetched_documents = doc_struct[:documents]
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
+    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
+  end
+
   def fetched_documents
-    @fetched_documents ||= document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+    fetch_documents_from_service!
+    @fetched_documents
   end
 
   def document_service
@@ -489,8 +510,12 @@ class Appeal < ActiveRecord::Base
     def for_api(appellant_ssn:)
       fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
+      # Some appeals that are early on in the process
+      # have no events recorded. We are not showing these.
+      # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
+                .reject { |a| a.latest_event_date.nil? }
                 .sort_by(&:latest_event_date)
                 .reverse
     end

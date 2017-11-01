@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import { clearSearch } from './actions';
+import { clearSearch } from '../reader/DocumentList/DocumentListActions';
 
 export class NoSearchResults extends PureComponent {
   render() {

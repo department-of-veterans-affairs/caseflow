@@ -10,13 +10,13 @@ const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
-    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
     map(([key]) => categoryFieldNameOfCategoryName(key)).
     value();
 
   const activeTagFilters = _(docFilterCriteria.tag).
     toPairs().
-    filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
     map(([key]) => key).
     value();
 
@@ -171,7 +171,9 @@ export const initialState = {
         tag: false,
         category: false
       }
-    }
+    },
+    manifestVbmsFetchedAt: null,
+    manifestVvaFetchedAt: null
   },
 
   /**
@@ -187,6 +189,7 @@ export const initialState = {
   pdfDocuments: {},
   text: [],
   documentSearchString: null,
+  documentSearchIndex: 0,
   extractedText: {}
 };
 
@@ -254,6 +257,17 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.RECEIVE_MANIFESTS:
+    return update(state, {
+      ui: {
+        manifestVbmsFetchedAt: {
+          $set: action.payload.manifestVbmsFetchedAt
+        },
+        manifestVvaFetchedAt: {
+          $set: action.payload.manifestVvaFetchedAt
+        }
+      }
+    });
   case Constants.RECEIVE_ANNOTATIONS:
     return updateFilteredDocIds(update(
       state,
@@ -1088,7 +1102,7 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-  case Constants.GET_DCOUMENT_TEXT:
+  case Constants.GET_DOCUMENT_TEXT:
     return update(
       state,
       {
@@ -1097,12 +1111,21 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_DOCUMENT_SEARCH:
+  case Constants.ZERO_SEARCH_INDEX:
     return update(
       state,
       {
-        documentSearchString: {
-          $set: action.payload.searchString
+        documentSearchIndex: {
+          $set: 0
+        }
+      }
+    );
+  case Constants.UPDATE_SEARCH_INDEX:
+    return update(
+      state,
+      {
+        documentSearchIndex: {
+          $apply: (index) => action.payload.increment ? index + 1 : index - 1
         }
       }
     );

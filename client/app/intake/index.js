@@ -5,7 +5,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import perfLogger from 'redux-perf-middleware';
 import IntakeFrame from './IntakeFrame';
 import { reducer, mapDataToInitialState } from './redux/reducer';
-import { reduxAnalyticsMiddleware } from '../reader/analytics';
+import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 
 const Intake = (props) => {
   // eslint-disable-next-line no-underscore-dangle
@@ -13,7 +13,7 @@ const Intake = (props) => {
   const store = createStore(
     reducer,
     mapDataToInitialState(props),
-    composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
+    composeEnhancers(applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware('intake')))
   );
 
   if (module.hot) {

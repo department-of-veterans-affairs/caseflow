@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { setPdfDocument, clearPdfDocument } from '../reader/actions';
+import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 

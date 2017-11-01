@@ -16,7 +16,8 @@ import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
-  setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility } from './actions';
+  setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility
+} from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
@@ -162,7 +163,7 @@ class DocumentsTable extends React.Component {
               page={comment.page}
               onJumpToComment={this.props.onJumpToComment(comment)}
               uuid={comment.uuid}
-              horizontalLayout={true}>
+              horizontalLayout>
               {comment.comment}
             </Comment>;
           });
