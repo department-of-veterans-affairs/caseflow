@@ -1,15 +1,16 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, onScrollToComment } from '../reader/Pdf/PdfActions';
 import { resetJumpToPage } from '../reader/actions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { List, CellMeasurer, AutoSizer, CellMeasurerCache } from 'react-virtualized';
-import { pageIndexOfPageNumber, pageNumberOfPageIndex } from './utils';
+import { pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 const PAGE_HEIGHT = 1056;
 
 export class PdfFile extends React.PureComponent {
@@ -23,6 +24,8 @@ export class PdfFile extends React.PureComponent {
     this.stopIndex = 0;
     this.scrollTop = 0;
     this.scrollLocation = {};
+    this.clientHeight = 0;
+    this.currentPage = 1;
   }
 
   componentDidMount = () => {
@@ -34,8 +37,6 @@ export class PdfFile extends React.PureComponent {
       url: this.props.file,
       withCredentials: true
     });
-
-    this.onPageChange(1);
 
     return this.loadingTask.then((pdfDocument) => {
       if (this.loadingTask.destroyed) {
@@ -90,13 +91,28 @@ export class PdfFile extends React.PureComponent {
       </div>;
   }
 
+  pageDimensions = (index) => this.props.pageDimensions[`${this.props.file}-${index}`]
+
+  pageHeight = (index) =>
+    _.get(this.pageDimensions(), ['height'], this.props.baseHeight)
+
   getRowHeight = ({ index }) => {
-    return (_.get(this.props.pageDimensions, [`${this.props.file}-${index}`, 'height'], this.props.baseHeight) + 25) * this.props.scale;
+    return (this.pageHeight(index) + 25) * this.props.scale;
   }
 
   getList = (list) => {
     this.list = list;
-    this.list.recomputeRowHeights();
+
+    if (this.list) {
+      const domNode = ReactDOM.findDOMNode(this.list);
+
+      domNode.focus();
+      this.list.recomputeRowHeights();
+    }
+  }
+
+  scrollToPosition = (pageIndex, locationOnPage) => {
+    this.list.scrollToPosition(this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage);
   }
 
   componentDidUpdate = (prevProps) => {
@@ -104,8 +120,7 @@ export class PdfFile extends React.PureComponent {
       this.list.recomputeRowHeights();
 
       if (this.scrollLocation.page) {
-        this.list.scrollToPosition(
-          this.list.getOffsetForRow({ index: this.scrollLocation.page }) + this.scrollLocation.locationOnPage);
+        this.scrollToPosition(this.scrollLocation.page, this.scrollLocation.locationOnPage);
 
         this.scrollLocation = {};
       }
@@ -116,6 +131,16 @@ export class PdfFile extends React.PureComponent {
         this.list.scrollToRow(scrollToIndex);
         this.props.resetJumpToPage();
       }
+
+      if (this.props.scrollToComment) {
+        const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
+        const transformedY = rotateCoordinates(this.props.scrollToComment,
+          this.pageDimensions(pageIndex), - this.props.rotation).y * this.props.scale;
+        const scrollToY = transformedY - this.pageHeight(pageIndex) / 2;
+
+        this.scrollToPosition(pageIndex, scrollToY);
+        this.props.onScrollToComment(null);
+      }
     }
   }
 
@@ -124,10 +149,9 @@ export class PdfFile extends React.PureComponent {
     this.stopIndex = stopIndex;
   }
 
-  onPageChange = (index) => {
-    const unscaledHeight = (this.getRowHeight({ index }) / this.props.scale);
-
-    this.props.onPageChange(index, unscaledHeight);
+  onPageChange = (index, clientHeight) => {
+    this.currentPage = index;
+    this.props.onPageChange(pageNumberOfPageIndex(index), clientHeight / this.pageHeight(index));
   }
 
   onScroll = ({ clientHeight, scrollTop }) => {
@@ -144,7 +168,7 @@ export class PdfFile extends React.PureComponent {
         }
       });
 
-      this.props.onPageChange(pageNumberOfPageIndex(lastIndex));
+      this.onPageChange(lastIndex, clientHeight);
     }
   }
 
@@ -154,11 +178,15 @@ export class PdfFile extends React.PureComponent {
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
     // pdfDocument in the Redux state. So we must check that the transport is not destroyed
     // before trying to render the page.
-    
-    // ({ index, isScrolling  }) => ({ width: 1000, height: 1000, x: width/2 - 250, y: 1000 * index })
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
-      return <AutoSizer>{({ width, height }) =>
-          <List
+      return <AutoSizer>{
+        ({ width, height }) => {
+          if (this.clientHeight !== height) {
+            this.onPageChange(this.currentPage, height);
+            this.clientHeight = height;
+          }
+
+          return <List
             ref={this.getList}
             onRowsRendered={this.onRowsRendered}
             onScroll={this.onScroll}
@@ -169,7 +197,9 @@ export class PdfFile extends React.PureComponent {
             scrollToAlignment={"start"}
             width={width}
             scale={this.props.scale}
-          />}
+          />;
+        }
+      }
       </AutoSizer>
     }
 
@@ -185,7 +215,8 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfDocument,
     clearPdfDocument,
-    resetJumpToPage
+    resetJumpToPage,
+    onScrollToComment
   }, dispatch)
 });
 
@@ -197,7 +228,8 @@ const mapStateToProps = (state, props) => {
     pdfDocument: state.readerReducer.pdfDocuments[props.file],
     pageDimensions: state.readerReducer.pageDimensions,
     baseHeight,
-    jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber
+    jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber,
+    scrollToComment: state.readerReducer.ui.pdf.scrollToComment
   }
 };
 

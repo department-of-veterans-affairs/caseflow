@@ -136,67 +136,6 @@ export class Pdf extends React.PureComponent {
     window.removeEventListener('keydown', this.keyListener);
   }
 
-  componentWillReceiveProps(nextProps) {
-    // In general I think this is a good lint rule. However,
-    // I think the below statements are clearer
-    // with negative conditions.
-    /* eslint-disable no-negated-condition */
-    if (nextProps.file !== this.props.file) {
-      this.scrollWindow.scrollTop = 0;
-
-      // focus the scroll window when the document changes.
-      this.scrollWindow.focus();
-    } else if (nextProps.scale !== this.props.scale && this.props.pageContainers) {
-      // Set the scroll location based on the current page and where you
-      // are on that page scaled by the zoom factor.
-      const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollWindow.scrollTop -
-        this.props.pageContainers[this.currentPage - 1].offsetTop);
-
-      this.scrollLocation = {
-        page: this.currentPage,
-        locationOnPage: nonZoomedLocation * zoomFactor
-      };
-    }
-    /* eslint-enable no-negated-condition */
-  }
-
-  scrollToPage(pageNumber) {
-    this.scrollWindow.scrollTop =
-      this.props.pageContainers[pageNumber - 1].getBoundingClientRect().top +
-      this.scrollWindow.scrollTop - COVER_SCROLL_HEIGHT;
-  }
-
-  // eslint-disable-next-line max-statements
-  componentDidUpdate() {
-    // Wait until the page dimensions have been calculated, then it is
-    // safe to jump to the pages since their positioning won't change.
-    if (this.props.arePageDimensionsSet) {
-      if (this.props.jumpToPageNumber) {
-
-        // this.scrollToPage(this.props.jumpToPageNumber);
-        // this.onPageChange(this.props.jumpToPageNumber);
-      }
-      if (this.props.scrollToComment) {
-        const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
-        const y = rotateCoordinates(this.props.scrollToComment,
-          this.props.pageContainers[pageIndex].getBoundingClientRect(), -this.props.rotation).y * this.props.scale;
-
-        this.scrollToPageLocation(pageIndex, y);
-      }
-    }
-
-    if (this.scrollLocation.page) {
-      this.scrollWindow.scrollTop = this.scrollLocation.locationOnPage +
-        this.props.pageContainers[this.scrollLocation.page - 1].offsetTop;
-    }
-  }
-
-  getScrollWindowRef = (scrollWindow) => {
-    this.scrollWindow = scrollWindow;
-    this.updateScrollWindowCenter();
-  }
-
   // eslint-disable-next-line max-statements
   render() {
     const scrollTop = this.scrollWindow ? this.scrollWindow.scrollTop : 0;
@@ -211,12 +150,7 @@ export class Pdf extends React.PureComponent {
         scale={this.props.scale}
       />;
     });
-// <div
-//       id="scrollWindow"
-//       tabIndex="0"
-//       className="cf-pdf-scroll-view"
-//       onScroll={this.scrollEvent}
-//       ref={this.getScrollWindowRef}>
+
     return <div className="cf-pdf-scroll-view">
       {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
       <div
@@ -233,23 +167,6 @@ export class Pdf extends React.PureComponent {
 }
 
 const mapStateToProps = (state, props) => {
-  // Gets page keys where the container is defined.
-  // const pages = state.readerReducer.pages[props.file];
-  // const numPagesDefined = pages.length;
-  // const pdfDocument = state.readerReducer.pdfDocuments[props.file];
-  // const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : -1;
-  // let pageContainers = null;
-
-  // if (numPagesDefined === numPages) {
-  //   pageContainers = pageKeys.reduce((acc, key) => {
-  //     const pageIndex = key.split('-')[1];
-
-  //     acc[pageIndex] = state.readerReducer.pages[key] ? state.readerReducer.pages[key].container : null;
-
-  //     return acc;
-  //   }, {});
-  // }
-
   return {
     ...state.readerReducer.ui.pdf,
     arePageDimensionsSet: false,
