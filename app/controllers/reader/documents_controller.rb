@@ -68,7 +68,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   end
 
   def respond_to_doc_retrieval_error(e)
-    render json: { "errors": [ "status": 502, "title": e.to_s, "detail": e.message ] }, status: 502
+    render json: { "errors": ["status": 502, "title": e.to_s, "detail": e.message] }, status: 502
   end
 
   def appeal_id
