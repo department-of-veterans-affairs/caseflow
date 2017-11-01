@@ -15,7 +15,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     RequestStore.store[:current_user] = reader_user.user
     update_fetched_at(reader_user)
     appeals = reader_user.user.current_case_assignments
-    fetch_docs_for_appeals(appeals)
+    fetch_documents_for_appeals(appeals)
     log_info
 
   rescue => e
@@ -28,7 +28,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     reader_user.update_attributes!(documents_fetched_at: Time.zone.now)
   end
 
-  def fetch_docs_for_appeals(appeals)
+  def fetch_documents_for_appeals(appeals)
     @counts[:appeals_total] = appeals.count
     appeals.each do |appeal|
       # signal to efolder X to fetch and save all documents
