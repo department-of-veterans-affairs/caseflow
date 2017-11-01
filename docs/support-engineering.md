@@ -21,6 +21,6 @@ If more than one user reports a bug, then we treat the issue as high priority. T
 Support should receive regular training from product teams so that they understand products in depth. This will help them triage issues.
 
 ## Questions to ask users
-Product teams should provide support with a list of questions to ask users. This may very between teams but will consist of something like:
+Product teams should provide support with a list of questions to ask users. This may vary between teams but will consist of something like:
 - What is the file number?
 - If the application is slow, are other VA services (like VBMS) slow?
