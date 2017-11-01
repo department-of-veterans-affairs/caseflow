@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import { expect } from 'chai';
 import { reducer, initialState } from '../../../app/reader/reducer';
-import { setViewingDocumentsOrComments } from '../../../app/reader/actions';
+import { setViewingDocumentsOrComments } from '../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../app/reader/constants';
 
 /* eslint-disable no-undefined */

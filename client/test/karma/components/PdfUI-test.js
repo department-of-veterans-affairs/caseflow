@@ -28,6 +28,7 @@ describe('PdfUI', () => {
         id="pdf"
         pdfWorker="noworker"
         documentPathBase={DOCUMENT_PATH_BASE}
+        showClaimsFolderNavigation={false}
       />);
     });
 

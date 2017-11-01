@@ -44,9 +44,11 @@ class ExternalApi::VBMSService
 
     Rails.logger.info("Document list length: #{documents.length}")
 
-    documents.map do |vbms_document|
-      Document.from_vbms_document(vbms_document)
-    end
+    {
+      manifest_vbms_fetched_at: nil,
+      manifest_vva_fetched_at: nil,
+      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document, sanitized_id) }
+    }
   end
 
   def self.upload_document_to_vbms(appeal, form8)

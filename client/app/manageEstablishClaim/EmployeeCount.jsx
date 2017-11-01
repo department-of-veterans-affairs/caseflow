@@ -17,7 +17,7 @@ const EmployeeCount = ({ employeeCount, handleEmployeeCountSave, handleEmployeeC
         readOnly={false}
         onChange={handleEmployeeCountChange}
         value={employeeCount}
-        isInteger={true}
+        isInteger
         {...employeeCount}
       />
       <Button

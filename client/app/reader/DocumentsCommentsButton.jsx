@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import ToggleButton from '../components/ToggleButton';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
-import { setViewingDocumentsOrComments } from './actions';
+import { setViewingDocumentsOrComments } from '../reader/DocumentList/DocumentListActions';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './constants';
 
 class DocumentsCommentsButton extends PureComponent {

@@ -61,6 +61,23 @@ describe RetrieveDocumentsForReaderJob do
       Faker::Pokemon.name
     end
 
+    let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
+
+    let!(:service_manifest_vbms_fetched_at) do
+      Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime(efolder_fetched_at_format)
+    end
+
+    let!(:service_manifest_vva_fetched_at) do
+      Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime(efolder_fetched_at_format)
+    end
+
+    let!(:doc_struct) do
+      {
+        manifest_vbms_fetched_at: service_manifest_vbms_fetched_at,
+        manifest_vva_fetched_at: service_manifest_vva_fetched_at
+      }
+    end
+
     before do
       # Reset S3 mock files
       S3Service.files = nil
@@ -113,8 +130,10 @@ describe RetrieveDocumentsForReaderJob do
           .with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 
+        struct = doc_struct.clone
+        struct[:documents] = [expected_doc1, new_doc]
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
-          .and_return([expected_doc1, new_doc]).once
+          .and_return(struct).once
 
         expect_calls_for_doc(expected_doc1, doc1_expected_content)
         expect_calls_for_doc(new_doc, new_doc_expected_content)
@@ -166,12 +185,15 @@ describe RetrieveDocumentsForReaderJob do
         end
 
         it "catches the exception when thrown by fetch_content and continues to the next document" do
+          struct = doc_struct.clone
+          struct[:documents] = [expected_doc1]
+
           expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
             .with(reader_user.css_id)
             .and_return([appeal_with_doc1]).once
           expect(S3Service).to receive(:exists?).with(expected_doc1.vbms_document_id).and_return(false).once
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
-            .and_return([expected_doc1]).once
+            .and_return(struct).once
           expect(EFolderService).to receive(:fetch_document_file).with(expected_doc1)
             .and_raise(VBMS::ClientError.new("<faultstring>Womp Womp.</faultstring>"))
             .once
@@ -262,15 +284,18 @@ describe RetrieveDocumentsForReaderJob do
           .with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 
+        struct = doc_struct.clone
+        struct[:documents] = [expected_doc1]
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user)
-          .and_return([expected_doc1]).once
+          .and_return(struct).once
 
         expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
           .with(reader_user_w_many_roles.css_id)
           .and_return([appeal_with_doc2]).once
 
+        struct[:documents] = [expected_doc2]
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
-          .and_return([expected_doc2]).once
+          .and_return(struct).once
 
         RetrieveDocumentsForReaderJob.perform_now
         expect(S3Service.files).to be_nil
@@ -289,15 +314,18 @@ describe RetrieveDocumentsForReaderJob do
         expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).with(reader_user.css_id)
           .and_return([appeal_with_doc1]).once
 
+        struct = doc_struct.clone
+        struct[:documents] = [expected_doc1]
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, reader_user)
-          .and_return([expected_doc1]).once
+          .and_return(struct).once
 
         expect(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols)
           .with(reader_user_w_many_roles.css_id)
           .and_return([appeal_with_doc2]).once
 
+        struct[:documents] = [expected_doc2]
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, reader_user_w_many_roles)
-          .and_return([expected_doc2]).once
+          .and_return(struct).once
 
         RetrieveDocumentsForReaderJob.perform_now
         expect(S3Service.files).to be_nil
@@ -319,7 +347,10 @@ describe RetrieveDocumentsForReaderJob do
   end
 
   def expect_calls_for_appeal(appeal, doc, content)
-    expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return([doc]).once
+    struct = doc_struct.clone
+    struct[:documents] = [doc]
+
+    expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return(struct).once
     expect_calls_for_doc(doc, content)
   end
 

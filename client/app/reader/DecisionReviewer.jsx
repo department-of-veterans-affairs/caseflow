@@ -11,7 +11,9 @@ import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
-import * as ReaderActions from './actions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
+import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
+import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
@@ -92,6 +94,8 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
+        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
         {...props}
       />
     </ReaderLoadingScreen>;
@@ -149,8 +153,7 @@ export class DecisionReviewer extends React.PureComponent {
               title="Document Viewer | Caseflow Reader"
               breadcrumb="Document Viewer"
               path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer}
-            />
+              render={this.routedPdfViewer}/>
           </div>
         </NavigationBar>
         <Footer
@@ -166,10 +169,12 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
-  onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func,
-  handleSetLastRead: PropTypes.func.isRequired,
   singleDocumentMode: PropTypes.bool,
+
+  // Required actions
+  onScrollToComment: PropTypes.func,
+  stopPlacingAnnotation: PropTypes.func,
+  setCategoryFilter: PropTypes.func,
 
   // These two properties are exclusively for testing purposes
   router: PropTypes.func,
@@ -185,8 +190,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(ReaderActions, dispatch),
-  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+  ...bindActionCreators({
+    onScrollToComment,
+    setCategoryFilter,
+    stopPlacingAnnotation
+  }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

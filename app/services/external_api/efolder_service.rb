@@ -18,10 +18,15 @@ class ExternalApi::EfolderService
     Rails.logger.error "eFolder HTTP status code: #{response.code} for appeal: #{appeal}. " if response.error?
     fail Caseflow::Error::DocumentRetrievalError if response.error?
 
-    documents = JSON.parse(response.body)["data"]["attributes"]["documents"] || []
+    response_attrs = JSON.parse(response.body)["data"]["attributes"]
+    documents = response_attrs["documents"] || []
     Rails.logger.info("# of Documents retrieved from efolder: #{documents.length}")
 
-    documents.map { |efolder_document| Document.from_efolder(efolder_document) }
+    {
+      manifest_vbms_fetched_at: response_attrs["manifest_vbms_fetched_at"],
+      manifest_vva_fetched_at: response_attrs["manifest_vva_fetched_at"],
+      documents: documents.map { |efolder_document| Document.from_efolder(efolder_document, sanitized_vbms_id) }
+    }
   end
 
   def self.efolder_base_url

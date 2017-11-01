@@ -56,7 +56,7 @@ class Finish extends React.PureComponent {
     case RAMP_INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW}/>;
     case RAMP_INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
@@ -77,8 +77,7 @@ class Finish extends React.PureComponent {
       </span>,
       <span>Update the Subject Line with "Ramp Election".</span>,
       <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of "RAMP".</span>,
-      <span>Send a <strong>RAMP Withdrawal Letter</strong> using <em>Letter Creator</em>.</span>
+      <span>Add a placeholder contention of "RAMP".</span>
     ];
     const stepFns = steps.map((step, index) =>
       () => <span><strong>Step {index + 1}.</strong> {step}</span>
@@ -119,7 +118,11 @@ class Finish extends React.PureComponent {
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.rampElection).then(
-      () => this.props.history.push('/completed')
+      (completeWasSuccessful) => {
+        if (completeWasSuccessful) {
+          this.props.history.push('/completed');
+        }
+      }
     );
   }
 
