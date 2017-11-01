@@ -4,7 +4,7 @@ class Generators::ReaderUser
     def default_attrs
       {
         user_id: nil,
-        appeals_docs_fetched_at: nil
+        documents_fetched_at: nil
       }
     end
 
