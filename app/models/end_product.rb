@@ -99,7 +99,23 @@ class EndProduct
     }
   end
 
+  def description
+    label && "#{claim_type_code} - #{label}"
+  end
+
+  def description_with_routing
+    "#{description} for #{station_description}"
+  end
+
+  def station_description
+    regional_office ? regional_office.station_description : "Unknown"
+  end
+
   private
+
+  def label
+    @label ||= CODES[claim_type_code]
+  end
 
   def near_decision_date_of?(appeal)
     (claim_date - appeal.decision_date).abs < 30.days
@@ -119,6 +135,10 @@ class EndProduct
 
   def active?
     !INACTIVE_STATUSES.include?(status_type_code)
+  end
+
+  def regional_office
+    @regional_office ||= RegionalOffice.for_station(station_of_jurisdiction).first
   end
 
   class << self

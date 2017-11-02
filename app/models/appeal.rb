@@ -227,11 +227,6 @@ class Appeal < ActiveRecord::Base
     }
   end
 
-  def station_key
-    result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
-    result && result.first
-  end
-
   def nod
     @nod ||= matched_document("NOD", nod_date)
   end
@@ -412,11 +407,12 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
       hash["issues"] = issues
+      hash["regional_office"] = regional_office_hash
     end
   end
 
@@ -483,6 +479,11 @@ class Appeal < ActiveRecord::Base
       else
         VBMSService
       end
+  end
+
+  # Used for serialization
+  def regional_office_hash
+    regional_office.to_h
   end
 
   class << self
