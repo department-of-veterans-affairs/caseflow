@@ -168,7 +168,7 @@ class RegionalOffice
     "SO43" => { city: "Sacremento", state: "CA", timezone: "America/Los_Angeles", regional_office: "RO43" }
   }.freeze
 
-  # The string key is a unique identifier for a regional office. 
+  # The string key is a unique identifier for a regional office.
   attr_reader :key
 
   def initialize(key)
@@ -208,7 +208,7 @@ class RegionalOffice
   def compute_location_hash
     result = CITIES[key] || SATELLITE_OFFICES[key]
 
-    raise NotFoundError unless result
+    fail NotFoundError unless result
 
     result
   end
@@ -224,7 +224,7 @@ class RegionalOffice
     def find!(key)
       result = RegionalOffice.new(key)
 
-      raise NotFoundError unless result.valid?
+      fail NotFoundError unless result.valid?
       result
     end
 

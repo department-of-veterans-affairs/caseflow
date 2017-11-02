@@ -35,7 +35,7 @@ describe RegionalOffice do
     end
 
     context "invalid regional office key" do
-      let(:regional_office_key) { "RO747"}
+      let(:regional_office_key) { "RO747" }
 
       it "raises NotFoundError" do
         expect { subject }.to raise_error(RegionalOffice::NotFoundError)
