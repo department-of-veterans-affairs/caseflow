@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
-import StatusMessage from '../../components/StatusMessage';
+import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
@@ -29,13 +29,11 @@ export class HearingWorksheetContainer extends React.Component {
   render() {
 
     if (this.props.worksheetServerError) {
-      return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
-        <StatusMessage
+      return <StatusMessage
           title="Unable to load documents">
           It looks like Caseflow was unable to load the worksheet.
           Please <a href="">refresh the page</a> and try again.
-        </StatusMessage>
-      </div>;
+        </StatusMessage>;
     }
 
     if (!this.props.worksheet) {

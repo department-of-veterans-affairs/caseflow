@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
-import StatusMessage from '../../components/StatusMessage';
+import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
 import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from './constants/constants';
 import AutoSave from '../components/AutoSave.jsx';
@@ -22,13 +22,11 @@ export class DailyDocketContainer extends React.Component {
 
   render() {
     if (this.props.docketServerError) {
-      return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
-        <StatusMessage
+      return <StatusMessage
           title="Unable to load documents">
           It looks like Caseflow was unable to load hearings.
           Please <a href="">refresh the page</a> and try again.
-        </StatusMessage>
-      </div>;
+        </StatusMessage>;
     }
 
     if (!this.props.dockets) {
