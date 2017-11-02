@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
-import { getCurrentMatchIndex } from './selectors';
+import { getCurrentMatchIndex, getMatchesPerPageInFile } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -87,17 +87,26 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidUpdate = () => {
-    if (!this.marks) {
-      this.marks = document.getElementsByTagName('mark');
-    }
+    this.marks = Array.prototype.slice.apply(document.getElementsByTagName('mark'));
+
+    _.each(this.marks, (mark) => {
+      const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
+      // eslint-disable-next-line no-unused-vars
+      const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
+
+      _.extend(mark.dataset, {
+        pageIdx: parseInt(pageId, 10),
+        docIdx: parseInt(docId, 10)
+      });
+    });
+
+    this.marks = this.marks.filter((mark) => parseInt(mark.dataset.docIdx, 10) === this.props.documentId);
+
+    _.sortBy(this.marks, (mark) => parseInt(mark.dataset.pageIdx, 10));
 
     _(this.marks).
-      filter((mark) => {
-        return mark.classList.contains('highlighted');
-      }).
-      each((mark) => {
-        mark.classList.remove('highlighted');
-      });
+      filter((mark) => mark.classList.contains('highlighted')).
+      each((mark) => mark.classList.remove('highlighted'));
 
     const selectedMark = this.marks[this.props.currentMatchIndex];
 
@@ -105,12 +114,14 @@ export class PdfFile extends React.PureComponent {
       selectedMark.classList.add('highlighted');
 
       // mark parent elements are absolutely-positioned divs
-      // todo: selectedMark.parentElement.top is relative to page, doesn't consider stacked pages
-      // let scrollTop = parseInt(selectedMark.parentElement.style.top, 10);
+      let scrollToY = parseInt(selectedMark.parentElement.style.top, 10);
+
+      // add offset for page (mark parents are positioned relative to their page)
+      scrollToY += parseInt(selectedMark.dataset.pageIdx, 10) * this.props.pageHeights[selectedMark.dataset.pageIdx];
 
       // if scrolling to < 100px, just scroll to top
-      // scrollTop = scrollTop < 100 ? 0 : scrollTop;
-      // this.props.scrollWindow.scrollTo(0, scrollTop);
+      scrollToY = scrollToY < 100 ? 0 : scrollToY;
+      this.props.scrollWindow.scrollTo(0, scrollToY);
     }
   }
 }
@@ -126,9 +137,15 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file],
-  currentMatchIndex: getCurrentMatchIndex(state, props)
-});
+const mapStateToProps = (state, props) => {
+  const pageHeights = _.map(state.readerReducer.pages, (page) => _.get(page, 'dimensions.height'));
+
+  return {
+    pdfDocument: state.readerReducer.pdfDocuments[props.file],
+    currentMatchIndex: getCurrentMatchIndex(state, props),
+    matchesPerPage: getMatchesPerPageInFile(state, props),
+    pageHeights
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);
