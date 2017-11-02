@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20171101191249) do
 
   create_table "appeal_series", force: :cascade do |t|
     t.boolean "incomplete"
+    t.integer "merged_appeal_count"
   end
 
   create_table "appeal_views", force: :cascade do |t|

@@ -2,13 +2,23 @@ class AppealSeries < ActiveRecord::Base
   has_many :appeals
 
   attr_accessor :incomplete
+  attr_accessor :merged_appeal_count
 
   class << self
     def appeal_series_by_vbms_id(vbms_id)
       appeals = AppealRepository.appeals_by_vbms_id(vbms_id)
 
+      return [] if appeals.empty?
+
       no_series_cnt = appeals.count { |appeal| !appeal.appeal_series }
-      generate_appeal_series_from_appeals(vbms_id) unless no_series_cnt.zero?
+      needs_update = no_series_cnt.positive?
+
+      if !needs_update
+        merge_cnt = appeals.count { |appeal| appeal.disposition == "Merged Appeal" }
+        needs_update = merge_cnt != appeals.first.appeal_series.merged_appeal_count
+      end
+
+      generate_appeal_series_for_vbms_id(vbms_id) if needs_update
 
       appeals.map(&:appeal_series).uniq
     end
@@ -91,25 +101,28 @@ class AppealSeries < ActiveRecord::Base
         merge_table[sid] = sid
       end
 
-      nodes.select { |node| node[:appeal].disposition == "Merged Appeal" }
-           .each do |node|
-             date = node[:appeal].decision_date.strftime("%m/%d/%y")
-             folder = node[:appeal].id
-             merge_str = "From appeal merged on #{date} (#{folder})"
+      merged = nodes.select { |node| node[:appeal].disposition == "Merged Appeal" }
 
-             destination_candidates = nodes.select do |candidate|
-               candidate[:appeal].issues.any? do |issue|
-                 issue.description.include?(merge_str)
-               end
-             end
+      merge_cnt = merged.length
 
-             if destination_candidates.length == 1
-               merge_table[node[:series_id]] = destination_candidates.first[:series_id]
-             end
-           end
+      merged.each do |node|
+        date = node[:appeal].decision_date.strftime("%m/%d/%y")
+        folder = node[:appeal].id
+        merge_str = "From appeal merged on #{date} (#{folder})"
+
+        destination_candidates = nodes.select do |candidate|
+          candidate[:appeal].issues.any? do |issue|
+            issue.description.include?(merge_str)
+          end
+        end
+
+        if destination_candidates.length == 1
+          merge_table[node[:series_id]] = destination_candidates.first[:series_id]
+        end
+      end
 
       merge_table.values.uniq.each do |sid|
-        series_table[sid] = create
+        series_table[sid] = create(merged_appeal_count: merge_cnt)
       end
 
       nodes.each do |node|
