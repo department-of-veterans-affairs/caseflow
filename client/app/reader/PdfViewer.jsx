@@ -8,7 +8,7 @@ import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import {
   selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal
-} from './actions';
+} from '../reader/PdfViewer/PdfViewerActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon,
   deleteAnnotation
 } from '../reader/PdfViewer/AnnotationActions';
