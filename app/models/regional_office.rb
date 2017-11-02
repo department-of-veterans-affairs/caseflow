@@ -196,7 +196,7 @@ class RegionalOffice
   end
 
   def valid?
-    !!location_hash
+    !!location_hash[:city]
   end
 
   private
@@ -206,11 +206,7 @@ class RegionalOffice
   end
 
   def compute_location_hash
-    result = CITIES[key] || SATELLITE_OFFICES[key]
-
-    fail NotFoundError unless result
-
-    result
+    CITIES[key] || SATELLITE_OFFICES[key] || {}
   end
 
   def compute_station_key
