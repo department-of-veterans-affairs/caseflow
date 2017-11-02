@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
-import { getCurrentMatchIndex, getMatchesPerPageInFile } from './selectors';
+import { getCurrentMatchIndex } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -137,15 +137,10 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-const mapStateToProps = (state, props) => {
-  const pageHeights = _.map(state.readerReducer.pages, (page) => _.get(page, 'dimensions.height'));
-
-  return {
-    pdfDocument: state.readerReducer.pdfDocuments[props.file],
-    currentMatchIndex: getCurrentMatchIndex(state, props),
-    matchesPerPage: getMatchesPerPageInFile(state, props),
-    pageHeights
-  };
-};
+const mapStateToProps = (state, props) => ({
+  pdfDocument: state.readerReducer.pdfDocuments[props.file],
+  currentMatchIndex: getCurrentMatchIndex(state, props),
+  pageHeights: _.map(state.readerReducer.pages, (page) => _.get(page, 'dimensions.height'))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);
