@@ -20,7 +20,7 @@ class HearingWorksheetIssueFields extends PureComponent {
     this.props.onDescriptionChange(event.target.value, this.props.issue.id);
 
   render() {
-    let { issue, field } = this.props;
+    let { issue, field, maxLength } = this.props;
 
     const allowedFields = {
       program: { onChange: this.onProgramChange,
@@ -50,6 +50,7 @@ class HearingWorksheetIssueFields extends PureComponent {
           onChange={allowedFields[field].onChange}
           minRows={2}
           maxRows={8}
+          maxLength={maxLength}
         />
       </div>;
     }
@@ -79,4 +80,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheetIssueFields);
-
