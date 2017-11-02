@@ -8,7 +8,13 @@ As we roll out Reader to 700 users, we've noticed some pain points in the way en
 # Proposals
 Below are three proposals for three different types of support tickets.
 ## FAQs - (User error and Common Known Bugs)
-The PMs and engineers will always have the most context on a given product. Support is not expected to know the answer to every user question. However, some questions are repeated many times. When support fields a question that they don't know the answer to, they will ping either the PM or engineer. If the problem is either a known minor bug or a common user error, support should record this problem and solution in a centralized support-FAQ. On subsequent inquiries, support should reference the FAQ before pinging an engineer or product person. Over time this support-FAQ may migrate to our user help page FAQs.
+When support fields a one-off question that they don't know the answer to:
+
+1) Check user help FAQs
+1) Check centralized support-FAQ
+1) Ping PM
+1) If PM is unavailable, ping tech lead
+1) Record this question and answer in centralized support-FAQ
 
 ## Creating or linking to engineering tickets - (Low Priority)
 It's always difficult to disambiguate low priority from high priority. So we set the following standard: if only one user has sent in feedback on a specific issue within a given day then we treat it as low priority. Support should either find an existing ticket in the product repo (caseflow, caseflow-efolder, etc.) or they should make a new ticket in one of those repos. These tickets should be marked with the support label. The ticket in the product repo should link to each instance in the support repo so that we have context on who reported it and how often it was reported. If support sees more than 5 support issues for a given product ticket they should ping the tech lead about that ticket.
@@ -22,5 +28,23 @@ Support should receive regular training from product teams so that they understa
 
 ## Questions to ask users
 Product teams should provide support with a list of questions to ask users. This may vary between teams but will consist of something like:
+- What is the URL of the page?
 - What is the file number?
 - If the application is slow, are other VA services (like VBMS) slow?
+
+## Proposed Updates to Existing Sub-Tasks
+
+- [ ] Send Reporter Acknowledgement. Ask above follow-up questions
+- [ ] Assess Issue
+   - How many users have sent in this or a related issue?
+   - Check user help FAQs
+   - Check centralized support-FAQ
+- [ ] Create new engineering ticket, or link to existing engineering ticket
+- [ ] If more than one user has reported this within 24 hours, ping PM and tech lead
+- [ ] Received Team Acknowledgement
+- [ ] Update Reporter
+- [ ] Resolve Issue
+- [ ] Received Completion Notice
+- [ ] Update Reporter - Issue Complete
+- [ ] Close NSD ticket, if applicable
+- [ ] Confirm/Update Knowledge Base
