@@ -1,5 +1,5 @@
 class AppealSeries < ActiveRecord::Base
-  has_many :appeals
+  has_many :appeals, dependent: :nullify
 
   attr_accessor :incomplete
   attr_accessor :merged_appeal_count
@@ -10,7 +10,7 @@ class AppealSeries < ActiveRecord::Base
 
       return [] if appeals.empty?
 
-      no_series_cnt = appeals.count { |appeal| !appeal.appeal_series }
+      no_series_cnt = appeals.count { |appeal| appeal.appeal_series.nil? }
       needs_update = no_series_cnt > 0
 
       if !needs_update
@@ -20,7 +20,7 @@ class AppealSeries < ActiveRecord::Base
 
       generate_appeal_series_for_vbms_id(vbms_id) if needs_update
 
-      appeals.map(&:appeal_series).uniq
+      Appeal.repository.appeals_by_vbms_id(vbms_id).map(&:appeal_series).uniq
     end
 
     private
@@ -28,7 +28,7 @@ class AppealSeries < ActiveRecord::Base
     def generate_appeal_series_for_vbms_id(vbms_id)
       appeals = Appeal.repository.appeals_by_vbms_id(vbms_id)
 
-      appeals.map(&:appeal_series).compact.uniq.each(&:delete)
+      appeals.map(&:appeal_series).compact.uniq.each(&:destroy)
 
       nodes = appeals.map do |appeal|
         node = { appeal: appeal, children: [] }
@@ -77,7 +77,7 @@ class AppealSeries < ActiveRecord::Base
         node
       end
 
-      roots, children = nodes.partition { |node| !node[:parent_appeal] }
+      roots, children = nodes.partition { |node| node[:parent_appeal].nil? }
 
       children.each do |child|
         parent = nodes.select { |node| node[:appeal] == child[:parent_appeal] }.first
@@ -123,11 +123,12 @@ class AppealSeries < ActiveRecord::Base
 
       merge_table.values.uniq.each do |sid|
         series_table[sid] = create(merged_appeal_count: merge_cnt)
+        binding.pry # why is merged_appeal_count not getting set???
       end
 
       nodes.each do |node|
-        node[:appeal].appeal_series = series_table[merge_table[node[:series_id]]]
-        node[:appeal].appeal_series.incomplete = true if node[:incomplete]
+        node[:appeal].update(appeal_series: series_table[merge_table[node[:series_id]]])
+        node[:appeal].appeal_series.update(incomplete: true) if node[:incomplete]
       end
     end
   end
