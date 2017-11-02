@@ -783,9 +783,14 @@ describe Appeal do
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
-    context "is false if status is not advance" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+    context "is false if status is not advance or remand" do
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Active") }
       it { is_expected.to be_falsey }
+    end
+
+    context "is true if status is remand" do
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+      it { is_expected.to be_truthy }
     end
 
     context "is true if status is advance" do
