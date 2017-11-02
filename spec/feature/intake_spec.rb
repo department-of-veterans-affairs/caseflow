@@ -34,10 +34,17 @@ RSpec.feature "RAMP Intake" do
     )
   end
 
-  let!(:ineligible_appeal) do
+  let!(:inactive_appeal) do
     Generators::Appeal.build(
       vbms_id: "77776666C",
       vacols_record: :full_grant_decided
+    )
+  end
+
+  let!(:ineligible_appeal) do
+    Generators::Appeal.build(
+      vbms_id: "77778888C",
+      vacols_record: :activated
     )
   end
 
@@ -64,7 +71,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
     end
 
-    scenario "Search for a veteran with an ineligible appeal" do
+    scenario "Search for a veteran with an no active appeals" do
       RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
 
       visit "/intake"
@@ -72,7 +79,18 @@ RSpec.feature "RAMP Intake" do
       click_on "Search"
 
       expect(page).to have_current_path("/intake")
-      expect(page).to have_content("This Veteran is not eligible to participate in RAMP.")
+      expect(page).to have_content("Ineligible to participate in RAMP: no active appeals")
+    end
+
+    scenario "Search for a veteran with an ineligible appeal" do
+      RampElection.create!(veteran_file_number: "77778888", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "77778888"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake")
+      expect(page).to have_content("Ineligible to participate in RAMP: appeal is at the Board")
     end
 
     scenario "Search for a veteran that has a RAMP election already processed" do
@@ -100,6 +118,10 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content(
         "A RAMP opt-in with the notice date 08/02/2017 was already processed"
       )
+
+      error_intake = Intake.last
+      expect(error_intake.completion_status).to eq("error")
+      expect(error_intake.error_code).to eq("ramp_election_already_complete")
     end
 
     scenario "Search for a veteran that has received a RAMP election" do

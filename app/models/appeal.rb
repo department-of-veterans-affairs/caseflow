@@ -208,7 +208,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def eligible_for_ramp?
-    status == "Advance"
+    status == "Advance" || status == "Remand"
   end
 
   def attributes_for_hearing
