@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingContainer from '../components/LoadingContainer';
-import Alert from '../components/Alert';
+import StatusMessage from '../../components/StatusMessage';
 import Dockets from './Dockets';
 import ApiUtil from '../util/ApiUtil';
 
@@ -29,11 +29,11 @@ export class DocketsContainer extends React.Component {
 
     if (this.props.docketServerError) {
       return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
-        <Alert
-          title="Unable to load documents"
-          type="error">It looks like Caseflow was unable to load hearings.
-          Please refresh the page and try again.
-        </Alert>
+        <StatusMessage
+          title="Unable to load documents">
+          It looks like Caseflow was unable to load hearings.
+          Please <a href="">refresh the page</a> and try again.
+        </StatusMessage>
       </div>;
     }
 
