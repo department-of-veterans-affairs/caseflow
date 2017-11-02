@@ -1,5 +1,7 @@
 describe "Appeals API v2", type: :request do
   context "Appeal list" do
+    before { FeatureToggle.enable!(:appeals_status) }
+
     let!(:resolved_appeal) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
