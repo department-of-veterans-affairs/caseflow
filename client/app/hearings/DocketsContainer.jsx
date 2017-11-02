@@ -29,8 +29,8 @@ export class DocketsContainer extends React.Component {
 
     if (this.props.docketServerError) {
       return <StatusMessage
-          title="Unable to load documents">
-          It looks like Caseflow was unable to load hearings.
+          title="Unable to load hearings">
+          It looks like Caseflow was unable to load hearings.<br />
           Please <a href="">refresh the page</a> and try again.
         </StatusMessage>;
     }
