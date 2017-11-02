@@ -80,11 +80,13 @@ export default class SearchBar extends React.Component {
 
     id = id || uuid.v4();
 
+    const hasInternalText = !_.isUndefined(internalText);
+
     const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
       'usa-search-small': size === 'small',
       'cf-search-ahead': isSearchAhead,
-      'cf-has-internal-text': Boolean(internalText)
+      'cf-has-internal-text': hasInternalText
     });
 
     const buttonClassNames = classnames({
@@ -97,7 +99,7 @@ export default class SearchBar extends React.Component {
     });
 
     const searchClasses = classnames('cf-search-input-with-close', {
-      'cf-search-with-internal-text': Boolean(internalText)
+      'cf-search-with-internal-text': hasInternalText
     });
 
     return <span className={searchTypeClasses} role="search">
@@ -115,7 +117,7 @@ export default class SearchBar extends React.Component {
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value}/>
-      {_.size(internalText) > 0 &&
+      {hasInternalText &&
         <input
           type="text"
           value={internalText}

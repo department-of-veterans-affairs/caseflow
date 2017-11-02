@@ -75,7 +75,7 @@ export class DocumentSearch extends React.PureComponent {
   searchBarRef = (node) => this.searchBar = node
 
   render() {
-    let internalText = ' ';
+    let internalText = '';
 
     if (this.searchTerm.length) {
       if (this.props.totalMatchesInFile > 0) {
