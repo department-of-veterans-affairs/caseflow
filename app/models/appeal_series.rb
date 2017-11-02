@@ -6,12 +6,12 @@ class AppealSeries < ActiveRecord::Base
 
   class << self
     def appeal_series_by_vbms_id(vbms_id)
-      appeals = AppealRepository.appeals_by_vbms_id(vbms_id)
+      appeals = Appeal.repository.appeals_by_vbms_id(vbms_id)
 
       return [] if appeals.empty?
 
       no_series_cnt = appeals.count { |appeal| !appeal.appeal_series }
-      needs_update = no_series_cnt.positive?
+      needs_update = no_series_cnt > 0
 
       if !needs_update
         merge_cnt = appeals.count { |appeal| appeal.disposition == "Merged Appeal" }
@@ -26,13 +26,13 @@ class AppealSeries < ActiveRecord::Base
     private
 
     def generate_appeal_series_for_vbms_id(vbms_id)
-      appeals = AppealRepository.appeals_by_vbms_id(vbms_id)
+      appeals = Appeal.repository.appeals_by_vbms_id(vbms_id)
 
-      appeals.map(&:appeal_series).uniq.each(&:delete)
+      appeals.map(&:appeal_series).compact.uniq.each(&:delete)
 
       nodes = appeals.map do |appeal|
         node = { appeal: appeal, children: [] }
-        return node if appeal.type == "Original"
+        next node if appeal.type == "Original"
 
         if %w(B W).include? appeal.id[-1]
           parent_id = appeal.id[0...-1]
@@ -44,12 +44,12 @@ class AppealSeries < ActiveRecord::Base
             node[:incomplete] = true
           end
 
-          return node
+          next node
         end
 
         if !appeal.prior_decision_date || appeal.prior_decision_date >= appeal.decision_date
           node[:incomplete] = true
-          return node
+          next node
         end
 
         parent_candidates = appeals.select do |candidate|
@@ -58,10 +58,10 @@ class AppealSeries < ActiveRecord::Base
 
         if parent_candidates.empty?
           node[:incomplete] = true
-          return node
+          next node
         elsif parent_candidates.length == 1
           node[:parent_appeal] = parent_candidates.first
-          return node
+          next node
         end
 
         parent_candidates.select! do |candidate|
@@ -90,7 +90,7 @@ class AppealSeries < ActiveRecord::Base
 
       traverse = lambda do |node, &block|
         block.call(node)
-        node.children.each { |child| traverse.call(child, block) }
+        node[:children].each { |child| traverse.call(child, block) }
       end
 
       roots.each_with_index do |root, sid|
