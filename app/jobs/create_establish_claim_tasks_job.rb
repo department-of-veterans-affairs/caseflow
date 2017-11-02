@@ -8,8 +8,10 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
       AppealRepository.amc_full_grants(outcoded_after: full_grant_outcoded_after).each do |appeal|
         EstablishClaim.find_or_create_by(appeal: appeal)
       end
-    else
-      # fetch all partial grants
+    end
+
+    # fetch all partial grants
+    if FeatureToggle.enabled?(:dispatch_partial_grants_remands)
       AppealRepository.remands_ready_for_claims_establishment.each do |appeal|
         EstablishClaim.find_or_create_by(appeal: appeal)
       end
