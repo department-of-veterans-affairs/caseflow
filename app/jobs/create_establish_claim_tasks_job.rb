@@ -11,8 +11,10 @@ class CreateEstablishClaimTasksJob < ActiveJob::Base
     end
 
     # fetch all partial grants
-    AppealRepository.remands_ready_for_claims_establishment.each do |appeal|
-      EstablishClaim.find_or_create_by(appeal: appeal)
+    if FeatureToggle.enabled?(:dispatch_partial_grants_remands)
+      AppealRepository.remands_ready_for_claims_establishment.each do |appeal|
+        EstablishClaim.find_or_create_by(appeal: appeal)
+      end
     end
   end
 
