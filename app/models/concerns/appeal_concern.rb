@@ -4,9 +4,7 @@ module AppealConcern
   delegate :station_key, to: :regional_office
 
   def regional_office
-    # TODO: We should probably use RegionalOffice.find! here since it
-    #       would be truly exceptional if the RO didn't exist
-    @regional_office ||= RegionalOffice.new(regional_office_key)
+    @regional_office ||= RegionalOffice.find!(regional_office_key)
   end
 
   def regional_office_name
