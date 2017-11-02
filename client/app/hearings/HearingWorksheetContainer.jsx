@@ -30,10 +30,10 @@ export class HearingWorksheetContainer extends React.Component {
 
     if (this.props.worksheetServerError) {
       return <StatusMessage
-          title="Unable to load the worksheet">
+        title="Unable to load the worksheet">
           It looks like Caseflow was unable to load the worksheet.<br />
           Please <a href="">refresh the page</a> and try again.
-        </StatusMessage>;
+      </StatusMessage>;
     }
 
     if (!this.props.worksheet) {
