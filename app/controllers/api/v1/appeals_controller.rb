@@ -35,7 +35,7 @@ class Api::V1::AppealsController < Api::ApplicationController
   end
 
   def verify_feature_enabled
-    unauthorized unless FeatureToggle.enabled?(:appeals_status)
+    unauthorized
   end
 
   def veteran_not_found
