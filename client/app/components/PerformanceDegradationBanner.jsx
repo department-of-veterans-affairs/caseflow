@@ -30,6 +30,9 @@ export default class PerformanceDegradationBanner extends React.Component {
     ApiUtil.get('/dependencies-check').
       then((data) => {
         let outage = JSON.parse(data.text).dependencies_outage;
+        console.log("LOL");
+        console.log(outage);
+        console.log("LOL");
 
         this.setState({
           showBanner: Boolean(outage),
@@ -58,6 +61,9 @@ export default class PerformanceDegradationBanner extends React.Component {
 
   render() {
 
+    console.log("LOL");
+    console.log(window.location.pathname);
+    console.log("LOL");
     return <div>
       { this.state.showBanner &&
         <div className="usa-banner">
