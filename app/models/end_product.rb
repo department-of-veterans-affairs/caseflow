@@ -11,8 +11,8 @@ class EndProduct
   INACTIVE_STATUSES = %w(CAN CLR).freeze
 
   RAMP_CODES = {
-    "682RAMP" => "Higher Level Review Rating",
-    "683RAMP" => "Supplemental Claim Review Rating"
+    "682HLRRRAMP" => "Higher Level Review Rating",
+    "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }
 
   DISPATCH_CODES = {

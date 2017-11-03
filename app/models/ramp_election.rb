@@ -9,6 +9,12 @@ class RampElection < ActiveRecord::Base
     higher_level_review_with_hearing: "higher_level_review_with_hearing"
   }
 
+  END_PRODUCT_DATA_BY_OPTION = {
+    "supplemental_claim" => { code: "683SCRRRAMP", modifier: "683" },
+    "higher_level_review" => { code: "682HLRRRAMP", modifier: "682" },
+    "higher_level_review_with_hearing" => { code: "682HLRRRAMP", modifier: "682" }
+  }
+
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_receipt
   validate :validate_receipt_date
 
@@ -16,30 +22,28 @@ class RampElection < ActiveRecord::Base
     @saving_receipt = true
   end
 
-<<<<<<< HEAD
-  def create_end_product!(end_product_params)
+  def create_end_product!
     end_product = EndProduct.new(
-      claim_date: Time.zone.now,
-      claim_type_code: hash[:end_product_code],
-      modifier: hash[:end_product_modifier],
-      suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
-      gulf_war_registry: hash[:gulf_war_registry],
-      station_of_jurisdiction: hash[:station_of_jurisdiction]
+      claim_date: receipt_date,
+      claim_type_code: END_PRODUCT_DATA_BY_OPTION[option_selected][:code],
+      modifier: END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier],
+      suppress_acknowledgement_letter: false,
+      gulf_war_registry: false,
+      station_of_jurisdiction: "397"
     )
 
     fail InvalidEndProductError unless end_product.valid?
 
-
     establish_claim_in_vbms(end_product).tap do |result|
-      ## SAVE THE EP ID
+      self.end_product_reference_id = result.claim_id
     end
 
   rescue VBMS::HTTPError => error
-    raise parse_vbms_error(error)
-=======
+    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
+  end
+
   def successfully_received?
     ramp_intakes.where(completion_status: "success").any?
->>>>>>> master
   end
 
   private

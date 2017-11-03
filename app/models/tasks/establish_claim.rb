@@ -5,14 +5,6 @@ class EstablishClaim < Task
 
   class InvalidEndProductError < StandardError; end
 
-  class VBMSError < StandardError
-    attr_reader :error_code
-
-    def initialize(error_code)
-      @error_code = error_code
-    end
-  end
-
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
@@ -89,7 +81,7 @@ class EstablishClaim < Task
     end
 
   rescue VBMS::HTTPError => error
-    raise parse_vbms_error(error)
+    raise VBMSError.from_establish_claim_error(error)
   end
 
   def complete_with_review!(vacols_note:)
@@ -195,21 +187,6 @@ class EstablishClaim < Task
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: appeal.veteran.to_vbms_hash
     )
-  end
-
-  def parse_vbms_error(error)
-    case error.body
-    when /PIF is already in use/
-      return VBMSError.new("duplicate_ep")
-    when /A duplicate claim for this EP code already exists/
-      return VBMSError.new("duplicate_ep")
-    when /The PersonalInfo SSN must not be empty./
-      return VBMSError.new("missing_ssn")
-    when /The PersonalInfo.+must not be empty/
-      return VBMSError.new("bgs_info_invalid")
-    else
-      return error
-    end
   end
 
   def decision_reviewed_action_description
