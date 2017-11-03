@@ -990,48 +990,20 @@ export const reducer = (state = initialState, action = {}) => {
         documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
-    return update(
-      state,
-      {
-        ui: {
-          pdf: {
-            $merge: { hidePdfSidebar: !state.ui.pdf.hidePdfSidebar }
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } } } }
     );
   case Constants.TOGGLE_SEARCH_BAR:
-    return update(
-      state,
-      {
-        ui: {
-          pdf: {
-            $merge: { hideSearchBar: !state.ui.pdf.hideSearchBar }
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: !state.ui.pdf.hideSearchBar } } } }
     );
   case Constants.SHOW_SEARCH_BAR:
-    return update(
-      state,
-      {
-        ui: {
-          pdf: {
-            $set: { hideSearchBar: false }
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: false } } } }
     );
   case Constants.HIDE_SEARCH_BAR:
-    return update(
-      state,
-      {
-        ui: {
-          pdf: {
-            $set: { hideSearchBar: true }
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: true } } } }
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
