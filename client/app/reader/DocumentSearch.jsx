@@ -74,10 +74,10 @@ export class DocumentSearch extends React.PureComponent {
 
   searchBarRef = (node) => this.searchBar = node
 
-  render() {
+  getInternalText = () => {
     let internalText = '';
 
-    if (this.searchTerm.length) {
+    if (_.size(this.searchTerm)) {
       if (this.props.totalMatchesInFile > 0) {
         internalText = `${this.props.getCurrentMatch + 1} of ${this.props.totalMatchesInFile}`;
       } else if (this.props.totalMatchesInFile > 9999) {
@@ -87,6 +87,10 @@ export class DocumentSearch extends React.PureComponent {
       }
     }
 
+    return internalText;
+  }
+
+  render() {
     const classes = classNames('cf-search-bar', {
       hidden: this.props.hidden
     });
@@ -100,7 +104,7 @@ export class DocumentSearch extends React.PureComponent {
         placeholder="Type to search..."
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
-        internalText={internalText}
+        internalText={this.getInternalText()}
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}

@@ -233,41 +233,6 @@ export const hideSearchBar = () => ({
   type: Constants.HIDE_SEARCH_BAR
 });
 
-export const setUpPdfPage = (file, pageIndex, page) => ({
-  type: Constants.SET_UP_PDF_PAGE,
-  payload: {
-    file,
-    pageIndex,
-    page
-  }
-});
-
-export const clearPdfPage = (file, pageIndex, page) => ({
-  type: Constants.CLEAR_PDF_PAGE,
-  payload: {
-    file,
-    pageIndex,
-    page
-  }
-});
-
-export const clearPdfDocument = (file, pageIndex, doc) => ({
-  type: Constants.CLEAR_PDF_DOCUMENT,
-  payload: {
-    file,
-    pageIndex,
-    doc
-  }
-});
-
-export const setPdfDocument = (file, doc) => ({
-  type: Constants.SET_PDF_DOCUMENT,
-  payload: {
-    file,
-    doc
-  }
-});
-
 /** Set current PDF **/
 export const selectCurrentPdfLocally = (docId) => ({
   type: Constants.SELECT_CURRENT_VIEWER_PDF,

@@ -990,49 +990,45 @@ export const reducer = (state = initialState, action = {}) => {
         documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdf: {
-            hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
+            $merge: { hidePdfSidebar: !state.ui.pdf.hidePdfSidebar }
           }
         }
       }
     );
   case Constants.TOGGLE_SEARCH_BAR:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdf: {
-            hideSearchBar: !state.ui.pdf.hideSearchBar
+            $merge: { hideSearchBar: !state.ui.pdf.hideSearchBar }
           }
         }
       }
     );
   case Constants.SHOW_SEARCH_BAR:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdf: {
-            hideSearchBar: false
+            $set: { hideSearchBar: false }
           }
         }
       }
     );
   case Constants.HIDE_SEARCH_BAR:
-    return _.merge(
-      {},
+    return update(
       state,
       {
         ui: {
           pdf: {
-            hideSearchBar: true
+            $set: { hideSearchBar: true }
           }
         }
       }
