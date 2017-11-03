@@ -100,7 +100,7 @@ export default class TestUsers extends React.PureComponent {
         some users have access to different parts of the same application.</p>
       <strong>App Selector:</strong>
       <TabWindow
-        tabs={tabs}/>
+        tabs={tabs} />
     </div>;
   }
 

@@ -192,7 +192,7 @@ export class PdfUI extends React.Component {
                 href={`/reader/appeal${this.props.documentPathBase}/${this.props.doc.id}`}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
-                  <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLink /></span>
                 </h1>
               </Link>
             </span>
@@ -219,7 +219,7 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.fitToScreen}
             ariaLabel="fit to screen">
-            <FitToScreen/>
+            <FitToScreen />
           </Button>
           <Button
             name="rotation"
@@ -234,7 +234,7 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-download-icon']}
             onClick={this.openDownloadLink}
             ariaLabel="download pdf">
-            <DownloadIcon/>
+            <DownloadIcon />
           </Button>
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">

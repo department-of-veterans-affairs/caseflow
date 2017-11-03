@@ -43,7 +43,7 @@ export class CertificationProgressBar extends React.Component {
     let showProgressBar = !this.props.serverError;
 
     return <div>
-      { showProgressBar && <ProgressBar sections={this.deriveSections()}/> }
+      { showProgressBar && <ProgressBar sections={this.deriveSections()} /> }
     </div>;
   }
 }

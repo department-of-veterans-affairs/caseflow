@@ -166,7 +166,7 @@ export default class CancelCertificationModal extends BaseForm {
           required
           onChange={this.onCancellationReasonChange}
           errorMessage={this.state.
-            certificationCancellationForm.cancellationReason.errorMessage}/>
+            certificationCancellationForm.cancellationReason.errorMessage} />
         {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
@@ -182,7 +182,7 @@ export default class CancelCertificationModal extends BaseForm {
           onChange={this.onEmailChange}
           errorMessage={this.state.certificationCancellationForm.email.errorMessage}
           value={this.state.emailValue}
-          required/>
+          required />
       </Modal>
     </div>;
   }

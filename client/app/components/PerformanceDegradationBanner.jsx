@@ -62,7 +62,7 @@ export default class PerformanceDegradationBanner extends React.Component {
         <div className="usa-banner">
           <div className="usa-grid usa-banner-inner">
             <div className="banner-icon">
-              <WrenchIcon/>
+              <WrenchIcon />
             </div>
             <span className="banner-text">
               We've detected technical issues in our system.

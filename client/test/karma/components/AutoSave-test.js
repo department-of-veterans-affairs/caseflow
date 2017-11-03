@@ -67,7 +67,7 @@ describe('AutoSave', () => {
       const saveFunc = sinon.spy(saveFunction);
 
       mount(
-        <AutoSave save={saveFunc} intervalInMs={intervalInMs}/>
+        <AutoSave save={saveFunc} intervalInMs={intervalInMs} />
       );
 
       clock.tick(intervalInMs);

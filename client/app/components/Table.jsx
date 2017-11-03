@@ -110,7 +110,7 @@ class FooterRow extends React.PureComponent {
     const hasFooters = _.some(props.columns, 'footer');
 
     return <tfoot>
-      {hasFooters && <Row columns={props.columns} footer/>}
+      {hasFooters && <Row columns={props.columns} footer />}
     </tfoot>;
   }
 }
@@ -151,7 +151,7 @@ export default class Table extends React.PureComponent {
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow columns={columns} headerClassName={headerClassName}/>
+      <HeaderRow columns={columns} headerClassName={headerClassName} />
       <BodyRows
         id={tbodyId}
         tbodyRef={tbodyRef}

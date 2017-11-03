@@ -67,7 +67,7 @@ const CREATE_EP_ERRORS = {
     body: <span>
             This veteran does not have a social security number, so their
             claim cannot be established in Caseflow.
-      <br/>
+      <br />
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
     </span>
@@ -77,7 +77,7 @@ const CREATE_EP_ERRORS = {
     body: <span>
             The veteran's profile in the corporate database is missing information
             required by Caseflow.
-      <br/>
+      <br />
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
     </span>

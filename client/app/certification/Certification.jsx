@@ -26,7 +26,7 @@ class EntryPointRedirect extends React.Component {
       match
     } = this.props;
 
-    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`} />;
   }
 }
 
@@ -157,7 +157,7 @@ export class Certification extends React.Component {
         !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) &&
         <LoadingScreen
           message={message}
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}/>
+          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION} />
       }
 
       {
@@ -169,10 +169,10 @@ export class Certification extends React.Component {
         <div>
           <BrowserRouter>
             <div>
-              <Header/>
-              <CertificationProgressBar/>
+              <Header />
+              <CertificationProgressBar />
               <Route path="/certifications/new/:vacols_id"
-                component={EntryPointRedirect}/>
+                component={EntryPointRedirect} />
               <PageRoute
                 title="Check Documents | Caseflow Certification"
                 path="/certifications/:vacols_id/check_documents"
@@ -191,7 +191,7 @@ export class Certification extends React.Component {
               <PageRoute
                 title="Sign and Certify | Caseflow Certification"
                 path="/certifications/:vacols_id/sign_and_certify"
-                component={SignAndCertify}/>
+                component={SignAndCertify} />
               <PageRoute
                 title="Success! | Caseflow Certification"
                 path="/certifications/:vacols_id/success"

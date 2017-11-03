@@ -37,7 +37,7 @@ export default class EstablishClaimComplete extends React.Component {
     quotaReachedMessage = () => {
       if (hasQuotaReached) {
         return <span>
-          <h2>Way to go!</h2> 💪💻🇺🇸<br/>
+          <h2>Way to go!</h2> 💪💻🇺🇸<br />
           <h2 className ="cf-msg-screen-deck cf-success-emoji-text">
              You have completed all of the total cases assigned to you today.
           </h2>

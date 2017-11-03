@@ -144,17 +144,17 @@ export class SignAndCertify extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/success`}/>;
+        to={`/certifications/${match.params.vacols_id}/success`} />;
     }
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'}/>;
+        to={'/certifications/error'} />;
     }
 
     const shouldDisplayCertifyingOfficialTitleOther =
@@ -181,14 +181,14 @@ export class SignAndCertify extends React.Component {
             value={certifyingOfficialName}
             errorMessage={this.certifyingOfficialNameError()}
             required
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')} />
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
             required
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')} />
           {
             shouldDisplayCertifyingOfficialTitleOther &&
             <TextField
