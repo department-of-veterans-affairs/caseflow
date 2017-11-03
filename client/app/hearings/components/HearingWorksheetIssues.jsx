@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import Table from '../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
+import IssuesUtil from '../util/IssuesUtil';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -15,7 +15,8 @@ class HearingWorksheetIssues extends PureComponent {
     let {
       worksheetIssues,
       worksheetStreamsAppeal,
-      appealKey
+      appealKey,
+      issueCount
     } = this.props;
 
 
@@ -56,19 +57,14 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    // Deleted issues can't be removed from Redux because we need to send them
-    // to the backend with their ID information. We filter them from the display.
-    const filteredIssues = _.pickBy(worksheetIssues, (issue) => {
-      // eslint-disable-next-line no-underscore-dangle
-      return !issue._destroy && issue.appeal_id === worksheetStreamsAppeal.id;
-    });
+    const filteredIssues = IssuesUtil.filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
 
     const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
 
       let issueRow = worksheetIssues[issue];
 
       return {
-        counter: <b>{key + 1}.</b>,
+        counter: <b>{key + issueCount + 1}.</b>,
         program: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
@@ -124,5 +120,6 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
-  worksheetStreamsAppeal: PropTypes.object.isRequired
+  worksheetStreamsAppeal: PropTypes.object.isRequired,
+  issueCount: PropTypes.number.isRequired
 };
