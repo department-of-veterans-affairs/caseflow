@@ -55,6 +55,8 @@ gem 'pdfjs_viewer-rails', git: "https://github.com/senny/pdfjs_viewer-rails.git"
 # Error reporting to Sentry
 gem "sentry-raven"
 
+gem 'newrelic_rpm'
+
 # Used to colorize output for rake tasks
 gem "rainbow"
 
