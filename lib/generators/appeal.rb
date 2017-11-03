@@ -7,8 +7,8 @@ class Generators::Appeal
         vbms_id: generate_external_id,
         vacols_id: generate_external_id,
         vacols_record: :ready_to_certify,
-        manifest_vbms_fetched_at: Time.zone.now.strftime("%D %l:%M%P %Z"),
-        manifest_vva_fetched_at: Time.zone.now.strftime("%D %l:%M%P %Z")
+        manifest_vbms_fetched_at: Time.zone.now,
+        manifest_vva_fetched_at: Time.zone.now
       }
     end
 
@@ -60,6 +60,7 @@ class Generators::Appeal
           certification_date: 1.day.ago
         },
         activated: {
+          status: "Active",
           certification_date: 4.days.ago,
           case_review_date: 1.day.ago
         },

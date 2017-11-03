@@ -25,7 +25,7 @@ export default class StyleGuideNavigationBar extends React.Component {
         title="Navigation Bar"
         id="navigation_bar"
         link="StyleGuideNavigationBar.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <p>
       The Navigation Bar is a simple white bar that sits on top of every application.
