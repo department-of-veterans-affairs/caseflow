@@ -121,7 +121,7 @@ class AppealSeries < ActiveRecord::Base
       # The issue description field has a character limit, so the note may be truncated
       merged.each_with_index do |node, i|
         abbr_merge_str = ""
-        abbr_len = 23 # The minimum truncated length that can be searched for
+        abbr_len = 30 # The minimum truncated length that can be searched for
 
         loop do
           abbr_merge_str = merge_strs[i][0...abbr_len]
