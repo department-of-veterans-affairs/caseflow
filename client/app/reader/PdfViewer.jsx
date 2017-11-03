@@ -7,10 +7,10 @@ import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import {
-  selectCurrentPdf, fetchAppealDetails
-} from './actions';
+  selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal
+} from '../reader/PdfViewer/PdfViewerActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon,
-  deleteAnnotation, closeAnnotationDeleteModal
+  deleteAnnotation
 } from '../reader/PdfViewer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
@@ -269,7 +269,6 @@ PdfViewer.propTypes = {
     id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
-  onScrollToComment: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,

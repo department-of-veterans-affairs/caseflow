@@ -71,6 +71,7 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
+    FeatureToggle.disable!(:reader_blacklist)
   end
 
   let(:vacols_record) { :remand_decided }
@@ -97,6 +98,17 @@ RSpec.feature "Reader" do
 
   let!(:current_user) do
     User.authenticate!(roles: ["Reader"])
+  end
+
+  context "User on blacklist" do
+    before do
+      FeatureToggle.enable!(:reader_blacklist, users: [current_user.css_id])
+    end
+
+    scenario "it redirects to unauthorized" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Unauthorized")
+    end
   end
 
   context "Short list of documents" do
@@ -186,8 +198,12 @@ RSpec.feature "Reader" do
     end
 
     context "Appeals without any issues" do
-      let(:vbms_fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
-      let(:vva_fetched_ts) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+      let(:fetched_at_format) { "%D %l:%M%P %Z" }
+      let(:vbms_fetched_ts) { Time.zone.now }
+      let(:vva_fetched_ts) { Time.zone.now }
+
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
 
       let(:appeal) do
         Generators::Appeal.build(
@@ -217,8 +233,8 @@ RSpec.feature "Reader" do
       context "When both document source manifest retrieval times are set" do
         scenario "Both times display on the page" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{vbms_fetched_ts}")
-          expect(find("#vva-manifest-retrieved-at").text).to have_content("Last VVA retrieval: #{vva_fetched_ts}")
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
         end
       end
 
@@ -226,7 +242,7 @@ RSpec.feature "Reader" do
         let(:vva_fetched_ts) { nil }
         scenario "Only VBMS time displays on the page" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content("Last VBMS retrieval: #{vbms_fetched_ts}")
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(page).to_not have_css("#vva-manifest-retrieved-at")
         end
       end
@@ -947,7 +963,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Docket Number")
       expect(page).to have_content(appeal.docket_number)
       expect(page).to have_content("Regional Office")
-      expect(page).to have_content("#{appeal.regional_office[:key]} - #{appeal.regional_office[:city]}")
+      expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
       appeal.issues do |issue|
         expect(page).to have_content(issue.type[:label])

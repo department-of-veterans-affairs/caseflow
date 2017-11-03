@@ -1,21 +1,16 @@
-/* eslint-disable max-lines */
-
-import * as Constants from './constants';
 import _ from 'lodash';
-import ApiUtil from '../util/ApiUtil';
-import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
-import { createSearchAction } from 'redux-search';
-import { selectAnnotation } from '../reader/PdfViewer/AnnotationActions';
+
+import * as Constants from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
+import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
 });
 
-export const onScrollToComment = (scrollToComment) => ({
-  type: Constants.SCROLL_TO_COMMENT,
-  payload: { scrollToComment }
-});
+/** Annotation Modal **/
 
 export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
   type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
@@ -40,6 +35,8 @@ export const closeAnnotationDeleteModal = () => ({
     }
   }
 });
+
+/** Jump To Page **/
 
 export const jumpToPage = (pageNumber, docId) => ({
   type: Constants.JUMP_TO_PAGE,
@@ -80,6 +77,8 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
+/** Tags **/
+
 export const newTagRequestSuccess = (docId, createdTags) =>
   (dispatch, getState) => {
     dispatch({
@@ -102,25 +101,6 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
     tagsThatWereAttemptedToBeCreated
   }
 });
-
-export const selectCurrentPdfLocally = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
-});
-
-export const selectCurrentPdf = (docId) => (dispatch) => {
-  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
-    catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Error marking as read', docId, err);
-    });
-
-  dispatch(
-    selectCurrentPdfLocally(docId)
-  );
-};
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
@@ -159,27 +139,6 @@ export const removeTag = (doc, tagId) =>
       }, () => {
         dispatch(removeTagRequestFailure(doc.id, tagId));
       });
-  }
-;
-
-
-export const onReceiveAppealDetails = (appeal) => ({
-  type: Constants.RECEIVE_APPEAL_DETAILS,
-  payload: { appeal }
-});
-
-export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
-  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
-  payload: { failedToLoad }
-});
-
-export const fetchAppealDetails = (vacolsId) =>
-  (dispatch) => {
-    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-
-      dispatch(onReceiveAppealDetails(returnedObject.appeal));
-    }, () => dispatch(onAppealDetailsLoadingFail()));
   };
 
 export const addNewTag = (doc, tags) =>
@@ -206,8 +165,30 @@ export const addNewTag = (doc, tags) =>
           dispatch(newTagRequestFailed(doc.id, newTags));
         });
     }
-  }
-;
+  };
+
+/** Getting Appeal Details **/
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { failedToLoad }
+});
+
+export const fetchAppealDetails = (vacolsId) =>
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+    }, () => dispatch(onAppealDetailsLoadingFail()));
+  };
+
+/** Sidebar and Accordion controls **/
 
 export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({
   type: Constants.SET_OPENED_ACCORDION_SECTIONS,
@@ -240,96 +221,23 @@ export const togglePdfSidebar = () => ({
   }
 });
 
-export const setUpPdfPage = (file, pageIndex, page) => ({
-  type: Constants.SET_UP_PDF_PAGE,
-  payload: {
-    file,
-    pageIndex,
-    page
-  }
-});
+/** Set current PDF **/
 
-export const clearPdfPage = (file, pageIndex, page) => ({
-  type: Constants.CLEAR_PDF_PAGE,
-  payload: {
-    file,
-    pageIndex,
-    page
-  }
-});
-
-export const clearPdfDocument = (file, pageIndex, doc) => ({
-  type: Constants.CLEAR_PDF_DOCUMENT,
-  payload: {
-    file,
-    pageIndex,
-    doc
-  }
-});
-
-export const setPdfDocument = (file, doc) => ({
-  type: Constants.SET_PDF_DOCUMENT,
-  payload: {
-    file,
-    doc
-  }
-});
-
-export const rotateDocument = (docId) => ({
-  type: Constants.ROTATE_PDF_DOCUMENT,
+export const selectCurrentPdfLocally = (docId) => ({
+  type: Constants.SELECT_CURRENT_VIEWER_PDF,
   payload: {
     docId
   }
 });
 
-export const getDocumentText = (pdfDocument, file) =>
-  (dispatch) => {
-    const getTextForPage = (index) => {
-      return pdfDocument.getPage(index + 1).then((page) => {
-        return page.getTextContent();
-      });
-    };
-    const getTextPromises = _.range(pdfDocument.pdfInfo.numPages).map((index) => getTextForPage(index));
-
-    Promise.all(getTextPromises).then((pages) => {
-      const textObject = pages.reduce((acc, page, pageIndex) => {
-        // PDFJS textObjects have an array of items. Each item has a str.
-        // concatenating all of these gets us to the page text.
-        const concatenated = page.items.map((row) => row.str).join(' ');
-
-        return {
-          ...acc,
-          [`${file}-${pageIndex}`]: {
-            id: `${file}-${pageIndex}`,
-            file,
-            text: concatenated,
-            pageIndex
-          }
-        };
-      }, {});
-
-      dispatch({
-        type: Constants.GET_DOCUMENT_TEXT,
-        payload: {
-          textObject
-        }
-      });
+export const selectCurrentPdf = (docId) => (dispatch) => {
+  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
+    catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log('Error marking as read', docId, err);
     });
-  }
-;
 
-export const updateSearchIndex = (increment) => ({
-  type: Constants.UPDATE_SEARCH_INDEX,
-  payload: {
-    increment
-  }
-});
-
-export const zeroSearchIndex = () => ({
-  type: Constants.ZERO_SEARCH_INDEX
-});
-
-export const searchText = (searchTerm) => (dispatch) => {
-  dispatch(zeroSearchIndex());
-  dispatch(createSearchAction('extractedText')(searchTerm));
+  dispatch(
+    selectCurrentPdfLocally(docId)
+  );
 };

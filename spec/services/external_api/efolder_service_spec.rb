@@ -87,7 +87,9 @@ describe ExternalApi::EfolderService do
 
       context "with one document" do
         let(:expected_received_at1) { Faker::Date.backward }
-        let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
+        let(:expected_document1) do
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
+        end
         let(:attrs_in) do
           {
             documents: [
@@ -152,8 +154,12 @@ describe ExternalApi::EfolderService do
 
         let(:expected_received_at1) { Faker::Date.backward }
         let(:expected_received_at2) { Faker::Date.backward }
-        let(:expected_document1) { Generators::Document.build(type: "SSOC", filename: nil) }
-        let(:expected_document2) { Generators::Document.build(type: "NOD", filename: nil) }
+        let(:expected_document1) do
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
+        end
+        let(:expected_document2) do
+          Generators::Document.build(type: "NOD", filename: nil, file_number: appeal.sanitized_vbms_id)
+        end
 
         it "returns an array with all Document objects" do
           # Convert the received_at to a string so we can compare the results properly
@@ -171,9 +177,10 @@ describe ExternalApi::EfolderService do
       context "with error code" do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
+        let(:err_msg) { "eFolder HTTP status code: 404 for appeal: #{appeal}." }
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError, err_msg)
         end
       end
     end

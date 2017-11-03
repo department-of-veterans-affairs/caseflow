@@ -4,22 +4,37 @@ class Intake < ActiveRecord::Base
 
   enum completion_status: {
     success: "success",
-    canceled: "canceled"
+    canceled: "canceled",
+    error: "error"
   }
 
-  attr_reader :error_code, :error_data
+  ERROR_CODES = {
+    invalid_file_number: "invalid_file_number",
+    veteran_not_found: "veteran_not_found",
+    veteran_not_accessible: "veteran_not_accessible"
+  }.freeze
+
+  attr_reader :error_data
 
   def self.in_progress
     where(completed_at: nil).where.not(started_at: nil)
   end
 
   def start!
-    return false unless validate_start
+    if validate_start
+      update_attributes(
+        started_at: Time.zone.now,
+        detail: find_or_create_initial_detail
+      )
+    else
+      update_attributes(
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: :error
+      )
 
-    update_attributes(
-      started_at: Time.zone.now,
-      detail: find_or_create_initial_detail
-    )
+      return false
+    end
   end
 
   def complete_with_status!(status)
@@ -31,13 +46,13 @@ class Intake < ActiveRecord::Base
 
   def validate_start
     if !file_number_valid?
-      @error_code = :invalid_file_number
+      self.error_code = :invalid_file_number
 
     elsif !veteran.found?
-      @error_code = :veteran_not_found
+      self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
-      @error_code = :veteran_not_accessible
+      self.error_code = :veteran_not_accessible
 
     else
       validate_detail_on_start

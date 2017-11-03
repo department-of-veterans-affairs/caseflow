@@ -470,7 +470,12 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vbms_id: "11555555C",
-      vacols_record: :remand_decided
+      vacols_record: :activated
+    )
+
+    Generators::Appeal.build(
+      vbms_id: "12555555C",
+      vacols_record: :full_grant_decided
     )
 
     Generators::Appeal.build(

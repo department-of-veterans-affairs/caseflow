@@ -208,7 +208,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def eligible_for_ramp?
-    status == "Advance"
+    status == "Advance" || status == "Remand"
   end
 
   def attributes_for_hearing
@@ -225,11 +225,6 @@ class Appeal < ActiveRecord::Base
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
-  end
-
-  def station_key
-    result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
-    result && result.first
   end
 
   def nod
@@ -412,11 +407,12 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
       hash["issues"] = issues
+      hash["regional_office"] = regional_office_hash
     end
   end
 
@@ -465,9 +461,9 @@ class Appeal < ActiveRecord::Base
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
-    @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
     @fetched_documents = doc_struct[:documents]
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
+    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
   end
 
   def fetched_documents
@@ -483,6 +479,11 @@ class Appeal < ActiveRecord::Base
       else
         VBMSService
       end
+  end
+
+  # Used for serialization
+  def regional_office_hash
+    regional_office.to_h
   end
 
   class << self

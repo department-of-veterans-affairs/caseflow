@@ -1,6 +1,13 @@
 class RampIntake < Intake
   include CachedAttributes
 
+  enum error_code: {
+    did_not_receive_ramp_election: "did_not_receive_ramp_election",
+    ramp_election_already_complete: "ramp_election_already_complete",
+    no_eligible_appeals: "no_eligible_appeals",
+    no_active_appeals: "no_active_appeals"
+  }.merge(Intake::ERROR_CODES)
+
   def find_or_create_initial_detail
     matching_ramp_election
   end
@@ -44,19 +51,26 @@ class RampIntake < Intake
   # Appeals in VACOLS that will be closed out in favor
   # of a new format review
   def eligible_appeals
-    Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:eligible_for_ramp?)
+    active_veteran_appeals.select(&:eligible_for_ramp?)
+  end
+
+  def active_veteran_appeals
+    @veteran_appeals ||= Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
   end
 
   def validate_detail_on_start
     if veteran_ramp_elections.empty?
-      @error_code = :did_not_receive_ramp_election
+      self.error_code = :did_not_receive_ramp_election
 
     elsif !matching_ramp_election
-      @error_code = :ramp_election_already_complete
+      self.error_code = :ramp_election_already_complete
       @error_data = { notice_date: veteran_ramp_elections.last.notice_date }
 
+    elsif active_veteran_appeals.empty?
+      self.error_code = :no_active_appeals
+
     elsif eligible_appeals.empty?
-      @error_code = :no_eligible_appeals
+      self.error_code = :no_eligible_appeals
     end
   end
 

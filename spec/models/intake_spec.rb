@@ -65,7 +65,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -74,7 +74,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -83,7 +83,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -92,7 +92,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -101,7 +101,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -110,7 +110,7 @@ describe Intake do
 
       it "adds veteran_not_found and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:veteran_not_found)
+        expect(intake.error_code).to eq("veteran_not_found")
       end
     end
 
@@ -121,7 +121,7 @@ describe Intake do
 
       it "adds veteran_not_accessible and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:veteran_not_accessible)
+        expect(intake.error_code).to eq("veteran_not_accessible")
       end
     end
 
