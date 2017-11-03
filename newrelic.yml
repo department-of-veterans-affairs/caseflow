@@ -9,6 +9,10 @@ common: &default_settings
   # Logging level for log/newrelic_agent.log
   log_level: info
 
+  # Exception messages may have PII, so we won't send them.
+  # If we are sure that certain exceptions will not have PII, then we can whitelist them in this config file.
+  strip_exception_messages.enabled: true
+
 # Environment-specific settings are in this section.
 # RAILS_ENV or RACK_ENV (as appropriate) is used to determine the environment.
 # If your application has other named environments, configure them here.
