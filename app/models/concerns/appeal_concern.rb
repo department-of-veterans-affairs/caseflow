@@ -23,7 +23,7 @@ module AppealConcern
     if veteran_middle_initial
       veteran_name_object.formatted(:readable_mi_formatted)
     else
-      veteran_name
+      veteran_name_object.formatted(:readable_short)
     end
   end
 
