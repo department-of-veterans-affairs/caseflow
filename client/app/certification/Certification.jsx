@@ -166,7 +166,7 @@ export class Certification extends React.Component {
         (this.state.loadingDataFailed || this.state.overallTimeout) && !this.state.certification && failureMessage
       }
 
-      { this.state.certification &&
+      { this.state.certification && !this.state.loading_data &&
       <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
         <div>
           <BrowserRouter>

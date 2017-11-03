@@ -2,8 +2,12 @@ class HearingRepository
   class << self
     # :nocov:
     def upcoming_hearings_for_judge(css_id)
-      records = VACOLS::CaseHearing.upcoming_for_judge(css_id) +
-                VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
+      records = MetricsService.record("VACOLS: HearingRepository.upcoming_hearings_for_judge: #{css_id}",
+                                      service: :vacols,
+                                      name: "upcoming_hearings_for_judge") do
+        VACOLS::CaseHearing.upcoming_for_judge(css_id) +
+          VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
+      end
       hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
     end
 
@@ -17,7 +21,11 @@ class HearingRepository
     end
 
     def load_vacols_data(hearing)
-      vacols_record = VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
+      vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
+                                            service: :vacols,
+                                            name: "load_vacols_data") do
+        VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
+      end
       set_vacols_values(hearing, vacols_record)
       true
     rescue ActiveRecord::RecordNotFound
