@@ -1,6 +1,7 @@
 require "ostruct"
 
 # frozen_string_literal: true
+# rubocop:disable Metrics/ClassLength
 class Fakes::AppealRepository
   class << self
     attr_accessor :issue_records
@@ -492,3 +493,4 @@ class Fakes::AppealRepository
     true
   end
 end
+# rubocop:enable Metrics/ClassLength

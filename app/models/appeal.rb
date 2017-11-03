@@ -532,13 +532,14 @@ class Appeal < ActiveRecord::Base
 
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
+    # rubocop:disable Metrics/ParameterLists
     def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
-        (appeals || [appeal]).each do |appeal|
+        (appeals || [appeal]).each do |close_appeal|
           close_single(
-            appeal: appeal,
+            appeal: close_appeal,
             user: user,
             closed_on: closed_on,
             disposition: disposition
@@ -548,6 +549,7 @@ class Appeal < ActiveRecord::Base
         inside_transaction.call if block_given?
       end
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
