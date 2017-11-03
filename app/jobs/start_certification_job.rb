@@ -15,6 +15,7 @@ class StartCertificationJob < ActiveJob::Base
       update_certification_attributes
     end
     fetch_power_of_attorney! if @certification.certification_status == :started
+    update_data_complete
   rescue => e
     Rails.logger.info "StartCertificationJob failed: #{e.message}"
     Rails.logger.info e.backtrace.join("\n")
@@ -38,7 +39,12 @@ class StartCertificationJob < ActiveJob::Base
       certifying_office: @certification.appeal.regional_office_name,
       certifying_username: @certification.appeal.regional_office_key,
       certifying_official_name: user ? user.full_name : nil,
-      certification_date: Time.zone.now.to_date,
+      certification_date: Time.zone.now.to_date
+    )
+  end
+
+  def update_data_complete
+    @certification.update_attributes!(
       loading_data: false,
       loading_data_failed: false
     )

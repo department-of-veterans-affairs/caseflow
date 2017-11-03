@@ -69,21 +69,25 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="program"
+          maxLength={30}
         />,
         issue: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="name"
+          maxLength={100}
         />,
         levels: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="levels"
+          maxLength={100}
         />,
         description: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="description"
+          maxLength={100}
         />,
         actions: <HearingWorksheetPreImpressions
           appeal={worksheetStreamsAppeal}
