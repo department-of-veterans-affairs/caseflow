@@ -6,7 +6,7 @@ class Generators::Hearings::MasterRecord
       {
         type: :video,
         date: Time.zone.now - 5.days,
-        regional_office_key: VACOLS::RegionalOffice::CITIES.keys.sample,
+        regional_office_key: RegionalOffice::CITIES.keys.sample,
         master_record: true
       }
     end
