@@ -5,8 +5,7 @@ class DependenciesCheckJob < ActiveJob::Base
     if ENV["MONITOR_URL"].present?
       begin
         request = HTTPI::Request.new
-        # request.url = ENV["MONITOR_URL"]
-        request.url = 
+        request.url = ENV["MONITOR_URL"]
         http = HTTPI.get(request, :httpclient)
         Rails.cache.write(:dependencies_report, http.raw_body)
       rescue
