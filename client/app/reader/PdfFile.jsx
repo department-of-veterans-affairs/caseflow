@@ -102,8 +102,6 @@ export class PdfFile extends React.PureComponent {
 
     this.marks = this.marks.filter((mark) => parseInt(mark.dataset.docIdx, 10) === this.props.documentId);
 
-    _.sortBy(this.marks, (mark) => parseInt(mark.dataset.pageIdx, 10));
-
     _(this.marks).
       filter((mark) => mark.classList.contains('highlighted')).
       each((mark) => mark.classList.remove('highlighted'));
