@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 20171101214530) do
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
 
   create_table "appeal_series", force: :cascade do |t|
-    t.boolean "incomplete"
+    t.boolean "incomplete",          default: false
     t.integer "merged_appeal_count"
   end
 

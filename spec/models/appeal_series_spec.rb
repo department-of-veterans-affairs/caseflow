@@ -66,7 +66,7 @@ describe AppealSeries do
       another_original.save
       series = AppealSeries.appeal_series_by_vbms_id(vbms_id)
       expect(series.length).to eq 2
-      expect(original.reload.appeal_series.incomplete).to be_nil
+      expect(original.reload.appeal_series.incomplete).to be false
     end
 
     it "regenerates appeal series if an appeal has been merged" do
@@ -77,7 +77,7 @@ describe AppealSeries do
       original.reload.appeal_series.update(merged_appeal_count: 0, incomplete: true)
       series = AppealSeries.appeal_series_by_vbms_id(vbms_id)
       expect(series.length).to eq 2
-      expect(original.reload.appeal_series.incomplete).to be_nil
+      expect(original.reload.appeal_series.incomplete).to be false
     end
 
     context "matching on folder number for post-remand field dispositions" do
