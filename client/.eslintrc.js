@@ -146,7 +146,7 @@ module.exports = {
     'no-mixed-requires': 'warn',
     'no-multi-spaces': 'warn',
     'no-multi-str': 'error',
-    'no-multiple-empty-lines': 'warn',
+    'no-multiple-empty-lines': ['warn', { max: 1 }],
     'no-native-reassign': 'error',
     'no-negated-condition': 'warn',
     'no-unsafe-negation': 'warn',
