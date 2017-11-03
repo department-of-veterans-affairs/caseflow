@@ -240,7 +240,9 @@ describe AppealSeries do
 
       context "when the issue description is ambiguous" do
         let(:description_1) do
+          # rubocop:disable Metrics/LineLength
           "really really really really really really really really long note From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (76"
+          # rubocop:enable Metrics/LineLength
         end
 
         let(:description_2) { "" }
@@ -257,7 +259,9 @@ describe AppealSeries do
 
       context "when there are multiple issues, some ambiguous" do
         let(:description_1) do
+          # rubocop:disable Metrics/LineLength
           "really really really really really really really really long note From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (76"
+          # rubocop:enable Metrics/LineLength
         end
 
         let(:description_2) do
