@@ -46,7 +46,7 @@ export class HearingWorksheet extends React.PureComponent {
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
     const appellant = worksheet.appellant_mi_formatted ?
-    worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
+      worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
