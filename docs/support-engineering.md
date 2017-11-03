@@ -8,13 +8,15 @@ As we roll out Reader to 700 users, we've noticed some pain points in the way en
 # Proposals
 Below are three proposals for three different types of support tickets.
 ## FAQs - (User error and Common Known Bugs)
-When support fields a one-off question that they don't know the answer to:
+The PMs and engineers will always have the most context on a given product. Support is not expected to know the answer to every user question. However, some questions are repeated many times.
 
 1) Check user help FAQs
 1) Check centralized support-FAQ
 1) Ping PM
 1) If PM is unavailable, ping tech lead
 1) Record this question and answer in centralized support-FAQ
+
+Over time this support-FAQ may migrate to our user help page FAQs.
 
 ## Creating or linking to engineering tickets - (Low Priority)
 It's always difficult to disambiguate low priority from high priority. So we set the following standard: if only one user has sent in feedback on a specific issue within a given day then we treat it as low priority. Support should either find an existing ticket in the product repo (caseflow, caseflow-efolder, etc.) or they should make a new ticket in one of those repos. These tickets should be marked with the support label. The ticket in the product repo should link to each instance in the support repo so that we have context on who reported it and how often it was reported. If support sees more than 5 support issues for a given product ticket they should ping the tech lead about that ticket.
