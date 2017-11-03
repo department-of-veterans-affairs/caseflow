@@ -13,6 +13,20 @@ common: &default_settings
   # If we are sure that certain exceptions will not have PII, then we can whitelist them in this config file.
   strip_exception_messages.enabled: true
 
+  # To avoid sending PII, we explicitly deny all headers and parameters. We then whitelist known safe attributes.
+  attributes.exclude: [response.headers.*, request.headers.*, request.parameters.*]
+  attributes.include: [
+    response.headers.contentType,
+    response.headers.contentLength,
+    request.headers.userAgent,
+    request.headers.accept,
+    request.headers.host,
+    request.headers.contentType,
+  ]
+
+  # Before we enable this, we should verify that it won't send any PII.
+  browser_monitoring.auto_instrument: false
+
 # Environment-specific settings are in this section.
 # RAILS_ENV or RACK_ENV (as appropriate) is used to determine the environment.
 # If your application has other named environments, configure them here.
