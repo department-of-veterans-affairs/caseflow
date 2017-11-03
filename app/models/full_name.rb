@@ -23,7 +23,7 @@ class FullName
     when :readable_full
       [first_name, middle_initial, last_name].select(&:present?).join(" ").titleize
     when :readable_mi_formatted
-      [first_name, middle_initial+'.', last_name].select(&:present?).join(" ").titleize
+      [first_name, middle_initial + ".", last_name].select(&:present?).join(" ").titleize
     when :readable_short
       [first_name, last_name].select(&:present?).join(" ").titleize
     when :form
