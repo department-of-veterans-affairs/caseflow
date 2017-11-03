@@ -62,6 +62,10 @@ class Fakes::AppealRepository
     true
   end
 
+  def self.transaction
+    yield
+  end
+
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
