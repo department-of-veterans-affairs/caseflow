@@ -16,6 +16,7 @@ class AppealSeries < ActiveRecord::Base
       if !needs_update
         merge_cnt = appeals.count { |appeal| appeal.disposition == "Merged Appeal" }
         needs_update = merge_cnt != appeals.first.appeal_series.merged_appeal_count
+        binding.pry
       end
 
       generate_appeal_series_for_vbms_id(vbms_id) if needs_update

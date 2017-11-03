@@ -26,9 +26,7 @@ describe AppealSeries do
 
     it "regenerates appeal series if an appeal has been merged" do
     end
-  end
 
-  context ".generate_appeal_series_for_vbms_id" do
     context "matching on folder number for post-remand field dispositions" do
     end
 
