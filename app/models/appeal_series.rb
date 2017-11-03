@@ -1,6 +1,18 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
+  def latest_appeal
+    active = appeals.select { |appeal| appeal.active? }
+
+    if active.length > 1
+      active.sort! { |x, y| y.last_location_change_date <=> x.last_location_change_date }
+    end
+
+    return active.first if active.length > 0
+
+    appeals.sort { |x, y| y.decision_date <=> x.decision_date }.first
+  end
+
   class << self
     def appeal_series_by_vbms_id(vbms_id)
       appeals = Appeal.repository.appeals_by_vbms_id(vbms_id)
