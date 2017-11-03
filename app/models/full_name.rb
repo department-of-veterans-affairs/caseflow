@@ -17,10 +17,13 @@ class FullName
   # :readable_full => Shane A Russell
   # :readable_short => Shane Russell
   # :form => Russell, Shane, A
+  # :readable_mi_formatted => Shane A. Russell (middle inital formatted)
   def formatted(format)
     case format
     when :readable_full
       [first_name, middle_initial, last_name].select(&:present?).join(" ").titleize
+    when :readable_mi_formatted
+      [first_name, middle_initial+'.', last_name].select(&:present?).join(" ").titleize
     when :readable_short
       [first_name, last_name].select(&:present?).join(" ").titleize
     when :form

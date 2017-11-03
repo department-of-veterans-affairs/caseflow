@@ -89,7 +89,8 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :regional_office_name,
         :venue, :appellant_last_first_mi,
-        :veteran_name, :vbms_id
+        :veteran_name, :vbms_id,
+        :appellant_mi_formatted, :veteran_mi_formatted
       ],
       except: :military_service
     )
