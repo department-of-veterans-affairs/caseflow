@@ -22,6 +22,10 @@ class AppealSeries < ActiveRecord::Base
 
     private
 
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def generate_appeal_series(appeals)
       appeals.map(&:appeal_series).compact.uniq.each(&:destroy)
 
@@ -80,7 +84,7 @@ class AppealSeries < ActiveRecord::Base
 
       # Invert the tree
       children.each do |child|
-        parent = nodes.select { |node| node[:appeal] == child[:parent_appeal] }.first
+        parent = nodes.find { |node| node[:appeal] == child[:parent_appeal] }
         parent[:children].push(child)
         child.delete(:parent_appeal)
       end
@@ -151,5 +155,9 @@ class AppealSeries < ActiveRecord::Base
 
       appeals
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
   end
 end

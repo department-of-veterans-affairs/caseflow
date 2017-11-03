@@ -222,7 +222,7 @@ describe AppealSeries do
 
       context "when there is a matching issue" do
         let(:description_1) do
-          "left From appeal merged on #{500.days.ago.strftime("%m/%d/%y")} (7654321)"
+          "left From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (7654321)"
         end
 
         let(:description_2) { "" }
@@ -240,7 +240,7 @@ describe AppealSeries do
 
       context "when the issue description is ambiguous" do
         let(:description_1) do
-          "really really really really really really really really long note From appeal merged on #{500.days.ago.strftime("%m/%d/%y")} (76"
+          "really really really really really really really really long note From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (76"
         end
 
         let(:description_2) { "" }
@@ -257,11 +257,11 @@ describe AppealSeries do
 
       context "when there are multiple issues, some ambiguous" do
         let(:description_1) do
-          "really really really really really really really really long note From appeal merged on #{500.days.ago.strftime("%m/%d/%y")} (76"
+          "really really really really really really really really long note From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (76"
         end
 
         let(:description_2) do
-          "left From appeal merged on #{500.days.ago.strftime("%m/%d/%y")} (7654321)"
+          "left From appeal merged on #{500.days.ago.strftime('%m/%d/%y')} (7654321)"
         end
 
         it "merges the series" do
