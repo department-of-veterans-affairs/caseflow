@@ -48,6 +48,7 @@ export class DocumentSearch extends React.PureComponent {
     }
 
     if (event.key === 'Escape') {
+      event.preventDefault();
       this.props.hideSearchBar();
     }
 
