@@ -172,9 +172,9 @@ export const updateNewAnnotationContent = (content) => ({
 });
 
 export const requestEditAnnotation = (annotation) => (dispatch) => {
-  // If the user removed all text content in the annotation, ask them if they're
-  // intending to delete it.
-  if (!annotation.comment) {
+  // If the user removed all text content in the annotation (or if only whitespace characters remain),
+  // ask the user if they're intending to delete it.
+  if (!annotation.comment.trim()) {
     dispatch(openAnnotationDeleteModal(annotation.id, 'open-by-deleting-all-annotation-content'));
 
     return;
