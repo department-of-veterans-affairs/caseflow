@@ -14,7 +14,7 @@ common: &default_settings
 # If your application has other named environments, configure them here.
 development:
   <<: *default_settings
-  app_name: Caseflow (Development)
+  app_name: Caseflow (Local Dev)
   agent_enabled: false
 
 demo:
