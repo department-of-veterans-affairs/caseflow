@@ -175,7 +175,6 @@ export class ConfirmCaseDetails extends React.Component {
       erroredFields.push('representativeNameLength');
     }
 
-
     return erroredFields;
   }
 
@@ -310,7 +309,6 @@ export class ConfirmCaseDetails extends React.Component {
 
     const unlistedServiceMessage =
         <p>Caseflow will update the representative type and name in VACOLS.</p>;
-
 
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">

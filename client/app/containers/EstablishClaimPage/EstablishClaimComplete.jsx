@@ -45,7 +45,6 @@ export default class EstablishClaimComplete extends React.Component {
       }
     };
 
-
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
 

@@ -34,7 +34,6 @@ export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
 export const EMAIL_PAGE = 'email';
 
-
 export const END_PRODUCT_INFO = {
   ARC: {
     'Full Grant': ['070BVAGRARC', 'ARC BVA Grant'],
@@ -282,7 +281,6 @@ export default class EstablishClaim extends React.Component {
     );
   }
 
-
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
@@ -363,7 +361,6 @@ export default class EstablishClaim extends React.Component {
       });
   }
 
-
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
@@ -413,7 +410,6 @@ export default class EstablishClaim extends React.Component {
       }
     });
   }
-
 
   setUnhandledSpecialIssuesEmailAndRegionalOffice = () => {
     if (this.containsRoutedSpecialIssues()) {

@@ -3,7 +3,6 @@ import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 
-
 /*
  * Caseflow Performance Degradation Banner.
  * Shared between all Certification pages.

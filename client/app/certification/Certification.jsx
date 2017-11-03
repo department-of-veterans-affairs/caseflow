@@ -20,7 +20,6 @@ import LoadingScreen from '../components/LoadingScreen';
 import * as AppConstants from '../constants/AppConstants';
 import StatusMessage from '../components/StatusMessage';
 
-
 class EntryPointRedirect extends React.Component {
   render() {
     let {
@@ -137,7 +136,6 @@ export class Certification extends React.Component {
         this.checkCertificationData(), AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
     }
   }
-
 
   render() {
 

@@ -26,7 +26,6 @@ const helperClasses = {
   right: 'cf-txt-r'
 };
 
-
 const cellClasses = ({ align, cellClass }) => classnames([helperClasses[align], cellClass]);
 
 const getColumns = (props) => {

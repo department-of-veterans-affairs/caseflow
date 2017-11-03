@@ -9,7 +9,6 @@ import emailValidator from '../util/validators/EmailValidator';
 import TextField from '../components/TextField';
 import ApiUtil from '../util/ApiUtil';
 
-
 // TODO: use the footer (see ConfirmHearing.jsx) everywhere,
 // then delete this comment :)
 export default class CancelCertificationModal extends BaseForm {

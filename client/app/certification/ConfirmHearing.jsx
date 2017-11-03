@@ -58,7 +58,6 @@ const typeOfForm9Answers = [
     value: Constants.form9Types.INFORMAL_FORM9 }
 ];
 
-
 const formalForm9HearingQuestion = `Which box did the appellant select for the Optional
 Board Hearing question above? Depending on the Form 9, this may be Question 8
 or Question 10.`;
