@@ -84,7 +84,9 @@ class Appeal < ActiveRecord::Base
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
-    "Court Remand" => "cavc_remand"
+    "Reconsideration" => "reconsideration",
+    "Court Remand" => "cavc_remand",
+    "Clear and Unmistakable Error" => "cue"
   }.freeze
 
   attr_writer :ssoc_dates
@@ -401,7 +403,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    !!type_code
+    %w(original post_remand cavc_remand).include? type_code
   end
 
   def type_code
@@ -582,8 +584,6 @@ class Appeal < ActiveRecord::Base
 
       fail Caseflow::Error::InvalidFileNumber
     end
-
-    private
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals

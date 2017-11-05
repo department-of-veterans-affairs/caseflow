@@ -166,24 +166,25 @@ describe "Appeals API v2", type: :request do
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(2)
 
+      # check the attribtues on the first appeal
+      expect(json["data"].first["attributes"]["type"]).to eq("original")
+      expect(json["data"].first["attributes"]["active"]).to eq(false)
+      expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
+
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc ssoc form9 ssoc))
-
-      # check that the date for the first event was formatted correctly
-      json_nod_date = json["data"].first["attributes"]["events"].first["date"]
-      expect(json_nod_date).to eq((Time.zone.today - 11.months).to_formatted_s(:csv_date))
-
-      # check the other attribtues on the first appeal
-      expect(json["data"].first["attributes"]["active"]).to eq(true)
-
-      # check the attribtues on the last appeal
-      expect(json["data"].last["attributes"]["type"]).to eq("original")
-      expect(json["data"].last["attributes"]["active"]).to eq(false)
+      expect(event_types).to eq(%w(nod soc form9 hearing_held bva_remand))
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9 hearing_held bva_remand))
+      expect(event_types).to eq(%w(nod soc ssoc form9 ssoc))
+
+      # check that the date for the last event was formatted correctly
+      json_nod_date = json["data"].last["attributes"]["events"].first["date"]
+      expect(json_nod_date).to eq((Time.zone.today - 11.months).to_formatted_s(:csv_date))
+
+      # check the other attribtues on the last appeal
+      expect(json["data"].last["attributes"]["active"]).to eq(true)
     end
   end
 end

@@ -2,6 +2,8 @@ class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
   def latest_appeal
+    return @latest_appeal if @latest_appeal
+
     active = appeals.select { |appeal| appeal.active? }
 
     if active.length > 1
@@ -10,10 +12,37 @@ class AppealSeries < ActiveRecord::Base
 
     return active.first if active.length > 0
 
-    appeals.sort { |x, y| y.decision_date <=> x.decision_date }.first
+    @latest_appeal = appeals.sort { |x, y| y.decision_date <=> x.decision_date }.first
+  end
+
+  def vacols_id
+    latest_appeal.vacols_id
+  end
+
+  def active?
+    latest_appeal.active?
+  end
+
+  def type_code
+    latest_appeal.type_code || 'other'
+  end
+
+  def api_sort_date
+    appeals.map(&:nod_date).min || DateTime::Infinity.new
+  end
+
+  def events
+    appeals.flat_map(&:events).uniq
   end
 
   class << self
+    def for_api(appellant_ssn:)
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9
+
+      appeal_series_by_vbms_id(Appeal.vbms_id_for_ssn(appellant_ssn))
+        .sort_by(&:api_sort_date)
+    end
+
     def appeal_series_by_vbms_id(vbms_id)
       appeals = Appeal.repository.appeals_by_vbms_id(vbms_id)
 
