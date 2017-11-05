@@ -615,6 +615,35 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".comment-container")
     end
 
+    context "when comment box contains only whitespace characters" do
+      scenario "save button is disabled" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        add_comment_without_clicking_save(random_whitespace)
+        expect(find("#button-save")["disabled"]).to eq("true")
+      end
+    end
+
+    context "existing comment edited to contain only whitespace characters" do
+      let!(:annotations) do
+        [Generators::Annotation.create(
+          comment: random_word_characters,
+          document_id: documents[0].id
+        )]
+      end
+      let(:comment_id) { annotations.length }
+
+      scenario "prompts delete modal to appear" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+        find("#button-edit-comment-#{comment_id}").click
+        fill_in "editCommentBox-#{comment_id}", with: random_whitespace
+        click_on "Save"
+
+        # Delete modal should appear.
+        expect(page).to have_css("#Delete-Comment-button-id-#{comment_id}")
+      end
+    end
+
     context "When there is an existing annotation" do
       let!(:annotations) do
         [
@@ -1261,4 +1290,20 @@ RSpec.feature "Reader" do
       expect_in_viewport("read-indicator")
     end
   end
+end
+
+# Generate some combination of whitespace characters between 1 and len characters long.
+# Do not include tab character becuase inserting tab will cause Capybara to change the focused DOM element.
+def random_whitespace(len = 16)
+  random_sample([" ", "\n", "\r"], len)
+end
+
+# Generate some combination of word and space characters between 1 and len characters long.
+def random_word_characters(len = 256)
+  a = ("a".."z").to_a.concat(("A".."Z").to_a).concat(("0".."9").to_a).push("_")
+  random_sample(a, len)
+end
+
+def random_sample(arr, len)
+  (Array.new(Random.rand(len) + 1) { arr.sample }).join
 end
