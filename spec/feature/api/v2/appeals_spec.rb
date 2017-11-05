@@ -2,7 +2,7 @@ describe "Appeals API v2", type: :request do
   context "Appeal list" do
     before { FeatureToggle.enable!(:appeals_status) }
 
-    let!(:resolved_appeal) do
+    let!(:original) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
         vacols_record: {
@@ -11,29 +11,44 @@ describe "Appeals API v2", type: :request do
           status: "Complete",
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
-          form9_date: Time.zone.today - 7.months,
+          form9_date: Time.zone.today - 8.months,
+          ssoc_dates: [Time.zone.today - 7.months],
           disposition: "Remanded",
           decision_date: Time.zone.today - 5.months
         }
       )
     end
 
-    let!(:current_appeal) do
+    let!(:post_remand) do
       Generators::Appeal.create(
         vbms_id: "111223333S",
         vacols_record: {
           template: :ready_to_certify,
-          nod_date: Time.zone.today - 11.months,
+          type: "Post Remand",
+          nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
-          form9_date: Time.zone.today - 7.months,
+          form9_date: Time.zone.today - 8.months,
           ssoc_dates: [
-            Time.zone.today - 8.months,
+            Time.zone.today - 7.months,
             Time.zone.today - 4.months
           ],
-          decision_date: nil,
-          prior_decision_date: Time.zone.today - 12.months,
-          hearing_request_type: :travel_board,
-          video_hearing_requested: true
+          prior_decision_date: Time.zone.today - 5.months,
+          disposition: nil
+        }
+      )
+    end
+
+    let!(:another_original) do
+      Generators::Appeal.create(
+        vbms_id: "111223333S",
+        vacols_record: {
+          template: :ready_to_certify,
+          type: "Original",
+          status: "Advance",
+          nod_date: Time.zone.today - 6.months,
+          soc_date: Time.zone.today - 2.months,
+          form9_date: Time.zone.today - 1.months,
+          disposition: nil
         }
       )
     end
@@ -44,17 +59,9 @@ describe "Appeals API v2", type: :request do
 
     let!(:held_hearing) do
       Generators::Hearing.create(
-        appeal: resolved_appeal,
+        appeal: original,
         date: 6.months.ago,
         disposition: :held
-      )
-    end
-
-    let!(:scheduled_hearing) do
-      Generators::Hearing.create(
-        appeal: current_appeal,
-        date: 1.month.from_now,
-        type: :travel_board
       )
     end
 
@@ -167,24 +174,25 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # check the attribtues on the first appeal
-      expect(json["data"].first["attributes"]["type"]).to eq("original")
-      expect(json["data"].first["attributes"]["active"]).to eq(false)
+      expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
+      expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9 hearing_held bva_remand))
+      expect(event_types).to eq(%w(nod soc form9 ssoc hearing_held bva_remand ssoc))
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc ssoc form9 ssoc))
+      expect(event_types).to eq(%w(nod soc form9))
 
       # check that the date for the last event was formatted correctly
       json_nod_date = json["data"].last["attributes"]["events"].first["date"]
-      expect(json_nod_date).to eq((Time.zone.today - 11.months).to_formatted_s(:csv_date))
+      expect(json_nod_date).to eq((Time.zone.today - 6.months).to_formatted_s(:csv_date))
 
       # check the other attribtues on the last appeal
       expect(json["data"].last["attributes"]["active"]).to eq(true)
+      expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)
     end
   end
 end
