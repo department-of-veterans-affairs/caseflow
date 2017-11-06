@@ -52,7 +52,7 @@ class HearingWorksheetStream extends Component {
             appealKey={key}
             worksheetStreamsAppeal={appeal}
             {...this.props}
-            issueCount={currentIssueCount}
+            countOfIssuesInPreviousAppeals={currentIssueCount}
           />
           <Button
             classNames={['usa-button-outline', 'hearings-add-issue']}

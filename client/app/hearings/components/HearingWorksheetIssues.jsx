@@ -16,7 +16,7 @@ class HearingWorksheetIssues extends PureComponent {
       worksheetIssues,
       worksheetStreamsAppeal,
       appealKey,
-      issueCount
+      countOfIssuesInPreviousAppeals
     } = this.props;
 
 
@@ -64,7 +64,7 @@ class HearingWorksheetIssues extends PureComponent {
       let issueRow = worksheetIssues[issue];
 
       return {
-        counter: <b>{key + issueCount + 1}.</b>,
+        counter: <b>{key + countOfIssuesInPreviousAppeals + 1}.</b>,
         program: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
@@ -125,5 +125,5 @@ export default connect(
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
   worksheetStreamsAppeal: PropTypes.object.isRequired,
-  issueCount: PropTypes.number.isRequired
+  countOfIssuesInPreviousAppeals: PropTypes.number.isRequired
 };
