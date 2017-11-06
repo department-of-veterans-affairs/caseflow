@@ -62,7 +62,7 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
-    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal,
+    caseSelectedAppeal: state.caseSelect.ui.selectedAppeal,
     manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
     manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
   };
