@@ -1,18 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types'; TODO(marian): define props for ChildNavLink
 
 // To be used with the "StickyNav" component
 // This generates the list of links for a side navigation list
 
-const NavLink = (props) => {
-  const { anchor, name } = props;
-
-  return <li><a href={anchor}>{name}</a></li>;
+export const NavLink = (props) => {
+  return <a href={props.anchor}>{props.name}</a>;
 };
 
-NavLink.propTypes = {
-  anchor: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+export const ChildNavLink = (props) => {
+  return <ul className="usa-sidenav-sub_list">
+    { props.links.map((link, i) => {
+      return <li key={i}><a href={link.anchor}>{link.name}</a></li>;
+    }
+    )
+    }
+  </ul>;
 };
-
-export default NavLink;
