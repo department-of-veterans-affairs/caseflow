@@ -1,6 +1,12 @@
 class DependenciesReportService
   class << self
-    ALL_DEPENDENCIES = ["BGS.FilenumberService", "BGS.PoaService", "VACOLS", "VBMS", "VBMS.FindDocumentSeriesReference", "VVA"].freeze
+    ALL_DEPENDENCIES =
+      ["BGS.FilenumberService",
+       "BGS.PoaService",
+       "VACOLS",
+       "VBMS",
+       "VBMS.FindDocumentSeriesReference",
+       "VVA"].freeze
 
     # this method is in case we need list of dependencies/services that are degraded
     def degraded_dependencies

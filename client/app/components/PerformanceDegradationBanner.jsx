@@ -23,7 +23,8 @@ export default class PerformanceDegradationBanner extends React.Component {
       reader: ['VBMS', 'VACOLS'],
       hearing: ['VACOLS'],
       dispatch: ['VBMS', 'VACOLS'],
-      undefined: ['BGS.FilenumberService', 'BGS.PoaService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference', 'VVA']
+      undefined: ['BGS.FilenumberService', 'BGS.PoaService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference',
+        'VVA']
     };
     this.appName = Object.keys(this.dependencies).filter((key) => {
       return window.location.pathname.includes(key);
