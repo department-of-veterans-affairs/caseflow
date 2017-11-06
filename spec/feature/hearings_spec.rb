@@ -170,21 +170,19 @@ RSpec.feature "Hearings" do
       expect(page).to_not have_content("Service Connection")
     end
 
-    context "Multiple appeal streams", focus: true do
+    context "Multiple appeal streams" do
       before do
         vbms_id = Hearing.find(1).appeal.vbms_id
         Generators::Appeal.create(vbms_id: vbms_id, vacols_record: { template: :pending_hearing })
       end
 
-      ensure_stable do
-        scenario "Numbering is consistent" do
-          visit "/hearings/1/worksheet"
-          click_on "button-addIssue-2"
-          expect(page).to have_content("3.")
-          find("#cf-issue-delete-21").click
-          click_on "Confirm delete"
-          expect(page).to_not have_content("3.")
-        end
+      scenario "Numbering is consistent" do
+        visit "/hearings/1/worksheet"
+        click_on "button-addIssue-2"
+        expect(page).to have_content("3.")
+        find("#cf-issue-delete-21").click
+        click_on "Confirm delete"
+        expect(page).to_not have_content("3.")
       end
     end
 
