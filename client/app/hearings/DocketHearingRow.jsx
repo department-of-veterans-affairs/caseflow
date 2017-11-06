@@ -43,7 +43,6 @@ const getDate = (date) => {
     replace('PM', 'p.m.');
 };
 
-
 export class DocketHearingRow extends React.PureComponent {
 
   setDisposition = ({ value }) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);

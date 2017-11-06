@@ -15,10 +15,10 @@ export default class TestPage extends React.Component {
       Test Page
       <a onClick={() => {
         this.props.handleAlert('error', 'test', 'bar');
-      }} className="handleAlert"/>
+      }} className="handleAlert" />
       <a onClick={() => {
         this.props.handleAlertClear();
-      }} className="handleAlertClear"/>
+      }} className="handleAlertClear" />
       <DateSelector
         label="Test Date"
         name="testDate"

@@ -34,7 +34,6 @@ export class EstablishClaimForm extends React.Component {
       backToDecisionReviewText
     } = this.props;
 
-
     return <div>
       <form noValidate id="end_product">
         <div className="cf-app-segment cf-app-segment--alt">

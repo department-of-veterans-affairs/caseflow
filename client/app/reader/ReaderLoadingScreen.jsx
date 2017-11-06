@@ -61,7 +61,7 @@ export class ReaderLoadingScreen extends React.Component {
           </StatusMessage> :
           <LoadingScreen
             spinnerColor={Constants.READER_COLOR}
-            message="Loading claims folder in Reader..."/>
+            message="Loading claims folder in Reader..." />
         }
       </div>
     </div>;

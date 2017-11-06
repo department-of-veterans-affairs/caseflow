@@ -10,8 +10,8 @@ let StyleGuideFormFields = () => {
   return (
     <div>
       <h2 id="form_fields">Form Fields</h2>
-      <StyleGuideTextInput/>
-      <StyleGuideTextInputError/>
+      <StyleGuideTextInput />
+      <StyleGuideTextInputError />
       <StyleGuideTextArea />
       <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />

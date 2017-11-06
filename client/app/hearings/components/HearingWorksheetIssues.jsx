@@ -19,7 +19,6 @@ class HearingWorksheetIssues extends PureComponent {
       countOfIssuesInPreviousAppeals
     } = this.props;
 
-
     const columns = [
       {
         header: '',
@@ -116,7 +115,6 @@ class HearingWorksheetIssues extends PureComponent {
 const mapStateToProps = (state) => ({
   worksheetIssues: state.worksheetIssues
 });
-
 
 export default connect(
   mapStateToProps,

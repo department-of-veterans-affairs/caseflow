@@ -9,7 +9,6 @@ import { formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../../establishClaim/constants';
 
-
 export class AssociatePage extends React.Component {
 
   constructor(props) {
