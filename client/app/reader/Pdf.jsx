@@ -14,75 +14,13 @@ import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/PdfViewer/AnnotationActions';
 
-import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 import DocumentSearch from './DocumentSearch';
-
-/**
- * We do a lot of work with coordinates to render PDFs.
- * It is important to keep the various coordinate systems straight.
- * Here are the systems we use:
- *
- *    Root coordinates: The coordinate system for the entire app.
- *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
- *
- *    Page coordinates: A coordinate system for a given PDF page.
- *      (0, 0) is the top left hand corner of that PDF page.
- *
- * The relationship between root and page coordinates is defined by where the PDF page is within the whole app,
- * and what the current scale factor is.
- *
- * All coordinates in our codebase should have `page` or `root` in the name, to make it clear which
- * coordinate system they belong to. All converting between coordinate systems should be done with
- * the proper helper functions.
- */
-export const getInitialAnnotationIconPageCoords = (iconPageBoundingBox, scrollWindowBoundingRect, scale) => {
-  const leftBound = Math.max(scrollWindowBoundingRect.left, iconPageBoundingBox.left);
-  const rightBound = Math.min(scrollWindowBoundingRect.right, iconPageBoundingBox.right);
-  const topBound = Math.max(scrollWindowBoundingRect.top, iconPageBoundingBox.top);
-  const bottomBound = Math.min(scrollWindowBoundingRect.bottom, iconPageBoundingBox.bottom);
-
-  const rootCoords = {
-    x: _.mean([leftBound, rightBound]),
-    y: _.mean([topBound, bottomBound])
-  };
-
-  const pageCoords = pageCoordsOfRootCoords(rootCoords, iconPageBoundingBox, scale);
-
-  const annotationIconOffset = ANNOTATION_ICON_SIDE_LENGTH / 2;
-
-  return {
-    x: pageCoords.x - annotationIconOffset,
-    y: pageCoords.y - annotationIconOffset
-  };
-};
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
 // they become visible.
 export class Pdf extends React.PureComponent {
-  handleAltC = () => {
-    if (this.props.sidebarHidden) {
-      this.props.togglePdfSidebar();
-    }
-
-    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
-
-    const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
-    const firstPageWithRoomForIconIndex = pageIndexOfPageNumber(this.currentPage);
-
-    const iconPageBoundingBox =
-      this.props.pageContainers[firstPageWithRoomForIconIndex].getBoundingClientRect();
-
-    const pageCoords = getInitialAnnotationIconPageCoords(
-      iconPageBoundingBox,
-      scrollWindowBoundingRect,
-      this.props.scale
-    );
-
-    this.props.showPlaceAnnotationIcon(firstPageWithRoomForIconIndex, pageCoords);
-  }
-
   handleAltEnter = () => {
     this.props.placeAnnotation(
       pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
@@ -106,10 +44,6 @@ export class Pdf extends React.PureComponent {
     }
 
     if (event.altKey) {
-      if (event.code === 'KeyC') {
-        this.handleAltC();
-      }
-
       if (event.code === 'Enter') {
         this.handleAltEnter();
       }

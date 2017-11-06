@@ -6,11 +6,16 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { setPdfDocument, clearPdfDocument, onScrollToComment } from '../reader/Pdf/PdfActions';
-import { resetJumpToPage } from '../reader/actions';
+import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { List, AutoSizer } from 'react-virtualized';
-import { pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
+import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates, getInitialAnnotationIconPageCoords } from './utils';
+import { startPlacingAnnotation, showPlaceAnnotationIcon }
+  from '../reader/PdfViewer/AnnotationActions';
+import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
+import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
+
 const PAGE_HEIGHT = 1056;
 
 export class PdfFile extends React.PureComponent {
@@ -38,6 +43,8 @@ export class PdfFile extends React.PureComponent {
       withCredentials: true
     });
 
+    window.addEventListener('keydown', this.keyListener);
+
     return this.loadingTask.then((pdfDocument) => {
       if (this.loadingTask.destroyed) {
         pdfDocument.destroy();
@@ -53,6 +60,8 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentWillUnmount = () => {
+    window.removeEventListener('keydown', this.keyListener);
+
     if (this.loadingTask) {
       this.loadingTask.destroy();
     }
@@ -188,6 +197,36 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
+  handleAltC = () => {
+    if (this.props.sidebarHidden) {
+      this.props.togglePdfSidebar();
+    }
+
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
+
+    const { width, height } = this.pageDimensions(this.currentPage);
+    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.list.getOffsetForRow({ index: this.currentPage }));
+
+    const initialCommentCoordinates = {
+      x: ((width - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale,
+      y: ((scrolledLocationOnPage + height - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale
+    };
+
+    this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
+  }
+
+  keyListener = (event) => {
+    if (isUserEditingText()) {
+      return;
+    }
+
+    if (event.altKey) {
+      if (event.code === 'KeyC') {
+        this.handleAltC();
+      }
+    }
+  }
+
   render() {
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
     // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
@@ -232,7 +271,9 @@ const mapDispatchToProps = (dispatch) => ({
     setPdfDocument,
     clearPdfDocument,
     resetJumpToPage,
-    onScrollToComment
+    onScrollToComment,
+    startPlacingAnnotation,
+    showPlaceAnnotationIcon
   }, dispatch)
 });
 
