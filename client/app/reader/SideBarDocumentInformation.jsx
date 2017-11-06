@@ -26,7 +26,7 @@ class SideBarDocumentInformation extends PureComponent {
         refresh this page</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {
-      renderComponent = <LoadingMessage message="Loading details..."/>;
+      renderComponent = <LoadingMessage message="Loading details..." />;
     } else {
       renderComponent = <div>
         <p className="cf-pdf-meta-title">
@@ -75,5 +75,4 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps
 )(SideBarDocumentInformation);
-
 
