@@ -280,10 +280,6 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def close!(user:, closed_on:, disposition:)
-    Appeal.close(appeal: self, user: user, closed_on: closed_on, disposition: disposition)
-  end
-
   def fetch_documents!(save:)
     save ? find_or_create_documents! : fetched_documents
   end
@@ -534,19 +530,26 @@ class Appeal < ActiveRecord::Base
       @repository ||= AppealRepository
     end
 
-    def close(appeal:, user:, closed_on:, disposition:)
-      fail "Only active appeals can be closed" unless appeal.active?
+    # Wraps the closure of appeals in a transaction
+    # add additional code inside the transaction by passing a block
+    # rubocop:disable Metrics/ParameterLists
+    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
+      fail "Only pass either appeal or appeals" if appeal && appeals
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-      fail "Disposition #{disposition}, does not exist" unless disposition_code
+      repository.transaction do
+        (appeals || [appeal]).each do |close_appeal|
+          close_single(
+            appeal: close_appeal,
+            user: user,
+            closed_on: closed_on,
+            disposition: disposition
+          )
+        end
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+        inside_transaction.call if block_given?
+      end
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -577,6 +580,20 @@ class Appeal < ActiveRecord::Base
     end
 
     private
+
+    def close_single(appeal:, user:, closed_on:, disposition:)
+      fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      repository.close!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: disposition_code
+      )
+    end
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
