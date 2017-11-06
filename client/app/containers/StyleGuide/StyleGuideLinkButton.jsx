@@ -4,7 +4,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 let StyleGuideLinkButton = () => {
   return <div>
-    <br/>
+    <br />
     <StyleGuideComponentTitle
       title="Link buttons"
       id="link_buttons"
@@ -37,7 +37,7 @@ let StyleGuideLinkButton = () => {
         </Button>
       </div>
     </div>
-    <br/>
+    <br />
   </div>;
 };
 
