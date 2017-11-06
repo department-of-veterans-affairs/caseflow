@@ -42,10 +42,10 @@ export default class StyleGuideTextInputError extends React.Component {
         onChange={(value) => {
           this.setState({ value });
         }}
-        errorMessage={this.state.errorMessage}/>
+        errorMessage={this.state.errorMessage} />
       <Button
         name="Submit"
-        onClick={this.onButtonClick}/>
+        onClick={this.onButtonClick} />
     </div>;
   }
 }

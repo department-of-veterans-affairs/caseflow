@@ -162,7 +162,6 @@ export const onDeleteIssue = (issueId) => ({
   }
 });
 
-
 export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
   type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
   payload: {

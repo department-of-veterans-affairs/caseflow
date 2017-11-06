@@ -131,7 +131,7 @@ export default function StyleGuideIndex() {
     <StickyNav>
       {
         componentLinks.map((link, i) => (
-          <NavLink anchor={link.anchor} name={link.name} key={i}/>
+          <NavLink anchor={link.anchor} name={link.name} key={i} />
         ))
       }
     </StickyNav>
