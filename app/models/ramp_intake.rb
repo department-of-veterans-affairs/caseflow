@@ -16,9 +16,12 @@ class RampIntake < Intake
     transaction do
       complete_with_status!(:success)
 
-      eligible_appeals.each do |appeal|
-        appeal.close!(user: user, closed_on: Time.zone.today, disposition: "RAMP Opt-in")
-      end
+      Appeal.close(
+        appeals: eligible_appeals,
+        user: user,
+        closed_on: Time.zone.today,
+        disposition: "RAMP Opt-in"
+      )
     end
   end
 
