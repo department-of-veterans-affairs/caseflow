@@ -387,7 +387,6 @@ export default connect(
   mapStateToProps, mapDispatchToProps
 )(Pdf);
 
-
 Pdf.defaultProps = {
   onPageChange: _.noop,
   prefetchFiles: [],

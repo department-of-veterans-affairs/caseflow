@@ -1,6 +1,7 @@
 require "ostruct"
 
 # frozen_string_literal: true
+# rubocop:disable Metrics/ClassLength
 class Fakes::AppealRepository
   class << self
     attr_accessor :issue_records
@@ -60,6 +61,10 @@ class Fakes::AppealRepository
 
   def self.vacols_db_connection_active?
     true
+  end
+
+  def self.transaction
+    yield
   end
 
   def self.certify(appeal:, certification:)
@@ -470,7 +475,12 @@ class Fakes::AppealRepository
 
     Generators::Appeal.build(
       vbms_id: "11555555C",
-      vacols_record: :remand_decided
+      vacols_record: :activated
+    )
+
+    Generators::Appeal.build(
+      vbms_id: "12555555C",
+      vacols_record: :full_grant_decided
     )
 
     Generators::Appeal.build(
@@ -483,3 +493,4 @@ class Fakes::AppealRepository
     true
   end
 end
+# rubocop:enable Metrics/ClassLength
