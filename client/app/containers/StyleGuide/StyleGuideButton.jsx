@@ -43,7 +43,7 @@ export default class StyleGuideButton extends React.Component {
             name="signup-1"
             classNames={['button_wrapper']}>
           Sign up
-          </Button><br/><br/>
+          </Button><br /><br />
           <Button
             name="signup-button"
             classNames={['usa-button-secondary']}>
@@ -56,7 +56,7 @@ export default class StyleGuideButton extends React.Component {
             name="signup-3"
             classNames={['usa-button-hover']}>
           Sign up
-          </Button><br/><br/>
+          </Button><br /><br />
           <Button
             name="signup-hover"
             classNames={['usa-button-secondary usa-button-hover']}>
@@ -69,14 +69,14 @@ export default class StyleGuideButton extends React.Component {
             name="signup-active"
             classNames={['usa-button-active']}>
           Sign up
-          </Button><br/><br/>
+          </Button><br /><br />
           <Button
             name="signup-secondary"
             classNames={['usa-button-secondary usa-button-active']}>
           Sign up
           </Button>
         </div>
-      </div><br/><br/>
+      </div><br /><br />
       <h3>Secondary buttons</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
@@ -103,7 +103,7 @@ export default class StyleGuideButton extends React.Component {
          Sign up
           </Button>
         </div>
-      </div><br/><br/>
+      </div><br /><br />
       <h3>Disabled button</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">

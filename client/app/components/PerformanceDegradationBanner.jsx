@@ -3,7 +3,6 @@ import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 
-
 /*
  * Caseflow Performance Degradation Banner.
  * Shared between all Certification pages.
@@ -79,7 +78,7 @@ export default class PerformanceDegradationBanner extends React.Component {
         <div className="usa-banner">
           <div className="usa-grid usa-banner-inner">
             <div className="banner-icon">
-              <WrenchIcon/>
+              <WrenchIcon />
             </div>
             <span className="banner-text">
               We've detected technical issues in our system.
