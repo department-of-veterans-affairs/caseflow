@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-
 let StyleGuideAction = () => {
   return <div>
 

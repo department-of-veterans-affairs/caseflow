@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import ProgressBar from '../components/ProgressBar';
 import { progressBarSections } from './constants/constants';
 
-
 // TODO: use the redux store to grab data and render this.
 export class CertificationProgressBar extends React.Component {
   static sections() {
@@ -44,7 +43,7 @@ export class CertificationProgressBar extends React.Component {
     let showProgressBar = !this.props.serverError;
 
     return <div>
-      { showProgressBar && <ProgressBar sections={this.deriveSections()}/> }
+      { showProgressBar && <ProgressBar sections={this.deriveSections()} /> }
     </div>;
   }
 }
