@@ -81,7 +81,7 @@ class EstablishClaim < Task
     end
 
   rescue VBMS::HTTPError => error
-    raise VBMSError.from_establish_claim_error(error)
+    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
   def complete_with_review!(vacols_note:)
