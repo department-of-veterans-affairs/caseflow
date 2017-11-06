@@ -5,6 +5,7 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
+import { caseSelectReducer } from './CaseSelect/CaseSelectReducer';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 
@@ -12,6 +13,7 @@ import { reducer as searchReducer, reduxSearch } from 'redux-search';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   combineReducers({
+    caseSelect: caseSelectReducer,
     readerReducer,
     search: searchReducer
   }),
