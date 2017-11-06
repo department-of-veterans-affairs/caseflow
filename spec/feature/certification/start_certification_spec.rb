@@ -257,9 +257,14 @@ RSpec.feature "Start Certification" do
     end
 
     scenario "There is a dependency outage" do
+      # Banner is showing when degraded dependency is relevant
       allow(DependenciesReportService).to receive(:dependencies_report).and_return(["VACOLS"])
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_content "We've detected technical issues in our system"
+      # Banner is not showing when degraded dependency is irrelevant
+      allow(DependenciesReportService).to receive(:dependencies_report).and_return(["VVA"])
+      visit "certifications/new/#{appeal_ready.vacols_id}"
+      expect(page).to_not have_content "We've detected technical issues in our system"
       User.unauthenticate!
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).not_to have_content "We've detected technical issues in our system"
