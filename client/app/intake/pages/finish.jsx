@@ -60,14 +60,12 @@ class Finish extends React.PureComponent {
     default:
     }
 
-    let epName, optionName;
+    let optionName;
 
     if (this.props.rampElection.optionSelected === 'supplemental_claim') {
       optionName = 'Supplemental Claim';
-      epName = '683 RAMP – Supplemental Claim Review Rating';
     } else {
       optionName = 'Higher-Level Review';
-      epName = '682 RAMP – Higher Level Review Rating';
     }
 
     const steps = [
@@ -75,7 +73,7 @@ class Finish extends React.PureComponent {
         Upload the RAMP Election form to the VBMS eFolder and ensure the
         Document Type is <b>Correspondence</b>.
       </span>,
-      <span>Update the Subject Line with "Ramp Election".</span>,
+      <span>Update the Subject Line with "Ramp Election".</span>
     ];
     const stepFns = steps.map((step, index) =>
       () => <span><strong>Step {index + 1}.</strong> {step}</span>

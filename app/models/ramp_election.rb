@@ -41,8 +41,8 @@ class RampElection < ActiveRecord::Base
     ramp_intakes.where(completion_status: "success").any?
   end
 
-  def end_product_created_message
-    end_product_reference_id && "Established EP: #{end_product.description_with_routing}"
+  def end_product_description
+    end_product_reference_id && end_product.description_with_routing
   end
 
   private

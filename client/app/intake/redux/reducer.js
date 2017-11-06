@@ -49,8 +49,8 @@ const updateStateWithSavedIntake = (state, intake) => {
       isComplete: {
         $set: Boolean(intake.completed_at)
       },
-      endProductCreatedMessage: {
-        $set: intake.end_product_created_message
+      endProductDescription: {
+        $set: intake.end_product_description
       }
     },
     appeals: {

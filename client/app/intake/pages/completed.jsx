@@ -12,7 +12,7 @@ class Completed extends React.PureComponent {
   render() {
     const {
       veteran,
-      endProductCreatedMessage,
+      endProductDescription,
       rampElectionStatus
     } = this.props;
 
@@ -36,7 +36,7 @@ class Completed extends React.PureComponent {
         leadMessageList={[message]}
         checklist={[
           'Caseflow closed the VACOLS record',
-          endProductCreatedMessage
+          `Established EP: ${endProductDescription}`
         ]}
         wrapInAppSegment={false}
       />
@@ -63,7 +63,7 @@ export const CompletedNextButton = connect(
 export default connect(
   (state) => ({
     veteran: state.veteran,
-    endProductCreatedMessage: state.rampElection.endProductCreatedMessage,
+    endProductDescription: state.rampElection.endProductDescription,
     rampElectionStatus: getRampElectionStatus(state)
   })
 )(Completed);

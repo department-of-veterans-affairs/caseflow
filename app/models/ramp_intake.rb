@@ -65,7 +65,7 @@ class RampIntake < Intake
       option_selected: ramp_election.option_selected,
       receipt_date: ramp_election.receipt_date,
       completed_at: completed_at,
-      end_product_created_message: ramp_election.end_product_created_message,
+      end_product_description: ramp_election.end_product_description,
       appeals: serialized_appeal_issues
     }
   end
