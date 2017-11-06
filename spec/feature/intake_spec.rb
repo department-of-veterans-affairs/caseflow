@@ -195,7 +195,6 @@ RSpec.feature "RAMP Intake" do
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Finish processing Higher-Level Review election")
-      expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
 
       click_label "confirm-finish"
 
@@ -217,7 +216,6 @@ RSpec.feature "RAMP Intake" do
       expect(page).to_not have_content("Something went wrong")
 
       expect(page).to have_content("Finish processing Supplemental Claim election")
-      expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
 
       # Validate the appeal & issue also shows up
       expect(page).to have_content("This Veteran has 1 active appeal, with the following issues")
