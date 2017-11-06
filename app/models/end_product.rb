@@ -13,7 +13,7 @@ class EndProduct
   RAMP_CODES = {
     "682HLRRRAMP" => "Higher Level Review Rating",
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
-  }
+  }.freeze
 
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
@@ -59,7 +59,7 @@ class EndProduct
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
 
   def claim_type
-    DISPATCH_CODES[claim_type_code] || claim_type_code
+    label || claim_type_code
   end
 
   def status_type

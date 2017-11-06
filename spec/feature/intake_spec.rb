@@ -6,6 +6,8 @@ RSpec.feature "RAMP Intake" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 8, 8))
+
+    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
   end
 
   let(:veteran) do
@@ -224,6 +226,8 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Complete intake for RAMP Election form" do
+      Fakes::VBMSService.end_product_claim_id = "SHANE9642"
+
       election = RampElection.create!(
         veteran_file_number: "12341234",
         notice_date: Date.new(2017, 8, 7)
@@ -269,6 +273,26 @@ RSpec.feature "RAMP Intake" do
       safe_click "button#button-submit-review"
 
       expect(page).to have_content("Intake completed")
+      expect(page).to have_content(
+        "Established EP: 682HLRRRAMP - Higher Level Review Rating for Station 397"
+      )
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: election.receipt_date.to_date,
+          end_product_modifier: "682",
+          end_product_label: "Higher Level Review Rating",
+          end_product_code: "682HLRRRAMP",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: intake.veteran.to_vbms_hash
+      )
 
       # Validate that you can not go back to previous steps
       page.go_back
@@ -280,6 +304,9 @@ RSpec.feature "RAMP Intake" do
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake).to be_success
+
+      election.reload
+      expect(election.end_product_reference_id).to eq("SHANE9642")
 
       # Validate that the intake is no longer able to be worked on
       visit "/intake/finish"

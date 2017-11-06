@@ -30,10 +30,14 @@ class Intake::RampIntakesController < ApplicationController
 
   def complete
     intake.complete!
-    render json: {}
+    render json: ramp_intake_data(intake)
   end
 
   private
+
+  def ramp_intake_data(ramp_intake)
+    ramp_intake ? ramp_intake.ui_hash : {}
+  end
 
   def intake
     @intake ||= RampIntake.where(user: current_user).find(params[:id])

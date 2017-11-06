@@ -48,6 +48,9 @@ const updateStateWithSavedIntake = (state, intake) => {
       },
       isComplete: {
         $set: Boolean(intake.completed_at)
+      },
+      endProductCreatedMessage: {
+        $set: intake.end_product_created_message
       }
     },
     appeals: {
@@ -246,7 +249,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
-    return update(state, {
+    return updateStateWithSavedIntake(update(state, {
       rampElection: {
         isComplete: {
           $set: true
@@ -257,7 +260,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.COMPLETE_INTAKE_FAIL:
     return update(state, {
       requestStatus: {

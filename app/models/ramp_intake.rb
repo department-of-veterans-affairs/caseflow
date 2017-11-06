@@ -8,6 +8,10 @@ class RampIntake < Intake
     no_active_appeals: "no_active_appeals"
   }.merge(Intake::ERROR_CODES)
 
+  def ramp_election
+    detail
+  end
+
   def find_or_create_initial_detail
     matching_ramp_election
   end
@@ -21,7 +25,9 @@ class RampIntake < Intake
         user: user,
         closed_on: Time.zone.today,
         disposition: "RAMP Opt-in"
-      )
+      ) do
+        ramp_election.create_end_product!
+      end
     end
   end
 
@@ -47,6 +53,21 @@ class RampIntake < Intake
 
   def veteran_ramp_elections
     @veteran_ramp_elections ||= RampElection.where(veteran_file_number: veteran_file_number).all
+  end
+
+  def ui_hash
+    {
+      id: id,
+      veteran_file_number: veteran_file_number,
+      veteran_name: veteran.name.formatted(:readable_short),
+      veteran_form_name: veteran.name.formatted(:form),
+      notice_date: ramp_election.notice_date,
+      option_selected: ramp_election.option_selected,
+      receipt_date: ramp_election.receipt_date,
+      completed_at: completed_at,
+      end_product_created_message: ramp_election.end_product_created_message,
+      appeals: serialized_appeal_issues
+    }
   end
 
   private
