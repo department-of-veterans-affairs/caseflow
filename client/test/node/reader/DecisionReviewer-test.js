@@ -346,7 +346,6 @@ describe('DecisionReviewer', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
 
-
         let textArray = wrapper.find('tr').map((node) => node.text());
 
         expect(textArray[1]).to.include(documents[0].type);

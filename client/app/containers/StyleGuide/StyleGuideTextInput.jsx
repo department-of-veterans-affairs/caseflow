@@ -40,7 +40,7 @@ export default class StyleGuideTextInput extends React.Component {
         required={false}
         onChange={(value) => {
           this.setState({ value });
-        }}/>
+        }} />
     </div>;
   }
 }
