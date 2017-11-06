@@ -102,7 +102,7 @@ export default class SearchBar extends React.Component {
         name="search"
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
-        value={value}/>
+        value={value} />
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"

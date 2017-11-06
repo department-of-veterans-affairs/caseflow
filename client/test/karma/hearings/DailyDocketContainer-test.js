@@ -25,7 +25,7 @@ describe('DailyDocketContainer', () => {
       <Provider store={store}>
         <MemoryRouter initialEntries={['/']}>
           <div>
-            <DailyDocketContainer veteran_law_judge={{ name: 'me' }} date="2017-06-17"/>
+            <DailyDocketContainer veteran_law_judge={{ name: 'me' }} date="2017-06-17" />
           </div>
         </MemoryRouter>
       </Provider>);

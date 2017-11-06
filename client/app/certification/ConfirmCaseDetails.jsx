@@ -175,7 +175,6 @@ export class ConfirmCaseDetails extends React.Component {
       erroredFields.push('representativeNameLength');
     }
 
-
     return erroredFields;
   }
 
@@ -270,17 +269,17 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} />;
     }
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'}/>;
+        to={'/certifications/error'} />;
     }
 
     let appellantInfoColumns = [
@@ -310,7 +309,6 @@ export class ConfirmCaseDetails extends React.Component {
 
     const unlistedServiceMessage =
         <p>Caseflow will update the representative type and name in VACOLS.</p>;
-
 
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
@@ -383,7 +381,7 @@ export class ConfirmCaseDetails extends React.Component {
               value={representativeName}
               errorMessage={this.calculateErrorMessage()}
               required
-              onChange={changeRepresentativeName}/>
+              onChange={changeRepresentativeName} />
         }
 
         {

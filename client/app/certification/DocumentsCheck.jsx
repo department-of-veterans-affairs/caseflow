@@ -45,17 +45,17 @@ export class DocumentsCheck extends React.Component {
     };
 
     if (certificationStatus === 'data_missing') {
-      return <NotReady/>;
+      return <NotReady />;
     }
 
     if (certificationStatus === 'already_certified') {
-      return <AlreadyCertified/>;
+      return <AlreadyCertified />;
     }
 
     const missingInformation =
       <div>
         <p>If the document status is marked
-          with an <NotFoundIcon/>, try checking:</p>
+          with an <NotFoundIcon />, try checking:</p>
         <ul>The <strong>document type</strong> in VBMS to make sure it's
           <a href="/certification/help#mismatched-documents"> labeled correctly.</a></ul>
         <ul>The <strong>document date</strong> in VBMS. NOD and Form 9 dates must match their VACOLS dates.
@@ -74,10 +74,10 @@ export class DocumentsCheck extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
-        { documentsMatch ? <DocumentsMatchingBox areDatesExactlyMatching={this.areDatesExactlyMatching()}/> :
-          <DocumentsNotMatchingBox/> }
+        { documentsMatch ? <DocumentsMatchingBox areDatesExactlyMatching={this.areDatesExactlyMatching()} /> :
+          <DocumentsNotMatchingBox /> }
 
-        <DocumentsCheckTable nod={nod} soc={soc} form9={form9} ssocs={ssocs}/>
+        <DocumentsCheckTable nod={nod} soc={soc} form9={form9} ssocs={ssocs} />
 
         { !documentsMatch && missingInformation }
       </div>
@@ -88,7 +88,7 @@ export class DocumentsCheck extends React.Component {
           `/certifications/${match.params.vacols_id}/confirm_case_details` :
           ''
         }
-        onClickContinue={ documentsMatch ? null : reloadPage }/>
+        onClickContinue={ documentsMatch ? null : reloadPage } />
     </div>;
   }
 }

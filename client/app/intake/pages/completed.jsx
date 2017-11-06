@@ -18,11 +18,11 @@ class Completed extends React.PureComponent {
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
     case RAMP_INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH}/>;
+      return <Redirect to={PAGE_PATHS.FINISH} />;
     default:
     }
 

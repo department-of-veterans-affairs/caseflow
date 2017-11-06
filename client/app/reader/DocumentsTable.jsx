@@ -237,7 +237,7 @@ class DocumentsTable extends React.Component {
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,
         valueFunction: (doc) => <DocTypeColumn doc={doc}
-          documentPathBase={this.props.documentPathBase}/>
+          documentPathBase={this.props.documentPathBase} />
       },
       {
         cellClass: 'tags-column',
