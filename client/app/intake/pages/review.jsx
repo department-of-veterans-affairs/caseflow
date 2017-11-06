@@ -20,9 +20,9 @@ class Review extends React.PureComponent {
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
