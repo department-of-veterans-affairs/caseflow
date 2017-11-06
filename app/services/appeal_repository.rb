@@ -9,6 +9,12 @@ class AppealRepository
     VACOLS::Record.connection.active?
   end
 
+  def self.transaction
+    VACOLS::Case.transaction do
+      yield
+    end
+  end
+
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
