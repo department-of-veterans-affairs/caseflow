@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import Button from '../../components/Button';
 import { onAddIssue } from '../actions/Issue';
-import IssuesUtil from '../util/IssuesUtil';
+import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
@@ -41,7 +41,7 @@ class HearingWorksheetStream extends Component {
       <h2 className="cf-hearings-worksheet-header">Issues</h2>
       {Object.values(worksheetAppeals).map((appeal, key) => {
 
-        const appealWorksheetIssues = IssuesUtil.filterIssuesOnAppeal(worksheetIssues, appeal.id);
+        const appealWorksheetIssues = filterIssuesOnAppeal(worksheetIssues, appeal.id);
         const currentIssueCount = issueCount;
 
         issueCount += _.size(appealWorksheetIssues);

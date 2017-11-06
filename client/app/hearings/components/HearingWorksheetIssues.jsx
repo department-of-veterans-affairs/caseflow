@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
-import IssuesUtil from '../util/IssuesUtil';
+import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -57,7 +57,7 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    const filteredIssues = IssuesUtil.filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
+    const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
 
     const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
 
