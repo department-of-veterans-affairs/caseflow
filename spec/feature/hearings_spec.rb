@@ -145,7 +145,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("These are comments")
     end
 
-    scenario "User can add and edit issues" do
+    scenario "Worksheet adds, deletes, edits, and saves user created issues" do
       visit "/hearings/1/worksheet"
       expect(page).to_not have_field("1-issue-program")
       expect(page).to_not have_field("1-issue-name")
@@ -158,21 +158,15 @@ RSpec.feature "Hearings" do
       fill_in "2-issue-levels", with: "This is the level"
       fill_in "2-issue-description", with: "This is the description"
 
+      find("#cf-issue-delete-21").click
+      click_on "Confirm delete"
+      expect(page).to_not have_content("Service Connection")
+
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is the program")
       expect(page).to have_content("This is the name")
       expect(page).to have_content("This is the level")
       expect(page).to have_content("This is the description")
-    end
-
-    scenario "User can delete issues" do
-      visit "/hearings/1/worksheet"
-      find("#cf-issue-delete-21").click
-      click_on "Confirm delete"
-      expect(page).to_not have_content("Service Connection")
-
-      # Confirm deletion saves to back end
-      visit "/hearings/1/worksheet"
       expect(page).to_not have_content("Service Connection")
     end
 
