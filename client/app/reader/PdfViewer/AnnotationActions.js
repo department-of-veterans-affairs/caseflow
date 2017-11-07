@@ -212,7 +212,6 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
     );
 };
 
-
 export const createAnnotation = (annotation) => (dispatch) => {
   const temporaryId = uuid.v4();
 

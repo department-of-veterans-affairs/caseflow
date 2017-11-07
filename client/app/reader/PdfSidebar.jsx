@@ -162,7 +162,7 @@ export class PdfSidebar extends React.Component {
           onChange={this.onAccordionOpenOrClose}
           activeKey={this.props.openedAccordionSections}>
           <AccordionSection title="Document information">
-            <SideBarDocumentInformation appeal={appeal} doc={this.props.doc}/>
+            <SideBarDocumentInformation appeal={appeal} doc={this.props.doc} />
           </AccordionSection>
           <AccordionSection title="Categories">
             <SideBarCategories doc={this.props.doc}
@@ -170,7 +170,7 @@ export class PdfSidebar extends React.Component {
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <SideBarIssueTags
-              doc={this.props.doc}/>
+              doc={this.props.doc} />
           </AccordionSection>
           <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
             <SideBarComments
@@ -203,17 +203,17 @@ export class PdfSidebar extends React.Component {
                 columns={scrollColumns}
                 rowObjects={scrollInstructions}
                 slowReRendersAreOk
-                className="cf-keyboard-modal-table"/>
+                className="cf-keyboard-modal-table" />
               <Table
                 columns={commentColumns}
                 rowObjects={commentInstructions}
                 slowReRendersAreOk
-                className="cf-keyboard-modal-table"/>
+                className="cf-keyboard-modal-table" />
               <Table
                 columns={documentsColumns}
                 rowObjects={documentsInstructions}
                 slowReRendersAreOk
-                className="cf-keyboard-modal-table"/>
+                className="cf-keyboard-modal-table" />
             </div>
           </Modal>
         </div>

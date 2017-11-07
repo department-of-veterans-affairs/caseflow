@@ -62,7 +62,7 @@ export default class StyleGuideTabs extends React.Component {
       <TabWindow
         name="tabsnoicons"
         tabs={tabs}
-        onChange={this.onTabSelected}/>
+        onChange={this.onTabSelected} />
       <h3>Tabs with Icons</h3>
       <p>
         Icons are optional on tabs and are set by the designer in the mockup.
@@ -72,7 +72,7 @@ export default class StyleGuideTabs extends React.Component {
       <TabWindow
         name="tabswithicons"
         tabs={tabsWithIcons}
-        onChange={this.onTabSelected}/>
+        onChange={this.onTabSelected} />
     </div>;
   }
 }

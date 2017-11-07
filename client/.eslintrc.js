@@ -71,6 +71,7 @@ module.exports = {
     // we have an array of elements doesn't mean we're going to put them into the DOM that way.
     // We don't always need to set a key.
     'react/jsx-key': 0,
+    'react/jsx-tag-spacing': 1,
     'react/jsx-uses-react': 'warn',
     'react/jsx-uses-vars': 'warn',
     // We have so many places where we have missing PropTypes that it's not worth it to fix this now.
@@ -146,7 +147,7 @@ module.exports = {
     'no-mixed-requires': 'warn',
     'no-multi-spaces': 'warn',
     'no-multi-str': 'error',
-    'no-multiple-empty-lines': 'warn',
+    'no-multiple-empty-lines': ['warn', { max: 1 }],
     'no-native-reassign': 'error',
     'no-negated-condition': 'warn',
     'no-unsafe-negation': 'warn',
