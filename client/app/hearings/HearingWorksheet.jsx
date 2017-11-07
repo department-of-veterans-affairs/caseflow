@@ -44,11 +44,12 @@ export class HearingWorksheet extends React.PureComponent {
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   printDocument() {
-    const input = document.getElementById('divToPrint');
+
+    const input = document.getElementById('printContainer');
     html2canvas(input)
       .then((canvas) => {
         const imgData = canvas.toDataURL('images/png');
-        const pdf = new jsPDF();
+        const pdf = new jspdf();
         pdf.addImage(imgData, 'JPEG', 0, 0);
         pdf.save("worksheet.pdf");
       })
@@ -62,7 +63,7 @@ export class HearingWorksheet extends React.PureComponent {
     const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
 
     return <div>
-      <div className="cf-app-segment--alt cf-hearings-worksheet">
+      <div id="printContainer" className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
