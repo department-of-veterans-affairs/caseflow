@@ -2,12 +2,6 @@
 @import 'uswds/core/variables';
 
 
-.saving {
-  display: none;
-}
-
-.cf-hearings,
-.cf-hearings-schedule,
 .cf-hearings-worksheet {
 
 
@@ -29,11 +23,6 @@
       font-size: inherit;
     }
   }
-}
-
-
-.cf-hearings-worksheet {
-  margin-bottom: 15px;
 
   .cf-form-textarea {
     max-width: 100%;
@@ -106,8 +95,7 @@
   }
 
   .cf-appeal-stream-label {
-    margin-top: .5em;
-    margin-bottom: 0;
+    margin: 0;
   }
 
   .cf-issue-delete {
@@ -171,9 +159,6 @@
 
       .cf-form-checkboxes {
         display: inline-block;
-        box-sizing: border-box;
-        margin: 0;
-        padding: .3em 0;
 
         &:nth-of-type(1),
         &:nth-of-type(4) {
