@@ -8,6 +8,8 @@ import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import AutoSave from '../components/AutoSave';
 import * as AppConstants from '../constants/AppConstants';
+import html2canvas from 'html2canvas';
+import jspdf from 'jspdf';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -41,6 +43,19 @@ export class HearingWorksheet extends React.PureComponent {
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
+  printDocument() {
+
+    const input = document.getElementById('printContainer');
+    html2canvas(input)
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('images/png');
+        const pdf = new jspdf();
+        pdf.addImage(imgData, 'JPEG', 0, 0);
+        pdf.save("worksheet.pdf");
+      })
+    ;
+  }
+
   render() {
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
@@ -48,7 +63,7 @@ export class HearingWorksheet extends React.PureComponent {
     const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
 
     return <div>
-      <div className="cf-app-segment--alt cf-hearings-worksheet">
+      <div id="printContainer" className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
@@ -181,6 +196,11 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
+        <Link
+          name="save-to-pdf"
+          onClick={this.printDocument}
+          button="secondary">
+            Save to PDF</Link>
         <Link
           name="review-efolder"
           href={`${readerLink}?category=case_summary`}
