@@ -63,6 +63,8 @@ export default class SearchBar extends React.Component {
   setInputFocus = () => this.input.focus()
   releaseInputFocus = () => this.input.blur();
 
+  clearInput = () => this.input.value = '';
+
   render() {
     let {
       id,

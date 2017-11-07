@@ -207,14 +207,14 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(-ZOOM_RATE)}
             ariaLabel="zoom out">
-            <i className="fa fa-minus" aria-hidden="true"></i>
+            <i className="fa fa-minus" aria-hidden="true" />
           </Button>
           <Button
             name="zoomIn"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(ZOOM_RATE)}
             ariaLabel="zoom in">
-            <i className="fa fa-plus" aria-hidden="true"></i>
+            <i className="fa fa-plus" aria-hidden="true" />
           </Button>
           <Button
             name="fit"
@@ -244,7 +244,7 @@ export class PdfUI extends React.Component {
             ariaLabel="search text"
             type="submit"
             onClick={this.props.toggleSearchBar}>
-            <SearchIcon/>
+            <SearchIcon />
           </Button>}
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
@@ -260,7 +260,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
-        {this.props.featureToggles.search && <DocumentSearch file={this.props.doc.content_url}/>}
+        {this.props.featureToggles.search && <DocumentSearch file={this.props.doc.content_url} />}
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
@@ -327,5 +327,6 @@ PdfUI.propTypes = {
   showClaimsFolderNavigation: PropTypes.bool.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   hidePdfSidebar: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  showPdf: PropTypes.func
 };

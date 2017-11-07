@@ -204,14 +204,11 @@ export class PdfViewer extends React.Component {
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
-            onPageClick={this.placeComment}
             prevDocId={this.getPrevDocId()}
             nextDocId={this.getNextDocId()}
             history={this.props.history}
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
-            onViewPortCreated={this.onViewPortCreated}
-            onViewPortsCleared={this.onViewPortsCleared}
             featureToggles={this.props.featureToggles}
           />
           <PdfSidebar
@@ -278,5 +275,6 @@ PdfViewer.propTypes = {
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,
-  hidePdfSidebar: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool,
+  showPdf: PropTypes.func
 };

@@ -57,13 +57,17 @@ export class DocumentSearch extends React.PureComponent {
     }
   }
 
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     // if focus is set on a hidden element, we can't prevent default
     // ctrl+f behavior, and other window-bound shortcuts stop working
     if (this.props.hidden) {
       this.searchBar.releaseInputFocus();
     } else {
       this.searchBar.setInputFocus();
+    }
+
+    if (this.props.file !== prevProps.file) {
+      this.clearSearch();
     }
   }
 
@@ -91,6 +95,11 @@ export class DocumentSearch extends React.PureComponent {
     return internalText;
   }
 
+  clearSearch = () => {
+    this.searchBar.clearInput();
+    this.onChange('');
+  }
+
   render() {
     const classes = classNames('cf-search-bar', {
       hidden: this.props.hidden
@@ -110,12 +119,12 @@ export class DocumentSearch extends React.PureComponent {
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
         onClick={this.prevMatch}>
-        <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}><LeftChevron/></div>
+        <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}><LeftChevron /></div>
       </Button>
       <Button
         classNames={['cf-increment-search-match', 'cf-next-match']}
         onClick={this.nextMatch}>
-        <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}><RightChevron/></div>
+        <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}><RightChevron /></div>
       </Button>
     </div>;
   }
