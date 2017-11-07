@@ -1,0 +1,235 @@
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
+
+.saving {
+  display: none;
+}
+
+.cf-hearings,
+.cf-hearings-schedule,
+.cf-hearings-worksheet {
+
+
+  .cf-hearings-title-and-judge {
+    h1 {
+      margin-bottom: 0;
+    }
+
+    span {
+      position: relative;
+      left: .25em;
+    }
+  }
+
+  .cf-title-meta-right {
+    line-height: 2em;
+
+    .meta {
+      font-size: inherit;
+    }
+  }
+
+  .addOn,
+  .transcriptRequested {
+    display: inline-block;
+    text-align: left;
+    padding: 0 .32em;
+
+    .cf-form-checkboxes {
+      margin-bottom: 0;
+    }
+  }
+
+  .addOn {
+    width: 33%;
+  }
+
+  .transcriptRequested {
+    width: 67%;
+  }
+}
+
+.loading-hearings {
+  margin: 100px auto 0;
+  text-align: center;
+}
+
+.cf-hearings-worksheet {
+  margin-bottom: 15px;
+
+  [type="text"] {
+    margin: .3em 0 0;
+  }
+
+  .cf-form-textarea {
+    max-width: 100%;
+
+    textarea {
+      margin: 0;
+      width: 100%;
+      resize: vertical;
+      min-height: 48px;
+    }
+  }
+
+  .cf-hearings-worksheet-witness-cell {
+
+    textarea {
+      height: 44px;
+      min-height: 44px;
+      min-width: 100%;
+    }
+  }
+
+  table {
+    margin: .5em 0 0;
+  }
+}
+
+.cf-hearings-worksheet-data {
+  position: relative;
+  margin-bottom: 1.765em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    font-size: 1.05em;
+    padding-bottom: .3em;
+  }
+
+  h4 {
+    font-weight: normal;
+    margin-top: 27px;
+    font-size: 17px;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .cf-hearings-worksheet-data-cell {
+    display: inline-block;
+    width: 20%;
+    margin-top: 1em;
+    vertical-align: top;
+    padding-left: .2em;
+
+    &.column-1 {
+      padding-left: 0;
+    }
+
+    &.column-2 {
+      width: 18%;
+    }
+
+    &.column-4 {
+      width: 21%;
+    }
+
+    &.column-5 {
+      width: 21%;
+    }
+
+  }
+
+  .cf-appeal-stream-label {
+    margin-top: .5em;
+    margin-bottom: 0;
+  }
+
+  .cf-issue-delete {
+    cursor: pointer;
+  }
+
+.cf-hearings-worksheet-issues {
+  margin: 0;
+
+  .cf-form-textarea {
+    min-height: 48px;
+
+    .question-label {
+      position: absolute;
+      left: -99999px;
+    }
+  }
+
+  .cf-txt-l {
+    padding-left: .4em;
+
+    [id=trash-can] {
+      margin-top: 20px;
+    }
+  }
+
+  tr {
+    border: none;
+
+    th {
+      padding: 0;
+    }
+  }
+
+  td {
+    vertical-align: top;
+    padding: .5em;
+
+    &:nth-of-type(1) {
+      width: 4.5em;
+    }
+
+    &:nth-of-type(2) {
+      width: 18em;
+    }
+
+    &:nth-of-type(3) {
+      width: 14em;
+    }
+
+    &:nth-of-type(4) {
+      width: 19em;
+    }
+
+    &:nth-of-type(5) {
+      width: 20%;
+    }
+
+    &:nth-of-type(6) {
+      width: 30%;
+    }
+
+    textarea {
+      height: 4em;
+    }
+
+    .cf-form-checkboxes {
+      display: inline-block;
+      box-sizing: border-box;
+      margin: 0;
+      padding: .3em 0;
+
+      &:nth-of-type(1),
+      &:nth-of-type(4) {
+        width: 40%;
+      }
+
+      &:nth-of-type(2),
+      &:nth-of-type(5) {
+        width: 35%;
+      }
+
+      &:nth-of-type(3),
+      &:nth-of-type(6) {
+        width: 25%;
+      }
+
+      label {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+ }
+}
