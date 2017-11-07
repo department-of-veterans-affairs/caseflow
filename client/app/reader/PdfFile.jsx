@@ -235,7 +235,7 @@ export class PdfFile extends React.PureComponent {
     // before trying to render the page.
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
       return <AutoSizer>{
-        ({ height }) => {
+        ({ width, height }) => {
           if (this.clientHeight !== height) {
             this.onPageChange(this.currentPage, height);
             this.clientHeight = height;
@@ -245,12 +245,12 @@ export class PdfFile extends React.PureComponent {
             ref={this.getList}
             onRowsRendered={this.onRowsRendered}
             onScroll={this.onScroll}
-            height={200}
+            height={height}
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
             rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
             scrollToAlignment={'start'}
-            width={200}
+            width={width}
             scale={this.props.scale}
           />;
         }
