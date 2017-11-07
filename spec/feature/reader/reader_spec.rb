@@ -72,6 +72,7 @@ RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
+    FeatureToggle.enable!(:search)
   end
 
   let(:vacols_record) { :remand_decided }
@@ -1205,6 +1206,22 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("Search results not found")
       expect(page).to have_content(search_query)
+    end
+
+    scenario "Search Document Text" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+
+      find(".cf-pdf-search").click
+
+      search_input = find("#search-ahead")
+      internal_text = find("#search-internal-text")
+
+      expect(search_input).to match_xpath("//input[@placeholder='Type to search...']")
+
+      fill_in "search-ahead", with: "decision"
+
+      search_input.value.should eq("decision")
+      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
     end
 
     scenario "Download PDF file" do
