@@ -52,6 +52,8 @@
 
   <%= stylesheet_link_tag    'application', media: 'all' %>
 
+
+
     <%= env_javascript_include_tag(static: 'application',
                                    hot: ['application',
                                          'http://localhost:3500/webpack-bundle.js']) %>
@@ -59,6 +61,8 @@
   <%= csrf_meta_tags %>
 
   <% if content_for?(:head) %><%= yield :head %><% end %>
+
+  <%= stylesheet_link_tag    'hearings_print', media: 'print' %>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
