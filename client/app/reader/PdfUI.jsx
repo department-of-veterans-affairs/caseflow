@@ -81,8 +81,14 @@ export class PdfUI extends React.Component {
   }
 
   getPageIndicator = () => {
+    if (this.props.doc.load_error) {
+      return;
+    }
+
+    let content = <em>Loading document...</em>;
+
     if (this.props.numPages) {
-      return <span>
+      content = <span>
         <PdfUIPageNumInput
           currentPage={this.state.currentPage}
           numPages={this.props.numPages}
@@ -93,11 +99,12 @@ export class PdfUI extends React.Component {
       </span>;
     }
 
-    return <em>Loading document...</em>;
+    return <span className="page-progress-indicator">{content}</span>;
   }
 
   getPdfFooter = () => {
     const currentDocIndex = this.props.filteredDocIds.indexOf(this.props.doc.id);
+    const pageIndicator = this.getPageIndicator();
 
     return <div className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-footer-buttons-left">
@@ -112,10 +119,9 @@ export class PdfUI extends React.Component {
         }
       </div>
       <div className="cf-pdf-buttons-center">
-        <span className="page-progress-indicator">
-          { this.getPageIndicator() }
-        </span>
-        |
+        { pageIndicator }
+        { pageIndicator && '|' }
+
         <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
@@ -253,6 +259,8 @@ export class PdfUI extends React.Component {
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
+          documentType={this.props.doc.type}
+          loadError={this.props.doc.load_error}
           file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}

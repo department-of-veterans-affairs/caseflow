@@ -18,6 +18,7 @@ export default class StatusMessage extends React.Component {
       title,
       wrapInAppSegment = true,
       children,
+      icon,
       type
     } = this.props;
 
@@ -44,7 +45,7 @@ export default class StatusMessage extends React.Component {
     });
 
     return <div id="certifications-generate" className={wrapperClassName}>
-      <h1 className={getClassNames()}>{title}</h1>
+      <h1 className={getClassNames()}>{icon}{title}</h1>
 
       { children ?
         <h2 className="cf-msg-screen-deck">

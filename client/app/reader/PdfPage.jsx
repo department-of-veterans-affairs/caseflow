@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { setUpPdfPage, clearPdfPage } from '../reader/Pdf/PdfActions';
 import { text as searchText } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
+import * as Constants from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -21,7 +22,7 @@ const PAGE_MARGIN_BOTTOM = 25;
 // These both come from _pdf_viewer.css and is the default height
 // of the pages in the PDF. We need it defined here to be
 // able to expand/contract the height of the pages as we zoom.
-const PAGE_WIDTH = 816;
+const PAGE_WIDTH = Constants.PDF_PAGE_WIDTH;
 const PAGE_HEIGHT = 1056;
 
 // Base scale used to calculate dimensions and draw text.

@@ -1261,4 +1261,14 @@ RSpec.feature "Reader" do
       expect_in_viewport("read-indicator")
     end
   end
+
+  context "with a single document that errors when we fetch it" do
+    let(:documents) { [Generators::Document.create] }
+
+    scenario "causes individual file view will display error message" do
+      allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      expect(page).to have_content("Unable to load document")
+    end
+  end
 end

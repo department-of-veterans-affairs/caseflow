@@ -400,6 +400,10 @@ body {
   }
 }
 
+.pdfViewer.singlePageView .cf-msg-screen-deck {
+  width: auto;
+}
+
 .cf-tab-window-body {
   padding-top: 20px;
   border: 1px solid $color-gray-light;

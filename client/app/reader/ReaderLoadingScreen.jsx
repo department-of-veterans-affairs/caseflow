@@ -4,6 +4,7 @@ import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations, onInitialDataLoadingFail
 } from './LoadingScreen/LoadingScreenActions';
+import { documentFailedToLoad } from './PdfViewer/PdfViewerActions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
@@ -37,7 +38,12 @@ export class ReaderLoadingScreen extends React.Component {
           withCredentials: true
         }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
           () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-        );
+        ).
+          catch((resp) => {
+            const docId = (/.*\/(\w*)\/\w*/).exec(resp.response.req.url)[1];
+
+            this.props.documentFailedToLoad(docId, resp.status);
+          });
       };
 
       for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
@@ -78,7 +84,8 @@ const mapDispatchToProps = (dispatch) => (
     onInitialDataLoadingFail,
     onReceiveDocs,
     onReceiveManifests,
-    onReceiveAnnotations
+    onReceiveAnnotations,
+    documentFailedToLoad
   }, dispatch)
 );
 

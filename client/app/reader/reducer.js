@@ -335,6 +335,17 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
+  case Constants.DOCUMENT_FAILED_TO_LOAD:
+    return update(state, {
+      documents: {
+        [action.payload.docId]: {
+          $merge: {
+            load_error: true,
+            status_code: action.payload.status
+          }
+        }
+      }
+    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
       hideErrorMessage(state, 'category'),

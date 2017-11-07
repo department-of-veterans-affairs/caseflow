@@ -241,3 +241,11 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
     selectCurrentPdfLocally(docId)
   );
 };
+
+export const documentFailedToLoad = (docId, statusCode) => ({
+  type: Constants.DOCUMENT_FAILED_TO_LOAD,
+  payload: {
+    status: statusCode,
+    docId
+  }
+});

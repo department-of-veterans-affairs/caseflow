@@ -4,6 +4,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
+
+import StatusMessage from '../components/StatusMessage';
+import ErrorAlertIcon from '../components/ErrorAlertIcon';
+import * as Constants from './constants';
 import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -76,9 +80,30 @@ export class PdfFile extends React.PureComponent {
     return null;
   }
 
+  displayErrorMessage = () => {
+    const downloadUrl = `${this.props.file}?type=${this.props.documentType}&download=true`;
+
+    // Center the status message vertically
+    const style = {
+      position: 'absolute',
+      top: '40%',
+      left: '50%',
+      width: `${Constants.PDF_PAGE_WIDTH}px`,
+      transform: 'translate(-50%, -50%)'
+    };
+
+    return <div style={style}>
+      <StatusMessage title="Unable to load document" icon={<ErrorAlertIcon />}>
+          Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
+        <br />
+          You can try <a href={downloadUrl}>downloading the document</a> or try again later.
+      </StatusMessage>
+    </div>;
+  }
+
   render() {
     return <div>
-      {this.getPages()}
+      {this.props.loadError && this.props.isVisible ? this.displayErrorMessage() : this.getPages()}
     </div>;
   }
 }
