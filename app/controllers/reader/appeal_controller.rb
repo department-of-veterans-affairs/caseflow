@@ -12,7 +12,7 @@ class Reader::AppealController < Reader::ApplicationController
     end
   end
 
-  def find_appeals_by_veteran_id
+  def find_appeals_by_veteran_id()
     MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
                           name: "AppealController.find_appeals_by_veteran_id") do
       appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
