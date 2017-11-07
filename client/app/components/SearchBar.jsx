@@ -120,11 +120,17 @@ export default class SearchBar extends React.Component {
         placeholder={placeholder}
         value={value} />
       {hasInternalText &&
+      <div>
+        <label className="usa-sr-only" htmlFor="search-internal-text">
+          Search Result Count
+        </label>
         <input
+          id="search-internal-text"
           type="text"
           value={internalText}
           onClick={this.setInputFocus}
-          className="cf-search-internal-text" /> }
+          className="cf-search-internal-text" />
+      </div>}
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
