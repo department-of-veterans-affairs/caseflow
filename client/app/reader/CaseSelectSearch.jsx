@@ -21,15 +21,15 @@ class CaseSelectSearch extends React.PureComponent {
   componentDidUpdate = () => {
     // if only one appeal is received for the veteran id
     // select that appeal's case.
-    if (_.size(this.props.caseSelect.ui.receivedAppeals) === 1) {
-      this.props.caseSelectAppeal(this.props.caseSelect.ui.receivedAppeals[0]);
+    if (_.size(this.props.caseSelect.receivedAppeals) === 1) {
+      this.props.caseSelectAppeal(this.props.caseSelect.receivedAppeals[0]);
     }
 
     // when an appeal is selected using claim search,
     // this method redirects to the claim folder page
     // and also does a bit of store clean up.
-    if (this.props.caseSelect.ui.selectedAppeal.vacols_id) {
-      this.props.history.push(`/${this.props.caseSelect.ui.selectedAppeal.vacols_id}/documents`);
+    if (this.props.caseSelect.selectedAppeal.vacols_id) {
+      this.props.history.push(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
       this.props.clearCaseSelectSearch();
     }
   };
@@ -41,8 +41,8 @@ class CaseSelectSearch extends React.PureComponent {
 
   handleSelectAppeal = () => {
     // get the appeal selected from the modal
-    const appeal = _.find(this.props.caseSelect.ui.receivedAppeals,
-      { vacols_id: this.props.caseSelect.ui.selectedAppealVacolsId });
+    const appeal = _.find(this.props.caseSelect.receivedAppeals,
+      { vacols_id: this.props.caseSelect.selectedAppealVacolsId });
 
     // set the selected appeal
     this.props.caseSelectAppeal(appeal);
@@ -74,12 +74,12 @@ class CaseSelectSearch extends React.PureComponent {
       }));
 
     return <div className="section-search">
-      {caseSelect.ui.search.showErrorMessage &&
+      {caseSelect.search.showErrorMessage &&
         <Alert title="Veteran ID not found" type="error">
           Please enter a valid Veteran ID and try again.
         </Alert>
       }
-      {caseSelect.ui.search.showNoAppealsInfoMessage &&
+      {caseSelect.search.showNoAppealsInfoMessage &&
         <Alert title="No appeals found" type="info">
           {`Veteran ID ${this.props.caseSelectCriteria.searchQuery} does not have any appeals.`}
         </Alert>
@@ -91,10 +91,10 @@ class CaseSelectSearch extends React.PureComponent {
         value={this.props.caseSelectCriteria.searchQuery}
         onClearSearch={this.props.clearCaseSelectSearch}
         onSubmit={this.searchOnChange}
-        loading={caseSelect.ui.isRequestingAppealsUsingVeteranId}
+        loading={caseSelect.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
       />
-      { Boolean(_.size(caseSelect.ui.receivedAppeals) > 1) && <Modal
+      { Boolean(_.size(caseSelect.receivedAppeals) > 1) && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
@@ -103,15 +103,15 @@ class CaseSelectSearch extends React.PureComponent {
           { classNames: ['usa-button', 'usa-button-primary'],
             name: 'Okay',
             onClick: this.handleSelectAppeal,
-            disabled: _.isEmpty(caseSelect.ui.selectedAppealVacolsId)
+            disabled: _.isEmpty(caseSelect.selectedAppealVacolsId)
           }
         ]}
         closeHandler={this.handleModalClose}
         title = "Select claims folder">
         <RadioField
           name="claims-folder-select"
-          options={createAppealOptions(caseSelect.ui.receivedAppeals)}
-          value={caseSelect.ui.selectedAppealVacolsId}
+          options={createAppealOptions(caseSelect.receivedAppeals)}
+          value={caseSelect.selectedAppealVacolsId}
           onChange={this.handleChangeAppealSelection}
           hideLabel
         />
