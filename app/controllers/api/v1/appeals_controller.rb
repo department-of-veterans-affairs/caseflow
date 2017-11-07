@@ -1,6 +1,4 @@
 class Api::V1::AppealsController < Api::ApplicationController
-  before_action :verify_feature_enabled
-
   rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn
 
   def index
@@ -32,10 +30,6 @@ class Api::V1::AppealsController < Api::ApplicationController
   # Cache can't be busted in prod
   def reload?
     !!params[:reload] && !Rails.deploy_env?(:prod)
-  end
-
-  def verify_feature_enabled
-    unauthorized unless FeatureToggle.enabled?(:appeals_status)
   end
 
   def veteran_not_found

@@ -978,7 +978,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Docket Number")
       expect(page).to have_content(appeal.docket_number)
       expect(page).to have_content("Regional Office")
-      expect(page).to have_content("#{appeal.regional_office[:key]} - #{appeal.regional_office[:city]}")
+      expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
       appeal.issues do |issue|
         expect(page).to have_content(issue.type[:label])

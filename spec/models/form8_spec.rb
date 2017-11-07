@@ -276,7 +276,8 @@ describe Form8 do
         notification_date: (Time.zone.now - 4.days).to_date,
         soc_date: (Time.zone.now - 4.days).to_date,
         form9_date: (Time.zone.now - 4.days).to_date,
-        insurance_loan_number: "1337"
+        insurance_loan_number: "1337",
+        regional_office_key: "RO37"
       )
     end
 

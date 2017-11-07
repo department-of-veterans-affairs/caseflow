@@ -506,44 +506,88 @@ describe Appeal do
     end
   end
 
-  context "#close!" do
+  context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
     let(:user) { Generators::User.build }
+    let(:disposition) { "RAMP Opt-in" }
 
-    subject { appeal.close!(user: user, closed_on: 4.days.ago, disposition: disposition) }
-
-    context "when disposition is not valid" do
-      let(:disposition) { "I'm not a disposition" }
+    context "when called with both appeal and appeals" do
+      let(:vacols_record) { :ready_to_certify }
 
       it "should raise error" do
-        expect { subject }.to raise_error(/Disposition/)
+        expect do
+          Appeal.close(
+            appeal: appeal,
+            appeals: [appeal, another_appeal],
+            user: user,
+            closed_on: 4.days.ago,
+            disposition: disposition
+          )
+        end.to raise_error("Only pass either appeal or appeals")
       end
     end
 
-    context "when disposition is valid" do
-      let(:disposition) { "RAMP Opt-in" }
+    context "when multiple appeals" do
+      it "closes each appeal" do
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: another_appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
 
-      context "when appeal is not active" do
-        let(:vacols_record) { :full_grant_decided }
+        Appeal.close(
+          appeals: [appeal, another_appeal],
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition
+        )
+      end
+    end
+
+    context "when just one appeal" do
+      subject do
+        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
+      end
+
+      context "when disposition is not valid" do
+        let(:disposition) { "I'm not a disposition" }
 
         it "should raise error" do
-          expect { subject }.to raise_error(/active/)
+          expect { subject }.to raise_error(/Disposition/)
         end
       end
 
-      context "when appeal is active" do
-        let(:vacols_record) { :ready_to_certify }
+      context "when disposition is valid" do
+        context "when appeal is not active" do
+          let(:vacols_record) { :full_grant_decided }
 
-        it "closes the appeal in VACOLS" do
-          expect(Fakes::AppealRepository).to receive(:close!).with(
-            appeal: appeal,
-            user: user,
-            closed_on: 4.days.ago,
-            disposition_code: "P"
-          )
+          it "should raise error" do
+            expect { subject }.to raise_error(/active/)
+          end
+        end
 
-          subject
+        context "when appeal is active" do
+          let(:vacols_record) { :ready_to_certify }
+
+          it "closes the appeal in VACOLS" do
+            expect(Fakes::AppealRepository).to receive(:close!).with(
+              appeal: appeal,
+              user: user,
+              closed_on: 4.days.ago,
+              disposition_code: "P"
+            )
+
+            subject
+          end
         end
       end
     end
@@ -911,7 +955,7 @@ describe Appeal do
     end
 
     context "when regional office key is not mapped to a station" do
-      let(:regional_office_key) { "ROXX" }
+      let(:regional_office_key) { "SO62" }
       it { is_expected.to be_nil }
     end
   end

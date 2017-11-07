@@ -132,12 +132,14 @@ RSpec.feature "Hearings" do
 
     scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
+      fill_in "Rep. Name:", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
       fill_in "worksheet-contentions", with: "These are contentions"
       fill_in "worksheet-military-service", with: "This is military service"
       fill_in "worksheet-evidence", with: "This is evidence"
       fill_in "worksheet-comments-for-attorney", with: "These are comments"
       visit "/hearings/1/worksheet"
+      expect(find_field("Rep. Name:").value).to eq "This is a rep name"
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are contentions")
       expect(page).to have_content("This is military service")
@@ -168,6 +170,22 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is the level")
       expect(page).to have_content("This is the description")
       expect(page).to_not have_content("Service Connection")
+    end
+
+    context "Multiple appeal streams" do
+      before do
+        vbms_id = Hearing.find(1).appeal.vbms_id
+        Generators::Appeal.create(vbms_id: vbms_id, vacols_record: { template: :pending_hearing })
+      end
+
+      scenario "Numbering is consistent" do
+        visit "/hearings/1/worksheet"
+        click_on "button-addIssue-2"
+        expect(page).to have_content("3.")
+        find("#cf-issue-delete-21").click
+        click_on "Confirm delete"
+        expect(page).to_not have_content("3.")
+      end
     end
 
     scenario "Can click from hearing worksheet to reader" do

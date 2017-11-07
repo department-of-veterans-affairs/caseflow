@@ -129,7 +129,7 @@ class Hearing < ActiveRecord::Base
     attr_writer :repository
 
     def venues
-      VACOLS::RegionalOffice::CITIES.merge(VACOLS::RegionalOffice::SATELLITE_OFFICES)
+      RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
     end
 
     def repository

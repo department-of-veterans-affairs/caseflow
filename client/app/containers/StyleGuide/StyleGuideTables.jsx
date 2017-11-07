@@ -79,7 +79,7 @@ export default function StyleGuideTables() {
       should be right aligned with the edge of the table.
     </p>
     <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary}
-      slowReRendersAreOk/>
+      slowReRendersAreOk />
 
     <h3>Queues</h3>
     <p>
@@ -90,6 +90,6 @@ export default function StyleGuideTables() {
       right-aligned actionable link, such as
       "Assign >>," located on the far right column.
     </p>
-    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk/>
+    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk />
   </div>;
 }

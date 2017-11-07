@@ -55,7 +55,7 @@ const EstablishClaimAdmin = ({
             <div className="cf-wide-app">
               <div className="usa-grid">
                 <Route exact path="/"
-                  component={() => <StuckTasksContainer/>}
+                  component={() => <StuckTasksContainer />}
                 />
 
               </div>
@@ -64,7 +64,7 @@ const EstablishClaimAdmin = ({
           <Footer
             appName="Establish Claim Admin"
             feedbackUrl={feedbackUrl}
-            buildDate={buildDate}/>
+            buildDate={buildDate} />
         </div>
       </BrowserRouter>
     </div>

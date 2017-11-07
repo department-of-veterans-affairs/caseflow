@@ -38,7 +38,6 @@ export const clearPdfDocument = (file, pageIndex, doc) => ({
   }
 });
 
-
 /** Document Search **/
 
 export const getDocumentText = (pdfDocument, file) =>

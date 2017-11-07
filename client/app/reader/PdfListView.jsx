@@ -32,7 +32,7 @@ export class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents}/>
+          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -62,7 +62,7 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
     appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
-    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal,
+    caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
     manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
   };
