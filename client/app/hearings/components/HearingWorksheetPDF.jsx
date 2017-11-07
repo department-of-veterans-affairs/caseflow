@@ -1,4 +1,6 @@
 import React, { Component, PropTypes} from 'react';
+import html2canvas from 'html2canvas';
+import jspdf from 'jspdf';
 
 export default class Export extends Component {
   constructor(props) {
@@ -12,7 +14,6 @@ export default class Export extends Component {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF();
         pdf.addImage(imgData, 'JPEG', 0, 0);
-        // pdf.output('dataurlnewwindow');
         pdf.save("worksheet.pdf");
       })
     ;
@@ -20,19 +21,21 @@ export default class Export extends Component {
 
   render() {
     return (<div>
-      <div className="mb5">
+      <div>
         <button onClick={this.printDocument}>Print</button>
       </div>
-      <div id="divToPrint" className="mt4" {...css({
-        backgroundColor: '#f5f5f5',
-        width: '200mm',
-        minHeight: '200mm',
-        marginLeft: 'auto',
-        marginRight: 'auto'
-      })}>
+      <div id="divToPrint" >
         <div>Test Page</div> 
         <div>--insert components here</div>
       </div>
     </div>);
   }
 }
+
+ // {...css({
+ //        backgroundColor: '#f5f5f5',
+ //        width: '200mm',
+ //        minHeight: '200mm',
+ //        marginLeft: 'auto',
+ //        marginRight: 'auto'
+ //      })}
