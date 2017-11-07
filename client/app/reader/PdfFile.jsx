@@ -26,7 +26,6 @@ export class PdfFile extends React.PureComponent {
     this.pdfDocument = null;
     this.list = null;
     this.startIndex = 0;
-    this.stopIndex = 0;
     this.scrollTop = 0;
     this.scrollLocation = {};
     this.clientHeight = 0;
@@ -132,7 +131,8 @@ export class PdfFile extends React.PureComponent {
   }
 
   jumpToPage = () => {
-    if (this.props.jumpToPageNumber) {
+    // We want to jump to the page, after the react virtualized has initialized the scroll window.
+    if (this.props.jumpToPageNumber && this.clientHeight > 0) {
       const scrollToIndex = this.props.jumpToPageNumber ? pageIndexOfPageNumber(this.props.jumpToPageNumber) : -1;
 
       this.list.scrollToRow(scrollToIndex);
@@ -141,7 +141,8 @@ export class PdfFile extends React.PureComponent {
   }
 
   jumpToComment = () => {
-    if (this.props.scrollToComment) {
+    // We want to jump to the comment, after the react virtualized has initialized the scroll window.
+    if (this.props.scrollToComment && this.clientHeight > 0) {
       const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
       const transformedY = rotateCoordinates(this.props.scrollToComment,
         this.pageDimensions(pageIndex), -this.props.rotation).y * this.props.scale;
@@ -161,7 +162,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidUpdate = () => {
-    if (this.list) {
+    if (this.list && this.props.isVisible) {
       this.list.recomputeRowHeights();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
@@ -169,9 +170,8 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  onRowsRendered = ({ startIndex, stopIndex }) => {
+  onRowsRendered = ({ startIndex }) => {
     this.startIndex = startIndex;
-    this.stopIndex = stopIndex;
   }
 
   onPageChange = (index, clientHeight) => {
@@ -185,7 +185,7 @@ export class PdfFile extends React.PureComponent {
     if (this.list) {
       let lastIndex = 0;
 
-      _.range(this.startIndex, this.stopIndex + 1).forEach((index) => {
+      _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
         const offset = this.list.getOffsetForRow({ index });
 
         if (offset < scrollTop + (clientHeight / 2)) {
@@ -245,12 +245,12 @@ export class PdfFile extends React.PureComponent {
             ref={this.getList}
             onRowsRendered={this.onRowsRendered}
             onScroll={this.onScroll}
-            height={height}
+            height={200}
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
             rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
             scrollToAlignment={'start'}
-            width={width}
+            width={200}
             scale={this.props.scale}
           />;
         }

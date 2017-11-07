@@ -17,7 +17,8 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 import readerReducer from '../../../app/reader/reducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
-
+import sinon from 'sinon';
+import { AutoSizer } from 'react-virtualized';
 const vacolsId = 'reader_id1';
 
 // This is the route history preset in react router
@@ -37,6 +38,12 @@ describe('DecisionReviewer', () => {
   beforeEach(() => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
+
+    sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
+      return <div ref={this._setRef}>
+        {this.props.children({ width: 200, height: 101 })}
+      </div>
+    });
 
     const store = createStore(
       combineReducers({
@@ -94,6 +101,7 @@ describe('DecisionReviewer', () => {
     wrapper.detach();
     ApiUtilStub.afterEach();
     PdfJsStub.afterEach();
+    AutoSizer.prototype.render.restore();
   });
 
   context('Loading Spinner', () => {
@@ -156,7 +164,7 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[0].type).
           simulate('click', { button: 0 });
         await pause();
-
+        console.log(wrapper.debug());
         expect(wrapper.find('#rotationDiv1').
           props().style.transform).to.equal('rotate(0deg)');
 
