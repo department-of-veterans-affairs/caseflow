@@ -78,7 +78,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader", focus: true do
+RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
