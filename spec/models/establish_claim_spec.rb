@@ -203,7 +203,7 @@ describe EstablishClaim do
 
         it "raises duplicate_ep VBMSError" do
           expect { subject }.to raise_error do |error|
-            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
             expect(error.error_code).to eq("duplicate_ep")
           end
         end
@@ -217,7 +217,7 @@ describe EstablishClaim do
 
         it "raises duplicate_ep VBMSError" do
           expect { subject }.to raise_error do |error|
-            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
             expect(error.error_code).to eq("duplicate_ep")
           end
         end
@@ -231,7 +231,7 @@ describe EstablishClaim do
 
         it "raises missing_ssn VBMSError" do
           expect { subject }.to raise_error do |error|
-            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
             expect(error.error_code).to eq("missing_ssn")
           end
         end
@@ -245,7 +245,7 @@ describe EstablishClaim do
 
         it "raises bgs_info_invalid VBMSError" do
           expect { subject }.to raise_error do |error|
-            expect(error).to be_a(EstablishClaim::VBMSError)
+            expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
             expect(error.error_code).to eq("bgs_info_invalid")
           end
         end
