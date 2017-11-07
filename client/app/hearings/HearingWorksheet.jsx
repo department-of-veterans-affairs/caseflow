@@ -30,7 +30,15 @@ export class HearingWorksheet extends React.PureComponent {
 
   constructor(props) {
     super(props);
+
+    this.printContainer = null;
     this.savePDF = this.savePDF.bind(this);
+    this.handlePrintContainerRef = this.handlePrintContainerRef.bind(this);
+  }
+
+  handlePrintContainerRef(element) {
+    //  `this.handlePrintContainerRef` will this, which will store ref
+    this.printContainer = element;
   }
 
   save = (worksheet, worksheetIssues) => () => {
@@ -48,7 +56,7 @@ export class HearingWorksheet extends React.PureComponent {
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   savePDF() {
-    const source = document.getElementById('printContainer');
+    const source = this.printContainer;
     /* eslint new-cap: ["error", { "newIsCap": false }]*/
     let pdf = new jspdf('p', 'pt', 'letter');
 
@@ -82,7 +90,7 @@ export class HearingWorksheet extends React.PureComponent {
     const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
 
     return <div>
-      <div id="printContainer" className="cf-app-segment--alt cf-hearings-worksheet">
+      <div id="printContainer" ref={this.handlePrintContainerRef} className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
