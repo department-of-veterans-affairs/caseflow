@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -39,11 +41,14 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
+    /* eslint-disable no-underscore-dangle */
     sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
       return <div ref={this._setRef}>
-        {this.props.children({ width: 200, height: 101 })}
-      </div>
+        {this.props.children({ width: 200,
+          height: 100 })}
+      </div>;
     });
+    /* eslint-enable no-underscore-dangle */
 
     const store = createStore(
       combineReducers({
@@ -164,7 +169,7 @@ describe('DecisionReviewer', () => {
           (link) => link.text() === documents[0].type).
           simulate('click', { button: 0 });
         await pause();
-        console.log(wrapper.debug());
+
         expect(wrapper.find('#rotationDiv1').
           props().style.transform).to.equal('rotate(0deg)');
 

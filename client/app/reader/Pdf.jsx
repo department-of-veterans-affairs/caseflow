@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
 
-import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
-  pageCoordsOfRootCoords } from '../reader/utils';
+import { isUserEditingText, pageNumberOfPageIndex } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';

@@ -519,7 +519,6 @@ RSpec.feature "Reader" do
 
         scroll_to_bottom(className: "ReactVirtualized__List")
         find(".cf-pdf-scroll-view").click
-        binding.pry
         find("body").send_keys(:arrow_left)
         expect(page).to_not have_css(".comment-textarea")
         add_comment_without_clicking_save "unsaved comment text"
@@ -927,7 +926,7 @@ RSpec.feature "Reader" do
     end
     # :nocov:
 
-# document.getElementsByClassName("ReactVirtualized__List")[0].scrollTop = 5000
+    # document.getElementsByClassName("ReactVirtualized__List")[0].scrollTop = 5000
     scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type

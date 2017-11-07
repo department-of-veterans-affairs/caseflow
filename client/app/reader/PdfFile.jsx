@@ -10,10 +10,10 @@ import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { List, AutoSizer } from 'react-virtualized';
-import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates, getInitialAnnotationIconPageCoords } from './utils';
+import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon }
   from '../reader/PdfViewer/AnnotationActions';
-import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
+import { INTERACTION_TYPES } from '../reader/analytics';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 
 const PAGE_HEIGHT = 1056;
@@ -235,7 +235,7 @@ export class PdfFile extends React.PureComponent {
     // before trying to render the page.
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
       return <AutoSizer>{
-        ({ width, height }) => {
+        ({ height }) => {
           if (this.clientHeight !== height) {
             this.onPageChange(this.currentPage, height);
             this.clientHeight = height;
