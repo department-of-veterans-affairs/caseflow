@@ -8,6 +8,7 @@ import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import AutoSave from '../components/AutoSave';
 import * as AppConstants from '../constants/AppConstants';
+import jspdf from 'jspdf';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -27,6 +28,11 @@ import {
 
 export class HearingWorksheet extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+    this.savePDF = this.savePDF.bind(this);
+  }
+
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
@@ -41,6 +47,34 @@ export class HearingWorksheet extends React.PureComponent {
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
+  savePDF() {
+    const source = document.getElementById('printContainer');
+    /* eslint new-cap: ["error", { "newIsCap": false }]*/
+    let pdf = new jspdf('p', 'pt', 'letter');
+
+    let specialElementHandlers = {
+      'omit' () {
+        return true;
+      }
+    };
+
+    let margins = { top: 50,
+      left: 60,
+      width: 612
+    };
+
+    pdf.fromHTML(
+      source, margins.left, margins.top, {
+        width: margins.width,
+        elementHandlers: specialElementHandlers
+      },
+      // TODO add worksheet ID to file name
+      () => {
+        pdf.save('worksheet.pdf');
+      }
+    );
+  }
+
   render() {
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
@@ -48,7 +82,7 @@ export class HearingWorksheet extends React.PureComponent {
     const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
 
     return <div>
-      <div className="cf-app-segment--alt cf-hearings-worksheet">
+      <div id="printContainer" className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
@@ -181,6 +215,11 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
+        <Link
+          name="save-to-pdf"
+          onClick={this.savePDF}
+          button="secondary">
+            Save to PDF</Link>
         <Link
           name="review-efolder"
           href={`${readerLink}?category=case_summary`}
