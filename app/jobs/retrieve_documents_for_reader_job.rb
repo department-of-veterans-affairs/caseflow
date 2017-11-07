@@ -3,7 +3,7 @@
 class RetrieveDocumentsForReaderJob < ActiveJob::Base
   queue_as :low_priority
 
-  DEFAULT_USERS_LIMIT = 10
+  DEFAULT_USERS_LIMIT = 3
   def perform(args = {})
     RequestStore.store[:application] = "reader"
 

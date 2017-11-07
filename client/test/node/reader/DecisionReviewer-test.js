@@ -15,6 +15,7 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
+import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
 
@@ -40,6 +41,7 @@ describe('DecisionReviewer', () => {
 
     const store = createStore(
       combineReducers({
+        caseSelect: caseSelectReducer,
         readerReducer,
         search: searchReducer
       }),
