@@ -131,6 +131,19 @@ export class HearingWorksheet extends React.PureComponent {
         />
 
         <form className="cf-hearings-worksheet-form">
+
+          <div className="cf-hearings-worksheet-data">
+            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+            <Textarea
+              name="Comments and special instructions to attorneys"
+              value={worksheet.comments_for_attorney || ''}
+              id="worksheet-comments-for-attorney"
+              onChange={this.onCommentsForAttorneyChange}
+              minRows={1}
+              maxLength={5000}
+            />
+          </div>
+
           <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-contentions">Contentions</label>
             <Textarea
@@ -167,17 +180,6 @@ export class HearingWorksheet extends React.PureComponent {
             />
           </div>
 
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
-            <Textarea
-              name="Comments and special instructions to attorneys"
-              value={worksheet.comments_for_attorney || ''}
-              id="worksheet-comments-for-attorney"
-              onChange={this.onCommentsForAttorneyChange}
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
         </form>
       </div>
       <div className="cf-push-right">
