@@ -1232,34 +1232,34 @@ RSpec.feature "Reader" do
     end
 
     scenario "Navigate Search Results with Keyboard" do
-      # skip_because_sending_keys_to_body_does_not_work_on_travis do
-      open_search_bar
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        open_search_bar
 
-      internal_text = find("#search-internal-text")
+        internal_text = find("#search-internal-text")
 
-      fill_in "search-ahead", with: "decision"
+        fill_in "search-ahead", with: "decision"
 
-      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+        expect(internal_text).to have_xpath("//input[@value='1 of 2']")
 
-      find("body").send_keys [:meta, "g"]
+        find("body").send_keys [:meta, "g"]
 
-      expect(internal_text).to have_xpath("//input[@value='2 of 2']")
-      # end
+        expect(internal_text).to have_xpath("//input[@value='2 of 2']")
+      end
     end
 
     scenario "Show and Hide Document Searchbar with Keyboard" do
-      # skip_because_sending_keys_to_body_does_not_work_on_travis do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
-      search_bar = find(".cf-search-bar")
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+        search_bar = find(".cf-search-bar")
 
-      find("body").send_keys [:meta, "f"]
+        find("body").send_keys [:meta, "f"]
 
-      expect(search_bar).not_to match_css(".hidden")
+        expect(search_bar).not_to match_css(".hidden")
 
-      find("body").send_keys [:escape]
+        find("body").send_keys [:escape]
 
-      expect(search_bar).to match_css(".hidden")
-      # end
+        expect(search_bar).to match_css(".hidden")
+      end
     end
 
     scenario "Download PDF file" do
