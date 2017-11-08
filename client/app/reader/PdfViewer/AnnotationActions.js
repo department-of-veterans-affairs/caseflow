@@ -203,15 +203,19 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
           annotationId: annotation.id
         }
       }),
-      () => dispatch({
-        type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
-        payload: {
-          annotationId: annotation.id
-        }
-      })
+      (response) => {
+        const responseObject = JSON.parse(response.response.text);
+
+        dispatch({
+          type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
+          payload: {
+            annotationId: annotation.id,
+            errorMessage: responseObject.errors[0].detail
+          }
+        });
+      }
     );
 };
-
 
 export const createAnnotation = (annotation) => (dispatch) => {
   const temporaryId = uuid.v4();
@@ -244,11 +248,16 @@ export const createAnnotation = (annotation) => (dispatch) => {
           }
         });
       },
-      () => dispatch({
-        type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
-        payload: {
-          annotationTemporaryId: temporaryId
-        }
-      })
+      (response) => {
+        const responseObject = JSON.parse(response.response.text);
+
+        dispatch({
+          type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
+          payload: {
+            annotationTemporaryId: temporaryId,
+            errorMessage: responseObject.errors[0].detail
+          }
+        });
+      }
     );
 };

@@ -22,7 +22,7 @@ class SideBarCategories extends PureComponent {
     );
 
     return <div className="cf-category-sidebar">
-      {this.props.showErrorMessage.category && <CannotSaveAlert />}
+      {this.props.error.category.visible && <CannotSaveAlert />}
       <DocCategoryPicker
         allowReadOnly
         handleCategoryToggle={_.partial(this.props.handleCategoryToggle, doc.id)}
@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+    error: state.readerReducer.ui.pdfSidebar.error
   };
 };
 
