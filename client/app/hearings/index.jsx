@@ -84,7 +84,7 @@ const Hearings = ({ hearings }) => {
           <Footer
             appName="Hearing Prep"
             feedbackUrl={hearings.feedbackUrl}
-            buildDate={hearings.buildDate}/>
+            buildDate={hearings.buildDate} />
         </div>
       </BrowserRouter>
     </div>

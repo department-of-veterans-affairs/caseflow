@@ -56,8 +56,6 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    global.featureToggles = this.props.featureToggles;
-
     window.addEventListener('click', this.clearPlacingAnnotationState);
     if (this.props.singleDocumentMode) {
       fireSingleDocumentModeEvent();
@@ -115,6 +113,7 @@ export class DecisionReviewer extends React.PureComponent {
         history={props.history}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
+        featureToggles={this.props.featureToggles}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -123,7 +122,7 @@ export class DecisionReviewer extends React.PureComponent {
 
   routedCaseSelect = (props) => <CaseSelectLoadingScreen assignments={this.props.assignments}>
     <CaseSelect history={props.history}
-      feedbackUrl={this.props.feedbackUrl}/>
+      feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
   render() {
@@ -141,25 +140,25 @@ export class DecisionReviewer extends React.PureComponent {
               exact
               path="/"
               title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect}/>
+              render={this.routedCaseSelect} />
             <PageRoute
               exact
               title="Claims Folder | Caseflow Reader"
               breadcrumb="Claims Folder"
               path="/:vacolsId/documents"
-              render={this.routedPdfListView}/>
+              render={this.routedPdfListView} />
             <PageRoute
               exact
               title="Document Viewer | Caseflow Reader"
               breadcrumb="Document Viewer"
               path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer}/>
+              render={this.routedPdfViewer} />
           </div>
         </NavigationBar>
         <Footer
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate}/>
+          buildDate={this.props.buildDate} />
       </div>
     </Router>;
   }

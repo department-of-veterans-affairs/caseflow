@@ -130,7 +130,6 @@ export const clearTagFilters = () => ({
   }
 });
 
-
 // Scrolling
 
 export const setDocListScrollPosition = (scrollTop) => ({

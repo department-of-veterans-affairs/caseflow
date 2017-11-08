@@ -34,7 +34,6 @@ export const FORM_PAGE = 'form';
 export const NOTE_PAGE = 'review';
 export const EMAIL_PAGE = 'email';
 
-
 export const END_PRODUCT_INFO = {
   ARC: {
     'Full Grant': ['070BVAGRARC', 'ARC BVA Grant'],
@@ -68,7 +67,7 @@ const CREATE_EP_ERRORS = {
     body: <span>
             This veteran does not have a social security number, so their
             claim cannot be established in Caseflow.
-      <br/>
+      <br />
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
     </span>
@@ -78,7 +77,7 @@ const CREATE_EP_ERRORS = {
     body: <span>
             The veteran's profile in the corporate database is missing information
             required by Caseflow.
-      <br/>
+      <br />
             Select Cancel at the bottom of the page to release this claim and
             proceed to process it outside of Caseflow.
     </span>
@@ -282,7 +281,6 @@ export default class EstablishClaim extends React.Component {
     );
   }
 
-
   hasAvailableModifers = () => this.validModifiers().length > 0
 
   handleDecisionPageSubmit = () => {
@@ -363,7 +361,6 @@ export default class EstablishClaim extends React.Component {
       });
   }
 
-
   handleAssociatePageSubmit = () => {
     this.handlePageChange(FORM_PAGE);
   }
@@ -413,7 +410,6 @@ export default class EstablishClaim extends React.Component {
       }
     });
   }
-
 
   setUnhandledSpecialIssuesEmailAndRegionalOffice = () => {
     if (this.containsRoutedSpecialIssues()) {

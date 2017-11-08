@@ -44,6 +44,15 @@ For the frontend, you'll need to install Node and the relevant npm modules. [Ins
 
     cd client && yarn
 
+## Monitoring
+We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
+
+```
+NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABLED=true bundle exec foreman start
+```
+
+You may wish to do this if you are debugging our NewRelic integration, for instance.
+
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
 to skip production gems when installing.

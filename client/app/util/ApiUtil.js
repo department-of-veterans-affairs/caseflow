@@ -29,7 +29,6 @@ export const getHeadersObject = (options = {}) => {
     ReactOnRails.authenticityHeaders(),
     options);
 
-
   return headers;
 };
 

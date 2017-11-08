@@ -21,7 +21,6 @@ const updateUserQuotaInState = (state, index, values) => {
   const newUserQuotas = ReducerUtil.changeObjectInArray(state.userQuotas, { index,
     values });
 
-
   return update(state, { userQuotas: { $set: newUserQuotas } });
 };
 

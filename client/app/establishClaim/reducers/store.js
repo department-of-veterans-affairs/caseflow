@@ -13,7 +13,6 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const createEstablishClaimStore = (props) => {
   let middleware = [thunk];
 
-
   // Avoid all the log spam when running the tests
   if (!ConfigUtil.test()) {
     middleware.push(logger);
