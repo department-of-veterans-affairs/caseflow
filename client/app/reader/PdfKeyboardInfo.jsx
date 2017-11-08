@@ -39,7 +39,11 @@ export const searchColumns = [{ header: 'Search within document',
   valueName: 'shortcut',
   align: 'left' }];
 
-const metaKey = navigator.appVersion.includes('Win') ? 'ctrl' : 'cmd';
+let metaKey = 'ctrl';
+
+if (navigator.appVersion && navigator.appVersion.includes('Mac')) {
+  metaKey = 'cmd';
+}
 
 export const searchInstructions = [
   { searchInstruction: 'Open search box',
