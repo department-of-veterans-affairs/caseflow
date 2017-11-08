@@ -21,7 +21,7 @@ Each sprint team listed in [`priorities.md`](https://github.com/department-of-ve
 | Whiskey | Bespin |
 | Tango | Naboo |
 | Foxtrot | Endor | 
-| Devops | Slack call |
+| Devops | Status Hero (#sre) |
 | Harambe | Anoat |
 | QA? | ??? |
 

@@ -58,6 +58,13 @@ export default class SearchBar extends React.Component {
     }
   }
 
+  setInputRef = (node) => this.input = node
+
+  setInputFocus = () => this.input.focus()
+  releaseInputFocus = () => this.input.blur();
+
+  clearInput = () => this.input.value = '';
+
   render() {
     let {
       id,
@@ -69,15 +76,19 @@ export default class SearchBar extends React.Component {
       title,
       onSubmit,
       submitUsingEnterKey,
-      placeholder
+      placeholder,
+      internalText
     } = this.props;
 
     id = id || uuid.v4();
 
+    const hasInternalText = !_.isUndefined(internalText);
+
     const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
       'usa-search-small': size === 'small',
-      'cf-search-ahead': isSearchAhead
+      'cf-search-ahead': isSearchAhead,
+      'cf-has-internal-text': hasInternalText
     });
 
     const buttonClassNames = classnames({
@@ -89,12 +100,17 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
+    const searchClasses = classnames('cf-search-input-with-close', {
+      'cf-search-with-internal-text': hasInternalText
+    });
+
     return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
       <input
-        className="cf-search-input-with-close"
+        ref={this.setInputRef}
+        className={searchClasses}
         id={id}
         onChange={this.onChange}
         onBlur={this.onBlur}
@@ -103,6 +119,18 @@ export default class SearchBar extends React.Component {
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value} />
+      {hasInternalText &&
+      <div>
+        <label className="usa-sr-only" htmlFor="search-internal-text">
+          Search Result Count
+        </label>
+        <input
+          id="search-internal-text"
+          type="text"
+          value={internalText}
+          onClick={this.setInputFocus}
+          className="cf-search-internal-text" />
+      </div>}
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
@@ -132,5 +160,6 @@ SearchBar.propTypes = {
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
-  submitUsingEnterKey: PropTypes.bool
+  submitUsingEnterKey: PropTypes.bool,
+  internalText: PropTypes.string
 };
