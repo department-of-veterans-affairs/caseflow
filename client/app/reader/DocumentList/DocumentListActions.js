@@ -1,7 +1,8 @@
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
+import { collectAllTags } from '../PdfViewer/PdfViewerActions';
 
 // Table header actions
 
@@ -202,3 +203,15 @@ export const handleToggleCommentOpened = (docId) => ({
     }
   }
 });
+
+export const onReceiveDocs = (documents, vacolsId) =>
+  (dispatch) => {
+    dispatch(collectAllTags(documents));
+    dispatch({
+      type: Constants.RECEIVE_DOCUMENTS,
+      payload: {
+        documents,
+        vacolsId
+      }
+    });
+  };

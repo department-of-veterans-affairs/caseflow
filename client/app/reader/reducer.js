@@ -2,85 +2,9 @@
 import * as Constants from './constants';
 import _ from 'lodash';
 import { update } from '../util/ReducerUtil';
-import { categoryFieldNameOfCategoryName, moveModel } from './utils';
-import { searchString, commentContainsWords, categoryContainsWords } from './search';
+import { moveModel } from './utils';
 import { timeFunction } from '../util/PerfDebug';
-
-const updateFilteredDocIds = (nextState) => {
-  const { docFilterCriteria } = nextState.ui;
-  const activeCategoryFilters = _(docFilterCriteria.category).
-    toPairs().
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => categoryFieldNameOfCategoryName(key)).
-    value();
-
-  const activeTagFilters = _(docFilterCriteria.tag).
-    toPairs().
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => key).
-    value();
-
-  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
-
-  // ensure we have a deep clone so we are not mutating the original state
-  let updatedNextState = update(nextState, {});
-
-  const filteredIds = _(nextState.documents).
-    filter(
-      (doc) => !activeCategoryFilters.length ||
-        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
-    ).
-    filter(
-      (doc) => !activeTagFilters.length ||
-        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
-    ).
-    filter(
-      searchString(searchQuery, nextState)
-    ).
-    sortBy(docFilterCriteria.sort.sortBy).
-    map('id').
-    value();
-
-  // looping through all the documents to update category highlights and expanding comments
-  _.forEach(updatedNextState.documents, (doc) => {
-    const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
-
-    // getting all the truthy values from the object
-    // {'medical': true, 'procedural': false } turns into {'medical': true}
-    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
-
-    // update the state for all the search category highlights
-    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState.ui.searchCategoryHighlights[doc.id] = matchesCategories;
-    }
-
-    // updating the state of all annotations for expanded comments
-    if (containsWords !== doc.listComments) {
-      updatedNextState.documents[doc.id].listComments = containsWords;
-    }
-  });
-
-  if (docFilterCriteria.sort.sortAscending) {
-    filteredIds.reverse();
-  }
-
-  return update(updatedNextState, {
-    ui: {
-      filteredDocIds: {
-        $set: filteredIds
-      }
-    }
-  });
-};
-
-const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
-  update(
-    state,
-    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
-  );
-
-const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
-const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
+import { hideErrorMessage, showErrorMessage, updateFilteredDocIds } from './helpers/reducerHelper';
 
 const updateLastReadDoc = (state, docId) =>
   update(
@@ -297,16 +221,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_SEARCH:
-    return updateFilteredDocIds(update(state, {
-      ui: {
-        docFilterCriteria: {
-          searchQuery: {
-            $set: action.payload.searchQuery
-          }
-        }
-      }
-    }));
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -335,54 +249,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return update(
-      hideErrorMessage(state, 'category'),
-      {
-        documents: {
-          [action.payload.docId]: {
-            [action.payload.categoryKey]: {
-              $set: action.payload.toggleState
-            }
-          }
-        }
-      }
-    );
-  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-    return update(
-      showErrorMessage(state, 'category'),
-      {
-        documents: {
-          [action.payload.docId]: {
-            [action.payload.categoryKey]: {
-              $set: action.payload.categoryValueToRevertTo
-            }
-          }
-        }
-      }
-    );
-  case Constants.TOGGLE_FILTER_DROPDOWN:
-    return (() => {
-      const originalValue = _.get(
-        state,
-        ['ui', 'pdfList', 'dropdowns', action.payload.filterName],
-        false
-      );
-
-      return update(state,
-        {
-          ui: {
-            pdfList: {
-              dropdowns: {
-                [action.payload.filterName]: {
-                  $set: !originalValue
-                }
-              }
-            }
-          }
-        }
-      );
-    })();
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(hideErrorMessage(state, 'tag'), {
       documents: {
@@ -470,20 +336,6 @@ export const reducer = (state = initialState, action = {}) => {
       }
     );
   }
-  case Constants.SET_CATEGORY_FILTER:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            category: {
-              [action.payload.categoryName]: {
-                $set: action.payload.checked
-              }
-            }
-          }
-        }
-      }));
   case Constants.JUMP_TO_PAGE:
     return update(
       state,
@@ -510,64 +362,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_TAG_FILTER:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            tag: {
-              [action.payload.text]: {
-                $set: action.payload.checked
-              }
-            }
-          }
-        }
-      }));
-  case Constants.CLEAR_TAG_FILTER:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            tag: {
-              $set: {}
-            }
-          }
-        }
-      }
-    ));
-  case Constants.CLEAR_CATEGORY_FILTER:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            category: {
-              $set: {}
-            }
-          }
-        }
-      }
-    ));
-  case Constants.CLEAR_ALL_FILTERS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            category: {
-              $set: {}
-            },
-            tag: {
-              $set: {}
-            }
-          }
-        },
-        viewingDocumentsOrComments: {
-          $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
-        }
-      }));
   case Constants.REQUEST_REMOVE_TAG:
     return update(state, {
       documents: {
@@ -836,14 +630,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SET_DOC_LIST_SCROLL_POSITION:
-    return update(state, {
-      ui: {
-        pdfList: {
-          scrollTop: { $set: action.payload.scrollTop }
-        }
-      }
-    });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(showErrorMessage(state, 'tag'), {
       documents: {
@@ -868,21 +654,6 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
-  case Constants.TOGGLE_COMMENT_LIST:
-    modifiedDocuments = update(state.documents,
-      {
-        [action.payload.docId]: {
-          $merge: {
-            listComments: !state.documents[action.payload.docId].listComments
-          }
-        }
-      });
-
-    return update(
-      state,
-      {
-        documents: { $set: modifiedDocuments }
-      });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return _.merge(
       {},
@@ -897,41 +668,12 @@ export const reducer = (state = initialState, action = {}) => {
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
-  case Constants.CLEAR_ALL_SEARCH:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            searchQuery: {
-              $set: ''
-            }
-          }
-        }
-      }
-    ));
   case Constants.SET_OPENED_ACCORDION_SECTIONS:
     return update(
       state,
       {
         openedAccordionSections: {
           $set: action.payload.openedAccordionSections
-        }
-      }
-    );
-  case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
-    return update(
-      state,
-      {
-        viewingDocumentsOrComments: {
-          $set: action.payload.documentsOrComments
-        },
-        documents: {
-          $apply: (docs) =>
-            _.mapValues(docs, (doc) => ({
-              ...doc,
-              listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-            }))
         }
       }
     );

@@ -183,8 +183,8 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    documentFilters: state.readerReducer.ui.pdfList.filters,
-    storeDocuments: state.readerReducer.documents,
+    documentFilters: state.documentList.pdfList.filters,
+    storeDocuments: state.documentList.documents,
     pdf: state.readerReducer.ui.pdf
   };
 };

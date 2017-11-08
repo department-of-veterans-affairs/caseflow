@@ -91,7 +91,7 @@ class CaseSelect extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state.readerReducer, 'assignments');
+const mapStateToProps = (state) => _.pick(state.documentList, 'assignments');
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

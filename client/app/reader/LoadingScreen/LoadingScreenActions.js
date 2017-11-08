@@ -1,5 +1,4 @@
 import * as Constants from '../constants';
-import { collectAllTags } from '../PdfViewer/PdfViewerActions';
 
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,
@@ -10,18 +9,6 @@ export const onInitialCaseLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_CASE_FAILURE,
   payload: { value }
 });
-
-export const onReceiveDocs = (documents, vacolsId) =>
-  (dispatch) => {
-    dispatch(collectAllTags(documents));
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: {
-        documents,
-        vacolsId
-      }
-    });
-  };
 
 export const onReceiveAnnotations = (annotations) => ({
   type: Constants.RECEIVE_ANNOTATIONS,

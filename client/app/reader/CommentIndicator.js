@@ -36,7 +36,7 @@ class CommentIndicator extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const doc = state.readerReducer.documents[ownProps.docId];
+  const doc = state.documentList.documents[ownProps.docId];
 
   return {
     docId: doc.id,
