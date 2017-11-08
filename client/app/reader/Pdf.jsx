@@ -14,7 +14,6 @@ import { placeAnnotation, startPlacingAnnotation,
 } from '../reader/PdfViewer/AnnotationActions';
 
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
-import DocumentSearch from './DocumentSearch';
 
 // The Pdf component encapsulates PDFJS to enable easy drawing of PDFs.
 // The component will speed up drawing by only drawing pages when
@@ -82,7 +81,6 @@ export class Pdf extends React.PureComponent {
     });
 
     return <div className="cf-pdf-scroll-view">
-      {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
       <div
         id={this.props.file}
         style={{

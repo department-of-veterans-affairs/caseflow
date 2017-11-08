@@ -82,6 +82,7 @@ RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
+    FeatureToggle.enable!(:search)
   end
 
   let(:vacols_record) { :remand_decided }
@@ -1217,6 +1218,72 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("Search results not found")
       expect(page).to have_content(search_query)
+    end
+
+    def open_search_bar
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      search_bar = find(".cf-pdf-search")
+      search_bar.click
+
+      expect(search_bar).not_to match_css(".hidden")
+    end
+
+    scenario "Search Document Text" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      internal_text = find("#search-internal-text")
+
+      expect(search_input).to match_xpath("//input[@placeholder='Type to search...']")
+
+      fill_in "search-ahead", with: "decision"
+
+      expect(search_input.value).to eq("decision")
+      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+    end
+
+    scenario "Search Text Resets on Change Document" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      next_doc = find("#button-previous")
+
+      fill_in "search-ahead", with: "decision"
+      expect(search_input.value).to eq("decision")
+      next_doc.click
+      expect(search_input.value).to eq("")
+    end
+
+    scenario "Navigate Search Results with Keyboard" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        open_search_bar
+
+        internal_text = find("#search-internal-text")
+
+        fill_in "search-ahead", with: "decision"
+
+        expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+
+        find("body").send_keys [:meta, "g"]
+
+        expect(internal_text).to have_xpath("//input[@value='2 of 2']")
+      end
+    end
+
+    scenario "Show and Hide Document Searchbar with Keyboard" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        search_bar = find(".cf-search-bar")
+
+        find("body").send_keys [:meta, "f"]
+
+        expect(search_bar).not_to match_css(".hidden")
+
+        find("body").send_keys [:escape]
+
+        expect(search_bar).to match_css(".hidden")
+      end
     end
 
     scenario "Download PDF file" do

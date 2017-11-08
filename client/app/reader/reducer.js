@@ -146,7 +146,8 @@ export const initialState = {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
-      jumpToPageNumber: null
+      jumpToPageNumber: null,
+      hideSearchBar: true
     },
     pdfSidebar: {
       showErrorMessage: initialShowErrorMessageState
@@ -884,16 +885,20 @@ export const reducer = (state = initialState, action = {}) => {
         documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdf: {
-            hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } } } }
+    );
+  case Constants.TOGGLE_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: !state.ui.pdf.hideSearchBar } } } }
+    );
+  case Constants.SHOW_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: false } } } }
+    );
+  case Constants.HIDE_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: true } } } }
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);

@@ -42,7 +42,7 @@ export class PdfPage extends React.PureComponent {
 
   markText = (txt) => {
     this.markInstance.unmark({
-      done: () => this.markInstance.mark(txt)
+      done: () => this.markInstance.mark(txt, { separateWordSearch: false })
     });
   };
 
