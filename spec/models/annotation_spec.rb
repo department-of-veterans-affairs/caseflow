@@ -4,7 +4,7 @@ describe Annotation do
   end
 
   let(:document) { Document.create!(vbms_document_id: Random.rand(256) + 1) }
-  let(:comment) { random_word_characters }
+  let(:comment) { Generators::Random.word_characters }
 
   context "#save" do
     context "when comment contains some word characters" do
@@ -25,25 +25,10 @@ describe Annotation do
     end
 
     context "when comment contains only whitespace" do
-      let(:comment) { random_whitespace }
+      let(:comment) { Generators::Random.whitespace }
       it "throws an error" do
         expect { annotation.save! }.to raise_error(ActiveRecord::RecordInvalid, err_msg)
       end
     end
   end
-end
-
-# Generate some combination of whitespace characters between 1 and len characters long.
-def random_whitespace(len = 16)
-  random_sample([" ", "\n", "\r", "\t"], len)
-end
-
-# Generate some combination of word and space characters between 1 and len characters long.
-def random_word_characters(len = 256)
-  a = ("a".."z").to_a.concat(("A".."Z").to_a).concat(("0".."9").to_a).push("_")
-  random_sample(a, len)
-end
-
-def random_sample(arr, len)
-  (Array.new(Random.rand(len) + 1) { arr.sample }).join
 end
