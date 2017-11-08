@@ -146,3 +146,5 @@ group :development do
 end
 
 gem 'shoryuken', '3.1.11'
+
+gem 'ddtrace', '0.9.2'
