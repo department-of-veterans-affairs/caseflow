@@ -89,8 +89,7 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :regional_office_name,
         :venue, :appellant_last_first_mi,
-        :veteran_name, :vbms_id,
-        :appellant_mi_formatted, :veteran_mi_formatted
+        :veteran_name, :vbms_id
       ],
       except: :military_service
     )
@@ -105,7 +104,9 @@ class Hearing < ActiveRecord::Base
                 :veteran_age,
                 :appellant_city,
                 :appellant_state,
-                :military_service]
+                :military_service,
+                :appellant_mi_formatted,
+                :veteran_mi_formatted]
     ).merge(to_hash)
   end
 
