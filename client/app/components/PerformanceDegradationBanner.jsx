@@ -22,12 +22,9 @@ export default class PerformanceDegradationBanner extends React.Component {
       reader: ['VBMS', 'VACOLS'],
       hearing: ['VACOLS'],
       dispatch: ['VBMS', 'VACOLS'],
-      undefined: ['BGS.FilenumberService', 'BGS.PoaService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference',
+      other: ['BGS.FilenumberService', 'BGS.PoaService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference',
         'VVA']
     };
-    this.appName = Object.keys(this.dependencies).filter((key) => {
-      return window.location.pathname.includes(key);
-    })[0];
   }
 
   checkDependencies() {
@@ -37,17 +34,21 @@ export default class PerformanceDegradationBanner extends React.Component {
       return;
     }
 
+    this.appName = Object.keys(this.dependencies).filter((key) => {
+      return window.location.pathname.includes(key);
+    })[0] || 'other';
+
     this.setState({ isRequesting: true });
     ApiUtil.get('/dependencies-check').
       then((data) => {
         let report = JSON.parse(data.text).dependencies_report;
         // Each app has a relevant report
-        let filteredForAppReport = report.filter((key) => {
+        let outageAffectingCurrentApp = report.filter((key) => {
           return this.dependencies[this.appName].includes(key);
         });
 
         this.setState({
-          showBanner: Boolean(filteredForAppReport.length > 0),
+          showBanner: Boolean(outageAffectingCurrentApp.length > 0),
           isRequesting: false
         });
       }, () => {
