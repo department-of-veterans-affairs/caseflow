@@ -322,6 +322,10 @@ class Appeal < ActiveRecord::Base
     status != "Complete"
   end
 
+  def merged?
+    disposition == "Merged Appeal"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
