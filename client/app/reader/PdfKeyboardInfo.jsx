@@ -1,13 +1,6 @@
 import React from 'react';
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 
-export const scrollInstructions = [
-  { scrollInstruction: 'Page up',
-    shortcut: <span><code>shift</code> + <code>space</code></span> },
-  { scrollInstruction: 'Page down',
-    shortcut: <span><code>space</code></span> }
-];
-
 export const scrollColumns = [{ header: 'Scroll',
   valueName: 'scrollInstruction',
   align: 'left' },
@@ -39,7 +32,27 @@ export const commentColumns = [{ header: 'Add/ edit comment',
   valueName: 'shortcut',
   align: 'left' }];
 
+export const searchColumns = [{ header: 'Search within document',
+  valueName: 'searchInstruction',
+  align: 'left'
+}, { header: 'Shortcut',
+  valueName: 'shortcut',
+  align: 'left' }];
+
+const metaKey = navigator.appVersion.includes('Win') ? 'ctrl' : 'cmd';
+
+export const searchInstructions = [
+  { searchInstruction: 'Open search box',
+    shortcut: <span><code>{metaKey}</code> + <code>f</code></span> },
+  { searchInstruction: 'Navigate search results',
+    shortcut: <span><code>{metaKey}</code> + <code>g</code></span> }
+];
+
 export const documentsInstructions = [
+  { documentsInstruction: 'Scroll page up',
+    shortcut: <span><code>shift</code> + <code>space</code></span> },
+  { documentsInstruction: 'Scroll page down',
+    shortcut: <span><code>space</code></span> },
   { documentsInstruction: 'View next document',
     shortcut: <span><ArrowRight /></span> },
   { documentsInstruction: 'View previous document',
