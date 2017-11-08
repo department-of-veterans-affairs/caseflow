@@ -15,3 +15,11 @@ To log into Hearing Prep from the welcome gate page, please follow the following
 1. On the 'App Selector' tab, Select Hearing Prep. 
 
 1. Select Upcoming Days.
+
+## Supported Browsers
+
+- Chrome
+
+## Supported Screen Size
+
+- 1280 x 800 resolution
