@@ -63,17 +63,17 @@ Post-standup discussions occur in Endor. They are announced ahead of time at oth
 ### Hard Stop
 At 11am, we stop any post-standup discussion. If we can't resolve an issue in this time, then we can schedule a longer session. It may also indicate that we need to do more prep work before gathering people to make a decision.
 
-### Tech Leads and Product Owners Standup
+### Sprint Leads Standup
 On the first day of the sprint, when there is no normal standup because there's sprint planning, the tech leads and product owners will meet instead. 
 
-* **Time:** 10:30a
-* **Location:** Anoat
+* **Time:** 10:15a
+* **Location:** Wobani and VANTS
 * **Topics:** Cross-team coordination issues to inform sprint planning
 
 ## Daily Schedule
 | Day | Schedule | 
 | --- | --- |
-| Monday (first day of sprint) | Tech Leads and Product Owners Standup |
+| Monday (first day of sprint) | Sprint Leads Standup |
 | Monday (middle of sprint) | Sprint standup only |
 | Tuesday | Sprint standup only |
 | Wednesday | Sprint + full eng and design standup |
