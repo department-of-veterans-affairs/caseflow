@@ -150,7 +150,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 3
+          vbms_document_id: 1
         )
       ]
     end
@@ -1086,7 +1086,7 @@ RSpec.feature "Reader" do
     end
 
     context "Tags" do
-      scenario "adding and deleting tags" do
+      scenario "adding and deleting tags", focus: true do
         TAG1 = "Medical".freeze
         TAG2 = "Law document".freeze
 
