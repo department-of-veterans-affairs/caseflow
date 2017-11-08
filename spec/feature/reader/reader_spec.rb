@@ -507,19 +507,17 @@ RSpec.feature "Reader" do
       # Check if annotation mode disappears when moving to another document
       # Removing this for now. For some reason clicking on the add a comment
       # button causes the viewer to scroll.
-      if false
-        add_comment_without_clicking_save "unsaved comment text"
+      # add_comment_without_clicking_save "unsaved comment text"
 
-        scroll_to_bottom(class_name: "ReactVirtualized__List")
-        find(".cf-pdf-scroll-view").click
-        find("body").send_keys(:arrow_left)
-        expect(page).to_not have_css(".comment-textarea")
-        add_comment_without_clicking_save "unsaved comment text"
-        scroll_to_bottom(class_name: "ReactVirtualized__List")
-        find(".cf-pdf-scroll-view").click
-        find("body").send_keys(:arrow_right)
-        expect(page).to_not have_css(".comment-textarea")
-      end
+      # scroll_to_bottom(class_name: "ReactVirtualized__List")
+      # find(".cf-pdf-scroll-view").click
+      # find("body").send_keys(:arrow_left)
+      # expect(page).to_not have_css(".comment-textarea")
+      # add_comment_without_clicking_save "unsaved comment text"
+      # scroll_to_bottom(class_name: "ReactVirtualized__List")
+      # find(".cf-pdf-scroll-view").click
+      # find("body").send_keys(:arrow_right)
+      # expect(page).to_not have_css(".comment-textarea")
 
       fill_in "tags", with: "tag content"
       find("#tags").send_keys(:arrow_left)
