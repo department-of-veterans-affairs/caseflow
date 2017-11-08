@@ -37,7 +37,7 @@ export class HearingWorksheet extends React.PureComponent {
   }
 
   handlePrintContainerRef(element) {
-    //  `this.handlePrintContainerRef` will this, which will store ref
+    //  `this.handlePrintContainerRef` will store ref
     this.printContainer = element;
   }
 
@@ -59,6 +59,7 @@ export class HearingWorksheet extends React.PureComponent {
     const source = this.printContainer;
     /* eslint new-cap: ["error", { "newIsCap": false }]*/
     let pdf = new jspdf('p', 'pt', 'letter');
+    let worksheetID = this.props.worksheet.id;
 
     let specialElementHandlers = {
       'omit' () {
@@ -76,9 +77,8 @@ export class HearingWorksheet extends React.PureComponent {
         width: margins.width,
         elementHandlers: specialElementHandlers
       },
-      // TODO add worksheet ID to file name
       () => {
-        pdf.save('worksheet.pdf');
+        pdf.save('Worksheet-' + worksheetID + '.pdf' );
       }
     );
   }
