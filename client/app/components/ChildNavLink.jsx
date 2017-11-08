@@ -1,22 +1,20 @@
 import React from 'react';
 
 export default class ChildNavLink extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       menu: false
-    }
+    };
   }
 
-  showSubMenu = (event) => {
+  showSubMenu = () => {
     this.setState((prevState) => ({
       menu: !prevState.menu
     }));
   }
 
   componentDidMount = () => window.addEventListener('click', this.showSubMenu);
-
-  componentWillUnmount = () => window.removeEventListener('click', this.showSubMenu);
 
   render() {
     const {
@@ -29,6 +27,6 @@ export default class ChildNavLink extends React.Component {
       }
       )
       }
-    </ul>
+    </ul>;
   }
 }

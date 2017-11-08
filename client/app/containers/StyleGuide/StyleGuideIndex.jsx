@@ -3,7 +3,6 @@ import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
 import StyleGuideButton from './StyleGuideButton';
-import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
@@ -17,7 +16,6 @@ import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLoaders from './StyleGuideLoaders';
-import StyleGuideSmallLoader from './StyleGuideSmallLoader';
 import StyleGuideLayout from './StyleGuideLayout';
 import StyleGuideDashboard from './StyleGuideDashboard';
 import StyleGuideTypography from './StyleGuideTypography';
@@ -227,27 +225,27 @@ export const componentLinks = [
     },
     {
       anchor: '#user_dropdown_menu',
-      name: 'User dropdown menu',
+      name: 'User dropdown menu'
     },
-     {
+    {
       anchor: '#content_area',
-      name: 'Main content area',
+      name: 'Main content area'
     },
     {
       anchor: '#app_canvas',
-      name: 'App canvas',
+      name: 'App canvas'
     },
     {
       anchor: '#actions',
-      name: 'Actions',
+      name: 'Actions'
     },
     {
       anchor: '#horizontal_line',
-      name: 'Horizontal line',
+      name: 'Horizontal line'
     },
     {
       anchor: '#footer',
-      name: 'Footer',
+      name: 'Footer'
     }]
   },
   {
@@ -259,11 +257,11 @@ export const componentLinks = [
     },
     {
       anchor: '#status_messages',
-      name: 'Status',
+      name: 'Status'
     },
     {
       anchor: '#alerts',
-      name: 'Alert',
+      name: 'Alert'
     }
     ]
   },
@@ -316,8 +314,8 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuideLogos />
         <div className="cf-help-divider"></div>
-         <StyleGuideTypography />
-         <div className="cf-help-divider"></div>
+        <StyleGuideTypography />
+        <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Headings and Body"
           id="headings_and_body"

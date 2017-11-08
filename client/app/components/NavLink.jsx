@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 const NavLink = (props) => {
   const { anchor, name } = props;
 
-  return <li><a href={anchor}>{name}</a></li>;
+  return <a href={anchor}>{name}</a>;
 };
 
 NavLink.propTypes = {
