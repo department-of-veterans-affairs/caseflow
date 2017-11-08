@@ -8,6 +8,7 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 ![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
 
 [View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
+[View application information on Caseflow Hearing Prep](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/hearing-prep.md).
 
 ## Setup
 Install dependencies via Homebrew:
