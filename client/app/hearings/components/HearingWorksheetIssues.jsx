@@ -40,7 +40,7 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'levels'
       },
       {
-        header: 'Description',
+        header: 'Notes',
         align: 'left',
         valueName: 'description'
       },
