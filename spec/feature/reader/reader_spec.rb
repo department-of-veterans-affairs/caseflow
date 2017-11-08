@@ -1263,7 +1263,9 @@ RSpec.feature "Reader" do
   end
 
   context "with a single document that errors when we fetch it" do
-    let(:documents) { [Generators::Document.create] }
+    # TODO(lowell): Remove manual setting of ID here when we figure out how to
+    # clear the browser cache through Capybara.
+    let(:documents) { [Generators::Document.create(id: rand(999) + 999_999)] }
 
     scenario "causes individual file view will display error message" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
