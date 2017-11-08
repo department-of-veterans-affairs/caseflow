@@ -1209,7 +1209,7 @@ RSpec.feature "Reader" do
     end
 
     def open_search_bar
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
 
       search_bar = find(".cf-pdf-search")
       search_bar.click
@@ -1227,8 +1227,20 @@ RSpec.feature "Reader" do
 
       fill_in "search-ahead", with: "decision"
 
-      search_input.value.should eq("decision")
+      expect(search_input.value).to eq("decision")
       expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+    end
+
+    scenario "Search Text Resets on Change Document" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      next_doc = find("#button-previous")
+
+      fill_in "search-ahead", with: "decision"
+      expect(search_input.value).to eq("decision")
+      next_doc.click
+      expect(search_input.value).to eq("")
     end
 
     scenario "Navigate Search Results with Keyboard" do
@@ -1249,7 +1261,7 @@ RSpec.feature "Reader" do
 
     scenario "Show and Hide Document Searchbar with Keyboard" do
       skip_because_sending_keys_to_body_does_not_work_on_travis do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/1"
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         search_bar = find(".cf-search-bar")
 
         find("body").send_keys [:meta, "f"]
