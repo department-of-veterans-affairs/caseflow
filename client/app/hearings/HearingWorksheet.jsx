@@ -131,14 +131,13 @@ export class HearingWorksheet extends React.PureComponent {
         />
 
         <form className="cf-hearings-worksheet-form">
-
           <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
             <Textarea
-              name="Comments and special instructions to attorneys"
-              value={worksheet.comments_for_attorney || ''}
-              id="worksheet-comments-for-attorney"
-              onChange={this.onCommentsForAttorneyChange}
+              name="Periods and circumstances of service"
+              value={worksheet.military_service || ''}
+              onChange={this.onMilitaryServiceChange}
+              id="worksheet-military-service"
               minRows={1}
               maxLength={5000}
             />
@@ -157,18 +156,6 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
 
           <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
-            <Textarea
-              name="Periods and circumstances of service"
-              value={worksheet.military_service || ''}
-              onChange={this.onMilitaryServiceChange}
-              id="worksheet-military-service"
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-evidence">Evidence</label>
             <Textarea
               name="Evidence"
@@ -180,6 +167,17 @@ export class HearingWorksheet extends React.PureComponent {
             />
           </div>
 
+          <div className="cf-hearings-worksheet-data">
+            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+            <Textarea
+              name="Comments and special instructions to attorneys"
+              value={worksheet.comments_for_attorney || ''}
+              id="worksheet-comments-for-attorney"
+              onChange={this.onCommentsForAttorneyChange}
+              minRows={3}
+              maxLength={5000}
+            />
+          </div>
         </form>
       </div>
       <div className="cf-push-right">
