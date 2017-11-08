@@ -1,6 +1,17 @@
 class RampIntake < Intake
   include CachedAttributes
 
+  enum error_code: {
+    did_not_receive_ramp_election: "did_not_receive_ramp_election",
+    ramp_election_already_complete: "ramp_election_already_complete",
+    no_eligible_appeals: "no_eligible_appeals",
+    no_active_appeals: "no_active_appeals"
+  }.merge(Intake::ERROR_CODES)
+
+  def ramp_election
+    detail
+  end
+
   def find_or_create_initial_detail
     matching_ramp_election
   end
@@ -9,8 +20,13 @@ class RampIntake < Intake
     transaction do
       complete_with_status!(:success)
 
-      eligible_appeals.each do |appeal|
-        appeal.close!(user: user, closed_on: Time.zone.today, disposition: "RAMP Opt-in")
+      Appeal.close(
+        appeals: eligible_appeals,
+        user: user,
+        closed_on: Time.zone.today,
+        disposition: "RAMP Opt-in"
+      ) do
+        ramp_election.create_end_product!
       end
     end
   end
@@ -39,24 +55,46 @@ class RampIntake < Intake
     @veteran_ramp_elections ||= RampElection.where(veteran_file_number: veteran_file_number).all
   end
 
+  def ui_hash
+    {
+      id: id,
+      veteran_file_number: veteran_file_number,
+      veteran_name: veteran.name.formatted(:readable_short),
+      veteran_form_name: veteran.name.formatted(:form),
+      notice_date: ramp_election.notice_date,
+      option_selected: ramp_election.option_selected,
+      receipt_date: ramp_election.receipt_date,
+      completed_at: completed_at,
+      end_product_description: ramp_election.end_product_description,
+      appeals: serialized_appeal_issues
+    }
+  end
+
   private
 
   # Appeals in VACOLS that will be closed out in favor
   # of a new format review
   def eligible_appeals
-    Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:eligible_for_ramp?)
+    active_veteran_appeals.select(&:eligible_for_ramp?)
+  end
+
+  def active_veteran_appeals
+    @veteran_appeals ||= Appeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
   end
 
   def validate_detail_on_start
     if veteran_ramp_elections.empty?
-      @error_code = :did_not_receive_ramp_election
+      self.error_code = :did_not_receive_ramp_election
 
     elsif !matching_ramp_election
-      @error_code = :ramp_election_already_complete
+      self.error_code = :ramp_election_already_complete
       @error_data = { notice_date: veteran_ramp_elections.last.notice_date }
 
+    elsif active_veteran_appeals.empty?
+      self.error_code = :no_active_appeals
+
     elsif eligible_appeals.empty?
-      @error_code = :no_eligible_appeals
+      self.error_code = :no_eligible_appeals
     end
   end
 

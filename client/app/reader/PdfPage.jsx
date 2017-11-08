@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Mark from 'mark.js';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setUpPdfPage, clearPdfPage } from '../reader/actions';
+import { setUpPdfPage, clearPdfPage } from '../reader/Pdf/PdfActions';
+import { text as searchText } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -51,6 +53,12 @@ export class PdfPage extends React.PureComponent {
   getCanvasRef = (canvas) => this.canvas = canvas
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
+
+  markText = (txt) => {
+    this.markInstance.unmark({
+      done: () => this.markInstance.mark(txt)
+    });
+  };
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
@@ -122,6 +130,9 @@ export class PdfPage extends React.PureComponent {
     this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();
+      if (this.markInstance) {
+        this.markInstance.unmark();
+      }
     }
     // Cleaning up this page from the Redux store should happen when we have idle time.
     // We don't want to block showing pages because we're too busy cleaning old pages.
@@ -180,6 +191,10 @@ export class PdfPage extends React.PureComponent {
       this.clearPage();
     }
     this.previousShouldDraw = shouldDraw;
+
+    if (this.markInstance) {
+      this.markText(this.props.searchText);
+    }
   }
 
   drawText = (page, text) => {
@@ -193,6 +208,8 @@ export class PdfPage extends React.PureComponent {
       viewport,
       textDivs: []
     });
+
+    this.markInstance = new Mark(this.textLayer);
   }
 
   getText = (page) => page.getTextContent()
@@ -363,7 +380,8 @@ const mapStateToProps = (state, props) => {
     page: _.get(page, ['page']),
     text: _.get(page, ['text']),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0)
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0),
+    searchText: searchText(state, props)
   };
 };
 

@@ -208,7 +208,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def eligible_for_ramp?
-    status == "Advance"
+    status == "Advance" || status == "Remand"
   end
 
   def attributes_for_hearing
@@ -225,11 +225,6 @@ class Appeal < ActiveRecord::Base
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
-  end
-
-  def station_key
-    result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
-    result && result.first
   end
 
   def nod
@@ -283,10 +278,6 @@ class Appeal < ActiveRecord::Base
 
   def certify!
     Appeal.certify(self)
-  end
-
-  def close!(user:, closed_on:, disposition:)
-    Appeal.close(appeal: self, user: user, closed_on: closed_on, disposition: disposition)
   end
 
   def fetch_documents!(save:)
@@ -412,11 +403,12 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
       hash["issues"] = issues
+      hash["regional_office"] = regional_office_hash
     end
   end
 
@@ -465,9 +457,9 @@ class Appeal < ActiveRecord::Base
 
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
-    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at]
-    @manifest_vva_fetched_at  = doc_struct[:manifest_vva_fetched_at]
     @fetched_documents = doc_struct[:documents]
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
+    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
   end
 
   def fetched_documents
@@ -483,6 +475,11 @@ class Appeal < ActiveRecord::Base
       else
         VBMSService
       end
+  end
+
+  # Used for serialization
+  def regional_office_hash
+    regional_office.to_h
   end
 
   class << self
@@ -504,8 +501,12 @@ class Appeal < ActiveRecord::Base
     def for_api(appellant_ssn:)
       fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
+      # Some appeals that are early on in the process
+      # have no events recorded. We are not showing these.
+      # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
+                .reject { |a| a.latest_event_date.nil? }
                 .sort_by(&:latest_event_date)
                 .reverse
     end
@@ -529,19 +530,26 @@ class Appeal < ActiveRecord::Base
       @repository ||= AppealRepository
     end
 
-    def close(appeal:, user:, closed_on:, disposition:)
-      fail "Only active appeals can be closed" unless appeal.active?
+    # Wraps the closure of appeals in a transaction
+    # add additional code inside the transaction by passing a block
+    # rubocop:disable Metrics/ParameterLists
+    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
+      fail "Only pass either appeal or appeals" if appeal && appeals
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-      fail "Disposition #{disposition}, does not exist" unless disposition_code
+      repository.transaction do
+        (appeals || [appeal]).each do |close_appeal|
+          close_single(
+            appeal: close_appeal,
+            user: user,
+            closed_on: closed_on,
+            disposition: disposition
+          )
+        end
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+        inside_transaction.call if block_given?
+      end
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -572,6 +580,20 @@ class Appeal < ActiveRecord::Base
     end
 
     private
+
+    def close_single(appeal:, user:, closed_on:, disposition:)
+      fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      repository.close!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: disposition_code
+      )
+    end
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals

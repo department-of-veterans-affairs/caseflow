@@ -47,7 +47,7 @@ class ExternalApi::VBMSService
     {
       manifest_vbms_fetched_at: nil,
       manifest_vva_fetched_at: nil,
-      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document) }
+      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document, sanitized_id) }
     }
   end
 

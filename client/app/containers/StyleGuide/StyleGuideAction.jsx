@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-
 let StyleGuideAction = () => {
   return <div>
 
@@ -10,7 +9,7 @@ let StyleGuideAction = () => {
       title="Actions"
       id="actions"
       link="StyleGuideAction.jsx"
-      isSubsection={true}
+      isSubsection
     />
     <p>
       For most task-based pages, Primary and Secondary Actions sit under the App Canvas.

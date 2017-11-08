@@ -27,10 +27,10 @@ class SeedDB
 
   def create_users(number, deterministic = true)
     users = number.times.map do |i|
-      length = VACOLS::RegionalOffice::STATIONS.length
+      length = RegionalOffice::STATIONS.length
       station_index = deterministic ? (i % length) : (rand(length))
       User.create(
-        station_id: VACOLS::RegionalOffice::STATIONS.keys[station_index],
+        station_id: RegionalOffice::STATIONS.keys[station_index],
         css_id: "css_#{i}",
         full_name: "name_#{i}",
         email: "test#{i}@example.com"
@@ -98,10 +98,12 @@ class SeedDB
       )
     end
 
-    RampElection.create!(
-      veteran_file_number: "11555555",
-      notice_date: 3.weeks.ago
-    )
+    ["11555555", "12555555"].each do |number|
+      RampElection.create!(
+        veteran_file_number: number,
+        notice_date: 3.weeks.ago
+      )
+    end
   end
 
   def create_tags

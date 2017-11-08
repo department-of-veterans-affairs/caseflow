@@ -26,22 +26,6 @@ describe ClaimEstablishment do
     end
   end
 
-  context "#ep_description" do
-    subject { claim_establishment.ep_description }
-
-    let(:claim_establishment) { ClaimEstablishment.new(ep_code: ep_code) }
-
-    context "when ep_code doesn't exist" do
-      let(:ep_code) { "BLARGYBLARG" }
-      it { is_expected.to be_nil }
-    end
-
-    context "when ep_code does exist" do
-      let(:ep_code) { "170RBVAG" }
-      it { is_expected.to eq("170RBVAG - Remand with BVA Grant") }
-    end
-  end
-
   context "#sent_email" do
     subject { claim_establishment.sent_email }
 

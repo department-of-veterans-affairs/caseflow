@@ -2,8 +2,12 @@ class HearingRepository
   class << self
     # :nocov:
     def upcoming_hearings_for_judge(css_id)
-      records = VACOLS::CaseHearing.upcoming_for_judge(css_id) +
-                VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
+      records = MetricsService.record("VACOLS: HearingRepository.upcoming_hearings_for_judge: #{css_id}",
+                                      service: :vacols,
+                                      name: "upcoming_hearings_for_judge") do
+        VACOLS::CaseHearing.upcoming_for_judge(css_id) +
+          VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
+      end
       hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
     end
 
@@ -17,7 +21,11 @@ class HearingRepository
     end
 
     def load_vacols_data(hearing)
-      vacols_record = VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
+      vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
+                                            service: :vacols,
+                                            name: "load_vacols_data") do
+        VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
+      end
       set_vacols_values(hearing, vacols_record)
       true
     rescue ActiveRecord::RecordNotFound
@@ -81,9 +89,11 @@ class HearingRepository
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def vacols_attributes(vacols_record)
+      # use venue location on the hearing if it exists
+      ro = vacols_record.hearing_venue || vacols_record.bfregoff
       type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
-                                                  regional_office_key: vacols_record.bfregoff,
+                                                  regional_office_key: ro,
                                                   type: type)
       {
         vacols_record: vacols_record,
@@ -102,7 +112,7 @@ class HearingRepository
         appellant_first_name: vacols_record.sspare1,
         appellant_middle_initial: vacols_record.sspare2,
         appellant_last_name: vacols_record.sspare3,
-        regional_office_key: vacols_record.bfregoff,
+        regional_office_key: ro,
         type: type,
         date: date,
         master_record: false

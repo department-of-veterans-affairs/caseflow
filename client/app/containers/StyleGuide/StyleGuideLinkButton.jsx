@@ -4,12 +4,12 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 
 let StyleGuideLinkButton = () => {
   return <div>
-    <br/>
+    <br />
     <StyleGuideComponentTitle
       title="Link buttons"
       id="link_buttons"
       link="StyleGuideLinkButton.jsx"
-      isSubsection={true}
+      isSubsection
     />
     <div className="usa-grid">
       <div className="usa-width-one-third">
@@ -37,7 +37,7 @@ let StyleGuideLinkButton = () => {
         </Button>
       </div>
     </div>
-    <br/>
+    <br />
   </div>;
 };
 

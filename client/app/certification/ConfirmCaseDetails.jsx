@@ -175,7 +175,6 @@ export class ConfirmCaseDetails extends React.Component {
       erroredFields.push('representativeNameLength');
     }
 
-
     return erroredFields;
   }
 
@@ -270,17 +269,17 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} />;
     }
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'}/>;
+        to={'/certifications/error'} />;
     }
 
     let appellantInfoColumns = [
@@ -311,7 +310,6 @@ export class ConfirmCaseDetails extends React.Component {
     const unlistedServiceMessage =
         <p>Caseflow will update the representative type and name in VACOLS.</p>;
 
-
     return <div>
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Case Details</h2>
@@ -332,7 +330,7 @@ export class ConfirmCaseDetails extends React.Component {
 
         <RadioField
           name="Does the representative information from VBMS and VACOLS match?"
-          required={true}
+          required
           options={poaMatchesOptions}
           value={poaMatches}
           errorMessage={this.isFieldErrored('poaMatches') ? ERRORS.poaMatches : null}
@@ -347,7 +345,7 @@ export class ConfirmCaseDetails extends React.Component {
               value={poaCorrectLocation}
               onChange={changePoaCorrectLocation}
               errorMessage={this.isFieldErrored('poaCorrectLocation') ? ERRORS.poaCorrectLocation : null}
-              required={true}
+              required
             />
         }
 
@@ -359,7 +357,7 @@ export class ConfirmCaseDetails extends React.Component {
               value={representativeType}
               onChange={changeRepresentativeType}
               errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
-              required={true}
+              required
             />
         }
 
@@ -373,7 +371,7 @@ export class ConfirmCaseDetails extends React.Component {
               defaultText="Select an organization"
               onChange={changeOrganizationName}
               errorMessage={this.isFieldErrored('organizationName') ? ERRORS.organizationName : null}
-              required={true}
+              required
             />
         }
         {
@@ -382,8 +380,8 @@ export class ConfirmCaseDetails extends React.Component {
               name={'Enter the service organization\'s name:'}
               value={representativeName}
               errorMessage={this.calculateErrorMessage()}
-              required={true}
-              onChange={changeRepresentativeName}/>
+              required
+              onChange={changeRepresentativeName} />
         }
 
         {

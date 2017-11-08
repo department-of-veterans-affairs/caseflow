@@ -144,17 +144,17 @@ export class SignAndCertify extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/success`}/>;
+        to={`/certifications/${match.params.vacols_id}/success`} />;
     }
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'}/>;
+        to={'/certifications/error'} />;
     }
 
     const shouldDisplayCertifyingOfficialTitleOther =
@@ -169,40 +169,40 @@ export class SignAndCertify extends React.Component {
           <TextField
             name={'Name and location of certifying office:'}
             value={certifyingOffice}
-            readOnly={true}
+            readOnly
           />
           <TextField
             name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
-            readOnly={true}
+            readOnly
           />
           <TextField
             name={'Name of certifying official:'}
             value={certifyingOfficialName}
             errorMessage={this.certifyingOfficialNameError()}
-            required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
+            required
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')} />
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
-            required={true}
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
+            required
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')} />
           {
             shouldDisplayCertifyingOfficialTitleOther &&
             <TextField
               name={'Specify other title of certifying official:'}
               value={certifyingOfficialTitleOther}
               errorMessage={this.certifyingOfficialTitleOtherError()}
-              required={true}
+              required
               onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
             />
           }
           <DateSelector
             name={'Date:'}
             value={formatDateStr(certificationDate)}
-            readOnly={true}
+            readOnly
           />
         </div>
       </form>

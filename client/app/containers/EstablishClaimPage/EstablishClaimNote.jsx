@@ -127,7 +127,6 @@ export class EstablishClaimNote extends BaseForm {
       <p>To help better identify this claim, please copy the following note,
       then open VBMS and attach it to the EP you just created.</p>
 
-
       <div className ="cf-vbms-note">
         <TextareaField
           label="VBMS Note:"
@@ -157,12 +156,11 @@ export class EstablishClaimNote extends BaseForm {
           name="confirmNote"
           onChange={this.handleFieldChange('noteForm', 'confirmBox')}
           {...this.state.noteForm.confirmBox}
-          required={true}
+          required
         />
       </div>
     </div>;
   }
-
 
   handleSubmit = () => {
     this.props.handleSubmit(this.vacolsNoteText());

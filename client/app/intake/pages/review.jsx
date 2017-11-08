@@ -20,9 +20,9 @@ class Review extends React.PureComponent {
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
@@ -33,11 +33,11 @@ class Review extends React.PureComponent {
       },
       {
         value: 'higher_level_review_with_hearing',
-        displayElem: <span>Higher Level Review <strong>with</strong> DRO hearing request</span>
+        displayText: 'Higher Level Review with Informal Conference'
       },
       {
         value: 'higher_level_review',
-        displayElem: <span>Higher Level Review with<strong>out</strong> DRO hearing request</span>
+        displayText: 'Higher Level Review'
       }
     ];
 

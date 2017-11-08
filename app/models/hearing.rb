@@ -104,7 +104,9 @@ class Hearing < ActiveRecord::Base
                 :veteran_age,
                 :appellant_city,
                 :appellant_state,
-                :military_service]
+                :military_service,
+                :appellant_mi_formatted,
+                :veteran_mi_formatted]
     ).merge(to_hash)
   end
 
@@ -129,7 +131,7 @@ class Hearing < ActiveRecord::Base
     attr_writer :repository
 
     def venues
-      VACOLS::RegionalOffice::CITIES.merge(VACOLS::RegionalOffice::SATELLITE_OFFICES)
+      RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
     end
 
     def repository

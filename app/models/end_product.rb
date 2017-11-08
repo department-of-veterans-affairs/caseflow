@@ -10,6 +10,11 @@ class EndProduct
 
   INACTIVE_STATUSES = %w(CAN CLR).freeze
 
+  RAMP_CODES = {
+    "682HLRRRAMP" => "Higher Level Review Rating",
+    "683SCRRRAMP" => "Supplemental Claim Review Rating"
+  }.freeze
+
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
     # no longer needed. Maybe 30 days after May 2017?
@@ -41,7 +46,7 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES
+  CODES = DISPATCH_CODES.merge(RAMP_CODES)
 
   DISPATCH_MODIFIERS = %w(070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172).freeze
 
@@ -50,11 +55,11 @@ class EndProduct
 
   # Validators are used for validating the EP before we create it in VBMS
   validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
-  validates :claim_type_code, inclusion: { in: DISPATCH_CODES.keys }
+  validates :claim_type_code, inclusion: { in: CODES.keys }
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
 
   def claim_type
-    DISPATCH_CODES[claim_type_code] || claim_type_code
+    label || claim_type_code
   end
 
   def status_type
@@ -99,7 +104,23 @@ class EndProduct
     }
   end
 
+  def description
+    label && "#{claim_type_code} - #{label}"
+  end
+
+  def description_with_routing
+    "#{description} for #{station_description}"
+  end
+
+  def station_description
+    regional_office ? regional_office.station_description : "Unknown"
+  end
+
   private
+
+  def label
+    @label ||= CODES[claim_type_code]
+  end
 
   def near_decision_date_of?(appeal)
     (claim_date - appeal.decision_date).abs < 30.days
@@ -119,6 +140,10 @@ class EndProduct
 
   def active?
     !INACTIVE_STATUSES.include?(status_type_code)
+  end
+
+  def regional_office
+    @regional_office ||= RegionalOffice.for_station(station_of_jurisdiction).first
   end
 
   class << self

@@ -32,7 +32,7 @@ describe RampIntake do
       RampElection.create!(
         veteran_file_number: "64205555",
         notice_date: 5.days.ago,
-        option_selected: :supplemental_claim,
+        option_selected: "supplemental_claim",
         receipt_date: 3.days.ago
       )
     end
@@ -52,7 +52,12 @@ describe RampIntake do
     subject { intake.complete! }
 
     let(:detail) do
-      RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+      RampElection.create!(
+        veteran_file_number: "64205555",
+        notice_date: 5.days.ago,
+        option_selected: "supplemental_claim",
+        receipt_date: 3.days.ago
+      )
     end
 
     let!(:appeals_to_close) do
@@ -61,7 +66,9 @@ describe RampIntake do
       end
     end
 
-    it "closes out the appeals correctly" do
+    it "closes out the appeals correctly and creates an end product" do
+      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
       expect(Fakes::AppealRepository).to receive(:close!).with(
         appeal: appeals_to_close.first,
         user: intake.user,
@@ -170,7 +177,14 @@ describe RampIntake do
 
       it "does not save intake and returns false" do
         expect(subject).to be_falsey
-        expect(intake).to_not be_persisted
+
+        expect(intake).to have_attributes(
+          started_at: Time.zone.now,
+          completed_at: Time.zone.now,
+          completion_status: "error",
+          error_code: "invalid_file_number",
+          detail: nil
+        )
       end
     end
 
@@ -178,7 +192,6 @@ describe RampIntake do
       it "saves intake and sets detail to ramp election" do
         expect(subject).to be_truthy
 
-        expect(intake).to be_persisted
         expect(intake.started_at).to eq(Time.zone.now)
         expect(intake.detail).to eq(ramp_election)
       end
@@ -192,7 +205,7 @@ describe RampIntake do
     context "there is not a ramp election for veteran" do
       it "adds did_not_receive_ramp_election and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:did_not_receive_ramp_election)
+        expect(intake.error_code).to eq("did_not_receive_ramp_election")
       end
     end
 
@@ -213,16 +226,16 @@ describe RampIntake do
 
         it "adds ramp_election_already_complete and returns false" do
           expect(subject).to eq(false)
-          expect(intake.error_code).to eq(:ramp_election_already_complete)
+          expect(intake.error_code).to eq("ramp_election_already_complete")
         end
       end
 
-      context "there are no eligible appeals" do
+      context "there are no active appeals" do
         let(:appeal_vacols_record) { :full_grant_decided }
 
         it "adds no_eligible_appeals and returns false" do
           expect(subject).to eq(false)
-          expect(intake.error_code).to eq(:no_eligible_appeals)
+          expect(intake.error_code).to eq("no_active_appeals")
         end
       end
 

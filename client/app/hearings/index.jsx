@@ -5,6 +5,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
+import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import DocketsContainer from './DocketsContainer';
 import DailyDocketContainer from './DailyDocketContainer';
 import HearingWorksheetContainer from './HearingWorksheetContainer';
@@ -15,7 +16,7 @@ import Footer from '../components/Footer';
 
 const configureStore = (data) => {
 
-  const middleware = [thunk, perflogger];
+  const middleware = [thunk, perflogger, getReduxAnalyticsMiddleware()];
 
   // This is to be used with the Redux Devtools Chrome extension
   // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
@@ -83,7 +84,7 @@ const Hearings = ({ hearings }) => {
           <Footer
             appName="Hearing Prep"
             feedbackUrl={hearings.feedbackUrl}
-            buildDate={hearings.buildDate}/>
+            buildDate={hearings.buildDate} />
         </div>
       </BrowserRouter>
     </div>

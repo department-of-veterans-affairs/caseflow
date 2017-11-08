@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { addNewTag, removeTag } from '../reader/actions';
+import { addNewTag, removeTag } from '../reader/PdfViewer/PdfViewerActions';
 
 class SideBarIssueTags extends PureComponent {
   render() {
@@ -40,13 +40,13 @@ class SideBarIssueTags extends PureComponent {
         key={doc.id}
         name="tags"
         label="Select or tag issue(s)"
-        multi={true}
-        creatable={true}
+        multi
+        creatable
         options={generateOptionsFromTags(this.props.tagOptions)}
         placeholder=""
         value={generateOptionsFromTags(doc.tags)}
         onChange={onChange}
-        selfManageValueState={true}
+        selfManageValueState
       />
     </div>;
   }

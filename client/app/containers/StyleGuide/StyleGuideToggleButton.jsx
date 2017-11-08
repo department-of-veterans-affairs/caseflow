@@ -21,7 +21,7 @@ export default class StyleGuideToggleButton extends React.Component {
         title="Toggle buttons"
         id="toggle_buttons"
         link="StyleGuideToggleButton.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <ToggleButton active={this.state.active}
         onClick={this.handleClick}>

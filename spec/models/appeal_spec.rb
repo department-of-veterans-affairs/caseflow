@@ -48,17 +48,18 @@ describe Appeal do
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
-  let(:appeal_manifest_vbms_fetched_at) { Time.zone.local(1954, "mar", 16, 8, 2, 55).strftime("%D %l:%M%P %Z") }
-  let(:appeal_manifest_vva_fetched_at) { Time.zone.local(1987, "mar", 15, 20, 15, 1).strftime("%D %l:%M%P %Z") }
+  let(:appeal_manifest_vbms_fetched_at) { Time.zone.local(1954, "mar", 16, 8, 2, 55) }
+  let(:appeal_manifest_vva_fetched_at) { Time.zone.local(1987, "mar", 15, 20, 15, 1) }
 
-  let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55).strftime("%D %l:%M%P %Z") }
-  let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1).strftime("%D %l:%M%P %Z") }
+  let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55) }
+  let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1) }
 
+  let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
   let(:doc_struct) do
     {
       documents: documents,
-      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: service_manifest_vva_fetched_at
+      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at.utc.strftime(efolder_fetched_at_format),
+      manifest_vva_fetched_at: service_manifest_vva_fetched_at.utc.strftime(efolder_fetched_at_format)
     }
   end
 
@@ -505,44 +506,88 @@ describe Appeal do
     end
   end
 
-  context "#close!" do
+  context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
     let(:user) { Generators::User.build }
+    let(:disposition) { "RAMP Opt-in" }
 
-    subject { appeal.close!(user: user, closed_on: 4.days.ago, disposition: disposition) }
-
-    context "when disposition is not valid" do
-      let(:disposition) { "I'm not a disposition" }
+    context "when called with both appeal and appeals" do
+      let(:vacols_record) { :ready_to_certify }
 
       it "should raise error" do
-        expect { subject }.to raise_error(/Disposition/)
+        expect do
+          Appeal.close(
+            appeal: appeal,
+            appeals: [appeal, another_appeal],
+            user: user,
+            closed_on: 4.days.ago,
+            disposition: disposition
+          )
+        end.to raise_error("Only pass either appeal or appeals")
       end
     end
 
-    context "when disposition is valid" do
-      let(:disposition) { "RAMP Opt-in" }
+    context "when multiple appeals" do
+      it "closes each appeal" do
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: another_appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
 
-      context "when appeal is not active" do
-        let(:vacols_record) { :full_grant_decided }
+        Appeal.close(
+          appeals: [appeal, another_appeal],
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition
+        )
+      end
+    end
+
+    context "when just one appeal" do
+      subject do
+        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
+      end
+
+      context "when disposition is not valid" do
+        let(:disposition) { "I'm not a disposition" }
 
         it "should raise error" do
-          expect { subject }.to raise_error(/active/)
+          expect { subject }.to raise_error(/Disposition/)
         end
       end
 
-      context "when appeal is active" do
-        let(:vacols_record) { :ready_to_certify }
+      context "when disposition is valid" do
+        context "when appeal is not active" do
+          let(:vacols_record) { :full_grant_decided }
 
-        it "closes the appeal in VACOLS" do
-          expect(Fakes::AppealRepository).to receive(:close!).with(
-            appeal: appeal,
-            user: user,
-            closed_on: 4.days.ago,
-            disposition_code: "P"
-          )
+          it "should raise error" do
+            expect { subject }.to raise_error(/active/)
+          end
+        end
 
-          subject
+        context "when appeal is active" do
+          let(:vacols_record) { :ready_to_certify }
+
+          it "closes the appeal in VACOLS" do
+            expect(Fakes::AppealRepository).to receive(:close!).with(
+              appeal: appeal,
+              user: user,
+              closed_on: 4.days.ago,
+              disposition_code: "P"
+            )
+
+            subject
+          end
         end
       end
     end
@@ -782,9 +827,14 @@ describe Appeal do
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
-    context "is false if status is not advance" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+    context "is false if status is not advance or remand" do
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Active") }
       it { is_expected.to be_falsey }
+    end
+
+    context "is true if status is remand" do
+      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+      it { is_expected.to be_truthy }
     end
 
     context "is true if status is advance" do
@@ -905,7 +955,7 @@ describe Appeal do
     end
 
     context "when regional office key is not mapped to a station" do
-      let(:regional_office_key) { "ROXX" }
+      let(:regional_office_key) { "SO62" }
       it { is_expected.to be_nil }
     end
   end
@@ -1349,11 +1399,15 @@ describe Appeal do
         Generators::Appeal.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: 3.days.ago }
+        ),
+        Generators::Appeal.build(
+          vbms_id: "999887777S",
+          vacols_record: { form9_date: nil }
         )
       ]
     end
 
-    it "returns filtered appeals for veteran sorted by latest event date" do
+    it "returns filtered appeals with events only for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
     end

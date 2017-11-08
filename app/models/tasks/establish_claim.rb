@@ -5,14 +5,6 @@ class EstablishClaim < Task
 
   class InvalidEndProductError < StandardError; end
 
-  class VBMSError < StandardError
-    attr_reader :error_code
-
-    def initialize(error_code)
-      @error_code = error_code
-    end
-  end
-
   has_one :claim_establishment, foreign_key: :task_id
   after_create :init_claim_establishment!
 
@@ -89,7 +81,7 @@ class EstablishClaim < Task
     end
 
   rescue VBMS::HTTPError => error
-    raise parse_vbms_error(error)
+    raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
   def complete_with_review!(vacols_note:)
@@ -141,7 +133,7 @@ class EstablishClaim < Task
   def completion_status_text
     case completion_status
     when "routed_to_ro"
-      "EP created for RO #{ep_ro_description}"
+      "EP created for RO #{saved_end_product.station_description}"
     when "special_issue_emailed"
       "Emailed - #{special_issues} Issue(s)"
     else
@@ -197,27 +189,12 @@ class EstablishClaim < Task
     )
   end
 
-  def parse_vbms_error(error)
-    case error.body
-    when /PIF is already in use/
-      return VBMSError.new("duplicate_ep")
-    when /A duplicate claim for this EP code already exists/
-      return VBMSError.new("duplicate_ep")
-    when /The PersonalInfo SSN must not be empty./
-      return VBMSError.new("missing_ssn")
-    when /The PersonalInfo.+must not be empty/
-      return VBMSError.new("bgs_info_invalid")
-    else
-      return error
-    end
-  end
-
   def decision_reviewed_action_description
     completed? ? "Reviewed #{cached_decision_type} decision" : nil
   end
 
   def ep_establishment_action_description
-    ep_created? ? "Established EP: #{established_ep_description}" : nil
+    ep_created? ? "Established EP: #{saved_end_product.description_with_routing}" : nil
   end
 
   def change_location_action_description
@@ -269,22 +246,12 @@ class EstablishClaim < Task
     outgoing_reference_id && !assigned_existing_ep?
   end
 
-  def established_ep_description
-    if claim_establishment
-      "#{claim_establishment.ep_description} for #{ep_ro_description}"
-    else
-      # TODO: remove this when we are confident all tasks are receiving claim establishments
-      "routed to #{ep_ro_description}"
-    end
-  end
-
-  def ep_ro_description
-    ep_ro ? "Station #{appeal.dispatched_to_station} - #{ep_ro[:city]}" : "Unknown"
-  end
-
-  def ep_ro
-    possible_ros = [VACOLS::RegionalOffice::STATIONS[appeal.dispatched_to_station]].flatten
-    possible_ros && VACOLS::RegionalOffice::CITIES[possible_ros.first]
+  def saved_end_product
+    EndProduct.new(
+      claim_id: outgoing_reference_id,
+      station_of_jurisdiction: appeal.dispatched_to_station,
+      claim_type_code: claim_establishment.ep_code
+    )
   end
 
   def completion_status_after_review

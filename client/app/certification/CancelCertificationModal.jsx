@@ -9,7 +9,6 @@ import emailValidator from '../util/validators/EmailValidator';
 import TextField from '../components/TextField';
 import ApiUtil from '../util/ApiUtil';
 
-
 // TODO: use the footer (see ConfirmHearing.jsx) everywhere,
 // then delete this comment :)
 export default class CancelCertificationModal extends BaseForm {
@@ -152,7 +151,7 @@ export default class CancelCertificationModal extends BaseForm {
             onClick: this.submitForm
           }
         ]}
-        visible={true}
+        visible
         closeHandler={closeHandler}
         title={title}>
         <p>
@@ -164,14 +163,14 @@ export default class CancelCertificationModal extends BaseForm {
           name="Why can't this case be certified in Caseflow?"
           options={cancellationReasonOptions}
           value={this.state.cancellationReasonValue}
-          required={true}
+          required
           onChange={this.onCancellationReasonChange}
           errorMessage={this.state.
-            certificationCancellationForm.cancellationReason.errorMessage}/>
+            certificationCancellationForm.cancellationReason.errorMessage} />
         {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
-                required={true}
+                required
                 onChange={this.onOtherReasonChange}
                 errorMessage={this.state.
                   certificationCancellationForm.otherReason.errorMessage}
@@ -183,7 +182,7 @@ export default class CancelCertificationModal extends BaseForm {
           onChange={this.onEmailChange}
           errorMessage={this.state.certificationCancellationForm.email.errorMessage}
           value={this.state.emailValue}
-          required={true}/>
+          required />
       </Modal>
     </div>;
   }

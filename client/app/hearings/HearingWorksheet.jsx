@@ -45,7 +45,8 @@ export class HearingWorksheet extends React.PureComponent {
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
-    const appellant = worksheet.appellant_last_first_mi ? worksheet.appellant_last_first_mi : worksheet.veteran_name;
+    const appellant = worksheet.appellant_mi_formatted ?
+      worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
@@ -92,11 +93,12 @@ export class HearingWorksheet extends React.PureComponent {
               aria-label="Representative Name"
               value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
+              maxLength={30}
             />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Veteran Name:</div>
-            <div><b>{worksheet.veteran_name}</b></div>
+            <div><b>{worksheet.veteran_mi_formatted}</b></div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
             <div>Veteran ID:</div>
@@ -116,6 +118,7 @@ export class HearingWorksheet extends React.PureComponent {
               aria-label="Witness Observer"
               value={worksheet.witness || ''}
               onChange={this.onWitnessChange}
+              maxLength={120}
             />
           </div>
         </div>
@@ -130,6 +133,18 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
+            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
+            <Textarea
+              name="Periods and circumstances of service"
+              value={worksheet.military_service || ''}
+              onChange={this.onMilitaryServiceChange}
+              id="worksheet-military-service"
+              minRows={1}
+              maxLength={5000}
+            />
+          </div>
+
+          <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-contentions">Contentions</label>
             <Textarea
               name="Contentions"
@@ -137,17 +152,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onContentionsChange}
               id="worksheet-contentions"
               minRows={3}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
-            <Textarea
-              name="Periods and circumstances of service"
-              value={worksheet.military_service || ''}
-              onChange={this.onMilitaryServiceChange}
-              id="worksheet-military-service"
-              minRows={3}
+              maxLength={5000}
             />
           </div>
 
@@ -159,6 +164,7 @@ export class HearingWorksheet extends React.PureComponent {
               onChange={this.onEvidenceChange}
               id="worksheet-evidence"
               minRows={3}
+              maxLength={5000}
             />
           </div>
 
@@ -170,6 +176,7 @@ export class HearingWorksheet extends React.PureComponent {
               id="worksheet-comments-for-attorney"
               onChange={this.onCommentsForAttorneyChange}
               minRows={3}
+              maxLength={5000}
             />
           </div>
         </form>

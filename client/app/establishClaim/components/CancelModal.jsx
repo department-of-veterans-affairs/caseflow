@@ -47,7 +47,7 @@ export const CancelModal = ({
           onClick: handleCancelSubmit
         }
       ]}
-      visible={true}
+      visible
       closeHandler={handleCloseCancelModal}
       title="Stop Processing Claim">
       <p>
@@ -62,7 +62,7 @@ export const CancelModal = ({
         label="Explanation"
         name="Explanation"
         onChange={handleChangeCancelFeedback}
-        required={true}
+        required
         errorMessage={errorMessage}
         value={cancelFeedback}
       />

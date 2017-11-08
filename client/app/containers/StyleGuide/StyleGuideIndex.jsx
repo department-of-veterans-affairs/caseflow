@@ -131,7 +131,7 @@ export default function StyleGuideIndex() {
     <StickyNav>
       {
         componentLinks.map((link, i) => (
-          <NavLink anchor={link.anchor} name={link.name} key={i}/>
+          <NavLink anchor={link.anchor} name={link.name} key={i} />
         ))
       }
     </StickyNav>
@@ -157,11 +157,11 @@ export default function StyleGuideIndex() {
       <StyleGuidePlaceholder
         title="Headings and Body"
         id="headings_and_body"
-        isSubsection={true} />
+        isSubsection />
       <StyleGuidePlaceholder
         title="Styles"
         id="styles"
-        isSubsection={true} />
+        isSubsection />
       <div className="cf-help-divider"></div>
       <StyleGuideColors />
       <div className="cf-help-divider"></div>

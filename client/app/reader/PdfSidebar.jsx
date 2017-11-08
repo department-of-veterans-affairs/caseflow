@@ -17,9 +17,11 @@ import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
-import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
-  selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
-} from '../reader/actions';
+import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import {
+  selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
+  updateAnnotationContent
+} from '../reader/PdfViewer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
@@ -160,7 +162,7 @@ export class PdfSidebar extends React.Component {
           onChange={this.onAccordionOpenOrClose}
           activeKey={this.props.openedAccordionSections}>
           <AccordionSection title="Document information">
-            <SideBarDocumentInformation appeal={appeal} doc={this.props.doc}/>
+            <SideBarDocumentInformation appeal={appeal} doc={this.props.doc} />
           </AccordionSection>
           <AccordionSection title="Categories">
             <SideBarCategories doc={this.props.doc}
@@ -168,7 +170,7 @@ export class PdfSidebar extends React.Component {
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <SideBarIssueTags
-              doc={this.props.doc}/>
+              doc={this.props.doc} />
           </AccordionSection>
           <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
             <SideBarComments
@@ -194,24 +196,24 @@ export class PdfSidebar extends React.Component {
             ]}
             closeHandler={this.handleKeyboardModalClose}
             title="Keyboard shortcuts"
-            noDivider={true}
+            noDivider
             id="cf-keyboard-modal">
             <div className="cf-keyboard-modal-scroll">
               <Table
                 columns={scrollColumns}
                 rowObjects={scrollInstructions}
-                slowReRendersAreOk={true}
-                className="cf-keyboard-modal-table"/>
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
               <Table
                 columns={commentColumns}
                 rowObjects={commentInstructions}
-                slowReRendersAreOk={true}
-                className="cf-keyboard-modal-table"/>
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
               <Table
                 columns={documentsColumns}
                 rowObjects={documentsInstructions}
-                slowReRendersAreOk={true}
-                className="cf-keyboard-modal-table"/>
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
             </div>
           </Modal>
         </div>
