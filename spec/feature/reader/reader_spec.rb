@@ -1,18 +1,18 @@
 require "rails_helper"
 
-def scroll_position(id: nil, className: nil)
+def scroll_position(id: nil, class_name: nil)
   page.evaluate_script <<-EOS
     function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{className}')[0];
+      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
       return elem.scrollTop;
     }();
   EOS
 end
 
-def scroll_to(id: nil, className: nil, value: 0)
+def scroll_to(id: nil, class_name: nil, value: 0)
   page.driver.evaluate_script <<-EOS
     function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{className}')[0];
+      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
       elem.scrollTop=#{value};
     }();
   EOS
@@ -30,10 +30,10 @@ def scroll_element_to_view(element)
   page.execute_script("document.getElementById('#{element}').scrollIntoView()")
 end
 
-def scroll_to_bottom(id: nil, className: nil)
+def scroll_to_bottom(id: nil, class_name: nil)
   page.driver.evaluate_script <<-EOS
     function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{className}')[0];
+      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
       elem.scrollTop = elem.scrollHeight;
     }();
   EOS
@@ -510,12 +510,12 @@ RSpec.feature "Reader" do
       if false
         add_comment_without_clicking_save "unsaved comment text"
 
-        scroll_to_bottom(className: "ReactVirtualized__List")
+        scroll_to_bottom(class_name: "ReactVirtualized__List")
         find(".cf-pdf-scroll-view").click
         find("body").send_keys(:arrow_left)
         expect(page).to_not have_css(".comment-textarea")
         add_comment_without_clicking_save "unsaved comment text"
-        scroll_to_bottom(className: "ReactVirtualized__List")
+        scroll_to_bottom(class_name: "ReactVirtualized__List")
         find(".cf-pdf-scroll-view").click
         find("body").send_keys(:arrow_right)
         expect(page).to_not have_css(".comment-textarea")
@@ -801,11 +801,11 @@ RSpec.feature "Reader" do
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
         element_class = "ReactVirtualized__List"
-        original_scroll = scroll_position(className: element_class)
+        original_scroll = scroll_position(class_name: element_class)
 
         # Click on the off screen comment (0 through 3 are on screen)
         find("#comment4").click
-        after_click_scroll = scroll_position(className: element_class)
+        after_click_scroll = scroll_position(class_name: element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
 
@@ -825,7 +825,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_css(".page")
         expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(className: "ReactVirtualized__List", value: 2000)
+        scroll_to(class_name: "ReactVirtualized__List", value: 2000)
         expect(find_field("page-progress-indicator-input").value).to_not eq "1"
       end
 
@@ -882,7 +882,7 @@ RSpec.feature "Reader" do
       old_height_1 = get_size("pageContainer1")[:height]
       old_height_10 = get_size("pageContainer10")[:height]
 
-      scroll_to(className: "ReactVirtualized__List", value: scroll_amount)
+      scroll_to(class_name: "ReactVirtualized__List", value: scroll_amount)
 
       find("#button-zoomIn").click
 
@@ -919,7 +919,6 @@ RSpec.feature "Reader" do
     end
     # :nocov:
 
-    # document.getElementsByClassName("ReactVirtualized__List")[0].scrollTop = 5000
     scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
