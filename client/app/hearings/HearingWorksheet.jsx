@@ -133,24 +133,24 @@ export class HearingWorksheet extends React.PureComponent {
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-contentions">Contentions</label>
-            <Textarea
-              name="Contentions"
-              value={worksheet.contentions || ''}
-              onChange={this.onContentionsChange}
-              id="worksheet-contentions"
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
             <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
             <Textarea
               name="Periods and circumstances of service"
               value={worksheet.military_service || ''}
               onChange={this.onMilitaryServiceChange}
               id="worksheet-military-service"
+              minRows={1}
+              maxLength={5000}
+            />
+          </div>
+
+          <div className="cf-hearings-worksheet-data">
+            <label htmlFor="worksheet-contentions">Contentions</label>
+            <Textarea
+              name="Contentions"
+              value={worksheet.contentions || ''}
+              onChange={this.onContentionsChange}
+              id="worksheet-contentions"
               minRows={3}
               maxLength={5000}
             />
