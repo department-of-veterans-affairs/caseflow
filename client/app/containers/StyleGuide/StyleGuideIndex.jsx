@@ -10,7 +10,8 @@ import StyleGuideTables from './StyleGuideTables';
 import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
-import { NavLink, ChildNavLink } from '../../components/NavLink.jsx';
+import NavLink from '../../components/NavLink';
+import ChildNavLink from '../../components/ChildNavLink';
 import StyleGuideSearch from './StyleGuideSearch';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
 import StyleGuideLogos from './StyleGuideLogos';
@@ -266,7 +267,7 @@ export const componentLinks = [
     }
     ]
   },
-  
+
   {
     anchor: '#dashboard',
     name: 'Dashboard'
@@ -350,7 +351,7 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuideFormFields />
         <div className="cf-help-divider"></div>
-        <StyleGuideLoaders />  
+        <StyleGuideLoaders />
         <div className="cf-help-divider"></div>
         <StyleGuideAlerts />
         <div className="cf-help-divider"></div>
