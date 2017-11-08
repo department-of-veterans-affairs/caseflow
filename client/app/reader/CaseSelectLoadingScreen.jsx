@@ -43,7 +43,7 @@ export class CaseSelectLoadingScreen extends React.Component {
           </StatusMessage> :
           <LoadingScreen
             spinnerColor={Constants.READER_COLOR}
-            message="Loading cases in Reader..."/>
+            message="Loading cases in Reader..." />
         }
       </div>
     </div>;

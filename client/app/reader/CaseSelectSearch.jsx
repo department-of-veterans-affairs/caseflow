@@ -128,7 +128,6 @@ class CaseSelectSearch extends React.PureComponent {
   }
 }
 
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAppealUsingVeteranId,
   onReceiveAppealDetails,
@@ -139,10 +138,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  caseSelect: state.readerReducer.ui.caseSelect,
-  caseSelectCriteria: state.readerReducer.ui.caseSelectCriteria
+  caseSelect: state.caseSelect,
+  caseSelectCriteria: state.caseSelect.caseSelectCriteria
 });
-
 
 export default connect(
   mapStateToProps,

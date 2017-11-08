@@ -1,5 +1,6 @@
 class HealthChecksController < ActionController::Base
   protect_from_forgery with: :exception
+  newrelic_ignore_apdex
 
   def show
     healthcheck = HealthCheck.new

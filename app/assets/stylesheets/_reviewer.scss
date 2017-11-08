@@ -204,6 +204,8 @@ svg[aria-hidden=true],
   position: absolute;
   opacity: 1;
   padding: 15px 23px 15px 15px;
+  // .cf-pdf-scroll-view is 5, .cf-search-bar is 6
+  z-index: 7;
 
   .category-icons-and-doc-type {
     display: flex;
@@ -738,5 +740,19 @@ input[type="search"].cf-search-input-with-close {
     }
 
   }
+}
 
+.cf-increment-search-match {
+  height: 3.3rem;
+  padding-top: 3px;
+  width: 4rem;
+
+  &.cf-prev-match {
+    border-radius: 1rem 0 0 1rem;
+  }
+
+  &.cf-next-match {
+    border-radius: 0 1rem 1rem 0;
+    margin-left: 5px !important;
+  }
 }

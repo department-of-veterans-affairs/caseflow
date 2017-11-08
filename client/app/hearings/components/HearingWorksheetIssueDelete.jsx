@@ -6,7 +6,6 @@ import { toggleIssueDeleteModal, onDeleteIssue } from '../actions/Issue';
 import Modal from '../../components/Modal';
 import { TrashCan } from '../../components/RenderFunctions';
 
-
 class HearingWorksheetIssueDelete extends PureComponent {
 
   handleModalOpen = (issueId) => () => {

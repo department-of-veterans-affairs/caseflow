@@ -41,7 +41,6 @@ export default class EditComment extends React.Component {
     this.handleAutoSave();
   }
 
-
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
   onCancelCommentEdit = () => {

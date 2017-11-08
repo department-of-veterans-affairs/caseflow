@@ -12,16 +12,17 @@ class Completed extends React.PureComponent {
   render() {
     const {
       veteran,
+      endProductDescription,
       rampElectionStatus
     } = this.props;
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
     case RAMP_INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH}/>;
+      return <Redirect to={PAGE_PATHS.FINISH} />;
     default:
     }
 
@@ -33,7 +34,10 @@ class Completed extends React.PureComponent {
         title="Intake completed"
         type="success"
         leadMessageList={[message]}
-        checklist={['Caseflow closed the VACOLS record']}
+        checklist={[
+          'Caseflow closed the VACOLS record',
+          `Established EP: ${endProductDescription}`
+        ]}
         wrapInAppSegment={false}
       />
     </div>;
@@ -59,6 +63,7 @@ export const CompletedNextButton = connect(
 export default connect(
   (state) => ({
     veteran: state.veteran,
+    endProductDescription: state.rampElection.endProductDescription,
     rampElectionStatus: getRampElectionStatus(state)
   })
 )(Completed);
