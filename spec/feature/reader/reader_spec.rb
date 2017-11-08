@@ -1086,7 +1086,7 @@ RSpec.feature "Reader" do
     end
 
     context "Tags" do
-      scenario "adding and deleting tags", focus: true do
+      scenario "adding and deleting tags" do
         TAG1 = "Medical".freeze
         TAG2 = "Law document".freeze
 
