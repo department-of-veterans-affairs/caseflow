@@ -82,7 +82,9 @@ When you're on prod squad, it's expected that you will make less progress than u
 
 ### Sentry Errors
 
-The procedure for responding to a new alert in #appeals-app-alerts is:
+Previously, those on Prod Squad were required to triage all sentry errors errors in the #appeals-app-alerts. Sentry alerts are now routed to individual sprint teams and this responsibility is now on sprint team leads.
+Sentry Errors that are unrouted will still appear in #appeals-app-alerts.  This procedure still follows for any *unrouted* sentry alert that appears in #appeals-app-alerts.
+
 
 1. Leave a threaded comment in Slack on the issue in question to say that you're looking at it. When you finish the steps here, post the result on that thread. (For example, if you create a new GitHub issue, link to it.)
 1. Make a ticket for the error. Label it with `prod-alert`. 
@@ -140,16 +142,10 @@ If you don't have access to everything on this list, talk to your team lead abou
 The Prod Squad schedule is managed via PagerDuty. See https://dsva-appeals.pagerduty.com/escalation_policies for the schedule.
 
 ## Responsibility for Errors
-| App | Team | Tech Lead |
-| --- | --- | --- |
-| Reader | Whiskey | Mark |
-| Certification | Foxtrot | Alex |
-| Certification v2 | Foxtrot | Alex |
-| eFolder | Foxtrot | Alex |
-| Dispatch | Tango | Sharon |
-| Hearings Prep | Tango | Sharon |
 
-All the tech leads need to be responsible for prioritizing triaging errors and either silencing or fixing them. We can't be complacent, like we were with the flakey tests, and wait until there's a crisis. 
+![Please view Priorities.md for Sprint team leads](https://github.com/department-of-veterans-affairs/appeals-pm/blob/master/priorities.md#sprint-teams)
+
+All the tech leads need to be responsible for prioritizing triaging errors and either silencing or fixing them. We can't be complacent, like we were with the flakey tests, and wait until there's a crisis.
 
 # Appendix: On-Call Hour Determination
 Our analysis of when to be on call is based on the following data:
