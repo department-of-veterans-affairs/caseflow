@@ -99,7 +99,7 @@ export class PdfUI extends React.Component {
       </span>;
     }
 
-    return <span className="page-progress-indicator">{content}</span>;
+    return <span><span className="page-progress-indicator">{content}</span>|</span>;
   }
 
   getPdfFooter = () => {
@@ -120,8 +120,6 @@ export class PdfUI extends React.Component {
       </div>
       <div className="cf-pdf-buttons-center">
         { pageIndicator }
-        { pageIndicator && '|' }
-
         <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
