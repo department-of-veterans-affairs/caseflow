@@ -142,16 +142,10 @@ If you don't have access to everything on this list, talk to your team lead abou
 The Prod Squad schedule is managed via PagerDuty. See https://dsva-appeals.pagerduty.com/escalation_policies for the schedule.
 
 ## Responsibility for Errors
-| App | Team | Tech Lead |
-| --- | --- | --- |
-| Reader | Whiskey | Mark |
-| Certification | Foxtrot | Alex |
-| Certification v2 | Foxtrot | Alex |
-| eFolder | Whiskey | Anya |
-| Dispatch | Tango | Sharon |
-| Hearings Prep | Tango | Sharon |
 
-All the tech leads need to be responsible for prioritizing triaging errors and either silencing or fixing them. We can't be complacent, like we were with the flakey tests, and wait until there's a crisis. 
+![Please view Priorities.md for Sprint team leads](https://github.com/department-of-veterans-affairs/appeals-pm/blob/master/priorities.md#sprint-teams)
+
+All the tech leads need to be responsible for prioritizing triaging errors and either silencing or fixing them. We can't be complacent, like we were with the flakey tests, and wait until there's a crisis.
 
 # Appendix: On-Call Hour Determination
 Our analysis of when to be on call is based on the following data:
