@@ -216,7 +216,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   keyListener = (event) => {
-    if (isUserEditingText()) {
+    if (isUserEditingText() || !this.props.isVisible) {
       return;
     }
 
