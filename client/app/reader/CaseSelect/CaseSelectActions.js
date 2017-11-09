@@ -66,5 +66,7 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
         } else {
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }
-      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+      }, () => {
+        dispatch(fetchAppealUsingVeteranIdFailed());
+      });
   };
