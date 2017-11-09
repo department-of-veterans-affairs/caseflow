@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 
 import StatusMessage from '../components/StatusMessage';
-import * as Constants from './constants';
+import { PDF_PAGE_WIDTH } from './constants';
 import { setPdfDocument, clearPdfDocument, errorLoadingDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
@@ -92,7 +92,7 @@ export class PdfFile extends React.PureComponent {
       position: 'absolute',
       top: '40%',
       left: '50%',
-      width: `${Constants.PDF_PAGE_WIDTH}px`,
+      width: `${PDF_PAGE_WIDTH}px`,
       transform: 'translate(-50%, -50%)'
     };
 
