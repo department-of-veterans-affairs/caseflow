@@ -58,23 +58,21 @@ export class HearingWorksheet extends React.PureComponent {
 
   savePDF() {
     const source = this.printContainer;
-    /* eslint new-cap: ["error", { "newIsCap": false }]*/
-    let pdf = new jspdf('p', 'pt', 'letter');
     let worksheetID = this.props.worksheet.id;
 
-
-    html2canvas(source)
-      .then((canvas) => {
+    html2canvas(source).
+      then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
+        /* eslint new-cap: ["error", { "newIsCap": false }]*/
         const pdf = new jspdf();
-        pdf.addImage(imgData, 'png', 0, 0);
+
+        pdf.addImage(imgData, 'JPEG', 0, 0);
         // TODO URL Output of this for linking from reader
         // pdf.output('URL ');
-         pdf.save('Worksheet-' + worksheetID + '.pdf' );
+        pdf.save(`Worksheet-${worksheetID}.pdf`);
       });
 
   }
-
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
