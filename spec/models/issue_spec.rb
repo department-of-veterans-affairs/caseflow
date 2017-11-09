@@ -60,7 +60,7 @@ describe Issue do
       end
 
       it "returns level descriptions in order" do
-        expect(subject).to eq(["Other", "Right elbow", "Right shoulder"])
+        expect(subject).to eq(["02 - Other", "0304 - Right elbow", " 0404 - Right shoulder"])
       end
     end
 
@@ -71,7 +71,7 @@ describe Issue do
       end
 
       it "returns the amount of issue levels present" do
-        expect(subject).to eq(["Other"])
+        expect(subject).to eq(["02 - Other"])
       end
     end
   end

@@ -83,6 +83,7 @@ class Issue
       levels.push((hash["isslev1_label"]).to_s) if hash["isslev1_label"]
       levels.push((hash["isslev2_label"]).to_s) if hash["isslev2_label"]
       levels.push((hash["isslev3_label"]).to_s) if hash["isslev3_label"]
+
       levels
     end
 
