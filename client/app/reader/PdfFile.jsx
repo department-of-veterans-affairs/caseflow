@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 
 import StatusMessage from '../components/StatusMessage';
-import ErrorAlertIcon from '../components/ErrorAlertIcon';
 import * as Constants from './constants';
 import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
@@ -93,7 +92,7 @@ export class PdfFile extends React.PureComponent {
     };
 
     return <div style={style}>
-      <StatusMessage title="Unable to load document" icon={<ErrorAlertIcon />}>
+      <StatusMessage title="Unable to load document" type="warning">
           Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
         <br />
           You can try <a href={downloadUrl}>downloading the document</a> or try again later.

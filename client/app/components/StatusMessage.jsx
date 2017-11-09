@@ -29,12 +29,13 @@ export default class StatusMessage extends React.Component {
     }
 
     let getClassNames = () => {
+      let h1classNames = ['cf-msg-screen-heading'];
       if (type === 'success') {
-        h1classNames = ['cf-msg-screen-heading', 'cf-success'];
+        h1classNames.push('cf-success');
       } else if (type === 'alert') {
-        h1classNames = ['cf-msg-screen-heading', 'cf-red-text'];
-      } else {
-        h1classNames = ['cf-msg-screen-heading'];
+        h1classNames.push('cf-red-text');
+      } else if (type === 'warning') {
+        h1classNames.push('usa-alert-error', 'cf-warning');
       }
 
       return h1classNames.join(' ');
@@ -45,7 +46,7 @@ export default class StatusMessage extends React.Component {
     });
 
     return <div id="certifications-generate" className={wrapperClassName}>
-      <h1 className={getClassNames()}>{icon}{title}</h1>
+       <h1 className={getClassNames()}>{title}</h1>
 
       { children ?
         <h2 className="cf-msg-screen-deck">

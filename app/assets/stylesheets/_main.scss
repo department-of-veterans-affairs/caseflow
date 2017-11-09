@@ -404,6 +404,13 @@ body {
   width: auto;
 }
 
+.cf-warning {
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-left: 3rem;
+  background-color: inherit;
+}
+
 .cf-tab-window-body {
   padding-top: 20px;
   border: 1px solid $color-gray-light;
