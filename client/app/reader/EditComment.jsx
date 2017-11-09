@@ -53,6 +53,8 @@ export default class EditComment extends React.Component {
     this.props.onSaveCommentEdit(this.props.comment);
   }
 
+  isStringEmpty = (str = '') => !str.trim();
+
   render() {
     return <div>
       <textarea
@@ -73,7 +75,7 @@ export default class EditComment extends React.Component {
               Cancel
           </Button>
           <Button
-            disabled={this.props.disableOnEmpty && !this.props.comment.comment}
+            disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
             name="save"
             onClick={this.onSaveCommentEdit}>
               Save
