@@ -138,5 +138,8 @@ export const READER_COLOR = '#417505';
 // UI Text
 export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 
-// Comes from _pdf_viewer.css
+// These both come from _pdf_viewer.css and is the default height
+// of the pages in the PDF. We need it defined here to be
+// able to expand/contract the height of the pages as we zoom.
 export const PDF_PAGE_WIDTH = 816;
+export const PDF_PAGE_HEIGHT = 1056;

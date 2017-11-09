@@ -12,17 +12,13 @@ export default class StatusMessage extends React.Component {
       // you'd never know what that element is by looking at the variable name.
       classNames,
       example,
-      h1classNames,
       leadMessageList,
       messageText,
       title,
       wrapInAppSegment = true,
       children,
-      icon,
       type
     } = this.props;
-
-    h1classNames = [];
 
     if (example) {
       classNames.push('cf-sg-success-example');
@@ -30,6 +26,7 @@ export default class StatusMessage extends React.Component {
 
     let getClassNames = () => {
       let h1classNames = ['cf-msg-screen-heading'];
+
       if (type === 'success') {
         h1classNames.push('cf-success');
       } else if (type === 'alert') {
@@ -46,7 +43,7 @@ export default class StatusMessage extends React.Component {
     });
 
     return <div id="certifications-generate" className={wrapperClassName}>
-       <h1 className={getClassNames()}>{title}</h1>
+      <h1 className={getClassNames()}>{title}</h1>
 
       { children ?
         <h2 className="cf-msg-screen-deck">

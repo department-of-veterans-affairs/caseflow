@@ -340,7 +340,7 @@ export const reducer = (state = initialState, action = {}) => {
       documents: {
         [action.payload.docId]: {
           $merge: {
-            load_error: true,
+            loadError: true,
             status_code: action.payload.status
           }
         }

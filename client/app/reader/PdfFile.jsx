@@ -80,6 +80,10 @@ export class PdfFile extends React.PureComponent {
   }
 
   displayErrorMessage = () => {
+    if (!this.props.isVisible) {
+      return;
+    }
+
     const downloadUrl = `${this.props.file}?type=${this.props.documentType}&download=true`;
 
     // Center the status message vertically
@@ -102,7 +106,7 @@ export class PdfFile extends React.PureComponent {
 
   render() {
     return <div>
-      {this.props.loadError && this.props.isVisible ? this.displayErrorMessage() : this.getPages()}
+      {this.props.loadError ? this.displayErrorMessage() : this.getPages()}
     </div>;
   }
 }

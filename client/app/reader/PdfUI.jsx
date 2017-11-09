@@ -81,7 +81,7 @@ export class PdfUI extends React.Component {
   }
 
   getPageIndicator = () => {
-    if (this.props.doc.load_error) {
+    if (this.props.doc.loadError) {
       return;
     }
 
@@ -258,7 +258,7 @@ export class PdfUI extends React.Component {
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
           documentType={this.props.doc.type}
-          loadError={this.props.doc.load_error}
+          loadError={this.props.doc.loadError}
           file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
