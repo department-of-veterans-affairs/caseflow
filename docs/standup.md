@@ -49,7 +49,7 @@ The team-wide standup occurs in Endor. This is a good time for topics like:
 * Tool / build changes ("We're switching from `npm` to `yarn`.")
 * Reminders about post-standup discussions
 * Notes about code changes that affect all Caseflow apps
-* Notes about design or produce decisions that affect the entire team
+* Notes about design or product decisions that affect the entire team
 * QA resolving blockers to ticket validation
 * 5 minute demo of cool or interesting new functionality from a sprint team. Any team can volunteer to do a demo. 
 
