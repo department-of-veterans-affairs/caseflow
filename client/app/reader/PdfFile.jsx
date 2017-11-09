@@ -7,7 +7,8 @@ import { bindActionCreators } from 'redux';
 
 import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH } from './constants';
-import { setPdfDocument, clearPdfDocument, errorLoadingDocument } from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLoadError }
+  from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -32,6 +33,8 @@ export class PdfFile extends React.PureComponent {
       withCredentials: true
     });
 
+    this.props.clearDocumentLoadError(this.props.file);
+
     return this.loadingTask.then((pdfDocument) => {
       if (this.loadingTask.destroyed) {
         pdfDocument.destroy();
@@ -43,7 +46,7 @@ export class PdfFile extends React.PureComponent {
     }).
       catch(() => {
         this.loadingTask = null;
-        this.props.errorLoadingDocument(this.props.file);
+        this.props.setDocumentLoadError(this.props.file);
       });
   }
 
@@ -120,7 +123,8 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfDocument,
     clearPdfDocument,
-    errorLoadingDocument
+    setDocumentLoadError,
+    clearDocumentLoadError
   }, dispatch)
 });
 

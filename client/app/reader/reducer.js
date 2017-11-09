@@ -998,11 +998,19 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-  case Constants.DOCUMENT_FAILED_TO_LOAD:
+  case Constants.SET_DOCUMENT_LOAD_ERROR:
     return update(state, {
       documentErrors: {
         [action.payload.file]: {
           $set: true
+        }
+      }
+    });
+  case Constants.CLEAR_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: false
         }
       }
     });

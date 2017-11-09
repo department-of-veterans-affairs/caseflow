@@ -47,8 +47,13 @@ export const clearPdfDocument = (file, pageIndex, doc) => ({
   }
 });
 
-export const errorLoadingDocument = (file) => ({
-  type: Constants.DOCUMENT_FAILED_TO_LOAD,
+export const setDocumentLoadError = (file) => ({
+  type: Constants.SET_DOCUMENT_LOAD_ERROR,
+  payload: { file }
+});
+
+export const clearDocumentLoadError = (file) => ({
+  type: Constants.CLEAR_DOCUMENT_LOAD_ERROR,
   payload: { file }
 });
 
