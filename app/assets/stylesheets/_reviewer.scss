@@ -152,6 +152,7 @@ svg[aria-hidden=true],
   }
 
   .usa-alert {
+    float: left;
     margin-top: 15px;
   }
 }
@@ -713,8 +714,8 @@ input[type="search"].cf-search-input-with-close {
   }
 }
 
-.cf-table-borderless + .cf-keyboard-modal-table thead th {
-  width: 23%;
+.cf-table-borderless.cf-keyboard-modal-table > thead > tr > th {
+  width: 200px;
 }
 
 .section--case-select {

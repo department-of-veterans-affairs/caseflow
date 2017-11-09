@@ -24,8 +24,8 @@ import {
 } from '../reader/PdfViewer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
-import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
-  documentsInstructions } from './PdfKeyboardInfo';
+import { commentColumns, commentInstructions, documentsColumns,
+  documentsInstructions, searchColumns, searchInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { CATEGORIES } from './analytics';
@@ -200,18 +200,18 @@ export class PdfSidebar extends React.Component {
             id="cf-keyboard-modal">
             <div className="cf-keyboard-modal-scroll">
               <Table
-                columns={scrollColumns}
-                rowObjects={scrollInstructions}
+                columns={documentsColumns}
+                rowObjects={documentsInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
+              <Table
+                columns={searchColumns}
+                rowObjects={searchInstructions}
                 slowReRendersAreOk
                 className="cf-keyboard-modal-table" />
               <Table
                 columns={commentColumns}
                 rowObjects={commentInstructions}
-                slowReRendersAreOk
-                className="cf-keyboard-modal-table" />
-              <Table
-                columns={documentsColumns}
-                rowObjects={documentsInstructions}
                 slowReRendersAreOk
                 className="cf-keyboard-modal-table" />
             </div>
@@ -232,10 +232,19 @@ PdfSidebar.propTypes = {
   })),
   onJumpToComment: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  showErrorMessage: PropTypes.shape({
-    tag: PropTypes.bool,
-    category: PropTypes.bool,
-    comment: PropTypes.bool
+  error: PropTypes.shape({
+    tag: PropTypes.shape({
+      visible: PropTypes.bool,
+      message: PropTypes.string
+    }),
+    category: PropTypes.shape({
+      visible: PropTypes.bool,
+      message: PropTypes.string
+    }),
+    comment: PropTypes.shape({
+      visible: PropTypes.bool,
+      message: PropTypes.string
+    })
   }),
   scrollToSidebarComment: PropTypes.shape({
     id: PropTypes.number
@@ -249,7 +258,7 @@ const mapStateToProps = (state, ownProps) => {
     comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.doc.id),
     scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
+    error: state.readerReducer.ui.pdfSidebar.error,
     appeal: state.readerReducer.loadedAppeal,
     ..._.pick(state.readerReducer, 'documents', 'openedAccordionSections')
   };
