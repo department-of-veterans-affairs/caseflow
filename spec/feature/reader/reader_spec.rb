@@ -72,6 +72,7 @@ RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
+    FeatureToggle.enable!(:search)
   end
 
   let(:vacols_record) { :remand_decided }
@@ -613,6 +614,35 @@ RSpec.feature "Reader" do
 
       # Comment should be removed
       expect(page).to_not have_css(".comment-container")
+    end
+
+    context "when comment box contains only whitespace characters" do
+      scenario "save button is disabled" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        add_comment_without_clicking_save(random_whitespace_no_tab)
+        expect(find("#button-save")["disabled"]).to eq("true")
+      end
+    end
+
+    context "existing comment edited to contain only whitespace characters" do
+      let!(:annotations) do
+        [Generators::Annotation.create(
+          comment: Generators::Random.word_characters,
+          document_id: documents[0].id
+        )]
+      end
+      let(:comment_id) { annotations.length }
+
+      scenario "prompts delete modal to appear" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+        find("#button-edit-comment-#{comment_id}").click
+        fill_in "editCommentBox-#{comment_id}", with: random_whitespace_no_tab
+        click_on "Save"
+
+        # Delete modal should appear.
+        expect(page).to have_css("#Delete-Comment-button-id-#{comment_id}")
+      end
     end
 
     context "When there is an existing annotation" do
@@ -1207,6 +1237,72 @@ RSpec.feature "Reader" do
       expect(page).to have_content(search_query)
     end
 
+    def open_search_bar
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      search_bar = find(".cf-pdf-search")
+      search_bar.click
+
+      expect(search_bar).not_to match_css(".hidden")
+    end
+
+    scenario "Search Document Text" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      internal_text = find("#search-internal-text")
+
+      expect(search_input).to match_xpath("//input[@placeholder='Type to search...']")
+
+      fill_in "search-ahead", with: "decision"
+
+      expect(search_input.value).to eq("decision")
+      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+    end
+
+    scenario "Search Text Resets on Change Document" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      next_doc = find("#button-previous")
+
+      fill_in "search-ahead", with: "decision"
+      expect(search_input.value).to eq("decision")
+      next_doc.click
+      expect(search_input.value).to eq("")
+    end
+
+    scenario "Navigate Search Results with Keyboard" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        open_search_bar
+
+        internal_text = find("#search-internal-text")
+
+        fill_in "search-ahead", with: "decision"
+
+        expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+
+        find("body").send_keys [:meta, "g"]
+
+        expect(internal_text).to have_xpath("//input[@value='2 of 2']")
+      end
+    end
+
+    scenario "Show and Hide Document Searchbar with Keyboard" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        search_bar = find(".cf-search-bar")
+
+        find("body").send_keys [:meta, "f"]
+
+        expect(search_bar).not_to match_css(".hidden")
+
+        find("body").send_keys [:escape]
+
+        expect(search_bar).to match_css(".hidden")
+      end
+    end
+
     scenario "Download PDF file" do
       DownloadHelpers.clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
@@ -1277,4 +1373,10 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Unable to load document")
     end
   end
+end
+
+# Generate some combination of whitespace characters between 1 and len characters long.
+# Do not include tab character becuase inserting tab will cause Capybara to change the focused DOM element.
+def random_whitespace_no_tab(len = 16)
+  Generators::Random.from_set([" ", "\n", "\r"], len)
 end
