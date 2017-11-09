@@ -25,7 +25,7 @@ export default class StyleGuideCheckboxes extends React.Component {
         are at most 2 options.</p>
       <h3 id='single_checkbox'>Single Checkbox</h3>
       <Example1 />
-      <h3>Single Checkbox with value set</h3>
+      <h4>Single Checkbox with value set</h4>
       <Example2 />
       <Example3 />
       <Example4 />

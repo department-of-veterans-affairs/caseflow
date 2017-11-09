@@ -80,7 +80,7 @@ export const componentLinks = [
     },
     {
       anchor: '#multi_dropdrown',
-      name: 'Create and Search Multiple Selection'
+      name: 'Search Multiple Selection'
     }]
   },
   {
@@ -153,6 +153,10 @@ export const componentLinks = [
     {
       anchor: '#borderless',
       name: 'Borderless'
+    },
+    {
+      anchor: '#bordered_outline',
+      name: 'Bordered Outline'
     }]
   },
   {

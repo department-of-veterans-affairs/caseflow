@@ -3,6 +3,7 @@ import { componentLinks } from './ComponentLinks';
 import StyleGuideModal from './StyleGuideModal';
 import StyleGuideTabs from './StyleGuideTabs';
 import StyleGuideProgressBar from './StyleGuideProgressBar';
+import StyleGuideBranding from './StyleGuideBranding';
 import StyleGuideButton from './StyleGuideButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
@@ -13,7 +14,6 @@ import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
 import StyleGuideSearch from './StyleGuideSearch';
 import StyleGuideSearchableDropdown from './StyleGuideSearchableDropdown';
-import StyleGuideLogos from './StyleGuideLogos';
 import StyleGuideColors from './StyleGuideColors';
 import StyleGuideLoaders from './StyleGuideLoaders';
 import StyleGuideLayout from './StyleGuideLayout';
@@ -22,6 +22,7 @@ import StyleGuideTypography from './StyleGuideTypography';
 import StyleGuideFormFields from './StyleGuideFormFields';
 import StyleGuideAccordions from './StyleGuideAccordions';
 import StyleGuideAlerts from './StyleGuideAlerts';
+import {ChevronDown, ChevronUp } from '../../components/RenderFunctions';
 
 export default class StyleGuideIndex extends React.Component {
 
@@ -54,18 +55,9 @@ export default class StyleGuideIndex extends React.Component {
             Download UI Kit</a>
         </p>
         <div className="cf-help-divider"></div>
-        <StyleGuideLogos />
+        <StyleGuideBranding />
         <div className="cf-help-divider"></div>
         <StyleGuideTypography />
-        <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Headings and Body"
-          id="headings_and_body"
-          isSubsection />
-        <StyleGuidePlaceholder
-          title="Styles"
-          id="styles"
-          isSubsection />
         <div className="cf-help-divider"></div>
         <StyleGuideColors />
         <div className="cf-help-divider"></div>
@@ -98,10 +90,6 @@ export default class StyleGuideIndex extends React.Component {
         <StyleGuideLayout />
         <div className="cf-help-divider"></div>
         <StyleGuideMessages />
-        <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Branding"
-          id="branding" />
         <div className="cf-help-divider"></div>
         <StyleGuideDashboard />
         <div className="cf-help-divider"></div>
