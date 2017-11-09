@@ -81,7 +81,7 @@ export class PdfUI extends React.Component {
   }
 
   getPageIndicator = () => {
-    if (this.props.doc.loadError) {
+    if (this.props.loadError) {
       return;
     }
 
@@ -258,7 +258,6 @@ export class PdfUI extends React.Component {
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
           documentType={this.props.doc.type}
-          loadError={this.props.doc.loadError}
           file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
@@ -282,6 +281,7 @@ const mapStateToProps = (state, props) => {
   return {
     ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
     docListIsFiltered: docListIsFiltered(state.readerReducer),
+    loadError: state.readerReducer.documentErrors[props.doc.content_url],
     ...state.readerReducer.ui.pdf,
     numPages
   };

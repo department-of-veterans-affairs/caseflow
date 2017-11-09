@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import StatusMessage from '../components/StatusMessage';
 import * as Constants from './constants';
-import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, errorLoadingDocument } from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -43,6 +43,7 @@ export class PdfFile extends React.PureComponent {
     }).
       catch(() => {
         this.loadingTask = null;
+        this.props.errorLoadingDocument(this.props.file);
       });
   }
 
@@ -118,12 +119,14 @@ PdfFile.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfDocument,
-    clearPdfDocument
+    clearPdfDocument,
+    errorLoadingDocument
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file]
+  pdfDocument: state.readerReducer.pdfDocuments[props.file],
+  loadError: state.readerReducer.documentErrors[props.file]
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);

@@ -174,6 +174,7 @@ export const initialState = {
   documents: {},
   pages: {},
   pdfDocuments: {},
+  documentErrors: {},
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
@@ -335,17 +336,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
-  case Constants.DOCUMENT_FAILED_TO_LOAD:
-    return update(state, {
-      documents: {
-        [action.payload.docId]: {
-          $merge: {
-            loadError: true,
-            status_code: action.payload.status
-          }
-        }
-      }
-    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(
       hideErrorMessage(state, 'category'),
@@ -1008,6 +998,14 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
+  case Constants.DOCUMENT_FAILED_TO_LOAD:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: true
+        }
+      }
+    });
   case Constants.GET_DOCUMENT_TEXT:
     return update(
       state,

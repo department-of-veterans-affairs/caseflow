@@ -47,6 +47,11 @@ export const clearPdfDocument = (file, pageIndex, doc) => ({
   }
 });
 
+export const errorLoadingDocument = (file) => ({
+  type: Constants.DOCUMENT_FAILED_TO_LOAD,
+  payload: { file }
+});
+
 /** Document Search **/
 
 export const getDocumentText = (pdfDocument, file) =>

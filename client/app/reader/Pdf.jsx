@@ -327,7 +327,6 @@ export class Pdf extends React.PureComponent {
         isVisible={this.props.file === file}
         scale={this.props.scale}
         documentType={this.props.documentType}
-        loadError={this.props.loadError}
       />;
     });
 
