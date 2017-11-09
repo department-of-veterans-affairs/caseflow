@@ -82,7 +82,9 @@ When you're on prod squad, it's expected that you will make less progress than u
 
 ### Sentry Errors
 
-The procedure for responding to a new alert in #appeals-app-alerts is:
+Previously, those on Prod Squad were required to triage all sentry errors errors in the #appeals-app-alerts. Sentry alerts are now routed to individual sprint teams and this responsibility is now on sprint team leads.
+Sentry Errors that are unrouted will still appear in #appeals-app-alerts.  This procedure still follows for any *unrouted* sentry alert that appears in #appeals-app-alerts.
+
 
 1. Leave a threaded comment in Slack on the issue in question to say that you're looking at it. When you finish the steps here, post the result on that thread. (For example, if you create a new GitHub issue, link to it.)
 1. Make a ticket for the error. Label it with `prod-alert`. 
@@ -145,7 +147,7 @@ The Prod Squad schedule is managed via PagerDuty. See https://dsva-appeals.pager
 | Reader | Whiskey | Mark |
 | Certification | Foxtrot | Alex |
 | Certification v2 | Foxtrot | Alex |
-| eFolder | Foxtrot | Alex |
+| eFolder | Whiskey | Anya |
 | Dispatch | Tango | Sharon |
 | Hearings Prep | Tango | Sharon |
 
