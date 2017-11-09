@@ -1,5 +1,4 @@
 class HealthChecksController < BaseController
-  protect_from_forgery with: :exception
   newrelic_ignore_apdex
 
   def show
