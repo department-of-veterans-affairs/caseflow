@@ -1,4 +1,4 @@
-class Api::ApplicationController < ActionController::Base
+class Api::ApplicationController < BaseController
   protect_from_forgery with: :null_session
 
   force_ssl if: :ssl_enabled?
