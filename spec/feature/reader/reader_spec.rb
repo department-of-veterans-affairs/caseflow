@@ -1263,8 +1263,12 @@ RSpec.feature "Reader" do
   end
 
   context "with a single document that errors when we fetch it" do
-    # TODO(lowell): Remove manual setting of ID here when we figure out how to
-    # clear the browser cache through Capybara.
+    # TODO(lowell): The webdriver we use caches HTTP requests in the browser, and that cache
+    # persists between subtests. Capybara does not easily allow us to clear the browser
+    # cache, so we use a document ID that will probably not have been used by a previous
+    # test to avoid the issue of a request to /document/1/pdf returning a cached response
+    # instead of an error that would trigger the state we desire.
+    # Created issue #3883 to address this browser cache retention issue.
     let(:documents) { [Generators::Document.create(id: rand(999) + 999_999)] }
 
     scenario "causes individual file view will display error message" do
