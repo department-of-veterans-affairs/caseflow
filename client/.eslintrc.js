@@ -6,7 +6,22 @@ module.exports = {
     mocha: true,
     node: true
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings'
+  ],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: [
+          '.js',
+          '.jsx'
+        ]
+      }
+    }
+  },
   parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
@@ -17,6 +32,7 @@ module.exports = {
   },
   plugins: [
     'react',
+    'import',
     'mocha'
   ],
   rules: {
