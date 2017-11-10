@@ -73,6 +73,11 @@ export class DecisionReviewer extends React.PureComponent {
 
     if (documentCategories[category]) {
       this.props.setCategoryFilter(category, true);
+
+      // Clear out the URI query string params after we determine the initial
+      // category filter so that we do not continue to attempt to set the
+      // category filter every time routedPdfListView renders.
+      props.location.search = '';
     }
   };
 
