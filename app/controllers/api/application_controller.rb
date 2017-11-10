@@ -1,6 +1,6 @@
 class Api::ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
-    
+
   include TrackRequestId
 
   force_ssl if: :ssl_enabled?
