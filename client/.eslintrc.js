@@ -84,7 +84,6 @@ module.exports = {
     // This rule will catch some cases that we don't care about.
     'import/no-named-as-default': 0,
     'import/no-named-as-default-member': 0,
-    'import/prefer-default-export': 1,
     // This rule will catch some cases that we don't care about.
     'react/display-name': 0,
     'react/jsx-boolean-value': 1,
