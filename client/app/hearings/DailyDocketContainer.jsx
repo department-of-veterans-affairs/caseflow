@@ -6,7 +6,7 @@ import LoadingContainer from '../components/LoadingContainer';
 import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
 import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from './constants/constants';
-import AutoSave from '../components/AutoSave.jsx';
+import AutoSave from '../components/AutoSave';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
 
