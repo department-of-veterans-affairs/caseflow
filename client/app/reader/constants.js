@@ -77,6 +77,8 @@ export const CLEAR_PDF_DOCUMENT = 'CLEAR_PDF_DOCUMENT';
 export const GET_DOCUMENT_TEXT = 'GET_DCOUMENT_TEXT';
 export const ZERO_SEARCH_INDEX = 'ZERO_SEARCH_INDEX';
 export const UPDATE_SEARCH_INDEX = 'UPDATE_SEARCH_INDEX';
+export const SET_DOCUMENT_LOAD_ERROR = 'SET_DOCUMENT_LOAD_ERROR';
+export const CLEAR_DOCUMENT_LOAD_ERROR = 'CLEAR_DOCUMENT_LOAD_ERROR';
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
 export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
@@ -139,3 +141,9 @@ export const READER_COLOR = '#417505';
 
 // UI Text
 export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
+
+// These both come from _pdf_viewer.css and is the default height
+// of the pages in the PDF. We need it defined here to be
+// able to expand/contract the height of the pages as we zoom.
+export const PDF_PAGE_WIDTH = 816;
+export const PDF_PAGE_HEIGHT = 1056;
