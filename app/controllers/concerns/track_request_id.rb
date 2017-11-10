@@ -2,7 +2,7 @@ module TrackRequestId
   extend ActiveSupport::Concern
 
   included do
-    after_action :track_request_id
+    before_action :track_request_id
   end
 
   def track_request_id
