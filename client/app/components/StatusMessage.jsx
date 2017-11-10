@@ -12,7 +12,6 @@ export default class StatusMessage extends React.Component {
       // you'd never know what that element is by looking at the variable name.
       classNames,
       example,
-      h1classNames,
       leadMessageList,
       messageText,
       title,
@@ -21,19 +20,19 @@ export default class StatusMessage extends React.Component {
       type
     } = this.props;
 
-    h1classNames = [];
-
     if (example) {
       classNames.push('cf-sg-success-example');
     }
 
     let getClassNames = () => {
+      let h1classNames = ['cf-msg-screen-heading'];
+
       if (type === 'success') {
-        h1classNames = ['cf-msg-screen-heading', 'cf-success'];
+        h1classNames.push('cf-success');
       } else if (type === 'alert') {
-        h1classNames = ['cf-msg-screen-heading', 'cf-red-text'];
-      } else {
-        h1classNames = ['cf-msg-screen-heading'];
+        h1classNames.push('cf-red-text');
+      } else if (type === 'warning') {
+        h1classNames.push('usa-alert-error', 'cf-warning');
       }
 
       return h1classNames.join(' ');
