@@ -13,6 +13,8 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     }
     RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = reader_user.user
+    Raven.extra_context({ application: "reader", reader_user: reader_user.id })
+
     update_fetched_at(reader_user)
     appeals = reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
@@ -31,6 +33,8 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def fetch_documents_for_appeals(appeals)
     @counts[:appeals_total] = appeals.count
     appeals.each do |appeal|
+      Raven.extra_context({ appeal_id: appeal.id })
+
       # signal to efolder X to fetch and save all documents
       appeal.saved_documents
       @counts[:appeals_successful] += 1
