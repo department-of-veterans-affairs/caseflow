@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { loadingSymbolHtml } from '../components/RenderFunctions.jsx';
+import { loadingSymbolHtml } from '../components/RenderFunctions';
 import { LOADING_INDICATOR_COLOR_DEFAULT } from '../constants/AppConstants';
 import moment from 'moment';
 
