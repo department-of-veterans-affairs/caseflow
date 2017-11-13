@@ -27,20 +27,28 @@ export class PdfFile extends React.PureComponent {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
 
+    let requestOptions = { cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer' };
+
     // We have to set withCredentials to true since we're requesting the file from a
     // different domain (eFolder), and still need to pass our credentials to authenticate.
-    return ApiUtil.get(this.props.file, {cache: true, withCredentials: true}).then((resp) => {
-      this.loadingTask = PDFJS.getDocument({data: resp.text});
-      return this.loadingTask;
-    }).then((pdfDocument) => {
-      if (this.loadingTask.destroyed) {
-        pdfDocument.destroy();
-      } else {
-        this.loadingTask = null;
-        this.pdfDocument = pdfDocument;
-        this.props.setPdfDocument(this.props.file, pdfDocument);
-      }
-    }).
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+
+        return this.loadingTask;
+      }).
+      then((pdfDocument) => {
+        if (this.loadingTask.destroyed) {
+          pdfDocument.destroy();
+        } else {
+          this.loadingTask = null;
+          this.pdfDocument = pdfDocument;
+          this.props.setPdfDocument(this.props.file, pdfDocument);
+        }
+      }).
       catch(() => {
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
