@@ -85,7 +85,7 @@ const CREATE_EP_ERRORS = {
   end_product_invalid: {
     header: 'The EP for this claim must be created outside Caseflow.',
     body: <span>
-            Data associated with this claim has not passed our validation.  
+            Data associated with this claim has not passed our validation.
             It's likely there is erroneous data associated with this claim.
       <br />
             Select Cancel at the bottom of the page to release this claim and
