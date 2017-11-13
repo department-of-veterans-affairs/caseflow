@@ -70,7 +70,7 @@ def add_comment_without_clicking_save(text)
   find("#pageContainer1").click
 
   expect(page).to_not have_css(".cf-pdf-placing-comment")
-  fill_in "addComment", with: text, wait: 3
+  fill_in "addComment", with: text, wait: 10
 end
 
 def add_comment(text)
@@ -627,13 +627,15 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".comment-container")
     end
 
-    context "when comment box contains only whitespace characters" do
+    ensure_stable do
+      context "when comment box contains only whitespace characters" do
       scenario "save button is disabled" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         add_comment_without_clicking_save(random_whitespace_no_tab)
         expect(find("#button-save")["disabled"]).to eq("true")
       end
     end
+  end
 
     context "existing comment edited to contain only whitespace characters" do
       let!(:annotations) do
@@ -1114,7 +1116,8 @@ RSpec.feature "Reader" do
       end
     end
 
-    context "Tags" do
+    context "Tags", focus: true do
+      ensure_stable do
       scenario "adding and deleting tags" do
         TAG1 = "Medical".freeze
         TAG2 = "Law document".freeze
@@ -1129,7 +1132,7 @@ RSpec.feature "Reader" do
         fill_in "tags", with: TAG1
 
         # making sure there is a dropdown showing up when text is entered
-        expect(page).to have_css(".Select-menu-outer")
+        expect(page).to have_css(".Select-menu-outer", wait: 5)
 
         # submit entering the tag
         fill_in "tags", with: (TAG1 + "\n")
@@ -1188,7 +1191,7 @@ RSpec.feature "Reader" do
           expect(tag_options.count).to eq(2)
 
           documents[0].tags.each_with_index do |tag, index|
-            expect(tag_options[index]).to have_content(tag.text)
+            expect(tag_options[index]).to have_content(tag.text, wait: 5)
           end
 
           NEW_TAG_TEXT = "New Tag".freeze
@@ -1219,6 +1222,7 @@ RSpec.feature "Reader" do
           expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
         end
       end
+    end
     end
 
     scenario "Search and Filter" do
