@@ -83,6 +83,11 @@ RSpec.feature "Reader" do
     Fakes::Initializer.load!
     FeatureToggle.disable!(:reader_blacklist)
     FeatureToggle.enable!(:search)
+    Capybara.default_max_wait_time = 5
+  end
+
+  after do
+    Capybara.default_max_wait_time = 2
   end
 
   let(:vacols_record) { :remand_decided }
@@ -627,15 +632,13 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".comment-container")
     end
 
-    ensure_stable do
-      context "when comment box contains only whitespace characters" do
+    context "when comment box contains only whitespace characters" do
       scenario "save button is disabled" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         add_comment_without_clicking_save(random_whitespace_no_tab)
         expect(find("#button-save")["disabled"]).to eq("true")
       end
     end
-  end
 
     context "existing comment edited to contain only whitespace characters" do
       let!(:annotations) do
