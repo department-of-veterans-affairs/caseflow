@@ -25,7 +25,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   end
 
   def setup_context(reader_user)
-    #set up debug context
+    # set up debug context
     current_user = reader_user.user
     RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = current_user
