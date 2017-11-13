@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { setUpPdfPage, clearPdfPage } from '../reader/Pdf/PdfActions';
 import { text as searchText } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 
@@ -17,12 +18,6 @@ import classNames from 'classnames';
 // We need it defined here to be able to expand/contract margin between pages
 // as we zoom.
 const PAGE_MARGIN_BOTTOM = 25;
-
-// These both come from _pdf_viewer.css and is the default height
-// of the pages in the PDF. We need it defined here to be
-// able to expand/contract the height of the pages as we zoom.
-const PAGE_WIDTH = 816;
-const PAGE_HEIGHT = 1056;
 
 // Base scale used to calculate dimensions and draw text.
 const PAGE_DIMENSION_SCALE = 1;
@@ -270,8 +265,8 @@ export class PdfPage extends React.PureComponent {
 
   getDivDimensions = () => {
     const innerDivDimensions = {
-      innerDivWidth: _.get(this.props.pageDimensions, ['width'], PAGE_WIDTH),
-      innerDivHeight: _.get(this.props.pageDimensions, ['height'], PAGE_HEIGHT)
+      innerDivWidth: _.get(this.props.pageDimensions, ['width'], PDF_PAGE_WIDTH),
+      innerDivHeight: _.get(this.props.pageDimensions, ['height'], PDF_PAGE_HEIGHT)
     };
 
     // If we have rotated the page, we need to switch the width and height.
