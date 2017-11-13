@@ -5,7 +5,7 @@ import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
-export const STANDARD_API_TIMEOUT = 60 * 1000;
+export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
   if (endpointName) {
