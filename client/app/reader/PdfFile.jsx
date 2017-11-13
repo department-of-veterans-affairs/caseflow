@@ -33,9 +33,14 @@ export class PdfFile extends React.PureComponent {
       withCredentials: true
     });
 
+    // Cancel the request if we exceed our timeout.
+    let requestTimeout = new Promise((resolve, reject) => {
+      setTimeout(reject, 60 * 1000);
+    });
+
     this.props.clearDocumentLoadError(this.props.file);
 
-    return this.loadingTask.then((pdfDocument) => {
+    return Promise.race([this.loadingTask, requestTimeout]).then((pdfDocument) => {
       if (this.loadingTask.destroyed) {
         pdfDocument.destroy();
       } else {
