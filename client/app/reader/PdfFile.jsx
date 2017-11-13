@@ -10,7 +10,7 @@ import { PDF_PAGE_WIDTH } from './constants';
 import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLoadError }
   from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {

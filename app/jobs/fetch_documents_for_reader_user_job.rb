@@ -11,8 +11,8 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
       appeals_total: 0,
       appeals_successful: 0
     }
-    RequestStore.store[:application] = "reader"
-    RequestStore.store[:current_user] = reader_user.user
+
+    setup_debug_context(reader_user)
     update_fetched_at(reader_user)
     appeals = reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
@@ -24,6 +24,20 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     raise e
   end
 
+  def setup_debug_context(reader_user)
+    current_user = reader_user.user
+    RequestStore.store[:application] = "reader"
+    RequestStore.store[:current_user] = current_user
+    Raven.extra_context(application: "reader")
+    Raven.user_context(
+      email: current_user.email,
+      css_id: current_user.css_id,
+      regional_office: current_user.regional_office,
+      reader_user: reader_user.id
+    )
+    Rails.logger.debug("Fetching docs for reader_user: #{reader_user.id}, user: #{current_user.id}")
+  end
+
   def update_fetched_at(reader_user)
     reader_user.update_attributes!(documents_fetched_at: Time.zone.now)
   end
@@ -31,6 +45,9 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def fetch_documents_for_appeals(appeals)
     @counts[:appeals_total] = appeals.count
     appeals.each do |appeal|
+      Raven.extra_context(appeal_id: appeal.id)
+      Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
+
       # signal to efolder X to fetch and save all documents
       appeal.saved_documents
       @counts[:appeals_successful] += 1
