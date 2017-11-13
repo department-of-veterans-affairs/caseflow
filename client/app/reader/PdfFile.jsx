@@ -7,17 +7,16 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT } from './constants';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError }
   from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 import { List, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon }
   from '../reader/PdfViewer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
-import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
