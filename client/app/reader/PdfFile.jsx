@@ -11,6 +11,7 @@ import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLo
   from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { STANDARD_API_TIMEOUT } from '../util/ApiUtil';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -35,7 +36,7 @@ export class PdfFile extends React.PureComponent {
 
     // Cancel the request if we exceed our timeout.
     let requestTimeout = new Promise((resolve, reject) => {
-      setTimeout(reject, 60 * 1000);
+      setTimeout(reject, STANDARD_API_TIMEOUT);
     });
 
     this.props.clearDocumentLoadError(this.props.file);
