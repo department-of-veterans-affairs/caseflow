@@ -24,8 +24,8 @@ import {
 } from '../reader/PdfViewer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
-import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
-  documentsInstructions } from './PdfKeyboardInfo';
+import { commentColumns, commentInstructions, documentsColumns,
+  documentsInstructions, searchColumns, searchInstructions } from './PdfKeyboardInfo';
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { CATEGORIES } from './analytics';
@@ -200,18 +200,18 @@ export class PdfSidebar extends React.Component {
             id="cf-keyboard-modal">
             <div className="cf-keyboard-modal-scroll">
               <Table
-                columns={scrollColumns}
-                rowObjects={scrollInstructions}
+                columns={documentsColumns}
+                rowObjects={documentsInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
+              <Table
+                columns={searchColumns}
+                rowObjects={searchInstructions}
                 slowReRendersAreOk
                 className="cf-keyboard-modal-table" />
               <Table
                 columns={commentColumns}
                 rowObjects={commentInstructions}
-                slowReRendersAreOk
-                className="cf-keyboard-modal-table" />
-              <Table
-                columns={documentsColumns}
-                rowObjects={documentsInstructions}
                 slowReRendersAreOk
                 className="cf-keyboard-modal-table" />
             </div>
