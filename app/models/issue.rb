@@ -80,11 +80,12 @@ class Issue
 
     def parse_levels_from_vacols(hash)
       levels = []
-      levels.push((hash["isslev1_label"]).to_s) if hash["isslev1_label"]
-      levels.push((hash["isslev2_label"]).to_s) if hash["isslev2_label"]
-      levels.push((hash["isslev3_label"]).to_s) if hash["isslev3_label"]
+      levels.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
+      levels.push("#{hash['isslev2']} - #{hash['isslev2_label']}") if hash["isslev2"]
+      levels.push("#{hash['isslev3']} - #{hash['isslev3_label']}") if hash["isslev3"]
       levels
     end
+
 
     def load_from_vacols(hash)
       category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
