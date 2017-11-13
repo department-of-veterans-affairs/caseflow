@@ -189,6 +189,7 @@ export const initialState = {
   documents: {},
   pages: {},
   pdfDocuments: {},
+  documentErrors: {},
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
@@ -1016,6 +1017,22 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
+  case Constants.SET_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: true
+        }
+      }
+    });
+  case Constants.CLEAR_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: false
+        }
+      }
+    });
   case Constants.GET_DOCUMENT_TEXT:
     return update(
       state,
