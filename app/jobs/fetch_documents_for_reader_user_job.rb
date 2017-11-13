@@ -12,7 +12,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
       appeals_successful: 0
     }
 
-    setup_context(reader_user)
+    setup_debug_context(reader_user)
     update_fetched_at(reader_user)
     appeals = reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
@@ -24,8 +24,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     raise e
   end
 
-  def setup_context(reader_user)
-    # set up debug context
+  def setup_debug_context(reader_user)
     current_user = reader_user.user
     RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = current_user
