@@ -67,6 +67,7 @@ class VACOLS::CaseIssue < VACOLS::Record
           or (ISSREF.LEV3_CODE = '##' and 'DG' || ISSUES.ISSLEV3 = VFTYPES.FTKEY))
 
       where ISSUES.ISSKEY IN (?)
+        and (ISSUES.ISSDCLS is NULL or (ISSUES.ISSDCLS is NOT NULL and ISSUES.ISSCODE IN ('3','L')))
     SQL
 
     issues_result = MetricsService.record("VACOLS: CaseIssue.descriptions for #{vacols_ids}",
