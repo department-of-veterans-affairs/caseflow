@@ -10,7 +10,7 @@ import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
-import Reader from '../reader/index.jsx';
+import Reader from '../reader/index';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
