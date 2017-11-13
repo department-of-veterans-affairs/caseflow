@@ -86,7 +86,6 @@ class Issue
       levels
     end
 
-
     def load_from_vacols(hash)
       category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
 
