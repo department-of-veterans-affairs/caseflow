@@ -10,7 +10,7 @@ import { text as searchText } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from './constants';
 import { pageNumberOfPageIndex } from './utils';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 
 import classNames from 'classnames';
 

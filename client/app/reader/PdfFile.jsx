@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH } from './constants';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError }
   from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
@@ -18,8 +18,6 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon }
   from '../reader/PdfViewer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
-
-const PAGE_HEIGHT = 1056;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -316,7 +314,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state, props) => {
   const dimensionValues = _.filter(state.readerReducer.pageDimensions, (dimension) => dimension.file === props.file);
-  const baseHeight = _.get(dimensionValues, [0, 'height'], PAGE_HEIGHT);
+  const baseHeight = _.get(dimensionValues, [0, 'height'], PDF_PAGE_HEIGHT);
 
   return {
     pdfDocument: state.readerReducer.pdfDocuments[props.file],
