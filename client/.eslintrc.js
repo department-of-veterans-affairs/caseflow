@@ -87,6 +87,7 @@ module.exports = {
     // This rule will catch some cases that we don't care about.
     'react/display-name': 0,
     'react/jsx-boolean-value': 1,
+    'react/jsx-curly-spacing': 1,
     // This rule is too aggressive. It will catch an array of JSX elements, but just because
     // we have an array of elements doesn't mean we're going to put them into the DOM that way.
     // We don't always need to set a key.
