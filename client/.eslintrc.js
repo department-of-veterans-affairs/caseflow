@@ -91,6 +91,7 @@ module.exports = {
     // we have an array of elements doesn't mean we're going to put them into the DOM that way.
     // We don't always need to set a key.
     'react/jsx-key': 0,
+    'react/jsx-pascal-case': 1,
     'react/jsx-tag-spacing': 1,
     'react/jsx-uses-react': 'warn',
     'react/jsx-uses-vars': 'warn',
