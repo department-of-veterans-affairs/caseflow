@@ -5,8 +5,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { setPdfDocument, clearPdfDocument, onScrollToComment } from '../reader/Pdf/PdfActions';
 import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
+import StatusMessage from '../components/StatusMessage';
+import { PDF_PAGE_WIDTH } from './constants';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError }
+  from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { List, AutoSizer } from 'react-virtualized';
@@ -44,6 +47,8 @@ export class PdfFile extends React.PureComponent {
 
     window.addEventListener('keydown', this.keyListener);
 
+    this.props.clearDocumentLoadError(this.props.file);
+
     return this.loadingTask.then((pdfDocument) => {
       if (this.loadingTask.destroyed) {
         pdfDocument.destroy();
@@ -55,6 +60,7 @@ export class PdfFile extends React.PureComponent {
     }).
       catch(() => {
         this.loadingTask = null;
+        this.props.setDocumentLoadError(this.props.file);
       });
   }
 
@@ -227,7 +233,36 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
+  displayErrorMessage = () => {
+    if (!this.props.isVisible) {
+      return;
+    }
+
+    const downloadUrl = `${this.props.file}?type=${this.props.documentType}&download=true`;
+
+    // Center the status message vertically
+    const style = {
+      position: 'absolute',
+      top: '40%',
+      left: '50%',
+      width: `${PDF_PAGE_WIDTH}px`,
+      transform: 'translate(-50%, -50%)'
+    };
+
+    return <div style={style}>
+      <StatusMessage title="Unable to load document" type="warning">
+          Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
+        <br />
+          You can try <a href={downloadUrl}>downloading the document</a> or try again later.
+      </StatusMessage>
+    </div>;
+  }
+
   render() {
+    if (this.props.loadError) {
+      return <div>{this.displayErrorMessage()}</div>;
+    }
+
     // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
     // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
     // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
@@ -273,7 +308,9 @@ const mapDispatchToProps = (dispatch) => ({
     resetJumpToPage,
     onScrollToComment,
     startPlacingAnnotation,
-    showPlaceAnnotationIcon
+    showPlaceAnnotationIcon,
+    setDocumentLoadError,
+    clearDocumentLoadError
   }, dispatch)
 });
 
@@ -286,7 +323,8 @@ const mapStateToProps = (state, props) => {
     pageDimensions: state.readerReducer.pageDimensions,
     baseHeight,
     jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber,
-    scrollToComment: state.readerReducer.ui.pdf.scrollToComment
+    scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
+    loadError: state.readerReducer.documentErrors[props.file]
   };
 };
 

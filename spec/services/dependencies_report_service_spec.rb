@@ -25,8 +25,8 @@ describe DependenciesReportService do
     end
 
     it "returns degraded services" do
-      expect(DependenciesReportService.find_degraded_dependencies).to eq %w(VACOLS VBMS)
-      expect(DependenciesReportService.outage_present?).to be_truthy
+      expect(DependenciesReportService.degraded_dependencies).to eq %w(VACOLS VBMS)
+      expect(DependenciesReportService.dependencies_report.present?).to be_truthy
     end
   end
 
@@ -36,8 +36,8 @@ describe DependenciesReportService do
     end
 
     it "returns no outage" do
-      expect(DependenciesReportService.find_degraded_dependencies).to be_empty
-      expect(DependenciesReportService.outage_present?).to be_falsey
+      expect(DependenciesReportService.degraded_dependencies).to be_empty
+      expect(DependenciesReportService.dependencies_report.present?).to be_falsey
     end
   end
 
@@ -49,7 +49,7 @@ describe DependenciesReportService do
     end
 
     it "returns no outage" do
-      expect(DependenciesReportService.outage_present?).to be_falsey
+      expect(DependenciesReportService.dependencies_report.present?).to be_falsey
     end
   end
 
@@ -59,7 +59,7 @@ describe DependenciesReportService do
     end
 
     it "returns degraded service" do
-      expect(DependenciesReportService.outage_present?).to be_truthy
+      expect(DependenciesReportService.dependencies_report.present?).to be_truthy
     end
   end
 
@@ -70,7 +70,7 @@ describe DependenciesReportService do
     end
 
     it "returns no outage" do
-      expect(DependenciesReportService.outage_present?).to be_falsey
+      expect(DependenciesReportService.dependencies_report.present?).to be_falsey
     end
   end
 
@@ -85,8 +85,8 @@ describe DependenciesReportService do
       end
 
       it "returns degraded services" do
-        expect(DependenciesReportService.find_degraded_dependencies).to eq %w(VACOLS VBMS)
-        expect(DependenciesReportService.outage_present?).to be_truthy
+        expect(DependenciesReportService.degraded_dependencies).to eq %w(VACOLS VBMS)
+        expect(DependenciesReportService.dependencies_report.present?).to be_truthy
       end
     end
 
@@ -97,8 +97,8 @@ describe DependenciesReportService do
       end
 
       it "returns no outage" do
-        expect(DependenciesReportService.find_degraded_dependencies).to be_empty
-        expect(DependenciesReportService.outage_present?).to be_falsey
+        expect(DependenciesReportService.degraded_dependencies).to be_empty
+        expect(DependenciesReportService.dependencies_report.present?).to be_falsey
       end
     end
   end

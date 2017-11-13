@@ -1369,6 +1369,22 @@ RSpec.feature "Reader" do
       expect_in_viewport("read-indicator")
     end
   end
+
+  context "with a single document that errors when we fetch it" do
+    # TODO(lowell): The webdriver we use caches HTTP requests in the browser, and that cache
+    # persists between subtests. Capybara does not easily allow us to clear the browser
+    # cache, so we use a document ID that will probably not have been used by a previous
+    # test to avoid the issue of a request to /document/1/pdf returning a cached response
+    # instead of an error that would trigger the state we desire.
+    # Created issue #3883 to address this browser cache retention issue.
+    let(:documents) { [Generators::Document.create(id: rand(999) + 999_999)] }
+
+    scenario "causes individual file view will display error message" do
+      allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      expect(page).to have_content("Unable to load document")
+    end
+  end
 end
 
 # Generate some combination of whitespace characters between 1 and len characters long.
