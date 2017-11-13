@@ -9,9 +9,9 @@ import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH } from './constants';
 import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLoadError }
   from '../reader/Pdf/PdfActions';
+import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
-import { STANDARD_API_TIMEOUT_MILLISECONDS } from '../util/ApiUtil';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -29,19 +29,10 @@ export class PdfFile extends React.PureComponent {
 
     // We have to set withCredentials to true since we're requesting the file from a
     // different domain (eFolder), and still need to pass our credentials to authenticate.
-    this.loadingTask = PDFJS.getDocument({
-      url: this.props.file,
-      withCredentials: true
-    });
-
-    // Cancel the request if we exceed our timeout.
-    let requestTimeout = new Promise((resolve, reject) => {
-      setTimeout(reject, STANDARD_API_TIMEOUT_MILLISECONDS);
-    });
-
-    this.props.clearDocumentLoadError(this.props.file);
-
-    return Promise.race([this.loadingTask, requestTimeout]).then((pdfDocument) => {
+    return ApiUtil.get(this.props.file, {cache: true, withCredentials: true}).then((resp) => {
+      this.loadingTask = PDFJS.getDocument({data: resp.text});
+      return this.loadingTask;
+    }).then((pdfDocument) => {
       if (this.loadingTask.destroyed) {
         pdfDocument.destroy();
       } else {

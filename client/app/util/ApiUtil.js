@@ -6,6 +6,12 @@ import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
+export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5* 60 * 1000;
+
+const timeoutSettings = {
+  response: STANDARD_API_TIMEOUT_MILLISECONDS,
+  deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS,
+};
 
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
   if (endpointName) {
@@ -46,7 +52,9 @@ const httpMethods = {
   get(url, options = {}) {
     let promise = request.
       get(url).
+      // timeout(timeoutSettings).
       set(getHeadersObject(options.headers)).
+      // responseType('arraybuffer').
       query(options.query);
 
     if (options.withCredentials) {
