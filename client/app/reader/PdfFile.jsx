@@ -11,7 +11,7 @@ import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLo
   from '../reader/Pdf/PdfActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {

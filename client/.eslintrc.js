@@ -6,7 +6,22 @@ module.exports = {
     mocha: true,
     node: true
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings'
+  ],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: [
+          '.js',
+          '.jsx'
+        ]
+      }
+    }
+  },
   parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
@@ -17,6 +32,7 @@ module.exports = {
   },
   plugins: [
     'react',
+    'import',
     'mocha'
   ],
   rules: {
@@ -64,6 +80,10 @@ module.exports = {
     'id-length': ['warn', { exceptions: ['i', '_', 'x', 'y'] }],
     'id-match': 'warn',
     indent: ['warn', 2],
+    'import/extensions': 1,
+    // This rule will catch some cases that we don't care about.
+    'import/no-named-as-default': 0,
+    'import/no-named-as-default-member': 0,
     // This rule will catch some cases that we don't care about.
     'react/display-name': 0,
     'react/jsx-boolean-value': 1,

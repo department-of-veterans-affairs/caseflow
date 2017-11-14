@@ -50,6 +50,8 @@ class EstablishClaimsController < TasksController
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
 
+  rescue EstablishClaim::InvalidEndProductError
+    render json: { error_code: "end_product_invalid" }, status: 422
   rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
     render json: { error_code: e.error_code }, status: 422
   end
