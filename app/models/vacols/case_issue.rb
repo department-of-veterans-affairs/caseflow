@@ -13,6 +13,7 @@ class VACOLS::CaseIssue < VACOLS::Record
   # in VFTYPES.FTKEY, where the diagnostic code is prefixed with 'DG'.
   # This query matches each ISSUE table code with the appropriate label,
   # either from the ISSREF or VFTYPES table.
+  # We define active as either having no disposition or being remanded.
   def self.active_issues(vacols_ids)
     conn = connection
 
