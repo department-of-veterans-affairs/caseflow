@@ -18,7 +18,7 @@ class LastReadIndicator extends React.PureComponent {
 }
 
 const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
-  shouldShow: state.readerReducer.ui.pdfList.lastReadDocId === ownProps.docId
+  shouldShow: state.documentList.ui.pdfList.lastReadDocId === ownProps.docId
 });
 
 export default connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);

@@ -22,7 +22,7 @@ Highlight.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  searchQuery: state.readerReducer.ui.docFilterCriteria.searchQuery
+  searchQuery: state.documentList.ui.docFilterCriteria.searchQuery
 });
 
 export default connect(

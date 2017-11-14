@@ -2,8 +2,9 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations, onInitialDataLoadingFail
+import { onReceiveManifests, onReceiveAnnotations, onInitialDataLoadingFail
 } from './LoadingScreen/LoadingScreenActions';
+import { onReceiveDocs } from './DocumentList/DocumentListActions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
@@ -14,10 +15,9 @@ const PARALLEL_DOCUMENT_REQUESTS = 3;
 
 export class ReaderLoadingScreen extends React.Component {
 
-  componentDidMount = () => {
+  componentDidMount = () => {    
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
-
     ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
       const returnedObject = JSON.parse(response.text);
       const documents = returnedObject.appealDocuments;
@@ -69,8 +69,8 @@ export class ReaderLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer, 'initialDataLoadingFail'),
-  loadedAppealId: state.readerReducer.loadedAppealId
+  ..._.pick(state.documentList, 'initialDataLoadingFail'),
+  loadedAppealId: state.documentList.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (

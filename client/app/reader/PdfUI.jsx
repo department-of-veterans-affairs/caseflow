@@ -274,9 +274,9 @@ const mapStateToProps = (state, props) => {
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
 
   return {
-    ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
-    docListIsFiltered: docListIsFiltered(state.readerReducer),
-    ...state.readerReducer.ui.pdf,
+    ..._.pick(state.documentList.ui, 'filteredDocIds'),
+    docListIsFiltered: docListIsFiltered(state.documentList),
+    ...state.documentList.ui.pdf,
     numPages
   };
 };

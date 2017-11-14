@@ -14,7 +14,7 @@ class SideBarCategories extends PureComponent {
       doc,
       documents
     } = this.props;
-
+    console.log(documents);
     const categoryToggleStates = _.mapValues(
       Constants.documentCategories,
       (val, key) =>

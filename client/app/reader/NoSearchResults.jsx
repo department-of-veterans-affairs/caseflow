@@ -24,7 +24,7 @@ NoSearchResults.propTypes = {
   searchQuery: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.documentList.docFilterCriteria, 'searchQuery');
+const mapStateToProps = (state) => _.pick(state.documentList.ui.docFilterCriteria, 'searchQuery');
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

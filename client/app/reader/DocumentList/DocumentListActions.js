@@ -2,6 +2,7 @@ import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
+import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
 import { collectAllTags } from '../PdfViewer/PdfViewerActions';
 
 // Table header actions
@@ -207,6 +208,7 @@ export const handleToggleCommentOpened = (docId) => ({
 export const onReceiveDocs = (documents, vacolsId) =>
   (dispatch) => {
     dispatch(collectAllTags(documents));
+    dispatch(setViewedAssignment(vacolsId));
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
       payload: {
@@ -214,4 +216,25 @@ export const onReceiveDocs = (documents, vacolsId) =>
         vacolsId
       }
     });
+  };
+
+/** Getting Appeal Details **/
+
+export const onReceiveAppealDetails = (appeal) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS,
+  payload: { appeal }
+});
+
+export const onAppealDetailsLoadingFail = (failedToLoad = true) => ({
+  type: Constants.RECEIVE_APPEAL_DETAILS_FAILURE,
+  payload: { failedToLoad }
+});
+
+export const fetchAppealDetails = (vacolsId) =>
+  (dispatch) => {
+    ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+
+      dispatch(onReceiveAppealDetails(returnedObject.appeal));
+    }, () => dispatch(onAppealDetailsLoadingFail()));
   };

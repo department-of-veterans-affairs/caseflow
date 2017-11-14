@@ -13,7 +13,8 @@ export const hideErrorMessage = (state, errorMessageType) => setErrorMessageStat
 export const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
 
 export const updateFilteredDocIds = (nextState) => {
-  const { docFilterCriteria } = nextState;
+
+  const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
     filter(([key, value]) => value). // eslint-disable-line no-unused-vars
@@ -71,8 +72,10 @@ export const updateFilteredDocIds = (nextState) => {
   }
 
   return update(updatedNextState, {
-    filteredDocIds: {
-      $set: filteredIds
+    ui: {
+      filteredDocIds: {
+        $set: filteredIds
+      }
     }
   });
 };

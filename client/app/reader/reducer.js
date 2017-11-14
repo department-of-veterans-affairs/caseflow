@@ -6,20 +6,6 @@ import { moveModel } from './utils';
 import { timeFunction } from '../util/PerfDebug';
 import { hideErrorMessage, showErrorMessage, updateFilteredDocIds } from './helpers/reducerHelper';
 
-const updateLastReadDoc = (state, docId) =>
-  update(
-    state,
-    {
-      ui: {
-        pdfList: {
-          lastReadDocId: {
-            $set: docId
-          }
-        }
-      }
-    }
-  );
-
 const openAnnotationDeleteModalFor = (state, annotationId) =>
   update(state, {
     ui: {
@@ -36,36 +22,19 @@ const initialShowErrorMessageState = {
 };
 
 export const initialState = {
-  assignments: [],
-  assignmentsLoaded: false,
-  loadedAppealId: null,
-  loadedAppeal: {},
   initialDataLoadingFail: false,
   didLoadAppealFail: false,
   initialCaseLoadingFail: false,
-  viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
-    tagOptions: [],
-    searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
     selectedAnnotationId: null,
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
-    filteredDocIds: null,
-    docFilterCriteria: {
-      sort: {
-        sortBy: 'receivedAt',
-        sortAscending: true
-      },
-      category: {},
-      tag: {},
-      searchQuery: ''
-    },
     pdf: {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
@@ -74,18 +43,14 @@ export const initialState = {
     },
     pdfSidebar: {
       showErrorMessage: initialShowErrorMessageState
-    },
-    pdfList: {
-      scrollTop: null,
-      lastReadDocId: null,
-      dropdowns: {
-        tag: false,
-        category: false
-      }
-    },
-    manifestVbmsFetchedAt: null,
-    manifestVvaFetchedAt: null
+    }
   },
+  pages: {},
+  pdfDocuments: {},
+  text: [],
+  documentSearchString: null,
+  documentSearchIndex: 0,
+  extractedText: {},
 
   /**
    * `editingAnnotations` is an object of annotations that are currently being edited.
@@ -93,21 +58,12 @@ export const initialState = {
    * To commit the edits, we copy from `editingAnnotations` back into `annotations`.
    * To discard the edits, we delete from `editingAnnotations`.
    */
-  editingAnnotations: {},
-  annotations: {},
-  documents: {},
-  pages: {},
-  pdfDocuments: {},
-  text: [],
-  documentSearchString: null,
-  documentSearchIndex: 0,
-  extractedText: {}
+  editingAnnotations: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
-  let modifiedDocuments;
 
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
@@ -140,34 +96,6 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload.value
       }
     });
-  case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        documents: {
-          $set: _(action.payload.documents).
-            map((doc) => [
-              doc.id, {
-                ...doc,
-                receivedAt: doc.received_at,
-                listComments: false
-              }
-            ]).
-            fromPairs().
-            value()
-        },
-        loadedAppealId: {
-          $set: action.payload.vacolsId
-        },
-        assignments: {
-          $apply: (existingAssignments) =>
-            existingAssignments.map((assignment) => ({
-              ...assignment,
-              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
-            }))
-        }
-      }
-    ));
   case Constants.RECEIVE_MANIFESTS:
     return update(state, {
       ui: {
@@ -179,40 +107,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.RECEIVE_ANNOTATIONS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        annotations: {
-          $set: _(action.payload.annotations).
-            map((annotation) => ({
-              documentId: annotation.document_id,
-              uuid: annotation.id,
-              ...annotation
-            })).
-            keyBy('id').
-            value()
-        }
-      }
-    ));
-  case Constants.RECEIVE_ASSIGNMENTS:
-    return update(state,
-      {
-        assignments: {
-          $set: action.payload.assignments
-        },
-        assignmentsLoaded: {
-          $set: true
-        }
-      });
-  case Constants.RECEIVE_APPEAL_DETAILS:
-    return update(state,
-      {
-        loadedAppeal: {
-          $set: action.payload.appeal
-        }
-      }
-    );
   case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
     return update(state,
       {
@@ -236,19 +130,16 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return updateLastReadDoc(update(state, {
+  case Constants.CLEAR_ALL_PDF_VIEWER_ERRORS:
+    return update(state, {
       ui: {
         pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
-      },
-      documents: {
-        [action.payload.docId]: {
-          $merge: {
-            opened_by_current_user: true
-          }
-        }
       }
-    }), action.payload.docId);
+    });
+  case Constants.HIDE_ERROR_MESSAGE:
+    return update(hideErrorMessage(state, action.payload.messageType));
+  case Constants.SHOW_ERROR_MESSAGE:
+    return update(showErrorMessage(state, action.payload.messageType));
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(hideErrorMessage(state, 'tag'), {
       documents: {
@@ -666,8 +557,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.LAST_READ_DOCUMENT:
-    return updateLastReadDoc(state, action.payload.docId);
   case Constants.SET_OPENED_ACCORDION_SECTIONS:
     return update(
       state,

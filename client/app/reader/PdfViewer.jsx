@@ -7,8 +7,11 @@ import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
 import {
-  selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal
+  selectCurrentPdf, closeAnnotationDeleteModal
 } from '../reader/PdfViewer/PdfViewerActions';
+import {
+  fetchAppealDetails
+} from '../reader/DocumentList/DocumentListActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon,
   deleteAnnotation
 } from '../reader/PdfViewer/AnnotationActions';
@@ -238,7 +241,7 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  documents: getFilteredDocuments(state.readerReducer),
+  documents: getFilteredDocuments(state.documentList),
   appeal: state.readerReducer.appeal,
   pages: state.readerReducer.pages,
   ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
