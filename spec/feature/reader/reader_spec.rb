@@ -155,7 +155,7 @@ RSpec.feature "Reader" do
           filename: "My NOD",
           type: "NOD",
           received_at: 1.day.ago,
-          vbms_document_id: 1
+          vbms_document_id: 3
         )
       ]
     end
