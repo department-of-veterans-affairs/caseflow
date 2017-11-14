@@ -76,8 +76,6 @@ test:
   <% if ENV['POSTGRES_HOST'] %>
   host: <%= ENV['POSTGRES_HOST'] %>
   <% end %>
-  # If we set the value to nil when the variable isn't present,
-  # the k8s Jenkins environment won't connect
   <% if ENV['POSTGRES_PASSWORD'] %>
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
