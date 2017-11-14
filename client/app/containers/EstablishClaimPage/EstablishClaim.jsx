@@ -82,6 +82,16 @@ const CREATE_EP_ERRORS = {
             proceed to process it outside of Caseflow.
     </span>
   },
+  end_product_invalid: {
+    header: 'The EP for this claim must be created outside Caseflow.',
+    body: <span>
+            Data associated with this claim has not passed our validation.
+            It's likely there is erroneous data associated with this claim.
+      <br />
+            Select Cancel at the bottom of the page to release this claim and
+            proceed to process it outside of Caseflow.
+    </span>
+  },
   default: {
     header: 'System Error',
     body: 'Something went wrong on our end. We were not able to create an End Product. ' +
