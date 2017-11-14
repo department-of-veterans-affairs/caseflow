@@ -96,7 +96,7 @@ export class PdfPage extends React.PureComponent {
       this.drawPage(this.page);
     }
 
-    if (this.markInstance) {
+    if (this.markInstance && this.props.searchText) {
       this.markText(this.props.searchText);
     }
   }
@@ -118,6 +118,9 @@ export class PdfPage extends React.PureComponent {
     });
 
     this.markInstance = new Mark(this.textLayer);
+    if (this.props.searchText) {
+      this.markText(this.props.searchText);
+    }
   }
 
   getText = (page) => page.getTextContent()

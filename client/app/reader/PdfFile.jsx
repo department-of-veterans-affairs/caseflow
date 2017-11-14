@@ -7,17 +7,17 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT } from './constants';
-import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError }
-  from '../reader/Pdf/PdfActions';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
+} from '../reader/Pdf/PdfActions';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
 import { List, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
-import { startPlacingAnnotation, showPlaceAnnotationIcon }
-  from '../reader/PdfViewer/AnnotationActions';
+import { startPlacingAnnotation, showPlaceAnnotationIcon
+} from '../reader/PdfViewer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
-import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
+import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -55,11 +55,10 @@ export class PdfFile extends React.PureComponent {
         this.pdfDocument = pdfDocument;
         this.props.setPdfDocument(this.props.file, pdfDocument);
       }
-    }).
-      catch(() => {
-        this.loadingTask = null;
-        this.props.setDocumentLoadError(this.props.file);
-      });
+    }).catch(() => {
+      this.loadingTask = null;
+      this.props.setDocumentLoadError(this.props.file);
+    });
   }
 
   componentWillUnmount = () => {
@@ -71,6 +70,9 @@ export class PdfFile extends React.PureComponent {
     if (this.pdfDocument) {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
+    }
+    if (this.marks) {
+      this.marks = [];
     }
   }
 
@@ -128,7 +130,7 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  scrollToPosition = (pageIndex, locationOnPage) => {
+  scrollToPosition = (pageIndex, locationOnPage = 0) => {
     const position = this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage;
 
     this.list.scrollToPosition(Math.max(position, 0));
@@ -165,12 +167,62 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
+  getPageofMatch = (matchIndex) => {
+    let pageIndex = 0;
+    let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
+
+    while (matchesProcessed <= matchIndex) {
+      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+      pageIndex += 1;
+    }
+
+    const pageDocIdsRE = /\/document\/\d+\/pdf-(\d+)/gi;
+    const pageIdMatch = pageDocIdsRE.exec(this.props.matchesPerPage[pageIndex].id);
+
+    return parseInt(pageIdMatch[1], 10);
+  }
+
+  // eslint-disable-next-line max-statements
   componentDidUpdate = () => {
     if (this.list && this.props.isVisible) {
       this.list.recomputeRowHeights();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
       this.jumpToComment();
+
+      this.marks = Array.prototype.slice.apply(document.getElementsByTagName('mark'));
+
+      if (this.props.searchText && this.props.matchesPerPage.length) {
+        _.each(this.marks, (mark) => {
+          const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
+          // eslint-disable-next-line no-unused-vars
+          const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
+
+          _.extend(mark.dataset, {
+            pageIdx: parseInt(pageId, 10),
+            docIdx: parseInt(docId, 10)
+          });
+        });
+
+        this.marks = this.marks.filter((mark) => parseInt(mark.dataset.docIdx, 10) === this.props.documentId);
+
+        _(this.marks).
+          filter((mark) => mark.classList.contains('highlighted')).
+          each((mark) => mark.classList.remove('highlighted'));
+
+        // scroll to mark page before highlighting--may not be in DOM
+        this.scrollToPosition(this.getPageofMatch(this.props.currentMatchIndex));
+
+        const selectedMark = this.marks[this.props.currentMatchIndex];
+
+        if (selectedMark) {
+          // mark parent elements are positioned absolutely relative to page; scroll highlight below search bar
+          // let scrollToY = parseInt(selectedMark.parentElement.style.top, 10) - 60;
+          // this.scrollToPosition(this.getPageofMatch(this.props.currentMatchIndex), scrollToY);
+
+          selectedMark.classList.add('highlighted');
+        }
+      }
     }
   }
 
@@ -322,7 +374,10 @@ const mapStateToProps = (state, props) => {
     baseHeight,
     jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber,
     scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
-    loadError: state.readerReducer.documentErrors[props.file]
+    loadError: state.readerReducer.documentErrors[props.file],
+    currentMatchIndex: getCurrentMatchIndex(state, props),
+    matchesPerPage: getMatchesPerPageInFile(state, props),
+    searchText: searchText(state, props)
   };
 };
 
