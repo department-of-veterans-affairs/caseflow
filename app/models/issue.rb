@@ -94,7 +94,7 @@ class Issue
 
       new(
         id: hash["isskey"],
-        levels: "#{hash['issprog']} - #{hash['issprog_label']}",
+        levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
