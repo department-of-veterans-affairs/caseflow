@@ -32,6 +32,8 @@ export class PdfFile extends React.PureComponent {
       timeout: true,
       responseType: 'arraybuffer' };
 
+    this.props.clearDocumentLoadError(this.props.file);
+
     // We have to set withCredentials to true since we're requesting the file from a
     // different domain (eFolder), and still need to pass our credentials to authenticate.
     return ApiUtil.get(this.props.file, requestOptions).
