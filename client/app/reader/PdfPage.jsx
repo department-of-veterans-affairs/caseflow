@@ -35,11 +35,8 @@ export class PdfPage extends React.PureComponent {
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
-  markText = (txt) => {
-    this.markInstance.unmark({
-      done: () => this.markInstance.mark(txt, { separateWordSearch: false })
-    });
-  };
+  unmarkText = (callback = _.noop) => this.markInstance.unmark({ done: callback });
+  markText = (txt) => this.unmarkText(() => this.markInstance.mark(txt, { separateWordSearch: false }));
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
@@ -96,8 +93,12 @@ export class PdfPage extends React.PureComponent {
       this.drawPage(this.page);
     }
 
-    if (this.markInstance && this.props.searchText) {
-      this.markText(this.props.searchText);
+    if (this.markInstance) {
+      if (this.props.searchText) {
+        this.markText(this.props.searchText);
+      } else {
+        this.unmarkText();
+      }
     }
   }
 

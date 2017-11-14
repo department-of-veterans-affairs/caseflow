@@ -171,9 +171,9 @@ export class PdfFile extends React.PureComponent {
     let pageIndex = 0;
     let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
 
-    while (matchesProcessed <= matchIndex) {
-      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+    while (matchesProcessed < matchIndex) {
       pageIndex += 1;
+      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
     }
 
     const pageDocIdsRE = /\/document\/\d+\/pdf-(\d+)/gi;
@@ -183,16 +183,17 @@ export class PdfFile extends React.PureComponent {
   }
 
   // eslint-disable-next-line max-statements
-  componentDidUpdate = () => {
+  componentDidUpdate = (prevProps) => {
     if (this.list && this.props.isVisible) {
       this.list.recomputeRowHeights();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
       this.jumpToComment();
 
-      this.marks = Array.prototype.slice.apply(document.getElementsByTagName('mark'));
+      if (this.props.searchText && this.props.matchesPerPage.length &&
+        (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
+        this.marks = Array.prototype.slice.apply(document.getElementsByTagName('mark'));
 
-      if (this.props.searchText && this.props.matchesPerPage.length) {
         _.each(this.marks, (mark) => {
           const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
           // eslint-disable-next-line no-unused-vars
@@ -211,15 +212,19 @@ export class PdfFile extends React.PureComponent {
           each((mark) => mark.classList.remove('highlighted'));
 
         // scroll to mark page before highlighting--may not be in DOM
-        this.scrollToPosition(this.getPageofMatch(this.props.currentMatchIndex));
+        // todo: dispatch event to update this.props.jumpToPageNumber?
+        const pageOfMatch = this.getPageofMatch(this.props.currentMatchIndex);
+
+        this.list.scrollToRow(pageOfMatch);
 
         const selectedMark = this.marks[this.props.currentMatchIndex];
 
         if (selectedMark) {
           // mark parent elements are positioned absolutely relative to page; scroll highlight below search bar
           // let scrollToY = parseInt(selectedMark.parentElement.style.top, 10) - 60;
-          // this.scrollToPosition(this.getPageofMatch(this.props.currentMatchIndex), scrollToY);
+          // this.scrollToPosition(pageOfMatch, scrollToY);
 
+          // todo: add highlighted on finish scrolling
           selectedMark.classList.add('highlighted');
         }
       }
