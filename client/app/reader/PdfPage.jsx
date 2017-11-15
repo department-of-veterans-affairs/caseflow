@@ -6,7 +6,7 @@ import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { setPageDimensions } from '../reader/Pdf/PdfActions';
-import { text as searchText } from '../reader/selectors';
+import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from './constants';
 import { pageNumberOfPageIndex } from './utils';
@@ -88,6 +88,52 @@ export class PdfPage extends React.PureComponent {
     }
   }
 
+  extendMarkDataset = () => {
+    _.each(document.getElementsByTagName('mark'), (mark) => {
+      const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
+      // todo: use Element.closest to get comment layer div
+      // Element.closest isn't supported in IE, polyfills exist but may be slow
+      // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+      // eslint-disable-next-line no-unused-vars
+      const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
+
+      _.extend(mark.dataset, {
+        pageIdx: parseInt(pageId, 10),
+        docIdx: parseInt(docId, 10)
+      });
+    });
+  }
+
+  getPageOfMatch = (matchIndex) => {
+    let pageIndex = 0;
+    let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
+
+    while (matchesProcessed < matchIndex) {
+      pageIndex += 1;
+      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+    }
+
+    return pageIndex;
+  }
+
+  markHighlightedText = () => {
+    if (this.props.matchesPerPage[this.props.currentMatchIndex]) {
+      this.extendMarkDataset();
+
+      const matchedPageIndex = this.getPageOfMatch(this.props.currentMatchIndex);
+      const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
+      const indexInPage = this.props.currentMatchIndex % pageWithMatch.matches;
+
+      this.marks = document.getElementsByTagName('mark');
+      _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
+      this.marks = _.filter(this.marks, (mark) => parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex);
+
+      if (_.includes(pageWithMatch.id, this.props.pageIndex) && this.marks[indexInPage]) {
+        this.marks[indexInPage].classList.add('highlighted');
+      }
+    }
+  }
+
   componentDidUpdate = (prevProps) => {
     if (prevProps.scale !== this.props.scale) {
       this.drawPage(this.page);
@@ -96,6 +142,7 @@ export class PdfPage extends React.PureComponent {
     if (this.markInstance) {
       if (this.props.searchText) {
         this.markText(this.props.searchText);
+        this.markHighlightedText();
       } else {
         this.unmarkText();
       }
@@ -121,6 +168,7 @@ export class PdfPage extends React.PureComponent {
     this.markInstance = new Mark(this.textLayer);
     if (this.props.searchText) {
       this.markText(this.props.searchText);
+      this.markHighlightedText();
     }
   }
 
@@ -264,7 +312,9 @@ const mapStateToProps = (state, props) => {
     pageDimensions: _.get(state.readerReducer.pageDimensions, [`${props.file}-${props.pageIndex}`]),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0),
-    searchText: searchText(state, props)
+    searchText: searchText(state, props),
+    currentMatchIndex: getCurrentMatchIndex(state, props),
+    matchesPerPage: getMatchesPerPageInFile(state, props)
   };
 };
 

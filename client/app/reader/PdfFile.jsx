@@ -71,9 +71,6 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
-    if (this.marks) {
-      this.marks = [];
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -176,13 +173,12 @@ export class PdfFile extends React.PureComponent {
       matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
     }
 
-    const pageDocIdsRE = /\/document\/\d+\/pdf-(\d+)/gi;
-    const pageIdMatch = pageDocIdsRE.exec(this.props.matchesPerPage[pageIndex].id);
+    const pageIdRE = /\/document\/\d+\/pdf-(\d+)/gi;
+    const pageIdMatch = pageIdRE.exec(this.props.matchesPerPage[pageIndex].id);
 
     return parseInt(pageIdMatch[1], 10);
   }
 
-  // eslint-disable-next-line max-statements
   componentDidUpdate = (prevProps) => {
     if (this.list && this.props.isVisible) {
       this.list.recomputeRowHeights();
@@ -192,41 +188,9 @@ export class PdfFile extends React.PureComponent {
 
       if (this.props.searchText && this.props.matchesPerPage.length &&
         (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
-        this.marks = Array.prototype.slice.apply(document.getElementsByTagName('mark'));
-
-        _.each(this.marks, (mark) => {
-          const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
-          // eslint-disable-next-line no-unused-vars
-          const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
-
-          _.extend(mark.dataset, {
-            pageIdx: parseInt(pageId, 10),
-            docIdx: parseInt(docId, 10)
-          });
-        });
-
-        this.marks = this.marks.filter((mark) => parseInt(mark.dataset.docIdx, 10) === this.props.documentId);
-
-        _(this.marks).
-          filter((mark) => mark.classList.contains('highlighted')).
-          each((mark) => mark.classList.remove('highlighted'));
-
         // scroll to mark page before highlighting--may not be in DOM
         // todo: dispatch event to update this.props.jumpToPageNumber?
-        const pageOfMatch = this.getPageofMatch(this.props.currentMatchIndex);
-
-        this.list.scrollToRow(pageOfMatch);
-
-        const selectedMark = this.marks[this.props.currentMatchIndex];
-
-        if (selectedMark) {
-          // mark parent elements are positioned absolutely relative to page; scroll highlight below search bar
-          // let scrollToY = parseInt(selectedMark.parentElement.style.top, 10) - 60;
-          // this.scrollToPosition(pageOfMatch, scrollToY);
-
-          // todo: add highlighted on finish scrolling
-          selectedMark.classList.add('highlighted');
-        }
+        this.list.scrollToRow(this.getPageofMatch(this.props.currentMatchIndex));
       }
     }
   }
