@@ -31,6 +31,9 @@ export const SHOW_PREV_PDF = 'SHOW_PREV_PDF';
 export const SCROLL_TO_COMMENT = 'SCROLL_TO_COMMENT';
 export const TOGGLE_COMMENT_LIST = 'TOGGLE_COMMENT_LIST';
 export const TOGGLE_PDF_SIDEBAR = 'TOGGLE_PDF_SIDEBAR';
+export const TOGGLE_SEARCH_BAR = 'TOGGLE_SEARCH_BAR';
+export const SHOW_SEARCH_BAR = 'SHOW_SEARCH_BAR';
+export const HIDE_SEARCH_BAR = 'HIDE_SEARCH_BAR';
 export const LAST_READ_DOCUMENT = 'LAST_READ_DOCUMENT';
 export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
 export const COLLECT_ALL_TAGS_FOR_OPTIONS = 'COLLECT_ALL_TAGS_FOR_OPTIONS';
@@ -74,6 +77,8 @@ export const CLEAR_PDF_DOCUMENT = 'CLEAR_PDF_DOCUMENT';
 export const GET_DOCUMENT_TEXT = 'GET_DCOUMENT_TEXT';
 export const ZERO_SEARCH_INDEX = 'ZERO_SEARCH_INDEX';
 export const UPDATE_SEARCH_INDEX = 'UPDATE_SEARCH_INDEX';
+export const SET_DOCUMENT_LOAD_ERROR = 'SET_DOCUMENT_LOAD_ERROR';
+export const CLEAR_DOCUMENT_LOAD_ERROR = 'CLEAR_DOCUMENT_LOAD_ERROR';
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
 export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
@@ -136,3 +141,9 @@ export const READER_COLOR = '#417505';
 
 // UI Text
 export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
+
+// These both come from _pdf_viewer.css and is the default height
+// of the pages in the PDF. We need it defined here to be
+// able to expand/contract the height of the pages as we zoom.
+export const PDF_PAGE_WIDTH = 816;
+export const PDF_PAGE_HEIGHT = 1056;

@@ -101,7 +101,7 @@ class Begin extends React.PureComponent {
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
       <h1>Welcome to Caseflow Intake!</h1>
-      <p>To begin processing this opt-in request, please enter the Veteran ID below.</p>
+      <p>To begin processing this opt-in election, please enter the Veteran ID below.</p>
 
       <SearchBar
         size="small"
