@@ -98,7 +98,7 @@ export default class StyleGuideColors extends React.Component {
         requirements.
       </p>
 
-      <h3>Palette</h3>
+      <h3 id='palatte'>Palette</h3>
 
       <h4>Primary Colors</h4>
 
@@ -182,7 +182,7 @@ export default class StyleGuideColors extends React.Component {
         )}
       </div>
 
-      <h3>Text Accessibility</h3>
+      <h3 id='text_accessibility'>Text Accessibility</h3>
 
       <p>
         WCAG (Web Content Accessibility Guidelines) ensure that content is accessible by

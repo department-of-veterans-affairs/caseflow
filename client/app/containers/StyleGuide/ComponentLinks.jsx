@@ -31,8 +31,8 @@ export const componentLinks = [
     anchor: '#colors',
     name: 'Colors',
     subnav: [{
-      anchor: '#platte',
-      name: 'Platte'
+      anchor: '#palatte',
+      name: 'Palette'
     },
     {
       anchor: '#logos',
@@ -51,7 +51,7 @@ export const componentLinks = [
       name: 'secondary'
     },
     {
-      anchor: '#Disabled',
+      anchor: '#disabled',
       name: 'Disabled'
     },
     {
@@ -68,22 +68,26 @@ export const componentLinks = [
     name: 'Search'
   },
   {
-    anchor: '#dropdowns',
+    anchor: '#dropdown_menu',
     name: 'Dropdown Menus',
     subnav: [{
-      anchor: '#single_selection',
+      anchor: '#dropdown',
+      name: 'Dropdown'
+    },
+    {
+      anchor: '#single_dropdown',
       name: 'Search Single Selection'
     },
     {
-      anchor: '#multiple_selection',
-      name: 'Create and Search Multiple Selection'
+      anchor: '#multi_dropdrown',
+      name: 'Search Multiple Selection'
     }]
   },
   {
     anchor: '#checkboxes',
     name: 'Checkboxes',
     subnav: [{
-      anchor: '#single',
+      anchor: '#single_checkbox',
       name: 'Single'
     },
     {
@@ -95,7 +99,7 @@ export const componentLinks = [
       name: 'Horizontal'
     },
     {
-      anchor: '#required',
+      anchor: '#required_checkboxes',
       name: 'Required'
     },
     {
@@ -107,11 +111,11 @@ export const componentLinks = [
     anchor: '#radios',
     name: 'Radio Buttons',
     subnav: [{
-      anchor: '#vertical',
+      anchor: '#vertical_radio',
       name: 'Vertical'
     },
     {
-      anchor: '#horizontal',
+      anchor: '#horizontal_radio',
       name: 'Horizontal'
     }]
   },
@@ -149,6 +153,10 @@ export const componentLinks = [
     {
       anchor: '#borderless',
       name: 'Borderless'
+    },
+    {
+      anchor: '#bordered_outline',
+      name: 'Bordered Outline'
     }]
   },
   {
