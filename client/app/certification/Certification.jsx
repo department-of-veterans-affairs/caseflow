@@ -11,6 +11,7 @@ import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
+import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
@@ -169,8 +170,6 @@ export class Certification extends React.Component {
         <div>
           <BrowserRouter>
             <div>
-              <Header />
-              <CertificationProgressBar />
               <Route path="/certifications/new/:vacols_id"
                 component={EntryPointRedirect} />
               <PageRoute
@@ -201,6 +200,11 @@ export class Certification extends React.Component {
                 title="Error | Caseflow Certification"
                 path="/certifications/error"
                 component={ErrorMessage}
+              />
+              <PageRoute
+                title="Not Certified | Caseflow Certification"
+                path="/certification_cancellations/"
+                component={CancelCertificationConfirmation}
               />
             </div>
           </BrowserRouter>

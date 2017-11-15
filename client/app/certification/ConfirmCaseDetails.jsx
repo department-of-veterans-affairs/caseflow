@@ -14,6 +14,8 @@ import Table from '../components/Table';
 import Footer from './Footer';
 import Dropdown from '../components/Dropdown';
 import TextField from '../components/TextField';
+import Header from './Header';
+import CertificationProgressBar from './CertificationProgressBar';
 
 const poaMatchesOptions = [
   { displayText: 'Yes',
@@ -311,6 +313,8 @@ export class ConfirmCaseDetails extends React.Component {
         <p>Caseflow will update the representative type and name in VACOLS.</p>;
 
     return <div>
+      <Header />
+      <CertificationProgressBar />
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Case Details</h2>
 
@@ -324,6 +328,7 @@ export class ConfirmCaseDetails extends React.Component {
           columns={appellantInfoColumns}
           rowObjects={appellantInfoRowObjects}
           summary="Appellant Information"
+          slowReRendersAreOk
         />
 
         <div className="cf-help-divider"></div>
