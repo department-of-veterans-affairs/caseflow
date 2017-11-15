@@ -137,9 +137,13 @@ export const reducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.HIDE_ERROR_MESSAGE:
-    return update(state, hideErrorMessage(state, action.payload.messageType));
+    return Object.assign({}, state,
+      hideErrorMessage(state, action.payload.messageType)
+    );
   case Constants.SHOW_ERROR_MESSAGE:
-    return update(state, showErrorMessage(state, action.payload.messageType));
+    return Object.assign({}, state,
+      showErrorMessage(state, action.payload.messageType)
+    );
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(hideErrorMessage(state, 'tag'), {
       documents: {
