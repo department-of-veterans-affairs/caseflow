@@ -27,10 +27,12 @@ export class PdfFile extends React.PureComponent {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
 
-    let requestOptions = { cache: true,
+    let requestOptions = {
+      cache: true,
       withCredentials: true,
       timeout: true,
-      responseType: 'arraybuffer' };
+      responseType: 'arraybuffer'
+    };
 
     this.props.clearDocumentLoadError(this.props.file);
 
