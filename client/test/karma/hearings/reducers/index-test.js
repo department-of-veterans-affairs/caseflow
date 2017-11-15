@@ -398,4 +398,22 @@ describe('hearingsReducer', () => {
       );
     });
   });
+
+    context(Constants.DELETE_ISSUE, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.DELETE_ISSUE,
+        payload: { _destroy: true, issueId: 6 }
+      });
+    });
+
+    it('deletesX worksheet issue', () => {
+      expect(state.worksheetIssues).to.deep.equal({
+        6: { _destroy: true, edited: true  }
+        }
+      );
+    });
+  });
 });
