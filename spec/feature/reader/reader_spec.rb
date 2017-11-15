@@ -1120,6 +1120,14 @@ RSpec.feature "Reader" do
     end
 
     context "Tags", focus: true do
+      variable = true
+      before do
+        variable = true
+      end
+
+      after do
+        puts page.html if variable
+      end
       ensure_stable do
       scenario "adding and deleting tags" do
         TAG1 = "Medical".freeze
@@ -1174,6 +1182,7 @@ RSpec.feature "Reader" do
 
         # verify that the tags on the previous document still exist
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
+        variable = false
       end
 
       context "Share tags among all documents in a case" do
