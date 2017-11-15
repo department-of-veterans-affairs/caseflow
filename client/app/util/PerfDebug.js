@@ -87,7 +87,7 @@ export const timeFunctionPromise = (fn, onTimeElapsed, label) => (...args) => {
       }
     };
 
-    returnPromise.then(
+    return returnPromise.then(
       (returnValue) => {
         onFunctionComplete();
 
