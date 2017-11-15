@@ -35,7 +35,7 @@ export default class StyleGuideButton extends React.Component {
       buttons of various widths are stacked, we highly recommend adjusting the padding of the buttons
       so that they all match in width.</p>
 
-      <h3 id='primary'>Primary buttons</h3>
+      <h3 id="primary">Primary buttons</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Default</h3>
@@ -77,7 +77,7 @@ export default class StyleGuideButton extends React.Component {
           </Button>
         </div>
       </div><br /><br />
-      <h3 id='secondary'>Secondary buttons</h3>
+      <h3 id="secondary">Secondary buttons</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Default</h3>
@@ -104,7 +104,7 @@ export default class StyleGuideButton extends React.Component {
           </Button>
         </div>
       </div><br /><br />
-      <h3 id='disabled'>Disabled button</h3>
+      <h3 id="disabled">Disabled button</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <Button

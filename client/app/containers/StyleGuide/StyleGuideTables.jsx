@@ -81,7 +81,7 @@ export default function StyleGuideTables() {
     <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary}
       slowReRendersAreOk />
 
-    <h3 id='queues'>Queues</h3>
+    <h3 id="queues">Queues</h3>
     <p>
       Tables are most frequently used in users' Queues or
       a list of work items for a user to take action on.

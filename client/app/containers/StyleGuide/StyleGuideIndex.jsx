@@ -22,7 +22,6 @@ import StyleGuideTypography from './StyleGuideTypography';
 import StyleGuideFormFields from './StyleGuideFormFields';
 import StyleGuideAccordions from './StyleGuideAccordions';
 import StyleGuideAlerts from './StyleGuideAlerts';
-import {ChevronDown, ChevronUp } from '../../components/RenderFunctions';
 
 export default class StyleGuideIndex extends React.Component {
 

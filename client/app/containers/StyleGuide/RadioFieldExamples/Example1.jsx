@@ -29,7 +29,7 @@ export default class Example1 extends React.Component {
     ];
 
     return <RadioField
-      label={<h3 id='vertical_radio'>Vertical Radio Button</h3>}
+      label={<h3 id="vertical_radio">Vertical Radio Button</h3>}
       name="radio_example_1"
       options={options}
       value={this.state.value}

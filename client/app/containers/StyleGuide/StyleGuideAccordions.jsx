@@ -30,17 +30,17 @@ export default class StyleGuideAccordions extends React.PureComponent {
     Accordions are a list of headers that can be clicked to hide or reveal additional
     content.</p>
 
-      <h3 id='border'>Border</h3>
+      <h3 id="border">Border</h3>
       <Accordion style="bordered" accordion>
         {sgAccordionSections}
       </Accordion>
 
-      <h3 id='borderless'>Borderless</h3>
+      <h3 id="borderless">Borderless</h3>
       <Accordion style="borderless" accordion>
         {sgAccordionSections}
       </Accordion>
 
-      <h3 id='bordered_outline'>Bordered Outline</h3>
+      <h3 id="bordered_outline">Bordered Outline</h3>
       <Accordion style="outline" accordion>
         {sgAccordionSections}
       </Accordion>
