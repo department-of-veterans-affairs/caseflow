@@ -10,7 +10,7 @@ describe WorksheetIssue do
       subject
       expect(WorksheetIssue.all.size).to eq 1
       expect(subject.program).to eq issue.program.to_s.capitalize
-      expect(subject.levels).to eq issue.levels.join("; ")
+      expect(subject.levels).to eq issue.program_description.join("; ")
       expect(subject.description).to eq issue.note
       expect(subject.name).to eq issue.type[:label].to_s
       expect(subject.from_vacols).to eq true
