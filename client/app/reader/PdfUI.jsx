@@ -277,6 +277,7 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.documentList.ui, 'filteredDocIds'),
     docListIsFiltered: docListIsFiltered(state.documentList),
     ...state.documentList.ui.pdf,
+    ...state.readerReducer.ui.pdf,
     numPages
   };
 };

@@ -380,7 +380,7 @@ const mapStateToProps = (state, props) => {
     page: _.get(page, ['page']),
     text: _.get(page, ['text']),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0),
+    rotation: _.get(state.documentList.documents, [props.documentId, 'rotation'], 0),
     searchText: searchText(state, props)
   };
 };

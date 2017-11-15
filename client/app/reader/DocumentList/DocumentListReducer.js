@@ -2,7 +2,7 @@ import * as Constants from './actionTypes';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from '../constants';
 import _ from 'lodash';
 import { update } from '../../util/ReducerUtil';
-import { hideErrorMessage, showErrorMessage, updateFilteredDocIds } from '../helpers/reducerHelper';
+import { updateFilteredDocIds } from '../helpers/reducerHelper';
 import documentsReducer from './DocumentsReducer';
 
 const updateLastReadDoc = (state, docId) =>
