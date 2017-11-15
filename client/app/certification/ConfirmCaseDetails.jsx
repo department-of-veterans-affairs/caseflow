@@ -377,7 +377,7 @@ export class ConfirmCaseDetails extends React.Component {
         {
           organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             <TextField
-              name="Enter the service organization\'s name:"
+              name="Enter the service organization's name:"
               value={representativeName}
               errorMessage={this.calculateErrorMessage()}
               required
