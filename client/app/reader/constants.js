@@ -123,3 +123,6 @@ export const READER_COLOR = '#417505';
 
 // UI Text
 export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
+
+export const HIDE_ERROR_MESSAGE = 'HIDE_ERROR_MESSAGE';
+export const SHOW_ERROR_MESSAGE = 'SHOW_ERROR_MESSAGE';

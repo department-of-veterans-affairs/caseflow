@@ -3,7 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
 import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
-import { collectAllTags } from '../PdfViewer/PdfViewerActions';
+import { collectAllTags, showErrorMessage, hideErrorMessage } from '../PdfViewer/PdfViewerActions';
 
 // Table header actions
 
@@ -68,14 +68,18 @@ export const toggleDropdownFilterVisibility = (filterName) => ({
   }
 });
 
-export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
-  type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
-  payload: {
-    docId,
-    categoryKey,
-    categoryValueToRevertTo
-  }
-});
+export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) =>
+  (dispatch) => {
+    dispatch(showErrorMessage('category'));
+    dispatch({
+      type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
+      payload: {
+        docId,
+        categoryKey,
+        categoryValueToRevertTo
+      }
+    });
+  };
 
 export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
   const categoryKey = categoryFieldNameOfCategoryName(categoryName);
@@ -87,6 +91,8 @@ export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispa
   ).catch(() =>
     dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
   );
+
+  dispatch(hideErrorMessage('category'));
 
   dispatch({
     type: Constants.TOGGLE_DOCUMENT_CATEGORY,
@@ -200,7 +206,7 @@ export const handleToggleCommentOpened = (docId) => ({
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
-      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
+      label: (nextState) => nextState.documentList.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

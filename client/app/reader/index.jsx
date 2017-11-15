@@ -9,18 +9,19 @@ import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import documentListReducer from './DocumentList/documentListReducer';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
+import { createLogger } from 'redux-logger'
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   combineReducers({
     caseSelect: caseSelectReducer,
-    documentList: documentListReducer,
+    documentList: documentListReducer,  
     readerReducer,
     search: searchReducer
   }),
   composeEnhancers(
-    applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware()),
+    applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware(), createLogger({})),
     reduxSearch({
       // Configure redux-search by telling it which resources to index for searching
       resourceIndexes: {

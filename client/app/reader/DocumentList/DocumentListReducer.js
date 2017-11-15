@@ -114,14 +114,14 @@ const documentListReducer = (state = initialState, action = {}) => {
       });
     })();
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-    return update(
-      showErrorMessage(state, 'category'), {
-        documents: documentsReducer(state.documents, action)
+    return update(state,
+      {
+        documents: { $set: documentsReducer(state.documents, action) }
       });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return update(
-      hideErrorMessage(state, 'category'), {
-        documents: documentsReducer(state.documents, action)
+    return update(state,
+      {
+        documents: { $set: documentsReducer(state.documents, action) }
       });
   // Tag Filters
   case Constants.SET_TAG_FILTER:
@@ -201,7 +201,7 @@ const documentListReducer = (state = initialState, action = {}) => {
     });
   case Constants.TOGGLE_COMMENT_LIST:
     return update(state, {
-      documents: documentsReducer(state.documents, action)
+      documents: { $set: documentsReducer(state.documents, action) }
     });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
@@ -249,6 +249,11 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     }), action.payload.docId);
+  case Constants.ROTATE_PDF_DOCUMENT: {
+    return update(state, {
+      documents: { $set: documentsReducer(state.documents, action) }
+    });
+  }
   default:
     return state;
   }

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import * as Constants from './actionTypes';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../constants';
+import { DOCUMENTS_OR_COMMENTS_ENUM, ROTATION_INCREMENTS, COMPLETE_ROTATION } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
 const documentsReducer = (state = {}, action = {}) => {
@@ -43,15 +43,33 @@ const documentsReducer = (state = {}, action = {}) => {
       listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
     }));
   case Constants.TOGGLE_COMMENT_LIST:
-    return (docs) =>
-      _.mapValues(docs, (doc) => ({
-        ...doc,
-        listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-      }));
+    return update(
+      state,
+      {
+        [action.payload.docId]: {
+          $merge: {
+            listComments: !state[action.payload.docId].listComments
+          }
+        }
+      });
+  case Constants.ROTATE_PDF_DOCUMENT: {
+    const rotation = (_.get(state, [action.payload.docId, 'rotation'], 0) +
+      ROTATION_INCREMENTS) % COMPLETE_ROTATION;
+
+    return update(
+      state,
+      {
+        [action.payload.docId]: {
+          rotation: {
+            $set: rotation
+          }
+        }
+      }
+    );
+  }
   default:
     return state;
   }
-
 };
 
 export default documentsReducer;

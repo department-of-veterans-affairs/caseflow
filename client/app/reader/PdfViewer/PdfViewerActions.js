@@ -213,3 +213,18 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
     selectCurrentPdfLocally(docId)
   );
 };
+
+export const hideErrorMessage = (messageType) => ({
+  type: Constants.HIDE_ERROR_MESSAGE,
+  payload: {
+    messageType
+  }
+});
+
+export const showErrorMessage = (messageType) => ({
+  type: Constants.SHOW_ERROR_MESSAGE,
+  payload: {
+    messageType
+  }
+});
+

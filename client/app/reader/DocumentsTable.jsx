@@ -280,11 +280,14 @@ class DocumentsTable extends React.Component {
   }
 
   render() {
+    console.log(this.props.annotationsPerDocument);
+    
     const rowObjects = getRowObjects(
       this.props.documents,
       this.props.annotationsPerDocument,
       this.props.viewingDocumentsOrComments
     );
+
 
     return <div>
       <Table

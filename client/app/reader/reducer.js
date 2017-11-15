@@ -137,9 +137,9 @@ export const reducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.HIDE_ERROR_MESSAGE:
-    return update(hideErrorMessage(state, action.payload.messageType));
+    return update(state, hideErrorMessage(state, action.payload.messageType));
   case Constants.SHOW_ERROR_MESSAGE:
-    return update(showErrorMessage(state, action.payload.messageType));
+    return update(state, showErrorMessage(state, action.payload.messageType));
   case Constants.REQUEST_NEW_TAG_CREATION:
     return update(hideErrorMessage(state, 'tag'), {
       documents: {
@@ -210,23 +210,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.ROTATE_PDF_DOCUMENT: {
-    const rotation = (_.get(state.documents, [action.payload.docId, 'rotation'], 0) +
-      Constants.ROTATION_INCREMENTS) % Constants.COMPLETE_ROTATION;
-
-    return update(
-      state,
-      {
-        documents: {
-          [action.payload.docId]: {
-            rotation: {
-              $set: rotation
-            }
-          }
-        }
-      }
-    );
-  }
   case Constants.JUMP_TO_PAGE:
     return update(
       state,
