@@ -399,20 +399,22 @@ describe('hearingsReducer', () => {
     });
   });
 
-    context(Constants.DELETE_ISSUE, () => {
+  context(Constants.DELETE_ISSUE, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.DELETE_ISSUE,
-        payload: { _destroy: true, issueId: 6 }
+        payload: { _destroy: true,
+          issueId: 6 }
       });
     });
 
-    it('deletesX worksheet issue', () => {
+    it('deletes worksheet issue', () => {
       expect(state.worksheetIssues).to.deep.equal({
-        6: { _destroy: true, edited: true  }
-        }
+        6: { _destroy: true,
+          edited: true }
+      }
       );
     });
   });
