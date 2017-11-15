@@ -138,7 +138,7 @@ RSpec.feature "RAMP Intake" do
       click_on "Search"
 
       expect(page).to have_current_path("/intake/review-request")
-      expect(page).to have_content("Review Ed Merica's opt-in request")
+      expect(page).to have_content("Review Ed Merica's opt-in election")
 
       intake = RampIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
