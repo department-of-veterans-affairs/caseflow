@@ -120,7 +120,7 @@ export default class CancelCertificationModal extends BaseForm {
       then(() => {
         this.setState({
           updateCancelSuccess: true
-        })
+        });
       });
 
   }
@@ -144,7 +144,7 @@ export default class CancelCertificationModal extends BaseForm {
     ];
 
     if (this.state.updateCancelSuccess) {
-      return <Redirect to={'/certification_cancellations/'} />
+      return <Redirect to={'/certification_cancellations/'} />;
     }
 
     return <div>

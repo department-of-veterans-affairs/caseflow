@@ -5,14 +5,12 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
-import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
 import CancelCertificationConfirmation from './CancelCertificationConfirmation';
-import CertificationProgressBar from './CertificationProgressBar';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
