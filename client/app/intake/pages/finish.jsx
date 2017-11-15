@@ -95,7 +95,7 @@ class Finish extends React.PureComponent {
       <p>Please complete the following steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
 
-      <Alert title={ issuesAlertTitle } type="info">
+      <Alert title={issuesAlertTitle} type="info">
         { this.getIssuesAlertContent(appeals) }
       </Alert>
 

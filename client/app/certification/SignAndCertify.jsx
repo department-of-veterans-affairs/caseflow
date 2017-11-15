@@ -154,7 +154,7 @@ export class SignAndCertify extends React.Component {
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'} />;
+        to="/certifications/error" />;
     }
 
     const shouldDisplayCertifyingOfficialTitleOther =
@@ -167,17 +167,17 @@ export class SignAndCertify extends React.Component {
           <p>Fill in information about yourself below to sign this certification.</p>
           <div className="cf-help-divider"></div>
           <TextField
-            name={'Name and location of certifying office:'}
+            name="Name and location of certifying office:"
             value={certifyingOffice}
             readOnly
           />
           <TextField
-            name={'Organizational elements certifying appeal:'}
+            name="Organizational elements certifying appeal:"
             value={certifyingUsername}
             readOnly
           />
           <TextField
-            name={'Name of certifying official:'}
+            name="Name of certifying official:"
             value={certifyingOfficialName}
             errorMessage={this.certifyingOfficialNameError()}
             required
@@ -192,7 +192,7 @@ export class SignAndCertify extends React.Component {
           {
             shouldDisplayCertifyingOfficialTitleOther &&
             <TextField
-              name={'Specify other title of certifying official:'}
+              name="Specify other title of certifying official:"
               value={certifyingOfficialTitleOther}
               errorMessage={this.certifyingOfficialTitleOtherError()}
               required
@@ -200,7 +200,7 @@ export class SignAndCertify extends React.Component {
             />
           }
           <DateSelector
-            name={'Date:'}
+            name="Date:"
             value={formatDateStr(certificationDate)}
             readOnly
           />
