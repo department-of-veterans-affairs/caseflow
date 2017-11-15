@@ -153,6 +153,9 @@ describe('DecisionReviewer', () => {
 
     context('rotate', () => {
       it('turns pages', asyncTest(async() => {
+        // Stub ApiUtil.get() calls so request to content_url return some fake response.
+        ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
+
         // Click on first document link
         wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
@@ -203,6 +206,9 @@ describe('DecisionReviewer', () => {
           document_id: 1,
           uuid: commentId
         };
+
+        // Stub ApiUtil.get() calls so request to content_url return some fake response.
+        ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
 
         // Stub out post requests to return the commentId
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
