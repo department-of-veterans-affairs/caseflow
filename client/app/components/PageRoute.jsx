@@ -52,7 +52,7 @@ class PageRoute extends React.Component {
     // eslint-disable-next-line no-unused-vars
     let { title, render, component, ...routeProps } = this.props;
 
-    return <Route { ...routeProps } render={ this.renderWithCallback } />;
+    return <Route {...routeProps} render={this.renderWithCallback} />;
   }
 }
 

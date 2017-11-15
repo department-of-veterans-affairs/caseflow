@@ -228,7 +228,7 @@ export class ConfirmHearing extends React.Component {
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'} />;
+        to="/certifications/error" />;
     }
 
     const hearingCheckText = <span>Check the eFolder for the appellant’s most
