@@ -154,6 +154,14 @@ const documentsReducer = (state = {}, action = {}) => {
         }
       }
     });
+  case Constants.SELECT_CURRENT_VIEWER_PDF:
+    return update(state, {
+      [action.payload.docId]: {
+        $merge: {
+          opened_by_current_user: true
+        }
+      }
+    });
   default:
     return state;
   }

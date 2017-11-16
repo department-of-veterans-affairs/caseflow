@@ -19,6 +19,13 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
+const updateDocuments = (state, action) =>
+  update(state, {
+    documents: {
+      $set: documentsReducer(state.documents, action) 
+    }
+  });
+
 const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
@@ -116,12 +123,16 @@ const documentListReducer = (state = initialState, action = {}) => {
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
     return update(state,
       {
-        documents: { $set: documentsReducer(state.documents, action) }
+        documents: {
+          $set: documentsReducer(state.documents, action) 
+        }
       });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
     return update(state,
       {
-        documents: { $set: documentsReducer(state.documents, action) }
+        documents: {
+          $set: documentsReducer(state.documents, action)
+        }
       });
   // Tag Filters
   case Constants.SET_TAG_FILTER:
@@ -197,32 +208,27 @@ const documentListReducer = (state = initialState, action = {}) => {
       viewingDocumentsOrComments: {
         $set: action.payload.documentsOrComments
       },
-      documents: { $set: documentsReducer(state.documents, action) }
+      documents: { 
+        $set: documentsReducer(state.documents, action) 
+      }
     });
   case Constants.TOGGLE_COMMENT_LIST:
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
+    return updateDocuments(state, action);
   case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        documents: {
-          $set: documentsReducer(state.documents, action)
-        },
-        loadedAppealId: {
-          $set: action.payload.vacolsId
-        }
+    return updateFilteredDocIds(update(state, {
+      documents: {
+        $set: documentsReducer(state.documents, action)
+      },
+      loadedAppealId: {
+        $set: action.payload.vacolsId
       }
-    ));
+    }));
   case Constants.RECEIVE_APPEAL_DETAILS:
-    return update(state,
-      {
-        loadedAppeal: {
-          $set: action.payload.appeal
-        }
+    return update(state, {
+      loadedAppeal: {
+        $set: action.payload.appeal
       }
-    );
+    });
   case Constants.RECEIVE_ANNOTATIONS:
     return updateFilteredDocIds(update(
       state,
@@ -242,38 +248,21 @@ const documentListReducer = (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       documents: {
-        [action.payload.docId]: {
-          $merge: {
-            opened_by_current_user: true
-          }
-        }
+        $set: documentsReducer(state.documents, action) 
       }
     }), action.payload.docId);
-  case Constants.ROTATE_PDF_DOCUMENT: {
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
-  }
+  case Constants.ROTATE_PDF_DOCUMENT:
+    return updateDocuments(state, action);
   case Constants.REQUEST_NEW_TAG_CREATION:
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
+    return updateDocuments(state, action);
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
+    return updateDocuments(state, action);
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
+    return updateDocuments(state, action);
   case Constants.REQUEST_REMOVE_TAG:
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
+    return updateDocuments(state, action);
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return update(state, {
-      documents: { $set: documentsReducer(state.documents, action) }
-    });
+    return updateDocuments(state, action);
   default:
     return state;
   }
