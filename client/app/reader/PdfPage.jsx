@@ -36,7 +36,57 @@ export class PdfPage extends React.PureComponent {
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
   unmarkText = (callback = _.noop) => this.markInstance.unmark({ done: callback });
-  markText = (txt) => this.unmarkText(() => this.markInstance.mark(txt, { separateWordSearch: false }));
+  markText = (txt) => this.unmarkText(() => this.markInstance.mark(txt, {
+    separateWordSearch: false,
+    done: this.highlightMarkAtIndex
+  }));
+
+  highlightMarkAtIndex = () => {
+    if (this.props.matchesPerPage.length) {
+      this.marks = document.getElementsByTagName('mark');
+
+      _.each(this.marks, (mark) => {
+        const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
+        // todo: use Element.closest to get comment layer div
+        // Element.closest isn't supported in IE, polyfills exist but may be slow
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+        // eslint-disable-next-line no-unused-vars
+        const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
+
+        _.extend(mark.dataset, {
+          pageIdx: parseInt(pageId, 10),
+          docIdx: parseInt(docId, 10)
+        });
+      });
+
+      const matchedPageIndex = this.getPageOfMatch(this.props.currentMatchIndex + 1);
+      const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
+      const indexInPage = this.props.currentMatchIndex % pageWithMatch.matches;
+
+      // todo: filter this.marks by doc id?
+      this.marks = _.filter(this.marks, (mark) =>
+        parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex
+      );
+      _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
+
+      const selectedMark = this.marks[indexInPage];
+
+      if (_.endsWith(pageWithMatch.id, this.props.pageIndex) && selectedMark) {
+        selectedMark.classList.add('highlighted');
+
+        // todo: scroll to position of mark on page
+        // mark parent elements are absolutely-positioned divs
+        // let scrollToY = parseInt(selectedMark.parentElement.style.top, 10);
+        //
+        // // add offset for page (mark parents are positioned relative to their page)
+        // scrollToY += parseInt(selectedMark.dataset.pageIdx, 10) * this.props.pageHeights[selectedMark.dataset.pageIdx];
+        //
+        // // if scrolling to < 100px, just scroll to top
+        // scrollToY = scrollToY < 100 ? 0 : scrollToY;
+        // this.pageContainer.parentElement.parentElement.scrollTo(0, scrollToY);
+      }
+    }
+  }
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
@@ -88,22 +138,6 @@ export class PdfPage extends React.PureComponent {
     }
   }
 
-  extendMarkDataset = () => {
-    _.each(document.getElementsByTagName('mark'), (mark) => {
-      const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
-      // todo: use Element.closest to get comment layer div
-      // Element.closest isn't supported in IE, polyfills exist but may be slow
-      // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-      // eslint-disable-next-line no-unused-vars
-      const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
-
-      _.extend(mark.dataset, {
-        pageIdx: parseInt(pageId, 10),
-        docIdx: parseInt(docId, 10)
-      });
-    });
-  }
-
   getPageOfMatch = (matchIndex) => {
     // get index in matchesPerPage of page containing match index
     let pageIndex = 0;
@@ -117,26 +151,6 @@ export class PdfPage extends React.PureComponent {
     return pageIndex;
   }
 
-  markHighlightedText = () => {
-    if (this.props.matchesPerPage.length) {
-      this.extendMarkDataset();
-
-      const matchedPageIndex = this.getPageOfMatch(this.props.currentMatchIndex + 1);
-      const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
-      const indexInPage = this.props.currentMatchIndex % pageWithMatch.matches;
-
-      // todo: filter this.marks by doc id?
-      this.marks = _.filter(document.getElementsByTagName('mark'), (mark) =>
-        parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex
-      );
-      _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
-
-      if (_.includes(pageWithMatch.id, this.props.pageIndex) && this.marks[indexInPage]) {
-        this.marks[indexInPage].classList.add('highlighted');
-      }
-    }
-  }
-
   componentDidUpdate = (prevProps) => {
     if (prevProps.scale !== this.props.scale) {
       this.drawPage(this.page);
@@ -145,7 +159,6 @@ export class PdfPage extends React.PureComponent {
     if (this.markInstance) {
       if (this.props.searchText && !this.props.searchBarHidden) {
         this.markText(this.props.searchText);
-        this.markHighlightedText();
       } else {
         this.unmarkText();
       }
@@ -171,8 +184,6 @@ export class PdfPage extends React.PureComponent {
     this.markInstance = new Mark(this.textLayer);
     if (this.props.searchText) {
       this.markText(this.props.searchText);
-      console.warn('calling markHighlightedText from drawText');
-      this.markHighlightedText();
     }
   }
 
@@ -319,7 +330,8 @@ const mapStateToProps = (state, props) => {
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar
+    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar,
+    // pageHeights: _.map(state.readerReducer.pageDimensions, (page) => page.height)
   };
 };
 
