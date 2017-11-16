@@ -254,6 +254,26 @@ const documentListReducer = (state = initialState, action = {}) => {
       documents: { $set: documentsReducer(state.documents, action) }
     });
   }
+  case Constants.REQUEST_NEW_TAG_CREATION:
+    return update(state, {
+      documents: { $set: documentsReducer(state.documents, action) }
+    });
+  case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
+    return update(state, {
+      documents: { $set: documentsReducer(state.documents, action) }
+    });
+  case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
+    return update(state, {
+      documents: { $set: documentsReducer(state.documents, action) }
+    });
+  case Constants.REQUEST_REMOVE_TAG:
+    return update(state, {
+      documents: { $set: documentsReducer(state.documents, action) }
+    });
+  case Constants.REQUEST_REMOVE_TAG_SUCCESS:
+    return update(state, {
+      documents: { $set: documentsReducer(state.documents, action) }
+    });
   default:
     return state;
   }

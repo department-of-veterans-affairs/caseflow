@@ -10,6 +10,20 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
+export const hideErrorMessage = (messageType) => ({
+  type: Constants.HIDE_ERROR_MESSAGE,
+  payload: {
+    messageType
+  }
+});
+
+export const showErrorMessage = (messageType) => ({
+  type: Constants.SHOW_ERROR_MESSAGE,
+  payload: {
+    messageType
+  }
+});
+
 /** Annotation Modal **/
 
 export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
@@ -81,19 +95,22 @@ export const newTagRequestSuccess = (docId, createdTags) =>
         createdTags
       }
     });
-    const { documents } = getState().readerReducer;
+    const { documents } = getState().documentList;
 
     dispatch(collectAllTags(documents));
   }
 ;
 
-export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
-  payload: {
-    docId,
-    tagsThatWereAttemptedToBeCreated
-  }
-});
+export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => (dispatch) => {
+  dispatch(showErrorMessage('tag'));
+  dispatch({
+    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
+    payload: {
+      docId,
+      tagsThatWereAttemptedToBeCreated
+    }
+  });
+};
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
@@ -105,6 +122,7 @@ export const removeTagRequestFailure = (docId, tagId) => ({
 
 export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
+    dispatch(hideErrorMessage('tag'));
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
       payload: {
@@ -112,7 +130,7 @@ export const removeTagRequestSuccess = (docId, tagId) =>
         tagId
       }
     });
-    const { documents } = getState().readerReducer;
+    const { documents } = getState().documentList;
 
     dispatch(collectAllTags(documents));
   };
@@ -144,6 +162,7 @@ export const addNewTag = (doc, tags) =>
       value();
 
     if (_.size(newTags)) {
+      dispatch(hideErrorMessage('tag'));
       dispatch({
         type: Constants.REQUEST_NEW_TAG_CREATION,
         payload: {
@@ -213,18 +232,3 @@ export const selectCurrentPdf = (docId) => (dispatch) => {
     selectCurrentPdfLocally(docId)
   );
 };
-
-export const hideErrorMessage = (messageType) => ({
-  type: Constants.HIDE_ERROR_MESSAGE,
-  payload: {
-    messageType
-  }
-});
-
-export const showErrorMessage = (messageType) => ({
-  type: Constants.SHOW_ERROR_MESSAGE,
-  payload: {
-    messageType
-  }
-});
-
