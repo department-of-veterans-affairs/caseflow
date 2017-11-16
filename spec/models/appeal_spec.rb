@@ -1242,7 +1242,7 @@ describe Appeal do
         expect(issue.vha).to eq true
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
-        expect(issue.program_description).to eq "Cabbage\nPickle"
+        expect(issue.levels).to eq "Cabbage\nPickle"
         expect(issue.description).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
