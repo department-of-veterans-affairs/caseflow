@@ -105,6 +105,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   getPageOfMatch = (matchIndex) => {
+    // get index in matchesPerPage of page containing match index
     let pageIndex = 0;
     let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
 
@@ -117,16 +118,18 @@ export class PdfPage extends React.PureComponent {
   }
 
   markHighlightedText = () => {
-    if (this.props.matchesPerPage[this.props.currentMatchIndex]) {
+    if (this.props.matchesPerPage.length) {
       this.extendMarkDataset();
 
-      const matchedPageIndex = this.getPageOfMatch(this.props.currentMatchIndex);
+      const matchedPageIndex = this.getPageOfMatch(this.props.currentMatchIndex + 1);
       const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
       const indexInPage = this.props.currentMatchIndex % pageWithMatch.matches;
 
-      this.marks = document.getElementsByTagName('mark');
+      // todo: filter this.marks by doc id?
+      this.marks = _.filter(document.getElementsByTagName('mark'), (mark) =>
+        parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex
+      );
       _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
-      this.marks = _.filter(this.marks, (mark) => parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex);
 
       if (_.includes(pageWithMatch.id, this.props.pageIndex) && this.marks[indexInPage]) {
         this.marks[indexInPage].classList.add('highlighted');
@@ -140,7 +143,7 @@ export class PdfPage extends React.PureComponent {
     }
 
     if (this.markInstance) {
-      if (this.props.searchText) {
+      if (this.props.searchText && !this.props.searchBarHidden) {
         this.markText(this.props.searchText);
         this.markHighlightedText();
       } else {
@@ -168,6 +171,7 @@ export class PdfPage extends React.PureComponent {
     this.markInstance = new Mark(this.textLayer);
     if (this.props.searchText) {
       this.markText(this.props.searchText);
+      console.warn('calling markHighlightedText from drawText');
       this.markHighlightedText();
     }
   }
@@ -314,7 +318,8 @@ const mapStateToProps = (state, props) => {
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0),
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
-    matchesPerPage: getMatchesPerPageInFile(state, props)
+    matchesPerPage: getMatchesPerPageInFile(state, props),
+    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar
   };
 };
 
