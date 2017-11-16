@@ -1,30 +1,26 @@
 import * as Constants from './actionTypes';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../constants';
+import {DOCUMENTS_OR_COMMENTS_ENUM} from '../constants';
 import _ from 'lodash';
-import { update } from '../../util/ReducerUtil';
-import { updateFilteredDocIds } from '../helpers/reducerHelper';
+import {update} from '../../util/ReducerUtil';
+import {updateFilteredDocIds} from '../helpers/reducerHelper';
 import documentsReducer from './DocumentsReducer';
+import annotationReducer from './AnnotationsReducer';
 
-const updateLastReadDoc = (state, docId) =>
-  update(
-    state,
-    {
-      ui: {
-        pdfList: {
-          lastReadDocId: {
-            $set: docId
-          }
-        }
+const updateLastReadDoc = (state, docId) => update(state, {
+  ui: {
+    pdfList: {
+      lastReadDocId: {
+        $set: docId
       }
     }
-  );
+  }
+});
 
-const updateDocuments = (state, action) =>
-  update(state, {
-    documents: {
-      $set: documentsReducer(state.documents, action) 
-    }
-  });
+const updateDocuments = (state, action) => update(state, {
+  documents: {
+    $set: documentsReducer(state.documents, action)
+  }
+});
 
 const initialState = {
   loadedAppealId: null,
@@ -102,11 +98,9 @@ const documentListReducer = (state = initialState, action = {}) => {
     }));
   case Constants.TOGGLE_FILTER_DROPDOWN:
     return (() => {
-      const originalValue = _.get(
-        state,
-        ['ui', 'pdfList', 'dropdowns', action.payload.filterName],
-        false
-      );
+      const originalValue = _.get(state, [
+        'ui', 'pdfList', 'dropdowns', action.payload.filterName
+      ], false);
 
       return update(state, {
         ui: {
@@ -121,20 +115,18 @@ const documentListReducer = (state = initialState, action = {}) => {
       });
     })();
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-    return update(state,
-      {
-        documents: {
-          $set: documentsReducer(state.documents, action) 
-        }
-      });
+    return update(state, {
+      documents: {
+        $set: documentsReducer(state.documents, action)
+      }
+    });
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return update(state,
-      {
-        documents: {
-          $set: documentsReducer(state.documents, action)
-        }
-      });
-  // Tag Filters
+    return update(state, {
+      documents: {
+        $set: documentsReducer(state.documents, action)
+      }
+    });
+    // Tag Filters
   case Constants.SET_TAG_FILTER:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -157,16 +149,18 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     }));
-  // Scrolling
+    // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
     return update(state, {
       ui: {
         pdfList: {
-          scrollTop: { $set: action.payload.scrollTop }
+          scrollTop: {
+            $set: action.payload.scrollTop
+          }
         }
       }
     });
-  // Document header
+    // Document header
   case Constants.SET_SEARCH:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -208,8 +202,8 @@ const documentListReducer = (state = initialState, action = {}) => {
       viewingDocumentsOrComments: {
         $set: action.payload.documentsOrComments
       },
-      documents: { 
-        $set: documentsReducer(state.documents, action) 
+      documents: {
+        $set: documentsReducer(state.documents, action)
       }
     });
   case Constants.TOGGLE_COMMENT_LIST:
@@ -230,37 +224,20 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.RECEIVE_ANNOTATIONS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        annotations: {
-          $set: _(action.payload.annotations).
-            map((annotation) => ({
-              documentId: annotation.document_id,
-              uuid: annotation.id,
-              ...annotation
-            })).
-            keyBy('id').
-            value()
-        }
-      }
-    ));
+    return updateFilteredDocIds(update(state, {
+      annotations: annotationReducer(state.annotations, action)
+    }));
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       documents: {
-        $set: documentsReducer(state.documents, action) 
+        $set: documentsReducer(state.documents, action)
       }
     }), action.payload.docId);
   case Constants.ROTATE_PDF_DOCUMENT:
-    return updateDocuments(state, action);
   case Constants.REQUEST_NEW_TAG_CREATION:
-    return updateDocuments(state, action);
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-    return updateDocuments(state, action);
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-    return updateDocuments(state, action);
   case Constants.REQUEST_REMOVE_TAG:
-    return updateDocuments(state, action);
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
     return updateDocuments(state, action);
   default:
