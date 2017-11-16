@@ -39,12 +39,10 @@ class HearingWorksheetIssueDelete extends PureComponent {
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
-            onClick: this.handleModalClose(issue.id)
-          },
+            onClick: this.handleModalClose(issue.id) },
           { classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Confirm delete',
-            onClick: this.onDeleteIssue(issue.id)
-          }]}
+            onClick: this.onDeleteIssue(issue.id) }]}
         closeHandler={this.handleModalClose(issue.id)}
         title = "Delete Issue Row">
         <p>Are you sure you want to remove this issue from Appeal Stream {appealKey + 1} on the worksheet? </p>

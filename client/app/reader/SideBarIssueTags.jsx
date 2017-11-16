@@ -16,8 +16,7 @@ class SideBarIssueTags extends PureComponent {
     let generateOptionsFromTags = (tags) =>
       _(tags).
         reject('pendingRemoval').
-        map((tag) => ({
-          value: tag.text,
+        map((tag) => ({ value: tag.text,
           label: tag.text,
           tagId: tag.id })
         ).

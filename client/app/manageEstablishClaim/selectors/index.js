@@ -21,6 +21,5 @@ export const getQuotaTotals = createSelector([getUserQuotas], (userQuotas) => {
     tasksLeftCount: 0,
     fullGrantCount: 0,
     partialGrantCount: 0,
-    remandCount: 0
-  });
+    remandCount: 0 });
 });

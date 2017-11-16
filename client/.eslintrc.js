@@ -215,6 +215,7 @@ module.exports = {
     'no-void': 'warn',
     'no-whitespace-before-property': 'warn',
     'no-with': 'error',
+    'object-curly-newline': ['error', { consistent: true }],
     'object-curly-spacing': [
       'warn',
       'always'

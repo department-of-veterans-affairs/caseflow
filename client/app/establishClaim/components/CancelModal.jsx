@@ -39,13 +39,11 @@ export const CancelModal = ({
       buttons={[
         { classNames: ['cf-modal-link', 'cf-btn-link'],
           name: 'Close',
-          onClick: handleCloseCancelModal
-        },
+          onClick: handleCloseCancelModal },
         { classNames: ['usa-button', 'usa-button-secondary'],
           loading: isCancelModalSubmitting,
           name: 'Stop processing claim',
-          onClick: handleCancelSubmit
-        }
+          onClick: handleCancelSubmit }
       ]}
       visible
       closeHandler={handleCloseCancelModal}

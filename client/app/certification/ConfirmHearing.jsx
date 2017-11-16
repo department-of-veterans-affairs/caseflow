@@ -213,8 +213,7 @@ export class ConfirmHearing extends React.Component {
       serverError,
       updateSucceeded,
       match,
-      certificationStatus
-    } = this.props;
+      certificationStatus } = this.props;
 
     if (!certificationStatus.includes('started')) {
       return <Redirect

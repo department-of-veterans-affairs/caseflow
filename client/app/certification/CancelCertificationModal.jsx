@@ -144,12 +144,10 @@ export default class CancelCertificationModal extends BaseForm {
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: '\u226A Go back',
-            onClick: closeHandler
-          },
+            onClick: closeHandler },
           { classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Cancel certification',
-            onClick: this.submitForm
-          }
+            onClick: this.submitForm }
         ]}
         visible
         closeHandler={closeHandler}
