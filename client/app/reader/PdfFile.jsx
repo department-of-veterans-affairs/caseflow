@@ -169,7 +169,7 @@ export class PdfFile extends React.PureComponent {
     let pageIndex = 0;
     let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
 
-    while (matchesProcessed < matchIndex) {
+    while (matchesProcessed < matchIndex + 1) {
       pageIndex += 1;
       matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
     }

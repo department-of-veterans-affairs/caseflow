@@ -59,9 +59,9 @@ export class PdfPage extends React.PureComponent {
         });
       });
 
-      const matchedPageIndex = this.getPageOfMatch(this.props.currentMatchIndex + 1);
+      const [matchedPageIndex, previousMatches] = this.getPageOfMatch(this.props.currentMatchIndex);
       const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
-      const indexInPage = this.props.currentMatchIndex % pageWithMatch.matches;
+      const indexInPage = pageWithMatch.matches - (previousMatches - this.props.currentMatchIndex);
 
       // todo: filter this.marks by doc id?
       this.marks = _.filter(this.marks, (mark) =>
@@ -143,12 +143,12 @@ export class PdfPage extends React.PureComponent {
     let pageIndex = 0;
     let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
 
-    while (matchesProcessed < matchIndex) {
+    while (matchesProcessed < matchIndex + 1) {
       pageIndex += 1;
       matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
     }
 
-    return pageIndex;
+    return [pageIndex, matchesProcessed];
   }
 
   componentDidUpdate = (prevProps) => {
