@@ -60,7 +60,7 @@ export class HearingWorksheet extends React.PureComponent {
     window.scrollTo(0, 0);
     const source = this.printContainer;
     const imgWidth = 210;
-    const pageHeight = 160;
+    const pageHeight = 190;
     let position = 0;
     let worksheetID = this.props.worksheet.id;
 
