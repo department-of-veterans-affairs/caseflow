@@ -9,10 +9,7 @@ export default class StatusMessage extends React.Component {
       checklist,
       checklistClassNames,
       example,
-      // leadMessageList: 20px font for page text: used for primary message text
       leadMessageList,
-      // messageText: 17px font for page text: used for secondary message text
-      // underneath leadMessageList
       messageText,
       title,
       wrapInAppSegment = true,
