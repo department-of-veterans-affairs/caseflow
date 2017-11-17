@@ -57,27 +57,29 @@ export class HearingWorksheet extends React.PureComponent {
     /* eslint new-cap: ["error", { "newIsCap": false }]*/
     const pdf = new jspdf('p', 'mm');
 
-
     html2canvas(document.getElementById('printContainer')).
       then((canvas) => {
-        let imgHeight = canvas.height * imgWidth / canvas.width - 20;
+        let imgHeight = canvas.height * imgWidth / canvas.width;
         let pageOne = canvas.toDataURL('image/png', 1.0);
+
         pdf.setFontSize(22);
-        pdf.text('Hearing Worksheet ' + this.props.veteran_law_judge.full_name, 10, 10)
+        pdf.text(`Hearing Worksheet ${this.props.veteran_law_judge.full_name}`, 10, 10);
         pdf.setFontSize(12);
-        pdf.text('Veteran Name: ' + this.props.worksheet.veteran_mi_formatted, 10, 20)
+        pdf.text(`Veteran Name: ${this.props.worksheet.veteran_mi_formatted}`, 10, 20);
+        // pdf.text(10, 20, moment(this.props.worksheet.date).format('ddd l'), null, null, 'right');
         pdf.addImage(pageOne, 'PNG', 10, 30, (imgWidth), (imgHeight));
       });
     html2canvas(document.getElementById('printContainerTwo')).
       then((canvas) => {
-        let imgHeight = canvas.height * imgWidth / canvas.width - 20;
+        let imgHeight = canvas.height * imgWidth / canvas.width;
         let pageTwo = canvas.toDataURL('image/png', 1.0);
+
         pdf.addPage(210);
         pdf.setFontSize(22);
-        pdf.text('Hearing Worksheet ' + this.props.veteran_law_judge.full_name, 10, 10)
+        pdf.text(`Hearing Worksheet ${this.props.veteran_law_judge.full_name}`, 10, 10);
         pdf.setFontSize(12);
-        pdf.text('Veteran Name: ' + this.props.worksheet.veteran_mi_formatted, 10, 20)
-        pdf.addImage(pageTwo, 'PNG', 10, 30, (imgWidth ), (imgHeight));
+        pdf.text(`Veteran Name: ${this.props.worksheet.veteran_mi_formatted}`, 10, 20);
+        pdf.addImage(pageTwo, 'PNG', 10, 30, (imgWidth), (imgHeight));
       });
     setTimeout(() => {
       // jsPDF code to save file
@@ -94,17 +96,17 @@ export class HearingWorksheet extends React.PureComponent {
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
-       
-          <div className="cf-title-meta-right">
-            <div className="title cf-hearings-title-and-judge">
-              <h1>Hearing Worksheet</h1>
-              <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
-            </div>
-            <div className="meta">
-              <div>{moment(worksheet.date).format('ddd l')}</div>
-              <div>Hearing Type: {worksheet.request_type}</div>
-            </div>
+
+        <div className="cf-title-meta-right">
+          <div className="title cf-hearings-title-and-judge">
+            <h1>Hearing Worksheet</h1>
+            <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
+          <div className="meta">
+            <div>{moment(worksheet.date).format('ddd l')}</div>
+            <div>Hearing Type: {worksheet.request_type}</div>
+          </div>
+        </div>
         <section id="printContainer" ref={this.handlePrintContainerRef} >
           <div className="cf-hearings-worksheet-data">
             <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
