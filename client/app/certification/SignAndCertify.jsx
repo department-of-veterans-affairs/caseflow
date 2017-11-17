@@ -11,6 +11,8 @@ import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
 import ValidatorsUtil from '../util/ValidatorsUtil';
 import { formatDateStr } from '../util/DateUtil';
+import Header from './Header';
+import CertificationProgressBar from './CertificationProgressBar';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -161,6 +163,8 @@ export class SignAndCertify extends React.Component {
       certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER;
 
     return <div>
+      <Header />
+      <CertificationProgressBar />
       <form>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Sign and Certify</h2>

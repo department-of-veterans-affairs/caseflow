@@ -11,6 +11,8 @@ import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 import * as AppConstants from '../constants/AppConstants';
+import Header from './Header';
+import CertificationProgressBar from './CertificationProgressBar';
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -251,6 +253,8 @@ export class ConfirmHearing extends React.Component {
       form9IsInformal;
 
     return <div>
+      <Header />
+      <CertificationProgressBar />
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
 

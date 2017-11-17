@@ -10,6 +10,8 @@ import Footer from './Footer';
 import * as Constants from './constants/constants';
 import NotFoundIcon from '../components/NotFoundIcon';
 import * as certificationActions from './actions/Certification';
+import Header from './Header';
+import CertificationProgressBar from './CertificationProgressBar';
 
 export class DocumentsCheck extends React.Component {
   // TODO: updating state in ComponentWillMount is
@@ -72,6 +74,8 @@ export class DocumentsCheck extends React.Component {
      * certificationStatus == 'mismatched_documents' or 'started'
      */
     return <div>
+      <Header />
+      <CertificationProgressBar />
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Check Documents</h2>
         { documentsMatch ? <DocumentsMatchingBox areDatesExactlyMatching={this.areDatesExactlyMatching()} /> :
