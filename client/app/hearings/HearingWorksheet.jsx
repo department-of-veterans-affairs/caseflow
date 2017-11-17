@@ -82,12 +82,13 @@ export class HearingWorksheet extends React.PureComponent {
         while (heightLeft >= 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
+
           pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
         }
+        pdf.text(this.props.worksheet.veteran_mi_formatted, 10, 180)
         pdf.save(`Worksheet-${worksheetID}.pdf`);
       });
-
   }
 
   render() {
