@@ -4,9 +4,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { setPdfDocument, clearPdfDocument } from '../reader/Pdf/PdfActions';
+
+import StatusMessage from '../components/StatusMessage';
+import { PDF_PAGE_WIDTH } from './constants';
+import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLoadError }
+  from '../reader/Pdf/PdfActions';
+import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
-import { PDFJS } from 'pdfjs-dist/web/pdf_viewer.js';
+import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -22,24 +27,35 @@ export class PdfFile extends React.PureComponent {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
 
+    let requestOptions = {
+      cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer'
+    };
+
+    this.props.clearDocumentLoadError(this.props.file);
+
     // We have to set withCredentials to true since we're requesting the file from a
     // different domain (eFolder), and still need to pass our credentials to authenticate.
-    this.loadingTask = PDFJS.getDocument({
-      url: this.props.file,
-      withCredentials: true
-    });
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
 
-    return this.loadingTask.then((pdfDocument) => {
-      if (this.loadingTask.destroyed) {
-        pdfDocument.destroy();
-      } else {
-        this.loadingTask = null;
-        this.pdfDocument = pdfDocument;
-        this.props.setPdfDocument(this.props.file, pdfDocument);
-      }
-    }).
+        return this.loadingTask;
+      }).
+      then((pdfDocument) => {
+        if (this.loadingTask.destroyed) {
+          pdfDocument.destroy();
+        } else {
+          this.loadingTask = null;
+          this.pdfDocument = pdfDocument;
+          this.props.setPdfDocument(this.props.file, pdfDocument);
+        }
+      }).
       catch(() => {
         this.loadingTask = null;
+        this.props.setDocumentLoadError(this.props.file);
       });
   }
 
@@ -76,9 +92,34 @@ export class PdfFile extends React.PureComponent {
     return null;
   }
 
+  displayErrorMessage = () => {
+    if (!this.props.isVisible) {
+      return;
+    }
+
+    const downloadUrl = `${this.props.file}?type=${this.props.documentType}&download=true`;
+
+    // Center the status message vertically
+    const style = {
+      position: 'absolute',
+      top: '40%',
+      left: '50%',
+      width: `${PDF_PAGE_WIDTH}px`,
+      transform: 'translate(-50%, -50%)'
+    };
+
+    return <div style={style}>
+      <StatusMessage title="Unable to load document" type="warning">
+          Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
+        <br />
+          You can try <a href={downloadUrl}>downloading the document</a> or try again later.
+      </StatusMessage>
+    </div>;
+  }
+
   render() {
     return <div>
-      {this.getPages()}
+      {this.props.loadError ? this.displayErrorMessage() : this.getPages()}
     </div>;
   }
 }
@@ -90,12 +131,15 @@ PdfFile.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfDocument,
-    clearPdfDocument
+    clearPdfDocument,
+    setDocumentLoadError,
+    clearDocumentLoadError
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file]
+  pdfDocument: state.readerReducer.pdfDocuments[props.file],
+  loadError: state.readerReducer.documentErrors[props.file]
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);

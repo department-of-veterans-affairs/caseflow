@@ -5,6 +5,14 @@ import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
+export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
+export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
+
+const timeoutSettings = {
+  response: STANDARD_API_TIMEOUT_MILLISECONDS,
+  deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
+};
+
 const makeSendAnalyticsTimingFn = (httpVerbName) => (timeElapsedMs, url, options, endpointName) => {
   if (endpointName) {
     window.analyticsTiming({
@@ -46,6 +54,14 @@ const httpMethods = {
       get(url).
       set(getHeadersObject(options.headers)).
       query(options.query);
+
+    if (options.timeout) {
+      promise.timeout(timeoutSettings);
+    }
+
+    if (options.responseType) {
+      promise.responseType(options.responseType);
+    }
 
     if (options.withCredentials) {
       promise.withCredentials();

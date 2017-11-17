@@ -73,14 +73,25 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
-const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
+const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
   update(
     state,
-    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
+    {
+      ui: {
+        pdfSidebar: {
+          error: {
+            [errorType]: {
+              visible: { $set: isVisible },
+              message: { $set: isVisible ? errorMsg : null }
+            }
+          }
+        }
+      }
+    },
   );
 
-const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
-const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
+const hideErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, false, errorMsg);
+const showErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, true, errorMsg);
 
 const updateLastReadDoc = (state, docId) =>
   update(
@@ -105,10 +116,13 @@ const openAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
-const initialShowErrorMessageState = {
-  tag: false,
-  category: false,
-  annotation: false
+const initialPdfSidebarErrorState = {
+  tag: { visible: false,
+    message: null },
+  category: { visible: false,
+    message: null },
+  annotation: { visible: false,
+    message: null }
 };
 
 export const initialState = {
@@ -150,7 +164,7 @@ export const initialState = {
       hideSearchBar: true
     },
     pdfSidebar: {
-      showErrorMessage: initialShowErrorMessageState
+      error: initialPdfSidebarErrorState
     },
     pdfList: {
       scrollTop: null,
@@ -175,6 +189,7 @@ export const initialState = {
   documents: {},
   pages: {},
   pdfDocuments: {},
+  documentErrors: {},
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
@@ -326,7 +341,7 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
+        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
       },
       documents: {
         [action.payload.docId]: {
@@ -710,7 +725,7 @@ export const reducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.STOP_PLACING_ANNOTATION:
-    return update(state, {
+    return update(hideErrorMessage(state, 'annotation'), {
       placingAnnotationIconPageCoords: {
         $set: null
       },
@@ -753,7 +768,7 @@ export const reducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
-    return update(showErrorMessage(state, 'annotation'), {
+    return update(showErrorMessage(state, 'annotation', action.payload.errorMessage), {
       ui: {
         // This will cause a race condition if the user has created multiple annotations.
         // Whichever annotation failed most recently is the one that'll be in the
@@ -816,7 +831,7 @@ export const reducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
     return moveModel(
-      showErrorMessage(state, 'annotation'),
+      showErrorMessage(state, 'annotation', action.payload.errorMessage),
       ['ui', 'pendingEditingAnnotations'],
       ['editingAnnotations'],
       action.payload.annotationId
@@ -1002,6 +1017,22 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
+  case Constants.SET_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: true
+        }
+      }
+    });
+  case Constants.CLEAR_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: false
+        }
+      }
+    });
   case Constants.GET_DOCUMENT_TEXT:
     return update(
       state,

@@ -143,7 +143,7 @@ class AppealRepository
 
   # :nocov:
   def self.issues(vacols_id)
-    (VACOLS::CaseIssue.descriptions([vacols_id])[vacols_id] || []).map do |issue_hash|
+    (VACOLS::CaseIssue.active_issues([vacols_id])[vacols_id] || []).map do |issue_hash|
       Issue.load_from_vacols(issue_hash)
     end
   end
@@ -321,7 +321,7 @@ class AppealRepository
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
-      active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
+      active_cases_issues = VACOLS::CaseIssue.active_issues(active_cases_vacols_ids)
       active_cases_for_user.map do |assignment|
         assignment_issues_hash_array = active_cases_issues[assignment.vacols_id] || []
 

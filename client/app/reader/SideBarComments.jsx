@@ -33,7 +33,7 @@ class SideBarComments extends PureComponent {
         </Button>
       </span>
       <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-        {this.props.showErrorMessage.annotation && <CannotSaveAlert />}
+        {this.props.error.annotation.visible && <CannotSaveAlert message={this.props.error.annotation.message} />}
         <div className="cf-pdf-comment-list">
           {this.props.placedButUnsavedAnnotation &&
           <EditComment
@@ -53,7 +53,7 @@ class SideBarComments extends PureComponent {
 const mapStateToProps = (state) => {
   return {
     ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+    error: state.readerReducer.ui.pdfSidebar.error
   };
 };
 
