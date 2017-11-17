@@ -86,7 +86,7 @@ export class HearingWorksheet extends React.PureComponent {
           pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
         }
-        pdf.text(this.props.worksheet.veteran_mi_formatted, 10, 180)
+        //     pdf.text(this.props.worksheet.veteran_mi_formatted, 10, 180);
         pdf.save(`Worksheet-${worksheetID}.pdf`);
       });
   }
@@ -115,12 +115,12 @@ export class HearingWorksheet extends React.PureComponent {
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
           <div data-html2canvas-ignore="true">
-          <AutoSave
-            save={this.save(worksheet, worksheetIssues)}
-            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-            isSaving={this.props.worksheetIsSaving}
-            saveFailed={this.props.saveWorksheetFailed}
-          />
+            <AutoSave
+              save={this.save(worksheet, worksheetIssues)}
+              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+              isSaving={this.props.worksheetIsSaving}
+              saveFailed={this.props.saveWorksheetFailed}
+            />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>

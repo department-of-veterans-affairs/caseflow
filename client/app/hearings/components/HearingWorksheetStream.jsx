@@ -55,12 +55,12 @@ class HearingWorksheetStream extends Component {
             countOfIssuesInPreviousAppeals={currentIssueCount}
           />
           <div data-html2canvas-ignore="true">
-          <Button
-            classNames={['usa-button-outline', 'hearings-add-issue']}
-            name="+ Add Issue"
-            id={`button-addIssue-${appeal.id}`}
-            onClick={this.onAddIssue(appeal.id)}
-          />
+            <Button
+              classNames={['usa-button-outline', 'hearings-add-issue']}
+              name="+ Add Issue"
+              id={`button-addIssue-${appeal.id}`}
+              onClick={this.onAddIssue(appeal.id)}
+            />
           </div>
           <hr />
         </div>;
