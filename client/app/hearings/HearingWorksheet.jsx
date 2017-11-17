@@ -8,6 +8,8 @@ import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import AutoSave from '../components/AutoSave';
 import * as AppConstants from '../constants/AppConstants';
+import jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -27,6 +29,19 @@ import {
 
 export class HearingWorksheet extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.printContainer = null;
+    this.savePDF = this.savePDF.bind(this);
+    this.handlePrintContainerRef = this.handlePrintContainerRef.bind(this);
+  }
+
+  handlePrintContainerRef(element) {
+    //  `this.handlePrintContainerRef` will store ref
+    this.printContainer = element;
+  }
+
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
@@ -41,6 +56,40 @@ export class HearingWorksheet extends React.PureComponent {
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
+  savePDF() {
+    window.scrollTo(0, 0);
+    const source = this.printContainer;
+    const imgWidth = 210;
+    const pageHeight = 150;
+    let position = 0;
+    let worksheetID = this.props.worksheet.id;
+
+    html2canvas(source).
+      then((canvas) => {
+
+        let imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+
+        const imgData = canvas.toDataURL('image/png');
+        /* eslint new-cap: ["error", { "newIsCap": false }]*/
+        const pdf = new jspdf('p', 'mm');
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        // TODO URL Output of this for linking from reader
+        // pdf.output('URL ');
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        pdf.save(`Worksheet-${worksheetID}.pdf`);
+      });
+
+  }
+
   render() {
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
@@ -49,7 +98,7 @@ export class HearingWorksheet extends React.PureComponent {
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     return <div>
-      <div className="cf-app-segment--alt cf-hearings-worksheet">
+      <div id="printContainer" ref={this.handlePrintContainerRef} className="cf-app-segment--alt cf-hearings-worksheet">
 
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
@@ -182,6 +231,11 @@ export class HearingWorksheet extends React.PureComponent {
         </form>
       </div>
       <div className="cf-push-right">
+        <Link
+          name="save-to-pdf"
+          onClick={this.savePDF}
+          button="secondary">
+            Save to PDF</Link>
         <Link
           name="review-efolder"
           href={`${readerLink}?category=case_summary`}
