@@ -61,30 +61,31 @@ export class HearingWorksheet extends React.PureComponent {
     const source = this.printContainer;
     const imgWidth = 210;
     const pageHeight = 210;
-    let position = 0;
     let worksheetID = this.props.worksheet.id;
 
-      html2canvas(source).
-        then((canvas) => {
+    /* eslint new-cap: ["error", { "newIsCap": false }]*/
+    const pdf = new jspdf('p', 'mm');
 
-          let imgHeight = canvas.height * imgWidth / canvas.width;
-          let heightLeft = imgHeight;
-
-          const imgData = canvas.toDataURL('image/png');
-          /* eslint new-cap: ["error", { "newIsCap": false }]*/
-          const pdf = new jspdf('p', 'mm');
-
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-           heightLeft -= pageHeight;
-          // TODO URL Output of this for linking from reader
-          // pdf.output('URL ');
-
-
-          pdf.save(`Worksheet-${worksheetID}.pdf`);
-        });
-
+    html2canvas(source).
+      then((canvas) => {
+        let imgHeight = canvas.height * imgWidth / canvas.width;
+        let imgData = canvas.toDataURL('image/png', 1.0);
+        pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
+      });
+    html2canvas(source).
+      then((canvas) => {
+        let imgHeight = canvas.height * imgWidth / canvas.width;
+        let imgData = canvas.toDataURL('image/png', 1.0);
+        pdf.addPage(580);
+        pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
+      });
+      setTimeout(function() {
+            //jsPDF code to save file
+            pdf.save(`Worksheet-${worksheetID}.pdf`);
+        }, 2000);
   }
 
+  // pdf.save(`Worksheet-${worksheetID}.pdf`);
   render() {
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
