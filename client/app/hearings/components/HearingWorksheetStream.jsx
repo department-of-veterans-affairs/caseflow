@@ -54,12 +54,14 @@ class HearingWorksheetStream extends Component {
             {...this.props}
             countOfIssuesInPreviousAppeals={currentIssueCount}
           />
-          <Button
-            classNames={['usa-button-outline', 'hearings-add-issue']}
-            name="+ Add Issue"
-            id={`button-addIssue-${appeal.id}`}
-            onClick={this.onAddIssue(appeal.id)}
-          />
+          <div data-html2canvas-ignore="true">
+            <Button
+              classNames={['usa-button-outline', 'hearings-add-issue']}
+              name="+ Add Issue"
+              id={`button-addIssue-${appeal.id}`}
+              onClick={this.onAddIssue(appeal.id)}
+            />
+          </div>
           <hr />
         </div>;
       })}
