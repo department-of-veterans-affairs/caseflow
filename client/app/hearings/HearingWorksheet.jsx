@@ -60,7 +60,7 @@ export class HearingWorksheet extends React.PureComponent {
     window.scrollTo(0, 0);
     const source = this.printContainer;
     const imgWidth = 210;
-    const pageHeight = 150;
+    const pageHeight = 160;
     let position = 0;
     let worksheetID = this.props.worksheet.id;
 
@@ -113,12 +113,14 @@ export class HearingWorksheet extends React.PureComponent {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
+          <div data-html2canvas-ignore="true">
           <AutoSave
             save={this.save(worksheet, worksheetIssues)}
             spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
             isSaving={this.props.worksheetIsSaving}
             saveFailed={this.props.saveWorksheetFailed}
           />
+          </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
             <div><b>{appellant}</b></div>
