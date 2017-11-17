@@ -33,13 +33,19 @@ export class HearingWorksheet extends React.PureComponent {
     super(props);
 
     this.printContainer = null;
+    this.printContainerTwo = null;
     this.savePDF = this.savePDF.bind(this);
     this.handlePrintContainerRef = this.handlePrintContainerRef.bind(this);
+    this.handlePrintContainerRefTwo = this.handlePrintContainerRefTwo.bind(this);
   }
 
   handlePrintContainerRef(element) {
-    //  `this.handlePrintContainerRef` will store ref
+
     this.printContainer = element;
+  }
+  handlePrintContainerRefTwo(element) {
+
+    this.printContainerTwo = element;
   }
 
   save = (worksheet, worksheetIssues) => () => {
@@ -59,8 +65,8 @@ export class HearingWorksheet extends React.PureComponent {
   savePDF() {
     window.scrollTo(0, 0);
     const source = this.printContainer;
+    const sourceTwo = this.printContainerTwo;
     const imgWidth = 210;
-    const pageHeight = 210;
     let worksheetID = this.props.worksheet.id;
 
     /* eslint new-cap: ["error", { "newIsCap": false }]*/
@@ -70,22 +76,23 @@ export class HearingWorksheet extends React.PureComponent {
       then((canvas) => {
         let imgHeight = canvas.height * imgWidth / canvas.width;
         let imgData = canvas.toDataURL('image/png', 1.0);
+
         pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
       });
-    html2canvas(source).
+    html2canvas(sourceTwo).
       then((canvas) => {
         let imgHeight = canvas.height * imgWidth / canvas.width;
         let imgData = canvas.toDataURL('image/png', 1.0);
+
         pdf.addPage(580);
         pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
       });
-      setTimeout(function() {
-            //jsPDF code to save file
-            pdf.save(`Worksheet-${worksheetID}.pdf`);
-        }, 2000);
+    setTimeout(() => {
+      // jsPDF code to save file
+      pdf.save(`Worksheet-${worksheetID}.pdf`);
+    }, 2000);
   }
 
-  // pdf.save(`Worksheet-${worksheetID}.pdf`);
   render() {
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
@@ -94,137 +101,139 @@ export class HearingWorksheet extends React.PureComponent {
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     return <div>
-      <div id="printContainer" ref={this.handlePrintContainerRef} className="cf-app-segment--alt cf-hearings-worksheet">
-
-        <div className="cf-title-meta-right">
-          <div className="title cf-hearings-title-and-judge">
-            <h1>Hearing Worksheet</h1>
-            <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+      <div className="cf-app-segment--alt cf-hearings-worksheet">
+        <section id="printContainer" ref={this.handlePrintContainerRef} >
+          <div className="cf-title-meta-right">
+            <div className="title cf-hearings-title-and-judge">
+              <h1>Hearing Worksheet</h1>
+              <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+            </div>
+            <div className="meta">
+              <div>{moment(worksheet.date).format('ddd l')}</div>
+              <div>Hearing Type: {worksheet.request_type}</div>
+            </div>
           </div>
-          <div className="meta">
-            <div>{moment(worksheet.date).format('ddd l')}</div>
-            <div>Hearing Type: {worksheet.request_type}</div>
-          </div>
-        </div>
 
-        <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <AutoSave
-            save={this.save(worksheet, worksheetIssues)}
-            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-            isSaving={this.props.worksheetIsSaving}
-            saveFailed={this.props.saveWorksheetFailed}
+          <div className="cf-hearings-worksheet-data">
+            <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
+            <AutoSave
+              save={this.save(worksheet, worksheetIssues)}
+              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+              isSaving={this.props.worksheetIsSaving}
+              saveFailed={this.props.saveWorksheetFailed}
+            />
+            <div className="cf-hearings-worksheet-data-cell column-1">
+              <div>Appellant Name:</div>
+              <div><b>{appellant}</b></div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-2">
+              <div>City/State:</div>
+              <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-3">
+              <div>Regional Office:</div>
+              <div>{worksheet.regional_office_name}</div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-4">
+              <div>Representative Org:</div>
+              <div>{worksheet.representative}</div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-5">
+              <TextField
+                name="Rep. Name:"
+                id="appellant-vet-rep-name"
+                aria-label="Representative Name"
+                value={worksheet.representative_name || ''}
+                onChange={this.props.onRepNameChange}
+                maxLength={30}
+              />
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-1">
+              <div>Veteran Name:</div>
+              <div><b>{worksheet.veteran_mi_formatted}</b></div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-2">
+              <div>Veteran ID:</div>
+              <div><b>{worksheet.vbms_id}</b></div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-3">
+              <div>Veteran's Age:</div>
+              <div>{worksheet.veteran_age}</div>
+            </div>
+            <div className="cf-hearings-worksheet-data-cell column-4">
+            </div>
+            <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
+              <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
+              <Textarea
+                name="Witness (W)/Observer (O):"
+                id="appellant-vet-witness"
+                aria-label="Witness Observer"
+                value={worksheet.witness || ''}
+                onChange={this.onWitnessChange}
+                maxLength={120}
+              />
+            </div>
+          </div>
+
+          <HearingWorksheetDocs
+            {...this.props}
           />
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>Appellant Name:</div>
-            <div><b>{appellant}</b></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>City/State:</div>
-            <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Regional Office:</div>
-            <div>{worksheet.regional_office_name}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>Representative Org:</div>
-            <div>{worksheet.representative}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-            <TextField
-              name="Rep. Name:"
-              id="appellant-vet-rep-name"
-              aria-label="Representative Name"
-              value={worksheet.representative_name || ''}
-              onChange={this.props.onRepNameChange}
-              maxLength={30}
-            />
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>Veteran Name:</div>
-            <div><b>{worksheet.veteran_mi_formatted}</b></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Veteran ID:</div>
-            <div><b>{worksheet.vbms_id}</b></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Veteran's Age:</div>
-            <div>{worksheet.veteran_age}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-          </div>
-          <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
-            <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-            <Textarea
-              name="Witness (W)/Observer (O):"
-              id="appellant-vet-witness"
-              aria-label="Witness Observer"
-              value={worksheet.witness || ''}
-              onChange={this.onWitnessChange}
-              maxLength={120}
-            />
-          </div>
-        </div>
 
-        <HearingWorksheetDocs
-          {...this.props}
-        />
+          <HearingWorksheetStream
+            {...this.props}
+          />
+        </section>
+        <section id="printContainerTwo" ref={this.handlePrintContainerRefTwo} >
+          <form className="cf-hearings-worksheet-form">
+            <div className="cf-hearings-worksheet-data">
+              <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
+              <Textarea
+                name="Periods and circumstances of service"
+                value={worksheet.military_service || ''}
+                onChange={this.onMilitaryServiceChange}
+                id="worksheet-military-service"
+                minRows={1}
+                maxLength={5000}
+              />
+            </div>
 
-        <HearingWorksheetStream
-          {...this.props}
-        />
+            <div className="cf-hearings-worksheet-data">
+              <label htmlFor="worksheet-contentions">Contentions</label>
+              <Textarea
+                name="Contentions"
+                value={worksheet.contentions || ''}
+                onChange={this.onContentionsChange}
+                id="worksheet-contentions"
+                minRows={3}
+                maxLength={5000}
+              />
+            </div>
 
-        <form className="cf-hearings-worksheet-form">
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
-            <Textarea
-              name="Periods and circumstances of service"
-              value={worksheet.military_service || ''}
-              onChange={this.onMilitaryServiceChange}
-              id="worksheet-military-service"
-              minRows={1}
-              maxLength={5000}
-            />
-          </div>
+            <div className="cf-hearings-worksheet-data">
+              <label htmlFor="worksheet-evidence">Evidence</label>
+              <Textarea
+                name="Evidence"
+                value={worksheet.evidence || ''}
+                onChange={this.onEvidenceChange}
+                id="worksheet-evidence"
+                minRows={3}
+                maxLength={5000}
+              />
+            </div>
 
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-contentions">Contentions</label>
-            <Textarea
-              name="Contentions"
-              value={worksheet.contentions || ''}
-              onChange={this.onContentionsChange}
-              id="worksheet-contentions"
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-evidence">Evidence</label>
-            <Textarea
-              name="Evidence"
-              value={worksheet.evidence || ''}
-              onChange={this.onEvidenceChange}
-              id="worksheet-evidence"
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
-            <Textarea
-              name="Comments and special instructions to attorneys"
-              value={worksheet.comments_for_attorney || ''}
-              id="worksheet-comments-for-attorney"
-              onChange={this.onCommentsForAttorneyChange}
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-        </form>
+            <div className="cf-hearings-worksheet-data">
+              <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
+              <Textarea
+                name="Comments and special instructions to attorneys"
+                value={worksheet.comments_for_attorney || ''}
+                id="worksheet-comments-for-attorney"
+                onChange={this.onCommentsForAttorneyChange}
+                minRows={3}
+                maxLength={5000}
+              />
+            </div>
+          </form>
+        </section>
       </div>
       <div className="cf-push-right">
         <Link
