@@ -60,23 +60,29 @@ export class HearingWorksheet extends React.PureComponent {
 
     html2canvas(document.getElementById('printContainer')).
       then((canvas) => {
-        let imgHeight = canvas.height * imgWidth / canvas.width;
-        let imgData = canvas.toDataURL('image/png', 1.0);
-      //  pdf.text('This is a test1', 10, 10)
-        pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
+        let imgHeight = canvas.height * imgWidth / canvas.width - 20;
+        let pageOne = canvas.toDataURL('image/png', 1.0);
+        pdf.setFontSize(22);
+        pdf.text('Hearing Worksheet ' + this.props.veteran_law_judge.full_name, 10, 10)
+        pdf.setFontSize(12);
+        pdf.text('Veteran Name: ' + this.props.worksheet.veteran_mi_formatted, 10, 20)
+        pdf.addImage(pageOne, 'PNG', 10, 30, (imgWidth), (imgHeight));
       });
     html2canvas(document.getElementById('printContainerTwo')).
       then((canvas) => {
-        let imgHeight = canvas.height * imgWidth / canvas.width;
-        let imgData = canvas.toDataURL('image/png', 1.0);
+        let imgHeight = canvas.height * imgWidth / canvas.width - 20;
+        let pageTwo = canvas.toDataURL('image/png', 1.0);
         pdf.addPage(210);
-     //   pdf.text('This is a test2', 10, 10)
-        pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
+        pdf.setFontSize(22);
+        pdf.text('Hearing Worksheet ' + this.props.veteran_law_judge.full_name, 10, 10)
+        pdf.setFontSize(12);
+        pdf.text('Veteran Name: ' + this.props.worksheet.veteran_mi_formatted, 10, 20)
+        pdf.addImage(pageTwo, 'PNG', 10, 30, (imgWidth ), (imgHeight));
       });
     setTimeout(() => {
       // jsPDF code to save file
       pdf.save(`Worksheet-${worksheetID}.pdf`);
-    }, 2000);
+    }, 1000);
   }
 
   render() {
@@ -88,7 +94,7 @@ export class HearingWorksheet extends React.PureComponent {
 
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
-        <section id="printContainer" ref={this.handlePrintContainerRef} >
+       
           <div className="cf-title-meta-right">
             <div className="title cf-hearings-title-and-judge">
               <h1>Hearing Worksheet</h1>
@@ -99,7 +105,7 @@ export class HearingWorksheet extends React.PureComponent {
               <div>Hearing Type: {worksheet.request_type}</div>
             </div>
           </div>
-
+        <section id="printContainer" ref={this.handlePrintContainerRef} >
           <div className="cf-hearings-worksheet-data">
             <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
             <div data-html2canvas-ignore="true">
