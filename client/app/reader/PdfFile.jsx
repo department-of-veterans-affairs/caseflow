@@ -189,10 +189,7 @@ export class PdfFile extends React.PureComponent {
 
       if (this.props.scrollTop !== prevProps.scrollTop) {
         // props.scrollTop updated by iterating through search results
-        this.scrollToPosition(
-          this.getPageIndexofMatch(this.props.currentMatchIndex),
-          Math.max(this.props.scrollTop, 0)
-        );
+        this.scrollToPosition(this.getPageIndexofMatch(this.props.currentMatchIndex), this.props.scrollTop);
       } else if (this.props.searchText && this.props.matchesPerPage.length &&
         (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
         // scroll to mark page before highlighting--may not be in DOM

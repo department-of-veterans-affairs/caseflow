@@ -6,7 +6,7 @@ import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { setPageDimensions } from '../reader/Pdf/PdfActions';
-import { setDocScrollPosition } from "./PdfViewer/PdfViewerActions";
+import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from './constants';
@@ -68,7 +68,6 @@ export class PdfPage extends React.PureComponent {
     const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
     const indexInPage = pageWithMatch.matches - (previousMatches - this.props.currentMatchIndex);
 
-    // todo: filter this.marks by doc id?
     this.marks = _.filter(this.marks, (mark) =>
       parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex
     );
@@ -336,8 +335,7 @@ const mapStateToProps = (state, props) => {
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar,
-    // pageHeights: _.map(state.readerReducer.pageDimensions, (page) => page.height)
+    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar
   };
 };
 
