@@ -75,8 +75,8 @@ describe('DecisionReviewer', () => {
       <Provider store={store}>
         <DecisionReviewer
           featureToggles={{}}
-          userDisplayName={'Name'}
-          feedbackUrl={'fakeurl'}
+          userDisplayName="Name"
+          feedbackUrl="fakeurl"
           dropdownUrls={[{
             title: 'title',
             link: 'link'

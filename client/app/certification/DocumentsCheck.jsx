@@ -87,12 +87,12 @@ export class DocumentsCheck extends React.Component {
       </div>
 
       <Footer
-        buttonText={ documentsMatch ? 'Continue' : 'Refresh page' }
-        nextPageUrl={ documentsMatch ?
+        buttonText={documentsMatch ? 'Continue' : 'Refresh page'}
+        nextPageUrl={documentsMatch ?
           `/certifications/${match.params.vacols_id}/confirm_case_details` :
           ''
         }
-        onClickContinue={ documentsMatch ? null : reloadPage } />
+        onClickContinue={documentsMatch ? null : reloadPage} />
     </div>;
   }
 }

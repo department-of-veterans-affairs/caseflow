@@ -105,7 +105,7 @@ class HearingWorksheetIssues extends PureComponent {
         className="cf-hearings-worksheet-issues"
         columns={columns}
         rowObjects={rowObjects}
-        summary={'Worksheet Issues'}
+        summary="Worksheet Issues"
         getKeyForRow={this.getKeyForRow}
       />
     </div>;
