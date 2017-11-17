@@ -187,10 +187,15 @@ export class PdfFile extends React.PureComponent {
       this.jumpToPage();
       this.jumpToComment();
 
-      if (this.props.searchText && this.props.matchesPerPage.length &&
+      if (this.props.scrollTop !== prevProps.scrollTop) {
+        // props.scrollTop updated by iterating through search results
+        this.scrollToPosition(
+          this.getPageIndexofMatch(this.props.currentMatchIndex),
+          Math.max(this.props.scrollTop, 0)
+        );
+      } else if (this.props.searchText && this.props.matchesPerPage.length &&
         (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
         // scroll to mark page before highlighting--may not be in DOM
-        // todo: dispatch event to update this.props.jumpToPageNumber?
         this.list.scrollToRow(this.getPageIndexofMatch(this.props.currentMatchIndex));
       }
     }
@@ -347,7 +352,8 @@ const mapStateToProps = (state, props) => {
     loadError: state.readerReducer.documentErrors[props.file],
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchText: searchText(state, props)
+    searchText: searchText(state, props),
+    scrollTop: state.readerReducer.ui.pdf.scrollTop
   };
 };
 

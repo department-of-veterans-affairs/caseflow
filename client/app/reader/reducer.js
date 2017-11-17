@@ -161,6 +161,7 @@ export const initialState = {
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
       jumpToPageNumber: null,
+      scrollTop: 0,
       hideSearchBar: true
     },
     pdfSidebar: {
@@ -856,6 +857,14 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         pdfList: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
+  case Constants.SET_DOC_SCROLL_POSITION:
+    return update(state, {
+      ui: {
+        pdf: {
           scrollTop: { $set: action.payload.scrollTop }
         }
       }
