@@ -57,11 +57,12 @@ export class HearingWorksheet extends React.PureComponent {
     /* eslint new-cap: ["error", { "newIsCap": false }]*/
     const pdf = new jspdf('p', 'mm');
 
+
     html2canvas(document.getElementById('printContainer')).
       then((canvas) => {
         let imgHeight = canvas.height * imgWidth / canvas.width;
         let imgData = canvas.toDataURL('image/png', 1.0);
-
+      //  pdf.text('This is a test1', 10, 10)
         pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
       });
     html2canvas(document.getElementById('printContainerTwo')).
@@ -69,12 +70,13 @@ export class HearingWorksheet extends React.PureComponent {
         let imgHeight = canvas.height * imgWidth / canvas.width;
         let imgData = canvas.toDataURL('image/png', 1.0);
         pdf.addPage(210);
+     //   pdf.text('This is a test2', 10, 10)
         pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
       });
     setTimeout(() => {
       // jsPDF code to save file
       pdf.save(`Worksheet-${worksheetID}.pdf`);
-    }, 3000);
+    }, 2000);
   }
 
   render() {
