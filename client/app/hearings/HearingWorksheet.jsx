@@ -32,20 +32,7 @@ export class HearingWorksheet extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.printContainer = null;
-    this.printContainerTwo = null;
     this.savePDF = this.savePDF.bind(this);
-    this.handlePrintContainerRef = this.handlePrintContainerRef.bind(this);
-    this.handlePrintContainerRefTwo = this.handlePrintContainerRefTwo.bind(this);
-  }
-
-  handlePrintContainerRef(element) {
-
-    this.printContainer = element;
-  }
-  handlePrintContainerRefTwo(element) {
-
-    this.printContainerTwo = element;
   }
 
   save = (worksheet, worksheetIssues) => () => {
@@ -64,8 +51,6 @@ export class HearingWorksheet extends React.PureComponent {
 
   savePDF() {
     window.scrollTo(0, 0);
-    const source = this.printContainer;
-    const sourceTwo = this.printContainerTwo;
     const imgWidth = 210;
     let worksheetID = this.props.worksheet.id;
 
@@ -83,14 +68,13 @@ export class HearingWorksheet extends React.PureComponent {
       then((canvas) => {
         let imgHeight = canvas.height * imgWidth / canvas.width;
         let imgData = canvas.toDataURL('image/png', 1.0);
-
-        pdf.addPage(580);
+        pdf.addPage(210);
         pdf.addImage(imgData, 'PNG', 0, 0, (imgWidth), (imgHeight));
       });
     setTimeout(() => {
       // jsPDF code to save file
       pdf.save(`Worksheet-${worksheetID}.pdf`);
-    }, 2000);
+    }, 3000);
   }
 
   render() {
@@ -116,12 +100,14 @@ export class HearingWorksheet extends React.PureComponent {
 
           <div className="cf-hearings-worksheet-data">
             <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-            <AutoSave
-              save={this.save(worksheet, worksheetIssues)}
-              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-              isSaving={this.props.worksheetIsSaving}
-              saveFailed={this.props.saveWorksheetFailed}
-            />
+            <div data-html2canvas-ignore="true">
+              <AutoSave
+                save={this.save(worksheet, worksheetIssues)}
+                spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+                isSaving={this.props.worksheetIsSaving}
+                saveFailed={this.props.saveWorksheetFailed}
+              />
+            </div>
             <div className="cf-hearings-worksheet-data-cell column-1">
               <div>Appellant Name:</div>
               <div><b>{appellant}</b></div>
