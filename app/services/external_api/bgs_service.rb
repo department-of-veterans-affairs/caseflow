@@ -100,6 +100,8 @@ class ExternalApi::BGSService
     # We should find a better way to do this.
     ip_address = current_user.ip_address || RequestStore[:ip_address]
 
+    forward_proxy_url = FeatureToggle.enabled?(:vbms_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
+
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
@@ -109,6 +111,7 @@ class ExternalApi::BGSService
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
       ssl_cert_file: ENV["BGS_CERT_LOCATION"],
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
+      forward_proxy_url: forward_proxy_url
       log: true
     )
   end
