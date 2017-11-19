@@ -5,13 +5,12 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
-import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
-import CertificationProgressBar from './CertificationProgressBar';
+import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
@@ -169,8 +168,6 @@ export class Certification extends React.Component {
         <div>
           <BrowserRouter>
             <div>
-              <Header />
-              <CertificationProgressBar />
               <Route path="/certifications/new/:vacols_id"
                 component={EntryPointRedirect} />
               <PageRoute
@@ -201,6 +198,11 @@ export class Certification extends React.Component {
                 title="Error | Caseflow Certification"
                 path="/certifications/error"
                 component={ErrorMessage}
+              />
+              <PageRoute
+                title="Not Certified | Caseflow Certification"
+                path="/certification_cancellations/"
+                component={CancelCertificationConfirmation}
               />
             </div>
           </BrowserRouter>
