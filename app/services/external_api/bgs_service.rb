@@ -100,7 +100,7 @@ class ExternalApi::BGSService
     # We should find a better way to do this.
     ip_address = current_user.ip_address || RequestStore[:ip_address]
 
-    forward_proxy_url = FeatureToggle.enabled?(:vbms_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
+    forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
 
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
