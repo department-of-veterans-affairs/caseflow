@@ -111,7 +111,7 @@ class ExternalApi::BGSService
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
       ssl_cert_file: ENV["BGS_CERT_LOCATION"],
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
-      forward_proxy_url: forward_proxy_url
+      forward_proxy_url: forward_proxy_url,
       log: true
     )
   end
