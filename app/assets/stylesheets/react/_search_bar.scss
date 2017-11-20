@@ -70,6 +70,16 @@
       cursor: text;
     }
   }
+
+  .search-text-spinner {
+    background-color: white;
+    font-size: 1rem;
+    margin-top: 1px;
+    width: 8rem;
+    text-align: right;
+    padding-right: 2rem;
+    padding-top: 3px;
+  }
 }
 
 .cf-search-ahead-parent {

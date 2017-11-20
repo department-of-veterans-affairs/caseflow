@@ -18,12 +18,14 @@ export class DocumentSearch extends React.PureComponent {
 
     this.searchTerm = '';
     this.sentAction = {};
+    this.loading = false;
   }
 
   onChange = (value) => {
     this.searchTerm = value;
 
     if (_.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
+      this.loading = Boolean(this.searchTerm.length);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
       this.sentAction[this.props.file] = true;
     }
@@ -72,6 +74,8 @@ export class DocumentSearch extends React.PureComponent {
     if (this.props.file !== prevProps.file) {
       this.clearSearch();
     }
+
+    this.loading = Boolean(!this.props.textExtracted && this.searchTerm.length);
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
@@ -119,6 +123,7 @@ export class DocumentSearch extends React.PureComponent {
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
         internalText={this.getInternalText()}
+        loading={this.loading}
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
@@ -150,7 +155,8 @@ const mapStateToProps = (state, props) => ({
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   getCurrentMatch: getCurrentMatchIndex(state, props),
-  hidden: state.readerReducer.ui.pdf.hideSearchBar
+  hidden: state.readerReducer.ui.pdf.hideSearchBar,
+  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { closeIcon } from './RenderFunctions';
+import { closeIcon, loadingSymbolHtml } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -65,6 +65,22 @@ export default class SearchBar extends React.Component {
 
   clearInput = () => this.input.value = '';
 
+  getInternalField = () => {
+    if (this.props.loading) {
+      return <div className="search-text-spinner">
+        { loadingSymbolHtml('', '25px', '#417505') }
+      </div>;
+    }
+
+    return <input
+      id="search-internal-text"
+      type="text"
+      value={this.props.internalText}
+      onClick={this.setInputFocus}
+      className="cf-search-internal-text"
+      readOnly />;
+  }
+
   render() {
     let {
       id,
@@ -119,17 +135,12 @@ export default class SearchBar extends React.Component {
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value} />
-      {hasInternalText &&
+      { hasInternalText &&
       <div>
         <label className="usa-sr-only" htmlFor="search-internal-text">
           Search Result Count
         </label>
-        <input
-          id="search-internal-text"
-          type="text"
-          value={internalText}
-          onClick={this.setInputFocus}
-          className="cf-search-internal-text" />
+        { this.getInternalField() }
       </div>}
       {_.size(value) > 0 &&
         <Button
