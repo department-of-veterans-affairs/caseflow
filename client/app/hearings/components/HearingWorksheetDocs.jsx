@@ -27,18 +27,16 @@ class HearingWorksheetDocs extends Component {
             <div>{formatDate(appeal.prior_decision_date)}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Rating Decision:</div>
-            <div></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>NOD:</div>
             <div>{formatDate(appeal.nod_date)}</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>SOC:</div>
             <div>{formatDate(appeal.soc_date)}</div>
           </div>
 
+        </div>
+        <div>
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Form 9:</div>
             <div>{formatDate(appeal.form9_date)}</div>
@@ -56,13 +54,7 @@ class HearingWorksheetDocs extends Component {
             <div>Certification:</div>
             <div>{formatDate(appeal.certification_date)}</div>
           </div>
-          <div>
 
-          </div>
-
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>&nbsp;</div>
-          </div>
         </div>
         </div>;
       })}
