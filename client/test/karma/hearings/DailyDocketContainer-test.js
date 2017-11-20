@@ -12,9 +12,7 @@ import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
 
-/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
-/* eslint-disable max-statements */
 describe('DailyDocketContainer', () => {
   let wrapper;
 

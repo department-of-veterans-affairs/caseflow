@@ -12,9 +12,7 @@ import HearingWorksheetContainer from '../../../app/hearings/HearingWorksheetCon
 
 const store = createStore(hearingsReducers, { dockets: {} }, applyMiddleware(thunk));
 
-/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
-/* eslint-disable max-statements */
 describe('HearingWorksheetContainer', () => {
   let wrapper;
 
