@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchableDropdown from '../components/SearchableDropdown';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import Textarea from 'react-textarea-autosize';
-import Checkbox from '../components/Checkbox';
+import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAod, setAddOn, setTranscriptRequested } from './actions/Dockets';
+import { setNotes, setDisposition, setHoldOpen, setAod, setAddOn, setTranscriptRequested } from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
