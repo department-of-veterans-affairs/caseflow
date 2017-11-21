@@ -445,6 +445,14 @@ $color-hearings-saving: #777;
 }
 
 @media print {
+  h1 {
+    font-size: 25px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
   .cf-print-page-break {
     break-after: page;
   }
