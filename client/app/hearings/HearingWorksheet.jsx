@@ -25,6 +25,23 @@ import {
   saveWorksheet
 } from './actions/Dockets';
 
+class WorksheetFormEntry extends React.PureComponent {
+  render() {
+    const textAreaProps = {
+      minRows: 3,
+      maxRows: 5000,
+      ...this.props
+    };
+
+    return <div className="cf-hearings-worksheet-data">
+      <label htmlFor={this.props.id}>{this.props.name}</label>
+      {this.props.print ? 
+        <p>{this.props.value}</p> : 
+        <Textarea {...textAreaProps} />}
+    </div>;
+  }
+}
+
 export class HearingWorksheet extends React.PureComponent {
 
   save = (worksheet, worksheetIssues) => () => {
@@ -136,53 +153,35 @@ export class HearingWorksheet extends React.PureComponent {
         />
 
         <form className="cf-hearings-worksheet-form">
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-military-service">Periods and circumstances of service</label>
-            <Textarea
-              name="Periods and circumstances of service"
-              value={worksheet.military_service || ''}
-              onChange={this.onMilitaryServiceChange}
-              id="worksheet-military-service"
-              minRows={1}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-contentions">Contentions</label>
-            <Textarea
-              name="Contentions"
-              value={worksheet.contentions || ''}
-              onChange={this.onContentionsChange}
-              id="worksheet-contentions"
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-evidence">Evidence</label>
-            <Textarea
-              name="Evidence"
-              value={worksheet.evidence || ''}
-              onChange={this.onEvidenceChange}
-              id="worksheet-evidence"
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          <div className="cf-hearings-worksheet-data">
-            <label htmlFor="worksheet-comments-for-attorney">Comments and special instructions to attorneys</label>
-            <Textarea
-              name="Comments and special instructions to attorneys"
-              value={worksheet.comments_for_attorney || ''}
-              id="worksheet-comments-for-attorney"
-              onChange={this.onCommentsForAttorneyChange}
-              minRows={3}
-              maxLength={5000}
-            />
-          </div>
+          <WorksheetFormEntry
+            name="Periods and circumstances of service"
+            value={worksheet.military_service}
+            onChange={this.onMilitaryServiceChange}
+            id="worksheet-military-service"
+            minRows={1}
+            print={this.props.print}
+          />
+          <WorksheetFormEntry
+            name="Contentions"
+            value={worksheet.contentions}
+            onChange={this.onContentionsChange}
+            id="worksheet-contentions"
+            print={this.props.print}
+          />
+          <WorksheetFormEntry
+            name="Evidence"
+            value={worksheet.evidence}
+            onChange={this.onEvidenceChange}
+            id="worksheet-evidence"
+            print={this.props.print}
+          />
+          <WorksheetFormEntry
+            name="Comments and special instructions to attorneys"
+            value={worksheet.comments_for_attorney}
+            id="worksheet-comments-for-attorney"
+            onChange={this.onCommentsForAttorneyChange}
+            print={this.props.print}
+          />
         </form>
       </div>
       <div className="cf-push-right">

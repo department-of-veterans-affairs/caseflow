@@ -43,15 +43,17 @@ class HearingWorksheetIssueFields extends PureComponent {
     if (!issue.from_vacols || allowedFields[field].alwaysEditable) {
       return <div className="cf-form-textarea">
         <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-${field}`}>{field}</label>
-        <Textarea aria-label={field} name={field}
-
-          id={`${issue.id}-issue-${field}`}
-          value={allowedFields[field].value || ''}
-          onChange={allowedFields[field].onChange}
-          minRows={2}
-          maxRows={8}
-          maxLength={maxLength}
-        />
+        { this.props.readOnly ? 
+          <p>{allowedFields[field].value}</p> :
+          <Textarea aria-label={field} name={field}
+            id={`${issue.id}-issue-${field}`}
+            value={allowedFields[field].value || ''}
+            onChange={allowedFields[field].onChange}
+            minRows={2}
+            maxRows={8}
+            maxLength={maxLength}
+          />
+        }
       </div>;
     }
 
@@ -73,6 +75,7 @@ const mapStateToProps = (state) => ({
 HearingWorksheetIssueFields.propTypes = {
   issue: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
+  readOnly: PropTypes.bool,
   field: PropTypes.string.isRequired
 };
 

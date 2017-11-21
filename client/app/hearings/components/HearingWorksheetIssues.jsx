@@ -89,6 +89,7 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="description"
+          readOnly={this.props.print}
           maxLength={100}
         />,
         actions: <HearingWorksheetPreImpressions
