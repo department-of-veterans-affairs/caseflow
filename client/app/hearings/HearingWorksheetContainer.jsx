@@ -27,7 +27,6 @@ export class HearingWorksheetContainer extends React.Component {
 
   componentDidUpdate() {
     if (this.props.worksheet && this.props.print) {
-      // TODO sometimes this runs too early.
       window.print();
     }
   }
