@@ -389,30 +389,23 @@ $color-hearings-saving: #777;
       height: 4em;
     }
 
-    .cf-form-checkboxes {
-      display: inline-block;
-      box-sizing: border-box;
-      margin: 0;
-      padding: .3em 0;
+    .cf-hearings-worksheet-actions {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
 
-      &:nth-of-type(1),
-      &:nth-of-type(4) {
-        width: 40%;
-      }
+      /* I did this so we could get both columns to be left-aligned.
+         I am not sure this is the best way to do that. */
+      height: 6rem;
 
-      &:nth-of-type(2),
-      &:nth-of-type(5) {
-        width: 35%;
-      }
+      .cf-form-checkboxes {
+        margin-bottom: 0;
+        margin-top: 0;
 
-      &:nth-of-type(3),
-      &:nth-of-type(6) {
-        width: 25%;
-      }
-
-      label {
-        margin: 0;
-        white-space: nowrap;
+        label {
+          margin: 0;
+          white-space: nowrap;
+        }
       }
     }
   }
