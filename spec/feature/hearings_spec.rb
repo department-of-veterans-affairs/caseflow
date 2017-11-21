@@ -132,7 +132,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
     end
 
-    scenario "Worksheet saves on refresh", focus: true do
+    scenario "Worksheet saves on refresh" do
       visit "/hearings/1/worksheet"
       fill_in "Rep. Name:", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
