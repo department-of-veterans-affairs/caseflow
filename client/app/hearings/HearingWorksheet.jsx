@@ -45,16 +45,21 @@ export class HearingWorksheet extends React.PureComponent {
 
   savePDF() {
     window.scrollTo(0, 0);
+    const pdf = new jspdf('p', 'mm');
     html2canvas(document.getElementById('pdf-header')).
       then((canvas) => {
-        const pdf = new jspdf('p', 'mm');
         const header = canvas.toDataURL('image/png');
-        pdf.addImage( header, 'PNG', 0, 0, 210, 100);
-        pdf.addPage();
-        pdf.addImage( header, 'PNG', 0, 0, 210, 100);
-        pdf.save(`HearingWorksheet.pdf`);
+        pdf.addImage( header, 'PNG', 5, 5, 200, 80);
       });
-  }
+    html2canvas(document.getElementById('pdf-streams')).
+      then((canvas) => {
+        const streams = canvas.toDataURL('image/png');
+        pdf.addImage( streams, 'PNG', 5, 85, 200, 120);
+      });
+    setTimeout(function() {
+      pdf.save(`HearingWorksheet.pdf`);
+    }, 2000);
+  };
 
   render() {
     let { worksheet, worksheetIssues } = this.props;
@@ -142,13 +147,15 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
         </div>
 
-        <HearingWorksheetDocs
-          {...this.props}
-        />
+        <div id="pdf-streams">
+          <HearingWorksheetDocs
+            {...this.props}
+          />
 
-        <HearingWorksheetStream
-          {...this.props}
-        />
+          <HearingWorksheetStream
+            {...this.props}
+          />
+        </div>
 
         <form className="cf-hearings-worksheet-form">
           <div className="cf-hearings-worksheet-data">
