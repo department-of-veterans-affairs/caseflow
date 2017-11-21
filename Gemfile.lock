@@ -30,8 +30,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: dd26fbff2179d400b4f19f91084835686276297f
-  ref: dd26fbff2179d400b4f19f91084835686276297f
+  revision: 2e401bf7749f0780280951cbde777b7d67765554
+  ref: 2e401bf7749f0780280951cbde777b7d67765554
   specs:
     connect_vbms (1.0.0)
       httpclient (~> 2.8.0)
@@ -424,7 +424,7 @@ GEM
     where-or (0.1.5)
     xmldsig (0.3.2)
       nokogiri
-    xmlenc (0.6.9)
+    xmlenc (0.7.0)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
       nokogiri (>= 1.6.0, < 2.0.0)
