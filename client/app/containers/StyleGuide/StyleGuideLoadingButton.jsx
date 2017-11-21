@@ -51,7 +51,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-default"
-          name={'Reset'}
+          name="Reset"
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.default}
@@ -68,7 +68,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-dispatch"
-          name={'Reset'}
+          name="Reset"
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.dispatch}
@@ -85,7 +85,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-cert"
-          name={'Reset'}
+          name="Reset"
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.cert}
@@ -102,7 +102,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-efolder"
-          name={'Reset'}
+          name="Reset"
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.efolder}
@@ -119,7 +119,7 @@ export default class StyleGuideLoadingButton extends React.Component {
         />
         <Button
           id="reset-feedback"
-          name={'Reset'}
+          name="Reset"
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.feedback}
