@@ -11,8 +11,8 @@ class Hearings::WorksheetsController < HearingsController
   end
 
   def show_print
-    veteran_name = hearing_worksheet["appellant_last_first_mi"]
-    @new_window_title = "Hearing Worksheet for #{veteran_name}"
+    appellant_name = hearing_worksheet["appellant_last_first_mi"]
+    @new_window_title = "Hearing Worksheet for #{appellant_name}"
     show
   end
 
