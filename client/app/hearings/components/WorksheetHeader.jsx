@@ -19,7 +19,7 @@ import {
 
 class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
-  
+
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
