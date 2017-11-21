@@ -130,7 +130,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
     end
 
-    scenario "Worksheet saves on refresh" do
+    scenario "Worksheet saves on refresh", focus: true do
       visit "/hearings/1/worksheet"
       fill_in "Rep. Name:", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
@@ -145,7 +145,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
-      
+
       visit "/hearings/1/worksheet/print?do_not_open_print_prompt=1"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
@@ -153,6 +153,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
+      expect(page.title).to eq "Hearing Worksheet for King, Anne A."
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do

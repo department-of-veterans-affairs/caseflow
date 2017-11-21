@@ -4,7 +4,9 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
 
   <title>
-    <% if content_for?(:new_window_title) %>
+    <% if @new_window_title %>
+      <%= @new_window_title %>
+    <% elsif content_for?(:new_window_title) %>
       <%= yield :new_window_title %>
     <% else %>
       Caseflow <%= logo_name %>

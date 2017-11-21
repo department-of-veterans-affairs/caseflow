@@ -10,6 +10,12 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
+  def show_print
+    veteran_name = hearing_worksheet["appellant_last_first_mi"]
+    @new_window_title = "Hearing Worksheet for #{veteran_name}"
+    show
+  end
+
   def update
     worksheet.update!(worksheet_params)
     worksheet.class.repository.update_vacols_hearing!(worksheet.vacols_record, worksheet_params)
