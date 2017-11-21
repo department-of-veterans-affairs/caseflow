@@ -83,6 +83,7 @@ Rails.application.routes.draw do
     resources :appeals, only: [:update], param: :appeal_id
   end
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
+  get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show", as: 'hearing_worksheet_print'
 
   resources :hearings, only: [:update]
 
