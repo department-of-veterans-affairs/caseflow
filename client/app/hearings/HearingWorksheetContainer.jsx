@@ -20,9 +20,14 @@ export const getWorksheet = (id, dispatch) => {
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
-    // TODO: if !worksheet call this.props.getWorksheet
     if (!this.props.worksheet) {
       this.props.getWorksheet(this.props.hearingId);
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.worksheet && this.props.print) {
+      window.print();
     }
   }
 
@@ -48,9 +53,7 @@ export class HearingWorksheetContainer extends React.Component {
       </div>;
     }
 
-    return <HearingWorksheet
-      {...this.props}
-    />;
+    return <HearingWorksheet {...this.props} />;
   }
 }
 

@@ -50,6 +50,7 @@ const Hearings = ({ hearings }) => {
           breadcrumb="Daily Docket > Hearing Worksheet"
           component={(props) => (
             <HearingWorksheetContainer
+              print
               veteran_law_judge={hearings.veteran_law_judge}
               hearingId={props.match.params.hearingId} />
           )}
