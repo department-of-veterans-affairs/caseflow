@@ -7,13 +7,12 @@ import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
+import _ from 'lodash';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
 
 import {
-  onRepNameChange,
-  onWitnessChange,
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
@@ -25,7 +24,16 @@ class WorksheetFormEntry extends React.PureComponent {
     const textAreaProps = {
       minRows: 3,
       maxRows: 5000,
-      ...this.props
+      ..._.pick(
+        this.props,
+        [
+          'name',
+          'value',
+          'onChange',
+          'id',
+          'minRows'
+        ]
+      )
     };
 
     return <div className="cf-hearings-worksheet-data">
@@ -37,7 +45,6 @@ class WorksheetFormEntry extends React.PureComponent {
   }
 }
 export class HearingWorksheet extends React.PureComponent {
-  onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
@@ -131,8 +138,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onRepNameChange,
-  onWitnessChange,
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,

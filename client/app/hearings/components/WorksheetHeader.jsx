@@ -12,10 +12,14 @@ import { saveIssues } from '../actions/Issue';
 import {
   toggleWorksheetSaving,
   setWorksheetSaveFailedStatus,
+  onRepNameChange,
+  onWitnessChange,
   saveWorksheet
 } from '../actions/Dockets';
 
 class WorksheetHeader extends React.PureComponent {
+  onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
+  
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
@@ -119,6 +123,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleWorksheetSaving,
+  onRepNameChange,
+  onWitnessChange,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
   saveIssues
