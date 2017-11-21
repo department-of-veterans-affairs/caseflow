@@ -58,15 +58,8 @@ export class HearingWorksheet extends React.PureComponent {
 
     const firstWorksheetPage = <div>
       {worksheetHeader}
-
-      <HearingWorksheetDocs
-        {...this.props}
-      />
-
-      <HearingWorksheetStream
-        {...this.props}
-        print={this.props.print}
-      />
+      <HearingWorksheetDocs {...this.props} />
+      <HearingWorksheetStream {...this.props} print={this.props.print} />
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">

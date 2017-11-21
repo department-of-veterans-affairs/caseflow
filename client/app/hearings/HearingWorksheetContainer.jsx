@@ -27,8 +27,7 @@ export class HearingWorksheetContainer extends React.Component {
 
   componentDidUpdate() {
     if (this.props.worksheet && this.props.print) {
-      // TODO re-enable this before submitting for review.
-      // window.print();
+      window.print();
     }
   }
 
