@@ -127,12 +127,17 @@ export class PdfViewer extends React.Component {
     }
   }
 
+  updateWindowTitle = () => {
+    document.title = `${this.selectedDoc().type} | Document Viewer | Caseflow Reader`;
+  }
+
   componentDidUpdate = () => {
     if (this.props.placedButUnsavedAnnotation) {
       let commentBox = document.getElementById('addComment');
 
       commentBox.focus();
     }
+    this.updateWindowTitle();
   }
 
   componentDidMount() {
@@ -142,6 +147,7 @@ export class PdfViewer extends React.Component {
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       this.props.fetchAppealDetails(this.props.match.params.vacolsId);
     }
+    this.updateWindowTitle();
   }
 
   componentWillUnmount = () => {
