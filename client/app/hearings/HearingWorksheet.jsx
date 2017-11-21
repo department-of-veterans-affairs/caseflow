@@ -6,6 +6,7 @@ import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
+import classNames from 'classnames';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -55,54 +56,64 @@ export class HearingWorksheet extends React.PureComponent {
       appellant={appellant}
     />;
 
-    return <div>
-      <div className="cf-app-segment--alt cf-hearings-worksheet">
-        {worksheetHeader}
+    const firstWorksheetPage = <div>
+      {worksheetHeader}
 
-        <HearingWorksheetDocs
-          {...this.props}
-        />
+      <HearingWorksheetDocs
+        {...this.props}
+      />
 
-        <HearingWorksheetStream
-          {...this.props}
+      <HearingWorksheetStream
+        {...this.props}
+        print={this.props.print}
+      />
+    </div>;
+
+    const secondWorksheetPage = <div className="cf-hearings-second-page">
+      {this.props.print && worksheetHeader}
+
+      <form className="cf-hearings-worksheet-form">
+        <WorksheetFormEntry
+          name="Periods and circumstances of service"
+          value={worksheet.military_service}
+          onChange={this.onMilitaryServiceChange}
+          id="worksheet-military-service"
+          minRows={1}
           print={this.props.print}
         />
+        <WorksheetFormEntry
+          name="Contentions"
+          value={worksheet.contentions}
+          onChange={this.onContentionsChange}
+          id="worksheet-contentions"
+          print={this.props.print}
+        />
+        <WorksheetFormEntry
+          name="Evidence"
+          value={worksheet.evidence}
+          onChange={this.onEvidenceChange}
+          id="worksheet-evidence"
+          print={this.props.print}
+        />
+        <WorksheetFormEntry
+          name="Comments and special instructions to attorneys"
+          value={worksheet.comments_for_attorney}
+          id="worksheet-comments-for-attorney"
+          onChange={this.onCommentsForAttorneyChange}
+          print={this.props.print}
+        />
+      </form>
+    </div>;
 
+    const wrapperClassNames = classNames('cf-hearings-worksheet', {
+      'cf-app-segment--alt': !this.props.print
+    });
+
+    return <div>
+      <div className={wrapperClassNames}>
+        {firstWorksheetPage}
         <PrintPageBreak />
-
-        {this.props.print && worksheetHeader}
-
-        <form className="cf-hearings-worksheet-form">
-          <WorksheetFormEntry
-            name="Periods and circumstances of service"
-            value={worksheet.military_service}
-            onChange={this.onMilitaryServiceChange}
-            id="worksheet-military-service"
-            minRows={1}
-            print={this.props.print}
-          />
-          <WorksheetFormEntry
-            name="Contentions"
-            value={worksheet.contentions}
-            onChange={this.onContentionsChange}
-            id="worksheet-contentions"
-            print={this.props.print}
-          />
-          <WorksheetFormEntry
-            name="Evidence"
-            value={worksheet.evidence}
-            onChange={this.onEvidenceChange}
-            id="worksheet-evidence"
-            print={this.props.print}
-          />
-          <WorksheetFormEntry
-            name="Comments and special instructions to attorneys"
-            value={worksheet.comments_for_attorney}
-            id="worksheet-comments-for-attorney"
-            onChange={this.onCommentsForAttorneyChange}
-            print={this.props.print}
-          />
-        </form>
+        {secondWorksheetPage}
       </div>
       {!this.props.print &&
       <div className="cf-push-right">
