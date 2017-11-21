@@ -82,7 +82,7 @@ class WorksheetHeader extends React.PureComponent {
             value={worksheet.representative_name || ''}
             onChange={this.props.onRepNameChange}
             maxLength={30}
-            hideInput={this.props.print}
+            fixedInput={this.props.print}
           />
         </div>
         <div className="cf-hearings-worksheet-data-cell column-1">

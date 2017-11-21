@@ -55,7 +55,8 @@ export default class TextField extends React.Component {
         </label>
       }
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      {!this.props.hideInput &&
+      {this.props.fixedInput ? 
+        <p>{value}</p> :
         <input
           className={className}
           name={name}
@@ -104,7 +105,7 @@ TextField.propTypes = {
   },
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
-  hideInput: PropTypes.bool,
+  fixedInput: PropTypes.bool,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
