@@ -28,7 +28,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
     } = this.props;
 
     return <div>
-      <div
+      <div data-html2canvas-ignore="true"
         id={`cf-issue-delete-${issue.appeal_id}${issue.id}`}
         className="cf-issue-delete"
         onClick={this.handleModalOpen(issue.id)}
