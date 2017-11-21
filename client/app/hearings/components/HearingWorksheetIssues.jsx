@@ -48,13 +48,16 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
-      },
-      {
+      }
+    ];
+
+    if (!this.props.print) {
+      columns.push({
         header: '',
         align: 'left',
         valueName: 'deleteIssue'
-      }
-    ];
+      })
+    }
 
     const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
 

@@ -51,15 +51,18 @@ class HearingWorksheetStream extends Component {
           <HearingWorksheetIssues
             appealKey={key}
             worksheetStreamsAppeal={appeal}
+            print={this.props.print}
             {...this.props}
             countOfIssuesInPreviousAppeals={currentIssueCount}
           />
-          <Button
-            classNames={['usa-button-outline', 'hearings-add-issue']}
-            name="+ Add Issue"
-            id={`button-addIssue-${appeal.id}`}
-            onClick={this.onAddIssue(appeal.id)}
-          />
+          {!this.props.print && 
+            <Button
+              classNames={['usa-button-outline', 'hearings-add-issue']}
+              name="+ Add Issue"
+              id={`button-addIssue-${appeal.id}`}
+              onClick={this.onAddIssue(appeal.id)}
+            />
+          }
           <hr />
         </div>;
       })}

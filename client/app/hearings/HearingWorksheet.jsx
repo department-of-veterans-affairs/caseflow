@@ -132,6 +132,7 @@ export class HearingWorksheet extends React.PureComponent {
 
         <HearingWorksheetStream
           {...this.props}
+          print={this.props.print}
         />
 
         <form className="cf-hearings-worksheet-form">
