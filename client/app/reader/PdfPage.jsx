@@ -75,19 +75,19 @@ export class PdfPage extends React.PureComponent {
 
     const selectedMark = this.marks[indexInPage];
 
-    if (_.endsWith(pageWithMatch.id, this.props.pageIndex) && !selectedMark) {
-      console.error('selectedMark not found in DOM');
-    }
+    if (_.endsWith(pageWithMatch.id, this.props.pageIndex)) {
+      if (selectedMark) {
+        selectedMark.classList.add('highlighted');
 
-    if (_.endsWith(pageWithMatch.id, this.props.pageIndex) && selectedMark) {
-      selectedMark.classList.add('highlighted');
+        // mark parent elements are absolutely-positioned divs
+        let scrollToY = parseInt(selectedMark.parentElement.style.top, 10);
 
-      // mark parent elements are absolutely-positioned divs
-      let scrollToY = parseInt(selectedMark.parentElement.style.top, 10);
-
-      if (scrollToMark) {
-        // account for search bar height
-        this.props.setDocScrollPosition(scrollToY - 60);
+        if (scrollToMark) {
+          // account for search bar height
+          this.props.setDocScrollPosition(scrollToY - 60);
+        }
+      } else {
+        console.error('selectedMark not found in DOM');
       }
     }
   }

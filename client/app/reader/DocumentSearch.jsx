@@ -112,7 +112,6 @@ export class DocumentSearch extends React.PureComponent {
       hidden: this.props.hidden
     });
 
-    // todo: add spinner before document text loaded (GET_DOCUMENT_TEXT)
     return <div className={classes}>
       <SearchBar
         ref={this.searchBarRef}
