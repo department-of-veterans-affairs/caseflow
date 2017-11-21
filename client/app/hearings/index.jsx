@@ -13,6 +13,7 @@ import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
+import AppFrame from '../components/AppFrame';
 
 const configureStore = (data) => {
 
@@ -60,7 +61,7 @@ const Hearings = ({ hearings }) => {
               defaultUrl="/hearings/dockets"
               userDisplayName={hearings.userDisplayName}
               dropdownUrls={hearings.dropdownUrls}>
-              <div className="cf-wide-app">
+              <AppFrame>
                 <div className="usa-grid">
                   <ScrollToTop />
                   <Route exact path="/hearings/dockets"
@@ -84,7 +85,7 @@ const Hearings = ({ hearings }) => {
                     )}
                   />
                 </div>
-              </div>
+              </AppFrame>
             </NavigationBar>
             <Footer
               appName="Hearing Prep"
