@@ -101,15 +101,16 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
           <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-          {!this.props.print &&
-              <Textarea
-                name="Witness (W)/Observer (O):"
-                id="appellant-vet-witness"
-                aria-label="Witness Observer"
-                value={worksheet.witness || ''}
-                onChange={this.onWitnessChange}
-                maxLength={120}
-              />
+          {this.props.print ?
+            <p>{worksheet.witness}</p> :
+            <Textarea
+              name="Witness (W)/Observer (O):"
+              id="appellant-vet-witness"
+              aria-label="Witness Observer"
+              value={worksheet.witness || ''}
+              onChange={this.onWitnessChange}
+              maxLength={120}
+            />
           }
         </div>
       </div>

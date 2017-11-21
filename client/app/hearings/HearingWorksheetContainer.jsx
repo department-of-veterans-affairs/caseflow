@@ -30,6 +30,7 @@ export class HearingWorksheetContainer extends React.Component {
     // We use the `do_not_open_print_prompt` querystring option for testing,
     // since Selenium struggles to interact with browser UI like a print prompt.
     const query = querystring.parse(window.location.search.slice(1));
+
     if (this.props.worksheet && this.props.print && !query.do_not_open_print_prompt) {
       window.print();
     }
