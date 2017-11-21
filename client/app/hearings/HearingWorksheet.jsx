@@ -81,12 +81,14 @@ export class HearingWorksheet extends React.PureComponent {
 
         <div className="cf-hearings-worksheet-data">
           <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          <AutoSave
-            save={this.save(worksheet, worksheetIssues)}
-            spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-            isSaving={this.props.worksheetIsSaving}
-            saveFailed={this.props.saveWorksheetFailed}
-          />
+          {!this.props.print && 
+            <AutoSave
+              save={this.save(worksheet, worksheetIssues)}
+              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+              isSaving={this.props.worksheetIsSaving}
+              saveFailed={this.props.saveWorksheetFailed}
+            />
+          }
           <div className="cf-hearings-worksheet-data-cell column-1">
             <div>Appellant Name:</div>
             <div><b>{appellant}</b></div>
