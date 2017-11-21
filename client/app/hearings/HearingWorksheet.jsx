@@ -48,6 +48,8 @@ export class HearingWorksheet extends React.PureComponent {
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
+    let olderVeteran = worksheet.veteran_age > 74;
+
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
 
@@ -106,7 +108,7 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Veteran's Age:</div>
-            <div>{worksheet.veteran_age}</div>
+            <div className={olderVeteran && 'cf-red-text'}>{worksheet.veteran_age}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
           </div>
