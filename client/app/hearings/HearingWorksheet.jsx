@@ -94,6 +94,7 @@ export class HearingWorksheet extends React.PureComponent {
               value={worksheet.representative_name || ''}
               onChange={this.props.onRepNameChange}
               maxLength={30}
+              hideInput={this.props.print}
             />
           </div>
           <div className="cf-hearings-worksheet-data-cell column-1">
@@ -112,14 +113,16 @@ export class HearingWorksheet extends React.PureComponent {
           </div>
           <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
             <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-            <Textarea
-              name="Witness (W)/Observer (O):"
-              id="appellant-vet-witness"
-              aria-label="Witness Observer"
-              value={worksheet.witness || ''}
-              onChange={this.onWitnessChange}
-              maxLength={120}
-            />
+            {!this.props.print &&
+              <Textarea
+                name="Witness (W)/Observer (O):"
+                id="appellant-vet-witness"
+                aria-label="Witness Observer"
+                value={worksheet.witness || ''}
+                onChange={this.onWitnessChange}
+                maxLength={120}
+              />
+            }
           </div>
         </div>
 
