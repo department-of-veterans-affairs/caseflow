@@ -72,7 +72,6 @@ export default connect(
 )(DocketsContainer);
 
 DocketsContainer.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
   dockets: PropTypes.object,
   docketServerError: PropTypes.object
 };

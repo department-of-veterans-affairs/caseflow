@@ -63,12 +63,9 @@ const Hearings = ({ hearings }) => {
               <div className="cf-wide-app">
                 <div className="usa-grid">
                   <ScrollToTop />
-                  <Route exact path="/hearings/dockets"
-                    component={() => (
-                      <DocketsContainer
-                        veteran_law_judge={hearings.veteran_law_judge} />
-                    )}
-                  />
+                  <Route exact path="/hearings/dockets">
+                    <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />
+                  </Route>
 
                   <Route exact path="/hearings/dockets/:date"
                     breadcrumb="Daily Docket"
