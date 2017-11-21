@@ -55,7 +55,7 @@ class HearingWorksheetStream extends Component {
             {...this.props}
             countOfIssuesInPreviousAppeals={currentIssueCount}
           />
-          {!this.props.print && 
+          {!this.props.print &&
             <Button
               classNames={['usa-button-outline', 'hearings-add-issue']}
               name="+ Add Issue"

@@ -56,7 +56,7 @@ class HearingWorksheetIssues extends PureComponent {
         header: '',
         align: 'left',
         valueName: 'deleteIssue'
-      })
+      });
     }
 
     const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);

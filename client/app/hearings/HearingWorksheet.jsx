@@ -1,17 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import moment from 'moment';
 import Link from '../components/Link';
-import TextField from '../components/TextField';
 import Textarea from 'react-textarea-autosize';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
-import AutoSave from '../components/AutoSave';
-import * as AppConstants from '../constants/AppConstants';
+import PrintPageBreak from '../components/PrintPageBreak';
+import WorksheetHeader from './components/WorksheetHeader';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
-import { saveIssues } from './actions/Issue';
 
 import {
   onRepNameChange,
@@ -19,10 +16,7 @@ import {
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange,
-  toggleWorksheetSaving,
-  setWorksheetSaveFailedStatus,
-  saveWorksheet
+  onCommentsForAttorneyChange
 } from './actions/Dockets';
 
 class WorksheetFormEntry extends React.PureComponent {
@@ -35,23 +29,13 @@ class WorksheetFormEntry extends React.PureComponent {
 
     return <div className="cf-hearings-worksheet-data">
       <label htmlFor={this.props.id}>{this.props.name}</label>
-      {this.props.print ? 
-        <p>{this.props.value}</p> : 
+      {this.props.print ?
+        <p>{this.props.value}</p> :
         <Textarea {...textAreaProps} />}
     </div>;
   }
 }
-
 export class HearingWorksheet extends React.PureComponent {
-
-  save = (worksheet, worksheetIssues) => () => {
-    this.props.toggleWorksheetSaving();
-    this.props.setWorksheetSaveFailedStatus(false);
-    this.props.saveWorksheet(worksheet);
-    this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
-  };
-
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
@@ -59,91 +43,21 @@ export class HearingWorksheet extends React.PureComponent {
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
-    let { worksheet, worksheetIssues } = this.props;
+    let { worksheet } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
+    const worksheetHeader = <WorksheetHeader
+      print={this.props.print}
+      veteranLawJudge={this.props.veteran_law_judge}
+      appellant={appellant}
+    />;
+
     return <div>
       <div className="cf-app-segment--alt cf-hearings-worksheet">
-
-        <div className="cf-title-meta-right">
-          <div className="title cf-hearings-title-and-judge">
-            <h1>Hearing Worksheet</h1>
-            <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
-          </div>
-          <div className="meta">
-            <div>{moment(worksheet.date).format('ddd l')}</div>
-            <div>Hearing Type: {worksheet.request_type}</div>
-          </div>
-        </div>
-
-        <div className="cf-hearings-worksheet-data">
-          <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-          {!this.props.print && 
-            <AutoSave
-              save={this.save(worksheet, worksheetIssues)}
-              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-              isSaving={this.props.worksheetIsSaving}
-              saveFailed={this.props.saveWorksheetFailed}
-            />
-          }
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>Appellant Name:</div>
-            <div><b>{appellant}</b></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>City/State:</div>
-            <div>{worksheet.appellant_city}, {worksheet.appellant_state}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Regional Office:</div>
-            <div>{worksheet.regional_office_name}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>Representative Org:</div>
-            <div>{worksheet.representative}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-            <TextField
-              name="Rep. Name:"
-              id="appellant-vet-rep-name"
-              aria-label="Representative Name"
-              value={worksheet.representative_name || ''}
-              onChange={this.props.onRepNameChange}
-              maxLength={30}
-              hideInput={this.props.print}
-            />
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-1">
-            <div>Veteran Name:</div>
-            <div><b>{worksheet.veteran_mi_formatted}</b></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Veteran ID:</div>
-            <div><b>{worksheet.vbms_id}</b></div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Veteran's Age:</div>
-            <div>{worksheet.veteran_age}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-          </div>
-          <div className="cf-hearings-worksheet-data-cell cf-hearings-worksheet-witness-cell column-5">
-            <label htmlFor="appellant-vet-witness">Witness (W)/Observer (O):</label>
-            {!this.props.print &&
-              <Textarea
-                name="Witness (W)/Observer (O):"
-                id="appellant-vet-witness"
-                aria-label="Witness Observer"
-                value={worksheet.witness || ''}
-                onChange={this.onWitnessChange}
-                maxLength={120}
-              />
-            }
-          </div>
-        </div>
+        {worksheetHeader}
 
         <HearingWorksheetDocs
           {...this.props}
@@ -153,6 +67,10 @@ export class HearingWorksheet extends React.PureComponent {
           {...this.props}
           print={this.props.print}
         />
+
+        <PrintPageBreak />
+
+        {this.props.print && worksheetHeader}
 
         <form className="cf-hearings-worksheet-form">
           <WorksheetFormEntry
@@ -205,7 +123,6 @@ export class HearingWorksheet extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
-  worksheetIssues: state.worksheetIssues,
   worksheetAppeals: state.worksheetAppeals
 });
 
@@ -215,11 +132,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange,
-  toggleWorksheetSaving,
-  saveWorksheet,
-  setWorksheetSaveFailedStatus,
-  saveIssues
+  onCommentsForAttorneyChange
 }, dispatch);
 
 export default connect(
