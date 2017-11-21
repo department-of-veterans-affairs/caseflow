@@ -184,12 +184,11 @@ export class HearingWorksheet extends React.PureComponent {
           />
         </form>
       </div>
+      {!this.props.print &&
       <div className="cf-push-right">
-        {!this.props.print &&
-          <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
-            Save as PDF
-          </Link>
-        }
+        <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
+          Save as PDF
+        </Link>
         <Link
           name="review-efolder"
           href={`${readerLink}?category=case_summary`}
@@ -197,6 +196,7 @@ export class HearingWorksheet extends React.PureComponent {
           target="_blank">
             Review eFolder</Link>
       </div>
+      }
     </div>;
   }
 }
