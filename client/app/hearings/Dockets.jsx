@@ -97,7 +97,7 @@ export class Dockets extends React.Component {
           className="dockets"
           columns={columns}
           rowObjects={rowObjects}
-          summary={'Upcoming Hearing Days?'}
+          summary="Upcoming Hearing Days?"
           getKeyForRow={this.getKeyForRow}
         />
       </div>

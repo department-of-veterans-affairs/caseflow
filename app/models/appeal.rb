@@ -10,6 +10,7 @@ class Appeal < ActiveRecord::Base
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class MultipleDecisionError < StandardError; end
+  class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -29,6 +30,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
@@ -83,6 +85,10 @@ class Appeal < ActiveRecord::Base
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Court Remand" => "cavc_remand"
+  }.freeze
+
+  LOCATION_CODES = {
+    remand_returned_to_bva: "96"
   }.freeze
 
   attr_writer :ssoc_dates
@@ -208,7 +214,13 @@ class Appeal < ActiveRecord::Base
   end
 
   def eligible_for_ramp?
-    status == "Advance" || status == "Remand"
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def in_location?(location)
+    fail UnknownLocationError unless LOCATION_CODES[location]
+
+    location_code == LOCATION_CODES[location]
   end
 
   def attributes_for_hearing

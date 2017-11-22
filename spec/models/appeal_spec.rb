@@ -17,7 +17,8 @@ describe Appeal do
       appellant_last_name: "Tester",
       decision_date: nil,
       manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at
+      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
+      location_code: location_code
     )
   end
 
@@ -43,6 +44,7 @@ describe Appeal do
   let(:documents) { [] }
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
+  let(:location_code) { nil }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -443,6 +445,29 @@ describe Appeal do
     end
   end
 
+  context "#in_location?" do
+    subject { appeal.in_location?(location) }
+    let(:location) { :remand_returned_to_bva }
+
+    context "when location is not recognized" do
+      let(:location) { :never_never_land }
+
+      it "raises error" do
+        expect { subject }.to raise_error(Appeal::UnknownLocationError)
+      end
+    end
+
+    context "when is in location" do
+      let(:location_code) { "96" }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when is not in location" do
+      let(:location_code) { "97" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context ".find_or_create_by_vacols_id" do
     let!(:vacols_appeal) do
       Generators::Appeal.build(vacols_id: "123C", vbms_id: "456VBMS")
@@ -827,19 +852,34 @@ describe Appeal do
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
+    let(:appeal) do
+      Generators::Appeal.build(vacols_id: "123", status: status, location_code: location_code)
+    end
+
+    let(:location_code) { nil }
+
     context "is false if status is not advance or remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Active") }
+      let(:status) { "Active" }
       it { is_expected.to be_falsey }
     end
 
-    context "is true if status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+    context "status is remand" do
+      let(:status) { "Remand" }
       it { is_expected.to be_truthy }
     end
 
-    context "is true if status is advance" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Advance") }
-      it { is_expected.to be_truthy }
+    context "status is advance" do
+      let(:status) { "Advance" }
+
+      context "location is remand_returned_to_bva" do
+        let(:location_code) { "96" }
+        it { is_expected.to be_falsey }
+      end
+
+      context "location is not remand_returned_to_bva" do
+        let(:location_code) { "90" }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 
