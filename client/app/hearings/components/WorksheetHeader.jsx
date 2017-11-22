@@ -35,6 +35,7 @@ class WorksheetHeader extends React.PureComponent {
       worksheetIssues,
       veteranLawJudge
     } = this.props;
+
     let olderVeteran = worksheet.veteran_age > 74;
 
     return <div>
