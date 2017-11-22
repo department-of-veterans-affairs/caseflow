@@ -4,6 +4,7 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   include CachedAttributes
 
+  belongs_to :appeal_series
   has_many :tasks
   has_many :appeal_views
   has_many :worksheet_issues
@@ -35,7 +36,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc, :veteran_date_of_birth
+  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -142,9 +143,7 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
-  def veteran_age
-    Veteran.new(date_of_birth: veteran_date_of_birth).age
-  end
+  delegate :age, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -329,6 +328,10 @@ class Appeal < ActiveRecord::Base
     status != "Complete"
   end
 
+  def merged?
+    disposition == "Merged Appeal"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
@@ -363,6 +366,11 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  # A uniqued list of issue codes on appeal, that is the combination of ISSPROG and ISSCODE
+  def issue_codes
+    issues.map(&:issue_code).uniq
   end
 
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then

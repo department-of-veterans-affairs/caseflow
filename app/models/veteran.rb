@@ -9,7 +9,7 @@ class Veteran
   BGS_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
     address_line3 city state country zip_code military_postal_type_code
-    military_post_office_type_code service
+    military_post_office_type_code service date_of_birth
   ).freeze
 
   CHARACTER_OF_SERVICE_CODES = {
@@ -24,7 +24,6 @@ class Veteran
   }.freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
-  attr_accessor :date_of_birth
 
   COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
 
@@ -69,7 +68,7 @@ class Veteran
 
   def age
     return unless date_of_birth
-    dob = date_of_birth
+    dob = Time.strptime(date_of_birth, "%m/%d/%Y")
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)

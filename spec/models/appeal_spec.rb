@@ -1236,6 +1236,29 @@ describe Appeal do
     end
   end
 
+  context "#issue_codes" do
+    subject { appeal.issue_codes }
+
+    let(:appeal) do
+      Generators::Appeal.build(issues: issues)
+    end
+
+    let(:issues) do
+      [
+        Generators::Issue.build(program: :compensation, code: "01"),
+        Generators::Issue.build(program: :compensation, code: "02"),
+        Generators::Issue.build(program: :compensation, code: "01")
+      ]
+    end
+
+    it { is_expected.to include("compensation-01") }
+    it { is_expected.to include("compensation-02") }
+    it { is_expected.to_not include("compensation-03") }
+    it "returns uniqued issue codes" do
+      expect(subject.length).to eq(2)
+    end
+  end
+
   context "#worksheet_issues" do
     subject { appeal.worksheet_issues.size }
 
