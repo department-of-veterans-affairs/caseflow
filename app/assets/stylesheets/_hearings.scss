@@ -188,7 +188,6 @@ $color-hearings-saving: #777;
     }
   }
 
-  .addOn,
   .transcriptRequested {
     display: inline-block;
     text-align: left;
@@ -199,12 +198,8 @@ $color-hearings-saving: #777;
     }
   }
 
-  .addOn {
-    width: 33%;
-  }
-
   .transcriptRequested {
-    width: 67%;
+    width: 100%;
   }
 }
 

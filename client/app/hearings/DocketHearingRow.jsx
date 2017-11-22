@@ -51,9 +51,6 @@ export class DocketHearingRow extends React.PureComponent {
 
   setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
 
-  setAddOn = (value) =>
-    this.props.setAddOn(this.props.index, value, this.props.hearingDate);
-
   setTranscriptRequested = (value) =>
     this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
@@ -108,14 +105,6 @@ export class DocketHearingRow extends React.PureComponent {
             value={hearing.aod}
             searchable
           />
-          <div className="addOn">
-            <Checkbox
-              label="Add on"
-              name={`${hearing.id}.addon`}
-              value={hearing.add_on}
-              onChange={this.setAddOn}
-            />
-          </div>
           <div className="transcriptRequested">
             <Checkbox
               label="Transcript Requested"
