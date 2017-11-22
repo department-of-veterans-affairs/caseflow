@@ -437,3 +437,44 @@ $color-hearings-saving: #777;
     }
   }
 }
+
+@page {
+  size: 8.5in 11in;
+  margin: 0;
+}
+
+@media print {
+  h1 {
+    font-size: 25px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .cf-print-page-break {
+    break-after: page;
+  }
+
+  .cf-hearings-worksheet {
+    margin-bottom: 0;
+    padding-bottom: 0;
+
+    .cf-hearings-second-page {
+      min-height: 11in;
+      display: flex;
+      flex-direction: column;
+
+      .cf-hearings-worksheet-form {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+
+        .cf-hearings-worksheet-data:last-child {
+          margin-bottom: inherit;
+        }
+      }
+    }
+  }
+}

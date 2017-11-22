@@ -21,6 +21,8 @@ RSpec.feature "Hearings" do
         Generators::Hearing.create(
           id: id,
           user: current_user,
+          appellant_first_name: "AppellantFirstName",
+          appellant_last_name: "AppellantLastName",
           date: 5.days.from_now,
           type: "video",
           master_record: false
@@ -145,6 +147,15 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
+
+      visit "/hearings/1/worksheet/print?do_not_open_print_prompt=1"
+      expect(page).to have_content("This is a rep name")
+      expect(page).to have_content("This is a witness")
+      expect(page).to have_content("These are contentions")
+      expect(page).to have_content("This is military service")
+      expect(page).to have_content("This is evidence")
+      expect(page).to have_content("These are comments")
+      expect(page.title).to eq "Hearing Worksheet for AppellantLastName, AppellantFirstName A."
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
