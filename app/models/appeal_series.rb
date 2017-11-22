@@ -28,7 +28,7 @@ class AppealSeries < ActiveRecord::Base
     def generate_appeal_series(appeals)
       # Before we get started, delete all the existing appeal series for our appeals
       # Since we have "dependent: :nullify" set above, this will null out all the foreign appeal_series_ids on appeals
-      appeals.map(&:appeal_series).compact.uniq.each(&:destroy)
+      where(id: appeals.map(&:appeal_series_id).uniq).destroy_all
 
       # Build a tree linking child appeals to their parents
       nodes = appeals.map do |appeal|
@@ -53,7 +53,7 @@ class AppealSeries < ActiveRecord::Base
 
       roots, children = nodes.partition { |node| node[:parent_appeal].nil? }
 
-      # Invert the tree
+      # Invert the tree, so we can traverse it downward later
       children.each do |child|
         parent = nodes.find { |node| node[:appeal] == child[:parent_appeal] }
         parent[:children].push(child)
@@ -78,10 +78,13 @@ class AppealSeries < ActiveRecord::Base
       end
 
       # Combine series if they have been merged
-      # The description of issues that are merged are appended with the date and vacols_id of the source appeal
+      # The descriptions of issues on an appeal that has had another appeal merged
+      # into it are appended with the date and vacols_id of the source appeal.
+      
+      # Appeals that have been merged into other appeals
       merged = nodes.select { |node| node[:appeal].merged? }
 
-      merge_cnt = merged.length
+      merge_count = merged.length
 
       merge_strs = merged.map do |node|
         date = node[:appeal].decision_date.strftime("%m/%d/%y")
@@ -108,8 +111,9 @@ class AppealSeries < ActiveRecord::Base
       end
 
       merge_table.values.uniq.each do |sid|
-        # If the number of merges changes, the series will need to be regenerated
-        series_table[sid] = create(merged_appeal_count: merge_cnt)
+        # We keep track of the count of merged appeals in a series because if
+        # further merges take place, we need to regenerate the appeal series.
+        series_table[sid] = create(merged_appeal_count: merge_count)
       end
 
       nodes.each do |node|
