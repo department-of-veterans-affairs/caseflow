@@ -192,14 +192,11 @@ $color-hearings-saving: #777;
     display: inline-block;
     text-align: left;
     padding: 0 .32em;
+    width: 100%;
 
     .cf-form-checkboxes {
       margin-bottom: 0;
     }
-  }
-
-  .transcriptRequested {
-    width: 100%;
   }
 }
 
