@@ -80,7 +80,7 @@ class AppealSeries < ActiveRecord::Base
       # Combine series if they have been merged
       # The descriptions of issues on an appeal that has had another appeal merged
       # into it are appended with the date and vacols_id of the source appeal.
-      
+
       # Appeals that have been merged into other appeals
       merged = nodes.select { |node| node[:appeal].merged? }
 
