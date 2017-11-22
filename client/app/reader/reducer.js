@@ -73,14 +73,25 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
-const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
+const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
   update(
     state,
-    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
+    {
+      ui: {
+        pdfSidebar: {
+          error: {
+            [errorType]: {
+              visible: { $set: isVisible },
+              message: { $set: isVisible ? errorMsg : null }
+            }
+          }
+        }
+      }
+    },
   );
 
-const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
-const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
+const hideErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, false, errorMsg);
+const showErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, true, errorMsg);
 
 const updateLastReadDoc = (state, docId) =>
   update(
@@ -105,10 +116,13 @@ const openAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
-const initialShowErrorMessageState = {
-  tag: false,
-  category: false,
-  annotation: false
+const initialPdfSidebarErrorState = {
+  tag: { visible: false,
+    message: null },
+  category: { visible: false,
+    message: null },
+  annotation: { visible: false,
+    message: null }
 };
 
 export const initialState = {
@@ -126,16 +140,6 @@ export const initialState = {
   ],
   ui: {
     tagOptions: [],
-    caseSelect: {
-      selectedAppealVacolsId: null,
-      isRequestingAppealsUsingVeteranId: false,
-      selectedAppeal: {},
-      receivedAppeals: [],
-      search: {
-        showErrorMessage: false,
-        showNoAppealsInfoMessage: false
-      }
-    },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -143,9 +147,6 @@ export const initialState = {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
-    caseSelectCriteria: {
-      searchQuery: ''
-    },
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -159,10 +160,11 @@ export const initialState = {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
-      jumpToPageNumber: null
+      jumpToPageNumber: null,
+      hideSearchBar: true
     },
     pdfSidebar: {
-      showErrorMessage: initialShowErrorMessageState
+      error: initialPdfSidebarErrorState
     },
     pdfList: {
       scrollTop: null,
@@ -187,6 +189,7 @@ export const initialState = {
   documents: {},
   pages: {},
   pdfDocuments: {},
+  documentErrors: {},
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
@@ -320,43 +323,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
-  case Constants.SET_CASE_SELECT_SEARCH:
-    return update(state, {
-      ui: {
-        caseSelectCriteria: {
-          searchQuery: {
-            $set: action.payload.searchQuery
-          }
-        }
-      }
-    });
-  case Constants.CLEAR_CASE_SELECT_SEARCH:
-    return update(state, {
-      ui: {
-        caseSelectCriteria: {
-          searchQuery: {
-            $set: ''
-          }
-        },
-        caseSelect: {
-          receivedAppeals: { $set: {} },
-          selectedAppeal: { $set: {} },
-          selectedAppealVacolsId: { $set: null },
-          search: {
-            showErrorMessage: { $set: false },
-            showNoAppealsInfoMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          selectedAppealVacolsId: { $set: action.payload.vacolsId }
-        }
-      }
-    });
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -375,7 +341,7 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
+        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
       },
       documents: {
         [action.payload.docId]: {
@@ -759,7 +725,7 @@ export const reducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.STOP_PLACING_ANNOTATION:
-    return update(state, {
+    return update(hideErrorMessage(state, 'annotation'), {
       placingAnnotationIconPageCoords: {
         $set: null
       },
@@ -801,63 +767,8 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.REQUEST_APPEAL_USING_VETERAN_ID:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: true }
-        }
-      }
-    });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false },
-          receivedAppeals: {
-            $set: action.payload.appeals
-          },
-          search: {
-            showErrorMessage: { $set: false },
-            showNoAppealsInfoMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false },
-          search: {
-            showErrorMessage: { $set: true },
-            showNoAppealsInfoMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false },
-          search: {
-            showNoAppealsInfoMessage: { $set: true },
-            showErrorMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.CASE_SELECT_APPEAL:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          selectedAppeal: { $set: action.payload.appeal }
-        }
-      }
-    });
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
-    return update(showErrorMessage(state, 'annotation'), {
+    return update(showErrorMessage(state, 'annotation', action.payload.errorMessage), {
       ui: {
         // This will cause a race condition if the user has created multiple annotations.
         // Whichever annotation failed most recently is the one that'll be in the
@@ -920,7 +831,7 @@ export const reducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
     return moveModel(
-      showErrorMessage(state, 'annotation'),
+      showErrorMessage(state, 'annotation', action.payload.errorMessage),
       ['ui', 'pendingEditingAnnotations'],
       ['editingAnnotations'],
       action.payload.annotationId
@@ -989,16 +900,20 @@ export const reducer = (state = initialState, action = {}) => {
         documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdf: {
-            hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } } } }
+    );
+  case Constants.TOGGLE_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: !state.ui.pdf.hideSearchBar } } } }
+    );
+  case Constants.SHOW_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: false } } } }
+    );
+  case Constants.HIDE_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: true } } } }
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
@@ -1102,6 +1017,22 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
+  case Constants.SET_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: true
+        }
+      }
+    });
+  case Constants.CLEAR_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: false
+        }
+      }
+    });
   case Constants.GET_DOCUMENT_TEXT:
     return update(
       state,

@@ -48,72 +48,43 @@ class AppealSeries < ActiveRecord::Base
 
       return [] if appeals.empty?
 
-      no_series_cnt = appeals.count { |appeal| appeal.appeal_series.nil? }
-      needs_update = no_series_cnt > 0
-
-      if !needs_update
-        merge_cnt = appeals.count { |appeal| appeal.disposition == "Merged Appeal" }
-        needs_update = merge_cnt != appeals.first.appeal_series.merged_appeal_count
-      end
-
-      appeals = generate_appeal_series(appeals) if needs_update
+      appeals = generate_appeal_series(appeals) if needs_update(appeals)
 
       appeals.map(&:appeal_series).uniq
     end
 
     private
 
+    def needs_update(appeals)
+      return true if appeals.any? { |appeal| appeal.appeal_series.nil? }
+
+      # If a new appeal has been merged, we need to regenerate the series
+      appeals.count(&:merged?) != appeals.first.appeal_series.merged_appeal_count
+    end
+
     # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def generate_appeal_series(appeals)
-      appeals.map(&:appeal_series).compact.uniq.each(&:destroy)
+      # Before we get started, delete all the existing appeal series for our appeals
+      # Since we have "dependent: :nullify" set above, this will null out all the foreign appeal_series_ids on appeals
+      where(id: appeals.map(&:appeal_series_id).uniq).destroy_all
 
       # Build a tree linking child appeals to their parents
       nodes = appeals.map do |appeal|
         node = { appeal: appeal, children: [] }
         next node if appeal.type == "Original"
 
-        # Attempt to match post-remand appeals on the vacols_id
         if %w(B W).include? appeal.vacols_id[-1]
           parent_id = appeal.vacols_id[0...-1]
-          parent_candidates = appeals.select { |candidate| candidate.vacols_id == parent_id }
-
-          if parent_candidates.length == 1
-            node[:parent_appeal] = parent_candidates.first
-          else
-            node[:incomplete] = true
-          end
-
-          next node
+          parent = appeals.find { |candidate| candidate.vacols_id == parent_id }
+        else
+          parent = find_parent_by_date_and_issues(appeal, appeals)
         end
 
-        # Attempt to match on date, prevent loops
-        if appeal.prior_decision_date.nil? || appeal.prior_decision_date >= appeal.decision_date
-          node[:incomplete] = true
-          next node
-        end
-
-        parent_candidates = appeals.select do |candidate|
-          candidate.decision_date == appeal.prior_decision_date
-        end
-
-        if parent_candidates.empty?
-          node[:incomplete] = true
-          next node
-        elsif parent_candidates.length == 1
-          node[:parent_appeal] = parent_candidates.first
-          next node
-        end
-
-        # More than one parent with the prior decision date, attempt to match on issues
-        parent_candidates.select! do |candidate|
-          !(appeal.issue_codes & candidate.issue_codes).empty?
-        end
-
-        if parent_candidates.length == 1
-          node[:parent_appeal] = parent_candidates.first
+        if parent
+          node[:parent_appeal] = parent
         else
           node[:incomplete] = true
         end
@@ -123,7 +94,7 @@ class AppealSeries < ActiveRecord::Base
 
       roots, children = nodes.partition { |node| node[:parent_appeal].nil? }
 
-      # Invert the tree
+      # Invert the tree, so we can traverse it downward later
       children.each do |child|
         parent = nodes.find { |node| node[:appeal] == child[:parent_appeal] }
         parent[:children].push(child)
@@ -148,9 +119,13 @@ class AppealSeries < ActiveRecord::Base
       end
 
       # Combine series if they have been merged
-      merged = nodes.select { |node| node[:appeal].disposition == "Merged Appeal" }
+      # The descriptions of issues on an appeal that has had another appeal merged
+      # into it are appended with the date and vacols_id of the source appeal.
 
-      merge_cnt = merged.length
+      # Appeals that have been merged into other appeals
+      merged = nodes.select { |node| node[:appeal].merged? }
+
+      merge_count = merged.length
 
       merge_strs = merged.map do |node|
         date = node[:appeal].decision_date.strftime("%m/%d/%y")
@@ -158,11 +133,11 @@ class AppealSeries < ActiveRecord::Base
         "From appeal merged on #{date} (#{folder})"
       end
 
-      # Search issue descriptions for text indicating the source appeal
-      # The issue description field has a character limit, so the note may be truncated
       merged.each_with_index do |node, i|
+        # If the description exceeds 100 characters, the merge string will be truncated
+        # We incrementally add add characters until we get to a unique merge string to avoid some cases of truncation
         abbr_merge_str = ""
-        abbr_len = 30 # The minimum truncated length that can be searched for
+        abbr_len = 30 # The minimum truncated length that can be searched for (must include at least a full date)
 
         loop do
           abbr_merge_str = merge_strs[i][0...abbr_len]
@@ -171,26 +146,21 @@ class AppealSeries < ActiveRecord::Base
           abbr_len += 1
         end
 
-        destination_candidates = nodes.select do |candidate|
-          candidate[:appeal].issues.any? do |issue|
-            issue.description.include?(abbr_merge_str)
-          end
-        end
+        target = find_merge_target(abbr_merge_str, nodes)
 
-        if destination_candidates.length == 1
-          merge_table[node[:series_id]] = destination_candidates.first[:series_id]
-        end
+        merge_table[node[:series_id]] = target[:series_id] if target
       end
 
       merge_table.values.uniq.each do |sid|
-        # If the number of merges changes, the series will need to be regenerated
-        series_table[sid] = create(merged_appeal_count: merge_cnt)
+        # We keep track of the count of merged appeals in a series because if
+        # further merges take place, we need to regenerate the appeal series.
+        series_table[sid] = create(merged_appeal_count: merge_count)
       end
 
       nodes.each do |node|
         # Set the series, joining through the merge table to the series table
         node[:appeal].update(appeal_series: series_table[merge_table[node[:series_id]]])
-        # If any node is marked as complete, the series is marked as incomplete
+        # If any node is marked as incomplete, the series is marked as incomplete
         node[:appeal].appeal_series.update(incomplete: true) if node[:incomplete]
       end
 
@@ -200,5 +170,32 @@ class AppealSeries < ActiveRecord::Base
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
+
+    def find_parent_by_date_and_issues(appeal, appeals)
+      # Prevent loops
+      return nil if appeal.prior_decision_date.nil? || appeal.prior_decision_date >= appeal.decision_date
+
+      candidates_by_date = appeals.select do |candidate|
+        candidate.decision_date == appeal.prior_decision_date
+      end
+
+      return candidates_by_date.first if candidates_by_date.length == 1
+
+      candidates_by_issue = candidates_by_date.select do |candidate|
+        !(appeal.issue_codes & candidate.issue_codes).empty?
+      end
+
+      return candidates_by_issue.first if candidates_by_issue.length == 1
+    end
+
+    def find_merge_target(merge_str, nodes)
+      matches = nodes.select do |candidate|
+        candidate[:appeal].issues.any? do |issue|
+          issue.description.include?(merge_str)
+        end
+      end
+
+      return matches.first if matches.length == 1
+    end
   end
 end

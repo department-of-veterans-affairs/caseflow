@@ -52,22 +52,20 @@ class Finish extends React.PureComponent {
 
     switch (this.props.rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
     case RAMP_INTAKE_STATES.COMPLETED:
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
-    let epName, optionName;
+    let optionName;
 
     if (this.props.rampElection.optionSelected === 'supplemental_claim') {
       optionName = 'Supplemental Claim';
-      epName = '683 RAMP – Supplemental Claim Review Rating';
     } else {
       optionName = 'Higher-Level Review';
-      epName = '682 RAMP – Higher Level Review Rating';
     }
 
     const steps = [
@@ -75,9 +73,7 @@ class Finish extends React.PureComponent {
         Upload the RAMP Election form to the VBMS eFolder and ensure the
         Document Type is <b>Correspondence</b>.
       </span>,
-      <span>Update the Subject Line with "Ramp Election".</span>,
-      <span>Create an EP <strong>{ epName }</strong> in VBMS.</span>,
-      <span>Add a placeholder contention of "RAMP".</span>
+      <span>Update the Subject Line with "Ramp Election".</span>
     ];
     const stepFns = steps.map((step, index) =>
       () => <span><strong>Step {index + 1}.</strong> {step}</span>
@@ -99,7 +95,7 @@ class Finish extends React.PureComponent {
       <p>Please complete the following steps outside Caseflow.</p>
       <BareOrderedList className="cf-steps-outside-of-caseflow-list" items={stepFns} />
 
-      <Alert title={ issuesAlertTitle } type="info">
+      <Alert title={issuesAlertTitle} type="info">
         { this.getIssuesAlertContent(appeals) }
       </Alert>
 

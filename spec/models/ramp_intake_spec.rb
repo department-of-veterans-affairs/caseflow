@@ -32,7 +32,7 @@ describe RampIntake do
       RampElection.create!(
         veteran_file_number: "64205555",
         notice_date: 5.days.ago,
-        option_selected: :supplemental_claim,
+        option_selected: "supplemental_claim",
         receipt_date: 3.days.ago
       )
     end
@@ -52,7 +52,12 @@ describe RampIntake do
     subject { intake.complete! }
 
     let(:detail) do
-      RampElection.create!(veteran_file_number: "64205555", notice_date: 5.days.ago)
+      RampElection.create!(
+        veteran_file_number: "64205555",
+        notice_date: 5.days.ago,
+        option_selected: "supplemental_claim",
+        receipt_date: 3.days.ago
+      )
     end
 
     let!(:appeals_to_close) do
@@ -61,7 +66,9 @@ describe RampIntake do
       end
     end
 
-    it "closes out the appeals correctly" do
+    it "closes out the appeals correctly and creates an end product" do
+      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
       expect(Fakes::AppealRepository).to receive(:close!).with(
         appeal: appeals_to_close.first,
         user: intake.user,

@@ -17,7 +17,8 @@ describe Appeal do
       appellant_last_name: "Tester",
       decision_date: nil,
       manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at
+      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
+      location_code: location_code
     )
   end
 
@@ -43,6 +44,7 @@ describe Appeal do
   let(:documents) { [] }
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
+  let(:location_code) { nil }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -443,6 +445,29 @@ describe Appeal do
     end
   end
 
+  context "#in_location?" do
+    subject { appeal.in_location?(location) }
+    let(:location) { :remand_returned_to_bva }
+
+    context "when location is not recognized" do
+      let(:location) { :never_never_land }
+
+      it "raises error" do
+        expect { subject }.to raise_error(Appeal::UnknownLocationError)
+      end
+    end
+
+    context "when is in location" do
+      let(:location_code) { "96" }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when is not in location" do
+      let(:location_code) { "97" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context ".find_or_create_by_vacols_id" do
     let!(:vacols_appeal) do
       Generators::Appeal.build(vacols_id: "123C", vbms_id: "456VBMS")
@@ -506,44 +531,88 @@ describe Appeal do
     end
   end
 
-  context "#close!" do
+  context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
     let(:user) { Generators::User.build }
+    let(:disposition) { "RAMP Opt-in" }
 
-    subject { appeal.close!(user: user, closed_on: 4.days.ago, disposition: disposition) }
-
-    context "when disposition is not valid" do
-      let(:disposition) { "I'm not a disposition" }
+    context "when called with both appeal and appeals" do
+      let(:vacols_record) { :ready_to_certify }
 
       it "should raise error" do
-        expect { subject }.to raise_error(/Disposition/)
+        expect do
+          Appeal.close(
+            appeal: appeal,
+            appeals: [appeal, another_appeal],
+            user: user,
+            closed_on: 4.days.ago,
+            disposition: disposition
+          )
+        end.to raise_error("Only pass either appeal or appeals")
       end
     end
 
-    context "when disposition is valid" do
-      let(:disposition) { "RAMP Opt-in" }
+    context "when multiple appeals" do
+      it "closes each appeal" do
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: another_appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
 
-      context "when appeal is not active" do
-        let(:vacols_record) { :full_grant_decided }
+        Appeal.close(
+          appeals: [appeal, another_appeal],
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition
+        )
+      end
+    end
+
+    context "when just one appeal" do
+      subject do
+        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
+      end
+
+      context "when disposition is not valid" do
+        let(:disposition) { "I'm not a disposition" }
 
         it "should raise error" do
-          expect { subject }.to raise_error(/active/)
+          expect { subject }.to raise_error(/Disposition/)
         end
       end
 
-      context "when appeal is active" do
-        let(:vacols_record) { :ready_to_certify }
+      context "when disposition is valid" do
+        context "when appeal is not active" do
+          let(:vacols_record) { :full_grant_decided }
 
-        it "closes the appeal in VACOLS" do
-          expect(Fakes::AppealRepository).to receive(:close!).with(
-            appeal: appeal,
-            user: user,
-            closed_on: 4.days.ago,
-            disposition_code: "P"
-          )
+          it "should raise error" do
+            expect { subject }.to raise_error(/active/)
+          end
+        end
 
-          subject
+        context "when appeal is active" do
+          let(:vacols_record) { :ready_to_certify }
+
+          it "closes the appeal in VACOLS" do
+            expect(Fakes::AppealRepository).to receive(:close!).with(
+              appeal: appeal,
+              user: user,
+              closed_on: 4.days.ago,
+              disposition_code: "P"
+            )
+
+            subject
+          end
         end
       end
     end
@@ -783,19 +852,34 @@ describe Appeal do
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
+    let(:appeal) do
+      Generators::Appeal.build(vacols_id: "123", status: status, location_code: location_code)
+    end
+
+    let(:location_code) { nil }
+
     context "is false if status is not advance or remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Active") }
+      let(:status) { "Active" }
       it { is_expected.to be_falsey }
     end
 
-    context "is true if status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+    context "status is remand" do
+      let(:status) { "Remand" }
       it { is_expected.to be_truthy }
     end
 
-    context "is true if status is advance" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Advance") }
-      it { is_expected.to be_truthy }
+    context "status is advance" do
+      let(:status) { "Advance" }
+
+      context "location is remand_returned_to_bva" do
+        let(:location_code) { "96" }
+        it { is_expected.to be_falsey }
+      end
+
+      context "location is not remand_returned_to_bva" do
+        let(:location_code) { "90" }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 

@@ -23,38 +23,38 @@ class HearingWorksheetDocs extends Component {
             <div>{appeal.docket_number}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>NOD:</div>
-            <div>{formatDate(appeal.nod_date)}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
-            <div>Form 9:</div>
-            <div>{formatDate(appeal.form9_date)}</div>
-          </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Prior BVA Decision:</div>
             <div>{formatDate(appeal.prior_decision_date)}</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-5">
-            <div>Docs since Certification:</div>
-            <div>{appeal.cached_number_of_documents_after_certification}</div>
+          <div className="cf-hearings-worksheet-data-cell column-3">
+            <div>NOD:</div>
+            <div>{formatDate(appeal.nod_date)}</div>
           </div>
-        </div>
-        <div>
-          <div className="cf-hearings-worksheet-data-cell column-1">
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>SOC:</div>
             <div>{formatDate(appeal.soc_date)}</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-2">
-            <div>Certification:</div>
-            <div>{formatDate(appeal.certification_date)}</div>
+
+        </div>
+        <div>
+          <div className="cf-hearings-worksheet-data-cell column-1">
+            <div>Form 9:</div>
+            <div>{formatDate(appeal.form9_date)}</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-3">
+          <div className="cf-hearings-worksheet-data-cell column-2">
             <div>SSOC:</div>
             <div>{formatArrayOfDateStrings(appeal.ssoc_dates)}</div>
           </div>
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>&nbsp;</div>
+          <div className="cf-hearings-worksheet-data-cell column-3">
+            <div>Docs since Certification:</div>
+            <div>{appeal.cached_number_of_documents_after_certification}</div>
           </div>
+
+          <div className="cf-hearings-worksheet-data-cell column-4">
+            <div>Certification:</div>
+            <div>{formatDate(appeal.certification_date)}</div>
+          </div>
+
         </div>
         </div>;
       })}

@@ -39,7 +39,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   const renderApp = (Component) => {
     const element = (
       <AppContainer>
-        <Component {...props}/>
+        <Component {...props} />
       </AppContainer>
     );
 

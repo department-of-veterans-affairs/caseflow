@@ -5,7 +5,7 @@ import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAod, setAddOn, setTranscriptRequested } from './actions/Dockets';
+import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from './actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
@@ -43,7 +43,6 @@ const getDate = (date) => {
     replace('PM', 'p.m.');
 };
 
-
 export class DocketHearingRow extends React.PureComponent {
 
   setDisposition = ({ value }) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);
@@ -51,9 +50,6 @@ export class DocketHearingRow extends React.PureComponent {
   setHoldOpen = ({ value }) => this.props.setHoldOpen(this.props.index, value, this.props.hearingDate);
 
   setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
-
-  setAddOn = (value) =>
-    this.props.setAddOn(this.props.index, value, this.props.hearingDate);
 
   setTranscriptRequested = (value) =>
     this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
@@ -109,14 +105,6 @@ export class DocketHearingRow extends React.PureComponent {
             value={hearing.aod}
             searchable
           />
-          <div className="addOn">
-            <Checkbox
-              label="Add on"
-              name={`${hearing.id}.addon`}
-              value={hearing.add_on}
-              onChange={this.setAddOn}
-            />
-          </div>
           <div className="transcriptRequested">
             <Checkbox
               label="Transcript Requested"
@@ -153,7 +141,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDisposition,
   setHoldOpen,
   setAod,
-  setAddOn,
   setTranscriptRequested
 }, dispatch);
 

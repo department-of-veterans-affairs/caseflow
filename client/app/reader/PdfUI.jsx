@@ -2,18 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
+import DocumentSearch from './DocumentSearch';
 import Button from '../components/Button';
 import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar, toggleSearchBar
+} from '../reader/PdfViewer/PdfViewerActions';
 import { rotateDocument } from '../reader/Pdf/PdfActions';
 import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
-  ExternalLink, FitToScreen, Rotate } from '../components/RenderFunctions';
+  ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from '../reader/analytics';
@@ -81,8 +83,10 @@ export class PdfUI extends React.Component {
   }
 
   getPageIndicator = () => {
+    let content = <em>Loading document...</em>;
+
     if (this.props.numPages) {
-      return <span>
+      content = <span>
         <PdfUIPageNumInput
           currentPage={this.state.currentPage}
           numPages={this.props.numPages}
@@ -93,7 +97,7 @@ export class PdfUI extends React.Component {
       </span>;
     }
 
-    return <em>Loading document...</em>;
+    return <span><span className="page-progress-indicator">{content}</span>|</span>;
   }
 
   getPdfFooter = () => {
@@ -112,10 +116,7 @@ export class PdfUI extends React.Component {
         }
       </div>
       <div className="cf-pdf-buttons-center">
-        <span className="page-progress-indicator">
-          { this.getPageIndicator() }
-        </span>
-        |
+        { !this.props.loadError && this.getPageIndicator() }
         <span className="doc-list-progress-indicator">{this.props.docListIsFiltered && <FilterIcon />}
           Document {currentDocIndex + 1} of {this.props.filteredDocIds.length}
         </span>
@@ -192,7 +193,7 @@ export class PdfUI extends React.Component {
                 href={`/reader/appeal${this.props.documentPathBase}/${this.props.doc.id}`}>
                 <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
                   <span title="Open in new tab">{this.props.doc.type}</span>
-                  <span className="cf-pdf-external-link-icon"><ExternalLink/></span>
+                  <span className="cf-pdf-external-link-icon"><ExternalLink /></span>
                 </h1>
               </Link>
             </span>
@@ -205,21 +206,21 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(-ZOOM_RATE)}
             ariaLabel="zoom out">
-            <i className="fa fa-minus" aria-hidden="true"></i>
+            <i className="fa fa-minus" aria-hidden="true" />
           </Button>
           <Button
             name="zoomIn"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.zoom(ZOOM_RATE)}
             ariaLabel="zoom in">
-            <i className="fa fa-plus" aria-hidden="true"></i>
+            <i className="fa fa-plus" aria-hidden="true" />
           </Button>
           <Button
             name="fit"
             classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
             onClick={this.fitToScreen}
             ariaLabel="fit to screen">
-            <FitToScreen/>
+            <FitToScreen />
           </Button>
           <Button
             name="rotation"
@@ -234,8 +235,16 @@ export class PdfUI extends React.Component {
             classNames={['cf-pdf-button cf-pdf-download-icon']}
             onClick={this.openDownloadLink}
             ariaLabel="download pdf">
-            <DownloadIcon/>
+            <DownloadIcon />
           </Button>
+          {this.props.featureToggles.search && <Button
+            name="search"
+            classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
+            ariaLabel="search text"
+            type="submit"
+            onClick={this.props.toggleSearchBar}>
+            <SearchIcon />
+          </Button>}
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
               <Button
@@ -250,9 +259,11 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
+        {this.props.featureToggles.search && <DocumentSearch file={this.props.doc.content_url} />}
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
+          documentType={this.props.doc.type}
           file={this.props.doc.content_url}
           pdfWorker={this.props.pdfWorker}
           id={this.props.id}
@@ -276,6 +287,7 @@ const mapStateToProps = (state, props) => {
   return {
     ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
     docListIsFiltered: docListIsFiltered(state.readerReducer),
+    loadError: state.readerReducer.documentErrors[props.doc.content_url],
     ...state.readerReducer.ui.pdf,
     numPages
   };
@@ -286,7 +298,8 @@ const mapDispatchToProps = (dispatch) => (
     togglePdfSidebar,
     resetJumpToPage,
     rotateDocument,
-    selectCurrentPdf
+    selectCurrentPdf,
+    toggleSearchBar
   }, dispatch)
 );
 
@@ -314,5 +327,7 @@ PdfUI.propTypes = {
   selectCurrentPdf: PropTypes.func,
   showClaimsFolderNavigation: PropTypes.bool.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  hidePdfSidebar: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  showPdf: PropTypes.func
 };

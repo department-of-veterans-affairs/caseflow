@@ -180,16 +180,9 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.amc_full_grants(outcoded_after:)
-    if FeatureToggle.enabled?(:dispatch_full_grants_with_pa)
-      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-                  .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-                  .order("BFDDEC ASC")
-    else
-      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-                  .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-                  .where(%(BFSO <> 'T'))
-                  .order("BFDDEC ASC")
-    end
+    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
+                .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+                .order("BFDDEC ASC")
   end
 
   # rubocop:disable Metrics/MethodLength

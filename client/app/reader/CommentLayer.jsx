@@ -165,7 +165,7 @@ class CommentLayer extends PureComponent {
       <div
         style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
-        className="textLayer"/>
+        className="textLayer" />
     </div>;
   }
 }

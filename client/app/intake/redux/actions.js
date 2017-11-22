@@ -143,9 +143,14 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`, {}, ENDPOINT_NAMES.INTAKE_RAMP_COMPLETE).
     then(
-      () => {
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+          payload: {
+            intake: responseObject
+          },
           meta: { analytics }
         });
 

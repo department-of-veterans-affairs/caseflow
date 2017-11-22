@@ -221,8 +221,19 @@ export const togglePdfSidebar = () => ({
   }
 });
 
-/** Set current PDF **/
+export const toggleSearchBar = () => ({
+  type: Constants.TOGGLE_SEARCH_BAR
+});
 
+export const showSearchBar = () => ({
+  type: Constants.SHOW_SEARCH_BAR
+});
+
+export const hideSearchBar = () => ({
+  type: Constants.HIDE_SEARCH_BAR
+});
+
+/** Set current PDF **/
 export const selectCurrentPdfLocally = (docId) => ({
   type: Constants.SELECT_CURRENT_VIEWER_PDF,
   payload: {
