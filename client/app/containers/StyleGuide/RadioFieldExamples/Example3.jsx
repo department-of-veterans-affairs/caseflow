@@ -27,7 +27,7 @@ export default class Example3 extends React.Component {
     ];
 
     return <RadioField
-      label={<h3>Horizontal Radio Button Forced Into Vertical Layout</h3>}
+      label={<h4>Horizontal Radio Button Forced Into Vertical Layout</h4>}
       name="radio_example_3"
       options={options}
       vertical

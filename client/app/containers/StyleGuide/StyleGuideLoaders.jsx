@@ -2,6 +2,8 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import LoadingContainer from '../../components/LoadingContainer';
 import * as AppConstants from '../../constants/AppConstants';
+import StyleGuideSmallLoader from './StyleGuideSmallLoader';
+import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 
 export default class StyleGuideLoaders extends React.Component {
 
@@ -29,7 +31,8 @@ export default class StyleGuideLoaders extends React.Component {
           <p className="cf-txt-c"> Gathering information in VBMS now......</p>
         </LoadingContainer>
       </div>
-
+      <StyleGuideSmallLoader />
+      <StyleGuideLoadingButton />
     </div>;
   }
 }
