@@ -10,11 +10,6 @@ class AppealSeries < ActiveRecord::Base
     @latest_appeal ||= fetch_latest_appeal
   end
 
-  def active_appeals
-    @active_appeals ||= appeals.select(&:active?)
-                               .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
-  end
-
   def api_sort_date
     appeals.map(&:nod_date).min || DateTime::Infinity.new
   end
@@ -27,6 +22,11 @@ class AppealSeries < ActiveRecord::Base
 
   def fetch_latest_appeal
     active_appeals.first || appeals_by_decision_date.first
+  end
+
+  def active_appeals
+    appeals.select(&:active?)
+           .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
   end
 
   def appeals_by_decision_date
