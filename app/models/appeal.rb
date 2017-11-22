@@ -4,6 +4,7 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   include CachedAttributes
 
+  belongs_to :appeal_series
   has_many :tasks
   has_many :appeal_views
   has_many :worksheet_issues
@@ -327,6 +328,10 @@ class Appeal < ActiveRecord::Base
     status != "Complete"
   end
 
+  def merged?
+    disposition == "Merged Appeal"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
@@ -361,6 +366,11 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  # A uniqued list of issue codes on appeal, that is the combination of ISSPROG and ISSCODE
+  def issue_codes
+    issues.map(&:issue_code).uniq
   end
 
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
