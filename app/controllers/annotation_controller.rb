@@ -2,6 +2,7 @@ class AnnotationController < ApplicationController
   before_action :verify_access
 
   rescue_from ActiveRecord::RecordInvalid do |e|
+    Raven.capture_exception(e)
     render json: { "errors": ["status": 500, "title": e.class.to_s, "detail": e.message] }, status: 500
   end
 
