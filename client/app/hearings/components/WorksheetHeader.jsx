@@ -36,6 +36,8 @@ class WorksheetHeader extends React.PureComponent {
       veteranLawJudge
     } = this.props;
 
+    let olderVeteran = worksheet.veteran_age > 74;
+
     return <div>
       <div className="cf-title-meta-right">
         <div className="title cf-hearings-title-and-judge">
@@ -95,7 +97,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
-          <div>{worksheet.veteran_age}</div>
+          <div className={olderVeteran && 'cf-red-text'}>{worksheet.veteran_age}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-4">
         </div>
