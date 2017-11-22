@@ -1,7 +1,46 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
+  delegate :vacols_id,
+           :active?,
+           :type_code,
+           to: :latest_appeal
+
+  def latest_appeal
+    @latest_appeal ||= fetch_latest_appeal
+  end
+
+  def api_sort_date
+    appeals.map(&:nod_date).min || DateTime::Infinity.new
+  end
+
+  def events
+    appeals.flat_map(&:events).uniq
+  end
+
+  private
+
+  def fetch_latest_appeal
+    active_appeals.first || appeals_by_decision_date.first
+  end
+
+  def active_appeals
+    appeals.select(&:active?)
+           .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
+  end
+
+  def appeals_by_decision_date
+    appeals.sort { |x, y| y.decision_date <=> x.decision_date }
+  end
+
   class << self
+    def for_api(appellant_ssn:)
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9
+
+      appeal_series_by_vbms_id(Appeal.vbms_id_for_ssn(appellant_ssn))
+        .sort_by(&:api_sort_date)
+    end
+
     def appeal_series_by_vbms_id(vbms_id)
       appeals = Appeal.repository.appeals_by_vbms_id(vbms_id)
 

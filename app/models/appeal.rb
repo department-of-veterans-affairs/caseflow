@@ -35,6 +35,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+  vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
   vacols_attr_accessor :cavc
 
@@ -85,7 +86,9 @@ class Appeal < ActiveRecord::Base
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
-    "Court Remand" => "cavc_remand"
+    "Reconsideration" => "reconsideration",
+    "Court Remand" => "cavc_remand",
+    "Clear and Unmistakable Error" => "cue"
   }.freeze
 
   LOCATION_CODES = {
@@ -410,11 +413,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    !!type_code
+    %w(original post_remand cavc_remand).include? type_code
   end
 
   def type_code
-    TYPE_CODES[type]
+    TYPE_CODES[type] || "other"
   end
 
   def latest_event_date
@@ -599,6 +602,17 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
+    # Because SSN is not accurate in VACOLS, we pull the file
+    # number from BGS for the SSN and use that to look appeals
+    # up in VACOLS
+    def vbms_id_for_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
+
+      fail ActiveRecord::RecordNotFound unless file_number
+
+      convert_file_number_to_vacols(file_number)
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
@@ -613,17 +627,6 @@ class Appeal < ActiveRecord::Base
         closed_on: closed_on,
         disposition_code: disposition_code
       )
-    end
-
-    # Because SSN is not accurate in VACOLS, we pull the file
-    # number from BGS for the SSN and use that to look appeals
-    # up in VACOLS
-    def vbms_id_for_ssn(ssn)
-      file_number = bgs.fetch_file_number_by_ssn(ssn)
-
-      fail ActiveRecord::RecordNotFound unless file_number
-
-      convert_file_number_to_vacols(file_number)
     end
   end
 end
