@@ -7,6 +7,7 @@ import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
+import querystring from 'querystring';
 
 export const getWorksheet = (id, dispatch) => {
   ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
@@ -20,9 +21,18 @@ export const getWorksheet = (id, dispatch) => {
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
-    // TODO: if !worksheet call this.props.getWorksheet
     if (!this.props.worksheet) {
       this.props.getWorksheet(this.props.hearingId);
+    }
+  }
+
+  componentDidUpdate() {
+    // We use the `do_not_open_print_prompt` querystring option for testing,
+    // since Selenium struggles to interact with browser UI like a print prompt.
+    const query = querystring.parse(window.location.search.slice(1));
+
+    if (this.props.worksheet && this.props.print && !query.do_not_open_print_prompt) {
+      window.print();
     }
   }
 
@@ -48,9 +58,7 @@ export class HearingWorksheetContainer extends React.Component {
       </div>;
     }
 
-    return <HearingWorksheet
-      {...this.props}
-    />;
+    return <HearingWorksheet {...this.props} />;
   }
 }
 
