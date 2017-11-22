@@ -47,7 +47,7 @@ describe "Appeals API v2", type: :request do
           status: "Advance",
           nod_date: Time.zone.today - 6.months,
           soc_date: Time.zone.today - 2.months,
-          form9_date: Time.zone.today - 1.months,
+          form9_date: Time.zone.today - 1.month,
           disposition: nil
         }
       )

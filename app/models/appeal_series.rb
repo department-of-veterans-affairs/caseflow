@@ -1,30 +1,18 @@
 class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
+  delegate :vacols_id,
+           :active?,
+           :type_code,
+           to: :latest_appeal
+
   def latest_appeal
-    return @latest_appeal if @latest_appeal
-
-    active = appeals.select { |appeal| appeal.active? }
-
-    if active.length > 1
-      active.sort! { |x, y| y.last_location_change_date <=> x.last_location_change_date }
-    end
-
-    return active.first if active.length > 0
-
-    @latest_appeal = appeals.sort { |x, y| y.decision_date <=> x.decision_date }.first
+    @latest_appeal ||= fetch_latest_appeal
   end
 
-  def vacols_id
-    latest_appeal.vacols_id
-  end
-
-  def active?
-    latest_appeal.active?
-  end
-
-  def type_code
-    latest_appeal.type_code || 'other'
+  def active_appeals
+    @active_appeals ||= appeals.select(&:active?)
+                               .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
   end
 
   def api_sort_date
@@ -33,6 +21,16 @@ class AppealSeries < ActiveRecord::Base
 
   def events
     appeals.flat_map(&:events).uniq
+  end
+
+  private
+
+  def fetch_latest_appeal
+    active_appeals.first || appeals_by_decision_date.first
+  end
+
+  def appeals_by_decision_date
+    appeals.sort { |x, y| y.decision_date <=> x.decision_date }
   end
 
   class << self

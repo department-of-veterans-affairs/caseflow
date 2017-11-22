@@ -285,17 +285,6 @@ describe AppealSeries do
     let(:series) { AppealSeries.create(appeals: appeals) }
     subject { series.latest_appeal.vacols_id }
 
-    context "when there is a single active appeal" do
-      let(:appeals) do
-        [
-          Generators::Appeal.build(vacols_id: "1234567", status: "Active"),
-          Generators::Appeal.build(vacols_id: "7654321", status: "Complete")
-        ]
-      end
-
-      it { is_expected.to eq "1234567" }
-    end
-
     context "when there are multiple active appeals" do
       let(:appeals) do
         [

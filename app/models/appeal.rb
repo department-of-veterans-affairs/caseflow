@@ -417,7 +417,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def type_code
-    TYPE_CODES[type]
+    TYPE_CODES[type] || "other"
   end
 
   def latest_event_date
