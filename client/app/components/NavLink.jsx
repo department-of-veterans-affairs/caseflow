@@ -6,8 +6,8 @@ import ChildNavLink from './ChildNavLink';
 // This generates the list of links for a side navigation list
 
 export default class NavLink extends React.PureComponent {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       menu: false
     };
@@ -22,10 +22,10 @@ export default class NavLink extends React.PureComponent {
   render() {
     const { anchor, name, subnav } = this.props;
 
-    return <div>
+    return <li>
       <a href={anchor} onClick={this.showSubMenu}>{name}</a>
       {this.state.menu && subnav && <ChildNavLink links={subnav} />}
-    </div>;
+    </li>;
   }
 }
 

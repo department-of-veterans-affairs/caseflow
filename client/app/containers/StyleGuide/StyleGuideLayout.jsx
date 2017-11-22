@@ -29,7 +29,7 @@ export default function StyleGuideLayout () {
     <br />
     <StyleGuideUserDropdownMenu />
     <br />
-    <h3 id="content_area">Main Content Area</h3>
+    <h3 id="content-area">Main Content Area</h3>
     <p>
       The main content area is where we put all the application-specific interaction.
       This includes things like a Queue of tasks for the user to perform,
@@ -37,7 +37,7 @@ export default function StyleGuideLayout () {
       The background of the main content area is #f9f9f9.</p>
     <br />
 
-    <h3 id="app_canvas">App Canvas</h3>
+    <h3 id="app-canvas">App Canvas</h3>
 
     <p>
       Almost all of the interaction in Caseflow takes place in an App Canvas.

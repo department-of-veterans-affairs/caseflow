@@ -98,7 +98,7 @@ export default class StyleGuideColors extends React.Component {
         requirements.
       </p>
 
-      <h3 id="palatte">Palette</h3>
+      <h3 id="palette">Palette</h3>
 
       <h4>Primary Colors</h4>
 

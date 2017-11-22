@@ -63,7 +63,7 @@ export default class StyleGuideTabs extends React.Component {
         name="tabsnoicons"
         tabs={tabs}
         onChange={this.onTabSelected} />
-      <h3 id="With_icons">Tabs with Icons</h3>
+      <h3 id="with_icons">Tabs with Icons</h3>
       <p>
         Icons are optional on tabs and are set by the designer in the mockup.
         These icons come from the Font Awesome package, which is set in the

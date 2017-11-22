@@ -30,9 +30,7 @@ export default class StyleGuideIndex extends React.Component {
       <StickyNav>
         {
           componentLinks.map((link, i) => (
-            <li key={i}>
-              <NavLink {...link} />
-            </li>
+            <NavLink {...link} key={i} />
           ))
         }
       </StickyNav>

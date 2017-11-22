@@ -31,12 +31,12 @@ export const componentLinks = [
     anchor: '#colors',
     name: 'Colors',
     subnav: [{
-      anchor: '#palatte',
+      anchor: '#palette',
       name: 'Palette'
     },
     {
       anchor: '#logos',
-      name: 'logos'
+      name: 'Logos'
     }]
   },
   {
@@ -44,11 +44,11 @@ export const componentLinks = [
     name: 'Buttons',
     subnav: [{
       anchor: '#primary',
-      name: 'primary'
+      name: 'Primary'
     },
     {
       anchor: '#secondary',
-      name: 'secondary'
+      name: 'Secondary'
     },
     {
       anchor: '#disabled',
@@ -139,7 +139,7 @@ export const componentLinks = [
       name: 'Without Icons'
     },
     {
-      anchor: '#With_icons',
+      anchor: '#with_icons',
       name: 'With Icons'
     }]
   },
@@ -211,11 +211,11 @@ export const componentLinks = [
       name: 'User dropdown menu'
     },
     {
-      anchor: '#content_area',
+      anchor: '#content-area',
       name: 'Main content area'
     },
     {
-      anchor: '#app_canvas',
+      anchor: '#app-canvas',
       name: 'App canvas'
     },
     {
