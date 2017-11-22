@@ -33,7 +33,6 @@ class Generators::Appeal
         regional_office_key: "RO13",
         decision_date: 7.days.ago,
         form9_date: 11.days.ago,
-        veteran_date_of_birth: 47.years.ago,
         appellant_city: "Huntingdon",
         appellant_state: "TN",
         docket_number: 4198

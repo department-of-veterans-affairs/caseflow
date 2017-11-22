@@ -13,7 +13,7 @@ class WorksheetIssue < ActiveRecord::Base
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
         record.update(program: issue.program.try(:capitalize),
                       name: issue.type[:label],
-                      levels: issue.levels.join("; "),
+                      levels: issue.description.join("; "),
                       description: issue.note,
                       from_vacols: true)
       end

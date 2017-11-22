@@ -1,6 +1,6 @@
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import _ from 'lodash';
 
 // CaseSelect search
@@ -66,5 +66,7 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
         } else {
           dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         }
-      }, () => dispatch(fetchAppealUsingVeteranIdFailed()));
+      }, () => {
+        dispatch(fetchAppealUsingVeteranIdFailed());
+      });
   };

@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
-import Alert from '../components/Alert';
+import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
 import HearingWorksheet from './HearingWorksheet';
 import ApiUtil from '../util/ApiUtil';
+import querystring from 'querystring';
 
 export const getWorksheet = (id, dispatch) => {
   ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
@@ -20,23 +21,29 @@ export const getWorksheet = (id, dispatch) => {
 export class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
-    // TODO: if !worksheet call this.props.getWorksheet
     if (!this.props.worksheet) {
       this.props.getWorksheet(this.props.hearingId);
+    }
+  }
+
+  componentDidUpdate() {
+    // We use the `do_not_open_print_prompt` querystring option for testing,
+    // since Selenium struggles to interact with browser UI like a print prompt.
+    const query = querystring.parse(window.location.search.slice(1));
+
+    if (this.props.worksheet && this.props.print && !query.do_not_open_print_prompt) {
+      window.print();
     }
   }
 
   render() {
 
     if (this.props.worksheetServerError) {
-      return <div className="cf-app-segment cf-app-segment--alt cf-hearings">
-        <Alert
-          title="Unable to load documents"
-          type="error">
-          It looks like Caseflow was unable to load the worksheet.
-          Please refresh the page and try again.
-        </Alert>
-      </div>;
+      return <StatusMessage
+        title="Unable to load the worksheet">
+          It looks like Caseflow was unable to load the worksheet.<br />
+          Please <a href="">refresh the page</a> and try again.
+      </StatusMessage>;
     }
 
     if (!this.props.worksheet) {
@@ -51,9 +58,7 @@ export class HearingWorksheetContainer extends React.Component {
       </div>;
     }
 
-    return <HearingWorksheet
-      {...this.props}
-    />;
+    return <HearingWorksheet {...this.props} />;
   }
 }
 

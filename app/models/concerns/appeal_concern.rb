@@ -19,9 +19,25 @@ module AppealConcern
     veteran_name_object.formatted(:readable_full)
   end
 
+  def veteran_mi_formatted
+    if veteran_middle_initial
+      veteran_name_object.formatted(:readable_mi_formatted)
+    else
+      veteran_name_object.formatted(:readable_short)
+    end
+  end
+
   def appellant_name
     if appellant_first_name
       [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
+    end
+  end
+
+  def appellant_mi_formatted
+    if appellant_middle_initial
+      appellant_name_object.formatted(:readable_mi_formatted)
+    else
+      appellant_name_object.formatted(:readable_short)
     end
   end
 
@@ -39,5 +55,9 @@ module AppealConcern
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  end
+
+  def appellant_name_object
+    FullName.new(appellant_first_name, appellant_middle_initial, appellant_last_name)
   end
 end

@@ -5,13 +5,12 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
-import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
-import CertificationProgressBar from './CertificationProgressBar';
+import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
@@ -20,14 +19,13 @@ import LoadingScreen from '../components/LoadingScreen';
 import * as AppConstants from '../constants/AppConstants';
 import StatusMessage from '../components/StatusMessage';
 
-
 class EntryPointRedirect extends React.Component {
   render() {
     let {
       match
     } = this.props;
 
-    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+    return <Redirect to={`/certifications/${match.params.vacols_id}/check_documents`} />;
   }
 }
 
@@ -138,7 +136,6 @@ export class Certification extends React.Component {
     }
   }
 
-
   render() {
 
     const initialMessage = 'Loading and checking documents from the Veteran’s file…';
@@ -159,7 +156,7 @@ export class Certification extends React.Component {
         !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) &&
         <LoadingScreen
           message={message}
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}/>
+          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION} />
       }
 
       {
@@ -171,10 +168,8 @@ export class Certification extends React.Component {
         <div>
           <BrowserRouter>
             <div>
-              <Header/>
-              <CertificationProgressBar/>
               <Route path="/certifications/new/:vacols_id"
-                component={EntryPointRedirect}/>
+                component={EntryPointRedirect} />
               <PageRoute
                 title="Check Documents | Caseflow Certification"
                 path="/certifications/:vacols_id/check_documents"
@@ -193,7 +188,7 @@ export class Certification extends React.Component {
               <PageRoute
                 title="Sign and Certify | Caseflow Certification"
                 path="/certifications/:vacols_id/sign_and_certify"
-                component={SignAndCertify}/>
+                component={SignAndCertify} />
               <PageRoute
                 title="Success! | Caseflow Certification"
                 path="/certifications/:vacols_id/success"
@@ -203,6 +198,11 @@ export class Certification extends React.Component {
                 title="Error | Caseflow Certification"
                 path="/certifications/error"
                 component={ErrorMessage}
+              />
+              <PageRoute
+                title="Not Certified | Caseflow Certification"
+                path="/certification_cancellations/"
+                component={CancelCertificationConfirmation}
               />
             </div>
           </BrowserRouter>

@@ -32,7 +32,9 @@ label_builder = lambda do |env, code|
     # '/users/1234/comments' -> '/users/:id/comments'
     # '/hearings/dockets/2017-10-15' -> '/hearings/dockets/:id'
     # '/certifications/new/123C' -> '/certifications/new/:id'
-    path: env["PATH_INFO"].to_s.gsub(%r{\/\d+-?\d*-?\d*C?S?(\/|$)}, '/:id\\1')
+    # '/certifications/new/2562815LL' -> '/certifications/new/:id'
+    # '/certifications/new/2562815D2' -> '/certifications/new/:id'
+    path: env["PATH_INFO"].to_s.gsub(%r{\/\d+-?\d*-?\d*[A-Z]?[A-Z]?\d?(\/|$)}, '/:id\\1')
   }
 end
 

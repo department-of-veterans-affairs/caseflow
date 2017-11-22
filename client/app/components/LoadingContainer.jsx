@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { loadingSymbolHtml } from './RenderFunctions.jsx';
+import { loadingSymbolHtml } from './RenderFunctions';
 export default class LoadingContainer extends React.Component {
   render() {
     let {

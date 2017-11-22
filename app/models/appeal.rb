@@ -11,6 +11,7 @@ class Appeal < ActiveRecord::Base
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class MultipleDecisionError < StandardError; end
+  class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -30,11 +31,12 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc, :veteran_date_of_birth
+  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -84,6 +86,10 @@ class Appeal < ActiveRecord::Base
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Court Remand" => "cavc_remand"
+  }.freeze
+
+  LOCATION_CODES = {
+    remand_returned_to_bva: "96"
   }.freeze
 
   attr_writer :ssoc_dates
@@ -137,9 +143,7 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
-  def veteran_age
-    Veteran.new(date_of_birth: veteran_date_of_birth).age
-  end
+  delegate :age, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -209,7 +213,13 @@ class Appeal < ActiveRecord::Base
   end
 
   def eligible_for_ramp?
-    status == "Advance" || status == "Remand"
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def in_location?(location)
+    fail UnknownLocationError unless LOCATION_CODES[location]
+
+    location_code == LOCATION_CODES[location]
   end
 
   def attributes_for_hearing
@@ -279,10 +289,6 @@ class Appeal < ActiveRecord::Base
 
   def certify!
     Appeal.certify(self)
-  end
-
-  def close!(user:, closed_on:, disposition:)
-    Appeal.close(appeal: self, user: user, closed_on: closed_on, disposition: disposition)
   end
 
   def fetch_documents!(save:)
@@ -544,19 +550,26 @@ class Appeal < ActiveRecord::Base
       @repository ||= AppealRepository
     end
 
-    def close(appeal:, user:, closed_on:, disposition:)
-      fail "Only active appeals can be closed" unless appeal.active?
+    # Wraps the closure of appeals in a transaction
+    # add additional code inside the transaction by passing a block
+    # rubocop:disable Metrics/ParameterLists
+    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
+      fail "Only pass either appeal or appeals" if appeal && appeals
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-      fail "Disposition #{disposition}, does not exist" unless disposition_code
+      repository.transaction do
+        (appeals || [appeal]).each do |close_appeal|
+          close_single(
+            appeal: close_appeal,
+            user: user,
+            closed_on: closed_on,
+            disposition: disposition
+          )
+        end
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+        inside_transaction.call if block_given?
+      end
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -587,6 +600,20 @@ class Appeal < ActiveRecord::Base
     end
 
     private
+
+    def close_single(appeal:, user:, closed_on:, disposition:)
+      fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      repository.close!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: disposition_code
+      )
+    end
 
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals

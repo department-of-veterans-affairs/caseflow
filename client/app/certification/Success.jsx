@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 
-
 export class Success extends React.Component {
   render() {
     let {

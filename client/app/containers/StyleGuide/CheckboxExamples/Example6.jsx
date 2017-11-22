@@ -37,7 +37,6 @@ export default class Example6 extends React.Component {
       }
     ];
 
-
     return <CheckboxGroup
       label="You must check an option:"
       name="checkbox_example_6"

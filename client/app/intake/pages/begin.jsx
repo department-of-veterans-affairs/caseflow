@@ -89,11 +89,11 @@ class Begin extends React.PureComponent {
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW}/>;
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
     case RAMP_INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH}/>;
+      return <Redirect to={PAGE_PATHS.FINISH} />;
     case RAMP_INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
@@ -101,7 +101,7 @@ class Begin extends React.PureComponent {
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
       <h1>Welcome to Caseflow Intake!</h1>
-      <p>To begin processing this opt-in request, please enter the Veteran ID below.</p>
+      <p>To begin processing this opt-in election, please enter the Veteran ID below.</p>
 
       <SearchBar
         size="small"
