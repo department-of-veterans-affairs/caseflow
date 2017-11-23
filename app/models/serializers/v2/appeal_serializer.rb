@@ -6,6 +6,11 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :incomplete, key: :incomplete_history
   attribute :type_code, key: :type
   attribute :active?, key: :active
+  attribute :aod
+
+  attribute :location do
+    (%w(Advance Remand).include? object.status) ? "aoj" : "bva"
+  end
 
   attribute :events do
     object.events.map(&:to_hash)

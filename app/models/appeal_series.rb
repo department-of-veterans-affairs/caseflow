@@ -4,6 +4,8 @@ class AppealSeries < ActiveRecord::Base
   delegate :vacols_id,
            :active?,
            :type_code,
+           :aod,
+           :status,
            to: :latest_appeal
 
   def latest_appeal
