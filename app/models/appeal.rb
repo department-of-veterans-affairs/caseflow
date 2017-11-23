@@ -135,8 +135,12 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def v1_events
+    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
+  end
+
   def events
-    @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS

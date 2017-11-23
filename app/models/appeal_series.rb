@@ -17,7 +17,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def events
-    appeals.flat_map(&:events).uniq
+    appeals.flat_map(&:events).uniq.sort_by(&:date)
   end
 
   private
