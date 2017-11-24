@@ -156,14 +156,26 @@ describe Appeal do
     it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
   end
 
-  context "#events" do
-    subject { appeal.events }
+  context "#v1_events" do
+    subject { appeal.v1_events }
     let(:soc_date) { 5.days.ago }
 
     it "returns list of events sorted from oldest to newest by date" do
       expect(subject.length > 1).to be_truthy
       expect(subject.first.date).to eq(5.days.ago)
       expect(subject.first.type).to eq(:soc)
+    end
+  end
+
+  context "#events" do
+    subject { appeal.events }
+
+    it "returns list of events" do
+      expect(subject.length > 0).to be_truthy
+      expect(subject.select { |event| event.type == :claim_decision }.length > 0).to be_truthy
+      expect(subject.select { |event| event.type == :nod }.length > 0).to be_truthy
+      expect(subject.select { |event| event.type == :soc }.length > 0).to be_truthy
+      expect(subject.select { |event| event.type == :form9 }.length > 0).to be_truthy
     end
   end
 
