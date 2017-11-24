@@ -161,6 +161,27 @@ describe AppealEvents do
       end
     end
 
+    context "hearing transcript events" do
+      # Save appeal so hearings can be associated to it
+      before { appeal.save! }
+
+      let!(:held_hearing) do
+        Generators::Hearing.create(disposition: :held, appeal: appeal, transcript_sent_date: 1.day.ago)
+      end
+
+      let!(:cancelled_hearing) do
+        Generators::Hearing.create(disposition: :cancelled, appeal: appeal, transcript_sent_date: 1.day.ago)
+      end
+
+      let(:transcript_events) do
+        events.select { |event| event.type == :transcript }
+      end
+
+      it "adds transcript events for all held hearings associated with the appeal" do
+        expect(transcript_events.length).to eq(1)
+      end
+    end
+
     context "decision event" do
       subject do
         events.find { |event| event.type == :field_grant && event.date == decision_date }

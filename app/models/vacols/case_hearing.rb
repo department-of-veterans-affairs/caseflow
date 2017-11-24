@@ -72,7 +72,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_date, :hearing_type,
              :notes1, :folder_nr,
              :vdkey, :aod,
-             :holddays, :tranreq,
+             :holddays, :tranreq, :transent,
              :repname, :addon,
              :board_member, :mduser,
              :mdtime, :sattyid,

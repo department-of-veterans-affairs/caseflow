@@ -16,6 +16,7 @@ class AppealEvents
         ssoc_events,
         certification_event,
         hearing_events,
+        hearing_transcript_events,
         decision_event,
         cavc_decision_events
       ].flatten.select(&:valid?)
@@ -99,6 +100,12 @@ class AppealEvents
 
   def hearing_events
     appeal.hearings.select(&:closed?).map { |hearing| AppealEvent.new(hearing: hearing) }
+  end
+
+  def hearing_transcript_events
+    appeal.hearings.select(&:held?).map do |hearing|
+      AppealEvent.new(type: :transcript, date: hearing.transcript_sent_date)
+    end
   end
 
   def cavc_decision_events
