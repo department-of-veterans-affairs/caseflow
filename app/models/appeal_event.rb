@@ -129,7 +129,7 @@ class AppealEvent
   def v1_type_from_disposition(disposition)
     V1_EVENT_TYPE_FOR_DISPOSITIONS.keys.find do |type|
       V1_EVENT_TYPE_FOR_DISPOSITIONS[type].include?(disposition)
-    end || :other_close
+    end
   end
 
   def type_from_disposition(disposition)
