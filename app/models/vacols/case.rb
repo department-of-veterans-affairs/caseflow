@@ -270,5 +270,34 @@ class VACOLS::Case < VACOLS::Record
     end
   end
 
+  def self.remand_return_date(vacols_ids)
+    conn = connection
+
+    conn.transaction do
+      query = <<-SQL
+        select BRIEFF.BFKEY, max(PRIORLOC.LOCDOUT) REM_RETURN
+        from BRIEFF
+        left join PRIORLOC
+          on PRIORLOC.LOCKEY = BRIEFF.BFKEY
+            and PRIORLOC.LOCSTTO = '96'
+        where BRIEFF.BFKEY in (?)
+        group by BRIEFF.BFKEY
+      SQL
+
+      result = MetricsService.record("VACOLS: Case.remand_return_date for #{vacols_ids}",
+                                     name: "Case.remand_return_date",
+                                     service: :vacols) do
+        conn.exec_query(sanitize_sql_array([query, vacols_ids]))
+      end
+
+      result.to_hash.reduce({}) do |memo, row|
+        # return false instead of nil if no remand return date so this value is cached
+        datetime = VacolsHelper.normalize_vacols_datetime(row["rem_return"]) || false
+        memo[(row["bfkey"]).to_s] = datetime
+        memo
+      end
+    end
+  end
+
   # :nocov:
 end

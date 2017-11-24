@@ -15,6 +15,7 @@ class AppealEvents
         form9_event,
         ssoc_events,
         certification_event,
+        remand_return_event,
         hearing_events,
         hearing_transcript_events,
         decision_event,
@@ -103,6 +104,10 @@ class AppealEvents
 
   def activation_event
     AppealEvent.new(type: :activated, date: appeal.case_review_date)
+  end
+
+  def remand_return_event
+    AppealEvent.new(type: :remand_return, date: appeal.remand_return_date)
   end
 
   def hearing_events

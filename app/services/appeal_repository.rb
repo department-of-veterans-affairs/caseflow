@@ -315,6 +315,10 @@ class AppealRepository
     VACOLS::Case.aod([vacols_id])[vacols_id]
   end
 
+  def self.remand_return_date(vacols_id)
+    VACOLS::Case.remand_return_date([vacols_id])[vacols_id]
+  end
+
   def self.load_user_case_assignments_from_vacols(css_id)
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
                           service: :vacols,

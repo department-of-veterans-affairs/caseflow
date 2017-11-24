@@ -50,6 +50,12 @@ class Appeal < ActiveRecord::Base
     self.class.repository.aod(vacols_id)
   end
 
+  cache_attribute :remand_return_date do
+    # Note: Returns nil if the appeal is active, returns false if the appeal is
+    # closed but does not have a remand return date (false is cached, nil is not).
+    self.class.repository.remand_return_date(vacols_id) unless active?
+  end
+
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {

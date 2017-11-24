@@ -496,5 +496,9 @@ class Fakes::AppealRepository
   def self.case_assignment_exists?(_vacols_id)
     true
   end
+
+  def self.remand_return_date(_vacols_id)
+    2.days.ago
+  end
 end
 # rubocop:enable Metrics/ClassLength
