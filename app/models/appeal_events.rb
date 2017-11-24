@@ -18,8 +18,9 @@ class AppealEvents
         hearing_events,
         hearing_transcript_events,
         decision_event,
+        issue_event,
         cavc_decision_events
-      ].flatten.select(&:valid?)
+      ].flatten.uniq.select(&:valid?)
     end
   end
 
@@ -88,6 +89,12 @@ class AppealEvents
 
   def decision_event
     AppealEvent.new(disposition: appeal.disposition, date: appeal.decision_date)
+  end
+
+  def issue_event
+    appeal.issues.select(&:closed?).map do |issue|
+      AppealEvent.new(issue_disposition: issue.disposition, date: issue.close_date)
+    end
   end
 
   def certification_event

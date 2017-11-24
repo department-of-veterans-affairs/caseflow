@@ -29,6 +29,28 @@ describe AppealEvent do
     end
   end
 
+  context "issue_disposition=" do
+    subject { appeal_event.issue_disposition = disposition }
+
+    context "when disposition is a field grant" do
+      let(:disposition) { "Advance Allowed in Field" }
+
+      it "sets type" do
+        subject
+        expect(appeal_event.type).to eq(:field_grant)
+      end
+    end
+
+    context "when disposition is any other event type" do
+      let(:disposition) { "Allowed" }
+
+      it "sets type to falsey" do
+        subject
+        expect(appeal_event.type).to be_falsey
+      end
+    end
+  end
+
   context "hearing=" do
     subject { appeal_event.hearing = hearing }
 

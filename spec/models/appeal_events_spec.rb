@@ -14,7 +14,8 @@ describe AppealEvents do
       case_review_date: case_review_date,
       decision_date: decision_date,
       disposition: disposition,
-      prior_decision_date: prior_decision_date
+      prior_decision_date: prior_decision_date,
+      issues: issues
     )
   end
 
@@ -28,6 +29,7 @@ describe AppealEvents do
   let(:case_review_date) { nil }
   let(:decision_date) { nil }
   let(:disposition) { nil }
+  let(:issues) { [] }
 
   let(:appeal_events) { AppealEvents.new(appeal: appeal, version: version) }
   let(:version) { nil }
@@ -199,6 +201,37 @@ describe AppealEvents do
 
       context "when no decision date" do
         it { is_expected.to be_nil }
+      end
+    end
+
+    context "issue event" do
+      subject do
+        events.select { |event| event.type == :field_grant && event.date == issue_close_date }.length
+      end
+
+      let(:issues) do
+        [Generators::Issue.build(disposition: issue_disposition, close_date: issue_close_date )]
+      end
+
+      let(:issue_disposition) { "Benefits Granted by AOJ" }
+      let(:issue_close_date) { nil }
+
+      context "when close date is set" do
+        let(:issue_close_date) { Time.zone.now }
+
+        it { is_expected.to eq(1) }
+      end
+
+      context "when no close date" do
+        it { is_expected.to eq(0) }
+      end
+
+      context "when the issue close is same as decision date" do
+        let(:issue_close_date) { Time.zone.now }
+        let(:decision_date) { issue_close_date }
+        let(:disposition) { issue_disposition }
+
+        it { is_expected.to eq(1) }
       end
     end
 
