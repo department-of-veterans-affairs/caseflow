@@ -18,7 +18,8 @@ describe Appeal do
       decision_date: nil,
       manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
       manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
-      location_code: location_code
+      location_code: location_code,
+      status: status
     )
   end
 
@@ -45,6 +46,7 @@ describe Appeal do
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
   let(:location_code) { nil }
+  let(:status) { "Advance" }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -164,6 +166,24 @@ describe Appeal do
       expect(subject.length > 1).to be_truthy
       expect(subject.first.date).to eq(5.days.ago)
       expect(subject.first.type).to eq(:soc)
+    end
+  end
+
+  context "#api_location" do
+    subject { appeal.api_location }
+
+    context "when it is in advance status" do
+      it { is_expected.to eq(:aoj) }
+    end
+
+    context "when it is in remand status" do
+      let(:status) { "Remand" }
+      it { is_expected.to eq(:aoj) }
+    end
+
+    context "when it is in any other status" do
+      let(:status) { "History" }
+      it { is_expected.to eq(:bva) }
     end
   end
 

@@ -7,10 +7,7 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :type_code, key: :type
   attribute :active?, key: :active
   attribute :aod
-
-  attribute :location do
-    (%w(Advance Remand).include? object.status) ? "aoj" : "bva"
-  end
+  attribute :api_location, key: :location
 
   attribute :events do
     object.events.map(&:to_hash)

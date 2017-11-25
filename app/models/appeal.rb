@@ -139,6 +139,10 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
+  def api_location
+    (%w(Advance Remand).include? status) ? :aoj : :bva
+  end
+
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
   # Eventually we'd like to reference methods on the veteran with data from VACOLS
   # and only "lazy load" data from BGS when necessary
