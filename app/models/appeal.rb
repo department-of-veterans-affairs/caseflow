@@ -143,6 +143,10 @@ class Appeal < ActiveRecord::Base
     (%w(Advance Remand).include? status) ? :aoj : :bva
   end
 
+  def api_status
+    @api_status ||= fetch_api_status
+  end
+
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
   # Eventually we'd like to reference methods on the veteran with data from VACOLS
   # and only "lazy load" data from BGS when necessary
@@ -219,6 +223,10 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
+  def hearing_scheduled?
+    scheduled_hearings.length > 0
+  end
+
   def eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
@@ -227,6 +235,10 @@ class Appeal < ActiveRecord::Base
     fail UnknownLocationError unless LOCATION_CODES[location]
 
     location_code == LOCATION_CODES[location]
+  end
+
+  def case_assignment_exists?
+    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing
@@ -450,6 +462,76 @@ class Appeal < ActiveRecord::Base
   end
 
   private
+
+  def fetch_api_status
+    case status
+    when "Advance"
+      disambiguate_api_status_advance
+    when "Active"
+      disambiguate_api_status_active
+    when "Complete"
+      disambiguate_api_status_complete
+    when "Remand"
+      :remand
+    when "Motion"
+      :motion
+    when "CAVC"
+      :cavc
+    end
+  end
+
+  def disambiguate_api_status_advance
+    if certification_date
+      return :scheduled_hearing if hearing_scheduled?
+      return :pending_hearing_scheduling if hearing_pending?
+      return :on_docket
+    end
+
+    return :pending_certification if form9_date
+
+    return :pending_form9 if soc_date
+
+    :pending_soc
+  end
+
+  def disambiguate_api_status_active
+    return :scheduled_hearing if hearing_scheduled?
+
+    case location_code
+    when "49"
+      :stayed
+    when "55"
+      :at_vso
+    when "19", "20"
+      :opinion_request
+    when "14", "16", "18", "24"
+      case_assignment_exists? ? :abeyance : :on_docket
+    else
+      case_assignment_exists? ? :decision_in_progress : :on_docket
+    end
+  end
+
+  def disambiguate_api_status_complete
+    case disposition
+    when "Allowed", "Denied"
+      :bva_decision
+    when "Advance Allowed in Field", "Benefits Granted by AOJ"
+      :field_grant
+    when "Withdrawn", "Advance Withdrawn by Appellant/Rep",
+         "Recon Motion Withdrawn", "Withdrawn from Remand"
+      :withdrawn
+    when "Advance Failure to Respond", "Remand Failure to Respond"
+      :ftr
+    when "RAMP Opt-in"
+      :ramp
+    when "Dismissed, Death", "Advance Withdrawn Death of Veteran"
+      :death
+    when "Reconsideration by Letter"
+      :reconsideration
+    else
+      :other_close
+    end
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

@@ -6,6 +6,7 @@ class AppealSeries < ActiveRecord::Base
            :type_code,
            :aod,
            :api_location,
+           :api_status,
            to: :latest_appeal
 
   def latest_appeal

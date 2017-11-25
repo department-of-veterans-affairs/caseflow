@@ -9,6 +9,7 @@ describe Appeal do
       soc_date: soc_date,
       form9_date: form9_date,
       ssoc_dates: ssoc_dates,
+      certification_date: certification_date,
       documents: documents,
       hearing_request_type: hearing_request_type,
       video_hearing_requested: video_hearing_requested,
@@ -19,7 +20,8 @@ describe Appeal do
       manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
       manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
       location_code: location_code,
-      status: status
+      status: status,
+      disposition: disposition
     )
   end
 
@@ -42,11 +44,13 @@ describe Appeal do
   let(:soc_date) { 1.day.ago }
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
+  let(:certification_date) { nil }
   let(:documents) { [] }
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
   let(:location_code) { nil }
   let(:status) { "Advance" }
+  let(:disposition) { nil }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -182,8 +186,52 @@ describe Appeal do
     end
 
     context "when it is in any other status" do
-      let(:status) { "History" }
+      let(:status) { "Not a real status" }
       it { is_expected.to eq(:bva) }
+    end
+  end
+
+  context "#api_status" do
+    subject { appeal.api_status }
+
+    context "when it is in advance status" do
+      it { is_expected.to eq(:pending_certification) }
+
+      context "and it has been certified" do
+        let(:certification_date) { 1.day.ago }
+        it { is_expected.to eq(:on_docket) }
+      end
+    end
+
+    context "when it is in active status" do
+      let(:status) { "Active" }
+      it { is_expected.to eq(:decision_in_progress) }
+
+      context "and it is in location 55" do
+        let(:location_code) { "55" }
+        it { is_expected.to eq(:at_vso) }
+      end
+    end
+
+    context "when it is in history status" do
+      let(:status) { "Complete" }
+      let(:disposition) { "Advance Allowed in Field" }
+      it { is_expected.to eq(:field_grant) }
+    end
+
+    context "when it is in remand status" do
+      let(:status) { "Remand" }
+      it { is_expected.to eq(:remand) }
+    end
+
+    context "when it is in motion status" do
+      let(:status) { "Motion" }
+      it { is_expected.to eq(:motion) }
+    end
+
+    context "when it is in cavc status" do
+      let(:status) { "CAVC" }
+      it { is_expected.to eq(:cavc) }
     end
   end
 
@@ -486,6 +534,12 @@ describe Appeal do
       let(:location_code) { "97" }
       it { is_expected.to be_falsey }
     end
+  end
+
+  context "#case_assignment_exists?" do
+    subject { appeal.case_assignment_exists? }
+
+    it { is_expected.to be_truthy }
   end
 
   context ".find_or_create_by_vacols_id" do
