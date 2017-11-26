@@ -147,6 +147,17 @@ class Appeal < ActiveRecord::Base
     @api_status ||= fetch_api_status
   end
 
+  def api_status_hash
+    case api_status
+    when :decision_in_progress
+      details = { test: "Hello World" }
+    else
+      details = {}
+    end
+
+    { type: api_status, details: details }
+  end
+
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
   # Eventually we'd like to reference methods on the veteran with data from VACOLS
   # and only "lazy load" data from BGS when necessary

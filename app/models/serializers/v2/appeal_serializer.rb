@@ -8,24 +8,9 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :active?, key: :active
   attribute :aod
   attribute :api_location, key: :location
+  attribute :api_status_hash, key: :status
 
   attribute :events do
     object.events.map(&:to_hash)
-  end
-
-  attribute :status do
-    {
-      type: object.api_status,
-      details: details_for_status(object.api_status)
-    }
-  end
-
-  def details_for_status(status_type)
-    case status_type
-    when :decision_in_progress
-      { test: "Hello World" }
-    else
-      {}
-    end
   end
 end

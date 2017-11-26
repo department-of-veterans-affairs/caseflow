@@ -235,6 +235,25 @@ describe Appeal do
     end
   end
 
+  context "#api_status_hash" do
+    subject { appeal.api_status_hash }
+
+    context "when there is a valid status" do
+      it "returns a hash with a type and details" do
+        expect(subject[:type]).to eq(:pending_certification)
+        expect(subject[:details].is_a?(Hash)).to be_truthy
+      end
+    end
+
+    context "when there is no known status" do
+      let(:status) { "Not a real status" }
+
+      it "returns an empty details hash" do
+        expect(subject[:details]).to eq({})
+      end
+    end
+  end
+
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
