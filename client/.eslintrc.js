@@ -4,7 +4,7 @@ module.exports = {
     mocha: true
   },
   extends: [
-    'appeals'
+    '@department-of-veterans-affairs/eslint-config-appeals'
   ],
   rules: {
     'prefer-const': 'off'
