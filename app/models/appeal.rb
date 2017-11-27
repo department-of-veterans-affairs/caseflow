@@ -158,6 +158,18 @@ class Appeal < ActiveRecord::Base
     { type: api_status, details: details }
   end
 
+  def alerts
+    @alerts ||= AppealAlerts.new(appeal: self).all
+  end
+
+  def form9_due_date
+    [notification_date + 1.year, soc_date + 60.days].max
+  end
+
+  def cavc_due_date
+    decision_date + 120.days
+  end
+
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
   # Eventually we'd like to reference methods on the veteran with data from VACOLS
   # and only "lazy load" data from BGS when necessary

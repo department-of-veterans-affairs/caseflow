@@ -13,4 +13,8 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :events do
     object.events.map(&:to_hash)
   end
+
+  attribute :alerts do
+    object.alerts.map(&:to_hash)
+  end
 end
