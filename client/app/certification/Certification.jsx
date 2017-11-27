@@ -5,18 +5,17 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
-import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
-import CertificationProgressBar from './CertificationProgressBar';
+import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
-import AsynchronousDataLoader from '../components/AsynchronousDataLoader';
+import LoadingScreen from '../components/LoadingScreen';
 import * as AppConstants from '../constants/AppConstants';
 import StatusMessage from '../components/StatusMessage';
 
@@ -70,7 +69,6 @@ const configureStore = (certification, form9PdfPath) => {
 };
 
 export class Certification extends React.Component {
-  /* eslint class-methods-use-this: ["warn", { "exceptMethods": ["fetchCertificationData","onSuccess", "onError"] }] */
 
   constructor(props) {
     super(props);
@@ -79,7 +77,8 @@ export class Certification extends React.Component {
       loadingDataFailed: false,
       certification: null,
       form9PdfPath: null,
-      data: null
+      longerThanUsual: false,
+      overallTimeout: false
     };
 
     // Allow test harness to trigger reloads
@@ -88,61 +87,53 @@ export class Certification extends React.Component {
     };
   }
 
-  fetchCertificationData(endpoint) {
-    return ApiUtil.get(endpoint);
+  checkCertificationData() {
+    ApiUtil.get(`/certifications/${this.props.vacolsId}`).
+      then((data) => {
+        this.setState({
+          loadingData: JSON.parse(data.text).loading_data,
+          loadingDataFailed: JSON.parse(data.text).loading_data_failed,
+          certification: JSON.parse(data.text).certification,
+          form9PdfPath: JSON.parse(data.text).form9PdfPath
+        });
+      }, () => {
+        this.setState({
+          loadingDataFailed: true
+        });
+      });
   }
 
-  onSuccess(data) {
-    return <Provider store={configureStore(JSON.parse(data.text).certification, JSON.parse(data.text).form9PdfPath)}>
-      <div>
-        <BrowserRouter>
-          <div>
-            <Header />
-            <CertificationProgressBar />
-            <Route path="/certifications/new/:vacols_id"
-              component={EntryPointRedirect} />
-            <PageRoute
-              title="Check Documents | Caseflow Certification"
-              path="/certifications/:vacols_id/check_documents"
-              component={DocumentsCheck}
-            />
-            <PageRoute
-              title="Confirm Case Details | Caseflow Certification"
-              path="/certifications/:vacols_id/confirm_case_details"
-              component={ConfirmCaseDetails}
-            />
-            <PageRoute
-              title="Confirm Hearing | Caseflow Certification"
-              path="/certifications/:vacols_id/confirm_hearing"
-              component={ConfirmHearing}
-            />
-            <PageRoute
-              title="Sign and Certify | Caseflow Certification"
-              path="/certifications/:vacols_id/sign_and_certify"
-              component={SignAndCertify} />
-            <PageRoute
-              title="Success! | Caseflow Certification"
-              path="/certifications/:vacols_id/success"
-              component={Success}
-            />
-            <PageRoute
-              title="Error | Caseflow Certification"
-              path="/certifications/error"
-              component={ErrorMessage}
-            />
-          </div>
-        </BrowserRouter>
-      </div>
-    </Provider>;
+  componentDidMount() {
+    // initial check
+    this.checkCertificationData();
+    // Timer for longer-than-usual message
+    setTimeout(
+      () => {
+        this.setState(
+          Object.assign({}, this.state, {
+            longerThanUsual: true
+          }));
+      },
+      AppConstants.LONGER_THAN_USUAL_TIMEOUT
+    );
+    // Timer for overall timeout
+    setTimeout(
+      () => {
+        this.setState(
+          Object.assign({}, this.state, {
+            overallTimeout: true
+          }));
+      },
+      AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT
+    );
   }
 
-  onError() {
-    return <StatusMessage
-      title="Technical Difficulties">
-      Systems that Caseflow Certification connects to are experiencing technical difficulties
-      and Caseflow is unable to load.
-      We apologize for any inconvenience. Please try again later.
-    </StatusMessage>;
+  componentDidUpdate() {
+    // subsequent checks if data is still loading
+    if (!this.state.certification && !this.state.loadingDataFailed && !this.state.overallTimeout) {
+      setTimeout(() =>
+        this.checkCertificationData(), AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
+    }
   }
 
   render() {
@@ -151,21 +142,72 @@ export class Certification extends React.Component {
 
     const longerThanUsualMessage = 'Documents are taking longer to load than usual. Thanks for your patience!';
 
+    const failureMessage = <StatusMessage
+      title="Technical Difficulties">
+                              Systems that Caseflow Certification connects to are experiencing technical difficulties
+                              and Caseflow is unable to load.
+                We apologize for any inconvenience. Please try again later.
+    </StatusMessage>;
+
+    let message = this.state.longerThanUsual ? longerThanUsualMessage : initialMessage;
+
     return <div>
       {
-        <AsynchronousDataLoader
-          componentsPromise={this.fetchCertificationData}
-          endpoint={`/certifications/${this.props.vacolsId}`}
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}
-          pollingIntervalSeconds={AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL}
-          message={initialMessage}
-          extendedWaitMessage={longerThanUsualMessage}
-          showExtendedWaitMessageInSeconds={AppConstants.LONGER_THAN_USUAL_TIMEOUT}
-          onSuccess={this.onSuccess}
-          onError={this.onError}
-          showErrorMessageInSeconds={AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT}
-        />
+        !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) &&
+        <LoadingScreen
+          message={message}
+          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION} />
       }
+
+      {
+        (this.state.loadingDataFailed || this.state.overallTimeout) && !this.state.certification && failureMessage
+      }
+
+      { this.state.certification && !this.state.loading_data &&
+      <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
+        <div>
+          <BrowserRouter>
+            <div>
+              <Route path="/certifications/new/:vacols_id"
+                component={EntryPointRedirect} />
+              <PageRoute
+                title="Check Documents | Caseflow Certification"
+                path="/certifications/:vacols_id/check_documents"
+                component={DocumentsCheck}
+              />
+              <PageRoute
+                title="Confirm Case Details | Caseflow Certification"
+                path="/certifications/:vacols_id/confirm_case_details"
+                component={ConfirmCaseDetails}
+              />
+              <PageRoute
+                title="Confirm Hearing | Caseflow Certification"
+                path="/certifications/:vacols_id/confirm_hearing"
+                component={ConfirmHearing}
+              />
+              <PageRoute
+                title="Sign and Certify | Caseflow Certification"
+                path="/certifications/:vacols_id/sign_and_certify"
+                component={SignAndCertify} />
+              <PageRoute
+                title="Success! | Caseflow Certification"
+                path="/certifications/:vacols_id/success"
+                component={Success}
+              />
+              <PageRoute
+                title="Error | Caseflow Certification"
+                path="/certifications/error"
+                component={ErrorMessage}
+              />
+              <PageRoute
+                title="Not Certified | Caseflow Certification"
+                path="/certification_cancellations/"
+                component={CancelCertificationConfirmation}
+              />
+            </div>
+          </BrowserRouter>
+        </div>
+      </Provider> }
     </div>;
   }
 }
