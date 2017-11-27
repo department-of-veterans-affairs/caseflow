@@ -163,11 +163,13 @@ class Appeal < ActiveRecord::Base
   end
 
   def form9_due_date
-    [notification_date + 1.year, soc_date + 60.days].max
+    return unless notification_date && soc_date
+    [notification_date + 1.year, soc_date + 60.days].max.to_date
   end
 
   def cavc_due_date
-    decision_date + 120.days
+    return unless decision_date
+    (decision_date + 120.days).to_date
   end
 
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS

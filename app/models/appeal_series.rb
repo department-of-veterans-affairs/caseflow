@@ -7,7 +7,7 @@ class AppealSeries < ActiveRecord::Base
            :aod,
            :api_location,
            :api_status_hash,
-           :alerts
+           :alerts,
            to: :latest_appeal
 
   def latest_appeal

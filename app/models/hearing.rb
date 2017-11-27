@@ -35,7 +35,8 @@ class Hearing < ActiveRecord::Base
   end
 
   def hold_release_date
-    held_open? ? date.to_date + (hold_open).days : nil
+    return unless held_open?
+    date.to_date + (hold_open).days
   end
 
   def no_show_excuse_letter_due_date
