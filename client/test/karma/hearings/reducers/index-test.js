@@ -106,26 +106,6 @@ describe('hearingsReducer', () => {
     });
   });
 
-  context(Constants.SET_ADD_ON, () => {
-    let state;
-
-    beforeEach(() => {
-      state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_ADD_ON,
-        payload: {
-          hearingIndex: 0,
-          addOn: true,
-          date: '2017-08-10'
-        }
-      });
-    });
-
-    it('sets addon', () => {
-      expect(state.dockets).to.deep.equal({ '2017-08-10': { hearings_array: { 0: { add_on: true,
-        edited: true } } } });
-    });
-  });
-
   context(Constants.SET_TRANSCRIPT_REQUESTED, () => {
     let state;
 
@@ -393,6 +373,26 @@ describe('hearingsReducer', () => {
     it('sets worksheet issue vha', () => {
       expect(state.worksheetIssues).to.deep.equal({
         6: { vha: true,
+          edited: true }
+      }
+      );
+    });
+  });
+
+  context(Constants.DELETE_ISSUE, () => {
+    let state;
+
+    beforeEach(() => {
+      state = Hearings.hearingsReducers(initialState, {
+        type: Constants.DELETE_ISSUE,
+        payload: { _destroy: true,
+          issueId: 6 }
+      });
+    });
+
+    it('deletes worksheet issue', () => {
+      expect(state.worksheetIssues).to.deep.equal({
+        6: { _destroy: true,
           edited: true }
       }
       );

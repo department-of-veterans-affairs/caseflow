@@ -36,7 +36,7 @@ export default class Example5 extends React.Component {
     ];
 
     return <CheckboxGroup
-      label={<h3>Forced Vertical Checkboxes</h3>}
+      label={<h4>Forced Vertical Checkboxes</h4>}
       name="checkbox_example_5"
       options={options}
       onChange={this.onChange}
