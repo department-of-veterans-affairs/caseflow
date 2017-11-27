@@ -2116,7 +2116,7 @@ escodegen@^1.6.1:
 
 "eslint-config-appeals@https://github.com/department-of-veterans-affairs/eslint-config-appeals/tarball/nth/initial":
   version "1.0.0"
-  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals/tarball/nth/initial#c122dc94f3ad4c372e0177544d5e09ac78e4a535"
+  resolved "https://github.com/department-of-veterans-affairs/eslint-config-appeals/tarball/nth/initial#e1e156b3a5591536c346229509ee354b9259fd8b"
   dependencies:
     babel-eslint "^8.0.2"
     eslint "^4.12.0"
