@@ -17,4 +17,12 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :alerts do
     object.alerts.map(&:to_hash)
   end
+
+  # Stubbed attributes
+  attribute :aoj { "vba" }
+  attribute :program_area { "compensation" }
+  attribute :description { "" }
+  attribute :docket { nil }
+  attribute :issues { [] }
+  attribute :evidence { [] }
 end
