@@ -48,12 +48,10 @@ export default class StyleGuideModal extends React.Component {
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Close',
-            onClick: this.handleModalClose
-          },
+            onClick: this.handleModalClose },
           { classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Proceed with action',
-            onClick: this.handleModalClose
-          }
+            onClick: this.handleModalClose }
         ]}
         closeHandler={this.handleModalClose}
         title = "This is a Modal">

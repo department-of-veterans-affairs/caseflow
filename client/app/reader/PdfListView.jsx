@@ -64,8 +64,7 @@ const mapStateToProps = (state, props) => {
       state.readerReducer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
-  };
+    manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt };
 };
 
 const mapDispatchToProps = (dispatch) => (

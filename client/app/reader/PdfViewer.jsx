@@ -226,15 +226,13 @@ export class PdfViewer extends React.Component {
           buttons={[
             { classNames: ['cf-modal-link', 'cf-btn-link'],
               name: 'Cancel',
-              onClick: this.props.closeAnnotationDeleteModal
-            },
+              onClick: this.props.closeAnnotationDeleteModal },
             { classNames: ['usa-button', 'usa-button-secondary'],
               name: 'Confirm delete',
               onClick: () => this.props.deleteAnnotation(
                 this.props.match.params.docId,
                 this.props.deleteAnnotationModalIsOpenFor
-              )
-            }
+              ) }
           ]}
           closeHandler={this.props.closeAnnotationDeleteModal}
           title="Delete Comment">

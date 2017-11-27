@@ -191,8 +191,7 @@ export class PdfSidebar extends React.Component {
             buttons = {[
               { classNames: ['usa-button', 'usa-button-secondary'],
                 name: 'Thanks, got it!',
-                onClick: this.closeKeyboardModalFromButton
-              }
+                onClick: this.closeKeyboardModalFromButton }
             ]}
             closeHandler={this.handleKeyboardModalClose}
             title="Keyboard shortcuts"

@@ -34,8 +34,7 @@ export const commentColumns = [{ header: 'Add/ edit comment',
 
 export const searchColumns = [{ header: 'Search within document',
   valueName: 'searchInstruction',
-  align: 'left'
-}, { header: 'Shortcut',
+  align: 'left' }, { header: 'Shortcut',
   valueName: 'shortcut',
   align: 'left' }];
 

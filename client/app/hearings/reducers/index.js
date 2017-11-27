@@ -158,12 +158,10 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
   case Constants.TOGGLE_DOCKET_SAVING:
-    return update(state, { docketIsSaving: { $set: !state.isSaving }
-    });
+    return update(state, { docketIsSaving: { $set: !state.isSaving } });
 
   case Constants.TOGGLE_WORKSHEET_SAVING:
-    return update(state, { worksheetIsSaving: { $set: !state.isSaving }
-    });
+    return update(state, { worksheetIsSaving: { $set: !state.isSaving } });
 
   case Constants.SET_DOCKET_SAVE_FAILED:
     return update(state, {

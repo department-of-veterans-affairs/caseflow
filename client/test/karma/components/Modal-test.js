@@ -11,8 +11,7 @@ describe('Modal', () => {
         <Modal
           buttons={[
             { classNames: ['test-class'],
-              name: 'first'
-            }
+              name: 'first' }
           ]}
           visible
           title="Test Title">
@@ -32,14 +31,11 @@ describe('Modal', () => {
         <Modal
           buttons={[
             { classNames: ['test-class'],
-              name: 'first'
-            },
+              name: 'first' },
             { classNames: ['test-class'],
-              name: 'second'
-            },
+              name: 'second' },
             { classNames: ['test-class'],
-              name: 'third'
-            }
+              name: 'third' }
           ]}
           visible
           title="Test Title">

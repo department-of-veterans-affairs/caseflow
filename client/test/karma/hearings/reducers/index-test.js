@@ -260,8 +260,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REOPEN,
         payload: { reopen: true,
-          issueId: 6
-        }
+          issueId: 6 }
       });
     });
 
@@ -281,8 +280,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_ALLOW,
         payload: { allow: true,
-          issueId: 6
-        }
+          issueId: 6 }
       });
     });
 
@@ -302,8 +300,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DENY,
         payload: { deny: true,
-          issueId: 6
-        }
+          issueId: 6 }
       });
     });
 
@@ -323,8 +320,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_REMAND,
         payload: { remand: true,
-          issueId: 6
-        }
+          issueId: 6 }
       });
     });
 
@@ -344,8 +340,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_DISMISS,
         payload: { dismiss: true,
-          issueId: 6
-        }
+          issueId: 6 }
       });
     });
 
@@ -365,8 +360,7 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_VHA,
         payload: { vha: true,
-          issueId: 6
-        }
+          issueId: 6 }
       });
     });
 

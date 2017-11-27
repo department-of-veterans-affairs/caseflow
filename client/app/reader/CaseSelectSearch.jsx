@@ -98,13 +98,11 @@ class CaseSelectSearch extends React.PureComponent {
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
-            onClick: this.handleModalClose
-          },
+            onClick: this.handleModalClose },
           { classNames: ['usa-button', 'usa-button-primary'],
             name: 'Okay',
             onClick: this.handleSelectAppeal,
-            disabled: _.isEmpty(caseSelect.selectedAppealVacolsId)
-          }
+            disabled: _.isEmpty(caseSelect.selectedAppealVacolsId) }
         ]}
         closeHandler={this.handleModalClose}
         title = "Select claims folder">
