@@ -11,7 +11,7 @@ import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
 import ConfirmCaseDetails from './ConfirmCaseDetails';
 import SignAndCertify from './SignAndCertify';
-import CertificationProgressBar from './CertificationProgressBar';
+import CancelCertificationConfirmation from './CancelCertificationConfirmation';
 import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
@@ -85,17 +85,11 @@ export class Certification extends React.Component {
     };
   }
 
-  fetchCertificationData(endpoint) {
-    return ApiUtil.get(endpoint);
-  }
-
   onSuccess(data) {
     return <Provider store={configureStore(JSON.parse(data.text).certification, JSON.parse(data.text).form9PdfPath)}>
       <div>
         <BrowserRouter>
           <div>
-            <Header />
-            <CertificationProgressBar />
             <Route path="/certifications/new/:vacols_id"
               component={EntryPointRedirect} />
             <PageRoute
@@ -127,13 +121,19 @@ export class Certification extends React.Component {
               path="/certifications/error"
               component={ErrorMessage}
             />
+            <PageRoute
+              title="Not Certified | Caseflow Certification"
+              path="/certification_cancellations/"
+              component={CancelCertificationConfirmation}
+            />
           </div>
         </BrowserRouter>
       </div>
     </Provider>;
   }
 
-  onError() {
+  /* eslint no-unused-vars: ["error", {"args": "none"}]*/
+  onError(error) {
     return <StatusMessage
       title="Technical Difficulties">
       Systems that Caseflow Certification connects to are experiencing technical difficulties
@@ -144,6 +144,25 @@ export class Certification extends React.Component {
 
   render() {
 
+    const fetchCertificationData = new Promise((resolve, reject) => {
+      let polling = setInterval(() => {
+        ApiUtil.get(`/certifications/${this.props.vacolsId}`).
+          then((data) => {
+            if (!JSON.parse(data.text).loading_data) {
+              resolve(data);
+              clearInterval(polling);
+            }
+            if (JSON.parse(data.text).loading_data_failed) {
+              reject(data);
+              clearInterval(polling);
+            }
+          }, (error) => {
+            reject(error);
+            clearInterval(polling);
+          });
+      }, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
+    });
+
     const initialMessage = 'Loading and checking documents from the Veteran’s file…';
 
     const longerThanUsualMessage = 'Documents are taking longer to load than usual. Thanks for your patience!';
@@ -151,10 +170,8 @@ export class Certification extends React.Component {
     return <div>
       {
         <AsynchronousDataLoader
-          componentsPromise={this.fetchCertificationData}
-          endpoint={`/certifications/${this.props.vacolsId}`}
+          componentsPromise={fetchCertificationData}
           spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}
-          pollingIntervalSeconds={AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL}
           message={initialMessage}
           extendedWaitMessage={longerThanUsualMessage}
           showExtendedWaitMessageInSeconds={AppConstants.LONGER_THAN_USUAL_TIMEOUT}

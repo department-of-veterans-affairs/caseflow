@@ -11,24 +11,15 @@ export default class AsynchronousDataLoader extends React.Component {
     };
   }
 
-  runPromise() {
-    this.props.componentsPromise(this.props.endpoint).
+  componentDidMount() {
+    this.props.componentsPromise.
       then((data) => {
-        if (!JSON.parse(data.text).loading_data && !JSON.parse(data.text).loading_data_failed) {
-          this.setState({
-            showLoader: false,
-            eventHasHappened: true,
-            promiseRejected: false,
-            data
-          });
-        } else if (JSON.parse(data.text).loading_data_failed) {
-          this.setState({
-            showLoader: false,
-            eventHasHappened: true,
-            promiseRejected: true,
-            error: data
-          });
-        }
+        this.setState({
+          showLoader: false,
+          eventHasHappened: true,
+          promiseRejected: false,
+          data
+        });
       },
       (error) => {
         this.setState({
@@ -38,11 +29,6 @@ export default class AsynchronousDataLoader extends React.Component {
           error
         });
       });
-  }
-
-  componentDidMount() {
-    // initial check
-    this.runPromise();
 
     // Timer for longer-than-usual message
     setTimeout(
@@ -65,15 +51,6 @@ export default class AsynchronousDataLoader extends React.Component {
     );
   }
 
-  componentDidUpdate() {
-    // subsequent checks if data is still loading
-    if (!this.state.data && !this.state.promiseRejected && !this.state.timeout && !this.state.eventHasHappened) {
-      setTimeout(() =>
-        this.runPromise(),
-      this.props.pollingIntervalSeconds);
-    }
-  }
-
   render() {
 
     return <div>
@@ -84,10 +61,11 @@ export default class AsynchronousDataLoader extends React.Component {
       }
       {
         ((this.state.timeout && !this.state.eventHasHappened) || this.state.promiseRejected) &&
-        this.props.onError(this.state.error)
+      this.props.onError(this.state.error)
       }
       {
-        (this.state.eventHasHappened && !this.state.promiseRejected) && this.props.onSuccess(this.state.data)
+        (this.state.eventHasHappened && !this.state.promiseRejected) &&
+        this.props.onSuccess(this.state.data)
       }
     </div>;
   }
