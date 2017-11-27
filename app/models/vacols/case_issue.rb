@@ -13,7 +13,8 @@ class VACOLS::CaseIssue < VACOLS::Record
   # in VFTYPES.FTKEY, where the diagnostic code is prefixed with 'DG'.
   # This query matches each ISSUE table code with the appropriate label,
   # either from the ISSREF or VFTYPES table.
-  def self.descriptions(vacols_ids)
+  # We define active as either having no disposition or being remanded.
+  def self.active_issues(vacols_ids)
     conn = connection
 
     query = <<-SQL
@@ -67,10 +68,11 @@ class VACOLS::CaseIssue < VACOLS::Record
           or (ISSREF.LEV3_CODE = '##' and 'DG' || ISSUES.ISSLEV3 = VFTYPES.FTKEY))
 
       where ISSUES.ISSKEY IN (?)
+        and (ISSUES.ISSDCLS is NULL or (ISSUES.ISSDCLS is NOT NULL and ISSUES.ISSDC IN ('3','L')))
     SQL
 
-    issues_result = MetricsService.record("VACOLS: CaseIssue.descriptions for #{vacols_ids}",
-                                          name: "CaseIssue.descriptions",
+    issues_result = MetricsService.record("VACOLS: CaseIssue.active_issues for #{vacols_ids}",
+                                          name: "CaseIssue.active_issues",
                                           service: :vacols) do
       conn.exec_query(sanitize_sql_array([query, vacols_ids]))
     end

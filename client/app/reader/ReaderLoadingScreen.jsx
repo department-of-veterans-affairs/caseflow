@@ -10,8 +10,6 @@ import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
 import _ from 'lodash';
 
-const PARALLEL_DOCUMENT_REQUESTS = 3;
-
 export class ReaderLoadingScreen extends React.Component {
 
   componentDidMount = () => {
@@ -26,23 +24,6 @@ export class ReaderLoadingScreen extends React.Component {
       this.props.onReceiveDocs(documents, this.props.vacolsId);
       this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
       this.props.onReceiveAnnotations(annotations);
-
-      const downloadDocuments = (documentUrls, index) => {
-        if (index >= documentUrls.length) {
-          return;
-        }
-
-        ApiUtil.get(documentUrls[index], {
-          cache: true,
-          withCredentials: true
-        }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
-          () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-        );
-      };
-
-      for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-        downloadDocuments(_.map(documents, 'content_url'), i);
-      }
     }, this.props.onInitialDataLoadingFail);
   }
 
