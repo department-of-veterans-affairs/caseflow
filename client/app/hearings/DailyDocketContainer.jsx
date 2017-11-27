@@ -26,7 +26,7 @@ export class DailyDocketContainer extends React.Component {
         title= "Unable to load hearings">
           It looks like Caseflow was unable to load hearings.<br />
           Please <a href="">refresh the page</a> and try again.
-      </ StatusMessage>;
+      </StatusMessage>;
     }
 
     if (!this.props.dockets) {
