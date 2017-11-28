@@ -7,7 +7,7 @@ import StyleGuideCharacterLimit from './StyleGuideCharacterLimit';
 
 export default class StyleGuideFormFields extends React.PureComponent {
   render = () => {
-   
+
     return <div>
       <h2 id="form-fields">Form Fields</h2>
       <StyleGuideTextInput />
@@ -15,7 +15,7 @@ export default class StyleGuideFormFields extends React.PureComponent {
       <StyleGuideTextArea />
       <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />
-    </div>
+    </div>;
   }
 }
 

@@ -20,40 +20,40 @@ export default class StyleGuideLayout extends React.PureComponent {
        Finally, the Footer should go at the bottom of the app.
       </p>
 
-     <p>
+      <p>
        We try to be consistent in this layout across all our applications
        so that our interface is predictable and familiar to our user.
        The consistency also helps us reuse common code in Caseflow Commons.</p>
 
-     <br />
-     <StyleGuideNavigationBar />
-     <br />
-     <StyleGuideUserDropdownMenu />
-     <br />
-     <h3 id="content-area">Main Content Area</h3>
-     <p>
+      <br />
+      <StyleGuideNavigationBar />
+      <br />
+      <StyleGuideUserDropdownMenu />
+      <br />
+      <h3 id="content-area">Main Content Area</h3>
+      <p>
        The main content area is where we put all the application-specific interaction.
        This includes things like a Queue of tasks for the user to perform,
        workflow specific actions, document previews, confirmation messages, and more.
        The background of the main content area is #f9f9f9.</p>
-     <br />
+      <br />
 
-     <h3 id="app-canvas">App Canvas</h3>
+      <h3 id="app-canvas">App Canvas</h3>
 
-     <p>
+      <p>
        Almost all of the interaction in Caseflow takes place in an App Canvas.
        The content starts off with a page title and minimal instructions for what the user
        needs to do to complete their task on the page.
        It then contains any interaction that well help this to accomplish their task including forms,
        document previews, tables, error messages, and more.
        The canvas has a default standard width but can be adjusted according to the needs of each application.</p>
-     <br />
-     <StyleGuideAction />
-     <br />
-     <StyleGuideHorizontalLine />
-     <br />
-     <StyleGuideFooter />
+      <br />
+      <StyleGuideAction />
+      <br />
+      <StyleGuideHorizontalLine />
+      <br />
+      <StyleGuideFooter />
 
-  </div>;
+    </div>;
   }
 }
