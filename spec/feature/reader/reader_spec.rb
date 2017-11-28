@@ -62,14 +62,24 @@ def get_size(element)
 end
 
 def add_comment_without_clicking_save(text)
-  # Add a comment
-  click_on "button-AddComment"
-  expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
+  # It seems that this can fail in some cases on Travis, retry if it does.
+  3.times do
+    # Add a comment
+    click_on "button-AddComment"
+    expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
 
-  # pageContainer1 is the id pdfJS gives to the div holding the first page.
-  find("#pageContainer1").click
+    # pageContainer1 is the id pdfJS gives to the div holding the first page.
+    find("#pageContainer1").click
 
-  expect(page).to_not have_css(".cf-pdf-placing-comment")
+    expect(page).to_not have_css(".cf-pdf-placing-comment")
+
+    begin
+      find("#addComment")
+      break
+    rescue Capybara::ElementNotFound
+      Rails.logger.info('#addComment not found, trying again')
+    end
+  end
   fill_in "addComment", with: text, wait: 10
 end
 
