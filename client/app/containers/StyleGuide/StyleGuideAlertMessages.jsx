@@ -4,7 +4,7 @@ import StatusMessage from '../../components/StatusMessage';
 
 export default class StyleGuideAlertMessages extends React.PureComponent {
   render = () => {
-    let message = 'We’ve recorded your explanation and placed the claim back in the queue.' +
+    const message = 'We’ve recorded your explanation and placed the claim back in the queue.' +
     'You can try establishing another claim or go back to your Work History.';
 
     return <div>

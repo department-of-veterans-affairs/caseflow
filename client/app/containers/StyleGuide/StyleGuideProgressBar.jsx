@@ -7,7 +7,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 export default class StyleGuideProgressBar extends React.PureComponent {
   render = () => {
 
-    let sections = [
+    const sections = [
       {
         title: '1. Review Description'
       },
