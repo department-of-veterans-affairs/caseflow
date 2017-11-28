@@ -3,13 +3,13 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import SmallLoader from '../../components/SmallLoader';
 import * as AppConstants from '../../constants/AppConstants';
 
-export default class StyleGuideSmallLoader extends React.Component {
+export default class StyleGuideSmallLoader extends React.PureComponent {
 
   render = () => {
     return <div>
       <StyleGuideComponentTitle
         title="Small Loader"
-        id="small_loader"
+        id="small-loader"
         link="StyleGuideSmallLoader.jsx"
       />
       <p>

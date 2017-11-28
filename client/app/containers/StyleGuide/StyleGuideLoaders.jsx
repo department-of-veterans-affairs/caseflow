@@ -5,7 +5,7 @@ import * as AppConstants from '../../constants/AppConstants';
 import StyleGuideSmallLoader from './StyleGuideSmallLoader';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 
-export default class StyleGuideLoaders extends React.Component {
+export default class StyleGuideLoaders extends React.PureComponent {
 
   render = () => {
     return <div>

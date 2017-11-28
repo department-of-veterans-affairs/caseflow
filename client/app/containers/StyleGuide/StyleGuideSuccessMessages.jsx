@@ -17,7 +17,7 @@ export default function StyleGuideSuccessMessages() {
   return <div>
     <StyleGuideComponentTitle
       title="Success Messages"
-      id="success_messages"
+      id="success-messages"
       link="StyleGuideSuccessMessages.jsx"
       isSubsection
     />

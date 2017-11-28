@@ -23,7 +23,7 @@ import StyleGuideFormFields from './StyleGuideFormFields';
 import StyleGuideAccordions from './StyleGuideAccordions';
 import StyleGuideAlerts from './StyleGuideAlerts';
 
-export default class StyleGuideIndex extends React.Component {
+export default class StyleGuideIndex extends React.PureComponent {
 
   render() {
     return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">

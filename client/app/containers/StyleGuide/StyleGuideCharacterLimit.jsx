@@ -2,7 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import TextareaField from '../../components/TextareaField';
 
-export default class StyleGuideCharacterLimit extends React.Component {
+export default class StyleGuideCharacterLimit extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -16,7 +16,7 @@ export default class StyleGuideCharacterLimit extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Character Limit"
-        id="character_limit"
+        id="character-limit"
         link="StyleGuideCharacterLimit.jsx"
         isSubsection
       />
