@@ -1130,6 +1130,7 @@ RSpec.feature "Reader" do
     end
 
     context "Tags" do
+      # :nocov:
       scenario "adding and deleting tags", skip: true do
         TAG1 = "Medical".freeze
         TAG2 = "Law document".freeze
@@ -1184,6 +1185,7 @@ RSpec.feature "Reader" do
         # verify that the tags on the previous document still exist
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
+      # :nocov:
 
       context "Share tags among all documents in a case" do
         scenario "Shouldn't show auto suggestions" do
@@ -1193,6 +1195,7 @@ RSpec.feature "Reader" do
           expect(page).not_to have_css(".Select-menu-outer")
         end
 
+        # :nocov:
         scenario "Should show correct auto suggestions", skip: true do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           click_on documents[1].type
@@ -1233,6 +1236,7 @@ RSpec.feature "Reader" do
           expect(tag_options.count).to eq(1)
           expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
         end
+        # :nocov:
       end
     end
 
