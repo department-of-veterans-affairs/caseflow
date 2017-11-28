@@ -290,7 +290,7 @@ export class PdfFile extends React.PureComponent {
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
             rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
-            scrollToAlignment={'start'}
+            scrollToAlignment="start"
             width={width}
             scale={this.props.scale}
           />;
