@@ -580,8 +580,7 @@ RSpec.feature "Reader" do
       expect(find("#procedural", visible: false).checked?).to be false
     end
 
-    ensure_stable do
-    scenario "Add comment", focus: true do
+    scenario "Add comment" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Caseflow Reader")
 
@@ -642,7 +641,6 @@ RSpec.feature "Reader" do
       # Comment should be removed
       expect(page).to_not have_css(".comment-container")
     end
-  end
 
     context "when comment box contains only whitespace characters" do
       scenario "save button is disabled" do
