@@ -10,7 +10,7 @@ import Example5 from './CheckboxExamples/Example5';
 import Example6 from './CheckboxExamples/Example6';
 import Example7 from './CheckboxExamples/Example7';
 
-export default class StyleGuideCheckboxes extends React.Component {
+export default class StyleGuideCheckboxes extends React.PureComponent {
   render = () => {
     return <div>
       <StyleGuideComponentTitle

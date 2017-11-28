@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-class StyleGuideSearchableDropdown extends Component {
+export default class StyleGuideSearchableDropdown extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -78,4 +78,3 @@ class StyleGuideSearchableDropdown extends Component {
   }
 }
 
-export default StyleGuideSearchableDropdown;
