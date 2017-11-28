@@ -8,7 +8,7 @@ import Table from '../../components/Table';
 export default class StyleGuideTables extends React.PureComponent {
   render = () => {
   // List of objects which will be used to create each row
-    let rowObjects = [
+    const rowObjects = [
       { name: 'Shane',
         favoriteAnimal: 'Hamster',
         likesSports: true },
@@ -20,7 +20,7 @@ export default class StyleGuideTables extends React.PureComponent {
         likesSports: false }
     ];
 
-    let columns = [
+    const columns = [
       {
         header: 'Name',
         valueName: 'name',
@@ -42,11 +42,11 @@ export default class StyleGuideTables extends React.PureComponent {
       }
     ];
 
-    let rowClassNames = (rowObject) => {
+    const rowClassNames = (rowObject) => {
       return rowObject.likesSports ? 'cf-success' : '';
     };
 
-    let columnsWithAction = _.concat(columns, [
+    const columnsWithAction = _.concat(columns, [
       {
         header: 'Poke',
         align: 'right',
@@ -56,7 +56,7 @@ export default class StyleGuideTables extends React.PureComponent {
       }
     ]);
 
-    let summary = 'Example styleguide table';
+    const summary = 'Example styleguide table';
 
     return <div className="cf-sg-tables-section">
       <StyleGuideComponentTitle

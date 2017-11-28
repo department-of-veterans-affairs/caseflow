@@ -38,7 +38,7 @@ export default class StyleGuideUserDropdownMenu extends React.PureComponent {
       <br />
       <StyleGuideComponentTitle
         title="User dropdown menu"
-        id="user-dropdow-menu"
+        id="user-dropdown-menu"
         link="StyleGuideUserDropdownMenu.jsx"
         isSubsection
       />
