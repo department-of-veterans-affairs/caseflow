@@ -42,6 +42,7 @@ Rails.application.configure do
 
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
+  config.allow_concurrency = true
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
