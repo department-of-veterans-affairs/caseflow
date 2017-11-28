@@ -6,8 +6,11 @@ import { connect } from 'react-redux';
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
-import { closeAnnotationDeleteModal, deleteAnnotation, showPlaceAnnotationIcon,
-  selectCurrentPdf, fetchAppealDetails, stopPlacingAnnotation } from './actions';
+import { selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal, showSearchBar
+} from '../reader/PdfViewer/PdfViewerActions';
+import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation
+} from '../reader/PdfViewer/AnnotationActions';
+
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import { update } from '../util/ReducerUtil';
 import { bindActionCreators } from 'redux';
@@ -19,7 +22,8 @@ const NUMBER_OF_DIRECTIONS = 4;
 
 // Given a direction, the current coordinates, an array of the div elements for each page,
 // the file, and rotation of the document, this function calculates the next location of the comment.
-export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation) => {
+// eslint-disable-next-line max-len
+export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation = 0) => {
   // There are four valid rotations: 0, 90, 180, 270. We transform those values to 0, -1, -2, -3.
   // We then use that value to rotate the direction. I.E. Hitting up (value 0) on the
   // keyboard when rotated 90 degrees corresponds to moving left (value 3) on the document.
@@ -115,6 +119,16 @@ export class PdfViewer extends React.Component {
       this.props.showPdf(this.getNextDocId())();
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
+
+    const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
+
+    if (event[metaKey] && event.code === 'KeyF') {
+      this.props.showSearchBar();
+    }
+  }
+
+  updateWindowTitle = () => {
+    document.title = `${this.selectedDoc().type} | Document Viewer | Caseflow Reader`;
   }
 
   componentDidUpdate = () => {
@@ -123,6 +137,7 @@ export class PdfViewer extends React.Component {
 
       commentBox.focus();
     }
+    this.updateWindowTitle();
   }
 
   componentDidMount() {
@@ -132,6 +147,7 @@ export class PdfViewer extends React.Component {
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       this.props.fetchAppealDetails(this.props.match.params.vacolsId);
     }
+    this.updateWindowTitle();
   }
 
   componentWillUnmount = () => {
@@ -194,14 +210,12 @@ export class PdfViewer extends React.Component {
             pdfWorker={this.props.pdfWorker}
             id="pdf"
             documentPathBase={this.props.documentPathBase}
-            onPageClick={this.placeComment}
             prevDocId={this.getPrevDocId()}
             nextDocId={this.getNextDocId()}
             history={this.props.history}
             showPdf={this.props.showPdf}
             showClaimsFolderNavigation={this.showClaimsFolderNavigation()}
-            onViewPortCreated={this.onViewPortCreated}
-            onViewPortsCleared={this.onViewPortsCleared}
+            featureToggles={this.props.featureToggles}
           />
           <PdfSidebar
             doc={doc}
@@ -246,7 +260,8 @@ const mapDispatchToProps = (dispatch) => ({
     closeAnnotationDeleteModal,
     deleteAnnotation,
     stopPlacingAnnotation,
-    fetchAppealDetails
+    fetchAppealDetails,
+    showSearchBar
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
@@ -263,9 +278,9 @@ PdfViewer.propTypes = {
     id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
-  onScrollToComment: PropTypes.func,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,
-  hidePdfSidebar: PropTypes.bool
+  hidePdfSidebar: PropTypes.bool,
+  showPdf: PropTypes.func
 };

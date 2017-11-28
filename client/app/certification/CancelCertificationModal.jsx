@@ -8,7 +8,7 @@ import requiredValidator from '../util/validators/RequiredValidator';
 import emailValidator from '../util/validators/EmailValidator';
 import TextField from '../components/TextField';
 import ApiUtil from '../util/ApiUtil';
-
+import { Redirect } from 'react-router-dom';
 
 // TODO: use the footer (see ConfirmHearing.jsx) everywhere,
 // then delete this comment :)
@@ -33,7 +33,8 @@ export default class CancelCertificationModal extends BaseForm {
           '',
           emailValidator('Make sure you’ve entered a valid email address below.')
         )
-      }
+      },
+      updateCancelSuccess: false
     };
   }
 
@@ -117,7 +118,9 @@ export default class CancelCertificationModal extends BaseForm {
 
     return ApiUtil.post('/certification_cancellations', { data }).
       then(() => {
-        window.location.href = '/certification_cancellations/show';
+        this.setState({
+          updateCancelSuccess: true
+        });
       });
 
   }
@@ -140,6 +143,10 @@ export default class CancelCertificationModal extends BaseForm {
         value: 'Other' }
     ];
 
+    if (this.state.updateCancelSuccess) {
+      return <Redirect to="/certification_cancellations/" />;
+    }
+
     return <div>
       <Modal
         buttons={[
@@ -152,7 +159,7 @@ export default class CancelCertificationModal extends BaseForm {
             onClick: this.submitForm
           }
         ]}
-        visible={true}
+        visible
         closeHandler={closeHandler}
         title={title}>
         <p>
@@ -164,14 +171,14 @@ export default class CancelCertificationModal extends BaseForm {
           name="Why can't this case be certified in Caseflow?"
           options={cancellationReasonOptions}
           value={this.state.cancellationReasonValue}
-          required={true}
+          required
           onChange={this.onCancellationReasonChange}
           errorMessage={this.state.
-            certificationCancellationForm.cancellationReason.errorMessage}/>
+            certificationCancellationForm.cancellationReason.errorMessage} />
         {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
-                required={true}
+                required
                 onChange={this.onOtherReasonChange}
                 errorMessage={this.state.
                   certificationCancellationForm.otherReason.errorMessage}
@@ -183,7 +190,7 @@ export default class CancelCertificationModal extends BaseForm {
           onChange={this.onEmailChange}
           errorMessage={this.state.certificationCancellationForm.email.errorMessage}
           value={this.state.emailValue}
-          required={true}/>
+          required />
       </Modal>
     </div>;
   }

@@ -6,7 +6,7 @@ import DocCategoryPicker from '../reader/DocCategoryPicker';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
-import { handleCategoryToggle } from '../reader/actions';
+import { handleCategoryToggle } from '../reader/DocumentList/DocumentListActions';
 
 class SideBarCategories extends PureComponent {
   render() {
@@ -22,7 +22,7 @@ class SideBarCategories extends PureComponent {
     );
 
     return <div className="cf-category-sidebar">
-      {this.props.showErrorMessage.category && <CannotSaveAlert />}
+      {this.props.error.category.visible && <CannotSaveAlert />}
       <DocCategoryPicker
         allowReadOnly
         handleCategoryToggle={_.partial(this.props.handleCategoryToggle, doc.id)}
@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+    error: state.readerReducer.ui.pdfSidebar.error
   };
 };
 

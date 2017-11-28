@@ -22,6 +22,7 @@ class Fakes::VBMSService
     attr_accessor :document_records
     attr_accessor :end_product_claim_id
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
+    attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -49,7 +50,12 @@ class Fakes::VBMSService
 
   def self.fetch_documents_for(appeal, _user = nil)
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
-    (document_records || {})[appeal.vbms_id] || @documents || []
+    fetched_at_format = "%FT%T.%LZ"
+    {
+      manifest_vbms_fetched_at: @manifest_vbms_fetched_at.try(:utc).try(:strftime, fetched_at_format),
+      manifest_vva_fetched_at: @manifest_vva_fetched_at.try(:utc).try(:strftime, fetched_at_format),
+      documents: (document_records || {})[appeal.vbms_id] || @documents || []
+    }
   end
 
   def self.upload_document_to_vbms(appeal, form8)

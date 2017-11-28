@@ -18,7 +18,7 @@ export default class StyleGuideTextInput extends React.Component {
         title="Text Input"
         id="text_input"
         link="StyleGuideTextInput.jsx"
-        isSubsection={true}
+        isSubsection
       />
       <p>A text input field in a form that allows the user to enter requested information.
       It can appear as a field for a single line of text or an area for multiple
@@ -40,7 +40,7 @@ export default class StyleGuideTextInput extends React.Component {
         required={false}
         onChange={(value) => {
           this.setState({ value });
-        }}/>
+        }} />
     </div>;
   }
 }

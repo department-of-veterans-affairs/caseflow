@@ -21,7 +21,7 @@ export default class EditComment extends React.Component {
   }
 
   keyListener = (event) => {
-    if (event.altKey && event.key === 'Enter') {
+    if (event.altKey && event.key === 'Enter' && this.props.comment.comment) {
       this.onSaveCommentEdit();
       event.stopPropagation();
     }
@@ -41,7 +41,6 @@ export default class EditComment extends React.Component {
     this.handleAutoSave();
   }
 
-
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
   onCancelCommentEdit = () => {
@@ -53,6 +52,8 @@ export default class EditComment extends React.Component {
     this.shouldAutosave = false;
     this.props.onSaveCommentEdit(this.props.comment);
   }
+
+  isStringEmpty = (str = '') => !str.trim();
 
   render() {
     return <div>
@@ -74,7 +75,7 @@ export default class EditComment extends React.Component {
               Cancel
           </Button>
           <Button
-            disabled={this.props.disableOnEmpty && !this.props.comment.comment}
+            disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
             name="save"
             onClick={this.onSaveCommentEdit}>
               Save

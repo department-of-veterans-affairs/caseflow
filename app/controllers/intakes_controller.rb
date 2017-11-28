@@ -15,6 +15,8 @@ class IntakesController < ApplicationController
   end
 
   def index
+    no_cache
+
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -24,26 +26,23 @@ class IntakesController < ApplicationController
     if intake.start!
       render json: ramp_intake_data(intake)
     else
-      render json: { error_code: intake.error_code }, status: 422
+      render json: {
+        error_code: intake.error_code,
+        error_data: intake.error_data
+      }, status: 422
     end
   end
 
   private
 
-  def ramp_intake_data(ramp_intake)
-    return {} unless ramp_intake
+  def no_cache
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
 
-    {
-      id: ramp_intake.id,
-      veteran_file_number: ramp_intake.veteran_file_number,
-      veteran_name: ramp_intake.veteran.name.formatted(:readable_short),
-      veteran_form_name: ramp_intake.veteran.name.formatted(:form),
-      notice_date: ramp_intake.detail.notice_date,
-      option_selected: ramp_intake.detail.option_selected,
-      receipt_date: ramp_intake.detail.receipt_date,
-      completed_at: ramp_intake.completed_at,
-      appeals: ramp_intake.serialized_appeal_issues
-    }
+  def ramp_intake_data(ramp_intake)
+    ramp_intake ? ramp_intake.ui_hash : {}
   end
   helper_method :ramp_intake_data
 

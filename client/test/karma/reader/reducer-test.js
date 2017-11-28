@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import { expect } from 'chai';
 import { reducer, initialState } from '../../../app/reader/reducer';
-import { setViewingDocumentsOrComments } from '../../../app/reader/actions';
+import { setViewingDocumentsOrComments } from '../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../app/reader/constants';
 
 /* eslint-disable no-undefined */
@@ -208,7 +208,7 @@ describe('Reader reducer', () => {
     it('shows an error message when creating the annotation fails', () => {
       const { state, annotation } = getContext();
 
-      expect(state.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(state.ui.pdfSidebar.error.annotation.visible).to.equal(true);
       expect(state.ui.placedButUnsavedAnnotation).to.deep.equal(annotation);
     });
 
@@ -227,7 +227,7 @@ describe('Reader reducer', () => {
         }
       ], state);
 
-      expect(nextState.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(nextState.ui.pdfSidebar.error.annotation.visible).to.equal(false);
     });
   });
 
@@ -279,14 +279,14 @@ describe('Reader reducer', () => {
     it('marks an annotation as pending deletion', () => {
       const { stateAfterDeleteRequest, annotationId } = getContext();
 
-      expect(stateAfterDeleteRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterDeleteRequest.ui.pdfSidebar.error.annotation.visible).to.equal(false);
       expect(stateAfterDeleteRequest.annotations[annotationId].pendingDeletion).to.equal(true);
     });
 
     it('shows an error message when the request fails', () => {
       const { stateAfterDeleteFailure, annotationId } = getContext();
 
-      expect(stateAfterDeleteFailure.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(stateAfterDeleteFailure.ui.pdfSidebar.error.annotation.visible).to.equal(true);
       expect(stateAfterDeleteFailure.annotations[annotationId].pendingDeletion).to.equal(undefined);
     });
   });
@@ -346,7 +346,7 @@ describe('Reader reducer', () => {
     it('handles editing an annotation', () => {
       const { stateAfterEditRequest, annotationId, newContent, documentId } = getContext();
 
-      expect(stateAfterEditRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterEditRequest.ui.pdfSidebar.error.annotation.visible).to.equal(false);
       expect(stateAfterEditRequest.ui.pendingEditingAnnotations[annotationId]).to.deep.equal({
         id: annotationId,
         uuid: annotationId,
@@ -358,7 +358,7 @@ describe('Reader reducer', () => {
     it('shows an error message when the request fails', () => {
       const { stateAfterEditFailure, annotationId, newContent, documentId } = getContext();
 
-      expect(stateAfterEditFailure.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(stateAfterEditFailure.ui.pdfSidebar.error.annotation.visible).to.equal(true);
       expect(stateAfterEditFailure.editingAnnotations[annotationId]).to.deep.equal({
         id: annotationId,
         uuid: annotationId,
@@ -422,21 +422,21 @@ describe('Reader reducer', () => {
     it('handles moving an annotation', () => {
       const { stateAfterMoveRequest, annotation, movedAnnotation } = getContext();
 
-      expect(stateAfterMoveRequest.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterMoveRequest.ui.pdfSidebar.error.annotation.visible).to.equal(false);
       expect(stateAfterMoveRequest.ui.pendingEditingAnnotations[annotation.id]).to.deep.equal(movedAnnotation);
     });
 
     it('shows an error message when the request fails', () => {
       const { stateAfterMoveFailure, annotation } = getContext();
 
-      expect(stateAfterMoveFailure.ui.pdfSidebar.showErrorMessage.annotation).to.equal(true);
+      expect(stateAfterMoveFailure.ui.pdfSidebar.error.annotation.visible).to.equal(true);
       expect(stateAfterMoveFailure.ui.pendingEditingAnnotations[annotation.id]).to.equal(undefined);
     });
 
     it('updates the annotation when the request succeeds', () => {
       const { stateAfterMoveSuccess, annotation, movedAnnotation } = getContext();
 
-      expect(stateAfterMoveSuccess.ui.pdfSidebar.showErrorMessage.annotation).to.equal(false);
+      expect(stateAfterMoveSuccess.ui.pdfSidebar.error.annotation.visible).to.equal(false);
       expect(stateAfterMoveSuccess.ui.pendingEditingAnnotations[annotation.id]).to.equal(undefined);
       expect(stateAfterMoveSuccess.annotations[annotation.id]).to.deep.equal(movedAnnotation);
     });

@@ -6,6 +6,8 @@ RSpec.feature "RAMP Intake" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 8, 8))
+
+    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
   end
 
   let(:veteran) do
@@ -34,6 +36,20 @@ RSpec.feature "RAMP Intake" do
     )
   end
 
+  let!(:inactive_appeal) do
+    Generators::Appeal.build(
+      vbms_id: "77776666C",
+      vacols_record: :full_grant_decided
+    )
+  end
+
+  let!(:ineligible_appeal) do
+    Generators::Appeal.build(
+      vbms_id: "77778888C",
+      vacols_record: :activated
+    )
+  end
+
   context "As a user with Mail Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Mail Intake"])
@@ -57,6 +73,59 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("A RAMP Opt-in Notice Letter was not sent to this Veteran.")
     end
 
+    scenario "Search for a veteran with an no active appeals" do
+      RampElection.create!(veteran_file_number: "77776666", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "77776666"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake")
+      expect(page).to have_content("Ineligible to participate in RAMP: no active appeals")
+    end
+
+    scenario "Search for a veteran with an ineligible appeal" do
+      RampElection.create!(veteran_file_number: "77778888", notice_date: 5.days.ago)
+
+      visit "/intake"
+      fill_in "Search small", with: "77778888"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake")
+      expect(page).to have_content("Ineligible to participate in RAMP: appeal is at the Board")
+    end
+
+    scenario "Search for a veteran that has a RAMP election already processed" do
+      ramp_election = RampElection.create!(
+        veteran_file_number: "12341234",
+        notice_date: 5.days.ago
+      )
+
+      RampIntake.create!(
+        user: current_user,
+        detail: ramp_election,
+        completed_at: Time.zone.now,
+        completion_status: :success
+      )
+
+      # Validate you're redirected back to the search page if you haven't started yet
+      visit "/intake/completed"
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+
+      visit "/intake/review-request"
+      fill_in "Search small", with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to have_content(
+        "A RAMP opt-in with the notice date 08/02/2017 was already processed"
+      )
+
+      error_intake = Intake.last
+      expect(error_intake.completion_status).to eq("error")
+      expect(error_intake.error_code).to eq("ramp_election_already_complete")
+    end
+
     scenario "Search for a veteran that has received a RAMP election" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: 5.days.ago)
 
@@ -69,7 +138,7 @@ RSpec.feature "RAMP Intake" do
       click_on "Search"
 
       expect(page).to have_current_path("/intake/review-request")
-      expect(page).to have_content("Review Ed Merica's opt-in request")
+      expect(page).to have_content("Review Ed Merica's opt-in election")
 
       intake = RampIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
@@ -120,15 +189,20 @@ RSpec.feature "RAMP Intake" do
       )
 
       within_fieldset("Which election did the Veteran select?") do
-        find("label", text: "Higher Level Review without DRO hearing request").click
+        find("label", text: "Higher Level Review", match: :prefer_exact).click
       end
       fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Finish processing Higher-Level Review election")
-      expect(page).to have_content("Create an EP 682 RAMP – Higher Level Review Rating in VBMS.")
 
       click_label "confirm-finish"
+
+      ## Validate error message when complete intake fails
+      allow(Appeal).to receive(:close).and_raise("A random error. Oh no!")
+      safe_click "button#button-submit-review"
+      expect(page).to have_content("Something went wrong")
+
       page.go_back
 
       expect(page).to_not have_content("Please select an option.")
@@ -139,9 +213,9 @@ RSpec.feature "RAMP Intake" do
       safe_click "#button-submit-review"
 
       expect(find("#confirm-finish", visible: false)).to_not be_checked
+      expect(page).to_not have_content("Something went wrong")
 
       expect(page).to have_content("Finish processing Supplemental Claim election")
-      expect(page).to have_content("Create an EP 683 RAMP – Supplemental Claim Review Rating in VBMS.")
 
       # Validate the appeal & issue also shows up
       expect(page).to have_content("This Veteran has 1 active appeal, with the following issues")
@@ -150,6 +224,8 @@ RSpec.feature "RAMP Intake" do
     end
 
     scenario "Complete intake for RAMP Election form" do
+      Fakes::VBMSService.end_product_claim_id = "SHANE9642"
+
       election = RampElection.create!(
         veteran_file_number: "12341234",
         notice_date: Date.new(2017, 8, 7)
@@ -163,7 +239,7 @@ RSpec.feature "RAMP Intake" do
       visit "/intake/finish"
 
       within_fieldset("Which election did the Veteran select?") do
-        find("label", text: "Higher Level Review with DRO hearing request").click
+        find("label", text: "Higher Level Review with Informal Conference").click
       end
 
       fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
@@ -195,10 +271,40 @@ RSpec.feature "RAMP Intake" do
       safe_click "button#button-submit-review"
 
       expect(page).to have_content("Intake completed")
+      expect(page).to have_content(
+        "Established EP: 682HLRRRAMP - Higher Level Review Rating for Station 397"
+      )
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: election.receipt_date.to_date,
+          end_product_modifier: "682",
+          end_product_label: "Higher Level Review Rating",
+          end_product_code: "682HLRRRAMP",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: intake.veteran.to_vbms_hash
+      )
+
+      # Validate that you can not go back to previous steps
+      page.go_back
+      expect(page).to have_content("Intake completed")
+
+      page.go_back
+      expect(page).to have_content("Welcome to Caseflow Intake!")
 
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake).to be_success
+
+      election.reload
+      expect(election.end_product_reference_id).to eq("SHANE9642")
 
       # Validate that the intake is no longer able to be worked on
       visit "/intake/finish"

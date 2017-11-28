@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   end
 
   def timezone
-    (VACOLS::RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
   end
 
   def display_name
@@ -94,7 +94,7 @@ class User < ActiveRecord::Base
   end
 
   def station_offices
-    VACOLS::RegionalOffice::STATIONS[station_id]
+    RegionalOffice::STATIONS[station_id]
   end
 
   def current_case_assignments_with_views

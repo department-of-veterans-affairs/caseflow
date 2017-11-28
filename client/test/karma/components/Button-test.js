@@ -11,7 +11,7 @@ describe('Button', () => {
       classNames={['usa-button-primary']}
       name="foo"
       onChange={onChange}
-      loading={true} />);
+      loading />);
 
     expect(wrapper.find('#test-button.hidden-field')).to.have.length(1);
   });
@@ -22,7 +22,7 @@ describe('Button', () => {
       name="foo"
       onChange={onChange}
       classNames={['usa-button-primary']}
-      disabled={true} />);
+      disabled />);
 
     expect(wrapper.find('.usa-button-disabled')).to.have.length(1);
     expect(wrapper.find('.usa-button-primary')).to.have.length(0);

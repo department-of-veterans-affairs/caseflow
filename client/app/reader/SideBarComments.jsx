@@ -7,9 +7,9 @@ import { plusIcon } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
-
-import { updateNewAnnotationContent, createAnnotation, stopPlacingAnnotation,
-  startPlacingAnnotation } from '../reader/actions';
+import { createAnnotation, stopPlacingAnnotation,
+  startPlacingAnnotation, updateNewAnnotationContent
+} from '../reader/PdfViewer/AnnotationActions';
 
 class SideBarComments extends PureComponent {
   handleAddClick = (event) => {
@@ -33,13 +33,13 @@ class SideBarComments extends PureComponent {
         </Button>
       </span>
       <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-        {this.props.showErrorMessage.annotation && <CannotSaveAlert />}
+        {this.props.error.annotation.visible && <CannotSaveAlert message={this.props.error.annotation.message} />}
         <div className="cf-pdf-comment-list">
           {this.props.placedButUnsavedAnnotation &&
           <EditComment
             comment={this.props.placedButUnsavedAnnotation}
             id="addComment"
-            disableOnEmpty={true}
+            disableOnEmpty
             onChange={this.props.updateNewAnnotationContent}
             onCancelCommentEdit={this.stopPlacingAnnotation}
             onSaveCommentEdit={this.props.createAnnotation} />}
@@ -53,7 +53,7 @@ class SideBarComments extends PureComponent {
 const mapStateToProps = (state) => {
   return {
     ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+    error: state.readerReducer.ui.pdfSidebar.error
   };
 };
 

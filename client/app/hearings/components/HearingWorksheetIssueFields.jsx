@@ -8,19 +8,19 @@ import { onProgramChange, onNameChange, onLevelsChange, onDescriptionChange } fr
 class HearingWorksheetIssueFields extends PureComponent {
 
   onProgramChange = (event) =>
-    this.props.onProgramChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onProgramChange(event.target.value, this.props.issue.id);
 
   onNameChange = (event) =>
-    this.props.onNameChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onNameChange(event.target.value, this.props.issue.id);
 
   onLevelsChange = (event) =>
-    this.props.onLevelsChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onLevelsChange(event.target.value, this.props.issue.id);
 
   onDescriptionChange = (event) =>
-    this.props.onDescriptionChange(event.target.value, this.props.issueKey, this.props.appealKey);
+    this.props.onDescriptionChange(event.target.value, this.props.issue.id);
 
   render() {
-    let { issue, field } = this.props;
+    let { issue, field, maxLength } = this.props;
 
     const allowedFields = {
       program: { onChange: this.onProgramChange,
@@ -43,14 +43,17 @@ class HearingWorksheetIssueFields extends PureComponent {
     if (!issue.from_vacols || allowedFields[field].alwaysEditable) {
       return <div className="cf-form-textarea">
         <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-${field}`}>{field}</label>
-        <Textarea aria-label={field} name={field}
-
-          id={`${issue.id}-issue-${field}`}
-          value={allowedFields[field].value || ''}
-          onChange={allowedFields[field].onChange}
-          minRows={2}
-          maxRows={8}
-        />
+        { this.props.readOnly ?
+          <p>{allowedFields[field].value}</p> :
+          <Textarea aria-label={field} name={field}
+            id={`${issue.id}-issue-${field}`}
+            value={allowedFields[field].value || ''}
+            onChange={allowedFields[field].onChange}
+            minRows={2}
+            maxRows={8}
+            maxLength={maxLength}
+          />
+        }
       </div>;
     }
 
@@ -72,13 +75,11 @@ const mapStateToProps = (state) => ({
 HearingWorksheetIssueFields.propTypes = {
   issue: PropTypes.object.isRequired,
   appeal: PropTypes.object.isRequired,
-  field: PropTypes.string.isRequired,
-  appealKey: PropTypes.number.isRequired,
-  issueKey: PropTypes.number.isRequired
+  readOnly: PropTypes.bool,
+  field: PropTypes.string.isRequired
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(HearingWorksheetIssueFields);
-

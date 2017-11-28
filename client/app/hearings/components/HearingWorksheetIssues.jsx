@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
+import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -12,11 +13,11 @@ class HearingWorksheetIssues extends PureComponent {
 
   render() {
     let {
-      worksheetStreamsIssues,
+      worksheetIssues,
       worksheetStreamsAppeal,
-      appealKey
+      appealKey,
+      countOfIssuesInPreviousAppeals
     } = this.props;
-
 
     const columns = [
       {
@@ -39,7 +40,7 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'levels'
       },
       {
-        header: 'Description',
+        header: 'Notes',
         align: 'left',
         valueName: 'description'
       },
@@ -47,68 +48,58 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
-      },
-      {
-        header: '',
-        align: 'left',
-        valueName: 'deleteIssue'
       }
     ];
 
-    // Maps over all issues inside stream
-    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue, key) => {
+    if (!this.props.print) {
+      columns.push({
+        header: '',
+        align: 'left',
+        valueName: 'deleteIssue'
+      });
+    }
 
-      let issueRow = worksheetStreamsIssues[issue];
+    const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
 
-      // Deleted issues can't be removed from Redux because we need to send them
-      // to the backend with their ID information. We need to filter them from
-      // the display.
-      // eslint-disable-next-line no-underscore-dangle
-      if (issueRow._destroy) {
-        return {};
-      }
+    const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
+
+      let issueRow = worksheetIssues[issue];
 
       return {
-        counter: <b>{key + 1}.</b>,
+        counter: <b>{key + countOfIssuesInPreviousAppeals + 1}.</b>,
         program: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="program"
-          appealKey={appealKey}
-          issueKey={key}
+          maxLength={30}
         />,
         issue: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="name"
-          appealKey={appealKey}
-          issueKey={key}
+          maxLength={100}
         />,
         levels: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="levels"
-          appealKey={appealKey}
-          issueKey={key}
+          maxLength={100}
         />,
         description: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="description"
-          appealKey={appealKey}
-          issueKey={key}
+          readOnly={this.props.print}
+          maxLength={100}
         />,
         actions: <HearingWorksheetPreImpressions
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
-          appealKey={appealKey}
-          issueKey={key}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           appealKey={appealKey}
-          issueKey={key}
         />
       };
     });
@@ -118,7 +109,7 @@ class HearingWorksheetIssues extends PureComponent {
         className="cf-hearings-worksheet-issues"
         columns={columns}
         rowObjects={rowObjects}
-        summary={'Worksheet Issues'}
+        summary="Worksheet Issues"
         getKeyForRow={this.getKeyForRow}
       />
     </div>;
@@ -126,9 +117,8 @@ class HearingWorksheetIssues extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  HearingWorksheetIssues: state
+  worksheetIssues: state.worksheetIssues
 });
-
 
 export default connect(
   mapStateToProps,
@@ -136,6 +126,6 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
-  worksheetStreamsIssues: PropTypes.array.isRequired,
-  worksheetStreamsAppeal: PropTypes.object.isRequired
+  worksheetStreamsAppeal: PropTypes.object.isRequired,
+  countOfIssuesInPreviousAppeals: PropTypes.number.isRequired
 };

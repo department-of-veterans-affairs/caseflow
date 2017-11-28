@@ -172,7 +172,7 @@ export class EstablishClaimDecision extends React.Component {
             select the decision that best fits the VACOLS Decision Criteria.</p>
             <TabWindow
               tabs={tabs}
-              onChange={this.onTabSelected}/>
+              onChange={this.onTabSelected} />
           </div>}
           {!this.hasMultipleDecisions() && tabs[0].page}
 
@@ -180,7 +180,7 @@ export class EstablishClaimDecision extends React.Component {
             <TextField
               label="Decision type"
               name="decisionType"
-              readOnly={true}
+              readOnly
               value={decisionType}
             />
           </div>

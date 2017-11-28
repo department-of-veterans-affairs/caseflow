@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
+import { clearSearch, clearAllFilters } from './DocumentList/DocumentListActions';
 
 import CaseSelectSearch from './CaseSelectSearch';
 import IssueList from './IssueList';
@@ -14,7 +16,7 @@ class CaseSelect extends React.PureComponent {
   renderIssuesColumnData = (appeal) =>
     <IssueList
       appeal={appeal}
-      formatLevelsInNewLine={true}
+      formatLevelsInNewLine
       className="issue-list"
     />;
 
@@ -57,6 +59,11 @@ class CaseSelect extends React.PureComponent {
 
   getKeyForRow = (index, row) => row.vacols_id;
 
+  componentDidMount = () => {
+    this.props.clearSearch();
+    this.props.clearAllFilters();
+  }
+
   render() {
     if (!this.props.assignments) {
       return null;
@@ -66,7 +73,7 @@ class CaseSelect extends React.PureComponent {
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           <h1 className="welcome-header">Welcome to Reader!</h1>
-          <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl}/>
+          <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
           <p className="cf-lead-paragraph">
             Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
@@ -86,6 +93,13 @@ class CaseSelect extends React.PureComponent {
 
 const mapStateToProps = (state) => _.pick(state.readerReducer, 'assignments');
 
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    clearSearch,
+    clearAllFilters
+  }, dispatch)
+);
+
 export default connect(
-  mapStateToProps
+  mapStateToProps, mapDispatchToProps
 )(CaseSelect);

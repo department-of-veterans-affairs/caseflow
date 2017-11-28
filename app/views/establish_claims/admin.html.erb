@@ -1,0 +1,8 @@
+<% content_for :full_page_content do %>
+<%= react_component("EstablishClaimAdmin", props: {
+  userDisplayName: current_user.display_name,
+  dropdownUrls: dropdown_urls,
+  feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+  buildDate: build_date
+}) %>
+<% end %>

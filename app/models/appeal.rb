@@ -1,15 +1,17 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < ActiveRecord::Base
+  include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
-  include RegionalOfficeConcern
 
+  belongs_to :appeal_series
   has_many :tasks
   has_many :appeal_views
   has_many :worksheet_issues
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class MultipleDecisionError < StandardError; end
+  class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -18,7 +20,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
-  vacols_attr_accessor :appellant_name, :appellant_relationship, :appellant_ssn
+  vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_city, :appellant_state
   vacols_attr_accessor :representative
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
@@ -29,11 +31,13 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+  vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc, :veteran_date_of_birth
+  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -82,7 +86,13 @@ class Appeal < ActiveRecord::Base
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
-    "Court Remand" => "cavc_remand"
+    "Reconsideration" => "reconsideration",
+    "Court Remand" => "cavc_remand",
+    "Clear and Unmistakable Error" => "cue"
+  }.freeze
+
+  LOCATION_CODES = {
+    remand_returned_to_bva: "96"
   }.freeze
 
   attr_writer :ssoc_dates
@@ -136,9 +146,7 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
-  def veteran_age
-    Veteran.new(date_of_birth: veteran_date_of_birth).age
-  end
+  delegate :age, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -174,32 +182,10 @@ class Appeal < ActiveRecord::Base
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
   end
 
-  def veteran_name
-    veteran_name_object.formatted(:form)
-  end
-
-  def veteran_full_name
-    veteran_name_object.formatted(:readable_full)
-  end
-
   # When the decision is signed by an attorney at BVA, an outcoder physically stamps the date,
   # checks for data accuracy and uploads the decision to VBMS
   def outcoded_by_name
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
-  end
-
-  def appellant_name
-    if appellant_first_name
-      [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")
-    end
-  end
-
-  def appellant_last_first_mi
-    # returns appellant name in format <last>, <first> <middle_initial>.
-    if appellant_first_name
-      name = "#{appellant_last_name}, #{appellant_first_name}"
-      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
-    end
   end
 
   def representative_name
@@ -229,6 +215,16 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
+  def eligible_for_ramp?
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def in_location?(location)
+    fail UnknownLocationError unless LOCATION_CODES[location]
+
+    location_code == LOCATION_CODES[location]
+  end
+
   def attributes_for_hearing
     {
       "id" => id,
@@ -243,11 +239,6 @@ class Appeal < ActiveRecord::Base
       "cached_number_of_documents_after_certification" => cached_number_of_documents_after_certification,
       "worksheet_issues" => worksheet_issues
     }
-  end
-
-  def station_key
-    result = VACOLS::RegionalOffice::STATIONS.find { |_station, ros| [*ros].include? regional_office_key }
-    result && result.first
   end
 
   def nod
@@ -303,10 +294,6 @@ class Appeal < ActiveRecord::Base
     Appeal.certify(self)
   end
 
-  def close!(user:, closed_on:, disposition:)
-    Appeal.close(appeal: self, user: user, closed_on: closed_on, disposition: disposition)
-  end
-
   def fetch_documents!(save:)
     save ? find_or_create_documents! : fetched_documents
   end
@@ -344,6 +331,10 @@ class Appeal < ActiveRecord::Base
     status != "Complete"
   end
 
+  def merged?
+    disposition == "Merged Appeal"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
@@ -378,6 +369,11 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  # A uniqued list of issue codes on appeal, that is the combination of ISSPROG and ISSCODE
+  def issue_codes
+    issues.map(&:issue_code).uniq
   end
 
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
@@ -417,11 +413,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    !!type_code
+    %w(original post_remand cavc_remand).include? type_code
   end
 
   def type_code
-    TYPE_CODES[type]
+    TYPE_CODES[type] || "other"
   end
 
   def latest_event_date
@@ -430,21 +426,26 @@ class Appeal < ActiveRecord::Base
 
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :regional_office, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
       hash["issues"] = issues
+      hash["regional_office"] = regional_office_hash
     end
   end
 
-  private
-
-  # TODO: this is named "veteran_name_object" to avoid name collision, refactor
-  #       the naming of the helper methods.
-  def veteran_name_object
-    FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
+  def manifest_vbms_fetched_at
+    fetch_documents_from_service!
+    @manifest_vbms_fetched_at
   end
+
+  def manifest_vva_fetched_at
+    fetch_documents_from_service!
+    @manifest_vva_fetched_at
+  end
+
+  private
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
@@ -474,8 +475,19 @@ class Appeal < ActiveRecord::Base
     @end_products ||= Appeal.fetch_end_products(sanitized_vbms_id)
   end
 
+  def fetch_documents_from_service!
+    return if @fetched_documents
+
+    doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+
+    @fetched_documents = doc_struct[:documents]
+    @manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
+    @manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
+  end
+
   def fetched_documents
-    @fetched_documents ||= document_service.fetch_documents_for(self, RequestStore.store[:current_user])
+    fetch_documents_from_service!
+    @fetched_documents
   end
 
   def document_service
@@ -486,6 +498,11 @@ class Appeal < ActiveRecord::Base
       else
         VBMSService
       end
+  end
+
+  # Used for serialization
+  def regional_office_hash
+    regional_office.to_h
   end
 
   class << self
@@ -507,8 +524,12 @@ class Appeal < ActiveRecord::Base
     def for_api(appellant_ssn:)
       fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
 
+      # Some appeals that are early on in the process
+      # have no events recorded. We are not showing these.
+      # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
                 .select(&:api_supported?)
+                .reject { |a| a.latest_event_date.nil? }
                 .sort_by(&:latest_event_date)
                 .reverse
     end
@@ -532,19 +553,26 @@ class Appeal < ActiveRecord::Base
       @repository ||= AppealRepository
     end
 
-    def close(appeal:, user:, closed_on:, disposition:)
-      fail "Only active appeals can be closed" unless appeal.active?
+    # Wraps the closure of appeals in a transaction
+    # add additional code inside the transaction by passing a block
+    # rubocop:disable Metrics/ParameterLists
+    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
+      fail "Only pass either appeal or appeals" if appeal && appeals
 
-      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-      fail "Disposition #{disposition}, does not exist" unless disposition_code
+      repository.transaction do
+        (appeals || [appeal]).each do |close_appeal|
+          close_single(
+            appeal: close_appeal,
+            user: user,
+            closed_on: closed_on,
+            disposition: disposition
+          )
+        end
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+        inside_transaction.call if block_given?
+      end
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
@@ -574,8 +602,6 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
-    private
-
     # Because SSN is not accurate in VACOLS, we pull the file
     # number from BGS for the SSN and use that to look appeals
     # up in VACOLS
@@ -585,6 +611,22 @@ class Appeal < ActiveRecord::Base
       fail ActiveRecord::RecordNotFound unless file_number
 
       convert_file_number_to_vacols(file_number)
+    end
+
+    private
+
+    def close_single(appeal:, user:, closed_on:, disposition:)
+      fail "Only active appeals can be closed" unless appeal.active?
+
+      disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
+
+      repository.close!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on,
+        disposition_code: disposition_code
+      )
     end
   end
 end

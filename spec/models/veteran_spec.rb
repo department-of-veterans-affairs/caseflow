@@ -20,6 +20,7 @@ describe Veteran do
         city: "San Francisco",
         state: "CA",
         country: "USA",
+        date_of_birth: "21/12/1989",
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE",
@@ -62,6 +63,7 @@ describe Veteran do
         city: "San Francisco",
         state: "CA",
         country: "USA",
+        date_of_birth: "21/12/1989",
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
@@ -80,11 +82,12 @@ describe Veteran do
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
-        address_line3: "Daisies",
+        address_line3: address_line3,
         city: "San Francisco",
         state: "CA",
         country: country,
-        zip_code: "94117",
+        date_of_birth: "21/12/1989",
+        zip_code: zip_code,
         military_post_office_type_code: military_post_office_type_code,
         military_postal_type_code: military_postal_type_code,
         service: [{ branch_of_service: "army" }]
@@ -94,6 +97,8 @@ describe Veteran do
     let(:military_post_office_type_code) { nil }
     let(:military_postal_type_code) { nil }
     let(:country) { "USA" }
+    let(:zip_code) { "94117" }
+    let(:address_line3) { "Daisies" }
 
     it "returns the correct values" do
       is_expected.to eq(
@@ -109,6 +114,7 @@ describe Veteran do
         city: "San Francisco",
         state: "CA",
         country: "USA",
+        date_of_birth: "21/12/1989",
         zip_code: "94117",
         address_type: ""
       )
@@ -119,6 +125,22 @@ describe Veteran do
       let(:military_post_office_type_code) { "APO" }
 
       it { is_expected.to include(state: "AA", city: "APO", address_type: "OVR") }
+    end
+
+    context "when a zip code is nil" do
+      let(:zip_code) { nil }
+
+      context "when address line 3 contains a zip code" do
+        let(:address_line3) { "055411-177" }
+
+        it { is_expected.to include(zip_code: "055411-177") }
+      end
+
+      context "when address line 3 does not contain a zip code" do
+        let(:address_line3) { ".4646-99" }
+
+        it { is_expected.to include(zip_code: nil) }
+      end
     end
 
     context "when country is not USA" do
@@ -235,20 +257,22 @@ describe Veteran do
       Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
     end
     subject { veteran.age }
-    let(:veteran) { Veteran.new(date_of_birth: date_of_birth) }
+    let(:veteran) do
+      Veteran.new(date_of_birth: date_of_birth)
+    end
 
     context "when they're born in the 1900s" do
-      let(:date_of_birth) { Time.utc(1956, 2, 2) }
+      let(:date_of_birth) { "2/2/1956" }
       it { is_expected.to eq(65) }
     end
 
     context "when they're born in the 2000s" do
-      let(:date_of_birth) { Time.utc(2001, 2, 2) }
+      let(:date_of_birth) { "2/2/2001" }
       it { is_expected.to eq(20) }
     end
 
     context "when the date has already passed this year" do
-      let(:date_of_birth) { Time.utc(1987, 1, 10) }
+      let(:date_of_birth) { "1/1/1987" }
       it { is_expected.to eq(35) }
     end
   end

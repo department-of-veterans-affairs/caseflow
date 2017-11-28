@@ -262,6 +262,13 @@ body {
   background-size: 32px 32px;
 }
 
+.cf-logo-image-intake {
+  background-image: url(asset-path('caseflow-intake-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
 .cf-stats {
   margin-top: 0;
 
@@ -391,6 +398,17 @@ body {
   &.cf-success-emoji-text {
     width: auto;
   }
+}
+
+.pdfViewer.singlePageView .cf-msg-screen-deck {
+  width: auto;
+}
+
+.cf-warning {
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-left: 3rem;
+  background-color: inherit;
 }
 
 .cf-tab-window-body {
@@ -648,7 +666,7 @@ select {
 }
 
 .vbms-id {
-  color: $color-gray-light;
+  color: $color-gray;
 }
 
 //candidate for commons

@@ -52,7 +52,7 @@ export default class StyleGuideTabs extends React.Component {
         id="tabs"
         link="StyleGuideTabs.jsx"
       />
-      <h3>Tabs without Icons</h3>
+      <h3 id="without_icons">Tabs without Icons</h3>
       <p>
         The US Web Design doesn’t include tabs so we’ve designed our own.
         The active tab is highligted with a blue border and blue text.
@@ -62,8 +62,8 @@ export default class StyleGuideTabs extends React.Component {
       <TabWindow
         name="tabsnoicons"
         tabs={tabs}
-        onChange={this.onTabSelected}/>
-      <h3>Tabs with Icons</h3>
+        onChange={this.onTabSelected} />
+      <h3 id="with_icons">Tabs with Icons</h3>
       <p>
         Icons are optional on tabs and are set by the designer in the mockup.
         These icons come from the Font Awesome package, which is set in the
@@ -72,7 +72,7 @@ export default class StyleGuideTabs extends React.Component {
       <TabWindow
         name="tabswithicons"
         tabs={tabsWithIcons}
-        onChange={this.onTabSelected}/>
+        onChange={this.onTabSelected} />
     </div>;
   }
 }

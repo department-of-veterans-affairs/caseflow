@@ -11,7 +11,9 @@ import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
-import * as ReaderActions from './actions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
+import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
+import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
@@ -54,8 +56,6 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    global.featureToggles = this.props.featureToggles;
-
     window.addEventListener('click', this.clearPlacingAnnotationState);
     if (this.props.singleDocumentMode) {
       fireSingleDocumentModeEvent();
@@ -73,6 +73,11 @@ export class DecisionReviewer extends React.PureComponent {
 
     if (documentCategories[category]) {
       this.props.setCategoryFilter(category, true);
+
+      // Clear out the URI query string params after we determine the initial
+      // category filter so that we do not continue to attempt to set the
+      // category filter every time routedPdfListView renders.
+      props.location.search = '';
     }
   };
 
@@ -92,6 +97,8 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
+        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
         {...props}
       />
     </ReaderLoadingScreen>;
@@ -111,6 +118,7 @@ export class DecisionReviewer extends React.PureComponent {
         history={props.history}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
         documentPathBase={`/${vacolsId}/documents`}
+        featureToggles={this.props.featureToggles}
         {...props}
       />
     </ReaderLoadingScreen>
@@ -119,7 +127,7 @@ export class DecisionReviewer extends React.PureComponent {
 
   routedCaseSelect = (props) => <CaseSelectLoadingScreen assignments={this.props.assignments}>
     <CaseSelect history={props.history}
-      feedbackUrl={this.props.feedbackUrl}/>
+      feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
   render() {
@@ -137,26 +145,25 @@ export class DecisionReviewer extends React.PureComponent {
               exact
               path="/"
               title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect}/>
+              render={this.routedCaseSelect} />
             <PageRoute
               exact
               title="Claims Folder | Caseflow Reader"
               breadcrumb="Claims Folder"
               path="/:vacolsId/documents"
-              render={this.routedPdfListView}/>
+              render={this.routedPdfListView} />
             <PageRoute
               exact
               title="Document Viewer | Caseflow Reader"
               breadcrumb="Document Viewer"
               path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer}
-            />
+              render={this.routedPdfViewer} />
           </div>
         </NavigationBar>
         <Footer
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate}/>
+          buildDate={this.props.buildDate} />
       </div>
     </Router>;
   }
@@ -166,10 +173,12 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
-  onScrollToComment: PropTypes.func,
-  onCommentScrolledTo: PropTypes.func,
-  handleSetLastRead: PropTypes.func.isRequired,
   singleDocumentMode: PropTypes.bool,
+
+  // Required actions
+  onScrollToComment: PropTypes.func,
+  stopPlacingAnnotation: PropTypes.func,
+  setCategoryFilter: PropTypes.func,
 
   // These two properties are exclusively for testing purposes
   router: PropTypes.func,
@@ -185,8 +194,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(ReaderActions, dispatch),
-  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
+  ...bindActionCreators({
+    onScrollToComment,
+    setCategoryFilter,
+    stopPlacingAnnotation
+  }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

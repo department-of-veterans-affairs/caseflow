@@ -35,7 +35,7 @@ export default class StyleGuideButton extends React.Component {
       buttons of various widths are stacked, we highly recommend adjusting the padding of the buttons
       so that they all match in width.</p>
 
-      <h3>Primary buttons</h3>
+      <h3 id="primary">Primary buttons</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Default</h3>
@@ -43,7 +43,7 @@ export default class StyleGuideButton extends React.Component {
             name="signup-1"
             classNames={['button_wrapper']}>
           Sign up
-          </Button><br/><br/>
+          </Button><br /><br />
           <Button
             name="signup-button"
             classNames={['usa-button-secondary']}>
@@ -56,7 +56,7 @@ export default class StyleGuideButton extends React.Component {
             name="signup-3"
             classNames={['usa-button-hover']}>
           Sign up
-          </Button><br/><br/>
+          </Button><br /><br />
           <Button
             name="signup-hover"
             classNames={['usa-button-secondary usa-button-hover']}>
@@ -69,15 +69,15 @@ export default class StyleGuideButton extends React.Component {
             name="signup-active"
             classNames={['usa-button-active']}>
           Sign up
-          </Button><br/><br/>
+          </Button><br /><br />
           <Button
             name="signup-secondary"
             classNames={['usa-button-secondary usa-button-active']}>
           Sign up
           </Button>
         </div>
-      </div><br/><br/>
-      <h3>Secondary buttons</h3>
+      </div><br /><br />
+      <h3 id="secondary">Secondary buttons</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Default</h3>
@@ -103,8 +103,8 @@ export default class StyleGuideButton extends React.Component {
          Sign up
           </Button>
         </div>
-      </div><br/><br/>
-      <h3>Disabled button</h3>
+      </div><br /><br />
+      <h3 id="disabled">Disabled button</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <Button

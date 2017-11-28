@@ -24,18 +24,18 @@ export default function StyleGuideLayout () {
       so that our interface is predictable and familiar to our user.
       The consistency also helps us reuse common code in Caseflow Commons.</p>
 
-    <br/>
+    <br />
     <StyleGuideNavigationBar />
-    <br/>
+    <br />
     <StyleGuideUserDropdownMenu />
-    <br/>
-    <h3 id="app-canvas">Main Content Area</h3>
+    <br />
+    <h3 id="content-area">Main Content Area</h3>
     <p>
       The main content area is where we put all the application-specific interaction.
       This includes things like a Queue of tasks for the user to perform,
       workflow specific actions, document previews, confirmation messages, and more.
       The background of the main content area is #f9f9f9.</p>
-    <br/>
+    <br />
 
     <h3 id="app-canvas">App Canvas</h3>
 
@@ -46,11 +46,11 @@ export default function StyleGuideLayout () {
       It then contains any interaction that well help this to accomplish their task including forms,
       document previews, tables, error messages, and more.
       The canvas has a default standard width but can be adjusted according to the needs of each application.</p>
-    <br/>
+    <br />
     <StyleGuideAction />
-    <br/>
+    <br />
     <StyleGuideHorizontalLine />
-    <br/>
+    <br />
     <StyleGuideFooter />
 
   </div>;

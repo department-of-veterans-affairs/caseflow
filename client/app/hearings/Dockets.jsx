@@ -91,13 +91,13 @@ export class Dockets extends React.Component {
       <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
           <h1>Upcoming Hearing Days</h1>
-          <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+          <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
         </div>
         <Table
           className="dockets"
           columns={columns}
           rowObjects={rowObjects}
-          summary={'Upcoming Hearing Days?'}
+          summary="Upcoming Hearing Days?"
           getKeyForRow={this.getKeyForRow}
         />
       </div>
@@ -114,6 +114,6 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
+  veteranLawJudge: PropTypes.object.isRequired,
   dockets: PropTypes.object.isRequired
 };

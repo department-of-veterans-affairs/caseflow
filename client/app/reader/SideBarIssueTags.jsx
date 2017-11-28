@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { bindActionCreators } from 'redux';
-import CannotSaveAlert from '../reader/CannotSaveAlert';
 import { connect } from 'react-redux';
-import SearchableDropdown from '../components/SearchableDropdown';
 import _ from 'lodash';
 
-import { addNewTag, removeTag } from '../reader/actions';
+import CannotSaveAlert from '../reader/CannotSaveAlert';
+import SearchableDropdown from '../components/SearchableDropdown';
+import { addNewTag, removeTag } from '../reader/PdfViewer/PdfViewerActions';
 
 class SideBarIssueTags extends PureComponent {
   render() {
@@ -35,18 +35,18 @@ class SideBarIssueTags extends PureComponent {
     };
 
     return <div className="cf-issue-tag-sidebar">
-      {this.props.showErrorMessage.tag && <CannotSaveAlert />}
+      {this.props.error.tag.visible && <CannotSaveAlert />}
       <SearchableDropdown
         key={doc.id}
         name="tags"
         label="Select or tag issue(s)"
-        multi={true}
-        creatable={true}
+        multi
+        creatable
         options={generateOptionsFromTags(this.props.tagOptions)}
         placeholder=""
         value={generateOptionsFromTags(doc.tags)}
         onChange={onChange}
-        selfManageValueState={true}
+        selfManageValueState
       />
     </div>;
   }
@@ -54,7 +54,7 @@ class SideBarIssueTags extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
+    error: state.readerReducer.ui.pdfSidebar.error,
     ..._.pick(state.readerReducer.ui, 'tagOptions')
   };
 };

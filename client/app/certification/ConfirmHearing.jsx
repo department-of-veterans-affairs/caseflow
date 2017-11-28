@@ -11,6 +11,8 @@ import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 import * as AppConstants from '../constants/AppConstants';
+import Header from './Header';
+import CertificationProgressBar from './CertificationProgressBar';
 
 // TODO: how should we organize content?
 // one school of thought is to put content
@@ -57,7 +59,6 @@ const typeOfForm9Answers = [
   { displayText: 'Statement in lieu of Form 9',
     value: Constants.form9Types.INFORMAL_FORM9 }
 ];
-
 
 const formalForm9HearingQuestion = `Which box did the appellant select for the Optional
 Board Hearing question above? Depending on the Form 9, this may be Question 8
@@ -219,17 +220,17 @@ export class ConfirmHearing extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/sign_and_certify`}/>;
+        to={`/certifications/${match.params.vacols_id}/sign_and_certify`} />;
     }
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'}/>;
+        to="/certifications/error" />;
     }
 
     const hearingCheckText = <span>Check the eFolder for the appellant’s most
@@ -252,6 +253,8 @@ export class ConfirmHearing extends React.Component {
       form9IsInformal;
 
     return <div>
+      <Header />
+      <CertificationProgressBar />
       <div className="cf-app-segment cf-app-segment--alt">
         <h2>Confirm Hearing</h2>
 
@@ -274,17 +277,17 @@ export class ConfirmHearing extends React.Component {
           */}
         <RadioField name="hearingChangeQuestion"
           label={hearingChangeQuestion}
-          required={true}
+          required
           options={hearingChangeAnswers}
           value={hearingDocumentIsInVbms}
           errorMessage={this.isFieldErrored('hearingDocumentIsInVbms') ? ERRORS.hearingDocumentIsInVbms : null}
-          onChange={onHearingDocumentChange}/>
+          onChange={onHearingDocumentChange} />
 
         {
           shouldDisplayHearingChangeFound &&
             <RadioField
               name={hearingChangeFoundQuestion}
-              required={true}
+              required
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
               options={hearingChangeFoundAnswers}
               value={hearingPreference}
@@ -296,7 +299,7 @@ export class ConfirmHearing extends React.Component {
           shouldDisplayTypeOfForm9Question &&
             <RadioField
               name={typeOfForm9Question}
-              required={true}
+              required
               options={typeOfForm9Answers}
               value={form9Type}
               errorMessage={this.isFieldErrored('form9Type') ? ERRORS.form9Type : null}
@@ -323,9 +326,9 @@ export class ConfirmHearing extends React.Component {
             <RadioField name={formalForm9HearingQuestion}
               options={formalForm9HearingAnswers}
               value={hearingPreference}
-              required={true}
+              required
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
-              onChange={onHearingPreferenceChange}/>
+              onChange={onHearingPreferenceChange} />
         }
 
         {
@@ -333,9 +336,9 @@ export class ConfirmHearing extends React.Component {
             <RadioField name={informalForm9HearingQuestion}
               options={informalForm9HearingAnswers}
               value={hearingPreference}
-              required={true}
+              required
               errorMessage={this.isFieldErrored('hearingPreference') ? ERRORS.hearingPreference : null}
-              onChange={onHearingPreferenceChange}/>
+              onChange={onHearingPreferenceChange} />
         }
       </div>
       <Footer

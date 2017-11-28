@@ -48,6 +48,9 @@ const updateStateWithSavedIntake = (state, intake) => {
       },
       isComplete: {
         $set: Boolean(intake.completed_at)
+      },
+      endProductDescription: {
+        $set: intake.end_product_description
       }
     },
     appeals: {
@@ -87,7 +90,10 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
       finishConfirmedError: null
     },
     cancelModalVisible: false,
-    searchErrorCode: null
+    searchErrorCode: null,
+    searchErrorData: {
+      duplicateNoticeDate: null
+    }
   }, data.currentIntake)
 );
 
@@ -155,6 +161,11 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       searchErrorCode: {
         $set: action.payload.errorCode
       },
+      searchErrorData: {
+        duplicateNoticeDate: {
+          $set: formatDateStr(action.payload.errorData.notice_date)
+        }
+      },
       requestStatus: {
         fileNumberSearch: {
           $set: REQUEST_STATE.FAILED
@@ -191,6 +202,9 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
+        },
+        completeIntake: {
+          $set: REQUEST_STATE.NOT_STARTED
         }
       }
     });
@@ -235,7 +249,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
-    return update(state, {
+    return updateStateWithSavedIntake(update(state, {
       rampElection: {
         isComplete: {
           $set: true
@@ -246,7 +260,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.COMPLETE_INTAKE_FAIL:
     return update(state, {
       requestStatus: {

@@ -2,17 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
+
 import { isUserEditingText, pageNumberOfPageIndex, pageIndexOfPageNumber,
   pageCoordsOfRootCoords, rotateCoordinates } from '../reader/utils';
 import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
-  stopPlacingAnnotation, showPlaceAnnotationIcon,
-  onScrollToComment } from '../reader/actions';
+  stopPlacingAnnotation, showPlaceAnnotationIcon
+} from '../reader/PdfViewer/AnnotationActions';
+
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
-import DocumentSearch from './DocumentSearch';
 
 /**
  * We do a lot of work with coordinates to render PDFs.
@@ -159,6 +162,10 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltC = () => {
+    if (this.props.sidebarHidden) {
+      this.props.togglePdfSidebar();
+    }
+
     this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const scrollWindowBoundingRect = this.scrollWindow.getBoundingClientRect();
@@ -177,6 +184,7 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltEnter = () => {
+    // todo: this is only triggered if not editing a comment--EditComment listens to alt+enter when active
     this.props.placeAnnotation(
       pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
       {
@@ -318,6 +326,7 @@ export class Pdf extends React.PureComponent {
         file={file}
         isVisible={this.props.file === file}
         scale={this.props.scale}
+        documentType={this.props.documentType}
       />;
     });
 
@@ -327,10 +336,9 @@ export class Pdf extends React.PureComponent {
       className="cf-pdf-scroll-view"
       onScroll={this.scrollEvent}
       ref={this.getScrollWindowRef}>
-      {global.featureToggles.search && <DocumentSearch file={this.props.file} />}
       <div
         id={this.props.file}
-        className={'cf-pdf-page pdfViewer singlePageView'}>
+        className="cf-pdf-page pdfViewer singlePageView">
         {pages}
       </div>
     </div>;
@@ -361,7 +369,8 @@ const mapStateToProps = (state, props) => {
     arePageDimensionsSet: numPagesDefined === numPages,
     pageContainers,
     ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'])
+    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation']),
+    sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar
   };
 };
 
@@ -371,14 +380,14 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    onScrollToComment
+    onScrollToComment,
+    togglePdfSidebar
   }, dispatch)
 });
 
 export default connect(
   mapStateToProps, mapDispatchToProps
 )(Pdf);
-
 
 Pdf.defaultProps = {
   onPageChange: _.noop,
@@ -400,5 +409,6 @@ Pdf.propTypes = {
   }),
   onIconMoved: PropTypes.func,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  rotation: PropTypes.number
+  rotation: PropTypes.number,
+  togglePdfSidebar: PropTypes.func
 };

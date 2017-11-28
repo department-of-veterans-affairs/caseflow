@@ -69,7 +69,7 @@ export const docListIsFiltered = createSelector(
 
 // text is a selector that returns the text Pages are currently filtered by
 // result is an Array of Page ids that match the current search :text
-const {
+export const {
   text,
   result
 } = getSearchSelectors({
@@ -89,4 +89,27 @@ export const getTextSearch = createSelector(
 export const getTextForFile = createSelector(
   [getExtractedText, getFile],
   (extractedText, file) => _.filter(extractedText, (pageText) => pageText.file === file)
+);
+
+export const getMatchesPerPageInFile = createSelector(
+  [getTextSearch, text],
+  (matchedPages, txt) => matchedPages.
+    map((page) => ({
+      id: page.id,
+      matches: (page.text.match(new RegExp(txt, 'gi')) || []).length
+    }))
+);
+
+export const getTotalMatchesInFile = createSelector(
+  [getMatchesPerPageInFile],
+  (matches) => _(matches).
+    map((match) => match.matches).
+    sum()
+);
+
+const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
+
+export const getCurrentMatchIndex = createSelector(
+  [getTotalMatchesInFile, getSelectedIndex],
+  (totalMatchesInFile, selectedIndex) => (selectedIndex + totalMatchesInFile) % totalMatchesInFile
 );

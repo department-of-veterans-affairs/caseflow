@@ -38,40 +38,39 @@ class StyleGuideSearchableDropdown extends Component {
       <div>
         <StyleGuideComponentTitle
           title="Dropdown Menus"
-          id="dropdowns"
+          id="dropdown_menu"
           link="StyleGuideSearchableDropdown.jsx"
         />
-        <h3>Dropdown</h3>
+        <h3 id="dropdown">Dropdown</h3>
         <SearchableDropdown
           label="Dropdown"
           name="no-search-select-countries"
           options={options}
           onChange={this.onChange}
-          required={true}
+          required
           searchable={false}
         />
         <p>The searchable dropdowns provide more context to users' choices.
           This is helpful in cases where there is a large dropdown menu with many options.
           This dual behavior dropdown component make the dropdown easier to use and
           options more readily available for the user.</p>
-        <h3>Single Select Searchable Dropdown</h3>
+        <h3 id="single_dropdown">Single Select Searchable Dropdown</h3>
         <SearchableDropdown
           label="Searchable dropdown"
           name="single-select-countries"
           options={options}
           onChange={this.onChange}
-          required={true}
+          required
         />
-        <h3>Creatable Searchable Multiselect Dropdown</h3>
+        <h3 id="multi_dropdrown">Creatable Searchable Multiselect Dropdown</h3>
         <SearchableDropdown
-          creatable={true}
+          creatable
           label="Click in the box below to select, type, or add issue(s)"
           name="multi-select-countries"
           options={options}
-          required={true}
-          multi={true}
+          required
+          multi
           placeholder="Select options"
-          creatable={true}
           creatableOptions={creatableOptions}
         />
       </div>

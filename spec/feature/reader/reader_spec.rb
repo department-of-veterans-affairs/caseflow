@@ -71,6 +71,8 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
+    FeatureToggle.disable!(:reader_blacklist)
+    FeatureToggle.enable!(:search)
   end
 
   let(:vacols_record) { :remand_decided }
@@ -97,6 +99,17 @@ RSpec.feature "Reader" do
 
   let!(:current_user) do
     User.authenticate!(roles: ["Reader"])
+  end
+
+  context "User on blacklist" do
+    before do
+      FeatureToggle.enable!(:reader_blacklist, users: [current_user.css_id])
+    end
+
+    scenario "it redirects to unauthorized" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      expect(page).to have_content("Unauthorized")
+    end
   end
 
   context "Short list of documents" do
@@ -186,8 +199,21 @@ RSpec.feature "Reader" do
     end
 
     context "Appeals without any issues" do
+      let(:fetched_at_format) { "%D %l:%M%P %Z" }
+      let(:vbms_fetched_ts) { Time.zone.now }
+      let(:vva_fetched_ts) { Time.zone.now }
+
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.localtime.strftime(fetched_at_format)}" }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.localtime.strftime(fetched_at_format)}" }
+
       let(:appeal) do
-        Generators::Appeal.build(vacols_record: vacols_record, documents: documents, issues: [])
+        Generators::Appeal.build(
+          vacols_record: vacols_record,
+          documents: documents,
+          manifest_vbms_fetched_at: vbms_fetched_ts,
+          manifest_vva_fetched_at: vva_fetched_ts,
+          issues: []
+        )
       end
 
       before do
@@ -203,6 +229,23 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
         expect(find(".claims-folder-issues").text).to have_content("No issues on appeal")
+      end
+
+      context "When both document source manifest retrieval times are set" do
+        scenario "Both times display on the page" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+        end
+      end
+
+      context "When VVA manifest retrieval time is nil" do
+        let(:vva_fetched_ts) { nil }
+        scenario "Only VBMS time displays on the page" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(page).to_not have_css("#vva-manifest-retrieved-at")
+        end
       end
 
       scenario "pdf view sidebar shows no issues message" do
@@ -573,6 +616,35 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".comment-container")
     end
 
+    context "when comment box contains only whitespace characters" do
+      scenario "save button is disabled" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        add_comment_without_clicking_save(random_whitespace_no_tab)
+        expect(find("#button-save")["disabled"]).to eq("true")
+      end
+    end
+
+    context "existing comment edited to contain only whitespace characters" do
+      let!(:annotations) do
+        [Generators::Annotation.create(
+          comment: Generators::Random.word_characters,
+          document_id: documents[0].id
+        )]
+      end
+      let(:comment_id) { annotations.length }
+
+      scenario "prompts delete modal to appear" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+        find("#button-edit-comment-#{comment_id}").click
+        fill_in "editCommentBox-#{comment_id}", with: random_whitespace_no_tab
+        click_on "Save"
+
+        # Delete modal should appear.
+        expect(page).to have_css("#Delete-Comment-button-id-#{comment_id}")
+      end
+    end
+
     context "When there is an existing annotation" do
       let!(:annotations) do
         [
@@ -921,7 +993,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Docket Number")
       expect(page).to have_content(appeal.docket_number)
       expect(page).to have_content("Regional Office")
-      expect(page).to have_content("#{appeal.regional_office[:key]} - #{appeal.regional_office[:city]}")
+      expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
       appeal.issues do |issue|
         expect(page).to have_content(issue.type[:label])
@@ -1165,6 +1237,72 @@ RSpec.feature "Reader" do
       expect(page).to have_content(search_query)
     end
 
+    def open_search_bar
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      search_bar = find(".cf-pdf-search")
+      search_bar.click
+
+      expect(search_bar).not_to match_css(".hidden")
+    end
+
+    scenario "Search Document Text" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      internal_text = find("#search-internal-text")
+
+      expect(search_input).to match_xpath("//input[@placeholder='Type to search...']")
+
+      fill_in "search-ahead", with: "decision"
+
+      expect(search_input.value).to eq("decision")
+      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+    end
+
+    scenario "Search Text Resets on Change Document" do
+      open_search_bar
+
+      search_input = find("#search-ahead")
+      next_doc = find("#button-previous")
+
+      fill_in "search-ahead", with: "decision"
+      expect(search_input.value).to eq("decision")
+      next_doc.click
+      expect(search_input.value).to eq("")
+    end
+
+    scenario "Navigate Search Results with Keyboard" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        open_search_bar
+
+        internal_text = find("#search-internal-text")
+
+        fill_in "search-ahead", with: "decision"
+
+        expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+
+        find("body").send_keys [:meta, "g"]
+
+        expect(internal_text).to have_xpath("//input[@value='2 of 2']")
+      end
+    end
+
+    scenario "Show and Hide Document Searchbar with Keyboard" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        search_bar = find(".cf-search-bar")
+
+        find("body").send_keys [:meta, "f"]
+
+        expect(search_bar).not_to match_css(".hidden")
+
+        find("body").send_keys [:escape]
+
+        expect(search_bar).to match_css(".hidden")
+      end
+    end
+
     scenario "Download PDF file" do
       DownloadHelpers.clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
@@ -1219,4 +1357,26 @@ RSpec.feature "Reader" do
       expect_in_viewport("read-indicator")
     end
   end
+
+  context "with a single document that errors when we fetch it" do
+    # TODO(lowell): The webdriver we use caches HTTP requests in the browser, and that cache
+    # persists between subtests. Capybara does not easily allow us to clear the browser
+    # cache, so we use a document ID that will probably not have been used by a previous
+    # test to avoid the issue of a request to /document/1/pdf returning a cached response
+    # instead of an error that would trigger the state we desire.
+    # Created issue #3883 to address this browser cache retention issue.
+    let(:documents) { [Generators::Document.create(id: rand(999) + 999_999)] }
+
+    scenario "causes individual file view will display error message" do
+      allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      expect(page).to have_content("Unable to load document")
+    end
+  end
+end
+
+# Generate some combination of whitespace characters between 1 and len characters long.
+# Do not include tab character becuase inserting tab will cause Capybara to change the focused DOM element.
+def random_whitespace_no_tab(len = 16)
+  Generators::Random.from_set([" ", "\n", "\r"], len)
 end

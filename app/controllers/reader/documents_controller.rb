@@ -11,11 +11,15 @@ class Reader::DocumentsController < Reader::ApplicationController
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
-            annotations: annotations
+            annotations: annotations,
+            manifestVbmsFetchedAt: manifest_vbms_fetched_at,
+            manifestVvaFetchedAt: manifest_vva_fetched_at
           }
         end
       end
     end
+  rescue Caseflow::Error::DocumentRetrievalError => e
+    respond_to_doc_retrieval_error(e)
   end
 
   def show
@@ -33,6 +37,19 @@ class Reader::DocumentsController < Reader::ApplicationController
     appeal.saved_documents.flat_map(&:annotations).map(&:to_hash)
   end
 
+  def fetched_at_format
+    "%D %l:%M%P %Z"
+  end
+
+  # Expect appeal.manifest_(vva|vbms)_fetched_at to be either nil or a Time objects
+  def manifest_vva_fetched_at
+    appeal.manifest_vva_fetched_at.strftime(fetched_at_format) if appeal.manifest_vva_fetched_at
+  end
+
+  def manifest_vbms_fetched_at
+    appeal.manifest_vbms_fetched_at.strftime(fetched_at_format) if appeal.manifest_vbms_fetched_at
+  end
+
   def documents
     document_ids = appeal.saved_documents.map(&:id)
 
@@ -48,6 +65,10 @@ class Reader::DocumentsController < Reader::ApplicationController
         object[:tags] = document.tags
       end
     end
+  end
+
+  def respond_to_doc_retrieval_error(e)
+    render json: { "errors": ["status": 502, "title": e.to_s, "detail": e.message] }, status: 502
   end
 
   def appeal_id

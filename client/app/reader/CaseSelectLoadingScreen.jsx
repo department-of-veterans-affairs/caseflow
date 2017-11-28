@@ -1,13 +1,16 @@
 import React from 'react';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialCaseLoadingFail } from './actions';
-import { connect } from 'react-redux';
+import {
+  onReceiveAssignments, onInitialCaseLoadingFail
+} from '../reader/LoadingScreen/LoadingScreenActions';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
-import _ from 'lodash';
 
 export class CaseSelectLoadingScreen extends React.Component {
   componentDidMount = () => {
@@ -40,7 +43,7 @@ export class CaseSelectLoadingScreen extends React.Component {
           </StatusMessage> :
           <LoadingScreen
             spinnerColor={Constants.READER_COLOR}
-            message="Loading cases in Reader..."/>
+            message="Loading cases in Reader..." />
         }
       </div>
     </div>;

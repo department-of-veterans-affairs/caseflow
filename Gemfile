@@ -45,7 +45,7 @@ gem 'wannabe_bool'
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '9a350be91959aacc0b8f3968ce6a7bf7c51305cd'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: 'faad830fe463e88f21bdb4a1af7422c2e529aab8'
 
 # PDF Tools
 gem 'pdf-forms'
@@ -54,6 +54,8 @@ gem 'pdfjs_viewer-rails', git: "https://github.com/senny/pdfjs_viewer-rails.git"
 
 # Error reporting to Sentry
 gem "sentry-raven"
+
+gem 'newrelic_rpm'
 
 # Used to colorize output for rake tasks
 gem "rainbow"
@@ -66,14 +68,14 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'pg', platforms: :ruby
 
-gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dd26fbff2179d400b4f19f91084835686276297f"
+gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "2e401bf7749f0780280951cbde777b7d67765554"
 
 gem 'redis-rails'
 
 # remove when upgrading to rails 5
 gem 'where-or'
 
-gem 'prometheus-client', "~> 0.6"
+gem 'prometheus-client', '~> 0.7.1'
 
 gem 'request_store'
 

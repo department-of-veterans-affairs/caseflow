@@ -79,9 +79,9 @@ export default function StyleGuideTables() {
       should be right aligned with the edge of the table.
     </p>
     <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} summary={summary}
-      slowReRendersAreOk={true}/>
+      slowReRendersAreOk />
 
-    <h3>Queues</h3>
+    <h3 id="queues">Queues</h3>
     <p>
       Tables are most frequently used in users' Queues or
       a list of work items for a user to take action on.
@@ -90,6 +90,6 @@ export default function StyleGuideTables() {
       right-aligned actionable link, such as
       "Assign >>," located on the far right column.
     </p>
-    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk={true}/>
+    <Table columns={columnsWithAction} rowObjects={rowObjects} summary={summary} slowReRendersAreOk />
   </div>;
 }

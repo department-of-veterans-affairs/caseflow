@@ -6,16 +6,18 @@ import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import { reducer as searchReducer, reduxSearch } from 'redux-search';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
+import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
-import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/actions';
+import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
 
 const vacolsId = 'reader_id1';
 
@@ -37,9 +39,29 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
-    const store = createStore(combineReducers({
-      readerReducer
-    }), applyMiddleware(thunk));
+    const store = createStore(
+      combineReducers({
+        caseSelect: caseSelectReducer,
+        readerReducer,
+        search: searchReducer
+      }),
+      compose(
+        applyMiddleware(thunk),
+        reduxSearch({
+          // Configure redux-search by telling it which resources to index for searching
+          resourceIndexes: {
+            // In this example Books will be searchable by :title and :author
+            extractedText: ['text']
+          },
+          // This selector is responsible for returning each collection of searchable resources
+          resourceSelector: (resourceName, state) => {
+            // In our example, all resources are stored in the state under a :resources Map
+            // For example "books" are stored under state.resources.books
+            return state.readerReducer[resourceName];
+          }
+        })
+      )
+    );
 
     setUpDocuments = () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
@@ -53,8 +75,8 @@ describe('DecisionReviewer', () => {
       <Provider store={store}>
         <DecisionReviewer
           featureToggles={{}}
-          userDisplayName={'Name'}
-          feedbackUrl={'fakeurl'}
+          userDisplayName="Name"
+          feedbackUrl="fakeurl"
           dropdownUrls={[{
             title: 'title',
             link: 'link'
@@ -131,6 +153,9 @@ describe('DecisionReviewer', () => {
 
     context('rotate', () => {
       it('turns pages', asyncTest(async() => {
+        // Stub ApiUtil.get() calls so request to content_url return some fake response.
+        ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
+
         // Click on first document link
         wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
@@ -181,6 +206,9 @@ describe('DecisionReviewer', () => {
           document_id: 1,
           uuid: commentId
         };
+
+        // Stub ApiUtil.get() calls so request to content_url return some fake response.
+        ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
 
         // Stub out post requests to return the commentId
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
@@ -325,7 +353,6 @@ describe('DecisionReviewer', () => {
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
-
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 
