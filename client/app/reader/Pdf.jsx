@@ -184,6 +184,7 @@ export class Pdf extends React.PureComponent {
   }
 
   handleAltEnter = () => {
+    // todo: this is only triggered if not editing a comment--EditComment listens to alt+enter when active
     this.props.placeAnnotation(
       pageNumberOfPageIndex(this.props.placingAnnotationIconPageCoords.pageIndex),
       {
