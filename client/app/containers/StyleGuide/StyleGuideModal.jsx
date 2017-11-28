@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideModal extends React.Component {
+export default class StyleGuideModal extends React.PureComponent {
   constructor(props) {
     super(props);
     window.jqueryOn = false;

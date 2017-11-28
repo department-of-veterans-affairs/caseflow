@@ -7,7 +7,7 @@ let StyleGuideLinkButton = () => {
     <br />
     <StyleGuideComponentTitle
       title="Link buttons"
-      id="link_buttons"
+      id="link-buttons"
       link="StyleGuideLinkButton.jsx"
       isSubsection
     />

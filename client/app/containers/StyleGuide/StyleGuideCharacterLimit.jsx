@@ -16,7 +16,7 @@ export default class StyleGuideCharacterLimit extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Character Limit"
-        id="character_limit"
+        id="character-limit"
         link="StyleGuideCharacterLimit.jsx"
         isSubsection
       />

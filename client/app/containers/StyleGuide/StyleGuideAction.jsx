@@ -2,7 +2,8 @@ import React from 'react';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-let StyleGuideAction = () => {
+ export default class StyleGuideAction extends React.PureComponent {
+  render = () => {
   return <div>
 
     <StyleGuideComponentTitle
@@ -55,6 +56,7 @@ let StyleGuideAction = () => {
       </div>
     </div>
   </div>;
-};
+ }
+}
 
-export default StyleGuideAction;
+

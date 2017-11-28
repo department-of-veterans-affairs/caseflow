@@ -290,17 +290,6 @@ ActiveRecord::Schema.define(version: 20171106153924) do
   add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
-  create_table "issues", force: :cascade do |t|
-    t.integer "appeal_id"
-    t.string  "vacols_sequence_id"
-    t.boolean "reopen",             default: false
-    t.boolean "vha",                default: false
-    t.boolean "allow",              default: false
-    t.boolean "deny",               default: false
-    t.boolean "remand",             default: false
-    t.boolean "dismiss",            default: false
-  end
-
   create_table "ramp_elections", force: :cascade do |t|
     t.string "veteran_file_number",      null: false
     t.date   "notice_date",              null: false

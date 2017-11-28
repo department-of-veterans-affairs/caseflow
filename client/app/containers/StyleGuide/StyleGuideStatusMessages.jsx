@@ -9,7 +9,7 @@ export default function StyleGuideStatusMessages() {
   return <div>
     <StyleGuideComponentTitle
       title="Status Messages"
-      id="status_messages"
+      id="status-messages"
       link="StyleGuideStatusMessages.jsx"
       isSubsection
     />

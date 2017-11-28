@@ -23,14 +23,14 @@ export default class StyleGuideCheckboxes extends React.Component {
         Checkboxes allow an alternative way to selection key responses
         through out Caseflow Applications. This layout is used when there
         are at most 2 options.</p>
-      <h3 id="single_checkbox">Single Checkbox</h3>
+      <h3 id="single-checkbox">Single Checkbox</h3>
       <Example1 />
       <h4>Single Checkbox with value set</h4>
       <Example2 />
       <Example3 />
       <Example4 />
       <Example5 />
-      <h3 id="required_checkboxes">Required Checkboxes</h3>
+      <h3 id="required-checkboxes">Required Checkboxes</h3>
       <Example6 />
       <h3 id="acknowledgements">Acknowledgements</h3>
       <p>In certain circumstances we ask the user to click a checkbox agreeing
