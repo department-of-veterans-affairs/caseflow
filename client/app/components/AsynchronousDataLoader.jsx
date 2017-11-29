@@ -1,5 +1,6 @@
 import React from 'react';
 import LoadingScreen from '../components/LoadingScreen';
+import PropTypes from 'prop-types';
 
 export default class AsynchronousDataLoader extends React.Component {
 
@@ -71,3 +72,13 @@ export default class AsynchronousDataLoader extends React.Component {
   }
 }
 
+AsynchronousDataLoader.propTypes = {
+  promiseToResolve: PropTypes.object.isRequired,
+  spinnerColor: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  extendedWaitMessage: PropTypes.string.isRequired,
+  showExtendedWaitMessageInSeconds: PropTypes.number.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
+  showErrorMessageInSeconds: PropTypes.number.isRequired
+};
