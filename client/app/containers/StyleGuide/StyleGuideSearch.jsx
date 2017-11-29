@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-class StyleGuideSearch extends Component {
+export default class StyleGuideSearch extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -129,5 +129,3 @@ class StyleGuideSearch extends Component {
     );
   }
 }
-
-export default StyleGuideSearch;

@@ -1,12 +1,12 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideHorizontalLine extends React.Component {
+export default class StyleGuideHorizontalLine extends React.PureComponent {
   render = () => {
     return <div>
       <StyleGuideComponentTitle
         title="Horizontal Line"
-        id="horizontal_line"
+        id="horizontal-line"
         link="StyleGuideHorizontalLine.jsx"
         isSubsection
       />
