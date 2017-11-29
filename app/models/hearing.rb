@@ -88,6 +88,7 @@ class Hearing < ActiveRecord::Base
         :representative,
         :representative_name,
         :regional_office_name,
+        :regional_office_timezone,
         :venue, :appellant_last_first_mi,
         :veteran_name, :vbms_id
       ],

@@ -21,7 +21,7 @@ class HearingDocket
 
   def to_hash
     serializable_hash(
-      methods: [:regional_office_name, :hearings_array, :slots]
+      methods: [:regional_office_name, :regional_office_timezone, :hearings_array, :slots]
     )
   end
 
@@ -42,6 +42,10 @@ class HearingDocket
       type: type,
       date: date
     ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
+  end
+
+  def regional_office_timezone
+     HearingMapper.timezone(regional_office_key)
   end
 
   class << self
