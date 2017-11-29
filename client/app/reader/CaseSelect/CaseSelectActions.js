@@ -71,10 +71,14 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
       });
   };
 
-  export const setViewedAssignment = (vacolsId) => ({
-    type: Constants.SET_VIEWED_ASSIGNMENT,
-    payload: {
-      vacolsId
-    }
-  });
-  
+export const setViewedAssignment = (vacolsId) => ({
+  type: Constants.SET_VIEWED_ASSIGNMENT,
+  payload: {
+    vacolsId
+  }
+});
+
+export const onReceiveAssignments = (assignments) => ({
+  type: Constants.RECEIVE_ASSIGNMENTS,
+  payload: { assignments }
+});

@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import {
-  onReceiveAssignments, onInitialCaseLoadingFail
+  onInitialCaseLoadingFail
 } from '../reader/LoadingScreen/LoadingScreenActions';
+import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
