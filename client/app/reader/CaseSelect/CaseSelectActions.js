@@ -70,3 +70,11 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
         dispatch(fetchAppealUsingVeteranIdFailed());
       });
   };
+
+  export const setViewedAssignment = (vacolsId) => ({
+    type: Constants.SET_VIEWED_ASSIGNMENT,
+    payload: {
+      vacolsId
+    }
+  });
+  

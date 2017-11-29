@@ -1,7 +1,21 @@
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
+import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
 import { categoryFieldNameOfCategoryName } from '../utils';
+
+export const onReceiveDocs = (documents, vacolsId) =>
+(dispatch) => {
+  dispatch(collectAllTags(documents));
+  dispatch(setViewedAssignment(vacolsId));
+  dispatch({
+    type: Constants.RECEIVE_DOCUMENTS,
+    payload: {
+      documents,
+      vacolsId
+    }
+  });
+};
 
 // Table header actions
 

@@ -11,18 +11,6 @@ export const onInitialCaseLoadingFail = (value = true) => ({
   payload: { value }
 });
 
-export const onReceiveDocs = (documents, vacolsId) =>
-  (dispatch) => {
-    dispatch(collectAllTags(documents));
-    dispatch({
-      type: Constants.RECEIVE_DOCUMENTS,
-      payload: {
-        documents,
-        vacolsId
-      }
-    });
-  };
-
 export const onReceiveAnnotations = (annotations) => ({
   type: Constants.RECEIVE_ANNOTATIONS,
   payload: { annotations }
