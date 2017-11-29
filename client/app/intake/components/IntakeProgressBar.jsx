@@ -12,7 +12,7 @@ class IntakeProgressBarInner extends React.PureComponent {
         path: PAGE_PATHS.BEGIN
       },
       {
-        title: '2. Review Request',
+        title: '2. Review Election',
         path: PAGE_PATHS.REVIEW
       },
       {

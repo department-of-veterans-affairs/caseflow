@@ -4,12 +4,14 @@ class Appeal < ActiveRecord::Base
   include AssociatedVacolsModel
   include CachedAttributes
 
+  belongs_to :appeal_series
   has_many :tasks
   has_many :appeal_views
   has_many :worksheet_issues
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class MultipleDecisionError < StandardError; end
+  class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -29,11 +31,13 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :certification_date, :case_review_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
+  vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
+  vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc, :veteran_date_of_birth
+  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -82,7 +86,13 @@ class Appeal < ActiveRecord::Base
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
-    "Court Remand" => "cavc_remand"
+    "Reconsideration" => "reconsideration",
+    "Court Remand" => "cavc_remand",
+    "Clear and Unmistakable Error" => "cue"
+  }.freeze
+
+  LOCATION_CODES = {
+    remand_returned_to_bva: "96"
   }.freeze
 
   attr_writer :ssoc_dates
@@ -136,9 +146,7 @@ class Appeal < ActiveRecord::Base
     @veteran ||= Veteran.new(file_number: sanitized_vbms_id).load_bgs_record!
   end
 
-  def veteran_age
-    Veteran.new(date_of_birth: veteran_date_of_birth).age
-  end
+  delegate :age, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -208,7 +216,13 @@ class Appeal < ActiveRecord::Base
   end
 
   def eligible_for_ramp?
-    status == "Advance" || status == "Remand"
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def in_location?(location)
+    fail UnknownLocationError unless LOCATION_CODES[location]
+
+    location_code == LOCATION_CODES[location]
   end
 
   def attributes_for_hearing
@@ -317,6 +331,10 @@ class Appeal < ActiveRecord::Base
     status != "Complete"
   end
 
+  def merged?
+    disposition == "Merged Appeal"
+  end
+
   def decision_type
     return "Full Grant" if full_grant?
     return "Partial Grant" if partial_grant?
@@ -351,6 +369,11 @@ class Appeal < ActiveRecord::Base
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  # A uniqued list of issue codes on appeal, that is the combination of ISSPROG and ISSCODE
+  def issue_codes
+    issues.map(&:issue_code).uniq
   end
 
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
@@ -390,11 +413,11 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    !!type_code
+    %w(original post_remand cavc_remand).include? type_code
   end
 
   def type_code
-    TYPE_CODES[type]
+    TYPE_CODES[type] || "other"
   end
 
   def latest_event_date
@@ -579,6 +602,17 @@ class Appeal < ActiveRecord::Base
       fail Caseflow::Error::InvalidFileNumber
     end
 
+    # Because SSN is not accurate in VACOLS, we pull the file
+    # number from BGS for the SSN and use that to look appeals
+    # up in VACOLS
+    def vbms_id_for_ssn(ssn)
+      file_number = bgs.fetch_file_number_by_ssn(ssn)
+
+      fail ActiveRecord::RecordNotFound unless file_number
+
+      convert_file_number_to_vacols(file_number)
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
@@ -593,17 +627,6 @@ class Appeal < ActiveRecord::Base
         closed_on: closed_on,
         disposition_code: disposition_code
       )
-    end
-
-    # Because SSN is not accurate in VACOLS, we pull the file
-    # number from BGS for the SSN and use that to look appeals
-    # up in VACOLS
-    def vbms_id_for_ssn(ssn)
-      file_number = bgs.fetch_file_number_by_ssn(ssn)
-
-      fail ActiveRecord::RecordNotFound unless file_number
-
-      convert_file_number_to_vacols(file_number)
     end
   end
 end

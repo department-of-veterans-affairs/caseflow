@@ -7,10 +7,7 @@ export default class StatusMessage extends React.Component {
   render() {
     let {
       checklist,
-      // TODO(nth) This is not a good variable name. It shadows the classNames node module.
-      // And it's too generic – the classNames are applied to one specific child element, but
-      // you'd never know what that element is by looking at the variable name.
-      classNames,
+      checklistClassNames,
       example,
       leadMessageList,
       messageText,
@@ -21,7 +18,7 @@ export default class StatusMessage extends React.Component {
     } = this.props;
 
     if (example) {
-      classNames.push('cf-sg-success-example');
+      checklistClassNames.push('cf-sg-success-example');
     }
 
     let getClassNames = () => {
@@ -54,7 +51,7 @@ export default class StatusMessage extends React.Component {
             {listValue}
           </h2>)
       }
-      {type === 'success' && checklist && <ul className={classNames.join(' ')}>
+      {type === 'success' && checklist && <ul className={checklistClassNames.join(' ')}>
         {checklist.map((listValue, i) => <li key={i}>{listValue}</li>)}
       </ul>}
       <p className="cf-msg-screen-text">
@@ -65,7 +62,7 @@ export default class StatusMessage extends React.Component {
 }
 
 StatusMessage.defaultProps = {
-  classNames: ['cf-success-checklist', 'cf-left-padding']
+  checklistClassNames: ['cf-success-checklist', 'cf-left-padding']
 };
 
 StatusMessage.props = {

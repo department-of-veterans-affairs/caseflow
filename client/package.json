@@ -73,13 +73,14 @@
     "webpack": "^2.3.3"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.1",
+    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.1",
+    "babel-eslint": "^8.0.2",
     "chai": "^3.5.0",
     "enzyme": "^2.6.0",
     "eslint": "^4.9.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-mocha": "^4.11.0",
-    "eslint-plugin-react": "^7.4.0",
+    "eslint-plugin-react": "^7.5.1",
     "karma": "^1.6.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.1",

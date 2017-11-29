@@ -10,6 +10,7 @@ import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
 } from '../reader/Pdf/PdfActions';
+import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 import { List, AutoSizer } from 'react-virtualized';
@@ -36,29 +37,38 @@ export class PdfFile extends React.PureComponent {
   componentDidMount = () => {
     PDFJS.workerSrc = this.props.pdfWorker;
 
-    // We have to set withCredentials to true since we're requesting the file from a
-    // different domain (eFolder), and still need to pass our credentials to authenticate.
-    this.loadingTask = PDFJS.getDocument({
-      url: this.props.file,
-      withCredentials: true
-    });
+    let requestOptions = {
+      cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer'
+    };
 
     window.addEventListener('keydown', this.keyListener);
 
     this.props.clearDocumentLoadError(this.props.file);
 
-    return this.loadingTask.then((pdfDocument) => {
-      if (this.loadingTask.destroyed) {
-        pdfDocument.destroy();
-      } else {
+    // We have to set withCredentials to true since we're requesting the file from a
+    // different domain (eFolder), and still need to pass our credentials to authenticate.
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+
+        return this.loadingTask;
+      }).
+      then((pdfDocument) => {
+        if (this.loadingTask.destroyed) {
+          pdfDocument.destroy();
+        } else {
+          this.loadingTask = null;
+          this.pdfDocument = pdfDocument;
+          this.props.setPdfDocument(this.props.file, pdfDocument);
+        }
+      }).
+      catch(() => {
         this.loadingTask = null;
-        this.pdfDocument = pdfDocument;
-        this.props.setPdfDocument(this.props.file, pdfDocument);
-      }
-    }).catch(() => {
-      this.loadingTask = null;
-      this.props.setDocumentLoadError(this.props.file);
-    });
+        this.props.setDocumentLoadError(this.props.file);
+      });
   }
 
   componentWillUnmount = () => {
@@ -306,7 +316,7 @@ export class PdfFile extends React.PureComponent {
             rowCount={this.props.pdfDocument.pdfInfo.numPages}
             rowHeight={this.getRowHeight}
             rowRenderer={this.getPage}
-            scrollToAlignment={'start'}
+            scrollToAlignment="start"
             width={width}
             scale={this.props.scale}
           />;

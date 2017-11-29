@@ -38,6 +38,11 @@ ActiveRecord::Schema.define(version: 20171106153924) do
   add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
 
+  create_table "appeal_series", force: :cascade do |t|
+    t.boolean "incomplete",          default: false
+    t.integer "merged_appeal_count"
+  end
+
   create_table "appeal_views", force: :cascade do |t|
     t.integer  "user_id",        null: false
     t.integer  "appeal_id",      null: false
@@ -77,8 +82,10 @@ ActiveRecord::Schema.define(version: 20171106153924) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
+    t.integer "appeal_series_id"
   end
 
+  add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
 
   create_table "certification_cancellations", force: :cascade do |t|
@@ -283,6 +290,17 @@ ActiveRecord::Schema.define(version: 20171106153924) do
   add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
+  create_table "issues", force: :cascade do |t|
+    t.integer "appeal_id"
+    t.string  "vacols_sequence_id"
+    t.boolean "reopen",             default: false
+    t.boolean "vha",                default: false
+    t.boolean "allow",              default: false
+    t.boolean "deny",               default: false
+    t.boolean "remand",             default: false
+    t.boolean "dismiss",            default: false
+  end
+
   create_table "ramp_elections", force: :cascade do |t|
     t.string "veteran_file_number",      null: false
     t.date   "notice_date",              null: false
@@ -376,5 +394,6 @@ ActiveRecord::Schema.define(version: 20171106153924) do
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
+  add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
 end

@@ -51,6 +51,7 @@ class DocumentsCheckTable extends React.Component {
       rowObjects={[form9, nod, soc].concat(ssocs)}
       caption="This table compares received dates for forms stored in VACOLS and VBMS."
       summary="Documents required for certification."
+      slowReRendersAreOk
     />;
   }
 }

@@ -23,7 +23,7 @@ export default class StyleGuideRadioField extends React.Component {
       <Example1 />
       <Example2 />
       <Example3 />
-      <h3>Required Radio Button Errors</h3>
+      <h3>Required Radio Button</h3>
       <Example4 />
     </div>;
   }
