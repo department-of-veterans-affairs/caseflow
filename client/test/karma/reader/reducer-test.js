@@ -1,10 +1,42 @@
 /* eslint-disable max-lines */
 import { expect } from 'chai';
 import { reducer, initialState } from '../../../app/reader/reducer';
+import { caseSelectReducer, initialState as caseSelectInitialState } from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import { setViewingDocumentsOrComments } from '../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../app/reader/constants';
+import * as CaseSelectConstants from '../../../app/reader/CaseSelect/actionTypes';
+import { caseSelectAppeal } from '../../../app/reader/CaseSelect/CaseSelectActions';
 
 /* eslint-disable no-undefined */
+
+describe('CaseSelect reducer', () => {
+  const reduceActions = (actions, state) => actions.reduce(caseSelectReducer, caseSelectReducer(state, {}));
+  
+  it('updates assignment as viewed', () => {
+    const vacolsId = 1;
+    const assignments = [{
+      viewed: false,
+      vacols_id: vacolsId
+    }];
+
+    const state = reduceActions([
+      {
+        type: CaseSelectConstants.RECEIVE_ASSIGNMENTS,
+        payload: {
+          assignments
+        }
+      },
+      {
+        type: CaseSelectConstants.SET_VIEWED_ASSIGNMENT,
+        payload: {
+          vacolsId
+        }
+      }
+    ], caseSelectInitialState);
+
+    expect(state.assignments[0].viewed).to.deep.equal(true);
+  });
+});
 
 describe('Reader reducer', () => {
 
@@ -104,40 +136,6 @@ describe('Reader reducer', () => {
 
       expect(state.documents[documents[0].id]).to.deep.equal(documents[0]);
       expect(state.loadedAppealId).to.deep.equal(vacolsId);
-      expect(state.assignments).to.deep.equal([]);
-    });
-
-    it('updates that assignment is viewed when documents are received', () => {
-      const vacolsId = 1;
-      const date = new Date();
-      const assignments = [{
-        viewed: false,
-        vacols_id: vacolsId
-      }];
-      const documents = [{
-        id: 0,
-        tags: [],
-        receivedAt: date,
-        received_at: date,
-        listComments: false
-      }];
-      const state = reduceActions([
-        {
-          type: Constants.RECEIVE_ASSIGNMENTS,
-          payload: {
-            assignments
-          }
-        },
-        {
-          type: Constants.RECEIVE_DOCUMENTS,
-          payload: {
-            documents,
-            vacolsId
-          }
-        }
-      ]);
-
-      expect(state.assignments[0].viewed).to.deep.equal(true);
     });
 
     it('updates documents object when null is passed', () => {

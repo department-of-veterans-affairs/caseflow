@@ -1,7 +1,7 @@
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
-const initialState = {
+export const initialState = {
   selectedAppealVacolsId: null,
   isRequestingAppealsUsingVeteranId: false,
   selectedAppeal: {},
@@ -17,7 +17,7 @@ const initialState = {
   assignmentsLoaded: false
 };
 
-const caseSelectReducer = (state = initialState, action = {}) => {
+export const caseSelectReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.CLEAR_CASE_SELECT_SEARCH:
     return update(state, {
