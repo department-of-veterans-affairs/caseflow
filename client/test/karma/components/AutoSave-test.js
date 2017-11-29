@@ -4,6 +4,7 @@ import { mount } from 'enzyme';
 import AutoSave from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
+import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
 
 export const saveFunction = () => ({ my: 'action' });
 
