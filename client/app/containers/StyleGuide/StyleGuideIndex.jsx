@@ -70,7 +70,7 @@ export default class StyleGuideIndex extends React.PureComponent {
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Date Input"
-          id="date_input" />
+          id="date-input" />
         <div className="cf-help-divider"></div>
         <StyleGuideTables />
         <div className="cf-help-divider"></div>
