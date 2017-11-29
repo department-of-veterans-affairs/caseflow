@@ -160,7 +160,7 @@ class Document < ActiveRecord::Base
   end
 
   def merge_into(document)
-    document.update_attributes(
+    document.assign_attributes(
       efolder_id: efolder_id,
       type: type,
       alt_types: alt_types,
