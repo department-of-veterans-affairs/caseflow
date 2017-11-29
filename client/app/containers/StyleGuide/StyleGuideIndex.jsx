@@ -24,14 +24,27 @@ import StyleGuideAccordions from './StyleGuideAccordions';
 import StyleGuideAlerts from './StyleGuideAlerts';
 
 export default class StyleGuideIndex extends React.PureComponent {
+  constructor() {
+    super();
+    this.state = {
+      selected: false
+    };
+  }
+
+  setSelectedSubNav = (idx) => {
+    this.setState({
+      selected: idx
+    });
+  }
 
   render() {
     return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         {
-          componentLinks.map((link, i) => (
-            <NavLink {...link} key={i} />
-          ))
+          componentLinks.map((link, i) => {
+            return <NavLink {...link} setSelected={this.setSelectedSubNav} index={i} key={i}
+              selectedIndex={this.state.selected} />;
+          })
         }
       </StickyNav>
       <div className="cf-sg-content">
