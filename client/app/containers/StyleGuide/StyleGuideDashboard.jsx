@@ -1,10 +1,10 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-let StyleGuideDashboard = () => {
+export default class StyleGuideDashboard extends React.PureComponent {
+  render = () => {
 
-  return (
-    <div>
+    return <div>
       <StyleGuideComponentTitle
         title="Dashboard"
         id="dashboard"
@@ -30,9 +30,6 @@ let StyleGuideDashboard = () => {
       </p>
       <p>Users can hover over historical points on the chart to show the data point
       for that specific time.</p>
-    </div>
-
-  );
-};
-
-export default StyleGuideDashboard;
+    </div>;
+  }
+}

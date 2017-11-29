@@ -18,12 +18,12 @@ const options = [
   }
 ];
 
-export default class StyleGuideNavigationBar extends React.Component {
+export default class StyleGuideNavigationBar extends React.PureComponent {
   render() {
     return <div className="sg-nav-bar">
       <StyleGuideComponentTitle
         title="Navigation Bar"
-        id="navigation_bar"
+        id="navigation-bar"
         link="StyleGuideNavigationBar.jsx"
         isSubsection
       />
