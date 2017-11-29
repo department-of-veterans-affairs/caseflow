@@ -7,7 +7,7 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :type_code, key: :type
   attribute :active?, key: :active
   attribute :aod
-  attribute :api_status_hash, key: :status
+  attribute :status_hash, key: :status
   attribute :location
 
   attribute :events do
