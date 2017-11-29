@@ -12,7 +12,7 @@ export default class AsynchronousDataLoader extends React.Component {
   }
 
   componentDidMount() {
-    this.props.componentsPromise.
+    this.props.promiseToResolve.
       then((data) => {
         this.setState({
           showLoader: false,

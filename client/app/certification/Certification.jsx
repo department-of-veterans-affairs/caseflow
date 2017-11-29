@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
 
 import ConfigUtil from '../util/ConfigUtil';
-import Header from './Header';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
@@ -70,7 +69,6 @@ const configureStore = (certification, form9PdfPath) => {
 };
 
 export class Certification extends React.Component {
-  /* eslint class-methods-use-this: ["warn", { "exceptMethods": ["fetchCertificationData","onSuccess", "onError"] }] */
 
   constructor(props) {
     super(props);
@@ -85,7 +83,7 @@ export class Certification extends React.Component {
     };
   }
 
-  onSuccess(data) {
+  onSuccess = (data) => {
     return <Provider store={configureStore(JSON.parse(data.text).certification, JSON.parse(data.text).form9PdfPath)}>
       <div>
         <BrowserRouter>
@@ -132,8 +130,7 @@ export class Certification extends React.Component {
     </Provider>;
   }
 
-  /* eslint no-unused-vars: ["error", {"args": "none"}]*/
-  onError(error) {
+  onError = () => {
     return <StatusMessage
       title="Technical Difficulties">
       Systems that Caseflow Certification connects to are experiencing technical difficulties
@@ -170,7 +167,7 @@ export class Certification extends React.Component {
     return <div>
       {
         <AsynchronousDataLoader
-          componentsPromise={fetchCertificationData}
+          promiseToResolve={fetchCertificationData}
           spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION}
           message={initialMessage}
           extendedWaitMessage={longerThanUsualMessage}
