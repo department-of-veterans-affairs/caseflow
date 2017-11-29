@@ -176,16 +176,6 @@ describe Appeal do
     end
   end
 
-  context "#alerts" do
-    subject { appeal.alerts }
-    let(:form9_date) { nil }
-
-    it "returns list of alerts" do
-      expect(subject.length > 0).to be_truthy
-      expect(subject.first.type).to eq(:form9_needed)
-    end
-  end
-
   context "#form9_due_date" do
     subject { appeal.form9_due_date }
 

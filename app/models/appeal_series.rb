@@ -5,7 +5,6 @@ class AppealSeries < ActiveRecord::Base
            :active?,
            :type_code,
            :aod,
-           :alerts,
            to: :latest_appeal
 
   def latest_appeal
@@ -37,6 +36,10 @@ class AppealSeries < ActiveRecord::Base
 
   def events
     appeals.flat_map(&:events).uniq
+  end
+
+  def alerts
+    @alerts ||= AppealAlerts.new(appeal_series: self).all
   end
 
   private

@@ -139,10 +139,6 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
-  def alerts
-    @alerts ||= AppealAlerts.new(appeal: self).all
-  end
-
   def form9_due_date
     return unless notification_date && soc_date
     [notification_date + 1.year, soc_date + 60.days].max.to_date
