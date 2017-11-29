@@ -5,6 +5,7 @@ import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
 import uuid from 'uuid';
+import { READER_COLOR } from '../reader/constants';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
@@ -68,7 +69,7 @@ export default class SearchBar extends React.Component {
   getInternalField = () => {
     if (this.props.loading) {
       return <div className="search-text-spinner">
-        { loadingSymbolHtml('', '25px', '#417505') }
+        { loadingSymbolHtml('', '25px', READER_COLOR) }
       </div>;
     }
 

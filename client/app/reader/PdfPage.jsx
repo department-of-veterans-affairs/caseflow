@@ -28,6 +28,7 @@ export class PdfPage extends React.PureComponent {
     super(props);
 
     this.isDrawing = false;
+    this.marks = [];
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -42,49 +43,25 @@ export class PdfPage extends React.PureComponent {
     done: () => _.defer(this.highlightMarkAtIndex, scrollToMark)
   }));
 
-  // eslint-disable-next-line max-statements
   highlightMarkAtIndex = (scrollToMark) => {
-    if (!this.props.matchesPerPage.length) {
+    if (!this.props.matchesPerPage.length || !this.textLayer) {
       return;
     }
 
-    this.marks = document.getElementsByTagName('mark');
-
-    _.each(this.marks, (mark) => {
-      const pageDocIdsRE = /comment-layer-(\d+)-\/document\/(\d+)\/pdf/gi;
-      // todo: use Element.closest to get comment layer div
-      // Element.closest isn't supported in IE, polyfills exist but may be slow
-      // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-      // eslint-disable-next-line no-unused-vars
-      const [s, pageId, docId] = pageDocIdsRE.exec(mark.parentElement.parentElement.parentElement.id);
-
-      _.extend(mark.dataset, {
-        pageIdx: parseInt(pageId, 10),
-        docIdx: parseInt(docId, 10)
-      });
-    });
-
-    const [matchedPageIndex, previousMatches] = this.getPageOfMatch(this.props.currentMatchIndex);
-    const pageWithMatch = this.props.matchesPerPage[matchedPageIndex];
-    const indexInPage = pageWithMatch.matches - (previousMatches - this.props.currentMatchIndex);
-
-    this.marks = _.filter(this.marks, (mark) =>
-      parseInt(mark.dataset.pageIdx, 10) === this.props.pageIndex
-    );
+    this.marks = this.textLayer.getElementsByTagName('mark');
     _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
 
+    const [pageWithMatch, indexInPage] = this.getIndexInPage();
     const selectedMark = this.marks[indexInPage];
 
-    if (_.endsWith(pageWithMatch.id, this.props.pageIndex)) {
+    if (_.endsWith(pageWithMatch.id, `pdf-${this.props.pageIndex}`)) {
       if (selectedMark) {
         selectedMark.classList.add('highlighted');
 
-        // mark parent elements are absolutely-positioned divs
-        let scrollToY = parseInt(selectedMark.parentElement.style.top, 10);
-
         if (scrollToMark) {
+          // mark parent elements are absolutely-positioned divs
           // account for search bar height
-          this.props.setDocScrollPosition(scrollToY - 60);
+          this.props.setDocScrollPosition(parseInt(selectedMark.parentElement.style.top, 10) - 60);
         }
       } else {
         console.error('selectedMark not found in DOM');
@@ -92,8 +69,8 @@ export class PdfPage extends React.PureComponent {
     }
   }
 
-  getPageOfMatch = (matchIndex) => {
-    // get index in matchesPerPage of page containing match index
+  getIndexInPage = (matchIndex = this.props.currentMatchIndex) => {
+    // get page, relative index of match at absolute index
     let pageIndex = 0;
     let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
 
@@ -102,7 +79,9 @@ export class PdfPage extends React.PureComponent {
       matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
     }
 
-    return [pageIndex, matchesProcessed];
+    const pageWithMatch = this.props.matchesPerPage[pageIndex];
+
+    return [pageWithMatch, pageWithMatch.matches - (matchesProcessed - this.props.currentMatchIndex)];
   }
 
   // This method is the interaction between our component and PDFJS.
@@ -162,7 +141,19 @@ export class PdfPage extends React.PureComponent {
 
     if (this.markInstance) {
       if (this.props.searchText && !this.props.searchBarHidden) {
-        this.markText(this.props.searchText, this.props.currentMatchIndex !== prevProps.currentMatchIndex);
+        // if mark is rendered and search term hasn't changed, highlightMarkAtIndex
+        if (!_.isNaN(this.props.currentMatchIndex) && this.props.matchesPerPage && this.marks.length &&
+           (this.props.searchText === prevProps.searchText)) {
+          // eslint-disable-next-line no-unused-vars
+          const [matchedPageIndex, indexInPage] = this.getIndexInPage();
+
+          if (this.marks[indexInPage]) {
+            this.highlightMarkAtIndex(true);
+          }
+        } else {
+          // else markText (and highlightMarkAtIndex afterwards)
+          this.markText(this.props.searchText, this.props.currentMatchIndex !== prevProps.currentMatchIndex);
+        }
       } else {
         this.unmarkText();
       }
