@@ -5,7 +5,6 @@ class AppealSeries < ActiveRecord::Base
            :active?,
            :type_code,
            :aod,
-           :api_location,
            :api_status_hash,
            to: :latest_appeal
 
@@ -15,6 +14,10 @@ class AppealSeries < ActiveRecord::Base
 
   def api_sort_date
     appeals.map(&:nod_date).min || DateTime::Infinity.new
+  end
+
+  def location
+    (%w(Advance Remand).include? latest_appeal.status) ? :aoj : :bva
   end
 
   def events

@@ -139,10 +139,6 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
-  def api_location
-    (%w(Advance Remand).include? status) ? :aoj : :bva
-  end
-
   def api_status
     @api_status ||= fetch_api_status
   end
