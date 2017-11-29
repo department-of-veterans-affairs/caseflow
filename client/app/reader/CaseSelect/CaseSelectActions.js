@@ -5,13 +5,6 @@ import _ from 'lodash';
 
 // CaseSelect search
 
-export const setViewedAssignment = (vacolsId) => ({
-  type: Constants.SET_VIEWED_ASSIGNMENT,
-  payload: {
-    vacolsId
-  }
-});
-
 export const clearCaseSelectSearch = () => ({
   type: Constants.CLEAR_CASE_SELECT_SEARCH
 });
