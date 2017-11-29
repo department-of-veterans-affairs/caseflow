@@ -3,7 +3,7 @@ import React from 'react';
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideColors extends React.Component {
+export default class StyleGuideColors extends React.PureComponent {
 
   Colors = {
     Base: '#212121',
@@ -182,7 +182,7 @@ export default class StyleGuideColors extends React.Component {
         )}
       </div>
 
-      <h3 id="text_accessibility">Text Accessibility</h3>
+      <h3 id="text-accessibility">Text Accessibility</h3>
 
       <p>
         WCAG (Web Content Accessibility Guidelines) ensure that content is accessible by

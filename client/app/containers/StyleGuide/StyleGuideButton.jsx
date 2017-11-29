@@ -4,7 +4,7 @@ import StyleGuideLinkButton from './StyleGuideLinkButton';
 import StyleGuideToggleButton from './StyleGuideToggleButton';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideButton extends React.Component {
+export default class StyleGuideButton extends React.PureComponent {
   render = () => {
     return <div>
       <StyleGuideComponentTitle
