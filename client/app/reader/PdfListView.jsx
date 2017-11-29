@@ -9,7 +9,7 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
+import { fetchAppealDetails } from '../reader/DocumentList/DocumentListActions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
@@ -60,7 +60,7 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state.readerReducer),
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
-    appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
+    appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,

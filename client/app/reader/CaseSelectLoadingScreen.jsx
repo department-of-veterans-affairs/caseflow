@@ -52,8 +52,8 @@ export class CaseSelectLoadingScreen extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.readerReducer, 'initialCaseLoadingFail'),
-  assignments: state.readerReducer.assignments,
-  assignmentsLoaded: state.readerReducer.assignmentsLoaded
+  assignments: state.caseSelect.assignments,
+  assignmentsLoaded: state.caseSelect.assignmentsLoaded
 });
 
 const mapDispatchToProps = (dispatch) => (

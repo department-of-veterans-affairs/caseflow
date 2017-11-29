@@ -126,8 +126,6 @@ const initialPdfSidebarErrorState = {
 };
 
 export const initialState = {
-  assignments: [],
-  assignmentsLoaded: false,
   loadedAppealId: null,
   loadedAppeal: {},
   initialDataLoadingFail: false,
