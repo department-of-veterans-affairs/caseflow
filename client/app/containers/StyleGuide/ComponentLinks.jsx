@@ -15,15 +15,15 @@ export const componentLinks = [
     anchor: '#typography',
     name: 'Typography',
     subnav: [{
-      anchor: '#text_styles',
+      anchor: '#text-styles',
       name: 'Text Styles'
     },
     {
-      anchor: '#font_family',
+      anchor: '#font-family',
       name: 'Font Family'
     },
     {
-      anchor: '#text_accessibility',
+      anchor: '#text-accessibility',
       name: 'Text Accessibility'
     }]
   },
@@ -55,11 +55,11 @@ export const componentLinks = [
       name: 'Disabled'
     },
     {
-      anchor: '#link_buttons',
+      anchor: '#link-buttons',
       name: 'Link Buttons'
     },
     {
-      anchor: '#toggle_buttons',
+      anchor: '#toggle-buttons',
       name: 'Toggle Buttons'
     }]
   },
@@ -68,18 +68,18 @@ export const componentLinks = [
     name: 'Search'
   },
   {
-    anchor: '#dropdown_menu',
+    anchor: '#dropdown-menu',
     name: 'Dropdown Menus',
     subnav: [{
       anchor: '#dropdown',
       name: 'Dropdown'
     },
     {
-      anchor: '#single_dropdown',
+      anchor: '#single-dropdown',
       name: 'Search Single Selection'
     },
     {
-      anchor: '#multi_dropdrown',
+      anchor: '#multi-dropdrown',
       name: 'Search Multiple Selection'
     }]
   },
@@ -87,7 +87,7 @@ export const componentLinks = [
     anchor: '#checkboxes',
     name: 'Checkboxes',
     subnav: [{
-      anchor: '#single_checkbox',
+      anchor: '#single-checkbox',
       name: 'Single'
     },
     {
@@ -99,7 +99,7 @@ export const componentLinks = [
       name: 'Horizontal'
     },
     {
-      anchor: '#required_checkboxes',
+      anchor: '#required-checkboxes',
       name: 'Required'
     },
     {
@@ -111,16 +111,16 @@ export const componentLinks = [
     anchor: '#radios',
     name: 'Radio Buttons',
     subnav: [{
-      anchor: '#vertical_radio',
+      anchor: '#vertical-radio',
       name: 'Vertical'
     },
     {
-      anchor: '#horizontal_radio',
+      anchor: '#horizontal-radio',
       name: 'Horizontal'
     }]
   },
   {
-    anchor: '#date_input',
+    anchor: '#date-input',
     name: 'Date Input'
   },
   {
@@ -135,11 +135,11 @@ export const componentLinks = [
     anchor: '#tabs',
     name: 'Tabs',
     subnav: [{
-      anchor: '#without_icons',
+      anchor: '#without-icons',
       name: 'Without Icons'
     },
     {
-      anchor: '#with_icons',
+      anchor: '#with-icons',
       name: 'With Icons'
     }]
   },
@@ -155,27 +155,27 @@ export const componentLinks = [
       name: 'Borderless'
     },
     {
-      anchor: '#bordered_outline',
+      anchor: '#bordered-outline',
       name: 'Bordered Outline'
     }]
   },
   {
-    anchor: '#form_fields',
+    anchor: '#form-fields',
     name: 'Form Fields',
     subnav: [{
-      anchor: '#text_input',
+      anchor: '#text-input',
       name: 'Text input'
     },
     {
-      anchor: '#text_area',
+      anchor: '#text-area',
       name: 'Text area'
     },
     {
-      anchor: '#character_limit',
+      anchor: '#character-limit',
       name: 'Character limit'
     },
     {
-      anchor: '#inline_form',
+      anchor: '#inline-form',
       name: 'Inline Form'
     }]
   },
@@ -183,11 +183,11 @@ export const componentLinks = [
     anchor: '#loaders',
     name: 'Loaders',
     subnav: [{
-      anchor: '#small_loader',
+      anchor: '#small-loader',
       name: 'Small loader'
     },
     {
-      anchor: '#loading_buttons',
+      anchor: '#loading-buttons',
       name: 'Loading buttons'
     }]
   },
@@ -195,7 +195,7 @@ export const componentLinks = [
     anchor: '#alerts',
     name: 'Alerts',
     subnav: [{
-      anchor: '#alerts_lite',
+      anchor: '#alerts-lite',
       name: 'Alerts lite'
     }]
   },
@@ -203,11 +203,11 @@ export const componentLinks = [
     anchor: '#layout',
     name: 'Layout',
     subnav: [{
-      anchor: '#navigation_bar',
+      anchor: '#navigation-bar',
       name: 'Navigation Bar'
     },
     {
-      anchor: '#user_dropdown_menu',
+      anchor: '#user-dropdown-menu',
       name: 'User dropdown menu'
     },
     {
@@ -223,7 +223,7 @@ export const componentLinks = [
       name: 'Actions'
     },
     {
-      anchor: '#horizontal_line',
+      anchor: '#horizontal-line',
       name: 'Horizontal line'
     },
     {
@@ -235,11 +235,11 @@ export const componentLinks = [
     anchor: '#messages',
     name: 'Messages',
     subnav: [{
-      anchor: '#success_messages',
+      anchor: '#success-messages',
       name: 'Success'
     },
     {
-      anchor: '#status_messages',
+      anchor: '#status-messages',
       name: 'Status'
     },
     {
@@ -258,7 +258,7 @@ export const componentLinks = [
     name: 'Modals'
   },
   {
-    anchor: '#progress_bar',
+    anchor: '#progress-bar',
     name: 'Progress Bar'
   }
 ];

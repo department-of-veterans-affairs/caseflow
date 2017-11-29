@@ -114,7 +114,7 @@ export default class TextStyles extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Text Styles"
-        id="text_styles"
+        id="text-styles"
         link="Typography/TextStyles.jsx"
         isSubsection
       />
