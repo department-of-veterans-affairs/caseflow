@@ -21,6 +21,10 @@ Highlight.propTypes = {
   searchQuery: PropTypes.string.isRequired
 };
 
+Highlight.defaultProps = {
+  searchQuery: ''
+};
+
 const mapStateToProps = (state) => ({
   searchQuery: state.readerReducer.ui.docFilterCriteria.searchQuery
 });
