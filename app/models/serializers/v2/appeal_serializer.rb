@@ -7,7 +7,7 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :type_code, key: :type
   attribute :active?, key: :active
   attribute :aod
-  attribute :api_location, key: :location
+  attribute :location
 
   attribute :events do
     object.events.map(&:to_hash)

@@ -169,24 +169,6 @@ describe Appeal do
     end
   end
 
-  context "#api_location" do
-    subject { appeal.api_location }
-
-    context "when it is in advance status" do
-      it { is_expected.to eq(:aoj) }
-    end
-
-    context "when it is in remand status" do
-      let(:status) { "Remand" }
-      it { is_expected.to eq(:aoj) }
-    end
-
-    context "when it is in any other status" do
-      let(:status) { "History" }
-      it { is_expected.to eq(:bva) }
-    end
-  end
-
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }
