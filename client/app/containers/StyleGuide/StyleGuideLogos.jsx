@@ -4,7 +4,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import Logo from '../../components/Logo';
 
-export default class StyleLogos extends React.Component {
+export default class StyleLogos extends React.PureComponent {
   render = () => {
     return <div>
       <StyleGuideComponentTitle
