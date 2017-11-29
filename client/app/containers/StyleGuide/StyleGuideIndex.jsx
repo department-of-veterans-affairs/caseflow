@@ -31,9 +31,9 @@ export default class StyleGuideIndex extends React.PureComponent {
     };
   }
 
-  setSelectedSubNav = (idx) => {
+  setSelectedLink = (index) => {
     this.setState({
-      selected: idx
+      selected: index
     });
   }
 
@@ -42,7 +42,7 @@ export default class StyleGuideIndex extends React.PureComponent {
       <StickyNav>
         {
           componentLinks.map((link, i) => {
-            return <NavLink {...link} setSelected={this.setSelectedSubNav} index={i} key={i}
+            return <NavLink {...link} setSelectedLink={this.setSelectedLink} index={i} key={i}
               selectedIndex={this.state.selected} />;
           })
         }

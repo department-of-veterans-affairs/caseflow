@@ -16,11 +16,17 @@ export default class NavLink extends React.PureComponent {
   }
 
   onClick = () => {
-    this.props.setSelected(this.props.index);
+    this.props.setSelectedLink(this.props.index);
   }
 
   showSelectedClass = () => {
     return classnames({ selected: this.props.index === this.props.selectedIndex });
+  }
+
+  setSelectedLink = (index) => {
+    this.setState({
+      selected: index
+    });
   }
 
   render() {
@@ -28,7 +34,14 @@ export default class NavLink extends React.PureComponent {
 
     return <li>
       <a href={anchor} onClick={this.onClick} className={this.showSelectedClass()}>{name}</a>
-      {(this.props.index === this.props.selectedIndex) && subnav && <ChildNavLink links={subnav} />}
+      {(this.props.index === this.props.selectedIndex) && subnav && <ul className="usa-sidenav-sub_list">
+        {
+          subnav.map((link, i) => {
+            return <ChildNavLink key={i} index={i} name={link.name} anchor={link.anchor}
+              setSelectedLink={this.setSelectedLink} selectedIndex={this.state.selected} />;
+          })
+        }
+      </ul>}
     </li>;
   }
 }
