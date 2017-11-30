@@ -202,6 +202,7 @@ export class PdfFile extends React.PureComponent {
         const prevPageIndex = this.getPageIndexofMatch(prevProps.currentMatchIndex);
 
         if (pageIndex === prevPageIndex) {
+          // todo: scroll to page if page is not rendered
           if (!_.isNull(this.props.scrollTop)) {
             this.scrollToPosition(pageIndex, this.props.scrollTop);
             this.props.setDocScrollPosition(null);

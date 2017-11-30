@@ -41,17 +41,18 @@ export class PdfPage extends React.PureComponent {
   markText = (scrollToMark = false, txt = this.props.searchText) => {
     this.unmarkText(() => this.markInstance.mark(txt, {
       separateWordSearch: false,
-      done: () => this.highlightMarkAtIndex(scrollToMark)
+      done: () => {
+        if (!this.props.matchesPerPage.length || !this.textLayer) {
+          return;
+        }
+
+        this.marks = this.textLayer.getElementsByTagName('mark');
+        this.highlightMarkAtIndex(scrollToMark);
+      }
     }));
   };
 
   highlightMarkAtIndex = (scrollToMark) => {
-    if (!this.props.matchesPerPage.length || !this.textLayer) {
-      return;
-    }
-
-    // todo: only update this.marks on change searchText
-    this.marks = this.textLayer.getElementsByTagName('mark');
     _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
 
     const [pageWithMatch, indexInPage] = this.getIndexInPage();
