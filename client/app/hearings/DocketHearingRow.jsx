@@ -65,7 +65,7 @@ export class DocketHearingRow extends React.PureComponent {
 
     let getRoTime = (date) => {
       return moment(date).tz(roTimeZone).
-        format('h:mm a').
+        format('h:mm a z').
         replace(/(a|p)(m)/, '$1.$2.');
     };
 
@@ -76,9 +76,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date)} EDT
-          </span>
-          <span>
+            {getDate(hearing.date)} EDT /<br />
             {getRoTime(hearing.date)}
           </span>
           <span>
