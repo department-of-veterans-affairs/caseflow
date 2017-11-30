@@ -7,7 +7,7 @@ import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIn
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { hideSearchBar } from './PdfViewer/PdfViewerActions';
+import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
@@ -58,6 +58,8 @@ export class DocumentSearch extends React.PureComponent {
     }
 
     if (event[metaKey] && event.code === 'KeyF') {
+      this.props.showSearchBar();
+      this.searchBar.setInputFocus();
       event.preventDefault();
     }
   }
@@ -164,7 +166,8 @@ const mapDispatchToProps = (dispatch) => ({
     searchText,
     getDocumentText,
     updateSearchIndex,
-    hideSearchBar
+    hideSearchBar,
+    showSearchBar
   }, dispatch)
 });
 

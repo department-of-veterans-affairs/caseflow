@@ -119,12 +119,6 @@ export class PdfViewer extends React.Component {
       this.props.showPdf(this.getNextDocId())();
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
-
-    const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
-
-    if (event[metaKey] && event.code === 'KeyF') {
-      this.props.showSearchBar();
-    }
   }
 
   updateWindowTitle = () => {
