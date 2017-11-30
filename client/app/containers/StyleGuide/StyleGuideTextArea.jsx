@@ -2,7 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import TextareaField from '../../components/TextareaField';
 
-export default class StyleGuideTextArea extends React.Component {
+export default class StyleGuideTextArea extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -16,7 +16,7 @@ export default class StyleGuideTextArea extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Text Area"
-        id="text_area"
+        id="text-area"
         link="StyleGuideTextArea.jsx"
         isSubsection
       />
