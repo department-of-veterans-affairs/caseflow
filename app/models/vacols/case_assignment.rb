@@ -36,5 +36,30 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfcurloc = staff.slogid
         SQL
     end
+
+    def exists_for_appeals(vacols_ids)
+    conn = connection
+
+    conn.transaction do
+        query = <<-SQL
+          select BRIEFF.BFKEY, count(DECASS.DEASSIGN) N
+          from BRIEFF
+          left join DECASS on BRIEFF.BFKEY = DECASS.DEFOLDER
+          where BRIEFF.BFKEY in (?)
+          group by BRIEFF.BFKEY
+        SQL
+
+        result = MetricsService.record("VACOLS: CaseAssignment.exists_for_appeals for #{vacols_ids}",
+                                       name: "CaseAssignment.exists_for_appeals",
+                                       service: :vacols) do
+          conn.exec_query(sanitize_sql_array([query, vacols_ids]))
+        end
+
+        result.to_hash.reduce({}) do |memo, row|
+          memo[(row["bfkey"]).to_s] = (row["n"] > 0)
+          memo
+        end
+      end
+    end
   end
 end

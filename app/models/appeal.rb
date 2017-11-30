@@ -135,8 +135,22 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def v1_events
+    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
+  end
+
   def events
-    @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
+    @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def form9_due_date
+    return unless notification_date && soc_date
+    [notification_date + 1.year, soc_date + 60.days].max.to_date
+  end
+
+  def cavc_due_date
+    return unless decision_date
+    (decision_date + 120.days).to_date
   end
 
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
@@ -215,6 +229,10 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
+  def hearing_scheduled?
+    scheduled_hearings.length > 0
+  end
+
   def eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
@@ -223,6 +241,10 @@ class Appeal < ActiveRecord::Base
     fail UnknownLocationError unless LOCATION_CODES[location]
 
     location_code == LOCATION_CODES[location]
+  end
+
+  def case_assignment_exists?
+    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing
@@ -421,7 +443,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def latest_event_date
-    events.last.try(:date)
+    v1_events.last.try(:date)
   end
 
   def to_hash(viewed: nil, issues: nil)

@@ -339,5 +339,9 @@ class AppealRepository
       end
     end
   end
+
+  def self.case_assignment_exists?(vacols_id)
+    VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
+  end
   # :nocov:
 end

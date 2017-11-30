@@ -25,6 +25,7 @@ describe "Appeals API v2", type: :request do
         vacols_record: {
           template: :ready_to_certify,
           type: "Post Remand",
+          status: "Active",
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 8.months,
@@ -177,14 +178,25 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"].first["attributes"]["aod"]).to eq(true)
+      expect(json["data"].first["attributes"]["location"]).to eq("bva")
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
       expect(event_types).to eq(%w(nod soc form9 ssoc hearing_held bva_remand ssoc))
 
+      # check the status on the first appeal
+      status = json["data"].first["attributes"]["status"]
+      expect(status["type"]).to eq("decision_in_progress")
+      expect(status["details"]["test"]).to eq("Hello World")
+
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
       expect(event_types).to eq(%w(nod soc form9))
+
+      # check the status on the last appeal
+      status = json["data"].last["attributes"]["status"]
+      expect(status["type"]).to eq("pending_certification")
 
       # check that the date for the last event was formatted correctly
       json_nod_date = json["data"].last["attributes"]["events"].first["date"]
@@ -193,6 +205,8 @@ describe "Appeals API v2", type: :request do
       # check the other attribtues on the last appeal
       expect(json["data"].last["attributes"]["active"]).to eq(true)
       expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"].last["attributes"]["aod"]).to eq(true)
+      expect(json["data"].last["attributes"]["location"]).to eq("aoj")
     end
   end
 end
