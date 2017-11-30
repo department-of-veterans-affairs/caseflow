@@ -38,6 +38,10 @@ class AppealSeries < ActiveRecord::Base
     appeals.flat_map(&:events).uniq
   end
 
+  def alerts
+    @alerts ||= AppealAlerts.new(appeal_series: self).all
+  end
+
   private
 
   def fetch_latest_appeal

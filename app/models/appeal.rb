@@ -139,6 +139,16 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
+  def form9_due_date
+    return unless notification_date && soc_date
+    [notification_date + 1.year, soc_date + 60.days].max.to_date
+  end
+
+  def cavc_due_date
+    return unless decision_date
+    (decision_date + 120.days).to_date
+  end
+
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
   # Eventually we'd like to reference methods on the veteran with data from VACOLS
   # and only "lazy load" data from BGS when necessary

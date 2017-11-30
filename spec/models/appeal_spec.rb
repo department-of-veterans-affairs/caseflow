@@ -5,6 +5,7 @@ describe Appeal do
 
   let(:appeal) do
     Generators::Appeal.build(
+      notification_date: notification_date,
       nod_date: nod_date,
       soc_date: soc_date,
       form9_date: form9_date,
@@ -16,7 +17,7 @@ describe Appeal do
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
       appellant_last_name: "Tester",
-      decision_date: nil,
+      decision_date: decision_date,
       manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
       manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
       location_code: location_code,
@@ -40,11 +41,13 @@ describe Appeal do
     )
   end
 
+  let(:notification_date) { 1.month.ago }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
   let(:certification_date) { nil }
+  let(:decision_date) { nil }
   let(:documents) { [] }
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
@@ -170,6 +173,37 @@ describe Appeal do
       expect(subject.length > 1).to be_truthy
       expect(subject.first.date).to eq(5.days.ago)
       expect(subject.first.type).to eq(:soc)
+    end
+  end
+
+  context "#form9_due_date" do
+    subject { appeal.form9_due_date }
+
+    context "when the notification date is within the last year" do
+      it { is_expected.to eq((notification_date + 1.year).to_date) }
+    end
+
+    context "when the notification date is older" do
+      let(:notification_date) { 1.year.ago }
+      it { is_expected.to eq((soc_date + 60.days).to_date) }
+    end
+
+    context "when missing notification date or soc date" do
+      let(:soc_date) { nil }
+      it { is_expected.to eq(nil)}
+    end
+  end
+
+  context "#cavc_due_date" do
+    subject { appeal.cavc_due_date }
+
+    context "when there is no decision date" do
+      it { is_expected.to eq(nil)}
+    end
+
+    context "when there is a decision date" do
+      let(:decision_date) { 30.days.ago }
+      it { is_expected.to eq(90.days.from_now.to_date) }
     end
   end
 
