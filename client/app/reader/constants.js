@@ -42,6 +42,7 @@ export const SET_SEARCH = 'SET_SEARCH';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
 export const CLEAR_ALL_SEARCH = 'CLEAR_ALL_SEARCH';
 export const SET_DOC_LIST_SCROLL_POSITION = 'SET_DOC_LIST_SCROLL_POSITION';
+export const SET_DOC_SCROLL_POSITION = 'SET_DOC_SCROLL_POSITION';
 export const JUMP_TO_PAGE = 'JUMP_TO_PAGE';
 export const RESET_JUMP_TO_PAGE = 'RESET_JUMP_TO_PAGE';
 
@@ -146,3 +147,7 @@ export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 // able to expand/contract the height of the pages as we zoom.
 export const PDF_PAGE_WIDTH = 816;
 export const PDF_PAGE_HEIGHT = 1056;
+
+// Defined in _search_bar.scss > .cf-search-bar. Max height of
+// search bar, used as offset when scrolling to search results
+export const SEARCH_BAR_HEIGHT = 50;

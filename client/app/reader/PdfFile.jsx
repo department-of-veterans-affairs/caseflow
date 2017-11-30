@@ -5,19 +5,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
+import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
-import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError }
-  from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
+} from '../reader/Pdf/PdfActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 import { List, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
-import { startPlacingAnnotation, showPlaceAnnotationIcon }
-  from '../reader/PdfViewer/AnnotationActions';
+import { startPlacingAnnotation, showPlaceAnnotationIcon
+} from '../reader/PdfViewer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
+import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -136,7 +137,7 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  scrollToPosition = (pageIndex, locationOnPage) => {
+  scrollToPosition = (pageIndex, locationOnPage = 0) => {
     const position = this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage;
 
     this.list.scrollToPosition(Math.max(position, 0));
@@ -173,12 +174,44 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  componentDidUpdate = () => {
+  getPageIndexofMatch = (matchIndex = this.props.currentMatchIndex) => {
+    // get index in matchesPerPage of page containing match index
+    let pageIndex = 0;
+    let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
+
+    while (matchesProcessed < matchIndex + 1) {
+      pageIndex += 1;
+      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+    }
+
+    const pageIdRE = /\/document\/\d+\/pdf-(\d+)/gi;
+    const pageIdMatch = pageIdRE.exec(this.props.matchesPerPage[pageIndex].id);
+
+    return parseInt(pageIdMatch[1], 10);
+  }
+
+  componentDidUpdate = (prevProps) => {
     if (this.list && this.props.isVisible) {
       this.list.recomputeRowHeights();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
       this.jumpToComment();
+
+      if (this.props.searchText && this.props.matchesPerPage.length) {
+        const pageIndex = this.getPageIndexofMatch();
+        const prevPageIndex = this.getPageIndexofMatch(prevProps.currentMatchIndex);
+
+        if (pageIndex === prevPageIndex) {
+          // todo: scroll to page if page is not rendered
+          if (!_.isNull(this.props.scrollTop)) {
+            this.scrollToPosition(pageIndex, this.props.scrollTop);
+            this.props.setDocScrollPosition(null);
+          }
+        } else {
+          // scroll to mark page before highlighting--may not be in DOM
+          this.list.scrollToRow(pageIndex);
+        }
+      }
     }
   }
 
@@ -304,7 +337,8 @@ export class PdfFile extends React.PureComponent {
 }
 
 PdfFile.propTypes = {
-  pdfDocument: PropTypes.object
+  pdfDocument: PropTypes.object,
+  setDocScrollPosition: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -316,7 +350,8 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     showPlaceAnnotationIcon,
     setDocumentLoadError,
-    clearDocumentLoadError
+    clearDocumentLoadError,
+    setDocScrollPosition
   }, dispatch)
 });
 
@@ -330,7 +365,11 @@ const mapStateToProps = (state, props) => {
     baseHeight,
     jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber,
     scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
-    loadError: state.readerReducer.documentErrors[props.file]
+    loadError: state.readerReducer.documentErrors[props.file],
+    currentMatchIndex: getCurrentMatchIndex(state, props),
+    matchesPerPage: getMatchesPerPageInFile(state, props),
+    searchText: searchText(state, props),
+    scrollTop: state.readerReducer.ui.pdf.scrollTop
   };
 };
 
