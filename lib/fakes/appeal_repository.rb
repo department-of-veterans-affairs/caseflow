@@ -492,5 +492,9 @@ class Fakes::AppealRepository
   def self.aod(_vacols_id)
     true
   end
+
+  def self.case_assignment_exists?(vacols_id)
+    true
+  end
 end
 # rubocop:enable Metrics/ClassLength

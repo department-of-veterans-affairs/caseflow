@@ -143,6 +143,16 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all
   end
 
+  def form9_due_date
+    return unless notification_date && soc_date
+    [notification_date + 1.year, soc_date + 60.days].max.to_date
+  end
+
+  def cavc_due_date
+    return unless decision_date
+    (decision_date + 120.days).to_date
+  end
+
   # TODO(jd): Refactor this to create a Veteran object but *not* call BGS
   # Eventually we'd like to reference methods on the veteran with data from VACOLS
   # and only "lazy load" data from BGS when necessary
@@ -219,6 +229,10 @@ class Appeal < ActiveRecord::Base
     hearing_requested && !hearing_held
   end
 
+  def hearing_scheduled?
+    scheduled_hearings.length > 0
+  end
+
   def eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
@@ -227,6 +241,10 @@ class Appeal < ActiveRecord::Base
     fail UnknownLocationError unless LOCATION_CODES[location]
 
     location_code == LOCATION_CODES[location]
+  end
+
+  def case_assignment_exists?
+    @case_assignment_exists ||= self.class.repository.case_assignment_exists?(vacols_id)
   end
 
   def attributes_for_hearing

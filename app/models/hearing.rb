@@ -21,9 +21,26 @@ class Hearing < ActiveRecord::Base
   def closed?
     !!disposition
   end
+  
+  def no_show?
+    disposition == :no_show
+  end
 
   def scheduled_pending?
     date && !closed?
+  end
+
+  def held_open?
+    hold_open && hold_open > 0
+  end
+
+  def hold_release_date
+    return unless held_open?
+    date.to_date + (hold_open).days
+  end
+
+  def no_show_excuse_letter_due_date
+    date.to_date + 15.days
   end
 
   def active_appeal_streams
