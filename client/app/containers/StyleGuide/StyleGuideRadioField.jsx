@@ -8,7 +8,7 @@ import Example2 from './RadioFieldExamples/Example2';
 import Example3 from './RadioFieldExamples/Example3';
 import Example4 from './RadioFieldExamples/Example4';
 
-export default class StyleGuideRadioField extends React.Component {
+export default class StyleGuideRadioField extends React.PureComponent {
 
   render = () => {
     return <div>

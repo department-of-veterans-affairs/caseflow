@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class StyleGuidePlaceholder extends React.Component {
+export default class StyleGuidePlaceholder extends React.PureComponent {
   render() {
     let {
       id,

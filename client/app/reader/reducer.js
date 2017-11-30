@@ -126,8 +126,6 @@ const initialPdfSidebarErrorState = {
 };
 
 export const initialState = {
-  assignments: [],
-  assignmentsLoaded: false,
   loadedAppealId: null,
   loadedAppeal: {},
   initialDataLoadingFail: false,
@@ -251,13 +249,6 @@ export const reducer = (state = initialState, action = {}) => {
         },
         loadedAppealId: {
           $set: action.payload.vacolsId
-        },
-        assignments: {
-          $apply: (existingAssignments) =>
-            existingAssignments.map((assignment) => ({
-              ...assignment,
-              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
-            }))
         }
       }
     ));
@@ -288,16 +279,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
-  case Constants.RECEIVE_ASSIGNMENTS:
-    return update(state,
-      {
-        assignments: {
-          $set: action.payload.assignments
-        },
-        assignmentsLoaded: {
-          $set: true
-        }
-      });
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
