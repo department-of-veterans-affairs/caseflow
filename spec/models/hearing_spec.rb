@@ -1,4 +1,64 @@
 describe Hearing do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
+  let(:hearing) do
+    Generators::Hearing.build(
+      date: date,
+      disposition: disposition,
+      hold_open: hold_open
+    )
+  end
+
+  let(:date) { 1.day.ago }
+  let(:disposition) { nil }
+  let(:hold_open) { nil }
+
+  context "#no_show?" do
+    subject { hearing.no_show? }
+    let(:disposition) { :no_show }
+
+    it { is_expected.to be_truthy }
+  end
+
+  context "#held_open?" do
+    subject { hearing.held_open? }
+
+    context "hold_open is nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "hold_open is zero" do
+      let(:hold_open) { 0 }
+      it { is_expected.to be_falsey }
+    end
+
+    context "hold_open is positive number" do
+      let(:hold_open) { 30 }
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#hold_release_date" do
+    subject { hearing.hold_release_date }
+
+    context "when held open" do
+      let(:hold_open) { 30 }
+      it { is_expected.to eq(29.days.from_now.to_date) }
+    end
+
+    context "when not held open" do
+      it { is_expected.to eq(nil) }
+    end
+  end
+
+  context "#no_show_excuse_letter_due_date" do
+    subject { hearing.no_show_excuse_letter_due_date }
+
+    it { is_expected.to eq(14.days.from_now.to_date) }
+  end
+
   context "#active_appeal_streams" do
     subject { hearing.active_appeal_streams }
 
