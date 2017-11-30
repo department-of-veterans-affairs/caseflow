@@ -199,9 +199,8 @@ export class PdfFile extends React.PureComponent {
 
       if (this.props.searchText && this.props.matchesPerPage.length) {
         const pageIndex = this.getPageIndexofMatch();
-        const prevPageIndex = this.getPageIndexofMatch(prevProps.currentMatchIndex);
 
-        if (pageIndex === prevPageIndex) {
+        if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
           // todo: scroll to page if page is not rendered
           if (!_.isNull(this.props.scrollTop)) {
             this.scrollToPosition(pageIndex, this.props.scrollTop);
@@ -311,7 +310,7 @@ export class PdfFile extends React.PureComponent {
       return <AutoSizer>{
         ({ width, height }) => {
           if (this.clientHeight !== height) {
-            this.onPageChange(this.currentPage, height);
+            _.defer(this.onPageChange, this.currentPage, height);
             this.clientHeight = height;
           }
 

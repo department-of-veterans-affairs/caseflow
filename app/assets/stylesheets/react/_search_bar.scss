@@ -86,6 +86,7 @@
   display: flex;
 }
 
+// scss-lint:disable PropertyCount
 .cf-search-bar {
   max-height: 50px;
   top: 5rem;
@@ -104,3 +105,4 @@
     top: 0;
   }
 }
+// scss-lint:disable PropertyCount
