@@ -10,6 +10,10 @@ export default class ChildNavLink extends React.PureComponent {
     return classnames({ selected: this.props.index === this.props.selectedIndex });
   }
 
+  componentWillUnmount() {
+    this.props.setSelectedLink(false);
+  }
+
   render() {
     const { name, anchor } = this.props;
 
