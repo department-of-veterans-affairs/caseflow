@@ -67,7 +67,8 @@ export class DocumentSearch extends React.PureComponent {
     // ctrl+f behavior, and other window-bound shortcuts stop working
     if (this.props.hidden) {
       this.searchBar.releaseInputFocus();
-    } else {
+    } else if (prevProps.hidden) {
+      // only hijack focus on show searchbar
       this.searchBar.setInputFocus();
     }
 
