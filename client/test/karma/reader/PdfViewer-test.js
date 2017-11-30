@@ -4,12 +4,10 @@ import * as Constants from '../../../app/reader/constants';
 
 describe('PdfViewer', () => {
   describe('getNextAnnotationIconPageCoords', () => {
-    const pages = {
+    const dimensions = {
       'test-1': {
-        dimensions: {
-          width: 1000,
-          height: 2000
-        }
+        width: 1000,
+        height: 2000
       }
     };
     const file = 'test';
@@ -25,7 +23,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -44,7 +42,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -63,7 +61,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -82,7 +80,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -102,7 +100,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 0
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -121,7 +119,7 @@ describe('PdfViewer', () => {
               x: 0,
               y: 100
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -140,7 +138,7 @@ describe('PdfViewer', () => {
               x: 960,
               y: 300
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -159,7 +157,7 @@ describe('PdfViewer', () => {
               x: 0,
               y: 1960
             },
-            pages,
+            dimensions,
             file,
             noRotation
           )
@@ -182,7 +180,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             oneRotation
           )
@@ -201,7 +199,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             oneRotation
           )
@@ -220,7 +218,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             oneRotation
           )
@@ -239,7 +237,7 @@ describe('PdfViewer', () => {
               x: 100,
               y: 200
             },
-            pages,
+            dimensions,
             file,
             oneRotation
           )

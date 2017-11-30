@@ -41,6 +41,7 @@ export const SET_SEARCH = 'SET_SEARCH';
 export const CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS';
 export const CLEAR_ALL_SEARCH = 'CLEAR_ALL_SEARCH';
 export const SET_DOC_LIST_SCROLL_POSITION = 'SET_DOC_LIST_SCROLL_POSITION';
+export const SET_DOC_SCROLL_POSITION = 'SET_DOC_SCROLL_POSITION';
 export const JUMP_TO_PAGE = 'JUMP_TO_PAGE';
 export const RESET_JUMP_TO_PAGE = 'RESET_JUMP_TO_PAGE';
 
@@ -68,9 +69,8 @@ export const SHOW_PLACE_ANNOTATION_ICON = 'SHOW_PLACE_ANNOTATION_ICON';
 export const STOP_PLACING_ANNOTATION = 'STOP_PLACING_ANNOTATION';
 export const SELECT_ANNOTATION = 'SELECT_ANNOTATION';
 export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
-export const SET_UP_PDF_PAGE = 'SET_UP_PDF_PAGE';
+export const SET_UP_PAGE_DIMENSIONS = 'SET_UP_PAGE_DIMENSIONS';
 export const SET_PDF_DOCUMENT = 'SET_PDF_DOCUMENT';
-export const CLEAR_PDF_PAGE = 'CLEAR_PDF_PAGE';
 export const ROTATE_PDF_DOCUMENT = 'ROTATE_PDF_DOCUMENT';
 export const CLEAR_PDF_DOCUMENT = 'CLEAR_PDF_DOCUMENT';
 export const GET_DOCUMENT_TEXT = 'GET_DCOUMENT_TEXT';
@@ -146,3 +146,7 @@ export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 // able to expand/contract the height of the pages as we zoom.
 export const PDF_PAGE_WIDTH = 816;
 export const PDF_PAGE_HEIGHT = 1056;
+
+// Defined in _search_bar.scss > .cf-search-bar. Max height of
+// search bar, used as offset when scrolling to search results
+export const SEARCH_BAR_HEIGHT = 50;

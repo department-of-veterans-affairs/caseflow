@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -18,7 +20,8 @@ import readerReducer from '../../../app/reader/reducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
-
+import sinon from 'sinon';
+import { AutoSizer } from 'react-virtualized';
 const vacolsId = 'reader_id1';
 
 // This is the route history preset in react router
@@ -38,6 +41,15 @@ describe('DecisionReviewer', () => {
   beforeEach(() => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
+
+    /* eslint-disable no-underscore-dangle */
+    sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
+      return <div ref={this._setRef}>
+        {this.props.children({ width: 200,
+          height: 100 })}
+      </div>;
+    });
+    /* eslint-enable no-underscore-dangle */
 
     const store = createStore(
       combineReducers({
@@ -96,6 +108,7 @@ describe('DecisionReviewer', () => {
     wrapper.detach();
     ApiUtilStub.afterEach();
     PdfJsStub.afterEach();
+    AutoSizer.prototype.render.restore();
   });
 
   context('Loading Spinner', () => {
