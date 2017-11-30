@@ -237,27 +237,6 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload.value
       }
     });
-  case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        documents: {
-          $set: _(action.payload.documents).
-            map((doc) => [
-              doc.id, {
-                ...doc,
-                receivedAt: doc.received_at,
-                listComments: false
-              }
-            ]).
-            fromPairs().
-            value()
-        },
-        loadedAppealId: {
-          $set: action.payload.vacolsId
-        }
-      }
-    ));
   case Constants.RECEIVE_MANIFESTS:
     return update(state, {
       ui: {
@@ -931,7 +910,18 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  
+  case Constants.RECEIVE_DOCUMENTS:
+    return updateFilteredDocIds(update(
+      state,
+      {
+        documents: {
+          $set: documentsReducer(state.documents, action)
+        },
+        loadedAppealId: {
+          $set: action.payload.vacolsId
+        }
+      }
+    ));
   case Constants.ROTATE_PDF_DOCUMENT:
   case Constants.REQUEST_NEW_TAG_CREATION:
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
