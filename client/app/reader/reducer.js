@@ -1,5 +1,7 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
+import * as DocumentConstants from './DocumentList/actionTypes';
+
 import _ from 'lodash';
 import { update } from '../util/ReducerUtil';
 import { categoryFieldNameOfCategoryName, moveModel } from './utils';
@@ -305,45 +307,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return updateLastReadDoc(update(state, {
-      ui: {
-        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
-      },
-      documents: {
-        [action.payload.docId]: {
-          $merge: {
-            opened_by_current_user: true
-          }
-        }
-      }
-    }), action.payload.docId);
-  case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return update(
-      hideErrorMessage(state, 'category'),
-      {
-        documents: {
-          [action.payload.docId]: {
-            [action.payload.categoryKey]: {
-              $set: action.payload.toggleState
-            }
-          }
-        }
-      }
-    );
-  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-    return update(
-      showErrorMessage(state, 'category'),
-      {
-        documents: {
-          [action.payload.docId]: {
-            [action.payload.categoryKey]: {
-              $set: action.payload.categoryValueToRevertTo
-            }
-          }
-        }
-      }
-    );
   case Constants.TOGGLE_FILTER_DROPDOWN:
     return (() => {
       const originalValue = _.get(
@@ -910,6 +873,22 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  // Documents related
+  case Constants.SELECT_CURRENT_VIEWER_PDF:
+    return updateLastReadDoc(update(state, {
+      ui: {
+        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
+      },
+      documents: documentsReducer(state.documents, action)
+    }), action.payload.docId);
+  case Constants.TOGGLE_DOCUMENT_CATEGORY:
+    return update(state, {
+      documents: documentsReducer(state.documents, action)
+    });
+  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
+    return update(state, {
+      documents: documentsReducer(state.documents, action)
+    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
