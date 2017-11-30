@@ -146,3 +146,7 @@ export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 // able to expand/contract the height of the pages as we zoom.
 export const PDF_PAGE_WIDTH = 816;
 export const PDF_PAGE_HEIGHT = 1056;
+
+// errors
+export const SHOW_ERROR_MESSAGE = 'SHOW_ERROR_MESSAGE';
+export const HIDE_ERROR_MESSAGE = 'HIDE_ERROR_MESSAGE';
