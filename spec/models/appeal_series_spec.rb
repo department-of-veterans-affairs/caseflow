@@ -93,22 +93,85 @@ describe AppealSeries do
         let(:certification_date) { 1.day.ago }
         it { is_expected.to eq(:on_docket) }
       end
+
+      context "and it has no form 9" do
+        let(:form9_date) { nil }
+        it { is_expected.to eq(:pending_form9) }
+
+        context "and it has no soc" do
+          let(:soc_date) { nil }
+          it { is_expected.to eq(:pending_soc) }
+        end
+      end
     end
 
     context "when it is in active status" do
       let(:status) { "Active" }
       it { is_expected.to eq(:decision_in_progress) }
 
+      context "and it is in location 49" do
+        let(:location_code) { "49" }
+        it { is_expected.to eq(:stayed) }
+      end
+
       context "and it is in location 55" do
         let(:location_code) { "55" }
         it { is_expected.to eq(:at_vso) }
+      end
+
+      context "and it is in location 20" do
+        let(:location_code) { "20" }
+        it { is_expected.to eq(:opinion_request) }
+      end
+
+      context "and it is in location 18" do
+        let(:location_code) { "18" }
+        it { is_expected.to eq(:abeyance) }
       end
     end
 
     context "when it is in history status" do
       let(:status) { "Complete" }
-      let(:disposition) { "Advance Allowed in Field" }
-      it { is_expected.to eq(:field_grant) }
+
+      context "when decided by the board" do
+        let(:disposition) { "Allowed" }
+        it { is_expected.to eq(:bva_decision) }
+      end
+
+      context "when granted by the aoj" do
+        let(:disposition) { "Advance Allowed in Field" }
+        it { is_expected.to eq(:field_grant) }
+      end
+
+      context "when withdrawn" do
+        let(:disposition) { "Withdrawn" }
+        it { is_expected.to eq(:withdrawn) }
+      end
+
+      context "when ftr" do
+        let(:disposition) { "Advance Failure to Respond" }
+        it { is_expected.to eq(:ftr) }
+      end
+
+      context "when ramp" do
+        let(:disposition) { "RAMP Opt-in" }
+        it { is_expected.to eq(:ramp) }
+      end
+
+      context "when death" do
+        let(:disposition) { "Dismissed, Death" }
+        it { is_expected.to eq(:death) }
+      end
+
+      context "when reconsideration by letter" do
+        let(:disposition) { "Reconsideration by Letter" }
+        it { is_expected.to eq(:reconsideration) }
+      end
+
+      context "when any other disposition" do
+        let(:disposition) { "Not a real disposition" }
+        it { is_expected.to eq(:other_close) }
+      end
     end
 
     context "when it is in remand status" do
