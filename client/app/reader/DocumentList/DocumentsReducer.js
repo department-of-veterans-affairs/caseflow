@@ -127,7 +127,7 @@ const documentsReducer = (state = {}, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => {
-            const removedTagIndex = _.findIndex(tags, {id: action.payload.tagId});
+            const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
 
             return update(tags, {
               [removedTagIndex]: {
@@ -144,7 +144,7 @@ const documentsReducer = (state = {}, action = {}) => {
     return update(state, {
       [action.payload.docId]: {
         tags: {
-          $apply: (tags) => _.reject(tags, {id: action.payload.tagId})
+          $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
         }
       }
     });

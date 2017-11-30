@@ -67,7 +67,7 @@ export const toggleDropdownFilterVisibility = (filterName) => ({
   }
 });
 
-export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => 
+export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) =>
   (dispatch) => {
     dispatch(showErrorMessage('category'));
     dispatch({
