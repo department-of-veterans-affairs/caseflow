@@ -41,7 +41,7 @@ export class PdfPage extends React.PureComponent {
   markText = (scrollToMark = false, txt = this.props.searchText) => {
     this.unmarkText(() => this.markInstance.mark(txt, {
       separateWordSearch: false,
-      done: () => _.defer(this.highlightMarkAtIndex, scrollToMark)
+      done: () => this.highlightMarkAtIndex(scrollToMark)
     }));
   };
 
@@ -50,6 +50,7 @@ export class PdfPage extends React.PureComponent {
       return;
     }
 
+    // todo: only update this.marks on change searchText
     this.marks = this.textLayer.getElementsByTagName('mark');
     _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
 
@@ -145,7 +146,8 @@ export class PdfPage extends React.PureComponent {
     if (this.markInstance) {
       if (this.props.searchText && !this.props.searchBarHidden) {
         if (!_.isNaN(this.props.currentMatchIndex) && this.props.matchesPerPage && this.marks.length &&
-           (this.props.searchText === prevProps.searchText)) {
+           (this.props.searchText === prevProps.searchText) &&
+           (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
           // eslint-disable-next-line no-unused-vars
           const [matchedPageIndex, indexInPage] = this.getIndexInPage();
 

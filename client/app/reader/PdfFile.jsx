@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-import { resetJumpToPage } from '../reader/PdfViewer/PdfViewerActions';
+import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
@@ -202,7 +202,10 @@ export class PdfFile extends React.PureComponent {
         const prevPageIndex = this.getPageIndexofMatch(prevProps.currentMatchIndex);
 
         if (pageIndex === prevPageIndex) {
-          this.scrollToPosition(pageIndex, this.props.scrollTop);
+          if (!_.isNull(this.props.scrollTop)) {
+            this.scrollToPosition(pageIndex, this.props.scrollTop);
+            this.props.setDocScrollPosition(null);
+          }
         } else {
           // scroll to mark page before highlighting--may not be in DOM
           this.list.scrollToRow(pageIndex);
@@ -333,7 +336,8 @@ export class PdfFile extends React.PureComponent {
 }
 
 PdfFile.propTypes = {
-  pdfDocument: PropTypes.object
+  pdfDocument: PropTypes.object,
+  setDocScrollPosition: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -345,7 +349,8 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     showPlaceAnnotationIcon,
     setDocumentLoadError,
-    clearDocumentLoadError
+    clearDocumentLoadError,
+    setDocScrollPosition
   }, dispatch)
 });
 
