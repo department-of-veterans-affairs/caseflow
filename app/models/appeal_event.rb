@@ -112,6 +112,9 @@ class AppealEvent
     type && date
   end
 
+  # We override these methods in order to have AppealEvent behave as a value type.
+  # Any two events with the same type and the same date are considered equal.
+  # We'll use this property when uniquing lists of events.
   def ==(other)
     type == other.type && date == other.date
   end

@@ -16,6 +16,9 @@ class AppealSeries < ActiveRecord::Base
     appeals.map(&:nod_date).min || DateTime::Infinity.new
   end
 
+  # Appeals from the same series contain many of the same events. We unique them,
+  # using the property of AppealEvent that any two events with the same type and
+  # date are considered equal.
   def events
     appeals.flat_map(&:events).uniq.sort_by(&:date)
   end
