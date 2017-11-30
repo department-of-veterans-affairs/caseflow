@@ -147,3 +147,7 @@ export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 // able to expand/contract the height of the pages as we zoom.
 export const PDF_PAGE_WIDTH = 816;
 export const PDF_PAGE_HEIGHT = 1056;
+
+// Defined in _search_bar.scss > .cf-search-bar. Max height of
+// search bar, used as offset when scrolling to search results
+export const SEARCH_BAR_HEIGHT = 50;

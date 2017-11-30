@@ -9,7 +9,7 @@ import { setPageDimensions } from '../reader/Pdf/PdfActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
-import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from './constants';
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 
@@ -38,10 +38,12 @@ export class PdfPage extends React.PureComponent {
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
   unmarkText = (callback = _.noop) => this.markInstance.unmark({ done: callback });
-  markText = (txt, scrollToMark = false) => this.unmarkText(() => this.markInstance.mark(txt, {
-    separateWordSearch: false,
-    done: () => _.defer(this.highlightMarkAtIndex, scrollToMark)
-  }));
+  markText = (scrollToMark = false, txt = this.props.searchText) => {
+    this.unmarkText(() => this.markInstance.mark(txt, {
+      separateWordSearch: false,
+      done: () => _.defer(this.highlightMarkAtIndex, scrollToMark)
+    }));
+  };
 
   highlightMarkAtIndex = (scrollToMark) => {
     if (!this.props.matchesPerPage.length || !this.textLayer) {
@@ -59,9 +61,10 @@ export class PdfPage extends React.PureComponent {
         selectedMark.classList.add('highlighted');
 
         if (scrollToMark) {
-          // mark parent elements are absolutely-positioned divs
-          // account for search bar height
-          this.props.setDocScrollPosition(parseInt(selectedMark.parentElement.style.top, 10) - 60);
+          // mark parent elements are absolutely-positioned divs. account for search bar height
+          this.props.setDocScrollPosition(
+            parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
+          );
         }
       } else {
         console.error('selectedMark not found in DOM');
@@ -141,7 +144,6 @@ export class PdfPage extends React.PureComponent {
 
     if (this.markInstance) {
       if (this.props.searchText && !this.props.searchBarHidden) {
-        // if mark is rendered and search term hasn't changed, highlightMarkAtIndex
         if (!_.isNaN(this.props.currentMatchIndex) && this.props.matchesPerPage && this.marks.length &&
            (this.props.searchText === prevProps.searchText)) {
           // eslint-disable-next-line no-unused-vars
@@ -151,8 +153,7 @@ export class PdfPage extends React.PureComponent {
             this.highlightMarkAtIndex(true);
           }
         } else {
-          // else markText (and highlightMarkAtIndex afterwards)
-          this.markText(this.props.searchText, this.props.currentMatchIndex !== prevProps.currentMatchIndex);
+          this.markText(this.props.currentMatchIndex !== prevProps.currentMatchIndex);
         }
       } else {
         this.unmarkText();
@@ -178,7 +179,7 @@ export class PdfPage extends React.PureComponent {
 
     this.markInstance = new Mark(this.textLayer);
     if (this.props.searchText && !this.props.searchBarHidden) {
-      this.markText(this.props.searchText, true);
+      this.markText(true);
     }
   }
 

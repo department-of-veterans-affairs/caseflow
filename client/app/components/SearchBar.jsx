@@ -5,7 +5,6 @@ import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
 import uuid from 'uuid';
-import { READER_COLOR } from '../reader/constants';
 
 export default class SearchBar extends React.Component {
   onChange = (event) => {
@@ -66,10 +65,10 @@ export default class SearchBar extends React.Component {
 
   clearInput = () => this.input.value = '';
 
-  getInternalField = () => {
+  getInternalField = (spinnerColor = '#417505') => {
     if (this.props.loading) {
       return <div className="search-text-spinner">
-        { loadingSymbolHtml('', '25px', READER_COLOR) }
+        { loadingSymbolHtml('', '25px', spinnerColor) }
       </div>;
     }
 
@@ -94,7 +93,8 @@ export default class SearchBar extends React.Component {
       onSubmit,
       submitUsingEnterKey,
       placeholder,
-      internalText
+      internalText,
+      spinnerColor
     } = this.props;
 
     id = id || uuid.v4();
@@ -141,7 +141,7 @@ export default class SearchBar extends React.Component {
         <label className="usa-sr-only" htmlFor="search-internal-text">
           Search Result Count
         </label>
-        { this.getInternalField() }
+        { this.getInternalField(spinnerColor) }
       </div>}
       {_.size(value) > 0 &&
         <Button
@@ -173,5 +173,6 @@ SearchBar.propTypes = {
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
   submitUsingEnterKey: PropTypes.bool,
-  internalText: PropTypes.string
+  internalText: PropTypes.string,
+  spinnerColor: PropTypes.string
 };
