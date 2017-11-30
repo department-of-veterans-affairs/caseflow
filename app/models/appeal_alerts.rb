@@ -18,7 +18,7 @@ class AppealAlerts
   private
 
   def form9_needed
-    if appeal_series.status == :pending_form9 && Date.today <= latest_appeal.form9_due_date
+    if appeal_series.status == :pending_form9 && Time.zone.today <= latest_appeal.form9_due_date
       {
         type: :form9_needed,
         details: {
@@ -44,7 +44,7 @@ class AppealAlerts
   def hearing_no_show
     if appeal_series.status == :on_docket
       recent_missed_hearing = latest_appeal.hearings.find do |hearing|
-        hearing.no_show? && Date.today <= hearing.no_show_excuse_letter_due_date
+        hearing.no_show? && Time.zone.today <= hearing.no_show_excuse_letter_due_date
       end
 
       return unless recent_missed_hearing
@@ -66,7 +66,7 @@ class AppealAlerts
   def held_for_evidence
     if appeal_series.status == :on_docket
       hearing_with_pending_hold = latest_appeal.hearings.find do |hearing|
-        hearing.held_open? && Date.today <= hearing.hold_release_date
+        hearing.held_open? && Time.zone.today <= hearing.hold_release_date
       end
 
       return unless hearing_with_pending_hold
@@ -86,7 +86,7 @@ class AppealAlerts
   end
 
   def cavc_option
-    if appeal_series.status == :bva_decision && Date.today <= latest_appeal.cavc_due_date
+    if appeal_series.status == :bva_decision && Time.zone.today <= latest_appeal.cavc_due_date
       {
         type: :cavc_option,
         details: {

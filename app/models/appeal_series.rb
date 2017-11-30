@@ -24,14 +24,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def status_hash
-    case status
-    when :decision_in_progress
-      details = { test: "Hello World" }
-    else
-      details = {}
-    end
-
-    { type: status, details: details }
+    { type: status, details: details_for_status }
   end
 
   # Appeals from the same series contain many of the same events. We unique them,
@@ -60,6 +53,7 @@ class AppealSeries < ActiveRecord::Base
     appeals.sort { |x, y| y.decision_date <=> x.decision_date }
   end
 
+  # rubocop:disable CyclomaticComplexity
   def fetch_status
     case latest_appeal.status
     when "Advance"
@@ -129,4 +123,14 @@ class AppealSeries < ActiveRecord::Base
       :other_close
     end
   end
+
+  def details_for_status
+    case status
+    when :decision_in_progress
+      { test: "Hello World" }
+    else
+      {}
+    end
+  end
+  # rubocop:enable CyclomaticComplexity
 end

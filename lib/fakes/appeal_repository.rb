@@ -493,7 +493,7 @@ class Fakes::AppealRepository
     true
   end
 
-  def self.case_assignment_exists?(vacols_id)
+  def self.case_assignment_exists?(_vacols_id)
     true
   end
 end

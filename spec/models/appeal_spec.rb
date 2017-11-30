@@ -190,7 +190,7 @@ describe Appeal do
 
     context "when missing notification date or soc date" do
       let(:soc_date) { nil }
-      it { is_expected.to eq(nil)}
+      it { is_expected.to eq(nil) }
     end
   end
 
@@ -198,7 +198,7 @@ describe Appeal do
     subject { appeal.cavc_due_date }
 
     context "when there is no decision date" do
-      it { is_expected.to eq(nil)}
+      it { is_expected.to eq(nil) }
     end
 
     context "when there is a decision date" do

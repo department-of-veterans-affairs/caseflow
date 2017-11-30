@@ -38,9 +38,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
     end
 
     def exists_for_appeals(vacols_ids)
-    conn = connection
+      conn = connection
 
-    conn.transaction do
+      conn.transaction do
         query = <<-SQL
           select BRIEFF.BFKEY, count(DECASS.DEASSIGN) N
           from BRIEFF

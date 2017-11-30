@@ -131,7 +131,8 @@ class AppealHistory
 
   def find_parent_appeal_by_decision_date_and_issues(appeal)
     # Prevents loops
-    return nil if appeal.prior_decision_date.nil? || appeal.prior_decision_date >= appeal.decision_date
+    return nil if appeal.prior_decision_date.nil? ||
+                  (appeal.decision_date && appeal.prior_decision_date >= appeal.decision_date)
 
     candidates_by_date = appeals.select do |candidate|
       candidate.decision_date == appeal.prior_decision_date

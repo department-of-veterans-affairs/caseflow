@@ -16,10 +16,27 @@ class V2::AppealSerializer < ActiveModel::Serializer
   end
 
   # Stubbed attributes
-  attribute :aoj { "vba" }
-  attribute :program_area { "compensation" }
-  attribute :description { "" }
-  attribute :docket { nil }
-  attribute :issues { [] }
-  attribute :evidence { [] }
+  attribute :aoj do
+    "vba"
+  end
+
+  attribute :program_area do
+    "compensation"
+  end
+
+  attribute :description do
+    ""
+  end
+
+  attribute :docket do
+    nil
+  end
+
+  attribute :issues do
+    []
+  end
+
+  attribute :evidence do
+    []
+  end
 end

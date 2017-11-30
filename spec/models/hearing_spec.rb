@@ -3,13 +3,13 @@ describe Hearing do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  let(:hearing) {
+  let(:hearing) do
     Generators::Hearing.build(
       date: date,
       disposition: disposition,
       hold_open: hold_open
     )
-  }
+  end
 
   let(:date) { 1.day.ago }
   let(:disposition) { nil }

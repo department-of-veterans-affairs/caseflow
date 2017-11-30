@@ -21,7 +21,7 @@ class Hearing < ActiveRecord::Base
   def closed?
     !!disposition
   end
-  
+
   def no_show?
     disposition == :no_show
   end
@@ -36,7 +36,7 @@ class Hearing < ActiveRecord::Base
 
   def hold_release_date
     return unless held_open?
-    date.to_date + (hold_open).days
+    date.to_date + hold_open.days
   end
 
   def no_show_excuse_letter_due_date
