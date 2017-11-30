@@ -24,7 +24,7 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def appeals
-    @appeals ||= AppealSeries.for_api(appellant_ssn: ssn)
+    @appeals ||= AppealHistory.for_api(appellant_ssn: ssn)
   end
 
   # Cache can't be busted in prod

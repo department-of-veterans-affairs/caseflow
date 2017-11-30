@@ -9,6 +9,7 @@ describe "Appeals API v2", type: :request do
           template: :remand_decided,
           type: "Original",
           status: "Complete",
+          notification_date: Time.zone.today - 18.months,
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 8.months,
@@ -25,6 +26,8 @@ describe "Appeals API v2", type: :request do
         vacols_record: {
           template: :ready_to_certify,
           type: "Post Remand",
+          status: "Active",
+          notification_date: Time.zone.today - 18.months,
           nod_date: Time.zone.today - 12.months,
           soc_date: Time.zone.today - 9.months,
           form9_date: Time.zone.today - 8.months,
@@ -33,7 +36,8 @@ describe "Appeals API v2", type: :request do
             Time.zone.today - 4.months
           ],
           prior_decision_date: Time.zone.today - 5.months,
-          disposition: nil
+          disposition: nil,
+          decision_date: nil
         }
       )
     end
@@ -45,10 +49,12 @@ describe "Appeals API v2", type: :request do
           template: :ready_to_certify,
           type: "Original",
           status: "Advance",
+          notification_date: Time.zone.today - 12.months,
           nod_date: Time.zone.today - 6.months,
-          soc_date: Time.zone.today - 2.months,
-          form9_date: Time.zone.today - 1.month,
-          disposition: nil
+          soc_date: Time.zone.today - 5.days,
+          form9_date: nil,
+          disposition: nil,
+          decision_date: nil
         }
       )
     end
@@ -177,22 +183,47 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"].first["attributes"]["aod"]).to eq(true)
+      expect(json["data"].first["attributes"]["location"]).to eq("bva")
+      expect(json["data"].first["attributes"]["alerts"]).to eq([])
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9 ssoc hearing_held bva_remand ssoc))
+      expect(event_types).to eq(%w(claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc))
+
+      # check the status on the first appeal
+      status = json["data"].first["attributes"]["status"]
+      expect(status["type"]).to eq("decision_in_progress")
+      expect(status["details"]["test"]).to eq("Hello World")
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9))
+      expect(event_types).to eq(%w(claim_decision nod soc))
+
+      # check for an alert on the last appeal
+      expect(json["data"].last["attributes"]["alerts"].first["type"]).to eq("form9_needed")
+
+      # check the status on the last appeal
+      status = json["data"].last["attributes"]["status"]
+      expect(status["type"]).to eq("pending_form9")
 
       # check that the date for the last event was formatted correctly
-      json_nod_date = json["data"].last["attributes"]["events"].first["date"]
-      expect(json_nod_date).to eq((Time.zone.today - 6.months).to_formatted_s(:csv_date))
+      json_notification_date = json["data"].last["attributes"]["events"].first["date"]
+      expect(json_notification_date).to eq((Time.zone.today - 12.months).to_formatted_s(:csv_date))
 
       # check the other attribtues on the last appeal
       expect(json["data"].last["attributes"]["active"]).to eq(true)
       expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"].last["attributes"]["aod"]).to eq(true)
+      expect(json["data"].last["attributes"]["location"]).to eq("aoj")
+
+      # check stubbed attributes
+      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
+      expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"].first["attributes"]["description"]).to eq("")
+      expect(json["data"].first["attributes"]["docket"]).to eq(nil)
+      expect(json["data"].first["attributes"]["issues"]).to eq([])
+      expect(json["data"].first["attributes"]["evidence"]).to eq([])
     end
   end
 end
