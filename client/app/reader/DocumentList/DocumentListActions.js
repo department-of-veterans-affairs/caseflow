@@ -2,7 +2,7 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
-import { showErrorMessage, hideErrorMessage } from '../PdfViewer/PdfViewerActions';
+import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 // Table header actions
 

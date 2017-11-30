@@ -4,26 +4,11 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
+import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
-});
-
-// errors
-
-export const hideErrorMessage = (messageType) => ({
-  type: Constants.HIDE_ERROR_MESSAGE,
-  payload: {
-    messageType
-  }
-});
-
-export const showErrorMessage = (messageType) => ({
-  type: Constants.SHOW_ERROR_MESSAGE,
-  payload: {
-    messageType
-  }
 });
 
 /** Annotation Modal **/
