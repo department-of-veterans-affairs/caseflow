@@ -9,11 +9,8 @@ class CertificationCancellationsController < ApplicationController
     # Old cancellation modal is using HTML format
     respond_to do |format|
       if @certification_cancellation.save
-        format.html { redirect_to @certification_cancellation }
         format.json { render json: { is_cancelled: true }, status: 201 }
-
       else
-        format.html { redirect_to "errors/500", layout: "application", status: 500 }
         format.json { render json: { is_cancelled: false }, status: 422 }
       end
     end
