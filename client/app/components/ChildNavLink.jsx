@@ -11,7 +11,7 @@ export default class ChildNavLink extends React.PureComponent {
   }
 
   render() {
-    const { name, anchor, index, selectedIndex } = this.props;
+    const { name, anchor } = this.props;
 
     return <li><a href={anchor} onClick={this.onClick} className={this.showSelectedClass()}>{name}</a></li>;
   }

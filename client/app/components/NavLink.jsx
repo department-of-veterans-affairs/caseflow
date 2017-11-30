@@ -30,7 +30,7 @@ export default class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { anchor, name, subnav, index, selectedIndex } = this.props;
+    const { anchor, name, subnav } = this.props;
 
     return <li>
       <a href={anchor} onClick={this.onClick} className={this.showSelectedClass()}>{name}</a>
