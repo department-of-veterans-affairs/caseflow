@@ -135,8 +135,12 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  def v1_events
+    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
+  end
+
   def events
-    @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   def form9_due_date
@@ -439,7 +443,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def latest_event_date
-    events.last.try(:date)
+    v1_events.last.try(:date)
   end
 
   def to_hash(viewed: nil, issues: nil)

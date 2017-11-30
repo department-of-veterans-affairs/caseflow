@@ -165,8 +165,8 @@ describe Appeal do
     it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
   end
 
-  context "#events" do
-    subject { appeal.events }
+  context "#v1_events" do
+    subject { appeal.v1_events }
     let(:soc_date) { 5.days.ago }
 
     it "returns list of events sorted from oldest to newest by date" do
