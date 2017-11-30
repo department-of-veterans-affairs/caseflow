@@ -622,6 +622,17 @@ RSpec.feature "Reader" do
         add_comment_without_clicking_save(random_whitespace_no_tab)
         expect(find("#button-save")["disabled"]).to eq("true")
       end
+
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        scenario "alt+enter shortcut doesn't trigger save" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+          add_comment_without_clicking_save(random_whitespace_no_tab)
+
+          find("body").send_keys [:alt, :enter]
+          expect(find("#button-save")["disabled"]).to eq("true")
+          expect(documents[0].annotations.empty?).to eq(true)
+        end
+      end
     end
 
     context "existing comment edited to contain only whitespace characters" do
