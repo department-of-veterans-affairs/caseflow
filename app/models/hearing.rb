@@ -54,6 +54,10 @@ class Hearing < ActiveRecord::Base
     end
   end
 
+  def regional_office_timezone
+    HearingMapper.timezone(regional_office_key)
+  end
+
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
@@ -105,6 +109,7 @@ class Hearing < ActiveRecord::Base
         :representative,
         :representative_name,
         :regional_office_name,
+        :regional_office_timezone,
         :venue, :appellant_last_first_mi,
         :veteran_name, :vbms_id
       ],
