@@ -11,6 +11,7 @@ import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { READER_COLOR } from './constants';
 
 export class DocumentSearch extends React.PureComponent {
   constructor() {
@@ -78,6 +79,7 @@ export class DocumentSearch extends React.PureComponent {
       this.clearSearch();
     }
 
+    // todo: after running a search, this.loading doesn't reset on change documents
     this.loading = Boolean(!this.props.textExtracted && this.searchTerm.length);
   }
 
@@ -126,6 +128,7 @@ export class DocumentSearch extends React.PureComponent {
         onKeyPress={this.onKeyPress}
         internalText={this.getInternalText()}
         loading={this.loading}
+        spinnerColor={READER_COLOR}
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
