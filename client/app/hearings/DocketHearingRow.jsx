@@ -39,15 +39,7 @@ const aodOptions = [{ value: 'granted',
 const getDate = (date) => {
   return moment(date).
     format('h:mm a').
-    replace(/(a|p)(m)/,'$1.$2.');
-};
-
-const getRoTime = (date) => {
-  return moment(date).
-
-  // pass RO timezone
-    format('h:mm a').
-    replace(/(a|p)(m)/,'$1.$2.');
+    replace(/(a|p)(m)/, '$1.$2.');
 };
 
 export class DocketHearingRow extends React.PureComponent {
@@ -69,6 +61,14 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
+    let roTimeZone = hearing.regional_office_timezone;
+
+    let getRoTime = (date) => {
+      return moment(date).tz(roTimeZone).
+        format('h:mm a').
+        replace(/(a|p)(m)/, '$1.$2.');
+    };
+
     const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
 
     return <tbody>
@@ -77,11 +77,11 @@ export class DocketHearingRow extends React.PureComponent {
           <span>{index + 1}.</span>
           <span>
             {getDate(hearing.date)} EDT
-            </span>
-             <span>
+          </span>
+          <span>
             {getRoTime(hearing.date)}
-            </span>
-            <span>
+          </span>
+          <span>
             {hearing.regional_office_name}
           </span>
         </td>
