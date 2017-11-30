@@ -875,9 +875,9 @@ export const reducer = (state = initialState, action = {}) => {
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
-    return update(hideErrorMessage(state, action.payload.messageType));
+    return hideErrorMessage(state, action.payload.messageType);
   case Constants.SHOW_ERROR_MESSAGE:
-    return update(showErrorMessage(state, action.payload.messageType));
+    return showErrorMessage(state, action.payload.messageType);
 
   // Documents related
   case Constants.SELECT_CURRENT_VIEWER_PDF:
