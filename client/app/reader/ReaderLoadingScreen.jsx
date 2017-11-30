@@ -13,6 +13,10 @@ import _ from 'lodash';
 export class ReaderLoadingScreen extends React.Component {
 
   componentDidMount = () => {
+    if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
+      return;
+    }
+
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
 
