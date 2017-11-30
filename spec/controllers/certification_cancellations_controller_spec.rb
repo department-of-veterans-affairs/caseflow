@@ -5,6 +5,22 @@ RSpec.describe CertificationCancellationsController, type: :controller do
   let!(:current_user) { User.authenticate! }
 
   describe "Responds to" do
+    context "responds to HTML format" do
+      it "when it passes validation" do
+        post :create, "certification_cancellation" =>
+          { "cancellation_reason" => "Test",
+            "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "1" }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it "when it fails validation" do
+        post :create, "certification_cancellation" =>
+          { "cancellation_reason" => "",
+            "other_reason" => "", "email" => "test@gmail.com", "certification_id" => "2" }
+        expect(response).to have_http_status(:internal_server_error)
+      end
+    end
+
     context "responds to JSON format" do
       before(:each) do
         request.headers["HTTP_ACCEPT"] = "application/json"
