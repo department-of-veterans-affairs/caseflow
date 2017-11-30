@@ -878,16 +878,10 @@ export const reducer = (state = initialState, action = {}) => {
       ui: {
         pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
       },
-      documents: documentsReducer(state.documents, action)
+      documents: {
+        $set: documentsReducer(state.documents, action)
+      }
     }), action.payload.docId);
-  case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return update(state, {
-      documents: documentsReducer(state.documents, action)
-    });
-  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-    return update(state, {
-      documents: documentsReducer(state.documents, action)
-    });
   case Constants.RECEIVE_DOCUMENTS:
     return updateFilteredDocIds(update(
       state,
@@ -900,13 +894,15 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
+  case Constants.TOGGLE_DOCUMENT_CATEGORY:
+  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
   case Constants.ROTATE_PDF_DOCUMENT:
   case Constants.REQUEST_NEW_TAG_CREATION:
   case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
   case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
   case Constants.REQUEST_REMOVE_TAG:
   case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return updateDocuments(state, action);  
+    return updateDocuments(state, action);
   default:
     return state;
   }
