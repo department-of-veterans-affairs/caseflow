@@ -9,6 +9,13 @@ export const populateDockets = (dockets) => ({
   }
 });
 
+export const populateDailyDocket = (dailyDocket) => ({
+  type: Constants.POPULATE_DAILY_DOCKET,
+  payload: {
+    dailyDocket
+  }
+});
+
 export const populateWorksheet = (worksheet) => ({
   type: Constants.POPULATE_WORKSHEET,
   payload: {

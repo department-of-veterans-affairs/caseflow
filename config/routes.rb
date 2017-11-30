@@ -78,7 +78,7 @@ Rails.application.routes.draw do
   end
 
   namespace :hearings do
-    resources :dockets, only: [:index, :show]
+    resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
   end

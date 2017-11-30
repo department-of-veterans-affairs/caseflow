@@ -13,11 +13,7 @@ import ApiUtil from '../util/ApiUtil';
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    this.props.getDockets();
-  }
-
-  docket = () => {
-    return this.props.dockets[this.props.date].hearings_array;
+    this.props.getDailyDocket();
   }
 
   render() {
@@ -29,25 +25,25 @@ export class DailyDocketContainer extends React.Component {
       </StatusMessage>;
     }
 
-    if (!this.props.dockets) {
+    if (!this.props.dailyDocket) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
             <div className="cf-image-loader">
             </div>
-            <p className="cf-txt-c">Loading dockets, please wait...</p>
+            <p className="cf-txt-c">Loading hearings, please wait...</p>
           </LoadingContainer>
         </div>
       </div>;
     }
 
-    if (Object.keys(this.props.dockets).length === 0) {
-      return <div>You have no upcoming hearings.</div>;
+    if (Object.keys(this.props.dailyDocket).length === 0) {
+      return <div>You have no hearings on this date.</div>;
     }
 
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        save={this.props.save(this.docket(), this.props.date)}
+        save={this.props.save(this.props.dailyDocket, this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
@@ -55,23 +51,23 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         veteran_law_judge={this.props.veteran_law_judge}
         date={this.props.date}
-        docket={this.docket()}
+        docket={this.props.dailyDocket}
       />
     </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets,
+  dailyDocket: state.dailyDocket,
   docketServerError: state.docketServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDockets: (dockets) => () => {
-    if (!dockets) {
-      ApiUtil.get('/hearings/dockets.json', { cache: true }).
+  getDailyDocket: (dailyDocket) => () => {
+    if (!dailyDocket) {
+      ApiUtil.get('/hearings/dockets/2017-11-22.json', { cache: true }).
         then((response) => {
-          dispatch(Actions.populateDockets(response.body));
+          dispatch(Actions.populateDailyDocket(response.body));
         }, (err) => {
           dispatch(Actions.handleDocketServerError(err));
         });
@@ -113,7 +109,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    getDockets: dispatchProps.getDockets(stateProps.dockets)
+    getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket)
   };
 };
 
@@ -125,7 +121,7 @@ export default connect(
 
 DailyDocketContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  dockets: PropTypes.object,
+  dailyDocket: PropTypes.array,
   date: PropTypes.string.isRequired,
   docketServerError: PropTypes.object
 };
