@@ -25,7 +25,7 @@ export class DocumentSearch extends React.PureComponent {
   onChange = (value) => {
     this.searchTerm = value;
 
-    if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
+    if (_.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
       this.loading = Boolean(this.searchTerm.length);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
       this.sentAction[this.props.file] = true;
