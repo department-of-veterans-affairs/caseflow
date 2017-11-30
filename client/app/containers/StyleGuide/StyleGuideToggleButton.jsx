@@ -3,7 +3,7 @@ import ToggleButton from '../../components/ToggleButton';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideToggleButton extends React.Component {
+export default class StyleGuideToggleButton extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -19,7 +19,7 @@ export default class StyleGuideToggleButton extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Toggle buttons"
-        id="toggle_buttons"
+        id="toggle-buttons"
         link="StyleGuideToggleButton.jsx"
         isSubsection
       />

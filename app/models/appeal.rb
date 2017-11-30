@@ -328,11 +328,15 @@ class Appeal < ActiveRecord::Base
     end
 
     fetched_documents.map do |document|
-      if existing_documents.key?(document.vbms_document_id)
+      if existing_documents[document.vbms_document_id]
         document.merge_into(existing_documents[document.vbms_document_id])
       else
-        document.save!
-        document
+        begin
+          document.save!
+          document
+        rescue ActiveRecord::RecordNotUnique
+          Document.find_by_vbms_document_id(document.vbms_document_id)
+        end
       end
     end
   end
