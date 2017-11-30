@@ -1,7 +1,9 @@
 class AppealAlerts
   include ActiveModel::Model
 
-  attr_accessor :appeal
+  attr_accessor :appeal_series
+
+  delegate :latest_appeal, to: :appeal_series
 
   def all
     [
@@ -16,40 +18,81 @@ class AppealAlerts
   private
 
   def form9_needed
-    if appeal.api_status == :pending_form9 && Date.today <= appeal.form9_due_date
-      AppealAlert.new(appeal: appeal, type: :form9_needed)
+    if appeal_series.status == :pending_form9 && Date.today <= latest_appeal.form9_due_date
+      {
+        type: :form9_needed,
+        details: {
+          due_date: latest_appeal.form9_due_date
+        }
+      }
     end
   end
 
   def scheduled_hearing
-    if appeal.api_status == :scheduled_hearing
-      AppealAlert.new(appeal: appeal, type: :scheduled_hearing)
+    if appeal_series.status == :scheduled_hearing
+      hearing = latest_appeal.scheduled_hearings.sort_by(&:date).first
+      {
+        type: :scheduled_hearing,
+        details: {
+          date: hearing.date.to_date,
+          type: hearing.type
+        }
+      }
     end
   end
 
   def hearing_no_show
-    if appeal.api_status == :on_docket
-      recent_missed_hearing = appeal.hearings.find do |hearing|
+    if appeal_series.status == :on_docket
+      recent_missed_hearing = latest_appeal.hearings.find do |hearing|
         hearing.no_show? && Date.today <= hearing.no_show_excuse_letter_due_date
       end
 
-      AppealAlert.new(appeal: appeal, type: :hearing_no_show) if recent_missed_hearing
+      return unless recent_missed_hearing
+
+      due_date = latest_appeal.hearings
+                              .select(&:no_show?)
+                              .map(&:no_show_excuse_letter_due_date)
+                              .max
+
+      {
+        type: :hearing_no_show,
+        details: {
+          due_date: due_date
+        }
+      }
     end
   end
 
   def held_for_evidence
-    if appeal.api_status == :on_docket
-      hearing_with_pending_hold = appeal.hearings.find do |hearing|
+    if appeal_series.status == :on_docket
+      hearing_with_pending_hold = latest_appeal.hearings.find do |hearing|
         hearing.held_open? && Date.today <= hearing.hold_release_date
       end
 
-      AppealAlert.new(appeal: appeal, type: :held_for_evidence) if hearing_with_pending_hold
+      return unless hearing_with_pending_hold
+
+      due_date = latest_appeal.hearings
+                              .select(&:held_open?)
+                              .map(&:hold_release_date)
+                              .max
+
+      {
+        type: :held_for_evidence,
+        details: {
+          due_date: due_date
+        }
+      }
     end
   end
 
   def cavc_option
-    if appeal.api_status == :bva_decision && Date.today <= appeal.cavc_due_date
-      AppealAlert.new(appeal: appeal, type: :cavc_option)
+    if appeal_series.status == :bva_decision && Date.today <= latest_appeal.cavc_due_date
+      {
+        type: :cavc_option,
+        details: {
+          due_date: latest_appeal.cavc_due_date
+        }
+      }
     end
   end
 end

@@ -1,4 +1,8 @@
-describe AppealEvents do
+describe AppealAlerts do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+  let(:series) { AppealSeries.create(appeals: [appeal]) }
   let(:appeal) do
     Generators::Appeal.build(
       status: status,
@@ -18,12 +22,12 @@ describe AppealEvents do
   let(:decision_date) { nil }
   let(:disposition) { nil }
 
-  let(:alerts) { AppealAlerts.new(appeal: appeal).all }
+  let(:alerts) { AppealAlerts.new(appeal_series: series).all }
 
   context "#all" do
     context "form9_needed alert" do
       it "includes an alert" do
-        expect(alerts.find { |alert| alert.type == :form9_needed }).to_not be_nil
+        expect(alerts.find { |alert| alert[:type] == :form9_needed }).to_not be_nil
       end
     end
 
@@ -39,7 +43,7 @@ describe AppealEvents do
       end
 
       it "includes an alert" do
-        expect(alerts.find { |alert| alert.type == :scheduled_hearing }).to_not be_nil
+        expect(alerts.find { |alert| alert[:type] == :scheduled_hearing }).to_not be_nil
       end
     end
 
@@ -57,14 +61,14 @@ describe AppealEvents do
       let(:hearing_date) { 1.day.ago }
 
       it "includes an alert" do
-        expect(alerts.find { |alert| alert.type == :hearing_no_show }).to_not be_nil
+        expect(alerts.find { |alert| alert[:type] == :hearing_no_show }).to_not be_nil
       end
 
       context "when more than 15 days ago" do
         let(:hearing_date) { 16.days.ago }
 
         it "does not include an alert" do
-          expect(alerts.find { |alert| alert.type == :hearing_no_show }).to be_nil
+          expect(alerts.find { |alert| alert[:type] == :hearing_no_show }).to be_nil
         end
       end
     end
@@ -84,14 +88,14 @@ describe AppealEvents do
       let(:hearing_date) { 1.day.ago }
 
       it "includes an alert" do
-        expect(alerts.find { |alert| alert.type == :held_for_evidence }).to_not be_nil
+        expect(alerts.find { |alert| alert[:type] == :held_for_evidence }).to_not be_nil
       end
 
       context "when older than the hold_open time" do
         let(:hearing_date) { 31.days.ago }
 
         it "does not include an alert" do
-          expect(alerts.find { |alert| alert.type == :held_for_evidence }).to be_nil
+          expect(alerts.find { |alert| alert[:type] == :held_for_evidence }).to be_nil
         end
       end
     end
@@ -102,14 +106,14 @@ describe AppealEvents do
       let(:disposition) { "Allowed" }
 
       it "includes an alert" do
-        expect(alerts.find { |alert| alert.type == :cavc_option }).to_not be_nil
+        expect(alerts.find { |alert| alert[:type] == :cavc_option }).to_not be_nil
       end
 
       context "when older than 120 days" do
         let(:decision_date) { 121.days.ago }
 
         it "does not include an alert" do
-          expect(alerts.find { |alert| alert.type == :held_for_evidence }).to be_nil
+          expect(alerts.find { |alert| alert[:type] == :held_for_evidence }).to be_nil
         end
       end
 
@@ -117,7 +121,7 @@ describe AppealEvents do
         let(:disposition) { "Benefits Granted by AOJ" }
 
         it "does not include an alert" do
-          expect(alerts.find { |alert| alert.type == :held_for_evidence }).to be_nil
+          expect(alerts.find { |alert| alert[:type] == :held_for_evidence }).to be_nil
         end
       end
     end

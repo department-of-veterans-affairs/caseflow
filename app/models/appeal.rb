@@ -139,29 +139,6 @@ class Appeal < ActiveRecord::Base
     @events ||= AppealEvents.new(appeal: self).all.sort_by(&:date)
   end
 
-  def api_location
-    (%w(Advance Remand).include? status) ? :aoj : :bva
-  end
-
-  def api_status
-    @api_status ||= fetch_api_status
-  end
-
-  def api_status_hash
-    case api_status
-    when :decision_in_progress
-      details = { test: "Hello World" }
-    else
-      details = {}
-    end
-
-    { type: api_status, details: details }
-  end
-
-  def alerts
-    @alerts ||= AppealAlerts.new(appeal: self).all
-  end
-
   def form9_due_date
     return unless notification_date && soc_date
     [notification_date + 1.year, soc_date + 60.days].max.to_date
@@ -487,76 +464,6 @@ class Appeal < ActiveRecord::Base
   end
 
   private
-
-  def fetch_api_status
-    case status
-    when "Advance"
-      disambiguate_api_status_advance
-    when "Active"
-      disambiguate_api_status_active
-    when "Complete"
-      disambiguate_api_status_complete
-    when "Remand"
-      :remand
-    when "Motion"
-      :motion
-    when "CAVC"
-      :cavc
-    end
-  end
-
-  def disambiguate_api_status_advance
-    if certification_date
-      return :scheduled_hearing if hearing_scheduled?
-      return :pending_hearing_scheduling if hearing_pending?
-      return :on_docket
-    end
-
-    return :pending_certification if form9_date
-
-    return :pending_form9 if soc_date
-
-    :pending_soc
-  end
-
-  def disambiguate_api_status_active
-    return :scheduled_hearing if hearing_scheduled?
-
-    case location_code
-    when "49"
-      :stayed
-    when "55"
-      :at_vso
-    when "19", "20"
-      :opinion_request
-    when "14", "16", "18", "24"
-      case_assignment_exists? ? :abeyance : :on_docket
-    else
-      case_assignment_exists? ? :decision_in_progress : :on_docket
-    end
-  end
-
-  def disambiguate_api_status_complete
-    case disposition
-    when "Allowed", "Denied"
-      :bva_decision
-    when "Advance Allowed in Field", "Benefits Granted by AOJ"
-      :field_grant
-    when "Withdrawn", "Advance Withdrawn by Appellant/Rep",
-         "Recon Motion Withdrawn", "Withdrawn from Remand"
-      :withdrawn
-    when "Advance Failure to Respond", "Remand Failure to Respond"
-      :ftr
-    when "RAMP Opt-in"
-      :ramp
-    when "Dismissed, Death", "Advance Withdrawn Death of Veteran"
-      :death
-    when "Reconsideration by Letter"
-      :reconsideration
-    else
-      :other_close
-    end
-  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
