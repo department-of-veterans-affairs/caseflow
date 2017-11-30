@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
-import * as DocumentConstants from './DocumentList/actionTypes';
 
 import _ from 'lodash';
 import { update } from '../util/ReducerUtil';
