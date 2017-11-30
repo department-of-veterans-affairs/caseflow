@@ -11,20 +11,20 @@ describe AppealEvent do
     subject { appeal_event.disposition = disposition }
 
     context "when disposition is mapped to an event type" do
-      let(:disposition) { "Allowed" }
+      let(:disposition) { "Withdrawn" }
 
       it "sets type" do
         subject
-        expect(appeal_event.type).to eq(:bva_final_decision)
+        expect(appeal_event.type).to eq(:withdrawn)
       end
     end
 
     context "when disposition is not mapped to an event type" do
       let(:disposition) { "Not a disposition" }
 
-      it "sets type to nil" do
+      it "sets type to other" do
         subject
-        expect(appeal_event.type).to be_nil
+        expect(appeal_event.type).to eq(:other_close)
       end
     end
   end
@@ -67,6 +67,14 @@ describe AppealEvent do
     context "when no date" do
       let(:date) { nil }
       it { is_expected.to be_falsey }
+    end
+  end
+
+  context "==" do
+    it "is equal to an object with the same type and date" do
+      a = AppealEvent.new(type: :nod, date: Time.zone.today)
+      b = AppealEvent.new(type: :nod, date: Time.zone.today)
+      expect(a).to eq(b)
     end
   end
 
