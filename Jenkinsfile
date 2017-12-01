@@ -43,7 +43,7 @@ node('deploy') {
     stage ('pull-deploy-repo') {
 
       sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
-
+      checkout scm
       // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
       if (env.APP_ENV == 'demo') {
         DEPLOY_MESSAGE = sh (
