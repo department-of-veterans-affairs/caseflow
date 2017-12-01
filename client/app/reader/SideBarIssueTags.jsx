@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-
 import CannotSaveAlert from '../reader/CannotSaveAlert';
+import { connect } from 'react-redux';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { addNewTag, removeTag } from '../reader/PdfViewer/PdfViewerActions';
+import _ from 'lodash';
 
 class SideBarIssueTags extends PureComponent {
   render() {
     const {
-      doc
+      doc,
+      tagOptions,
+      removeTag,
+      addNewTag
     } = this.props;
 
     let generateOptionsFromTags = (tags) =>
@@ -28,25 +28,25 @@ class SideBarIssueTags extends PureComponent {
         const tagValue = _.first(deletedValue).label;
         const result = _.find(doc.tags, { text: tagValue });
 
-        this.props.removeTag(doc, result.id);
+        removeTag(doc, result.id);
       } else if (values && values.length) {
-        this.props.addNewTag(doc, values);
+        addNewTag(doc, values);
       }
     };
 
     return <div className="cf-issue-tag-sidebar">
-      {this.props.error.tag.visible && <CannotSaveAlert />}
+      {this.props.showErrorMessage.tag && <CannotSaveAlert />}
       <SearchableDropdown
         key={doc.id}
         name="tags"
         label="Select or tag issue(s)"
-        multi
-        creatable
-        options={generateOptionsFromTags(this.props.tagOptions)}
+        multi={true}
+        creatable={true}
+        options={generateOptionsFromTags(tagOptions)}
         placeholder=""
         value={generateOptionsFromTags(doc.tags)}
         onChange={onChange}
-        selfManageValueState
+        selfManageValueState={true}
       />
     </div>;
   }
@@ -54,18 +54,10 @@ class SideBarIssueTags extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    error: state.readerReducer.ui.pdfSidebar.error,
-    ..._.pick(state.readerReducer.ui, 'tagOptions')
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    addNewTag,
-    removeTag
-  }, dispatch)
-});
-
 export default connect(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps
 )(SideBarIssueTags);

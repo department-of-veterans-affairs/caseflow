@@ -15,7 +15,7 @@ describe('TabWindow', () => {
           label: 'two',
           page: <div id="pageTwo">page two</div>
         }
-      ]} />);
+      ]}/>);
 
     expect(wrapper.find('.cf-tab')).to.have.length(2);
   });
@@ -31,7 +31,7 @@ describe('TabWindow', () => {
           label: 'two',
           page: <div id="pageTwo">page two</div>
         }
-      ]} />);
+      ]}/>);
 
     expect(wrapper.find('#pageOne')).to.have.length(1);
     expect(wrapper.find('#pageTwo')).to.have.length(0);
@@ -52,7 +52,7 @@ describe('TabWindow', () => {
           page: <div id="pageTwo">page two</div>
         }
       ]}
-      fullPage />);
+      fullPage={true}/>);
 
     expect(wrapper.find('.cf-tab-navigation-full-screen')).to.have.length(1);
   });
@@ -73,7 +73,7 @@ describe('TabWindow', () => {
           page: <div id="pageTwo">page two</div>
         }
       ]}
-      onChange={onChange} />);
+      onChange={onChange}/>);
 
     wrapper.find('#main-tab-1').simulate('click');
     expect(tabSelected).to.be.eq(1);

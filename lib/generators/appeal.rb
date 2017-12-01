@@ -6,9 +6,7 @@ class Generators::Appeal
       {
         vbms_id: generate_external_id,
         vacols_id: generate_external_id,
-        vacols_record: :ready_to_certify,
-        manifest_vbms_fetched_at: Time.zone.now,
-        manifest_vva_fetched_at: Time.zone.now
+        vacols_record: :ready_to_certify
       }
     end
 
@@ -33,6 +31,7 @@ class Generators::Appeal
         regional_office_key: "RO13",
         decision_date: 7.days.ago,
         form9_date: 11.days.ago,
+        veteran_date_of_birth: 47.years.ago,
         appellant_city: "Huntingdon",
         appellant_state: "TN",
         docket_number: 4198
@@ -55,16 +54,9 @@ class Generators::Appeal
           regional_office_key: "DSUSER"
         },
         certified: {
-          status: "Advance",
           certification_date: 1.day.ago
         },
-        activated: {
-          status: "Active",
-          certification_date: 4.days.ago,
-          case_review_date: 1.day.ago
-        },
         form9_not_submitted: {
-          status: "Advance",
           decision_date: nil,
           form9_date: nil
         },
@@ -175,50 +167,39 @@ class Generators::Appeal
     #
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
-      vacols_record = extract_vacols_record(attrs)
-      appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
-      inaccessible = attrs.delete(:inaccessible)
-      veteran = attrs.delete(:veteran)
 
+      vacols_record = extract_vacols_record(attrs)
+      documents = attrs.delete(:documents)
+      issues = attrs.delete(:issues)
       cast_datetime_fields(attrs)
-      setup_vbms_documents(attrs)
-      set_vacols_issues(appeal: appeal, vacols_record: vacols_record, attrs: attrs)
+      inaccessible = attrs.delete(:inaccessible)
+
+      appeal = Appeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
 
       vacols_record[:vbms_id] = attrs[:vbms_id]
       vacols_record = vacols_record.merge(attrs.select { |attr| Appeal.vacols_field?(attr) })
 
-      set_vacols_record(appeal: appeal, vacols_record: vacols_record)
+      issues_from_template = vacols_record.delete(:issues)
+      set_vacols_issues(appeal: appeal,
+                        issues: issues || issues_from_template)
+
+      Fakes::AppealRepository.records ||= {}
+      Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
+
+      Fakes::VBMSService.document_records ||= {}
+      Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
 
       non_vacols_attrs = attrs.reject { |attr| Appeal.vacols_field?(attr) }
       appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible
-      veteran || Generators::Veteran.build(file_number: appeal.sanitized_vbms_id)
 
       appeal
     end
 
     private
 
-    def set_vacols_record(appeal:, vacols_record:)
-      Fakes::AppealRepository.records ||= {}
-      Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
-    end
-
-    def setup_vbms_documents(attrs)
-      documents = attrs.delete(:documents)
-      Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
-
-      Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
-      Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
-    end
-
-    def set_vacols_issues(appeal:, vacols_record:, attrs:)
-      issues = attrs.delete(:issues)
-      issues_from_template = vacols_record.delete(:issues)
-      issues ||= issues_from_template
-
+    def set_vacols_issues(appeal:, issues:)
       appeal.issues = (issues || []).map do |issue|
         issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
       end

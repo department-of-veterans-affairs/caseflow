@@ -2,7 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import TextareaField from '../../components/TextareaField';
 
-export default class StyleGuideCharacterLimit extends React.PureComponent {
+export default class StyleGuideCharacterLimit extends React.Component {
 
   constructor(props) {
     super(props);
@@ -16,9 +16,9 @@ export default class StyleGuideCharacterLimit extends React.PureComponent {
     return <div>
       <StyleGuideComponentTitle
         title="Character Limit"
-        id="character-limit"
+        id="character_limit"
         link="StyleGuideCharacterLimit.jsx"
-        isSubsection
+        isSubsection={true}
       />
       <p>
         Character limits alert users of the maximum possible text input and is used
@@ -35,7 +35,7 @@ export default class StyleGuideCharacterLimit extends React.PureComponent {
           this.setState({ value });
         }}
         maxlength={2000}
-      />
+        />
     </div>;
   }
 }

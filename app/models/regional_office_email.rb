@@ -9,6 +9,6 @@ class RegionalOfficeEmail
   private
 
   def ro_city
-    @ro_city ||= RegionalOffice::CITIES[ro_id]
+    @ro_city ||= VACOLS::RegionalOffice::CITIES[ro_id]
   end
 end

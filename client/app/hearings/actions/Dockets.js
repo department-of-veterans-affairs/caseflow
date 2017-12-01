@@ -1,6 +1,4 @@
 import * as Constants from '../constants/constants';
-import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, debounceMs } from '../analytics';
 
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,
@@ -16,15 +14,8 @@ export const populateWorksheet = (worksheet) => ({
   }
 });
 
-export const handleWorksheetServerError = (err) => ({
-  type: Constants.HANDLE_WORKSHEET_SERVER_ERROR,
-  payload: {
-    err
-  }
-});
-
-export const handleDocketServerError = (err) => ({
-  type: Constants.HANDLE_DOCKET_SERVER_ERROR,
+export const handleServerError = (err) => ({
+  type: Constants.HANDLE_SERVER_ERROR,
   payload: {
     err
   }
@@ -44,18 +35,13 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
+
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
     hearingIndex,
     notes,
     date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      debounceMs
-    }
   }
 });
 
@@ -86,6 +72,15 @@ export const setAod = (hearingIndex, aod, date) => ({
   }
 });
 
+export const setAddOn = (hearingIndex, addOn, date) => ({
+  type: Constants.SET_ADD_ON,
+  payload: {
+    hearingIndex,
+    addOn,
+    date
+  }
+});
+
 export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => ({
   type: Constants.SET_TRANSCRIPT_REQUESTED,
   payload: {
@@ -99,12 +94,6 @@ export const onContentionsChange = (contentions) => ({
   type: Constants.SET_CONTENTIONS,
   payload: {
     contentions
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
@@ -112,12 +101,6 @@ export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
     militaryService
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
@@ -125,12 +108,6 @@ export const onEvidenceChange = (evidence) => ({
   type: Constants.SET_EVIDENCE,
   payload: {
     evidence
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
@@ -138,37 +115,5 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   type: Constants.SET_COMMENTS_FOR_ATTORNEY,
   payload: {
     commentsForAttorney
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
-
-export const toggleWorksheetSaving = () => ({
-  type: Constants.TOGGLE_WORKSHEET_SAVING
-});
-
-export const setWorksheetSaveFailedStatus = (saveFailed) => ({
-  type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-  payload: {
-    saveFailed
-  }
-});
-
-export const saveWorksheet = (worksheet) => (dispatch) => {
-  if (!worksheet.edited) {
-    return;
-  }
-
-  ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
-    then(() => {
-      dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
-    },
-    () => {
-      dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-        payload: { saveFailed: true } });
-    });
-};

@@ -11,10 +11,6 @@ $tag-backgrond-color: #d6d7d9;
 
   mark {
     background: $color-gold-lightest;
-
-    &.highlighted {
-      background: $color-gold-light;
-    }
   }
 
   .section--no-search-results {
@@ -46,7 +42,6 @@ $tag-backgrond-color: #d6d7d9;
 
   .documents-table {
     min-width: 810px;
-    margin-top: 0;
   }
 
   $last-read-column-width: 41px;
@@ -291,12 +286,7 @@ $tag-backgrond-color: #d6d7d9;
 
 
 .document-list-filter-message {
-  margin-top: 15px;
-  margin-bottom: 0;
-
-  &.hidden {
-    visibility: hidden;
-  }
+  margin-top: 10px;
 }
 
 .document-list-header {

@@ -75,6 +75,11 @@ $color-hearings-saving: #777;
     }
 
     // TODO: see if this can become a part of the general style
+    .Select-arrow {
+      width: 1.7em;
+    }
+
+    // TODO: see if this can become a part of the general style
     .Select-menu-outer {
       border: 1px solid $color-gray-medium;
       border-top: none;
@@ -129,7 +134,6 @@ $color-hearings-saving: #777;
 
         &:last-child {
           padding-left: 2em;
-          display: block;
         }
       }
     }
@@ -156,9 +160,9 @@ $color-hearings-saving: #777;
         vertical-align: top;
         width: 3em;
 
-        div {
+        + div {
           padding-left: 3em;
-       }
+        }
       }
 
       textarea {
@@ -167,8 +171,6 @@ $color-hearings-saving: #777;
         height: 4em;
         min-height: 4em;
         resize: vertical;
-        margin-left: 3em;
-        width: 84%;
       }
     }
 
@@ -188,21 +190,36 @@ $color-hearings-saving: #777;
     }
   }
 
+  .addOn,
   .transcriptRequested {
     display: inline-block;
     text-align: left;
     padding: 0 .32em;
-    width: 100%;
 
     .cf-form-checkboxes {
       margin-bottom: 0;
     }
   }
+
+  .addOn {
+    width: 33%;
+  }
+
+  .transcriptRequested {
+    width: 67%;
+  }
 }
 
 .loading-hearings {
+  width: 50%;
+  height: 35vh;
   margin: 100px auto 0;
   text-align: center;
+
+  .cf-image-loader {
+    height: 300px;
+    width: 300px;
+  }
 }
 
 .cf-hearings-worksheet {
@@ -219,7 +236,6 @@ $color-hearings-saving: #777;
       margin: 0;
       width: 100%;
       resize: vertical;
-      min-height: 48px;
     }
   }
 
@@ -261,23 +277,10 @@ $color-hearings-saving: #777;
     font-size: 17px;
   }
 
-  textarea {
-    resize: vertical;
-  }
-
   .saving {
     position: absolute;
     top: 0;
     right: 0;
-  }
-
-  .cf-modal {
-
-    h2 {
-      border-bottom: none;
-      font-size: 1.5em;
-    }
-
   }
 
 
@@ -313,6 +316,15 @@ $color-hearings-saving: #777;
 
   .cf-issue-delete {
     cursor: pointer;
+
+    .cf-modal {
+
+      h2 {
+        border-bottom: none;
+        font-size: 1.5em;
+      }
+
+    }
   }
 
   h2 {
@@ -325,7 +337,6 @@ $color-hearings-saving: #777;
   margin: 0;
 
   .cf-form-textarea {
-    min-height: 48px;
 
     .question-label {
       position: absolute;
@@ -352,22 +363,6 @@ $color-hearings-saving: #777;
   td {
     vertical-align: top;
     padding: .5em;
-
-    &:nth-of-type(1) {
-      width: 4.5em;
-    }
-
-    &:nth-of-type(2) {
-      width: 18em;
-    }
-
-    &:nth-of-type(3) {
-      width: 14em;
-    }
-
-    &:nth-of-type(4) {
-      width: 19em;
-    }
 
     &:nth-of-type(5) {
       width: 20%;
@@ -423,58 +418,4 @@ $color-hearings-saving: #777;
 .cf-hearings-worksheet-desc-label {
   position: absolute;
   left: -99999px;
-}
-
-@media only screen and (max-width : 1024px){
-
-  .cf-hearings {
-    .cf-hearings-docket {
-      .cf-hearings-docket-notes {
-        textarea {
-          width: 80%;
-        }
-      }
-    }
-  }
-}
-
-@page {
-  size: 8.5in 11in;
-  margin: 0;
-}
-
-@media print {
-  h1 {
-    font-size: 25px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  .cf-print-page-break {
-    break-after: page;
-  }
-
-  .cf-hearings-worksheet {
-    margin-bottom: 0;
-    padding-bottom: 0;
-
-    .cf-hearings-second-page {
-      min-height: 11in;
-      display: flex;
-      flex-direction: column;
-
-      .cf-hearings-worksheet-form {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-
-        .cf-hearings-worksheet-data:last-child {
-          margin-bottom: inherit;
-        }
-      }
-    }
-  }
 }

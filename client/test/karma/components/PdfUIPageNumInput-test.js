@@ -14,7 +14,7 @@ describe('PdfUIPageNumInput', () => {
         currentPage={1}
         numPages={4}
         docId={1}
-        jumpToPage={() => {
+        jumpToPage={ () => {
           return null;
         }}
       />,

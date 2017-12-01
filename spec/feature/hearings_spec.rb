@@ -21,8 +21,6 @@ RSpec.feature "Hearings" do
         Generators::Hearing.create(
           id: id,
           user: current_user,
-          appellant_first_name: "AppellantFirstName",
-          appellant_last_name: "AppellantLastName",
           date: 5.days.from_now,
           type: "video",
           master_record: false
@@ -73,7 +71,7 @@ RSpec.feature "Hearings" do
       # Validate help link
       find('#menu-trigger').click
       find_link("Help").click
-      expect(page).to have_content("Welcome to the Hearings Help page!")
+      expect(page).to have_content("Caseflow Hearings Help")
     end
 
     scenario "Upcoming docket days correctly handles master records" do
@@ -96,16 +94,12 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
-      fill_in "3.disposition", with: "No Show\n"
-      fill_in "3.hold_open", with: "30 days\n"
-      fill_in "3.aod", with: "Filed\n"
+      find("label", text: "Add on").click
       find("label", text: "Transcript Requested").click
 
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
-      expect(page).to have_content("No Show")
-      expect(page).to have_content("30 days")
-      expect(page).to have_content("Filed")
+      expect(find_field("Add on", visible: false)).to be_checked
       expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
@@ -130,84 +124,25 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
     end
 
-    scenario "Worksheet saves on refresh" do
+    scenario "Worksheet adds user created issues" do
       visit "/hearings/1/worksheet"
-      fill_in "Rep. Name:", with: "This is a rep name"
-      fill_in "appellant-vet-witness", with: "This is a witness"
-      fill_in "worksheet-contentions", with: "These are contentions"
-      fill_in "worksheet-military-service", with: "This is military service"
-      fill_in "worksheet-evidence", with: "This is evidence"
-      fill_in "worksheet-comments-for-attorney", with: "These are comments"
-      visit "/hearings/1/worksheet"
-      expect(find_field("Rep. Name:").value).to eq "This is a rep name"
-      expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are contentions")
-      expect(page).to have_content("This is military service")
-      expect(page).to have_content("This is evidence")
-      expect(page).to have_content("These are comments")
-
-      visit "/hearings/1/worksheet/print?do_not_open_print_prompt=1"
-      expect(page).to have_content("This is a rep name")
-      expect(page).to have_content("This is a witness")
-      expect(page).to have_content("These are contentions")
-      expect(page).to have_content("This is military service")
-      expect(page).to have_content("This is evidence")
-      expect(page).to have_content("These are comments")
-      expect(page.title).to eq "Hearing Worksheet for AppellantLastName, AppellantFirstName A."
-    end
-
-    scenario "Worksheet adds, deletes, edits, and saves user created issues" do
-      visit "/hearings/1/worksheet"
-      expect(page).to_not have_field("1-issue-program")
-      expect(page).to_not have_field("1-issue-name")
-      expect(page).to_not have_field("1-issue-levels")
-      expect(page).to have_field("1-issue-description")
-
-      click_on "button-addIssue-2"
-      fill_in "2-issue-program", with: "This is the program"
-      fill_in "2-issue-name", with: "This is the name"
-      fill_in "2-issue-levels", with: "This is the level"
-      fill_in "2-issue-description", with: "This is the description"
-
-      find("#cf-issue-delete-21").click
-      click_on "Confirm delete"
-      expect(page).to_not have_content("Service Connection")
-
-      visit "/hearings/1/worksheet"
-      expect(page).to have_content("This is the program")
-      expect(page).to have_content("This is the name")
-      expect(page).to have_content("This is the level")
-      expect(page).to have_content("This is the description")
-      expect(page).to_not have_content("Service Connection")
-    end
-
-    context "Multiple appeal streams" do
-      before do
-        vbms_id = Hearing.find(1).appeal.vbms_id
-        Generators::Appeal.create(vbms_id: vbms_id, vacols_record: { template: :pending_hearing })
-      end
-
-      scenario "Numbering is consistent" do
-        visit "/hearings/1/worksheet"
-        click_on "button-addIssue-2"
-        expect(page).to have_content("3.")
-        find("#cf-issue-delete-21").click
-        click_on "Confirm delete"
-        expect(page).to_not have_content("3.")
-      end
+      expect(page).to_not have_field("66-issue-program")
+      expect(page).to_not have_field("66-issue-name")
+      expect(page).to_not have_field("66-issue-levels")
+      expect(page).to have_field("66-issue-description")
+      click_on "button-addIssue-0"
+      # These IDs will be updated when we save edits to the backend
+      expect(page).to have_field("undefined-issue-program")
+      expect(page).to have_field("undefined-issue-name")
+      expect(page).to have_field("undefined-issue-levels")
+      expect(page).to have_field("undefined-issue-description")
     end
 
     scenario "Can click from hearing worksheet to reader" do
       visit "/hearings/1/worksheet"
-      link = find("#review-efolder")
-      link_href = link[:href]
       expect(page).to have_content("Review eFolder")
       click_on "Review eFolder"
-      new_window = windows.last
-      page.within_window new_window do
-        visit link_href
-        expect(page).to have_content("You've viewed 0 out of 4 documents")
-      end
+      expect(page).to have_content("You've viewed 0 out of 4 documents")
     end
   end
 end

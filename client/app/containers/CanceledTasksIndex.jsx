@@ -5,6 +5,7 @@ import moment from 'moment';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
 
+
 export default class CanceledTasksIndex extends React.Component {
   render() {
 

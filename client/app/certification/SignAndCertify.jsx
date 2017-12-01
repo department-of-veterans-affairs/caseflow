@@ -11,8 +11,6 @@ import * as actions from './actions/SignAndCertify';
 import { Redirect } from 'react-router-dom';
 import ValidatorsUtil from '../util/ValidatorsUtil';
 import { formatDateStr } from '../util/DateUtil';
-import Header from './Header';
-import CertificationProgressBar from './CertificationProgressBar';
 
 const certifyingOfficialTitleOptions = [{
   displayText: 'Decision Review Officer',
@@ -146,75 +144,73 @@ export class SignAndCertify extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
+        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/success`} />;
+        to={`/certifications/${match.params.vacols_id}/success`}/>;
     }
 
     if (serverError) {
       return <Redirect
-        to="/certifications/error" />;
+        to={'/certifications/error'}/>;
     }
 
     const shouldDisplayCertifyingOfficialTitleOther =
       certifyingOfficialTitle === Constants.certifyingOfficialTitles.OTHER;
 
     return <div>
-      <Header />
-      <CertificationProgressBar />
       <form>
         <div className="cf-app-segment cf-app-segment--alt">
           <h2>Sign and Certify</h2>
           <p>Fill in information about yourself below to sign this certification.</p>
           <div className="cf-help-divider"></div>
           <TextField
-            name="Name and location of certifying office:"
+            name={'Name and location of certifying office:'}
             value={certifyingOffice}
-            readOnly
+            readOnly={true}
           />
           <TextField
-            name="Organizational elements certifying appeal:"
+            name={'Organizational elements certifying appeal:'}
             value={certifyingUsername}
-            readOnly
+            readOnly={true}
           />
           <TextField
-            name="Name of certifying official:"
+            name={'Name of certifying official:'}
             value={certifyingOfficialName}
             errorMessage={this.certifyingOfficialNameError()}
-            required
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')} />
+            required={true}
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialName')}/>
           <RadioField
             name="Title of certifying official:"
             options={certifyingOfficialTitleOptions}
             value={certifyingOfficialTitle}
             errorMessage={(this.isFieldErrored('certifyingOfficialTitle') ? ERRORS.certifyingOfficialTitle : null)}
-            required
-            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')} />
+            required={true}
+            onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitle')}/>
           {
             shouldDisplayCertifyingOfficialTitleOther &&
             <TextField
-              name="Specify other title of certifying official:"
+              name={'Specify other title of certifying official:'}
               value={certifyingOfficialTitleOther}
               errorMessage={this.certifyingOfficialTitleOtherError()}
-              required
+              required={true}
               onChange={onSignAndCertifyFormChange.bind(this, 'certifyingOfficialTitleOther')}
             />
           }
           <DateSelector
-            name="Date:"
+            name={'Date:'}
             value={formatDateStr(certificationDate)}
-            readOnly
+            readOnly={true}
           />
         </div>
       </form>
-      <Footer
-        loading={loading}
-        onClickContinue={this.onClickContinue.bind(this)}
-      />
-    </div>;
+    <Footer
+      loading={loading}
+      onClickContinue={this.onClickContinue.bind(this)}
+    />
+  </div>;
   }
 }
 

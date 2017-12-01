@@ -5,7 +5,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import TextStyles from './Typography/TextStyles';
 import FontFamily from './Typography/FontFamily';
 
-export default class StyleGuideTypography extends React.PureComponent {
+export default class StyleGuideTypography extends React.Component {
 
   render = () => {
     return <div>

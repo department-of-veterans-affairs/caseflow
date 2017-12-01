@@ -2,7 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import TextareaField from '../../components/TextareaField';
 
-export default class StyleGuideTextArea extends React.PureComponent {
+export default class StyleGuideTextArea extends React.Component {
 
   constructor(props) {
     super(props);
@@ -16,9 +16,9 @@ export default class StyleGuideTextArea extends React.PureComponent {
     return <div>
       <StyleGuideComponentTitle
         title="Text Area"
-        id="text-area"
+        id="text_area"
         link="StyleGuideTextArea.jsx"
-        isSubsection
+        isSubsection={true}
       />
       <p>
         A text area allows multiple lines of text so that users can enter detailed
@@ -32,7 +32,7 @@ export default class StyleGuideTextArea extends React.PureComponent {
         onChange={(value) => {
           this.setState({ value });
         }}
-      />
+        />
     </div>;
   }
 }

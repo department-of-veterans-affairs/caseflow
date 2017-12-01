@@ -26,6 +26,7 @@ const helperClasses = {
   right: 'cf-txt-r'
 };
 
+
 const cellClasses = ({ align, cellClass }) => classnames([helperClasses[align], cellClass]);
 
 const getColumns = (props) => {
@@ -110,7 +111,7 @@ class FooterRow extends React.PureComponent {
     const hasFooters = _.some(props.columns, 'footer');
 
     return <tfoot>
-      {hasFooters && <Row columns={props.columns} footer />}
+      {hasFooters && <Row columns={props.columns} footer={true}/>}
     </tfoot>;
   }
 }
@@ -145,22 +146,22 @@ export default class Table extends React.PureComponent {
     }
 
     return <table
-      id={id}
-      className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
-      summary={summary} >
+              id={id}
+              className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
+              summary={summary} >
 
-      { caption && <caption className="usa-sr-only">{ caption }</caption> }
+        { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow columns={columns} headerClassName={headerClassName} />
-      <BodyRows
-        id={tbodyId}
-        tbodyRef={tbodyRef}
-        columns={columns}
-        getKeyForRow={keyGetter}
-        rowObjects={rowObjects}
-        bodyClassName={bodyClassName}
-        rowClassNames={rowClassNames} />
-      <FooterRow columns={columns} />
+        <HeaderRow columns={columns} headerClassName={headerClassName}/>
+        <BodyRows
+          id={tbodyId}
+          tbodyRef={tbodyRef}
+          columns={columns}
+          getKeyForRow={keyGetter}
+          rowObjects={rowObjects}
+          bodyClassName={bodyClassName}
+          rowClassNames={rowClassNames} />
+        <FooterRow columns={columns} />
     </table>;
   }
 }

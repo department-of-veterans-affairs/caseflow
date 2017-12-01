@@ -5,9 +5,6 @@
     page: "DecisionReviewer",
     feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
     pdfWorker: asset_path('pdf.worker.js'),
-    buildDate: build_date,
-    featureToggles: {
-      search: FeatureToggle.enabled?(:search, user: current_user)
-    }
+    buildDate: build_date
   }) %>
 <% end %>

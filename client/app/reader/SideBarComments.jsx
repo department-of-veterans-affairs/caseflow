@@ -7,9 +7,9 @@ import { plusIcon } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
-import { createAnnotation, stopPlacingAnnotation,
-  startPlacingAnnotation, updateNewAnnotationContent
-} from '../reader/PdfViewer/AnnotationActions';
+
+import { updateNewAnnotationContent, createAnnotation, stopPlacingAnnotation,
+  startPlacingAnnotation } from '../reader/actions';
 
 class SideBarComments extends PureComponent {
   handleAddClick = (event) => {
@@ -32,20 +32,20 @@ class SideBarComments extends PureComponent {
           <span>{ plusIcon() } &nbsp; Add a comment</span>
         </Button>
       </span>
-      <div id="cf-comment-wrapper" className="cf-comment-wrapper">
-        {this.props.error.annotation.visible && <CannotSaveAlert message={this.props.error.annotation.message} />}
-        <div className="cf-pdf-comment-list">
-          {this.props.placedButUnsavedAnnotation &&
+    <div id="cf-comment-wrapper" className="cf-comment-wrapper">
+      {this.props.showErrorMessage.annotation && <CannotSaveAlert />}
+      <div className="cf-pdf-comment-list">
+        {this.props.placedButUnsavedAnnotation &&
           <EditComment
             comment={this.props.placedButUnsavedAnnotation}
             id="addComment"
-            disableOnEmpty
+            disableOnEmpty={true}
             onChange={this.props.updateNewAnnotationContent}
             onCancelCommentEdit={this.stopPlacingAnnotation}
             onSaveCommentEdit={this.props.createAnnotation} />}
-          {comments}
-        </div>
+        {comments}
       </div>
+    </div>
     </div>;
   }
 }
@@ -53,7 +53,7 @@ class SideBarComments extends PureComponent {
 const mapStateToProps = (state) => {
   return {
     ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    error: state.readerReducer.ui.pdfSidebar.error
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
   };
 };
 

@@ -4,7 +4,7 @@ import React from 'react';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideLoadingButton extends React.PureComponent {
+export default class StyleGuideLoadingButton extends React.Component {
   constructor(props) {
     super(props);
 
@@ -33,7 +33,7 @@ export default class StyleGuideLoadingButton extends React.PureComponent {
     return <div>
       <StyleGuideComponentTitle
         title="Loading Buttons"
-        id="loading-buttons"
+        id="loading_buttons"
         link="StyleGuideLoadingButton.jsx"
       />
       <p>
@@ -51,7 +51,7 @@ export default class StyleGuideLoadingButton extends React.PureComponent {
         />
         <Button
           id="reset-default"
-          name="Reset"
+          name={'Reset'}
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.default}
@@ -68,7 +68,7 @@ export default class StyleGuideLoadingButton extends React.PureComponent {
         />
         <Button
           id="reset-dispatch"
-          name="Reset"
+          name={'Reset'}
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.dispatch}
@@ -85,7 +85,7 @@ export default class StyleGuideLoadingButton extends React.PureComponent {
         />
         <Button
           id="reset-cert"
-          name="Reset"
+          name={'Reset'}
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.cert}
@@ -102,7 +102,7 @@ export default class StyleGuideLoadingButton extends React.PureComponent {
         />
         <Button
           id="reset-efolder"
-          name="Reset"
+          name={'Reset'}
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.efolder}
@@ -119,7 +119,7 @@ export default class StyleGuideLoadingButton extends React.PureComponent {
         />
         <Button
           id="reset-feedback"
-          name="Reset"
+          name={'Reset'}
           onClick={this.toggle}
           classNames={['cf-btn-link']}
           disabled={!this.state.loading.feedback}

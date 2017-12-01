@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
-import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from './actions/Dockets';
+import { setNotes, setDisposition, setHoldOpen, setAod, setAddOn, setTranscriptRequested } from './actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
@@ -19,15 +18,12 @@ const dispositionOptions = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-const holdOptions = [
-  { value: 0,
-    label: '0 days' },
-  { value: 30,
-    label: '30 days' },
-  { value: 60,
-    label: '60 days' },
-  { value: 90,
-    label: '90 days' }];
+const holdOptions = [{ value: 30,
+  label: '30 days' },
+{ value: 60,
+  label: '60 days' },
+{ value: 90,
+  label: '90 days' }];
 
 const aodOptions = [{ value: 'granted',
   label: 'Granted' },
@@ -36,10 +32,11 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
-const getDate = (date) => {
-  return moment(date).
-    format('h:mm a').
-    replace(/(a|p)(m)/, '$1.$2.');
+const getDate = (date, timezone) => {
+  return moment.tz(date, timezone).
+    format('h:mm a z').
+    replace('AM', 'a.m.').
+    replace('PM', 'p.m.');
 };
 
 export class DocketHearingRow extends React.PureComponent {
@@ -50,8 +47,11 @@ export class DocketHearingRow extends React.PureComponent {
 
   setAod = ({ value }) => this.props.setAod(this.props.index, value, this.props.hearingDate);
 
+  setAddOn = (value) =>
+      this.props.setAddOn(this.props.index, value, this.props.hearingDate);
+
   setTranscriptRequested = (value) =>
-    this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
+      this.props.setTranscriptRequested(this.props.index, value, this.props.hearingDate);
 
   setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
@@ -61,30 +61,19 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
-    let roTimeZone = hearing.regional_office_timezone;
-
-    let getRoTime = (date) => {
-      return moment(date).tz(roTimeZone).
-        format('h:mm a z').
-        replace(/(a|p)(m)/, '$1.$2.');
-    };
-
-    const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
-
     return <tbody>
       <tr>
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date)} EDT /<br />
-            {getRoTime(hearing.date)}
+            {getDate(hearing.date, 'America/New_York')}
           </span>
           <span>
             {hearing.regional_office_name}
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{appellantDisplay}</b>
+          <b>{hearing.appellant_last_first_mi}</b>
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
@@ -113,6 +102,14 @@ export class DocketHearingRow extends React.PureComponent {
             value={hearing.aod}
             searchable
           />
+          <div className="addOn">
+            <Checkbox
+              label="Add on"
+              name={`${hearing.id}.addon`}
+              value={hearing.add_on}
+              onChange={this.setAddOn}
+            />
+          </div>
           <div className="transcriptRequested">
             <Checkbox
               label="Transcript Requested"
@@ -129,10 +126,9 @@ export class DocketHearingRow extends React.PureComponent {
           <div>
             <label htmlFor={`${hearing.id}.notes`}>Notes</label>
             <div>
-              <Textarea
+              <textarea
                 id={`${hearing.id}.notes`}
-                value={hearing.notes || ''}
-                name="Notes"
+                defaultValue={hearing.notes}
                 onChange={this.setNotes}
                 maxLength="100"
               />
@@ -149,6 +145,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDisposition,
   setHoldOpen,
   setAod,
+  setAddOn,
   setTranscriptRequested
 }, dispatch);
 

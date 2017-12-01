@@ -30,6 +30,6 @@ export default class Example7 extends React.Component {
       onChange={this.onChange}
       value={this.state.value}
       errorMessage={this.state.viewErrorMessage ? 'You must acknowledge this.' : null}
-    />;
+    ></Checkbox>;
   }
 }

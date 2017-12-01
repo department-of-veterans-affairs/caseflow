@@ -11,9 +11,7 @@ import PdfListView from './PdfListView';
 import ReaderLoadingScreen from './ReaderLoadingScreen';
 import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
-import { onScrollToComment } from '../reader/Pdf/PdfActions';
-import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
-import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
+import * as ReaderActions from './actions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
@@ -73,11 +71,6 @@ export class DecisionReviewer extends React.PureComponent {
 
     if (documentCategories[category]) {
       this.props.setCategoryFilter(category, true);
-
-      // Clear out the URI query string params after we determine the initial
-      // category filter so that we do not continue to attempt to set the
-      // category filter every time routedPdfListView renders.
-      props.location.search = '';
     }
   };
 
@@ -90,18 +83,16 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-      <PdfListView
-        showPdf={this.showPdf(props.history, vacolsId)}
-        sortBy={this.state.sortBy}
-        selectedLabels={this.state.selectedLabels}
-        isCommentLabelSelected={this.state.isCommentLabelSelected}
-        documentPathBase={`/${vacolsId}/documents`}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
-        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
-        {...props}
-      />
-    </ReaderLoadingScreen>;
+        <PdfListView
+          showPdf={this.showPdf(props.history, vacolsId)}
+          sortBy={this.state.sortBy}
+          selectedLabels={this.state.selectedLabels}
+          isCommentLabelSelected={this.state.isCommentLabelSelected}
+          documentPathBase={`/${vacolsId}/documents`}
+          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+          {...props}
+        />
+      </ReaderLoadingScreen>;
   }
 
   routedPdfViewer = (props) => {
@@ -111,61 +102,62 @@ export class DecisionReviewer extends React.PureComponent {
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
-      <PdfViewer
-        allDocuments={_.values(this.props.storeDocuments)}
-        pdfWorker={this.props.pdfWorker}
-        showPdf={this.showPdf(props.history, vacolsId)}
-        history={props.history}
-        onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        documentPathBase={`/${vacolsId}/documents`}
-        featureToggles={this.props.featureToggles}
-        {...props}
-      />
-    </ReaderLoadingScreen>
+        <PdfViewer
+          addNewTag={this.props.addNewTag}
+          removeTag={this.props.removeTag}
+          allDocuments={_.values(this.props.storeDocuments)}
+          pdfWorker={this.props.pdfWorker}
+          showPdf={this.showPdf(props.history, vacolsId)}
+          onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+          documentPathBase={`/${vacolsId}/documents`}
+          {...props}
+        />
+      </ReaderLoadingScreen>
     ;
   }
 
   routedCaseSelect = (props) => <CaseSelectLoadingScreen assignments={this.props.assignments}>
-    <CaseSelect history={props.history}
-      feedbackUrl={this.props.feedbackUrl} />
-  </CaseSelectLoadingScreen>
+      <CaseSelect history={props.history}
+          feedbackUrl={this.props.feedbackUrl}/>
+    </CaseSelectLoadingScreen>
 
   render() {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
-      <div>
-        <NavigationBar
-          appName="Reader"
-          userDisplayName={this.props.userDisplayName}
-          dropdownUrls={this.props.dropdownUrls}
-          defaultUrl="/">
-          <div className="cf-wide-app section--document-list">
-            <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-            <PageRoute
-              exact
-              title="Claims Folder | Caseflow Reader"
-              breadcrumb="Claims Folder"
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            <PageRoute
-              exact
-              title="Document Viewer | Caseflow Reader"
-              breadcrumb="Document Viewer"
-              path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer} />
-          </div>
-        </NavigationBar>
-        <Footer
-          appName="Reader"
-          feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate} />
-      </div>
-    </Router>;
+        <div>
+          <NavigationBar
+            appName="Reader"
+            userDisplayName={this.props.userDisplayName}
+            dropdownUrls={this.props.dropdownUrls}
+            defaultUrl="/">
+            <div className="cf-wide-app section--document-list">
+              <PageRoute
+                exact
+                path="/"
+                title="Assignments | Caseflow Reader"
+                render={this.routedCaseSelect}/>
+              <PageRoute
+                exact
+                title="Claims Folder | Caseflow Reader"
+                breadcrumb="Claims Folder"
+                path="/:vacolsId/documents"
+                render={this.routedPdfListView}/>
+              <PageRoute
+                exact
+                title="Document Viewer | Caseflow Reader"
+                breadcrumb="Document Viewer"
+                path="/:vacolsId/documents/:docId"
+                render={this.routedPdfViewer}
+              />
+            </div>
+          </NavigationBar>
+          <Footer
+            appName="Reader"
+            feedbackUrl={this.props.feedbackUrl}
+            buildDate={this.props.buildDate}/>
+        </div>
+      </Router>;
   }
 }
 
@@ -173,12 +165,10 @@ DecisionReviewer.propTypes = {
   pdfWorker: PropTypes.string,
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
-  singleDocumentMode: PropTypes.bool,
-
-  // Required actions
   onScrollToComment: PropTypes.func,
-  stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func,
+  onCommentScrolledTo: PropTypes.func,
+  handleSetLastRead: PropTypes.func.isRequired,
+  singleDocumentMode: PropTypes.bool,
 
   // These two properties are exclusively for testing purposes
   router: PropTypes.func,
@@ -194,11 +184,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    onScrollToComment,
-    setCategoryFilter,
-    stopPlacingAnnotation
-  }, dispatch)
+  ...bindActionCreators(ReaderActions, dispatch),
+  handleSelectCurrentPdf: (docId) => dispatch(ReaderActions.selectCurrentPdf(docId))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DecisionReviewer);

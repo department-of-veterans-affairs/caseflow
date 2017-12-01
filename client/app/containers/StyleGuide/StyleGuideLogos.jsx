@@ -4,7 +4,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import Logo from '../../components/Logo';
 
-export default class StyleLogos extends React.PureComponent {
+export default class StyleLogos extends React.Component {
   render = () => {
     return <div>
       <StyleGuideComponentTitle
@@ -34,9 +34,6 @@ export default class StyleLogos extends React.PureComponent {
       </p>
       <p>
         <Logo app="reader" /><b>Reader</b>
-      </p>
-      <p>
-        <Logo app="intake" /><b>Intake</b>
       </p>
       <p>
         <Logo app="feedback" /><b>Feedback</b>

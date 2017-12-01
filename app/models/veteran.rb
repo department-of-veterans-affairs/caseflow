@@ -9,32 +9,24 @@ class Veteran
   BGS_ATTRIBUTES = %i(
     file_number sex first_name last_name ssn address_line1 address_line2
     address_line3 city state country zip_code military_postal_type_code
-    military_post_office_type_code service date_of_birth
+    military_post_office_type_code service
   ).freeze
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
     "UHC" => "Under Honorable Conditions",
     "HVA" => "Honorable for VA Purposes",
-    "DVA" => "Dishonorable for VA Purposes",
-    "12D" => "Dishonorable - Ch 17 Eligible",
-    "12C" => "Dishonorable - Not Ch 17 Eligible",
-    "OTH" => "Other Than Honorable",
-    "DIS" => "Discharge"
+    "DVA" => "Dishonorable for VA Purposes"
   }.freeze
 
   attr_accessor(*BGS_ATTRIBUTES)
+  attr_accessor :date_of_birth
 
   COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
+  validates :ssn, :first_name, :last_name, :city, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: "country_requires_zip?"
   validates :state, presence: true, if: "country_requires_state?"
-
-  # TODO: get middle initial from BGS
-  def name
-    FullName.new(first_name, "", last_name)
-  end
 
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country)
@@ -50,7 +42,13 @@ class Veteran
   end
 
   def load_bgs_record!
-    set_attrs_from_bgs_record if found?
+    BGS_ATTRIBUTES.each do |bgs_attribute|
+      instance_variable_set(
+        "@#{bgs_attribute}".to_sym,
+        bgs_record[bgs_attribute]
+      )
+    end
+
     self
   end
 
@@ -68,36 +66,13 @@ class Veteran
 
   def age
     return unless date_of_birth
-    dob = Time.strptime(date_of_birth, "%m/%d/%Y")
+    dob = date_of_birth
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
-  def found?
-    bgs_record != :not_found && bgs_record[:file_number]
-  end
-
-  def accessible?
-    @accessible = self.class.bgs.can_access?(file_number) if @accessible.nil?
-    @accessible
-  end
-
-  # Postal code might be stored in address line 3 for international addresses
-  def zip_code
-    @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
-  end
-
   private
-
-  def set_attrs_from_bgs_record
-    BGS_ATTRIBUTES.each do |bgs_attribute|
-      instance_variable_set(
-        "@#{bgs_attribute}".to_sym,
-        bgs_record[bgs_attribute]
-      )
-    end
-  end
 
   def period_of_service(s)
     s[:branch_of_service].strip + " " +
@@ -108,7 +83,7 @@ class Veteran
 
   def character_of_service(s)
     text = CHARACTER_OF_SERVICE_CODES[s[:char_of_svc_code]]
-    text.present? ? ", #{text}" : ""
+    text.present? ? ", #{text} Discharge" : ""
   end
 
   def service_date(date)
@@ -125,7 +100,7 @@ class Veteran
   end
 
   def bgs_record
-    @bgs_record ||= (fetch_bgs_record || :not_found)
+    @bgs_record ||= fetch_bgs_record
   end
 
   def fetch_bgs_record

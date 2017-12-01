@@ -21,6 +21,7 @@ export class Footer extends React.Component {
     this.props.toggleCancellationModal();
   };
 
+
   render() {
     let {
       loading,
@@ -33,11 +34,12 @@ export class Footer extends React.Component {
       showCancellationModal
     } = this.props;
 
+
     return <div className="cf-app-segment">
       <Button
-        name="Cancel Certification"
-        onClick={this.handleModalOpen}
-        classNames={['cf-btn-link']}
+            name="Cancel Certification"
+            onClick={this.handleModalOpen}
+            classNames={['cf-btn-link']}
       />
       { !hideContinue && <Link to={nextPageUrl || '#'}>
         <Button type="button"
@@ -53,7 +55,8 @@ export class Footer extends React.Component {
       {showCancellationModal && <CancelCertificationModal
         title="Cancel Certification"
         certificationId={certificationId}
-        closeHandler={this.handleModalClose} />
+        closeHandler={this.handleModalClose}>
+      </CancelCertificationModal>
       }
     </div>;
   }

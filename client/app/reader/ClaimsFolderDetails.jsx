@@ -43,8 +43,10 @@ class ClaimsFolderDetails extends React.PureComponent {
               <span>{`${appeal.regional_office.key} - ${appeal.regional_office.city}`}</span>
             </div>
             <div className="usa-width-one-whole claims-folder-issues">
-              <b>Issues</b><br />
-              <IssueList appeal={appeal} />
+                <b>Issues</b><br />
+                <ol>
+                  {<IssueList appeal={appeal} />}
+                </ol>
             </div>
           </div>}
         </AccordionSection>

@@ -12,7 +12,7 @@ describe('NumberField', () => {
     wrapper = mount(
       <NumberField
         name="foo"
-        isInteger
+        isInteger={true}
         value={state.value}
         onChange={(val) => {
           state.value = val;

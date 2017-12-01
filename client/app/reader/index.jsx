@@ -5,34 +5,15 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
-import caseSelectReducer from './CaseSelect/CaseSelectReducer';
-import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
-import { reducer as searchReducer, reduxSearch } from 'redux-search';
+import { reduxAnalyticsMiddleware } from './analytics';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   combineReducers({
-    caseSelect: caseSelectReducer,
-    readerReducer,
-    search: searchReducer
+    readerReducer
   }),
-  composeEnhancers(
-    applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware()),
-    reduxSearch({
-      // Configure redux-search by telling it which resources to index for searching
-      resourceIndexes: {
-        // In this example Books will be searchable by :title and :author
-        extractedText: ['text']
-      },
-      // This selector is responsible for returning each collection of searchable resources
-      resourceSelector: (resourceName, state) => {
-        // In our example, all resources are stored in the state under a :resources Map
-        // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
-      }
-    })
-  )
+  composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
 );
 
 if (module.hot) {
@@ -44,7 +25,7 @@ if (module.hot) {
 
 const Reader = (props) => {
   return <Provider store={store}>
-    <DecisionReviewer {...props} />
+      <DecisionReviewer {...props} />
   </Provider>;
 };
 

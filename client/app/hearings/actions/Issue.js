@@ -1,196 +1,117 @@
 import * as Constants from '../constants/constants';
-import ApiUtil from '../../util/ApiUtil';
-import _ from 'lodash';
-import { CATEGORIES, ACTIONS } from '../analytics';
 
-export const onProgramChange = (program, issueId) => ({
+export const onProgramChange = (program, issueKey, appealKey) => ({
   type: Constants.SET_PROGRAM,
   payload: {
     program,
-    issueId
+    issueKey,
+    appealKey
   }
 });
 
-export const onNameChange = (name, issueId) => ({
+export const onNameChange = (name, issueKey, appealKey) => ({
   type: Constants.SET_NAME,
   payload: {
     name,
-    issueId
+    issueKey,
+    appealKey
   }
 });
 
-export const onLevelsChange = (levels, issueId) => ({
+export const onLevelsChange = (levels, issueKey, appealKey) => ({
   type: Constants.SET_LEVELS,
   payload: {
     levels,
-    issueId
+    issueKey,
+    appealKey
   }
 });
 
-export const onDescriptionChange = (description, issueId) => ({
+export const onDescriptionChange = (description, issueKey, appealKey) => ({
   type: Constants.SET_DESCRIPTION,
   payload: {
     description,
-    issueId
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleReopen = (reopen, issueId) => ({
+export const onToggleReopen = (reopen, issueKey, appealKey) => ({
   type: Constants.SET_REOPEN,
   payload: {
     reopen,
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'reopen'
-    }
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleAllow = (allow, issueId) => ({
+export const onToggleAllow = (allow, issueKey, appealKey) => ({
   type: Constants.SET_ALLOW,
   payload: {
     allow,
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'allow'
-    }
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleDeny = (deny, issueId) => ({
+export const onToggleDeny = (deny, issueKey, appealKey) => ({
   type: Constants.SET_DENY,
   payload: {
     deny,
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'deny'
-    }
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleRemand = (remand, issueId) => ({
+export const onToggleRemand = (remand, issueKey, appealKey) => ({
   type: Constants.SET_REMAND,
   payload: {
     remand,
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'remand'
-    }
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleDismiss = (dismiss, issueId) => ({
+export const onToggleDismiss = (dismiss, issueKey, appealKey) => ({
   type: Constants.SET_DISMISS,
   payload: {
     dismiss,
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'dismiss'
-    }
+    issueKey,
+    appealKey
   }
 });
 
-export const onToggleVHA = (vha, issueId) => ({
+export const onToggleVHA = (vha, issueKey, appealKey) => ({
   type: Constants.SET_VHA,
   payload: {
     vha,
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
-      label: 'vha'
-    }
+    issueKey,
+    appealKey
   }
 });
 
-export const onAddIssue = (appealId, vacolsSequenceId) => (dispatch) => {
-  const outgoingIssue = {
-    appeal_id: appealId,
-    from_vacols: false,
-    vacols_sequence_id: vacolsSequenceId
-  };
+export const onAddIssue = (appealKey) => ({
+  type: Constants.ADD_ISSUE,
+  payload: {
+    appealKey
+  }
+});
 
-  ApiUtil.patch(`/hearings/appeals/${outgoingIssue.appeal_id}`, { data: { appeal: {
-    worksheet_issues_attributes: [outgoingIssue] } } }).
-    then((data) => {
-      const issue = JSON.parse(data.text).appeal.worksheet_issues.filter((dbIssue) => {
-        return outgoingIssue.vacols_sequence_id === dbIssue.vacols_sequence_id;
-      })[0];
-
-      dispatch({ type: Constants.ADD_ISSUE,
-        payload: { issue },
-        meta: {
-          analytics: {
-            category: CATEGORIES.HEARING_WORKSHEET_PAGE
-          }
-        }
-      });
-    });
-};
-
-export const onDeleteIssue = (issueId) => ({
+export const onDeleteIssue = (appealKey, issueKey) => ({
   type: Constants.DELETE_ISSUE,
   payload: {
-    issueId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE
-    }
+    appealKey,
+    issueKey
   }
 });
 
-export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
+
+export const toggleIssueDeleteModal = (appealKey, issueKey, isShowingModal) => ({
   type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
   payload: {
-    issueId,
+    issueKey,
+    appealKey,
     isShowingModal
   }
 });
-
-export const saveIssues = (worksheetIssues) => (dispatch) => {
-  _.forEach(worksheetIssues, (issue) => {
-    if (issue.edited) {
-      ApiUtil.patch(`/hearings/appeals/${issue.appeal_id}`, { data: { appeal: {
-        worksheet_issues_attributes: [issue] } } }).
-        then(() => {
-          dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
-            payload: { issueId: issue.id },
-            meta: {
-              analytics: {
-                category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-                action: ACTIONS.EDIT_ISSUE
-              }
-            }
-          });
-        },
-        () => {
-          dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
-            payload: { saveFailed: true } });
-        });
-    }
-  });
-};
 

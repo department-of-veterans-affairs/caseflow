@@ -7,8 +7,12 @@ export default class StatusMessage extends React.Component {
   render() {
     let {
       checklist,
-      checklistClassNames,
+      // TODO(nth) This is not a good variable name. It shadows the classNames node module.
+      // And it's too generic – the classNames are applied to one specific child element, but
+      // you'd never know what that element is by looking at the variable name.
+      classNames,
       example,
+      h1classNames,
       leadMessageList,
       messageText,
       title,
@@ -17,19 +21,19 @@ export default class StatusMessage extends React.Component {
       type
     } = this.props;
 
+    h1classNames = [];
+
     if (example) {
-      checklistClassNames.push('cf-sg-success-example');
+      classNames.push('cf-sg-success-example');
     }
 
     let getClassNames = () => {
-      let h1classNames = ['cf-msg-screen-heading'];
-
       if (type === 'success') {
-        h1classNames.push('cf-success');
+        h1classNames = ['cf-msg-screen-heading', 'cf-success'];
       } else if (type === 'alert') {
-        h1classNames.push('cf-red-text');
-      } else if (type === 'warning') {
-        h1classNames.push('usa-alert-error', 'cf-warning');
+        h1classNames = ['cf-msg-screen-heading', 'cf-red-text'];
+      } else {
+        h1classNames = ['cf-msg-screen-heading'];
       }
 
       return h1classNames.join(' ');
@@ -51,7 +55,7 @@ export default class StatusMessage extends React.Component {
             {listValue}
           </h2>)
       }
-      {type === 'success' && checklist && <ul className={checklistClassNames.join(' ')}>
+      {type === 'success' && checklist && <ul className={classNames.join(' ')}>
         {checklist.map((listValue, i) => <li key={i}>{listValue}</li>)}
       </ul>}
       <p className="cf-msg-screen-text">
@@ -62,7 +66,7 @@ export default class StatusMessage extends React.Component {
 }
 
 StatusMessage.defaultProps = {
-  checklistClassNames: ['cf-success-checklist', 'cf-left-padding']
+  classNames: ['cf-success-checklist', 'cf-left-padding']
 };
 
 StatusMessage.props = {

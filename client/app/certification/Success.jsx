@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 
+
 export class Success extends React.Component {
   render() {
     let {
@@ -27,7 +28,7 @@ export class Success extends React.Component {
       leadMessageList={[message]}
       checklist={poaCorrectLocation === 'VACOLS' ? checklist : checklist.concat(updatedRepInVacols)}
       type="success"
-    />;
+      />;
   }
 }
 

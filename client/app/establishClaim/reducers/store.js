@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import specialIssuesReducer, { getSpecialIssuesInitialState } from './specialIssues';
 import establishClaimReducer, { getEstablishClaimInitialState } from './index';
 import establishClaimFormReducer,
-{ getEstablishClaimFormInitialState } from './establishClaimForm';
+  { getEstablishClaimFormInitialState } from './establishClaimForm';
 import ConfigUtil from '../../util/ConfigUtil';
 
 // eslint-disable-next-line no-underscore-dangle
@@ -12,6 +12,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const createEstablishClaimStore = (props) => {
   let middleware = [thunk];
+
 
   // Avoid all the log spam when running the tests
   if (!ConfigUtil.test()) {

@@ -45,7 +45,7 @@ export default class TextField extends React.Component {
     const labelContents = <span>{label || name} {required && <span className="cf-required">Required</span>}</span>;
 
     return <div className={textInputClass.join(' ')}>
-      {label !== false &&
+      {(label !== false) &&
         <label className="question-label" htmlFor={name}>
           {
             strongLabel ?
@@ -55,22 +55,19 @@ export default class TextField extends React.Component {
         </label>
       }
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      {this.props.fixedInput ?
-        <p>{value}</p> :
-        <input
-          className={className}
-          name={name}
-          id={name}
-          onChange={this.onChange}
-          onKeyPress={onKeyPress}
-          type={type}
-          value={value}
-          readOnly={readOnly}
-          placeholder={placeholder}
-          title={title}
-          maxLength={maxLength}
-        />
-      }
+      <input
+        className={className}
+        name={name}
+        id={name}
+        onChange={this.onChange}
+        onKeyPress={onKeyPress}
+        type={type}
+        value={value}
+        readOnly={readOnly}
+        placeholder={placeholder}
+        title={title}
+        maxLength={maxLength}
+      />
 
       {(validationError) &&
         <div className="cf-validation">
@@ -105,7 +102,6 @@ TextField.propTypes = {
   },
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
-  fixedInput: PropTypes.bool,
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,

@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import InlineForm from '../../components/InlineForm';
 
-export default class StyleGuideInlineForm extends React.PureComponent {
+export default class StyleGuideInlineForm extends React.Component {
 
   constructor(props) {
     super(props);
@@ -20,9 +20,9 @@ export default class StyleGuideInlineForm extends React.PureComponent {
     return <div>
       <StyleGuideComponentTitle
         title="Inline Form"
-        id="inline-form"
+        id="inline_form"
         link="StyleGuideInlineForm.jsx"
-        isSubsection
+        isSubsection={true}
       />
       <p>
         Inline forms give designers and developers the liberty to customize
@@ -34,7 +34,7 @@ export default class StyleGuideInlineForm extends React.PureComponent {
         <NumberField
           label="Enter the number of people working today"
           name="dummyEmployeeCount"
-          isInteger
+          isInteger={true}
           value={this.state.value}
           onChange={(value) => {
             this.setState({ value });

@@ -14,6 +14,7 @@ module.exports = function(config) {
     },
 
     files: [
+      'node_modules/babel-polyfill/dist/polyfill.js',
       'test/karma/setup.js',
       'test/karma/test-index.js'
     ],
@@ -28,6 +29,7 @@ module.exports = function(config) {
 
     webpack: _.merge({
       watch: true,
+      devtool: 'inline-source-map',
       externals: {
         cheerio: 'window',
         'react/addons': true,

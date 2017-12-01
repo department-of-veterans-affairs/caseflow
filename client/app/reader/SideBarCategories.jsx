@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
-import { handleCategoryToggle } from '../reader/DocumentList/DocumentListActions';
+import ApiUtil from '../util/ApiUtil';
+import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
+import { toggleDocumentCategoryFail } from '../reader/actions';
 
 class SideBarCategories extends PureComponent {
   render() {
@@ -22,7 +23,7 @@ class SideBarCategories extends PureComponent {
     );
 
     return <div className="cf-category-sidebar">
-      {this.props.error.category.visible && <CannotSaveAlert />}
+      {this.props.showErrorMessage.category && <CannotSaveAlert />}
       <DocCategoryPicker
         allowReadOnly
         handleCategoryToggle={_.partial(this.props.handleCategoryToggle, doc.id)}
@@ -32,14 +33,38 @@ class SideBarCategories extends PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    handleCategoryToggle
-  }, dispatch)
+  handleCategoryToggle(docId, categoryName, toggleState) {
+    const categoryKey = categoryFieldNameOfCategoryName(categoryName);
+
+    ApiUtil.patch(
+      `/document/${docId}`,
+      { data: { [categoryKey]: toggleState } },
+      ENDPOINT_NAMES.DOCUMENT
+    ).catch(() =>
+      dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
+    );
+
+    dispatch({
+      type: Constants.TOGGLE_DOCUMENT_CATEGORY,
+      payload: {
+        categoryKey,
+        toggleState,
+        docId
+      },
+      meta: {
+        analytics: {
+          category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+          action: `${toggleState ? 'set' : 'unset'} document category`,
+          label: categoryName
+        }
+      }
+    });
+  }
 });
 
 const mapStateToProps = (state) => {
   return {
-    error: state.readerReducer.ui.pdfSidebar.error
+    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
   };
 };
 

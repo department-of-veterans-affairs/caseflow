@@ -15,21 +15,13 @@ class ExternalApi::EfolderService
     headers = { "FILE-NUMBER" => sanitized_vbms_id }
     response = get_efolder_response("/api/v1/files?download=true", user, headers)
 
-    if response.error?
-      err_msg = "eFolder HTTP status code: #{response.code} for appeal: #{appeal}."
-      Rails.logger.error err_msg
-      fail Caseflow::Error::DocumentRetrievalError, err_msg
-    end
+    Rails.logger.error "eFolder HTTP status code: #{response.code} for appeal: #{appeal}. " if response.error?
+    fail Caseflow::Error::DocumentRetrievalError if response.error?
 
-    response_attrs = JSON.parse(response.body)["data"]["attributes"]
-    documents = response_attrs["documents"] || []
+    documents = JSON.parse(response.body)["data"]["attributes"]["documents"] || []
     Rails.logger.info("# of Documents retrieved from efolder: #{documents.length}")
 
-    {
-      manifest_vbms_fetched_at: response_attrs["manifest_vbms_fetched_at"],
-      manifest_vva_fetched_at: response_attrs["manifest_vva_fetched_at"],
-      documents: documents.map { |efolder_document| Document.from_efolder(efolder_document, sanitized_vbms_id) }
-    }
+    documents.map { |efolder_document| Document.from_efolder(efolder_document) }
   end
 
   def self.efolder_base_url

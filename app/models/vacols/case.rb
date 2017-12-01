@@ -6,9 +6,8 @@ class VACOLS::Case < VACOLS::Record
   has_one    :folder,          foreign_key: :ticknum
   has_one    :representative,  foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
-  has_many   :case_issues,     foreign_key: :isskey
+  has_many   :issues,          foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
-  has_many   :case_hearings,   foreign_key: :folder_nr
 
   class InvalidLocationError < StandardError; end
 
@@ -40,7 +39,6 @@ class VACOLS::Case < VACOLS::Record
     "G" => "Advance Failure to Respond",
     "L" => "Manlincon Remand",
     "M" => "Merged Appeal",
-    "P" => "RAMP Opt-in",
     "Q" => "Recon Motion Withdrawn",
     "R" => "Reconsideration by Letter",
     "V" => "Motion to Vacate Withdrawn",
@@ -119,7 +117,7 @@ class VACOLS::Case < VACOLS::Record
   # NOTE(jd): This is a list of the valid locations that Caseflow
   # supports updating an appeal to. This is a subset of the overall locations
   # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w(50 51 53 54 77 98 99).freeze
+  VALID_UPDATE_LOCATIONS = %w(50 51 53 54 98).freeze
 
   JOIN_ISSUE_COUNT = "
     inner join
@@ -180,9 +178,16 @@ class VACOLS::Case < VACOLS::Record
   end
 
   def self.amc_full_grants(outcoded_after:)
-    VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-                .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-                .order("BFDDEC ASC")
+    if FeatureToggle.enabled?(:dispatch_full_grants_with_pa)
+      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
+                  .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+                  .order("BFDDEC ASC")
+    else
+      VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
+                  .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+                  .where(%(BFSO <> 'T'))
+                  .order("BFDDEC ASC")
+    end
   end
 
   # rubocop:disable Metrics/MethodLength

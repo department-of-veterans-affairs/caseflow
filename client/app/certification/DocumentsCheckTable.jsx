@@ -4,11 +4,11 @@ import FoundIcon from '../components/FoundIcon';
 import NotFoundIcon from '../components/NotFoundIcon';
 import Table from '../components/Table';
 
-const found = <div><FoundIcon /><span>&emsp;Found in VBMS</span></div>;
+const found = <div><FoundIcon/><span>&emsp;Found in VBMS</span></div>;
 
-const notFound = <div><NotFoundIcon />
-  <span className="error-status">&emsp;Not found in VBMS</span>
-</div>;
+const notFound = <div><NotFoundIcon/>
+                    <span className="error-status">&emsp;Not found in VBMS</span>
+                 </div>;
 
 const documentIcon = (doc) => {
   return doc.isMatching ? found : notFound;
@@ -47,12 +47,11 @@ class DocumentsCheckTable extends React.Component {
     let { form9, nod, soc, ssocs } = this.props;
 
     return <Table
-      columns={this.getUserColumns()}
-      rowObjects={[form9, nod, soc].concat(ssocs)}
-      caption="This table compares received dates for forms stored in VACOLS and VBMS."
-      summary="Documents required for certification."
-      slowReRendersAreOk
-    />;
+        columns={this.getUserColumns()}
+        rowObjects={[form9, nod, soc].concat(ssocs)}
+        caption="This table compares received dates for forms stored in VACOLS and VBMS."
+        summary="Documents required for certification."
+      />;
   }
 }
 

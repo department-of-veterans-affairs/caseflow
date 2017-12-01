@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
-import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 class HearingWorksheetIssues extends PureComponent {
 
@@ -13,11 +12,11 @@ class HearingWorksheetIssues extends PureComponent {
 
   render() {
     let {
-      worksheetIssues,
+      worksheetStreamsIssues,
       worksheetStreamsAppeal,
-      appealKey,
-      countOfIssuesInPreviousAppeals
+      appealKey
     } = this.props;
+
 
     const columns = [
       {
@@ -40,7 +39,7 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'levels'
       },
       {
-        header: 'Notes',
+        header: 'Description',
         align: 'left',
         valueName: 'description'
       },
@@ -48,77 +47,80 @@ class HearingWorksheetIssues extends PureComponent {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
-      }
-    ];
-
-    if (!this.props.print) {
-      columns.push({
+      },
+      {
         header: '',
         align: 'left',
         valueName: 'deleteIssue'
-      });
-    }
+      }
+    ];
 
-    const filteredIssues = filterIssuesOnAppeal(worksheetIssues, worksheetStreamsAppeal.id);
+    // Maps over all issues inside stream
+    const rowObjects = Object.keys(worksheetStreamsIssues).map((issue, key) => {
 
-    const rowObjects = Object.keys(filteredIssues).map((issue, key) => {
-
-      let issueRow = worksheetIssues[issue];
+      let issueRow = worksheetStreamsIssues[issue];
 
       return {
-        counter: <b>{key + countOfIssuesInPreviousAppeals + 1}.</b>,
+        counter: <b>{key + 1}.</b>,
         program: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="program"
-          maxLength={30}
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="program"
+            appealKey={appealKey}
+            issueKey={key}
         />,
         issue: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="name"
-          maxLength={100}
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="name"
+            appealKey={appealKey}
+            issueKey={key}
         />,
         levels: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="levels"
-          maxLength={100}
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="levels"
+            appealKey={appealKey}
+            issueKey={key}
         />,
         description: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="description"
-          readOnly={this.props.print}
-          maxLength={100}
+            appeal={worksheetStreamsAppeal}
+            issue={issueRow}
+            field="description"
+            appealKey={appealKey}
+            issueKey={key}
         />,
         actions: <HearingWorksheetPreImpressions
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
+                    appeal={worksheetStreamsAppeal}
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          appealKey={appealKey}
+                    appeal={worksheetStreamsAppeal}
+                    issue={issueRow}
+                    appealKey={appealKey}
+                    issueKey={key}
         />
       };
     });
 
     return <div>
-      <Table
-        className="cf-hearings-worksheet-issues"
-        columns={columns}
-        rowObjects={rowObjects}
-        summary="Worksheet Issues"
-        getKeyForRow={this.getKeyForRow}
-      />
-    </div>;
+          <Table
+              className="cf-hearings-worksheet-issues"
+              columns={columns}
+              rowObjects={rowObjects}
+              summary={'Worksheet Issues'}
+              getKeyForRow={this.getKeyForRow}
+          />
+        </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  worksheetIssues: state.worksheetIssues
+  HearingWorksheetIssues: state
 });
+
 
 export default connect(
   mapStateToProps,
@@ -126,6 +128,6 @@ export default connect(
 
 HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
-  worksheetStreamsAppeal: PropTypes.object.isRequired,
-  countOfIssuesInPreviousAppeals: PropTypes.number.isRequired
+  worksheetStreamsIssues: PropTypes.array.isRequired,
+  worksheetStreamsAppeal: PropTypes.object.isRequired
 };
