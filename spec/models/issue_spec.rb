@@ -94,22 +94,6 @@ describe Issue do
     end
   end
 
-  context "#closed?" do
-    subject { issue.closed? }
-
-    context "when it has a disposition" do
-      let(:disposition) { :allowed }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when there is no disposition" do
-      let(:disposition) { nil }
-
-      it { is_expected.to be_falsey }
-    end
-  end
-
   context "#new_material?" do
     subject { issue.new_material? }
 

@@ -92,7 +92,7 @@ class AppealEvents
   end
 
   def issue_event
-    appeal.issues.select(&:closed?).map do |issue|
+    appeal.issues.map do |issue|
       AppealEvent.new(issue_disposition: issue.disposition, date: issue.close_date)
     end
   end

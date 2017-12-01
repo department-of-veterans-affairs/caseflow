@@ -46,10 +46,6 @@ class Issue
     disposition == :remanded
   end
 
-  def closed?
-    !!disposition
-  end
-
   # "New Material" (and "Non new material") are the exact
   # terms used internally by attorneys/judges. These mean the issue
   # was allowing/denying new material (such as medical evidence) to be used
