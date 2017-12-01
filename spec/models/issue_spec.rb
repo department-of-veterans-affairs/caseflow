@@ -19,6 +19,7 @@ describe Issue do
       { "isskey" => "12345678",
         "issseq" => 1,
         "issdc" => "3",
+        "issdcls" => 3.days.ago,
         "issdesc" => "CERVICAL CONDITION AS CLAIMED",
         "issprog" => "02",
         "isscode" => "15",
@@ -43,6 +44,7 @@ describe Issue do
       expect(subject.note).to eq("CERVICAL CONDITION AS CLAIMED")
       expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other", "03 - Left knee", "04 - Right knee"])
       expect(subject.disposition).to eq(:remanded)
+      expect(subject.close_date).to eq(AppealRepository.normalize_vacols_date(3.days.ago))
     end
   end
 

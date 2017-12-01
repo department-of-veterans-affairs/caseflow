@@ -22,6 +22,7 @@ class VACOLS::CaseIssue < VACOLS::Record
         ISSUES.ISSKEY,
         ISSUES.ISSSEQ,
         ISSUES.ISSDC,
+        ISSUES.ISSDCLS,
         ISSUES.ISSDESC,
         ISSUES.ISSPROG,
         ISSUES.ISSCODE,
