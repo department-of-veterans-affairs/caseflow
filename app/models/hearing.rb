@@ -22,8 +22,25 @@ class Hearing < ActiveRecord::Base
     !!disposition
   end
 
+  def no_show?
+    disposition == :no_show
+  end
+
   def scheduled_pending?
     date && !closed?
+  end
+
+  def held_open?
+    hold_open && hold_open > 0
+  end
+
+  def hold_release_date
+    return unless held_open?
+    date.to_date + hold_open.days
+  end
+
+  def no_show_excuse_letter_due_date
+    date.to_date + 15.days
   end
 
   def active_appeal_streams
@@ -35,6 +52,10 @@ class Hearing < ActiveRecord::Base
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
       super
     end
+  end
+
+  def regional_office_timezone
+    HearingMapper.timezone(regional_office_key)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -88,6 +109,7 @@ class Hearing < ActiveRecord::Base
         :representative,
         :representative_name,
         :regional_office_name,
+        :regional_office_timezone,
         :venue, :appellant_last_first_mi,
         :veteran_name, :vbms_id
       ],

@@ -7,22 +7,28 @@ import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIn
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { hideSearchBar } from './PdfViewer/PdfViewerActions';
+import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { READER_COLOR } from './constants';
 
 export class DocumentSearch extends React.PureComponent {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
+
     this.searchTerm = '';
+    this.sentAction = {};
+    this.loading = false;
   }
 
   onChange = (value) => {
     this.searchTerm = value;
 
-    if (_.isEmpty(this.props.pdfText)) {
+    if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
+      this.loading = Boolean(this.searchTerm.length);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
+      this.sentAction[this.props.file] = true;
     }
 
     // todo: add guard to PdfActions.searchText to abort if !searchTerm.length
@@ -53,6 +59,8 @@ export class DocumentSearch extends React.PureComponent {
     }
 
     if (event[metaKey] && event.code === 'KeyF') {
+      this.props.showSearchBar();
+      this.searchBar.setInputFocus();
       event.preventDefault();
     }
   }
@@ -62,13 +70,17 @@ export class DocumentSearch extends React.PureComponent {
     // ctrl+f behavior, and other window-bound shortcuts stop working
     if (this.props.hidden) {
       this.searchBar.releaseInputFocus();
-    } else {
+    } else if (prevProps.hidden) {
+      // only hijack focus on show searchbar
       this.searchBar.setInputFocus();
     }
 
     if (this.props.file !== prevProps.file) {
       this.clearSearch();
     }
+
+    // todo: after running a search, this.loading doesn't reset on change documents
+    this.loading = Boolean(!this.props.textExtracted && this.searchTerm.length);
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
@@ -115,6 +127,8 @@ export class DocumentSearch extends React.PureComponent {
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
         internalText={this.getInternalText()}
+        loading={this.loading}
+        spinnerColor={READER_COLOR}
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
@@ -146,7 +160,8 @@ const mapStateToProps = (state, props) => ({
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   getCurrentMatch: getCurrentMatchIndex(state, props),
-  hidden: state.readerReducer.ui.pdf.hideSearchBar
+  hidden: state.readerReducer.ui.pdf.hideSearchBar,
+  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -154,7 +169,8 @@ const mapDispatchToProps = (dispatch) => ({
     searchText,
     getDocumentText,
     updateSearchIndex,
-    hideSearchBar
+    hideSearchBar,
+    showSearchBar
   }, dispatch)
 });
 
