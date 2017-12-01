@@ -83,6 +83,10 @@ export class Certification extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   onSuccess = (data) => {
     return <Provider store={configureStore(JSON.parse(data.text).certification, JSON.parse(data.text).form9PdfPath)}>
       <div>
@@ -131,6 +135,8 @@ export class Certification extends React.Component {
   }
 
   onError = () => {
+    clearInterval(this.interval);
+
     return <StatusMessage
       title="Technical Difficulties">
       Systems that Caseflow Certification connects to are experiencing technical difficulties
@@ -141,23 +147,43 @@ export class Certification extends React.Component {
 
   render() {
 
+    let waitingOnResponse = false;
+
     const fetchCertificationData = new Promise((resolve, reject) => {
-      let polling = setInterval(() => {
-        ApiUtil.get(`/certifications/${this.props.vacolsId}`).
-          then((data) => {
-            if (!JSON.parse(data.text).loading_data) {
-              resolve(data);
-              clearInterval(polling);
+
+      ApiUtil.get(`/certifications/${this.props.vacolsId}`).
+        then((data) => {
+          if (JSON.parse(data.text).loading_data_failed) {
+            return reject(data);
+          }
+          if (!JSON.parse(data.text).loading_data) {
+            return resolve(data);
+          }
+          this.interval = setInterval(() => {
+            if (!waitingOnResponse) {
+              waitingOnResponse = true;
+              ApiUtil.get(`/certifications/${this.props.vacolsId}`).
+                then((response) => {
+                  // keep setInterval going 
+                  waitingOnResponse = false;
+                  if (JSON.parse(response.text).loading_data_failed) {
+                    reject(response);
+                    clearInterval(this.interval);
+                  }
+                  if (!JSON.parse(response.text).loading_data) {
+                    resolve(response);
+                    clearInterval(this.interval);
+                  }
+                }, (error) => {
+                  waitingOnResponse = false;
+                  reject(error);
+                  clearInterval(this.interval);
+                });
             }
-            if (JSON.parse(data.text).loading_data_failed) {
-              reject(data);
-              clearInterval(polling);
-            }
-          }, (error) => {
-            reject(error);
-            clearInterval(polling);
-          });
-      }, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
+          }, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
+        }, (error) => {
+          return reject(error);
+        });
     });
 
     const initialMessage = 'Loading and checking documents from the Veteran’s file…';
