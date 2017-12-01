@@ -38,21 +38,29 @@ node('deploy') {
       step([$class: 'WsCleanup'])
     }
 
+    if (env.APP_ENV == 'demo') {
+      stage('deploy-message') {
+        checkout scm
+        // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
+
+        DEPLOY_MESSAGE = sh (
+          // magical shell script that will find the latest tag for the repository
+          script: "git log \$(git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git \
+                   | awk '{print \$2}' | grep -E 'manual|stable' \
+                   | sort -t/ -nk4 \
+                   | awk -F\"/\" '{print \$0}' \
+                   | tail -n 1 \
+                   | awk '{print \$1}')..HEAD --pretty='format:%H     %<(25)%an     %s'",
+          returnStdout: true
+        ).trim()
+      }
+    }
+
     // Checkout the deployment repo for the ansible script. This is needed
     // since the deployment scripts are separated from the source code.
     stage ('pull-deploy-repo') {
 
       sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
-      checkout scm
-      // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
-      if (env.APP_ENV == 'demo') {
-        DEPLOY_MESSAGE = sh (
-          // magical shell script that will find the latest tag for the repository
-          script: "git log \$(git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -E 'manual|stable' | sort -t/ -nk4 | awk -F\"/\" '{print \$0}' | tail -n 1 | awk '{print \$1}')..HEAD --pretty='format:%H     %<(25)%an     %s'",
-          returnStdout: true
-        ).trim()
-        sh "echo ${DEPLOY_MESSAGE}"
-      }
       dir ('./appeals-deployment/ansible') {
         // The commmon pipeline script should kick off the deployment.
         commonPipeline = load "../jenkins/common-pipeline.groovy"
