@@ -4,7 +4,7 @@ import React from 'react';
 import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideLoadingButton extends React.PureComponent {
+export default class StyleGuideLoadingButton extends React.Component {
   constructor(props) {
     super(props);
 
