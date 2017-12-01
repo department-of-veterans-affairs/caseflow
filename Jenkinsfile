@@ -51,6 +51,7 @@ node('deploy') {
           script: "git log \$(git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -E 'manual|stable' | sort -t/ -nk4 | awk -F\"/\" '{print \$0}' | tail -n 1 | awk '{print \$1}')..HEAD --pretty='format:%H     %<(25)%an     %s'",
           returnStdout: true
         ).trim()
+        sh "echo ${DEPLOY_MESSAGE}"
       }
       dir ('./appeals-deployment/ansible') {
         // The commmon pipeline script should kick off the deployment.
