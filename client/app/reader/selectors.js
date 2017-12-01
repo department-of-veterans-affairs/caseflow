@@ -96,6 +96,7 @@ export const getMatchesPerPageInFile = createSelector(
   (matchedPages, txt) => matchedPages.
     map((page) => ({
       id: page.id,
+      pageIndex: page.pageIndex,
       matches: (page.text.match(new RegExp(txt, 'gi')) || []).length
     }))
 );

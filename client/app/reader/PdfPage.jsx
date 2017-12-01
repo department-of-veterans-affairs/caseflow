@@ -76,16 +76,20 @@ export class PdfPage extends React.PureComponent {
 
   getIndexInPage = (matchIndex = this.props.currentMatchIndex) => {
     // get page, relative index of match at absolute index
-    let pageIndex = 0;
-    let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
+    let cumulativeMatches = 0;
 
-    while (matchesProcessed < matchIndex + 1) {
-      pageIndex += 1;
-      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
+      if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
+        return [
+          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
+          this.props.currentMatchIndex - cumulativeMatches
+        ];
+      }
+
+      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
     }
-    const pageWithMatch = this.props.matchesPerPage[pageIndex];
 
-    return [pageIndex, this.props.currentMatchIndex + pageWithMatch.matches - matchesProcessed];
+    return [-1, -1];
   }
 
   // This method is the interaction between our component and PDFJS.
