@@ -176,7 +176,6 @@ describe Appeal do
     end
   end
 
-<<<<<<< HEAD
   context "#form9_due_date" do
     subject { appeal.form9_due_date }
 
