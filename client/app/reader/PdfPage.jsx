@@ -55,10 +55,10 @@ export class PdfPage extends React.PureComponent {
   highlightMarkAtIndex = (scrollToMark) => {
     _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
 
-    const [pageWithMatch, indexInPage] = this.getIndexInPage();
+    const [pageIndexWithMatch, indexInPage] = this.getIndexInPage();
     const selectedMark = this.marks[indexInPage];
 
-    if (_.endsWith(pageWithMatch.id, `pdf-${this.props.pageIndex}`)) {
+    if (pageIndexWithMatch === this.props.pageIndex) {
       if (selectedMark) {
         selectedMark.classList.add('highlighted');
 
@@ -83,10 +83,9 @@ export class PdfPage extends React.PureComponent {
       pageIndex += 1;
       matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
     }
-
     const pageWithMatch = this.props.matchesPerPage[pageIndex];
 
-    return [pageWithMatch, pageWithMatch.matches - (matchesProcessed - this.props.currentMatchIndex)];
+    return [pageIndex, this.props.currentMatchIndex + pageWithMatch.matches - matchesProcessed];
   }
 
   // This method is the interaction between our component and PDFJS.

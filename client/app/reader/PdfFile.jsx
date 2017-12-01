@@ -176,18 +176,17 @@ export class PdfFile extends React.PureComponent {
 
   getPageIndexofMatch = (matchIndex = this.props.currentMatchIndex) => {
     // get index in matchesPerPage of page containing match index
-    let pageIndex = 0;
-    let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
+    let cumulativeMatches = 0;
 
-    while (matchesProcessed < matchIndex + 1) {
-      pageIndex += 1;
-      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+    for (let pageIndex = 0; pageIndex < this.props.matchesPerPage.length; pageIndex++) {
+      cumulativeMatches += this.props.matchesPerPage[pageIndex].matches;
+
+      if (matchIndex < cumulativeMatches) {
+        return pageIndex;
+      }
     }
 
-    const pageIdRE = /\/document\/\d+\/pdf-(\d+)/gi;
-    const pageIdMatch = pageIdRE.exec(this.props.matchesPerPage[pageIndex].id);
-
-    return parseInt(pageIdMatch[1], 10);
+    return -1;
   }
 
   componentDidUpdate = (prevProps) => {
@@ -200,15 +199,17 @@ export class PdfFile extends React.PureComponent {
       if (this.props.searchText && this.props.matchesPerPage.length) {
         const pageIndex = this.getPageIndexofMatch();
 
-        if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
-          // todo: scroll to page if page is not rendered
-          if (!_.isNull(this.props.scrollTop)) {
-            this.scrollToPosition(pageIndex, this.props.scrollTop);
-            this.props.setDocScrollPosition(null);
+        if (pageIndex >= 0) {
+          if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
+            // todo: scroll to page if page is not rendered
+            if (!_.isNull(this.props.scrollTop)) {
+              this.scrollToPosition(pageIndex, this.props.scrollTop);
+              this.props.setDocScrollPosition(null);
+            }
+          } else {
+            // scroll to mark page before highlighting--may not be in DOM
+            this.list.scrollToRow(pageIndex);
           }
-        } else {
-          // scroll to mark page before highlighting--may not be in DOM
-          this.list.scrollToRow(pageIndex);
         }
       }
     }
