@@ -189,6 +189,25 @@ export class PdfFile extends React.PureComponent {
     return -1;
   }
 
+  scrollToSearchTerm = (prevProps) => {
+    if (this.props.searchText && this.props.matchesPerPage.length) {
+      const pageIndex = this.getPageIndexofMatch();
+
+      if (pageIndex >= 0) {
+        if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
+          // todo: scroll to page if page is not rendered
+          if (!_.isNull(this.props.scrollTop)) {
+            this.scrollToPosition(pageIndex, this.props.scrollTop);
+            this.props.setDocScrollPosition(null);
+          }
+        } else {
+          // scroll to mark page before highlighting--may not be in DOM
+          this.list.scrollToRow(pageIndex);
+        }
+      }
+    }
+  }
+
   componentDidUpdate = (prevProps) => {
     if (this.list && this.props.isVisible) {
       this.list.recomputeRowHeights();
@@ -196,22 +215,7 @@ export class PdfFile extends React.PureComponent {
       this.jumpToPage();
       this.jumpToComment();
 
-      if (this.props.searchText && this.props.matchesPerPage.length) {
-        const pageIndex = this.getPageIndexofMatch();
-
-        if (pageIndex >= 0) {
-          if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
-            // todo: scroll to page if page is not rendered
-            if (!_.isNull(this.props.scrollTop)) {
-              this.scrollToPosition(pageIndex, this.props.scrollTop);
-              this.props.setDocScrollPosition(null);
-            }
-          } else {
-            // scroll to mark page before highlighting--may not be in DOM
-            this.list.scrollToRow(pageIndex);
-          }
-        }
-      }
+      this.scrollToSearchTerm(prevProps);
     }
   }
 
