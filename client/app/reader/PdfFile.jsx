@@ -178,11 +178,11 @@ export class PdfFile extends React.PureComponent {
     // get index in matchesPerPage of page containing match index
     let cumulativeMatches = 0;
 
-    for (let pageIndex = 0; pageIndex < this.props.matchesPerPage.length; pageIndex++) {
-      cumulativeMatches += this.props.matchesPerPage[pageIndex].matches;
+    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
+      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
 
       if (matchIndex < cumulativeMatches) {
-        return pageIndex;
+        return this.props.matchesPerPage[matchesPerPageIndex].pageIndex;
       }
     }
 
