@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
-import _ from 'lodash';
 import { Link } from 'react-router-dom';
 
 export class Dockets extends React.Component {
@@ -12,13 +11,12 @@ export class Dockets extends React.Component {
     return (type === 'central_office') ? 'CO' : type;
   }
 
-  getStartTime = () => {
-    const startTime = `${moment().
-      add(_.random(0, 120), 'minutes').
-      format('LT')} EST`;
-
-    return startTime.replace('AM', 'a.m.').replace('PM', 'p.m.');
-  }
+  getDate = (date) => {
+    return moment(date).
+      format('LT').
+      replace('AM', 'a.m.').
+      replace('PM', 'p.m.');
+  };
 
   getKeyForRow = (index) => {
     return index;
@@ -34,7 +32,7 @@ export class Dockets extends React.Component {
     }
 
     return <Link to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-        {moment(docket.date).format('l')}
+      {moment(docket.date).format('l')}
     </Link>;
   }
 
@@ -81,10 +79,10 @@ export class Dockets extends React.Component {
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: this.getStartTime(),
+        start_time: `${this.getDate(docket.date)} EDT`,
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
-        slots: _.random(8, 12),
+        slots: docket.slots,
         scheduled: this.scheduled(docket)
       };
     });
@@ -93,13 +91,13 @@ export class Dockets extends React.Component {
       <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
           <h1>Upcoming Hearing Days</h1>
-          <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+          <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
         </div>
         <Table
           className="dockets"
           columns={columns}
           rowObjects={rowObjects}
-          summary={'Upcoming Hearing Days?'}
+          summary="Upcoming Hearing Days?"
           getKeyForRow={this.getKeyForRow}
         />
       </div>
@@ -116,6 +114,6 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
+  veteranLawJudge: PropTypes.object.isRequired,
   dockets: PropTypes.object.isRequired
 };

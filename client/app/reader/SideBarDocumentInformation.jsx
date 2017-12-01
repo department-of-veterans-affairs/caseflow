@@ -3,6 +3,7 @@ import { formatDateStr } from '../util/DateUtil';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import IssueList from './IssueList';
 
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
@@ -25,7 +26,7 @@ class SideBarDocumentInformation extends PureComponent {
         refresh this page</a> or try again later.
       </Alert>;
     } else if (_.isEmpty(appeal)) {
-      renderComponent = <LoadingMessage message="Loading details..."/>;
+      renderComponent = <LoadingMessage message="Loading details..." />;
     } else {
       renderComponent = <div>
         <p className="cf-pdf-meta-title">
@@ -41,18 +42,8 @@ class SideBarDocumentInformation extends PureComponent {
           <strong>Regional Office:</strong> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
         </p>
         <div className="cf-pdf-meta-title">
-          <strong>Issues:</strong> {_.size(appeal.issues) ?
-            <ol className="cf-pdf-meta-doc-info-issues">
-              {appeal.issues.map((issue) =>
-                <li key={`${issue.appeal_id}_${issue.vacols_sequence_id}`}>
-                  <span>
-                    {issue.type.label}: {issue.levels ? issue.levels.join(', ') : ''}
-                  </span>
-                </li>
-              )}
-            </ol> :
-            'No issues on appeal'
-          }
+          <strong>Issues: </strong>
+          <IssueList appeal={appeal} className="cf-pdf-meta-doc-info-issues" />
         </div>
       </div>;
     }
@@ -84,5 +75,4 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps
 )(SideBarDocumentInformation);
-
 

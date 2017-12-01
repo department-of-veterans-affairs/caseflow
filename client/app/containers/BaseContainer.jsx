@@ -7,27 +7,25 @@ import Alert from '../components/Alert';
 // container components
 import EstablishClaim from './EstablishClaimPage/EstablishClaim';
 import StyleGuideIndex from './StyleGuide/StyleGuideIndex';
-import StyleGuideModal from './StyleGuide/StyleGuideModal';
-import StyleGuideTabs from './StyleGuide/StyleGuideTabs';
 import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
-import Reader from '../reader/index.jsx';
+import Reader from '../reader/index';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
 import CanceledTasksIndex from './CanceledTasksIndex';
+import CancelCertificationConfirmation from '../certification/CancelCertificationConfirmation';
 
 const Pages = {
   CaseWorkerIndex,
+  CancelCertificationConfirmation,
   DecisionReviewer: Reader,
   Intake,
   EstablishClaim,
   EstablishClaimCancel,
   EstablishClaimComplete,
   StyleGuideIndex,
-  StyleGuideModal,
-  StyleGuideTabs,
   TestPage,
   UnpreparedTasksIndex,
   CanceledTasksIndex
@@ -79,7 +77,7 @@ export default class BaseContainer extends React.Component {
 
     return <div>
       {alert && <div className="cf-app-segment">
-          <Alert
+        <Alert
           type={alert.type}
           title={alert.title}
           message={alert.message}

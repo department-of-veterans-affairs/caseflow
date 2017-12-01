@@ -1,13 +1,21 @@
 import React, { PureComponent } from 'react';
+<<<<<<< HEAD
+=======
+import { bindActionCreators } from 'redux';
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import DocCategoryPicker from '../reader/DocCategoryPicker';
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import * as Constants from '../reader/constants';
 import { categoryFieldNameOfCategoryName } from './utils';
+<<<<<<< HEAD
 import ApiUtil from '../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from './analytics';
 import { toggleDocumentCategoryFail } from '../reader/actions';
+=======
+import { handleCategoryToggle } from '../reader/DocumentList/DocumentListActions';
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 
 class SideBarCategories extends PureComponent {
   render() {
@@ -23,7 +31,11 @@ class SideBarCategories extends PureComponent {
     );
 
     return <div className="cf-category-sidebar">
+<<<<<<< HEAD
       {this.props.showErrorMessage.category && <CannotSaveAlert />}
+=======
+      {this.props.error.category.visible && <CannotSaveAlert />}
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
       <DocCategoryPicker
         allowReadOnly
         handleCategoryToggle={_.partial(this.props.handleCategoryToggle, doc.id)}
@@ -33,6 +45,7 @@ class SideBarCategories extends PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => ({
+<<<<<<< HEAD
   handleCategoryToggle(docId, categoryName, toggleState) {
     const categoryKey = categoryFieldNameOfCategoryName(categoryName);
 
@@ -60,11 +73,20 @@ const mapDispatchToProps = (dispatch) => ({
       }
     });
   }
+=======
+  ...bindActionCreators({
+    handleCategoryToggle
+  }, dispatch)
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 });
 
 const mapStateToProps = (state) => {
   return {
+<<<<<<< HEAD
     showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage
+=======
+    error: state.readerReducer.ui.pdfSidebar.error
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   };
 };
 

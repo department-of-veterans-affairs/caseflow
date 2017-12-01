@@ -16,61 +16,12 @@ class Certification < ActiveRecord::Base
       loading_data_failed: false
     )
 
-    # We don't run sidekiq in development mode.
+    # Most developers don't run shoryuken in development mode.
     if Rails.env.development? || Rails.env.test?
       StartCertificationJob.perform_now(self)
     else
       StartCertificationJob.perform_later(self, RequestStore[:current_user], RequestStore[:current_user].ip_address)
     end
-  end
-
-  def start!
-    return certification_status unless can_be_updated?
-
-    user = RequestStore[:current_user]
-
-    create_or_update_form8
-
-    update_attributes!(
-      already_certified:   calculate_already_certified,
-      vacols_data_missing: calculate_vacols_data_missing,
-      nod_matching_at:     calculate_nod_matching_at,
-      form9_matching_at:   calculate_form9_matching_at,
-      soc_matching_at:     calculate_soc_matching_at,
-      ssocs_required:      calculate_ssocs_required,
-      ssocs_matching_at:   calculcate_ssocs_matching_at,
-      form8_started_at:    (certification_status == :started) ? now : nil,
-      vacols_hearing_preference: appeal.hearing_request_type,
-      certifying_office: appeal.regional_office_name,
-      certifying_username: appeal.regional_office_key,
-      certifying_official_name: user ? user.full_name : nil,
-      certification_date: Time.zone.now.to_date
-    )
-
-    certification_status
-  end
-
-  def fetch_power_of_attorney!
-    poa = appeal.power_of_attorney
-    update = {
-      bgs_representative_type: poa.bgs_representative_type,
-      bgs_representative_name: poa.bgs_representative_name,
-      vacols_representative_type: poa.vacols_representative_type,
-      vacols_representative_name: poa.vacols_representative_name
-    }
-
-    address = poa.bgs_representative_address
-    if address
-      update = update.merge(bgs_rep_address_line_1: address[:address_line_1],
-                            bgs_rep_address_line_2: address[:address_line_2],
-                            bgs_rep_address_line_3: address[:address_line_3],
-                            bgs_rep_city: address[:city],
-                            bgs_rep_country: address[:country],
-                            bgs_rep_state: address[:state],
-                            bgs_rep_zip: address[:zip])
-    end
-
-    update_attributes!(update)
   end
 
   def bgs_rep_address_found?
@@ -211,8 +162,6 @@ class Certification < ActiveRecord::Base
       :started
     end
   end
-
-  private
 
   def now
     @now ||= Time.zone.now

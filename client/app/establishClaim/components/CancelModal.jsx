@@ -9,6 +9,22 @@ import { getCancelFeedbackErrorMessage } from '../selectors';
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
 
+const CANCEL_ERRORS = {
+  task_already_completed: {
+    header: 'This task was already completed.',
+    body: <span>
+            Please return
+            to <a href="/dispatch/establish-claim/">Work History</a> to
+            establish the next claim.
+    </span>
+  },
+  default: {
+    header: 'Error',
+    body: 'There was an error while cancelling the current claim. ' +
+          'Please try again later'
+  }
+};
+
 export const CancelModal = ({
   cancelFeedback,
   errorMessage,
@@ -31,7 +47,7 @@ export const CancelModal = ({
           onClick: handleCancelSubmit
         }
       ]}
-      visible={true}
+      visible
       closeHandler={handleCloseCancelModal}
       title="Stop Processing Claim">
       <p>
@@ -46,7 +62,7 @@ export const CancelModal = ({
         label="Explanation"
         name="Explanation"
         onChange={handleChangeCancelFeedback}
-        required={true}
+        required
         errorMessage={errorMessage}
         value={cancelFeedback}
       />
@@ -99,13 +115,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       ApiUtil.patch(`/dispatch/establish-claim/${ownProps.taskId}/cancel`, { data }).
         then(() => {
           WindowUtil.reloadPage();
-        }, () => {
+        }, (error) => {
           _dispatch({ type: Constants.REQUEST_CANCEL_FEEDBACK_FAILURE });
+
+          let errorMessage = CANCEL_ERRORS[error.response.body.error_code] ||
+                             CANCEL_ERRORS.default;
+
           ownProps.handleAlert(
             'error',
-            'Error',
-            'There was an error while cancelling the current claim.' +
-            ' Please try again later'
+            errorMessage.header,
+            errorMessage.body
           );
         });
     })

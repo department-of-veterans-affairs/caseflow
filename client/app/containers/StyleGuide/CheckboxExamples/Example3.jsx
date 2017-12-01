@@ -42,11 +42,11 @@ export default class Example3 extends React.Component {
     ];
 
     return <CheckboxGroup
-      label={<h3>Vertical Checkboxes</h3>}
+      label={<h3 id="vertical">Vertical Checkboxes</h3>}
       name="checkbox_example_3"
       options={options}
       onChange={this.onChange}
       values={this.state.values}
-    ></CheckboxGroup>;
+    />;
   }
 }

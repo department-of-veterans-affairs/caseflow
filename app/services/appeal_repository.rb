@@ -1,5 +1,3 @@
-
-
 class AppealRepository
   CAVC_TYPE = "7".freeze
 
@@ -9,6 +7,12 @@ class AppealRepository
   # `select 1 from dual`
   def self.vacols_db_connection_active?
     VACOLS::Record.connection.active?
+  end
+
+  def self.transaction
+    VACOLS::Case.transaction do
+      yield
+    end
   end
 
   # Returns a boolean saying whether the load succeeded
@@ -41,10 +45,11 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
                                   service: :vacols,
                                   name: "appeals_ready_for_hearing") do
-      # An appeal is ready for hearing if form 9 has been submitted, but no decision
-      # has yet been made
-      VACOLS::Case.where(bfcorlid: vbms_id, bfddec: nil)
+      # An appeal is ready for hearing if form 9 has been submitted,
+      # with no decision date OR with dispositions: "3" Remanded and "L" Manlincon remands
+      VACOLS::Case.where(bfcorlid: vbms_id)
                   .where.not(bfd19: nil)
+                  .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
                   .includes(:folder, :correspondent)
     end
 
@@ -98,7 +103,6 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
-      veteran_date_of_birth: normalize_vacols_date(correspondent_record.sdob),
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
@@ -124,9 +128,11 @@ class AppealRepository
       case_review_date: folder_record.tidktime,
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
+      location_code: case_record.bfcurloc,
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
+      last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
       docket_number: folder_record.tinum,
@@ -138,7 +144,7 @@ class AppealRepository
 
   # :nocov:
   def self.issues(vacols_id)
-    VACOLS::CaseIssue.descriptions([vacols_id])[vacols_id].map do |issue_hash|
+    (VACOLS::CaseIssue.active_issues([vacols_id])[vacols_id] || []).map do |issue_hash|
       Issue.load_from_vacols(issue_hash)
     end
   end
@@ -236,6 +242,55 @@ class AppealRepository
     "98"
   end
 
+  # Close an appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
+  # WARNING: some parts of this action are not automatically reversable, and must
+  # be reversed by hand
+  def self.close!(appeal:, user:, closed_on:, disposition_code:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    VACOLS::Case.transaction do
+      case_record.update_attributes!(
+        bfmpro: "HIS",
+        bfddec: dateshift_to_utc(closed_on),
+        bfdc: disposition_code,
+        bfboard: "00",
+        bfmemid: "000",
+        bfattid: "000"
+      )
+
+      case_record.update_vacols_location!("99")
+
+      folder_record.update_attributes!(
+        ticukey: "HISTORY",
+        tikeywrd: "HISTORY",
+        tidcls: dateshift_to_utc(closed_on),
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+
+      # Close any issues associated to the appeal
+      case_record.case_issues.update_all(
+        issdc: disposition_code,
+        issdcls: VacolsHelper.local_time_with_utc_timezone
+      )
+
+      # Cancel any open diary notes for the appeal
+      case_record.notes.where(tskdcls: nil).update_all(
+        tskdcls: VacolsHelper.local_time_with_utc_timezone,
+        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
+        tskmdusr: user.regional_office,
+        tskstat: "C"
+      )
+
+      # Cancel any scheduled hearings
+      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
+        clsdate: VacolsHelper.local_time_with_utc_timezone,
+        hearing_disp: "C"
+      )
+    end
+  end
+
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
@@ -256,18 +311,37 @@ class AppealRepository
     end
   end
 
-  # Reverses the certification of an appeal.
-  # This is only used for test data setup, so it doesn't exist on Fakes::AppealRepository
-  def self.uncertify(appeal)
-    appeal.case_record.bftbind = nil
-    appeal.case_record.bfdcertool = nil
-    appeal.case_record.bf41stat = nil
-    appeal.case_record.save!
-  end
-
   def self.aod(vacols_id)
     VACOLS::Case.aod([vacols_id])[vacols_id]
   end
 
+  def self.load_user_case_assignments_from_vacols(css_id)
+    MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
+                          service: :vacols,
+                          name: "active_cases_for_user") do
+      active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
+      active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
+      active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
+      active_cases_issues = VACOLS::CaseIssue.active_issues(active_cases_vacols_ids)
+      active_cases_for_user.map do |assignment|
+        assignment_issues_hash_array = active_cases_issues[assignment.vacols_id] || []
+
+        # if that appeal is not found, it intializes a new appeal with the
+        # assignments vacols_id
+        appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
+        appeal.attributes = assignment.attributes
+        appeal.aod = active_cases_aod_results[assignment.vacols_id]
+
+        # fetching Issue objects using the issue hash
+        appeal.issues = assignment_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
+        appeal.save
+        appeal
+      end
+    end
+  end
+
+  def self.case_assignment_exists?(vacols_id)
+    VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
+  end
   # :nocov:
 end

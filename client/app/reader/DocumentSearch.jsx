@@ -7,6 +7,7 @@ import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIn
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
+<<<<<<< HEAD
 import { hideSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
@@ -16,13 +17,35 @@ export class DocumentSearch extends React.PureComponent {
   constructor(props) {
     super(props);
     this.searchTerm = '';
+=======
+import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
+import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
+import _ from 'lodash';
+import classNames from 'classnames';
+import { READER_COLOR } from './constants';
+
+export class DocumentSearch extends React.PureComponent {
+  constructor() {
+    super();
+
+    this.searchTerm = '';
+    this.sentAction = {};
+    this.loading = false;
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   }
 
   onChange = (value) => {
     this.searchTerm = value;
 
+<<<<<<< HEAD
     if (_.isEmpty(this.props.pdfText)) {
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
+=======
+    if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
+      this.loading = Boolean(this.searchTerm.length);
+      this.props.getDocumentText(this.props.pdfDocument, this.props.file);
+      this.sentAction[this.props.file] = true;
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
     }
 
     // todo: add guard to PdfActions.searchText to abort if !searchTerm.length
@@ -53,6 +76,11 @@ export class DocumentSearch extends React.PureComponent {
     }
 
     if (event[metaKey] && event.code === 'KeyF') {
+<<<<<<< HEAD
+=======
+      this.props.showSearchBar();
+      this.searchBar.setInputFocus();
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
       event.preventDefault();
     }
   }
@@ -62,13 +90,24 @@ export class DocumentSearch extends React.PureComponent {
     // ctrl+f behavior, and other window-bound shortcuts stop working
     if (this.props.hidden) {
       this.searchBar.releaseInputFocus();
+<<<<<<< HEAD
     } else {
+=======
+    } else if (prevProps.hidden) {
+      // only hijack focus on show searchbar
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
       this.searchBar.setInputFocus();
     }
 
     if (this.props.file !== prevProps.file) {
       this.clearSearch();
     }
+<<<<<<< HEAD
+=======
+
+    // todo: after running a search, this.loading doesn't reset on change documents
+    this.loading = Boolean(!this.props.textExtracted && this.searchTerm.length);
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
@@ -115,6 +154,11 @@ export class DocumentSearch extends React.PureComponent {
         onChange={this.onChange}
         onKeyPress={this.onKeyPress}
         internalText={this.getInternalText()}
+<<<<<<< HEAD
+=======
+        loading={this.loading}
+        spinnerColor={READER_COLOR}
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
       />
       <Button
         classNames={['cf-increment-search-match', 'cf-prev-match']}
@@ -146,7 +190,12 @@ const mapStateToProps = (state, props) => ({
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   getCurrentMatch: getCurrentMatchIndex(state, props),
+<<<<<<< HEAD
   hidden: state.readerReducer.ui.pdf.hideSearchBar
+=======
+  hidden: state.readerReducer.ui.pdf.hideSearchBar,
+  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -154,7 +203,12 @@ const mapDispatchToProps = (dispatch) => ({
     searchText,
     getDocumentText,
     updateSearchIndex,
+<<<<<<< HEAD
     hideSearchBar
+=======
+    hideSearchBar,
+    showSearchBar
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   }, dispatch)
 });
 

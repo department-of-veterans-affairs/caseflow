@@ -2,18 +2,19 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import Alert from '../../components/Alert';
 
-export default function StyleGuideAlerts() {
-  return <div>
+export default class StyleGuideAlerts extends React.PureComponent {
+  render = () => {
+    return <div>
       <StyleGuideComponentTitle
         title="Alerts"
         id="alerts"
         link="StyleGuideAlerts.jsx"
       />
-    <p>Alerts allow us to communicate important changes and time sensitive information.
-      This includes errors, warnings, and general updates.
-      We also use them as a validation message that alerts someone that they just
-      did something that needs to be corrected or as confirmation that a task was
-      completed successfully.</p>
+      <p>Alerts allow us to communicate important changes and time sensitive information.
+        This includes errors, warnings, and general updates.
+        We also use them as a validation message that alerts someone that they just
+        did something that needs to be corrected or as confirmation that a task was
+       completed successfully.</p>
       <Alert
         title="Success Status"
         type="success">
@@ -37,7 +38,7 @@ export default function StyleGuideAlerts() {
 
       <StyleGuideComponentTitle
         title="Alerts lite"
-        id="alerts_lite"
+        id="alerts-lite"
         link="StyleGuideAlerts.jsx"
       />
       <p>
@@ -70,4 +71,6 @@ export default function StyleGuideAlerts() {
         </Alert>
       </div>
     </div>;
+  }
 }
+

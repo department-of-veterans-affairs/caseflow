@@ -21,7 +21,11 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
                 staff.sattyid = tbmem3 OR
                 staff.sattyid = tbmem4")
         .where("staff.sdomainid = #{id}")
+<<<<<<< HEAD
         .where("tbstdate > ?", 1.week.ago)
+=======
+        .where("tbstdate > ?", 30.days.ago.beginning_of_day)
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
     end
   end
 

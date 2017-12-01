@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { closeSymbolHtml } from './RenderFunctions.jsx';
-import Button from './Button.jsx';
+import { closeSymbolHtml } from './RenderFunctions';
+import Button from './Button';
+import _ from 'lodash';
 
 export default class Modal extends React.Component {
   constructor(props) {
@@ -36,12 +37,15 @@ export default class Modal extends React.Component {
     }
   }
 
+  modalCloseFocus = (modalClose) => this.modalClose = modalClose
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.keyHandler);
+    this.modalClose.focus();
   }
 
   generateButtons() {
@@ -60,14 +64,14 @@ export default class Modal extends React.Component {
       }
 
       return <Button
-          name={object.name}
-          onClick={object.onClick}
-          classNames={classNames}
-          loading={object.loading}
-          disabled={object.disabled}
-          key={i}
-          id={this.buttonIdPrefix + i}
-        />;
+        name={object.name}
+        onClick={object.onClick}
+        classNames={classNames}
+        loading={object.loading}
+        disabled={object.disabled}
+        key={i}
+        id={this.buttonIdPrefix + i}
+      />;
     });
   }
 
@@ -77,22 +81,42 @@ export default class Modal extends React.Component {
       closeHandler,
       id,
       noDivider,
+      confirmButton,
+      cancelButton,
       title
     } = this.props;
 
+    let modalButtons;
+
+    if (!confirmButton && !cancelButton) {
+      modalButtons = this.generateButtons();
+    } else {
+      modalButtons = <div>
+        <span className="cf-push-right">
+          {confirmButton}
+        </span>
+        {cancelButton &&
+          <span className="cf-push-left">
+            {cancelButton}
+          </span>
+        }
+      </div>;
+    }
+
     return <section
-            className="cf-modal active"
-            id="modal_id"
-            role="alertdialog"
-            aria-labelledby="modal_id-title"
-            aria-describedby="modal_id-desc"
-          >
+      className="cf-modal active"
+      id="modal_id"
+      role="alertdialog"
+      aria-labelledby="modal_id-title"
+      aria-describedby="modal_id-desc"
+    >
       <div className="cf-modal-body" id={id || ''}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}
           className="cf-modal-close"
           onClick={closeHandler}
+          ref={this.modalCloseFocus}
         >
           {closeSymbolHtml()}
         </button>
@@ -102,7 +126,7 @@ export default class Modal extends React.Component {
         </div>
         {noDivider ? '' : <div className="cf-modal-divider"></div>}
         <div className="cf-push-row cf-modal-controls">
-          {this.generateButtons()}
+          {modalButtons}
         </div>
       </div>
     </section>;
@@ -114,7 +138,19 @@ Modal.defaultProps = {
 };
 
 Modal.propTypes = {
-  buttons: PropTypes.arrayOf(PropTypes.object),
+  buttons: (props, propName) => {
+    const buttons = props[propName];
+
+    if (!_.isArray(buttons)) {
+      return new Error(`'buttons' must be an array, but was: '${buttons}'`);
+    }
+
+    if (buttons.length && (props.cancelButton || props.confirmButton)) {
+      return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`');
+    }
+  },
+  confirmButton: PropTypes.element,
+  cancelButton: PropTypes.element,
   id: PropTypes.string,
   label: PropTypes.string,
   noDivider: PropTypes.bool,

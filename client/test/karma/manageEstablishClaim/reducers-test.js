@@ -3,7 +3,7 @@ import * as Constants from '../../../app/manageEstablishClaim/constants';
 import manageEstablishClaimReducer, { getManageEstablishClaimInitialState } from
   '../../../app/manageEstablishClaim/reducers/index';
 
- /* eslint-disable no-unused-expressions */
+/* eslint-disable no-unused-expressions */
 describe('getManageEstablishClaimInitialState', () => {
   let state;
 

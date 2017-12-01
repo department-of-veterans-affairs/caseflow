@@ -25,8 +25,16 @@ export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
   }).join(', ');
 };
 
-export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => (
-  moment(dateString, dateFormat).format(expectedFormat)
+export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
+  if (!dateString) {
+    return;
+  }
+
+  return moment(dateString, dateFormat).format(expectedFormat);
+};
+
+export const formatDateStringForApi = (dateString) => (
+  formatDateStr(dateString, 'MM/DD/YYYY', 'YYYY-MM-DD')
 );
 
 const YEAR_INDEX = 0;

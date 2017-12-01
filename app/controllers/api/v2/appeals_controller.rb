@@ -18,13 +18,21 @@ class Api::V2::AppealsController < Api::ApplicationController
       ActiveModelSerializers::SerializableResource.new(
         appeals,
         each_serializer: ::V2::AppealSerializer,
+<<<<<<< HEAD
         include: "scheduled_hearings"
+=======
+        key_transform: :camel_lower
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
       ).as_json
     end
   end
 
   def appeals
+<<<<<<< HEAD
     @appeals ||= Appeal.for_api(appellant_ssn: ssn)
+=======
+    @appeals ||= AppealHistory.for_api(appellant_ssn: ssn)
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   end
 
   # Cache can't be busted in prod

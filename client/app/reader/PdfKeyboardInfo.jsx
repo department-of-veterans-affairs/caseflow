@@ -1,13 +1,6 @@
 import React from 'react';
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from '../components/RenderFunctions';
 
-export const scrollInstructions = [
-  { scrollInstruction: 'Page up',
-    shortcut: <span><code>shift</code> + <code>space</code></span> },
-  { scrollInstruction: 'Page down',
-    shortcut: <span><code>space</code></span> }
-];
-
 export const scrollColumns = [{ header: 'Scroll',
   valueName: 'scrollInstruction',
   align: 'left' },
@@ -27,6 +20,8 @@ export const commentInstructions = [
   { commentInstruction: 'Move comment right',
     shortcut: <span><ArrowRight /></span> },
   { commentInstruction: 'Place a comment',
+    shortcut: <span><code>alt</code> + <code>enter</code></span> },
+  { commentInstruction: 'Save a comment',
     shortcut: <span><code>alt</code> + <code>enter</code></span> }
 ];
 
@@ -37,14 +32,42 @@ export const commentColumns = [{ header: 'Add/ edit comment',
   valueName: 'shortcut',
   align: 'left' }];
 
-export const documentsInstructions = [
-  { documentsInstruction: 'Next document',
-    shortcut: <span><ArrowRight /></span> },
-  { documentsInstruction: 'Previous document',
-    shortcut: <span><ArrowLeft /></span> }
+export const searchColumns = [{ header: 'Search within document',
+  valueName: 'searchInstruction',
+  align: 'left'
+}, { header: 'Shortcut',
+  valueName: 'shortcut',
+  align: 'left' }];
+
+let metaKey = 'ctrl';
+
+if (navigator.appVersion && navigator.appVersion.includes('Mac')) {
+  metaKey = 'cmd';
+}
+
+export const searchInstructions = [
+  { searchInstruction: 'Open search box',
+    shortcut: <span><code>{metaKey}</code> + <code>f</code></span> },
+  { searchInstruction: 'Navigate search results',
+    shortcut: <span><code>{metaKey}</code> + <code>g</code></span> }
 ];
 
-export const documentsColumns = [{ header: 'View documents',
+export const documentsInstructions = [
+  { documentsInstruction: 'Scroll page up',
+    shortcut: <span><code>shift</code> + <code>space</code></span> },
+  { documentsInstruction: 'Scroll page down',
+    shortcut: <span><code>space</code></span> },
+  { documentsInstruction: 'View next document',
+    shortcut: <span><ArrowRight /></span> },
+  { documentsInstruction: 'View previous document',
+    shortcut: <span><ArrowLeft /></span> },
+  { documentsInstruction: 'Open/ Hide menu',
+    shortcut: <span><code>alt</code> + <code>m</code></span> },
+  { documentsInstruction: 'Back to document list',
+    shortcut: <span><code>alt</code> + <code>backspace</code></span> }
+];
+
+export const documentsColumns = [{ header: 'Navigate reader',
   valueName: 'documentsInstruction',
   align: 'left' },
 { header: 'Shortcut',

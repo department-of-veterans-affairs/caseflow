@@ -27,10 +27,10 @@ class SeedDB
 
   def create_users(number, deterministic = true)
     users = number.times.map do |i|
-      length = VACOLS::RegionalOffice::STATIONS.length
+      length = RegionalOffice::STATIONS.length
       station_index = deterministic ? (i % length) : (rand(length))
       User.create(
-        station_id: VACOLS::RegionalOffice::STATIONS.keys[station_index],
+        station_id: RegionalOffice::STATIONS.keys[station_index],
         css_id: "css_#{i}",
         full_name: "name_#{i}",
         email: "test#{i}@example.com"
@@ -65,7 +65,8 @@ class SeedDB
 
     # Create one task with no decision documents
     EstablishClaim.create(
-      appeal: tasks[2].appeal
+      appeal: tasks[2].appeal,
+      created_at: 5.days.ago
     )
 
     @tasks.push(*tasks)
@@ -87,6 +88,22 @@ class SeedDB
   def create_annotations
     Generators::Annotation.create(comment: "Hello World!", document_id: 1, x: 300, y: 400)
     Generators::Annotation.create(comment: "This is an example comment", document_id: 2)
+  end
+
+  def create_ramp_elections(number)
+    number.times do |i|
+      RampElection.create!(
+        veteran_file_number: "#{i + 1}5555555",
+        notice_date: i.weeks.ago
+      )
+    end
+
+    ["11555555", "12555555"].each do |number|
+      RampElection.create!(
+        veteran_file_number: number,
+        notice_date: 3.weeks.ago
+      )
+    end
   end
 
   def create_tags
@@ -116,6 +133,7 @@ class SeedDB
     create_appeals(50)
     create_users(3)
     create_tasks(50)
+    create_ramp_elections(9)
     create_annotations
     create_tags
     create_hearings

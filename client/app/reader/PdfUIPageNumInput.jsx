@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { jumpToPage } from './actions';
+import { jumpToPage } from '../reader/PdfViewer/PdfViewerActions';
 import { isValidWholeNumber } from './utils';
 import TextField from '../components/TextField';
 
@@ -57,18 +57,18 @@ export class PdfUIPageNumInput extends React.PureComponent {
 
   render() {
     return (
-    <div style={{ display: 'inline-block' }}>
-      <TextField
-        maxLength="4"
-        name="page-progress-indicator-input"
-        label="Page"
-        onChange={this.setPageNumber}
-        onKeyPress={this.handleKeyPress}
-        value={this.state.pageNumber}
-        required={false}
-        className={['page-progress-indicator-input']}
-      />
-    </div>);
+      <div style={{ display: 'inline-block' }}>
+        <TextField
+          maxLength="4"
+          name="page-progress-indicator-input"
+          label="Page"
+          onChange={this.setPageNumber}
+          onKeyPress={this.handleKeyPress}
+          value={this.state.pageNumber}
+          required={false}
+          className={['page-progress-indicator-input']}
+        />
+      </div>);
   }
 }
 

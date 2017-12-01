@@ -4,15 +4,16 @@ import thunk from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import perfLogger from 'redux-perf-middleware';
 import IntakeFrame from './IntakeFrame';
-import reducer from './redux/reducer';
-import { reduxAnalyticsMiddleware } from '../reader/analytics';
+import { reducer, mapDataToInitialState } from './redux/reducer';
+import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 
 const Intake = (props) => {
   // eslint-disable-next-line no-underscore-dangle
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const store = createStore(
     reducer,
-    composeEnhancers(applyMiddleware(thunk, perfLogger, reduxAnalyticsMiddleware))
+    mapDataToInitialState(props),
+    composeEnhancers(applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware('intake')))
   );
 
   if (module.hot) {
@@ -23,7 +24,7 @@ const Intake = (props) => {
   }
 
   return <Provider store={store}>
-      <IntakeFrame {...props} />
+    <IntakeFrame {...props} />
   </Provider>;
 };
 

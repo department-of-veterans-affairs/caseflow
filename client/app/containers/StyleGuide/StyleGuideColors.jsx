@@ -3,7 +3,7 @@ import React from 'react';
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideColors extends React.Component {
+export default class StyleGuideColors extends React.PureComponent {
 
   Colors = {
     Base: '#212121',
@@ -26,10 +26,11 @@ export default class StyleGuideColors extends React.Component {
     Feedback: '#73e5d4',
     Certification: '#459fd7',
     Reader: '#417505',
-    Hearing: '#fdc231',
+    'Case Summary': '#ffcc4e',
+    Intake: '#ffcc4e',
     Procedural: '#5a94ec',
     Medical: '#ff6868',
-    CertificationCategory: '#3ad2cf'
+    'Other Evidence': '#3ad2cf'
   };
 
   Primary = [
@@ -58,7 +59,8 @@ export default class StyleGuideColors extends React.Component {
     'eFolder Express',
     'Feedback',
     'Certification',
-    'Reader'
+    'Reader',
+    'Intake'
   ];
 
   Combos = [
@@ -70,10 +72,10 @@ export default class StyleGuideColors extends React.Component {
   ];
 
   Reader = [
-    'Hearing',
+    'Case Summary',
     'Procedural',
     'Medical',
-    'CertificationCategory'
+    'Other Evidence'
   ];
 
   colorVar = (name) => {
@@ -96,7 +98,7 @@ export default class StyleGuideColors extends React.Component {
         requirements.
       </p>
 
-      <h3>Palette</h3>
+      <h3 id="palette">Palette</h3>
 
       <h4>Primary Colors</h4>
 
@@ -107,14 +109,14 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Primary.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
-        </div>
-      )}
+        {this.Primary.map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+            <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
+          </div>
+        )}
       </div>
 
       <h4>Secondary Colors</h4>
@@ -128,25 +130,25 @@ export default class StyleGuideColors extends React.Component {
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(0, 3).map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
-        </div>
-      )}
+        {this.Secondary.slice(0, 3).map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+            <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
+          </div>
+        )}
       </div>
 
       <div className="sg-colors-swatches">
-      {this.Secondary.slice(3).map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-          <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
-        </div>
-      )}
+        {this.Secondary.slice(3).map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+            <p title={this.VAR_TITLE}>{this.colorVar(name)}</p>
+          </div>
+        )}
       </div>
 
       <h3>Logos</h3>
@@ -154,33 +156,33 @@ export default class StyleGuideColors extends React.Component {
       <p>
         Logos are the only time Caseflow products use colors outside of Web Design
         Standards. These unique colors add a layer of modernism and fluidity to the
-        Caseflow's core color themes of of trust, reliability, and transparency.
+        Caseflow's core color themes of trust, reliability, and transparency.
       </p>
 
       <div className="sg-colors-swatches">
-      {this.Logos.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}></div>
-          <b>{this.Colors[name]}</b>
-          <p>{name}</p>
-        </div>
-      )}
+        {this.Logos.map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}></div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
+          </div>
+        )}
       </div>
 
       <h3>Reader Categories</h3>
 
       <div className="sg-colors-swatches">
-      {this.Reader.map((name) =>
-        <div className="sg-colors-swatch" key={name}>
-          <div style={{ background: this.Colors[name] }}>
+        {this.Reader.map((name) =>
+          <div className="sg-colors-swatch" key={name}>
+            <div style={{ background: this.Colors[name] }}>
+            </div>
+            <b>{this.Colors[name]}</b>
+            <p>{name}</p>
           </div>
-          <b>{this.Colors[name]}</b>
-          <p>{name === 'CertificationCategory' ? 'Certification' : name}</p>
-        </div>
-      )}
+        )}
       </div>
 
-      <h3>Text Accessibility</h3>
+      <h3 id="text-accessibility">Text Accessibility</h3>
 
       <p>
         WCAG (Web Content Accessibility Guidelines) ensure that content is accessible by

@@ -1,41 +1,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '../components/Link';
 import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
+import { clearSearch, clearAllFilters } from './DocumentList/DocumentListActions';
 
 import CaseSelectSearch from './CaseSelectSearch';
+import IssueList from './IssueList';
 
 class CaseSelect extends React.PureComponent {
 
-  renderIssuesColumnData = (appeal) => {
-    const issues = appeal.issues || [];
+  renderIssuesColumnData = (appeal) =>
+    <IssueList
+      appeal={appeal}
+      formatLevelsInNewLine
+      className="issue-list"
+    />;
 
-    return (
-      <ol className="issue-list">
-        {issues.map((issue) => {
-          const descriptionLabel = issue.levels ? `${issue.type.label}:` : issue.type.label;
-
-          return <li key={issue.vacols_sequence_id}>
-            {descriptionLabel}
-            {this.renderIssueLevels(issue)}
-          </li>;
-        })}
-      </ol>
-    );
-  }
-
-  renderIssueLevels = (issue) => {
-    const levels = issue.levels || [];
-
-    return levels.map((level) => <p className="issue-level" key={level}>{level}</p>);
-  }
-
-  getVeteranNameAndClaimType = (appeal) => {
-    return <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
-  }
+  getVeteranNameAndClaimType = (appeal) =>
+    <span>{appeal.veteran_full_name} <br /> {getClaimTypeDetailInfo(appeal)}</span>;
 
   getAssignmentColumn = () => [
     {
@@ -62,16 +48,21 @@ class CaseSelect extends React.PureComponent {
         }
 
         return <Link
-            name="view doc"
-            button={buttonType}
-            to={`/${row.vacols_id}/documents`}>
-              {buttonText}
-            </Link>;
+          name="view doc"
+          button={buttonType}
+          to={`/${row.vacols_id}/documents`}>
+          {buttonText}
+        </Link>;
       }
     }
   ];
 
   getKeyForRow = (index, row) => row.vacols_id;
+
+  componentDidMount = () => {
+    this.props.clearSearch();
+    this.props.clearAllFilters();
+  }
 
   render() {
     if (!this.props.assignments) {
@@ -82,7 +73,7 @@ class CaseSelect extends React.PureComponent {
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           <h1 className="welcome-header">Welcome to Reader!</h1>
-          <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl}/>
+          <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
           <p className="cf-lead-paragraph">
             Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
           </p>
@@ -100,8 +91,15 @@ class CaseSelect extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state.readerReducer, 'assignments');
+const mapStateToProps = (state) => _.pick(state.caseSelect, 'assignments');
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    clearSearch,
+    clearAllFilters
+  }, dispatch)
+);
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, mapDispatchToProps
 )(CaseSelect);

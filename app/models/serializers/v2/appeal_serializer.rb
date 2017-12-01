@@ -3,10 +3,48 @@ class V2::AppealSerializer < ActiveModel::Serializer
     object.vacols_id
   end
 
+<<<<<<< HEAD
   attribute :type_code, key: :type
   attribute :active?, key: :active
+=======
+  attribute :incomplete, key: :incomplete_history
+  attribute :type_code, key: :type
+  attribute :active?, key: :active
+  attribute :aod
+  attribute :location
+  attribute :status_hash, key: :status
+  attribute :alerts
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 
   attribute :events do
     object.events.map(&:to_hash)
   end
+<<<<<<< HEAD
+=======
+
+  # Stubbed attributes
+  attribute :aoj do
+    "vba"
+  end
+
+  attribute :program_area do
+    "compensation"
+  end
+
+  attribute :description do
+    ""
+  end
+
+  attribute :docket do
+    nil
+  end
+
+  attribute :issues do
+    []
+  end
+
+  attribute :evidence do
+    []
+  end
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 end

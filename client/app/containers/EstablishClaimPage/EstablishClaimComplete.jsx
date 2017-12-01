@@ -28,7 +28,7 @@ export default class EstablishClaimComplete extends React.Component {
       hasQuotaReached, quotaReachedMessage, secondHeader, totalCases;
 
     availableTasksMessage = availableTasks ? 'You can now establish the next claim or return to your Work History.' :
-                            'You can now close Caseflow or return to your Work History.';
+      'You can now close Caseflow or return to your Work History.';
 
     secondHeader = <span>{veteranName}'s claim has been processed. <br />
       {availableTasksMessage}
@@ -37,14 +37,13 @@ export default class EstablishClaimComplete extends React.Component {
     quotaReachedMessage = () => {
       if (hasQuotaReached) {
         return <span>
-            <h2>Way to go!</h2> 💪💻🇺🇸<br/>
-            <h2 className ="cf-msg-screen-deck cf-success-emoji-text">
+          <h2>Way to go!</h2> 💪💻🇺🇸<br />
+          <h2 className ="cf-msg-screen-deck cf-success-emoji-text">
              You have completed all of the total cases assigned to you today.
-            </h2>
-          </span>;
+          </h2>
+        </span>;
       }
     };
-
 
     totalCases = totalCasesToComplete + totalCasesCompleted;
     employeeCountInt = parseInt(employeeCount, PARSE_INT_RADIX);
@@ -55,25 +54,25 @@ export default class EstablishClaimComplete extends React.Component {
 
     return <div>
       <EstablishClaimProgressBar
-        isConfirmation={true}
+        isConfirmation
       />
 
-    <StatusMessage
+      <StatusMessage
         title={firstHeader}
         leadMessageList={[secondHeader]}
         checklist={checklist}
         messageText={hasQuotaReached && quotaReachedMessage()}
         type="success"
-        />
+      />
 
-    <EstablishClaimToolbar
-      availableTasks={availableTasks}
-      buttonText={buttonText}
-      casesAssigned={casesAssigned}
-      totalCasesCompleted={totalCasesCompleted}
-      handleAlert={handleAlert}
-      handleAlertClear={handleAlertClear}
-    />
+      <EstablishClaimToolbar
+        availableTasks={availableTasks}
+        buttonText={buttonText}
+        casesAssigned={casesAssigned}
+        totalCasesCompleted={totalCasesCompleted}
+        handleAlert={handleAlert}
+        handleAlertClear={handleAlertClear}
+      />
     </div>;
   }
 

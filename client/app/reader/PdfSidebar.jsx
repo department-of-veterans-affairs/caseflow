@@ -17,6 +17,7 @@ import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
 import * as Constants from '../reader/constants';
+<<<<<<< HEAD
 import { updateAnnotationContent, startEditAnnotation, cancelEditAnnotation, requestEditAnnotation,
   selectAnnotation, setOpenedAccordionSections, togglePdfSidebar
   } from '../reader/actions';
@@ -24,6 +25,17 @@ import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { scrollColumns, scrollInstructions, commentColumns, commentInstructions, documentsColumns,
   documentsInstructions } from './PdfKeyboardInfo';
+=======
+import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import {
+  selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
+  updateAnnotationContent
+} from '../reader/PdfViewer/AnnotationActions';
+import { keyOfAnnotation, sortAnnotations }
+  from './utils';
+import { commentColumns, commentInstructions, documentsColumns,
+  documentsInstructions, searchColumns, searchInstructions } from './PdfKeyboardInfo';
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { CATEGORIES } from './analytics';
@@ -77,6 +89,25 @@ export class PdfSidebar extends React.Component {
     }
   }
 
+<<<<<<< HEAD
+=======
+  componentDidMount() {
+    window.addEventListener('keydown', this.keyHandler);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyHandler);
+  }
+
+  keyHandler = (event) => {
+    if (event.altKey) {
+      if (event.code === 'KeyM') {
+        this.props.togglePdfSidebar();
+      }
+    }
+  }
+
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   onAccordionOpenOrClose = (openedSections) =>
     this.props.setOpenedAccordionSections(openedSections, this.props.openedAccordionSections)
 
@@ -84,21 +115,24 @@ export class PdfSidebar extends React.Component {
     let comments = [];
 
     const {
+<<<<<<< HEAD
       tagOptions,
+=======
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
       appeal
     } = this.props;
 
     comments = sortAnnotations(this.props.comments).map((comment, index) => {
       if (comment.editing) {
         return <EditComment
-            id={`editCommentBox-${keyOfAnnotation(comment)}`}
-            comment={comment}
-            onCancelCommentEdit={this.props.cancelEditAnnotation}
-            onChange={this.props.updateAnnotationContent}
-            value={comment.comment}
-            onSaveCommentEdit={this.props.requestEditAnnotation}
-            key={keyOfAnnotation(comment)}
-          />;
+          id={`editCommentBox-${keyOfAnnotation(comment)}`}
+          comment={comment}
+          onCancelCommentEdit={this.props.cancelEditAnnotation}
+          onChange={this.props.updateAnnotationContent}
+          value={comment.comment}
+          onSaveCommentEdit={this.props.requestEditAnnotation}
+          key={keyOfAnnotation(comment)}
+        />;
       }
 
       const handleClick = () => {
@@ -109,7 +143,7 @@ export class PdfSidebar extends React.Component {
       return <div ref={(commentElement) => {
         this.commentElements[comment.id] = commentElement;
       }}
-        key={keyOfAnnotation(comment)}>
+      key={keyOfAnnotation(comment)}>
         <Comment
           id={`comment${index}`}
           onEditComment={this.props.startEditAnnotation}
@@ -117,9 +151,9 @@ export class PdfSidebar extends React.Component {
           selected={comment.id === this.props.selectedAnnotationId}
           onClick={handleClick}
           page={comment.page}>
-            {comment.comment}
-          </Comment>
-        </div>;
+          {comment.comment}
+        </Comment>
+      </div>;
     });
 
     const sidebarClass = classNames(
@@ -127,14 +161,15 @@ export class PdfSidebar extends React.Component {
       { 'hidden-sidebar': this.props.hidePdfSidebar });
 
     return <div className={sidebarClass}>
-        <div className="cf-sidebar-header">
-          <Button
-            name="hide menu"
-            classNames={['cf-pdf-button']}
-            id="hide-menu-header"
-            onClick={this.props.togglePdfSidebar}>
-            <h2 className="cf-non-stylized-header">
+      <div className="cf-sidebar-header">
+        <Button
+          name="hide menu"
+          classNames={['cf-pdf-button']}
+          id="hide-menu-header"
+          onClick={this.props.togglePdfSidebar}>
+          <h2 className="cf-non-stylized-header">
               Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
+<<<<<<< HEAD
             </h2>
           </Button>
         </div>
@@ -172,40 +207,76 @@ export class PdfSidebar extends React.Component {
               onClick={this.openKeyboardModal}
               classNames={['cf-btn-link']}
           />
+=======
+          </h2>
+        </Button>
+      </div>
+      <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
+        this.commentListElement = commentListElement;
+      }}>
+        <Accordion style="outline"
+          onChange={this.onAccordionOpenOrClose}
+          activeKey={this.props.openedAccordionSections}>
+          <AccordionSection title="Document information">
+            <SideBarDocumentInformation appeal={appeal} doc={this.props.doc} />
+          </AccordionSection>
+          <AccordionSection title="Categories">
+            <SideBarCategories doc={this.props.doc}
+              documents={this.props.documents} />
+          </AccordionSection>
+          <AccordionSection title="Issue tags">
+            <SideBarIssueTags
+              doc={this.props.doc} />
+          </AccordionSection>
+          <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
+            <SideBarComments
+              comments={comments}
+            />
+          </AccordionSection>
+        </Accordion>
+      </div>
+      <div className="cf-keyboard-shortcuts">
+        <Button
+          id="cf-open-keyboard-modal"
+          name={<span><Keyboard />&nbsp; View keyboard shortcuts</span>}
+          onClick={this.openKeyboardModal}
+          classNames={['cf-btn-link']}
+        />
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
         { this.state.modal && <div className="cf-modal-scroll">
           <Modal
-              buttons = {[
-                { classNames: ['usa-button', 'usa-button-secondary'],
-                  name: 'Thanks, got it!',
-                  onClick: this.closeKeyboardModalFromButton
-                }
-              ]}
-              closeHandler={this.handleKeyboardModalClose}
-              title="Keyboard shortcuts"
-              noDivider={true}
-              id="cf-keyboard-modal">
-              <div className="cf-keyboard-modal-scroll">
-                <Table
-                  columns={scrollColumns}
-                  rowObjects={scrollInstructions}
-                  slowReRendersAreOk={true}
-                  className="cf-keyboard-modal-table"/>
-                <Table
-                  columns={commentColumns}
-                  rowObjects={commentInstructions}
-                  slowReRendersAreOk={true}
-                  className="cf-keyboard-modal-table"/>
-                <Table
-                  columns={documentsColumns}
-                  rowObjects={documentsInstructions}
-                  slowReRendersAreOk={true}
-                  className="cf-keyboard-modal-table"/>
-              </div>
-            </Modal>
+            buttons = {[
+              { classNames: ['usa-button', 'usa-button-secondary'],
+                name: 'Thanks, got it!',
+                onClick: this.closeKeyboardModalFromButton
+              }
+            ]}
+            closeHandler={this.handleKeyboardModalClose}
+            title="Keyboard shortcuts"
+            noDivider
+            id="cf-keyboard-modal">
+            <div className="cf-keyboard-modal-scroll">
+              <Table
+                columns={documentsColumns}
+                rowObjects={documentsInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
+              <Table
+                columns={searchColumns}
+                rowObjects={searchInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
+              <Table
+                columns={commentColumns}
+                rowObjects={commentInstructions}
+                slowReRendersAreOk
+                className="cf-keyboard-modal-table" />
+            </div>
+          </Modal>
         </div>
         }
-        </div>
-      </div>;
+      </div>
+    </div>;
   }
 }
 
@@ -218,10 +289,19 @@ PdfSidebar.propTypes = {
   })),
   onJumpToComment: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  showErrorMessage: PropTypes.shape({
-    tag: PropTypes.bool,
-    category: PropTypes.bool,
-    comment: PropTypes.bool
+  error: PropTypes.shape({
+    tag: PropTypes.shape({
+      visible: PropTypes.bool,
+      message: PropTypes.string
+    }),
+    category: PropTypes.shape({
+      visible: PropTypes.bool,
+      message: PropTypes.string
+    }),
+    comment: PropTypes.shape({
+      visible: PropTypes.bool,
+      message: PropTypes.string
+    })
   }),
   scrollToSidebarComment: PropTypes.shape({
     id: PropTypes.number
@@ -235,9 +315,8 @@ const mapStateToProps = (state, ownProps) => {
     comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.doc.id),
     scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
-    showErrorMessage: state.readerReducer.ui.pdfSidebar.showErrorMessage,
+    error: state.readerReducer.ui.pdfSidebar.error,
     appeal: state.readerReducer.loadedAppeal,
-    tagOptions: state.readerReducer.ui.tagOptions,
     ..._.pick(state.readerReducer, 'documents', 'openedAccordionSections')
   };
 };

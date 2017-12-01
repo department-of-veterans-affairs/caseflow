@@ -11,7 +11,7 @@ const typeContainsString = (searchQuery, doc) => {
 const commentContainsString = (searchQuery, state, doc) =>
   makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
-  , false);
+    , false);
 
 export const commentContainsWords = (searchQuery, state, doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
@@ -25,18 +25,18 @@ const categoryContainsString = (searchQuery, doc) =>
   Object.keys(Constants.documentCategories).reduce((acc, category) =>
     acc || (category.includes(searchQuery) &&
       doc[categoryFieldNameOfCategoryName(category)])
-  , false);
+    , false);
 
 export const categoryContainsWords = (searchQuery, doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));
 
   return _(_.keys(Constants.documentCategories)).
-        reduce((result, category) => {
-          return _.assign({
-            [`${category}`]: queryTokens.some((word) =>
-              category.includes(word) && doc[categoryFieldNameOfCategoryName(category)])
-          }, result);
-        }, {});
+    reduce((result, category) => {
+      return _.assign({
+        [`${category}`]: queryTokens.some((word) =>
+          category.includes(word) && doc[categoryFieldNameOfCategoryName(category)])
+      }, result);
+    }, {});
 };
 
 const tagContainsString = (searchQuery, doc) =>

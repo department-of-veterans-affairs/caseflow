@@ -25,6 +25,7 @@ export default class Alert extends React.Component {
 
   render() {
     let {
+      lowerMargin,
       children,
       message,
       title,
@@ -34,14 +35,15 @@ export default class Alert extends React.Component {
     let typeClass = `usa-alert-${type}`;
 
     const className = classnames('usa-alert', typeClass, {
+      'lower-margin': lowerMargin,
       'no-title': !title
     });
 
     return <div className={className} {...this.getRole()}>
       <div className="usa-alert-body">
         <h2 className="usa-alert-heading">{title}</h2>
-        { children ? <p className="usa-alert-text">{children}</p> :
-          <p className="usa-alert-text">{message}</p>}
+        { children ? <div className="usa-alert-text">{children}</div> :
+          <div className="usa-alert-text">{message}</div>}
       </div>
     </div>;
   }

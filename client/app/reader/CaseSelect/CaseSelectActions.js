@@ -70,3 +70,18 @@ export const fetchAppealUsingVeteranId = (veteranId) =>
         dispatch(fetchAppealUsingVeteranIdFailed());
       });
   };
+<<<<<<< HEAD
+=======
+
+export const setViewedAssignment = (vacolsId) => ({
+  type: Constants.SET_VIEWED_ASSIGNMENT,
+  payload: {
+    vacolsId
+  }
+});
+
+export const onReceiveAssignments = (assignments) => ({
+  type: Constants.RECEIVE_ASSIGNMENTS,
+  payload: { assignments }
+});
+>>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b

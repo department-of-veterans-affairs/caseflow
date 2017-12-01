@@ -1,22 +1,22 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideHorizontalLine extends React.Component {
+export default class StyleGuideHorizontalLine extends React.PureComponent {
   render = () => {
     return <div>
-  <StyleGuideComponentTitle
+      <StyleGuideComponentTitle
         title="Horizontal Line"
-        id="horizontal_line"
+        id="horizontal-line"
         link="StyleGuideHorizontalLine.jsx"
-        isSubsection={true}
-  />
+        isSubsection
+      />
 
-  <p>The horizontal line helps provide clarity and improve legibility
+      <p>The horizontal line helps provide clarity and improve legibility
   for users by separating different sections or UI components on a page.
   Caseflow horizontal lines should always be light grey and have 30 px
   of space between the bottom of the section or component and the top of the horizontal line.</p>
 
-  <div className="cf-help-divider"></div>
-  </div>;
+      <div className="cf-help-divider"></div>
+    </div>;
   }
 }

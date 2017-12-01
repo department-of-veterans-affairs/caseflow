@@ -1,9 +1,11 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { AutoSave } from '../../../app/components/AutoSave';
+import AutoSave from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
+// eslint-disable-next-line no-unused-vars
+import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
 
 export const saveFunction = () => ({ my: 'action' });
 
@@ -11,7 +13,7 @@ describe('AutoSave', () => {
   context('when isSaving is not true', () => {
     it('renders "Last saved at"', () => {
       const wrapper = mount(
-          <AutoSave save={saveFunction} />
+        <AutoSave save={saveFunction} />
       );
 
       expect(wrapper.find('.saving').text()).to.include('Last saved at');
@@ -21,10 +23,10 @@ describe('AutoSave', () => {
   context('when isSaving is true', () => {
     it('renders default spinner', () => {
       const wrapper = mount(
-          <AutoSave
-            isSaving
-            save={saveFunction}
-          />
+        <AutoSave
+          isSaving
+          save={saveFunction}
+        />
       );
 
       const spinner = wrapper.find(`[fill="${AppConstants.LOADING_INDICATOR_COLOR_DEFAULT}"]`).first();
@@ -67,7 +69,7 @@ describe('AutoSave', () => {
       const saveFunc = sinon.spy(saveFunction);
 
       mount(
-        <AutoSave save={saveFunc} intervalInMs={intervalInMs}/>
+        <AutoSave save={saveFunc} intervalInMs={intervalInMs} />
       );
 
       clock.tick(intervalInMs);

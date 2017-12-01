@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-class StyleGuideSearch extends Component {
+export default class StyleGuideSearch extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -82,7 +82,7 @@ class StyleGuideSearch extends Component {
         </p>
 
         <p>
-        <b>Technical notes:</b> In the "Search Big" and the "Search Small" examples below,
+          <b>Technical notes:</b> In the "Search Big" and the "Search Small" examples below,
         click on the Search buttons to activate the loading spinner for a 2 second
         period. For any search ahead search bars, the class <code>cf-search-ahead-parent</code>
         must be applied to the parent element.
@@ -110,24 +110,22 @@ class StyleGuideSearch extends Component {
             onClearSearch={this.clearSmallValue}
             loading={this.state.small}
             value={this.state.smallValue}
-            submitUsingEnterKey={true}
+            submitUsingEnterKey
           />
-       </div>
-       <div className="cf-sg-searchbar-example cf-search-ahead-parent">
-         <SearchBar
-           id="search-ahead"
-           title="Search Ahead"
-           size="small"
-           onChange={this.changeSearchAheadValue}
-           onClearSearch={this.clearSearchAheadValue}
-           placeholder="Type to search..."
-           isSearchAhead={true}
-           value={this.state.searchAheadValue}
-         />
+        </div>
+        <div className="cf-sg-searchbar-example cf-search-ahead-parent">
+          <SearchBar
+            id="search-ahead"
+            title="Search Ahead"
+            size="small"
+            onChange={this.changeSearchAheadValue}
+            onClearSearch={this.clearSearchAheadValue}
+            placeholder="Type to search..."
+            isSearchAhead
+            value={this.state.searchAheadValue}
+          />
+        </div>
       </div>
-    </div>
     );
   }
 }
-
-export default StyleGuideSearch;

@@ -1,7 +1,7 @@
 class EstablishClaimsController < TasksController
   before_action :verify_access
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
-  before_action :verify_not_complete, only: [:perform, :update_appeal]
+  before_action :verify_not_complete, only: [:perform, :update_appeal, :cancel]
   before_action :verify_bgs_info_valid, only: [:perform]
   before_action :verify_manager_access, only: [
     :unprepared_tasks,
@@ -9,6 +9,7 @@ class EstablishClaimsController < TasksController
     :canceled_tasks,
     :work_assignments
   ]
+  skip_before_action :verify_admin_access, only: [:index]
 
   def update_appeal
     task.appeal.update!(special_issues_params)
@@ -41,12 +42,17 @@ class EstablishClaimsController < TasksController
     render json: { next_task_id: assigned_task.id }
   end
 
+  def index
+  end
+
   def perform
     # If we've already created the EP, no-op and send the user to the note page
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
 
-  rescue EstablishClaim::VBMSError => e
+  rescue EstablishClaim::InvalidEndProductError
+    render json: { error_code: "end_product_invalid" }, status: 422
+  rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
     render json: { error_code: e.error_code }, status: 422
   end
 

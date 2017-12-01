@@ -1,13 +1,17 @@
 import React from 'react';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveAssignments, onInitialCaseLoadingFail } from './actions';
-import { connect } from 'react-redux';
+import {
+  onInitialCaseLoadingFail
+} from '../reader/LoadingScreen/LoadingScreenActions';
+import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
-import _ from 'lodash';
 
 export class CaseSelectLoadingScreen extends React.Component {
   componentDidMount = () => {
@@ -31,26 +35,26 @@ export class CaseSelectLoadingScreen extends React.Component {
     }
 
     return <div className="usa-grid">
-        <div className="cf-app">
-          {this.props.initialCaseLoadingFail ?
-            <StatusMessage
-              title="Unable to load the welcome page">
+      <div className="cf-app">
+        {this.props.initialCaseLoadingFail ?
+          <StatusMessage
+            title="Unable to load the welcome page">
               It looks like Caseflow was unable to load the welcome page.<br />
               Please <a href="">refresh the page</a> and try again.
-              </StatusMessage> :
-              <LoadingScreen
-                spinnerColor={Constants.READER_COLOR}
-                message="Loading cases in Reader..."/>
-          }
-        </div>
-      </div>;
+          </StatusMessage> :
+          <LoadingScreen
+            spinnerColor={Constants.READER_COLOR}
+            message="Loading cases in Reader..." />
+        }
+      </div>
+    </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.readerReducer, 'initialCaseLoadingFail'),
-  assignments: state.readerReducer.assignments,
-  assignmentsLoaded: state.readerReducer.assignmentsLoaded
+  assignments: state.caseSelect.assignments,
+  assignmentsLoaded: state.caseSelect.assignmentsLoaded
 });
 
 const mapDispatchToProps = (dispatch) => (

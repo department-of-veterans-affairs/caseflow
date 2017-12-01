@@ -9,12 +9,11 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails } from './actions';
+import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
       // information.
@@ -33,23 +32,27 @@ export class PdfListView extends React.Component {
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents}/>
+          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
           />
           { noDocuments ?
-          <NoSearchResults /> :
-          <DocumentsTable
-            documents={this.props.documents}
-            documentPathBase={this.props.documentPathBase}
-            onJumpToComment={this.props.onJumpToComment}
-            sortBy={this.props.sortBy}
-            docFilterCriteria={this.props.docFilterCriteria}
-            showPdf={this.props.showPdf}
-          />}
+            <NoSearchResults /> :
+            <DocumentsTable
+              documents={this.props.documents}
+              documentPathBase={this.props.documentPathBase}
+              onJumpToComment={this.props.onJumpToComment}
+              sortBy={this.props.sortBy}
+              docFilterCriteria={this.props.docFilterCriteria}
+              showPdf={this.props.showPdf}
+            />}
         </div>
       </div>
+      <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
+      { this.props.manifestVvaFetchedAt ?
+        <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
+        '' }
     </div>;
   }
 }
@@ -57,9 +60,11 @@ export class PdfListView extends React.Component {
 const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state.readerReducer),
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
-    appeal: _.find(state.readerReducer.assignments, { vacols_id: props.match.params.vacolsId }) ||
+    appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
-    caseSelectedAppeal: state.readerReducer.ui.caseSelect.selectedAppeal
+    caseSelectedAppeal: state.caseSelect.selectedAppeal,
+    manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
+    manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
   };
 };
 

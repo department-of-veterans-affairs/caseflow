@@ -14,6 +14,8 @@ import Table from '../components/Table';
 import Footer from './Footer';
 import Dropdown from '../components/Dropdown';
 import TextField from '../components/TextField';
+import Header from './Header';
+import CertificationProgressBar from './CertificationProgressBar';
 
 const poaMatchesOptions = [
   { displayText: 'Yes',
@@ -175,7 +177,6 @@ export class ConfirmCaseDetails extends React.Component {
       erroredFields.push('representativeNameLength');
     }
 
-
     return erroredFields;
   }
 
@@ -270,17 +271,17 @@ export class ConfirmCaseDetails extends React.Component {
 
     if (!certificationStatus.includes('started')) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/check_documents`}/>;
+        to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
     if (updateSucceeded) {
       return <Redirect
-        to={`/certifications/${match.params.vacols_id}/confirm_hearing`}/>;
+        to={`/certifications/${match.params.vacols_id}/confirm_hearing`} />;
     }
 
     if (serverError) {
       return <Redirect
-        to={'/certifications/error'}/>;
+        to="/certifications/error" />;
     }
 
     let appellantInfoColumns = [
@@ -311,60 +312,62 @@ export class ConfirmCaseDetails extends React.Component {
     const unlistedServiceMessage =
         <p>Caseflow will update the representative type and name in VACOLS.</p>;
 
-
     return <div>
-        <div className="cf-app-segment cf-app-segment--alt">
-          <h2>Confirm Case Details</h2>
+      <Header />
+      <CertificationProgressBar />
+      <div className="cf-app-segment cf-app-segment--alt">
+        <h2>Confirm Case Details</h2>
 
-          <div>
-            {`Review information about the appellant's
+        <div>
+          {`Review information about the appellant's
               representative from VBMS and VACOLS.`}
-          </div>
+        </div>
 
-          <Table
-            className="cf-borderless-rows"
-            columns={appellantInfoColumns}
-            rowObjects={appellantInfoRowObjects}
-            summary="Appellant Information"
-          />
+        <Table
+          className="cf-borderless-rows"
+          columns={appellantInfoColumns}
+          rowObjects={appellantInfoRowObjects}
+          summary="Appellant Information"
+          slowReRendersAreOk
+        />
 
-          <div className="cf-help-divider"></div>
+        <div className="cf-help-divider"></div>
 
-          <RadioField
-            name="Does the representative information from VBMS and VACOLS match?"
-            required={true}
-            options={poaMatchesOptions}
-            value={poaMatches}
-            errorMessage={this.isFieldErrored('poaMatches') ? ERRORS.poaMatches : null}
-            onChange={changePoaMatches}
-          />
+        <RadioField
+          name="Does the representative information from VBMS and VACOLS match?"
+          required
+          options={poaMatchesOptions}
+          value={poaMatches}
+          errorMessage={this.isFieldErrored('poaMatches') ? ERRORS.poaMatches : null}
+          onChange={changePoaMatches}
+        />
 
-          {
-            poaMatches === Constants.poaMatches.NO_MATCH &&
+        {
+          poaMatches === Constants.poaMatches.NO_MATCH &&
             <RadioField
               name="Which information source shows the correct representative for this appeal?"
               options={poaCorrectLocationOptions}
               value={poaCorrectLocation}
               onChange={changePoaCorrectLocation}
               errorMessage={this.isFieldErrored('poaCorrectLocation') ? ERRORS.poaCorrectLocation : null}
-              required={true}
+              required
             />
-          }
+        }
 
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
             <RadioField
               name="What type of representative did the appellant request for this appeal?"
               options={representativeTypeOptions}
               value={representativeType}
               onChange={changeRepresentativeType}
               errorMessage={this.isFieldErrored('representativeType') ? ERRORS.representativeType : null}
-              required={true}
+              required
             />
-          }
+        }
 
-          {
-            (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
+        {
+          (poaCorrectLocation === Constants.poaCorrectLocation.NONE &&
               representativeType === Constants.representativeTypes.ORGANIZATION) &&
             <Dropdown
               name="Service organization name"
@@ -373,57 +376,57 @@ export class ConfirmCaseDetails extends React.Component {
               defaultText="Select an organization"
               onChange={changeOrganizationName}
               errorMessage={this.isFieldErrored('organizationName') ? ERRORS.organizationName : null}
-              required={true}
+              required
             />
-          }
-          {
-            organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+        }
+        {
+          organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             <TextField
-              name={'Enter the service organization\'s name:'}
+              name="Enter the service organization's name:"
               value={representativeName}
               errorMessage={this.calculateErrorMessage()}
-              required={true}
-              onChange={changeRepresentativeName}/>
-          }
+              required
+              onChange={changeRepresentativeName} />
+        }
 
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.VACOLS &&
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.VACOLS &&
             'Great! Caseflow will keep the representative information as it exists now in VACOLS.'
-          }
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+        }
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === true &&
             'Great! Caseflow will update the representative name, type, and address ' +
               'in VACOLS with information from VBMS.'
-          }
-          {
-            poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
+        }
+        {
+          poaCorrectLocation === Constants.poaCorrectLocation.VBMS &&
             bgsPoaAddressFound === false &&
             'Caseflow will update the representative type in VACOLS with information from VBMS.'
-          }
-          {
-            (representativeType === Constants.representativeTypes.ATTORNEY ||
+        }
+        {
+          (representativeType === Constants.representativeTypes.ATTORNEY ||
               representativeType === Constants.representativeTypes.AGENT ||
               representativeType === Constants.representativeTypes.OTHER) &&
             representativeTypeMessage
-          }
-          {
-            organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
+        }
+        {
+          organizationName === Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION &&
             unlistedServiceMessage
-          }
-          {
-            // TODO: change this message when we can fetch addresses.
-            (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
+        }
+        {
+          // TODO: change this message when we can fetch addresses.
+          (organizationName && organizationName !== Constants.organizationNames.UNLISTED_SERVICE_ORGANIZATION) &&
             'Great! Caseflow will update the representative type and name information for the selected service ' +
             'organization in VACOLS.'
-          }
+        }
 
-        </div>
+      </div>
 
-        <Footer
-          loading={loading}
-          onClickContinue={this.onClickContinue.bind(this)}
-        />
+      <Footer
+        loading={loading}
+        onClickContinue={this.onClickContinue.bind(this)}
+      />
     </div>;
   }
 }

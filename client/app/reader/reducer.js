@@ -9,16 +9,16 @@ import { timeFunction } from '../util/PerfDebug';
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => categoryFieldNameOfCategoryName(key)).
-        value();
+    toPairs().
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
+    map(([key]) => categoryFieldNameOfCategoryName(key)).
+    value();
 
   const activeTagFilters = _(docFilterCriteria.tag).
-        toPairs().
-        filter((([key, value]) => value)). // eslint-disable-line no-unused-vars
-        map(([key]) => key).
-        value();
+    toPairs().
+    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
+    map(([key]) => key).
+    value();
 
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
@@ -73,14 +73,25 @@ const updateFilteredDocIds = (nextState) => {
   });
 };
 
-const setErrorMessageState = (state, errorMessageKey, errorMessageVal) =>
+const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
   update(
     state,
-    { ui: { pdfSidebar: { showErrorMessage: { [errorMessageKey]: { $set: errorMessageVal } } } } },
+    {
+      ui: {
+        pdfSidebar: {
+          error: {
+            [errorType]: {
+              visible: { $set: isVisible },
+              message: { $set: isVisible ? errorMsg : null }
+            }
+          }
+        }
+      }
+    },
   );
 
-const hideErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, false);
-const showErrorMessage = (state, errorMessageType) => setErrorMessageState(state, errorMessageType, true);
+const hideErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, false, errorMsg);
+const showErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, true, errorMsg);
 
 const updateLastReadDoc = (state, docId) =>
   update(
@@ -105,15 +116,16 @@ const openAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
-const initialShowErrorMessageState = {
-  tag: false,
-  category: false,
-  annotation: false
+const initialPdfSidebarErrorState = {
+  tag: { visible: false,
+    message: null },
+  category: { visible: false,
+    message: null },
+  annotation: { visible: false,
+    message: null }
 };
 
 export const initialState = {
-  assignments: [],
-  assignmentsLoaded: false,
   loadedAppealId: null,
   loadedAppeal: {},
   initialDataLoadingFail: false,
@@ -126,16 +138,6 @@ export const initialState = {
   ],
   ui: {
     tagOptions: [],
-    caseSelect: {
-      selectedAppealVacolsId: null,
-      isRequestingAppealsUsingVeteranId: false,
-      selectedAppeal: {},
-      receivedAppeals: [],
-      search: {
-        showErrorMessage: false,
-        showNoAppealsInfoMessage: false
-      }
-    },
     searchCategoryHighlights: {},
     pendingAnnotations: {},
     pendingEditingAnnotations: {},
@@ -143,9 +145,6 @@ export const initialState = {
     deleteAnnotationModalIsOpenFor: null,
     placedButUnsavedAnnotation: null,
     filteredDocIds: null,
-    caseSelectCriteria: {
-      searchQuery: ''
-    },
     docFilterCriteria: {
       sort: {
         sortBy: 'receivedAt',
@@ -159,10 +158,12 @@ export const initialState = {
       pdfsReadyToShow: {},
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
-      jumpToPageNumber: null
+      jumpToPageNumber: null,
+      scrollTop: 0,
+      hideSearchBar: true
     },
     pdfSidebar: {
-      showErrorMessage: initialShowErrorMessageState
+      error: initialPdfSidebarErrorState
     },
     pdfList: {
       scrollTop: null,
@@ -171,7 +172,9 @@ export const initialState = {
         tag: false,
         category: false
       }
-    }
+    },
+    manifestVbmsFetchedAt: null,
+    manifestVvaFetchedAt: null
   },
 
   /**
@@ -183,8 +186,13 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  pages: {},
-  pdfDocuments: {}
+  pageDimensions: {},
+  pdfDocuments: {},
+  documentErrors: {},
+  text: [],
+  documentSearchString: null,
+  documentSearchIndex: 0,
+  extractedText: {}
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -241,16 +249,20 @@ export const reducer = (state = initialState, action = {}) => {
         },
         loadedAppealId: {
           $set: action.payload.vacolsId
-        },
-        assignments: {
-          $apply: (existingAssignments) =>
-            existingAssignments.map((assignment) => ({
-              ...assignment,
-              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
-            }))
         }
       }
     ));
+  case Constants.RECEIVE_MANIFESTS:
+    return update(state, {
+      ui: {
+        manifestVbmsFetchedAt: {
+          $set: action.payload.manifestVbmsFetchedAt
+        },
+        manifestVvaFetchedAt: {
+          $set: action.payload.manifestVvaFetchedAt
+        }
+      }
+    });
   case Constants.RECEIVE_ANNOTATIONS:
     return updateFilteredDocIds(update(
       state,
@@ -267,16 +279,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
-  case Constants.RECEIVE_ASSIGNMENTS:
-    return update(state,
-      {
-        assignments: {
-          $set: action.payload.assignments
-        },
-        assignmentsLoaded: {
-          $set: true
-        }
-      });
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -303,43 +305,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
-  case Constants.SET_CASE_SELECT_SEARCH:
-    return update(state, {
-      ui: {
-        caseSelectCriteria: {
-          searchQuery: {
-            $set: action.payload.searchQuery
-          }
-        }
-      }
-    });
-  case Constants.CLEAR_CASE_SELECT_SEARCH:
-    return update(state, {
-      ui: {
-        caseSelectCriteria: {
-          searchQuery: {
-            $set: ''
-          }
-        },
-        caseSelect: {
-          receivedAppeals: { $set: {} },
-          selectedAppeal: { $set: {} },
-          selectedAppealVacolsId: { $set: null },
-          search: {
-            showErrorMessage: { $set: false },
-            showNoAppealsInfoMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.CASE_SELECT_MODAL_APPEAL_VACOLS_ID:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          selectedAppealVacolsId: { $set: action.payload.vacolsId }
-        }
-      }
-    });
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -358,7 +323,7 @@ export const reducer = (state = initialState, action = {}) => {
   case Constants.SELECT_CURRENT_VIEWER_PDF:
     return updateLastReadDoc(update(state, {
       ui: {
-        pdfSidebar: { showErrorMessage: { $set: initialShowErrorMessageState } }
+        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
       },
       documents: {
         [action.payload.docId]: {
@@ -742,7 +707,7 @@ export const reducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.STOP_PLACING_ANNOTATION:
-    return update(state, {
+    return update(hideErrorMessage(state, 'annotation'), {
       placingAnnotationIconPageCoords: {
         $set: null
       },
@@ -784,63 +749,8 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.REQUEST_APPEAL_USING_VETERAN_ID:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: true }
-        }
-      }
-    });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_SUCCESS:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false },
-          receivedAppeals: {
-            $set: action.payload.appeals
-          },
-          search: {
-            showErrorMessage: { $set: false },
-            showNoAppealsInfoMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.RECEIVE_APPEALS_USING_VETERAN_ID_FAILURE:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false },
-          search: {
-            showErrorMessage: { $set: true },
-            showNoAppealsInfoMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.RECEIVED_NO_APPEALS_USING_VETERAN_ID:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          isRequestingAppealsUsingVeteranId: { $set: false },
-          search: {
-            showNoAppealsInfoMessage: { $set: true },
-            showErrorMessage: { $set: false }
-          }
-        }
-      }
-    });
-  case Constants.CASE_SELECT_APPEAL:
-    return update(state, {
-      ui: {
-        caseSelect: {
-          selectedAppeal: { $set: action.payload.appeal }
-        }
-      }
-    });
   case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
-    return update(showErrorMessage(state, 'annotation'), {
+    return update(showErrorMessage(state, 'annotation', action.payload.errorMessage), {
       ui: {
         // This will cause a race condition if the user has created multiple annotations.
         // Whichever annotation failed most recently is the one that'll be in the
@@ -903,7 +813,7 @@ export const reducer = (state = initialState, action = {}) => {
     );
   case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
     return moveModel(
-      showErrorMessage(state, 'annotation'),
+      showErrorMessage(state, 'annotation', action.payload.errorMessage),
       ['ui', 'pendingEditingAnnotations'],
       ['editingAnnotations'],
       action.payload.annotationId
@@ -928,6 +838,14 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state, {
       ui: {
         pdfList: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
+  case Constants.SET_DOC_SCROLL_POSITION:
+    return update(state, {
+      ui: {
+        pdf: {
           scrollTop: { $set: action.payload.scrollTop }
         }
       }
@@ -972,16 +890,20 @@ export const reducer = (state = initialState, action = {}) => {
         documents: { $set: modifiedDocuments }
       });
   case Constants.TOGGLE_PDF_SIDEBAR:
-    return _.merge(
-      {},
-      state,
-      {
-        ui: {
-          pdf: {
-            hidePdfSidebar: !state.ui.pdf.hidePdfSidebar
-          }
-        }
-      }
+    return update(state,
+      { ui: { pdf: { hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } } } }
+    );
+  case Constants.TOGGLE_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: !state.ui.pdf.hideSearchBar } } } }
+    );
+  case Constants.SHOW_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: false } } } }
+    );
+  case Constants.HIDE_SEARCH_BAR:
+    return update(state,
+      { ui: { pdf: { hideSearchBar: { $set: true } } } }
     );
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
@@ -1023,43 +945,21 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_UP_PDF_PAGE:
+  case Constants.SET_UP_PAGE_DIMENSIONS:
     return update(
       state,
       {
-        pages: {
+        pageDimensions: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $set: action.payload.page
+            $set: {
+              ...action.payload.dimensions,
+              file: action.payload.file,
+              pageIndex: action.payload.pageIndex
+            }
           }
         }
       }
     );
-  case Constants.CLEAR_PDF_PAGE: {
-    // We only want to remove the page and container if we're cleaning up the same page that is
-    // currently stored here. This is to avoid a race condition where a user returns to this
-    // page and the new page object is stored here before we have a chance to destroy the
-    // old object.
-    const FILE_PAGE_INDEX = `${action.payload.file}-${action.payload.pageIndex}`;
-
-    if (action.payload.page &&
-      _.get(state.pages, [FILE_PAGE_INDEX, 'page']) === action.payload.page) {
-      return update(
-        state,
-        {
-          pages: {
-            [FILE_PAGE_INDEX]: {
-              $merge: {
-                page: null,
-                container: null
-              }
-            }
-          }
-        }
-      );
-    }
-
-    return state;
-  }
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,
@@ -1085,7 +985,49 @@ export const reducer = (state = initialState, action = {}) => {
     }
 
     return state;
-
+  case Constants.SET_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: true
+        }
+      }
+    });
+  case Constants.CLEAR_DOCUMENT_LOAD_ERROR:
+    return update(state, {
+      documentErrors: {
+        [action.payload.file]: {
+          $set: false
+        }
+      }
+    });
+  case Constants.GET_DOCUMENT_TEXT:
+    return update(
+      state,
+      {
+        extractedText: {
+          $merge: action.payload.textObject
+        }
+      }
+    );
+  case Constants.ZERO_SEARCH_INDEX:
+    return update(
+      state,
+      {
+        documentSearchIndex: {
+          $set: 0
+        }
+      }
+    );
+  case Constants.UPDATE_SEARCH_INDEX:
+    return update(
+      state,
+      {
+        documentSearchIndex: {
+          $apply: (index) => action.payload.increment ? index + 1 : index - 1
+        }
+      }
+    );
   default:
     return state;
   }

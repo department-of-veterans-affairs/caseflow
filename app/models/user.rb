@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   end
 
   def timezone
-    (VACOLS::RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
   end
 
   def display_name
@@ -94,7 +94,7 @@ class User < ActiveRecord::Base
   end
 
   def station_offices
-    VACOLS::RegionalOffice::STATIONS[station_id]
+    RegionalOffice::STATIONS[station_id]
   end
 
   def current_case_assignments_with_views
@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
   end
 
   def current_case_assignments
-    self.class.case_assignment_repository.load_from_vacols(css_id)
+    self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
   private
@@ -119,7 +119,7 @@ class User < ActiveRecord::Base
   end
 
   class << self
-    attr_writer :case_assignment_repository
+    attr_writer :appeal_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
@@ -154,8 +154,8 @@ class User < ActiveRecord::Base
       @authentication_service ||= AuthenticationService
     end
 
-    def case_assignment_repository
-      @case_assignment_repository ||= CaseAssignmentRepository
+    def appeal_repository
+      @appeal_repository ||= AppealRepository
     end
   end
 end

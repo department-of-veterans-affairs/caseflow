@@ -39,8 +39,6 @@ module CaseflowCertification
 
     config.google_analytics_account = nil
 
-    config.active_job.queue_adapter = :sidekiq
-
     config.bgs_environment = ENV["BGS_ENVIRONMENT"] || "beplinktest"
 
     # Used by the application to determine whether webpack hot reloading is active

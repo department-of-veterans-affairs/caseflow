@@ -196,6 +196,12 @@ body {
   }
 }
 
+.cf-app-intake {
+  .cf-app-width {
+    @include app-width('intake');
+  }
+}
+
 .cf-app-reader {
   // If we add this line, an extraneous scrollbar on Windows will disappear.
   // However, this also makes a test fail on Travis (but not Jenkins).
@@ -251,6 +257,13 @@ body {
 
 .cf-logo-image-hearing-prep {
   background-image: url(asset-path('caseflow-hearing-prep-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-intake {
+  background-image: url(asset-path('caseflow-intake-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
@@ -387,6 +400,17 @@ body {
   }
 }
 
+.pdfViewer.singlePageView .cf-msg-screen-deck {
+  width: auto;
+}
+
+.cf-warning {
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-left: 3rem;
+  background-color: inherit;
+}
+
 .cf-tab-window-body {
   padding-top: 20px;
   border: 1px solid $color-gray-light;
@@ -507,11 +531,18 @@ select {
   }
 }
 
-.usa-alert.no-title {
-  background-position: 1rem 1.5rem;
+.usa-alert {
+  &.lower-margin {
+    // This value is copied from USWDS.
+    margin-bottom: 1.5em;
+  }
 
-  .usa-alert-text {
-    font-size: 19px;
+  &.no-title {
+    background-position: 1rem 1.5rem;
+
+    .usa-alert-text {
+      font-size: 19px;
+    }
   }
 }
 
@@ -635,7 +666,7 @@ select {
 }
 
 .vbms-id {
-  color: $color-gray-light;
+  color: $color-gray;
 }
 
 //candidate for commons

@@ -29,14 +29,15 @@ class VACOLS::CaseHearing < VACOLS::Record
     Y: true
   }.freeze
 
-  TABLE_NAMES = {
+  COLUMN_NAMES = {
     notes: :notes1,
     disposition: :hearing_disp,
     hold_open: :holddays,
     aod: :aod,
     transcript_requested: :tranreq,
     add_on: :addon,
-    representative_name: :repname
+    representative_name: :repname,
+    staff_id: :mduser
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -47,14 +48,9 @@ class VACOLS::CaseHearing < VACOLS::Record
     def upcoming_for_judge(css_id)
       id = connection.quote(css_id)
 
-      hearings = select_hearings.where("staff.sdomainid = #{id}")
-                                .where("hearing_date > ?", 1.week.ago)
-
-      # For a video master record, the hearing_pkseq number becomes the VDKEY that links all
-      # the child records (veterans scheduled for that video) to the parent record
-      children_ids = hearings.map(&:vdkey).compact.map(&:to_i)
-      # Filter out video master records with children
-      hearings.reject { |hearing| hearing.master_record? && children_ids.include?(hearing.hearing_pkseq) }
+      select_hearings.where("staff.sdomainid = #{id}")
+                     .where("hearing_date > ?", 30.days.ago.beginning_of_day)
+                     .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -72,43 +68,37 @@ class VACOLS::CaseHearing < VACOLS::Record
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
              "staff.sdomainid as css_id",
-             :hearing_disp,
-             :hearing_pkseq,
-             :hearing_date,
-             :hearing_type,
-             :notes1,
-             :folder_nr,
-             :vdkey,
-             :aod,
-             :holddays,
-             :tranreq,
-             :repname,
-             :addon,
-             :board_member,
-             :mduser,
-             :mdtime,
-             :sattyid)
+             :hearing_disp, :hearing_pkseq,
+             :hearing_date, :hearing_type,
+             :notes1, :folder_nr,
+             :vdkey, :aod,
+             :holddays, :tranreq,
+             :repname, :addon,
+             :board_member, :mduser,
+             :mdtime, :sattyid,
+             :bfregoff, :bfso,
+             :bfcorkey, :bfddec, :bfdc,
+             "staff.slogid",
+             "corres.snamef, corres.snamemi",
+             "corres.snamel, corres.sspare1",
+             "corres.sspare2, corres.sspare3")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
+        .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
   end
 
   def master_record_type
     return :video if folder_nr =~ /VIDEO/
-    # TODO: return :travel_board if a record is from tb_sched
-  end
-
-  def master_record?
-    master_record_type.present?
   end
 
   def update_hearing!(hearing_info)
-    slogid = staff.try(:slogid)
-    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[TABLE_NAMES[k]] = v }
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do
-      update(attrs.merge(mduser: slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
+      update(attrs.merge(mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
 

@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
 import LoadingContainer from '../components/LoadingContainer';
+import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
-import { TOGGLE_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_SAVE_FAILED } from './constants/constants';
-import AutoSave from '../components/AutoSave.jsx';
+import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED } from './constants/constants';
+import AutoSave from '../components/AutoSave';
 import DailyDocket from './DailyDocket';
 import ApiUtil from '../util/ApiUtil';
 
@@ -20,9 +21,12 @@ export class DailyDocketContainer extends React.Component {
   }
 
   render() {
-    if (this.props.serverError) {
-      return <div style={{ textAlign: 'center' }}>
-        An error occurred while retrieving your hearings.</div>;
+    if (this.props.docketServerError) {
+      return <StatusMessage
+        title= "Unable to load hearings">
+          It looks like Caseflow was unable to load hearings.<br />
+          Please <a href="">refresh the page</a> and try again.
+      </StatusMessage>;
     }
 
     if (!this.props.dockets) {
@@ -45,6 +49,8 @@ export class DailyDocketContainer extends React.Component {
       <AutoSave
         save={this.props.save(this.docket(), this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+        isSaving={this.props.docketIsSaving}
+        saveFailed={this.props.saveDocketFailed}
       />
       <DailyDocket
         veteran_law_judge={this.props.veteran_law_judge}
@@ -57,7 +63,7 @@ export class DailyDocketContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dockets: state.dockets,
-  serverError: state.serverError
+  docketServerError: state.docketServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -67,7 +73,7 @@ const mapDispatchToProps = (dispatch) => ({
         then((response) => {
           dispatch(Actions.populateDockets(response.body));
         }, (err) => {
-          dispatch(Actions.handleServerError(err));
+          dispatch(Actions.handleDocketServerError(err));
         });
     }
   },
@@ -78,9 +84,9 @@ const mapDispatchToProps = (dispatch) => ({
       return;
     }
 
-    dispatch({ type: TOGGLE_SAVING });
+    dispatch({ type: TOGGLE_DOCKET_SAVING });
 
-    dispatch({ type: SET_SAVE_FAILED,
+    dispatch({ type: SET_DOCKET_SAVE_FAILED,
       payload: { saveFailed: false } });
 
     hearingsToSave.forEach((hearing) => {
@@ -88,17 +94,17 @@ const mapDispatchToProps = (dispatch) => ({
       const index = docket.findIndex((x) => x.id === hearing.id);
 
       ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
-      then(() => {
-        dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
-          payload: { date,
-            index } });
-      },
-      () => {
-        dispatch({ type: SET_SAVE_FAILED,
-          payload: { saveFailed: true } });
-      });
+        then(() => {
+          dispatch({ type: SET_EDITED_FLAG_TO_FALSE,
+            payload: { date,
+              index } });
+        },
+        () => {
+          dispatch({ type: SET_DOCKET_SAVE_FAILED,
+            payload: { saveFailed: true } });
+        });
     });
-    dispatch({ type: TOGGLE_SAVING });
+    dispatch({ type: TOGGLE_DOCKET_SAVING });
   }
 });
 
@@ -121,5 +127,5 @@ DailyDocketContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
   dockets: PropTypes.object,
   date: PropTypes.string.isRequired,
-  serverError: PropTypes.object
+  docketServerError: PropTypes.object
 };

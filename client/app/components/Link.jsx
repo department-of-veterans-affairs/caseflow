@@ -46,13 +46,13 @@ export default class Link extends React.Component {
 
     if (to) {
       return <RouterLink to={to} {...commonProps}>
-          {children}
-        </RouterLink>;
+        {children}
+      </RouterLink>;
     }
 
     return <a href={href} {...commonProps}>
-          {children}
-        </a>;
+      {children}
+    </a>;
 
   }
 }
