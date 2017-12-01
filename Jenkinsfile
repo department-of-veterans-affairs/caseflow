@@ -48,7 +48,7 @@ node('deploy') {
       if (env.APP_ENV == 'demo') {
         DEPLOY_MESSAGE = sh (
           // magical shell script that will find the latest tag for the repository
-          script: "git log \$(ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -E 'manual|stable' | sort -t/ -nk4 | awk -F\"/\" '{print \$0}' | tail -n 1 | awk '{print $1}')..HEAD --pretty='format:%H     %<(25)%an     %s",
+          script: "git log $(ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -E 'manual|stable' | sort -t/ -nk4 | awk -F\"/\" '{print \$0}' | tail -n 1 | awk '{print $1}')..HEAD --pretty='format:%H     %<(25)%an     %s",
           returnStdout: true
         ).trim()
       }
