@@ -189,20 +189,6 @@ describe EndProduct do
     end
   end
 
-  context "#description" do
-    subject { end_product.description }
-
-    context "when ep_code doesn't exist" do
-      let(:claim_type_code) { "BLARGYBLARG" }
-      it { is_expected.to be_nil }
-    end
-
-    context "when ep_code does exist" do
-      let(:claim_type_code) { "170RBVAG" }
-      it { is_expected.to eq("170RBVAG - Remand with BVA Grant") }
-    end
-  end
-
   context "#to_vbms_hash" do
     subject { end_product.to_vbms_hash }
 

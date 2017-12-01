@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
     @regional_office_options = current_user.station_offices.map do |regional_office_code|
       {
         "regionalOfficeCode" => regional_office_code,
-        "regionalOffice" => RegionalOffice::CITIES[regional_office_code]
+        "regionalOffice" => VACOLS::RegionalOffice::CITIES[regional_office_code]
       }
     end
     @redirect_to = session["return_to"] || root_path

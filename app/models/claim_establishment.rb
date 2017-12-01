@@ -25,7 +25,17 @@ class ClaimEstablishment < ActiveRecord::Base
     DECSION_TYPES[appeal.decision_type]
   end
 
+  def ep_description
+    ep_label && "#{ep_code} - #{ep_label}"
+  end
+
   def sent_email
     email_recipient && RegionalOfficeEmail.new(recipient: email_recipient, ro_id: email_ro_id)
+  end
+
+  private
+
+  def ep_label
+    @ep_label ||= EndProduct::CODES[ep_code]
   end
 end

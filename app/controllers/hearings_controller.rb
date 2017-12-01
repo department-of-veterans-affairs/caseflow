@@ -1,4 +1,5 @@
 class HearingsController < ApplicationController
+  # :nocov:
   before_action :verify_access, :check_hearing_prep_out_of_service
 
   def update
@@ -44,4 +45,16 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :add_on)
   end
+
+  def date_from_string(date_string)
+    # date should be YYYY-MM-DD
+    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ date_string
+
+    begin
+      date_string.to_date
+    rescue ArgumentError
+      nil
+    end
+  end
+  # :nocov:
 end

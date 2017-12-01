@@ -1,5 +1,20 @@
 # Caseflow
+
+Following are links to view the results for each product in Travis CI as well as a link to the product's repository:
+
+| Product | GitHub Repository | Travis CI |
+| --- | --- | ---|
+| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [Travis CI - Caseflow](https://travis-ci.org/department-of-veterans-affairs/caseflow) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
+| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
+| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
+
+
+# Caseflow Certification
+
 [![Build Status](https://travis-ci.org/department-of-veterans-affairs/caseflow.svg?branch=master)](https://travis-ci.org/department-of-veterans-affairs/caseflow)
+
+## About
 
 Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
 
@@ -10,21 +25,23 @@ Clerical errors have the potential to delay the resolution of a veteran's appeal
 [View application information on Caseflow Certification](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/certification.md).
 
 ## Setup
-Install dependencies via Homebrew:
-
-    brew install postgresql redis chromedriver rbenv
-    
 Make sure you have [rbenv](https://github.com/rbenv/rbenv) and [nvm](https://github.com/creationix/nvm) installed.
 
 Then run the following:
 
-    # rbenv install <the version of Ruby defined in .travis.yml>
-    # For example:
-    # rbenv install 2.2.4
+    rbenv install 2.2.4
 
     gem install bundler
 
-You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let `brew` tell you how to do that:
+You'll need ChromeDriver, Postgres, and Redis if you don't have them.
+
+    brew install postgresql
+
+    brew install redis
+
+    brew install chromedriver
+
+You need to have Redis, Postgres, and Chromedriver running to run Caseflow. (Chromedriver is for the Capybara tests.) Let brew tell you how to do that:
 
     brew info redis
 
@@ -37,21 +54,11 @@ Install [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server
 Note this link was found on Stack Overflow and is not the same link that is on the pdftk website.
 The version on the website does not work on recent versions of OSX (Sierra and El Capitan).
 
-For the frontend, you'll need to install Node and the relevant npm modules. [Install yarn](https://yarnpkg.com/en/docs/install). Use the version of Yarn defined in our `.travis.yml` file.
+For the frontend, you'll need to install Node and the relevant npm modules
 
-    # Use the version of Node defined in .nvmrc.
-    nvm use
+    nvm install v6.10.2
 
-    cd client && yarn
-
-## Monitoring
-We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
-
-```
-NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABLED=true bundle exec foreman start
-```
-
-You may wish to do this if you are debugging our NewRelic integration, for instance.
+    cd client && nvm use && npm install
 
 ## Running Caseflow in isolation
 To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
@@ -59,7 +66,7 @@ to skip production gems when installing.
 
     bundle install --without production staging
 
-Set up and seed the DB
+Setup and seed the DB
 
     rake db:setup
 
@@ -67,9 +74,13 @@ And by default, Rails will run in the development environment, which will mock o
 
     foreman start
 
-If you want to run the Rails server and frontend webpack server separately, look at the `Procfile` to figure out what commands to run.
+Or to run the rails server and frontend webpack server separately:
 
-You can access the site at [http://localhost:3000/test/users](http://localhost:3000/test/users).
+    REACT_ON_RAILS_ENV=hot bundle exec rails s
+
+    cd client && nvm use && npm run dev
+
+You can access the site at [http://localhost:3000](http://localhost:3000), which takes you to the help page.
 
 ## Roles
 
@@ -223,14 +234,6 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 ```
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
-
-# Other Caseflow Products
-| Product | GitHub Repository | Travis CI |
-| --- | --- | ---|
-| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [Travis CI - Caseflow](https://travis-ci.org/department-of-veterans-affairs/caseflow) |
-| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
-| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
-| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 # Support
 ![BrowserStack logo](./browserstack-logo.png)

@@ -4,11 +4,10 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { fetchAppealUsingVeteranId,
-  setCaseSelectSearch,
+  onReceiveAppealDetails, setCaseSelectSearch,
   clearCaseSelectSearch, caseSelectAppeal,
   caseSelectModalSelectVacolsId
-} from './CaseSelect/CaseSelectActions';
-import { onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
+} from './actions';
 
 import SearchBar from '../components/SearchBar';
 import Modal from '../components/Modal';
@@ -66,9 +65,9 @@ class CaseSelectSearch extends React.PureComponent {
           <strong>Veteran</strong> {appeal.veteran_full_name} <br />
           <strong>Veteran ID</strong> {appeal.vbms_id} <br />
           <strong>Issues</strong><br />
-          <ol className="issues">
-            <IssuesList appeal={appeal} />
-          </ol>
+            <ol className="issues">
+              <IssuesList appeal={appeal} />
+            </ol>
         </div>,
         value: appeal.vacols_id
       }));
@@ -128,6 +127,7 @@ class CaseSelectSearch extends React.PureComponent {
   }
 }
 
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAppealUsingVeteranId,
   onReceiveAppealDetails,
@@ -138,9 +138,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  caseSelect: state.caseSelect,
-  caseSelectCriteria: state.caseSelect.caseSelectCriteria
+  caseSelect: state.readerReducer.ui.caseSelect,
+  caseSelectCriteria: state.readerReducer.ui.caseSelectCriteria
 });
+
 
 export default connect(
   mapStateToProps,

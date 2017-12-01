@@ -8,7 +8,7 @@ describe('BaseContainer', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<BaseContainer page="TestPage" otherProp="foo" />);
+    wrapper = mount(<BaseContainer page="TestPage" otherProp="foo"/>);
   });
 
   context('sub-page', () => {

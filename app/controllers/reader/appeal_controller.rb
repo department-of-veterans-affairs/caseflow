@@ -13,11 +13,10 @@ class Reader::AppealController < Reader::ApplicationController
   end
 
   def find_appeals_by_veteran_id
-    MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
-                          name: "AppealController.find_appeals_by_veteran_id") do
-      appeals = Appeal.fetch_appeals_by_file_number(veteran_id)
+    MetricsService.record("VACOLS: Get appeal information for vbms_id #{veteran_id}",
+                          name: "AppealController.find_appeals_by_vbms_id") do
+      appeals = Appeal.fetch_appeals_by_vbms_id(veteran_id)
       hashed_appeals = appeals.map { |appeal| appeal.to_hash(issues: appeal.issues) }
-                              .reject { |appeal_hash| appeal_hash["issues"].empty? }
 
       render json: {
         appeals: hashed_appeals
@@ -29,7 +28,6 @@ class Reader::AppealController < Reader::ApplicationController
     vacols_id = params[:id]
 
     respond_to do |format|
-      format.html { redirect_to reader_appeal_documents_path(appeal_id: vacols_id) }
       format.json do
         MetricsService.record("VACOLS: Get appeal information for #{vacols_id}",
                               name: "AppealController.show") do

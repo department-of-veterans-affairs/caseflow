@@ -29,9 +29,11 @@ export const getStationOfJurisdiction = createSelector(
   }
 );
 
+
 const getIsValdating = (state) => state.isValidating;
 const getCancelFeedback = (state) => state.cancelFeedback;
 const getValidator = () => requiredValidator('Please enter an explanation');
+
 
 export const getCancelFeedbackErrorMessage = createSelector(
   [getIsValdating, getCancelFeedback, getValidator],

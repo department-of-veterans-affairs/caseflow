@@ -33,6 +33,13 @@ describe CreateEstablishClaimTasksJob do
       expect(EstablishClaim.count).to eq(2)
       expect(ClaimEstablishment.count).to eq(2)
     end
+
+    it "skips partial grants if they are disabled" do
+      FeatureToggle.disable!(:dispatch_partial_grants_remands)
+      expect(EstablishClaim.count).to eq(0)
+      CreateEstablishClaimTasksJob.perform_now
+      expect(EstablishClaim.count).to eq(1)
+    end
   end
 
   context ".full_grant_outcoded_after" do

@@ -22,7 +22,7 @@ export default class DropdownMenu extends React.Component {
   setWrapperRef = (node) => this.wrapperRef = node
 
   onClickOutside = (event) => {
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && this.state.menu) {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
       window.analyticsEvent(this.props.analyticsTitle, 'menu', 'blur');
 
       this.setState({

@@ -4,41 +4,18 @@ import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../redux/actions';
-import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
-import { getRampElectionStatus } from '../redux/selectors';
 
-class Completed extends React.PureComponent {
+export default class Completed extends React.PureComponent {
   render() {
-    const {
-      veteran,
-      endProductDescription,
-      rampElectionStatus
-    } = this.props;
-
-    switch (rampElectionStatus) {
-    case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case RAMP_INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case RAMP_INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH} />;
-    default:
-    }
-
-    const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'opt-in election has been processed. You can now begin intake for the next opt-in election.';
+    const message = 'Joe Snuffy\'s (ID #222222222) opt-in request has been processed, ' +
+      'and Caseflow closed the record in VACOLS. You can now begin processing the next opt-in letter.';
 
     return <div>
       <StatusMessage
         title="Intake completed"
         type="success"
-        leadMessageList={[message]}
-        checklist={[
-          'Caseflow closed the VACOLS record',
-          `Established EP: ${endProductDescription}`
-        ]}
         wrapInAppSegment={false}
+        messageText={message}
       />
     </div>;
   }
@@ -50,7 +27,7 @@ class UnconnectedCompletedNextButton extends React.PureComponent {
     this.props.history.push('/');
   }
 
-  render = () => <Button onClick={this.handleClick} legacyStyling={false}>Begin next intake</Button>
+  render = () => <Button onClick={this.handleClick}>Begin next intake</Button>
 }
 
 export const CompletedNextButton = connect(
@@ -59,11 +36,3 @@ export const CompletedNextButton = connect(
     startNewIntake
   }, dispatch)
 )(UnconnectedCompletedNextButton);
-
-export default connect(
-  (state) => ({
-    veteran: state.veteran,
-    endProductDescription: state.rampElection.endProductDescription,
-    rampElectionStatus: getRampElectionStatus(state)
-  })
-)(Completed);

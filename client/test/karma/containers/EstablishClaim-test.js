@@ -47,7 +47,7 @@ describe('EstablishClaim', () => {
         pdfjsLink=""
         handleAlert={func}
         handleAlertClear={func}
-        task={task} />);
+        task={task}/>);
 
     });
 
@@ -134,7 +134,7 @@ describe('EstablishClaim', () => {
         pdfjsLink=""
         handleAlert={func}
         handleAlertClear={func}
-        task={task} />);
+        task={task}/>);
 
       if (stationOfJurisdiction !== '397') {
         wrapper.node.store.dispatch({

@@ -37,14 +37,15 @@ export default class Example6 extends React.Component {
       }
     ];
 
+
     return <CheckboxGroup
       label="You must check an option:"
       name="checkbox_example_6"
       options={options}
       onChange={this.onChange}
       values={this.state.values}
-      required
+      required={true}
       errorMessage={this.state.errorMessage}
-    />;
+    ></CheckboxGroup>;
   }
 }

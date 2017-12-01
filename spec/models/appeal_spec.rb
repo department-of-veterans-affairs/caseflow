@@ -5,24 +5,17 @@ describe Appeal do
 
   let(:appeal) do
     Generators::Appeal.build(
-      notification_date: notification_date,
       nod_date: nod_date,
       soc_date: soc_date,
       form9_date: form9_date,
       ssoc_dates: ssoc_dates,
-      certification_date: certification_date,
       documents: documents,
       hearing_request_type: hearing_request_type,
       video_hearing_requested: video_hearing_requested,
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
       appellant_last_name: "Tester",
-      decision_date: decision_date,
-      manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
-      location_code: location_code,
-      status: status,
-      disposition: disposition
+      decision_date: nil
     )
   end
 
@@ -41,38 +34,17 @@ describe Appeal do
     )
   end
 
-  let(:notification_date) { 1.month.ago }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
-  let(:certification_date) { nil }
-  let(:decision_date) { nil }
   let(:documents) { [] }
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
-  let(:location_code) { nil }
-  let(:status) { "Advance" }
-  let(:disposition) { nil }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
-
-  let(:appeal_manifest_vbms_fetched_at) { Time.zone.local(1954, "mar", 16, 8, 2, 55) }
-  let(:appeal_manifest_vva_fetched_at) { Time.zone.local(1987, "mar", 15, 20, 15, 1) }
-
-  let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55) }
-  let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1) }
-
-  let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
-  let(:doc_struct) do
-    {
-      documents: documents,
-      manifest_vbms_fetched_at: service_manifest_vbms_fetched_at.utc.strftime(efolder_fetched_at_format),
-      manifest_vva_fetched_at: service_manifest_vva_fetched_at.utc.strftime(efolder_fetched_at_format)
-    }
-  end
 
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
@@ -165,45 +137,14 @@ describe Appeal do
     it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
   end
 
-  context "#v1_events" do
-    subject { appeal.v1_events }
+  context "#events" do
+    subject { appeal.events }
     let(:soc_date) { 5.days.ago }
 
     it "returns list of events sorted from oldest to newest by date" do
       expect(subject.length > 1).to be_truthy
       expect(subject.first.date).to eq(5.days.ago)
       expect(subject.first.type).to eq(:soc)
-    end
-  end
-
-  context "#form9_due_date" do
-    subject { appeal.form9_due_date }
-
-    context "when the notification date is within the last year" do
-      it { is_expected.to eq((notification_date + 1.year).to_date) }
-    end
-
-    context "when the notification date is older" do
-      let(:notification_date) { 1.year.ago }
-      it { is_expected.to eq((soc_date + 60.days).to_date) }
-    end
-
-    context "when missing notification date or soc date" do
-      let(:soc_date) { nil }
-      it { is_expected.to eq(nil) }
-    end
-  end
-
-  context "#cavc_due_date" do
-    subject { appeal.cavc_due_date }
-
-    context "when there is no decision date" do
-      it { is_expected.to eq(nil) }
-    end
-
-    context "when there is a decision date" do
-      let(:decision_date) { 30.days.ago }
-      it { is_expected.to eq(90.days.from_now.to_date) }
     end
   end
 
@@ -371,7 +312,7 @@ describe Appeal do
 
       context "when efolder_docs_api is disabled" do
         it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
           expect(EFolderService).not_to receive(:fetch_documents_for)
           expect(result).to eq(documents)
         end
@@ -380,7 +321,7 @@ describe Appeal do
           before { RequestStore.store[:application] = "reader" }
 
           it "loads document content from the VBMS service" do
-            expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
+            expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
             expect(EFolderService).not_to receive(:fetch_documents_for)
             expect(appeal.fetch_documents!(save: save)).to eq(documents)
           end
@@ -393,14 +334,10 @@ describe Appeal do
           RequestStore.store[:application] = "reader"
         end
 
-        it "loads document content from the efolder service and sets fetched_at attributes" do
+        it "loads document content from the efolder service" do
           expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
-
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(appeal.manifest_vbms_fetched_at).to eq(service_manifest_vbms_fetched_at)
-          expect(appeal.manifest_vva_fetched_at).to eq(service_manifest_vva_fetched_at)
         end
 
         after do
@@ -425,7 +362,7 @@ describe Appeal do
 
       context "when efolder_docs_api is disabled" do
         it "loads document content from the VBMS service" do
-          expect(VBMSService).to receive(:fetch_documents_for).and_return(doc_struct).once
+          expect(VBMSService).to receive(:fetch_documents_for).and_return(documents).once
           expect(EFolderService).not_to receive(:fetch_documents_for)
           expect(result).to eq(documents)
         end
@@ -439,7 +376,7 @@ describe Appeal do
 
         it "loads document content from the efolder service" do
           expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(documents).once
           expect(appeal.fetch_documents!(save: save)).to eq(documents)
         end
 
@@ -456,62 +393,16 @@ describe Appeal do
     end
   end
 
-  context "#manifest_vva_fetched_at" do
-    let(:documents) do
-      [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
-    end
-    context "instance variables for appeal not yet set" do
-      it "returns own attribute and sets manifest_vbms_fetched_at when called" do
-        expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
-
-        expect(EFolderService).not_to receive(:fetch_documents_for)
-        expect(VBMSService).not_to receive(:fetch_documents_for)
-        expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
-      end
-    end
-  end
-
-  context "#manifest_vbms_fetched_at" do
+  context "#fetched_documents" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
     end
 
-    it "returns own attribute and sets manifest_vva_fetched_at when called" do
-      expect(appeal.manifest_vbms_fetched_at).to eq(appeal_manifest_vbms_fetched_at)
-
-      expect(EFolderService).not_to receive(:fetch_documents_for)
-      expect(VBMSService).not_to receive(:fetch_documents_for)
-      expect(appeal.manifest_vva_fetched_at).to eq(appeal_manifest_vva_fetched_at)
-    end
-  end
-
-  context "#in_location?" do
-    subject { appeal.in_location?(location) }
-    let(:location) { :remand_returned_to_bva }
-
-    context "when location is not recognized" do
-      let(:location) { :never_never_land }
-
-      it "raises error" do
-        expect { subject }.to raise_error(Appeal::UnknownLocationError)
-      end
+    let(:appeal) do
+      Generators::Appeal.build(documents: documents)
     end
 
-    context "when is in location" do
-      let(:location_code) { "96" }
-      it { is_expected.to be_truthy }
-    end
-
-    context "when is not in location" do
-      let(:location_code) { "97" }
-      it { is_expected.to be_falsey }
-    end
-  end
-
-  context "#case_assignment_exists?" do
-    subject { appeal.case_assignment_exists? }
-
-    it { is_expected.to be_truthy }
+    subject { appeal.fetched_documents }
   end
 
   context ".find_or_create_by_vacols_id" do
@@ -574,93 +465,6 @@ describe Appeal do
 
     it "persists in database" do
       expect(Appeal.find_by(vacols_id: subject.vacols_id)).to be_an_instance_of(Appeal)
-    end
-  end
-
-  context ".close" do
-    let(:vacols_record) { :ready_to_certify }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
-    let(:user) { Generators::User.build }
-    let(:disposition) { "RAMP Opt-in" }
-
-    context "when called with both appeal and appeals" do
-      let(:vacols_record) { :ready_to_certify }
-
-      it "should raise error" do
-        expect do
-          Appeal.close(
-            appeal: appeal,
-            appeals: [appeal, another_appeal],
-            user: user,
-            closed_on: 4.days.ago,
-            disposition: disposition
-          )
-        end.to raise_error("Only pass either appeal or appeals")
-      end
-    end
-
-    context "when multiple appeals" do
-      it "closes each appeal" do
-        expect(Fakes::AppealRepository).to receive(:close!).with(
-          appeal: appeal,
-          user: user,
-          closed_on: 4.days.ago,
-          disposition_code: "P"
-        )
-        expect(Fakes::AppealRepository).to receive(:close!).with(
-          appeal: another_appeal,
-          user: user,
-          closed_on: 4.days.ago,
-          disposition_code: "P"
-        )
-
-        Appeal.close(
-          appeals: [appeal, another_appeal],
-          user: user,
-          closed_on: 4.days.ago,
-          disposition: disposition
-        )
-      end
-    end
-
-    context "when just one appeal" do
-      subject do
-        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
-      end
-
-      context "when disposition is not valid" do
-        let(:disposition) { "I'm not a disposition" }
-
-        it "should raise error" do
-          expect { subject }.to raise_error(/Disposition/)
-        end
-      end
-
-      context "when disposition is valid" do
-        context "when appeal is not active" do
-          let(:vacols_record) { :full_grant_decided }
-
-          it "should raise error" do
-            expect { subject }.to raise_error(/active/)
-          end
-        end
-
-        context "when appeal is active" do
-          let(:vacols_record) { :ready_to_certify }
-
-          it "closes the appeal in VACOLS" do
-            expect(Fakes::AppealRepository).to receive(:close!).with(
-              appeal: appeal,
-              user: user,
-              closed_on: 4.days.ago,
-              disposition_code: "P"
-            )
-
-            subject
-          end
-        end
-      end
     end
   end
 
@@ -733,14 +537,14 @@ describe Appeal do
     end
   end
 
-  context "#fetch_appeals_by_file_number" do
-    subject { Appeal.fetch_appeals_by_file_number(file_number) }
+  context "#fetch_appeals_by_vbms_id" do
+    subject { Appeal.fetch_appeals_by_vbms_id(vbms_id) }
     let!(:appeal) do
       Generators::Appeal.build(vacols_id: "123C", vbms_id: "123456789S")
     end
 
     context "when passed with valid vbms id" do
-      let(:file_number) { "123456789" }
+      let(:vbms_id) { "123456789" }
 
       it "returns an appeal" do
         expect(subject.length).to eq(1)
@@ -750,7 +554,7 @@ describe Appeal do
 
     context "when passed an invalid vbms id" do
       context "length greater than 9" do
-        let(:file_number) { "1234567890" }
+        let(:vbms_id) { "1234567890" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
@@ -758,10 +562,65 @@ describe Appeal do
       end
 
       context "length less than 3" do
-        let(:file_number) { "12" }
+        let(:vbms_id) { "12" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+    end
+  end
+
+  context "#convert_vbms_id_for_vacols_query" do
+    subject { Appeal.convert_vbms_id_for_vacols_query(vbms_id) }
+
+    context "when passed a vbms id with a valid ssn" do
+      let(:vbms_id) { "123456789" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "when passed a vbms id with a valid ssn and appended alphabets" do
+      let(:vbms_id) { "123456789S" }
+      it { is_expected.to eq("123456789S") }
+    end
+
+    context "when passed a vbms id with a less than 9 digits" do
+      let(:vbms_id) { "1234567" }
+      it { is_expected.to eq("1234567C") }
+    end
+
+    context "when passed a vbms id less than 9 digits with leading zeros" do
+      let(:vbms_id) { "0012347" }
+      it { is_expected.to eq("12347C") }
+    end
+
+    context "when passed a vbms id less than 9 digits with leading zeros and alphabets" do
+      let(:vbms_id) { "00123C00S9S" }
+      it { is_expected.to eq("123009C") }
+    end
+
+    context "invalid vbms id" do
+      context "when passed a vbms_id greater than 9 digits" do
+        let(:vbms_id) { "1234567890" }
+
+        it "raises RecordNotFound error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
+        end
+      end
+
+      context "when passed a vbms_id less than 3 digits" do
+        let(:vbms_id) { "12" }
+
+        it "raises RecordNotFound error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
+        end
+      end
+
+      context "when passed no vbms id" do
+        let(:vbms_id) { "" }
+
+        it "raises RecordNotFound error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidVBMSId)
         end
       end
     end
@@ -785,16 +644,6 @@ describe Appeal do
     context "for a file number with 9 digits" do
       let(:file_number) { "123456789" }
       it { is_expected.to eq("123456789S") }
-
-      context "with letters" do
-        let(:file_number) { "12ABCSD34ASDASD56789S" }
-        it { is_expected.to eq("123456789S") }
-      end
-
-      context "with leading zeros and letters" do
-        let(:file_number) { "00123C00S9S" }
-        it { is_expected.to eq("123009C") }
-      end
     end
 
     context "for a file number with more than 9 digits" do
@@ -892,40 +741,6 @@ describe Appeal do
       end
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
       it { is_expected.to be_truthy }
-    end
-  end
-
-  context "#eligible_for_ramp?" do
-    subject { appeal.eligible_for_ramp? }
-
-    let(:appeal) do
-      Generators::Appeal.build(vacols_id: "123", status: status, location_code: location_code)
-    end
-
-    let(:location_code) { nil }
-
-    context "is false if status is not advance or remand" do
-      let(:status) { "Active" }
-      it { is_expected.to be_falsey }
-    end
-
-    context "status is remand" do
-      let(:status) { "Remand" }
-      it { is_expected.to be_truthy }
-    end
-
-    context "status is advance" do
-      let(:status) { "Advance" }
-
-      context "location is remand_returned_to_bva" do
-        let(:location_code) { "96" }
-        it { is_expected.to be_falsey }
-      end
-
-      context "location is not remand_returned_to_bva" do
-        let(:location_code) { "90" }
-        it { is_expected.to be_truthy }
-      end
     end
   end
 
@@ -1041,7 +856,7 @@ describe Appeal do
     end
 
     context "when regional office key is not mapped to a station" do
-      let(:regional_office_key) { "SO62" }
+      let(:regional_office_key) { "ROXX" }
       it { is_expected.to be_nil }
     end
   end
@@ -1245,7 +1060,7 @@ describe Appeal do
   context "#veteran" do
     subject { appeal.veteran }
 
-    let(:veteran_record) { { file_number: "123", first_name: "Ed", last_name: "Merica" } }
+    let(:veteran_record) { { first_name: "Ed", last_name: "Merica" } }
 
     before do
       Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
@@ -1278,108 +1093,6 @@ describe Appeal do
           address_line_1: "9999 MISSION ST",
           city: "SAN FRANCISCO",
           zip: "94103")
-      end
-    end
-  end
-
-  context "#issue_codes" do
-    subject { appeal.issue_codes }
-
-    let(:appeal) do
-      Generators::Appeal.build(issues: issues)
-    end
-
-    let(:issues) do
-      [
-        Generators::Issue.build(program: :compensation, code: "01"),
-        Generators::Issue.build(program: :compensation, code: "02"),
-        Generators::Issue.build(program: :compensation, code: "01")
-      ]
-    end
-
-    it { is_expected.to include("compensation-01") }
-    it { is_expected.to include("compensation-02") }
-    it { is_expected.to_not include("compensation-03") }
-    it "returns uniqued issue codes" do
-      expect(subject.length).to eq(2)
-    end
-  end
-
-  context "#worksheet_issues" do
-    subject { appeal.worksheet_issues.size }
-
-    context "when appeal does not have any Vacols issues" do
-      let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
-      it { is_expected.to eq 0 }
-    end
-
-    context "when appeal has Vacols issues" do
-      let(:appeal) { Generators::Appeal.create(vacols_record: :remand_decided) }
-      it { is_expected.to eq 2 }
-    end
-  end
-
-  context "#update" do
-    subject { appeal.update(appeals_hash) }
-    let(:appeal) { Generators::Appeal.create(vacols_record: :form9_not_submitted) }
-
-    context "when Vacols does not need an update" do
-      let(:appeals_hash) do
-        { worksheet_issues_attributes: [{
-          remand: true,
-          vha: true,
-          program: "Wheel",
-          name: "Spoon",
-          levels: "Cabbage\nPickle",
-          description: "Donkey\nCow",
-          from_vacols: true,
-          vacols_sequence_id: 1
-        }]
-         }
-      end
-
-      it "updates worksheet issues" do
-        expect(appeal.worksheet_issues.count).to eq(0)
-        subject # do update
-        expect(appeal.worksheet_issues.count).to eq(1)
-
-        issue = appeal.worksheet_issues.first
-        expect(issue.remand).to eq true
-        expect(issue.allow).to eq false
-        expect(issue.deny).to eq false
-        expect(issue.dismiss).to eq false
-        expect(issue.vha).to eq true
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
-        expect(issue.description).to eq "Donkey\nCow"
-
-        # test that a 2nd save updates the same record, rather than create new one
-        id = appeal.worksheet_issues.first.id
-        appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:description] = "Tomato"
-        appeals_hash[:worksheet_issues_attributes][0][:id] = id
-
-        appeal.update(appeals_hash)
-
-        expect(appeal.worksheet_issues.count).to eq(1)
-        issue = appeal.worksheet_issues.first
-        expect(issue.id).to eq(id)
-        expect(issue.deny).to eq(true)
-        expect(issue.remand).to eq(true)
-        expect(issue.allow).to eq(false)
-        expect(issue.dismiss).to eq(false)
-        expect(issue.program).to eq "Wheel"
-        expect(issue.name).to eq "Spoon"
-        expect(issue.levels).to eq "Cabbage\nPickle"
-        expect(issue.description).to eq "Tomato"
-
-        # soft delete an issue
-        appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
-        appeal.update(appeals_hash)
-        expect(appeal.worksheet_issues.count).to eq(0)
-        expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
-        expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
       end
     end
   end
@@ -1508,15 +1221,11 @@ describe Appeal do
         Generators::Appeal.build(
           vbms_id: "999887777S",
           vacols_record: { form9_date: 3.days.ago }
-        ),
-        Generators::Appeal.build(
-          vbms_id: "999887777S",
-          vacols_record: { form9_date: nil }
         )
       ]
     end
 
-    it "returns filtered appeals with events only for veteran sorted by latest event date" do
+    it "returns filtered appeals for veteran sorted by latest event date" do
       expect(subject.length).to eq(2)
       expect(subject.first.form9_date).to eq(3.days.ago)
     end

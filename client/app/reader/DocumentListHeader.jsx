@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { ENDPOINT_NAMES } from './analytics';
 
 import ApiUtil from '../util/ApiUtil';
-import { setSearch, clearSearch, clearAllFilters } from '../reader/DocumentList/DocumentListActions';
+import { setSearch, clearSearch, clearAllFilters } from './actions';
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
@@ -32,7 +32,7 @@ class DocumentListHeader extends React.Component {
             onChange={props.setSearch}
             onClearSearch={props.clearSearch}
             recordSearch={this.recordSearch}
-            isSearchAhead
+            isSearchAhead={true}
             placeholder="Type to search..."
             value={props.docFilterCriteria.searchQuery}
             size="small"
@@ -44,7 +44,7 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-      <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
+        <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
     </div>;
   }
 }

@@ -18,13 +18,7 @@ class Highlight extends PureComponent {
 }
 
 Highlight.propTypes = {
-  searchQuery: PropTypes.string.isRequired,
-  children: PropTypes.string.isRequired
-};
-
-Highlight.defaultProps = {
-  searchQuery: '',
-  children: ''
+  searchQuery: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({

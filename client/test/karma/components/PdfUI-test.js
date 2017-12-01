@@ -28,8 +28,6 @@ describe('PdfUI', () => {
         id="pdf"
         pdfWorker="noworker"
         documentPathBase={DOCUMENT_PATH_BASE}
-        showClaimsFolderNavigation={false}
-        featureToggles={{ search: true }}
       />);
     });
 
@@ -55,10 +53,6 @@ describe('PdfUI', () => {
       it('renders the zoom buttons', () => {
         expect(wrapper.find({ name: 'zoomOut' })).to.have.length(1);
         expect(wrapper.find({ name: 'zoomIn' })).to.have.length(1);
-      });
-
-      it('renders the search button', () => {
-        expect(wrapper.find({ name: 'search' })).to.have.length(1);
       });
 
       context('when showClaimsFolderNavigation is true', () => {

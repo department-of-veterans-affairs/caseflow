@@ -1,11 +1,7 @@
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
-<<<<<<< HEAD
 const initialState = {
-=======
-export const initialState = {
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   selectedAppealVacolsId: null,
   isRequestingAppealsUsingVeteranId: false,
   selectedAppeal: {},
@@ -16,19 +12,10 @@ export const initialState = {
   },
   caseSelectCriteria: {
     searchQuery: ''
-<<<<<<< HEAD
   }
 };
 
 const caseSelectReducer = (state = initialState, action = {}) => {
-=======
-  },
-  assignments: [],
-  assignmentsLoaded: false
-};
-
-export const caseSelectReducer = (state = initialState, action = {}) => {
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   switch (action.type) {
   case Constants.CLEAR_CASE_SELECT_SEARCH:
     return update(state, {
@@ -92,30 +79,6 @@ export const caseSelectReducer = (state = initialState, action = {}) => {
         showNoAppealsInfoMessage: { $set: false }
       }
     });
-<<<<<<< HEAD
-=======
-  case Constants.RECEIVE_ASSIGNMENTS:
-    return update(state,
-      {
-        assignments: {
-          $set: action.payload.assignments
-        },
-        assignmentsLoaded: {
-          $set: true
-        }
-      });
-  case Constants.SET_VIEWED_ASSIGNMENT:
-    return update(state,
-      {
-        assignments: {
-          $apply: (existingAssignments) =>
-            existingAssignments.map((assignment) => ({
-              ...assignment,
-              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
-            }))
-        }
-      });
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   default:
     return state;
   }

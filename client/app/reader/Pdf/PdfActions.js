@@ -10,7 +10,6 @@ export const onScrollToComment = (scrollToComment) => ({
 
 /** PDF Page **/
 
-<<<<<<< HEAD
 export const setUpPdfPage = (file, pageIndex, page) => ({
   type: Constants.SET_UP_PDF_PAGE,
   payload: {
@@ -26,14 +25,6 @@ export const clearPdfPage = (file, pageIndex, page) => ({
     file,
     pageIndex,
     page
-=======
-export const setPageDimensions = (file, pageIndex, dimensions) => ({
-  type: Constants.SET_UP_PAGE_DIMENSIONS,
-  payload: {
-    file,
-    pageIndex,
-    dimensions
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
   }
 });
 

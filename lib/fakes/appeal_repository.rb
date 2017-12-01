@@ -1,14 +1,12 @@
 require "ostruct"
 
 # frozen_string_literal: true
-# rubocop:disable Metrics/ClassLength
 class Fakes::AppealRepository
   class << self
     attr_accessor :issue_records
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
     attr_accessor :certified_appeal
-    cattr_accessor :appeal_records
 
     def records
       @records ||= {}
@@ -16,10 +14,6 @@ class Fakes::AppealRepository
 
     def clean!
       @records = {}
-    end
-
-    def load_user_case_assignments_from_vacols(_css_id)
-      appeal_records || Fakes::Data::AppealData.default_records
     end
   end
 
@@ -63,10 +57,6 @@ class Fakes::AppealRepository
     true
   end
 
-  def self.transaction
-    yield
-  end
-
   def self.certify(appeal:, certification:)
     @certification = certification
     @certified_appeal = appeal
@@ -105,9 +95,6 @@ class Fakes::AppealRepository
 
   def self.appeals_ready_for_hearing(vbms_id)
     Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
-  end
-
-  def self.close!(*)
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
@@ -156,6 +143,10 @@ class Fakes::AppealRepository
     []
   end
 
+  def self.uncertify(_appeal)
+    # noop
+  end
+
   def self.issues(vacols_id)
     (issue_records || {})[vacols_id] || []
   end
@@ -175,7 +166,6 @@ class Fakes::AppealRepository
     seed_certification_data! if app_name.nil? || app_name == "certification"
     seed_establish_claim_data! if app_name.nil? || app_name == "dispatch-arc"
     seed_reader_data! if app_name.nil? || app_name == "reader"
-    seed_intake_data! if app_name.nil? || app_name == "intake"
   end
 
   def self.certification_documents
@@ -381,14 +371,15 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build,
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
                Generators::Issue.build(disposition: "Osteomyelitis",
                                        levels: ["Osteomyelitis"],
                                        description: [
                                          "15 - Compensation",
                                          "26 - Osteomyelitis"
                                        ],
-                                       program_description: "06 - Medical")],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -415,7 +406,8 @@ class Fakes::AppealRepository
           "14 - Right knee",
           "22 - Cervical strain"
         ],
-        program_description: "06 - Medical")],
+        program_description: "06 - Medical",
+        vacols_id: "reader_id2")],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -433,7 +425,7 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build],
+      issues: [Generators::Issue.build(vacols_id: "reader_id1")],
       documents: redacted_reader_documents
     )
     Generators::Appeal.build(
@@ -451,50 +443,20 @@ class Fakes::AppealRepository
         docket_number: "13 11-265",
         regional_office_key: "RO13"
       },
-      issues: [Generators::Issue.build,
+      issues: [Generators::Issue.build(vacols_id: "reader_id1"),
                Generators::Issue.build(disposition: "Osteomyelitis",
                                        levels: ["Osteomyelitis"],
                                        description: [
                                          "15 - Compensation",
                                          "26 - Osteomyelitis"
                                        ],
-                                       program_description: "06 - Medical")],
+                                       program_description: "06 - Medical",
+                                       vacols_id: "reader_id2")],
       documents: static_reader_documents
-    )
-  end
-
-  def self.seed_intake_data!
-    9.times do |i|
-      Generators::Veteran.build(file_number: "#{i + 1}0555555")
-
-      Generators::Appeal.build(
-        vbms_id: "#{i + 1}5555555C",
-        issues: (1..2).map { Generators::Issue.build }
-      )
-    end
-
-    Generators::Appeal.build(
-      vbms_id: "11555555C",
-      vacols_record: :activated
-    )
-
-    Generators::Appeal.build(
-      vbms_id: "12555555C",
-      vacols_record: :full_grant_decided
-    )
-
-    Generators::Appeal.build(
-      vbms_id: "25555555C",
-      issues: (1..3).map { Generators::Issue.build }
     )
   end
 
   def self.aod(_vacols_id)
     true
   end
-
-  def self.case_assignment_exists?(_vacols_id)
-    true
-  end
 end
-# rubocop:enable Metrics/ClassLength

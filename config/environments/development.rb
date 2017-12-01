@@ -37,7 +37,7 @@ Rails.application.configure do
   config.assets.raise_runtime_errors = true
 
   # Setup S3
-  config.s3_enabled = !ENV['AWS_BUCKET_NAME'].nil?
+  config.s3_enabled = !ENV['AWS_ACCESS_KEY_ID'].nil?
   config.s3_bucket_name = "caseflow-cache"
 
   # Set to true to get the documents from efolder running locally on port 4000.

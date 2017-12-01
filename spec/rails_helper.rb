@@ -154,7 +154,6 @@ end
 Appeal.repository = Fakes::AppealRepository
 PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
 Hearing.repository = Fakes::HearingRepository
-HearingDocket.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
@@ -208,57 +207,25 @@ def be_titled(title)
   have_xpath("//title[contains(.,'#{title}')]", visible: false)
 end
 
-def hang
-  puts "Hanging the test indefinitely so you can debug in the browser."
-  sleep(10_000)
-end
-
 # Wrap this around your test to run it many times and ensure that it passes consistently.
 # Note: do not merge to master like this, or the tests will be slow! Ha.
 def ensure_stable
-  repeat_count = ENV["TRAVIS"] ? 100 : 20
-  repeat_count.times do
+  20.times do
     yield
   end
 end
 
-def safe_click(selector)
-  scroll_element_in_to_view(selector)
-  page.first(selector).click
-end
-
-def click_label(label_for)
-  safe_click("label[for='#{label_for}']")
-end
-
-def scroll_element_in_to_view(selector)
-  expect do
-    page.evaluate_script <<-EOS
-      function() {
-        var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
-        if (!elem) {
-          return false;
-        }
-        elem.scrollIntoView();
-        return true;
-      }();
-    EOS
-  end.to become_truthy
-end
-
 # We generally avoid writing our own polling code, since proper Cappybara use generally
 # doesn't require it. That said, there may be some situations (such as evaluating javascript)
-# that require a spinning test. We got the following matcher from
-# https://gist.github.com/showaltb/0456ce0002842c88c3fc06db43f3ee7b
-RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
+# that require a spinning test. We got the following matcher from https://gist.github.com/jnicklas/4129937
+RSpec::Matchers.define :become_truthy do |_event_name|
   supports_block_expectations
 
   match do |block|
     begin
-      Timeout.timeout(wait) do
-        # rubocop:disable AssignmentInCondition
-        sleep(0.1) until value = block.call
-        value
+      Timeout.timeout(Capybara.default_max_wait_time) do
+        sleep(0.1) until block.call
+        true
       end
     rescue TimeoutError
       false

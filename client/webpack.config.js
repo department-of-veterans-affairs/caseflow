@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
 
-// eslint-disable-next-line no-process-env
 const devBuild = process.env.NODE_ENV !== 'production';
 
 const config = {
@@ -18,7 +17,7 @@ const config = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
+    new webpack.EnvironmentPlugin({NODE_ENV: 'development'})
   ],
   resolve: {
     extensions: ['.js', '.jsx'],

@@ -4,28 +4,25 @@
   "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "license": "none",
   "version": "0.0.1",
+  "engines": {
+    "node": "6.10.2",
+    "npm": "3.10.10"
+  },
   "scripts": {
-    "test": "yarn run test:karma && yarn run test:legacy",
+    "test": "npm run test:karma && npm run test:legacy",
     "test:legacy": "NODE_ENV=test mocha --recursive test/node/setup.js test/node/* --compilers jsx:babel-core/register js:babel-core/register",
     "test:karma": "NODE_ENV=test karma start",
-<<<<<<< HEAD
     "test:karma:watch": "npm run test:karma -- --no-single-run --debug",
     "test:legacy:watch": "npm run test:legacy -- --watch",
     "lint": "eslint . --ext .jsx --ext .js --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
-=======
-    "test:karma:watch": "yarn run test:karma --no-single-run",
-    "test:legacy:watch": "yarn run test:legacy --watch",
-    "lint": "eslint . .eslintrc.js --no-ignore --ext .jsx --ext .js --max-warnings 0",
-    "lint:fix": "yarn run lint --fix",
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
     "build": "webpack --config webpack.config.js",
-    "build:test": "NODE_ENV=test yarn run build",
-    "build:demo": "NODE_ENV=development yarn run build",
-    "build:production": "NODE_ENV=production yarn run build",
+    "build:test": "NODE_ENV=test npm run build",
+    "build:demo": "NODE_ENV=development npm run build",
+    "build:production": "NODE_ENV=production npm run build",
     "dev:clear-build": "rm ../app/assets/webpack/* || true",
-    "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
-    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
+    "dev": "npm run dev:clear-build && NODE_ENV=development npm run build -- -w",
+    "dev:hot": "npm run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
   },
   "cacheDirectories": [
     "node_modules",
@@ -43,15 +40,14 @@
     "es5-shim": "^4.5.7",
     "expose-loader": "^0.7.3",
     "history": "^4.5.1",
-    "immutability-helper": "^2.4.0",
+    "immutability-helper": "^2.1.2",
     "imports-loader": "^0.7.1",
-    "jsdom": "9.8.3",
+    "jsdom": "^9.8.3",
     "lodash": "^4.17.2",
-    "mark.js": "^8.11.0",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "1.6.414",
+    "pdfjs-dist": "^1.6.414",
     "prop-types": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz",
     "rc-collapse": "^1.7.6",
     "react": "^15.5.4",
@@ -60,18 +56,15 @@
     "react-dom": "^15.5.4",
     "react-highlight-words": "^0.8.0",
     "react-hot-loader": "^3.0.0-beta.6",
-    "react-on-rails": "^8.0.6",
+    "react-on-rails": "^6.8.0",
     "react-redux": "^5.0.5",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
     "react-select": "^1.0.0-rc.4",
     "react-test-renderer": "^15.5.4",
-    "react-virtualized": "^9.10.1",
-    "react-textarea-autosize": "^5.1.0",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.0",
     "redux-perf-middleware": "^1.2.2",
-    "redux-search": "^2.4.0",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.0",
     "superagent": "^3.0.0",
@@ -80,22 +73,13 @@
     "webpack": "^2.3.3"
   },
   "devDependencies": {
-    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.1",
-    "babel-eslint": "^8.0.2",
+    "babel-eslint": "^6.1.2",
     "chai": "^3.5.0",
-<<<<<<< HEAD
     "enzyme": "^3.0.0",
     "enzyme-adapter-react-15": "^1.0.0",
     "eslint": "^3.11.1",
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-react": "^6.7.1",
-=======
-    "enzyme": "^2.6.0",
-    "eslint": "^4.9.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-mocha": "^4.11.0",
-    "eslint-plugin-react": "^7.5.1",
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
     "karma": "^1.6.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.1",
@@ -107,5 +91,8 @@
     "react-addons-test-utils": "^15.4.2",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^2.4.2"
+  },
+  "optionalDependencies": {
+    "fsevents": "*"
   }
 }

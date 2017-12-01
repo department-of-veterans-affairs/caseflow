@@ -7,6 +7,7 @@ class Task < ActiveRecord::Base
 
   validate :no_open_tasks_for_appeal, on: :create
 
+  class MustImplementInSubclassError < StandardError; end
   class UserAlreadyHasTaskError < StandardError; end
 
   enum completion_status: {
@@ -83,7 +84,7 @@ class Task < ActiveRecord::Base
     # Generic relation method for joining the result of the task
     # ie: EstablishClaim.joins(:claim_establishment)
     def joins_task_result
-      fail Caseflow::Error::MustImplementInSubclass
+      fail MustImplementInSubclassError
     end
 
     def todays_quota

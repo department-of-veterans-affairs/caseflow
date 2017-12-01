@@ -19,11 +19,6 @@
     }
   }
 
-  &.cf-has-internal-text {
-    display: inline-flex;
-    margin-right: 0.5rem;
-  }
-
   &.usa-search-small {
     [type="submit"] {
 
@@ -46,63 +41,9 @@
 
   [type="search"] {
     border: 1px solid $color-gray-dark;
-
-    &.cf-search-with-internal-text {
-      border-right: 0;
-      -webkit-appearance: none !important;
-      outline: none;
-      width: 245px;
-    }
-  }
-
-  .cf-search-internal-text {
-    -webkit-appearance: none !important;
-    text-align: right;
-    width: 9rem;
-    border: 1px solid $color-gray-dark;
-    border-left: 0;
-    margin: 0 0 0 -7px;
-    color: $color-gray;
-    height: 3.3rem;
-    font-size: medium;
-
-    &:hover {
-      cursor: text;
-    }
-  }
-
-  .search-text-spinner {
-    background-color: $color-white;
-    font-size: 1rem;
-    margin-top: 1px;
-    width: 8rem;
-    text-align: right;
-    padding-right: 2rem;
-    padding-top: 3px;
   }
 }
 
 .cf-search-ahead-parent {
   display: flex;
 }
-
-// scss-lint:disable PropertyCount
-.cf-search-bar {
-  max-height: 50px;
-  top: 5rem;
-  transition: top .1s linear;
-  position: absolute;
-  background: $color-gray-dark;
-  // .cf-pdf-scroll-view is 5, .cf-pdf-header is 7
-  z-index: 6;
-  color: $color-white;
-  right: 3rem;
-  border-radius: 0 0 6px 6px;
-  padding: 0.5rem 1rem 1rem;
-  width: 440px;
-
-  &.hidden {
-    top: 0;
-  }
-}
-// scss-lint:disable PropertyCount

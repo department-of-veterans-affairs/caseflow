@@ -1,15 +1,7 @@
 class DependenciesReportService
   class << self
-    ALL_DEPENDENCIES =
-      ["BGS.FilenumberService",
-       "BGS.PoaService",
-       "VACOLS",
-       "VBMS",
-       "VBMS.FindDocumentSeriesReference",
-       "VVA"].freeze
-
     # this method is in case we need list of dependencies/services that are degraded
-    def degraded_dependencies
+    def find_degraded_dependencies
       str_report = Rails.cache.read(:dependencies_report)
       return [] if !str_report
       report = JSON.parse str_report
@@ -18,14 +10,14 @@ class DependenciesReportService
       end
     end
 
-    def dependencies_report
+    def outage_present?
       case Rails.cache.read(:degraded_service_banner)
       when :always_show
-        return ALL_DEPENDENCIES
+        return true
       when :never_show
-        return []
+        return false
       end
-      degraded_dependencies
+      find_degraded_dependencies.present?
     rescue => error
       Rails.logger.warn "Exception thrown while checking dependency "\
         "status: #{error}"

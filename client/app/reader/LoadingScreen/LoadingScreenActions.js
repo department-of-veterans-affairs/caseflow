@@ -1,9 +1,5 @@
 import * as Constants from '../constants';
 import { collectAllTags } from '../PdfViewer/PdfViewerActions';
-<<<<<<< HEAD
-=======
-import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,
@@ -18,10 +14,6 @@ export const onInitialCaseLoadingFail = (value = true) => ({
 export const onReceiveDocs = (documents, vacolsId) =>
   (dispatch) => {
     dispatch(collectAllTags(documents));
-<<<<<<< HEAD
-=======
-    dispatch(setViewedAssignment(vacolsId));
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
       payload: {
@@ -36,14 +28,11 @@ export const onReceiveAnnotations = (annotations) => ({
   payload: { annotations }
 });
 
-<<<<<<< HEAD
 export const onReceiveAssignments = (assignments) => ({
   type: Constants.RECEIVE_ASSIGNMENTS,
   payload: { assignments }
 });
 
-=======
->>>>>>> 06be805a17ef706c294f809fac882ebfe6c82a5b
 export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
   type: Constants.RECEIVE_MANIFESTS,
   payload: { manifestVbmsFetchedAt,

@@ -97,6 +97,7 @@ export const certificationReducers = function(state = initialState, action = {})
     return CertificationReducers.
       toggleCancellationModal(state, action);
 
+
   default:
     return state;
   }

@@ -12,15 +12,15 @@ export default class BaseForm extends React.Component {
   };
 
   validateFormAndSetErrors = function(form) {
-    // This variable stays true until a validator fails
-    // in which case we return false. Otherwise all fields
-    // are valid, and we return true.
+        // This variable stays true until a validator fails
+        // in which case we return false. Otherwise all fields
+        // are valid, and we return true.
     let allValid = true;
     let formCopy = { ...form };
 
     Object.keys(form).forEach((key) => {
       let errorMessage = form[key].validator.reduce(
-        (message, validator) => message || validator(form[key].value), null);
+                (message, validator) => message || validator(form[key].value), null);
 
       allValid = allValid && !errorMessage;
 
@@ -34,8 +34,8 @@ export default class BaseForm extends React.Component {
     }
 
     this.setState(
-      formCopy
-    );
+            formCopy
+        );
 
     return allValid;
   };
@@ -55,13 +55,6 @@ export default class BaseForm extends React.Component {
   }
 
   scrollToAndFocusFirstError = function() {
-
-    /**
-     * Tech debt: ReactDOM.findDOMNode will eventually be deprecated.
-     * https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-find-dom-node.md
-     * We should use ref callbacks instead to get an instance to the rendered element node.
-     */
-    // eslint-disable-next-line react/no-find-dom-node
     let erroredForm = ReactDOM.findDOMNode(this.state.validating);
     let errors = erroredForm.getElementsByClassName('usa-input-error-message');
 

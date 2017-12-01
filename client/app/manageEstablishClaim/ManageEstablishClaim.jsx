@@ -115,23 +115,19 @@ class ManageEstablishClaim extends React.Component {
         <h2>ARC Reports</h2>
         <p>
           <a href="/dispatch/canceled" target="_blank">
-            View canceled tasks <i className="fa fa-external-link" aria-hidden="true"></i>
+            View Canceled Tasks <i className="fa fa-external-link" aria-hidden="true"></i>
           </a>
         </p>
         <p>
           <a href="/dispatch/stats">
-            View dashboard <i className="fa fa-line-chart" aria-hidden="true"></i>
+            View Dashboard <i className="fa fa-line-chart" aria-hidden="true"></i>
           </a>
         </p>
-        <p>
-          <a href="/dispatch/admin">
-            View oldest unassigned tasks with uploaded decisions <i className="fa fa-line-chart" aria-hidden="true"></i>
-          </a>
-        </p>
+
         <h2>BVA Reports</h2>
         <p>
           <a href="/dispatch/missing-decision" target="_blank">
-            View claims missing decisions in VBMS <i className="fa fa-external-link" aria-hidden="true"></i>
+            View Claims Missing Decisions in VBMS <i className="fa fa-external-link" aria-hidden="true"></i>
           </a>
         </p>
       </div>

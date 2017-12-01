@@ -5,17 +5,19 @@ import StyleGuideTextInputError from './StyleGuideTextInputError';
 import StyleGuideTextArea from './StyleGuideTextArea';
 import StyleGuideCharacterLimit from './StyleGuideCharacterLimit';
 
-export default class StyleGuideFormFields extends React.PureComponent {
-  render = () => {
+let StyleGuideFormFields = () => {
 
-    return <div>
-      <h2 id="form-fields">Form Fields</h2>
-      <StyleGuideTextInput />
-      <StyleGuideTextInputError />
+  return (
+    <div>
+      <h2 id="form_fields">Form Fields</h2>
+      <StyleGuideTextInput/>
+      <StyleGuideTextInputError/>
       <StyleGuideTextArea />
       <StyleGuideCharacterLimit />
       <StyleGuideInlineForm />
-    </div>;
-  }
-}
+  </div>
 
+  );
+};
+
+export default StyleGuideFormFields;

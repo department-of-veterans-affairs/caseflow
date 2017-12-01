@@ -4,26 +4,25 @@ import React from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideProgressBar extends React.PureComponent {
-  render = () => {
+export default function StyleGuideProgressBar() {
 
-    const sections = [
-      {
-        title: '1. Review Description'
-      },
-      {
-        title: '2. Create End Product',
-        current: true
-      },
-      {
-        title: '3. Confirmation'
-      }
-    ];
+  let sections = [
+    {
+      title: '1. Review Description'
+    },
+    {
+      title: '2. Create End Product',
+      current: true
+    },
+    {
+      title: '3. Confirmation'
+    }
+  ];
 
-    return <div>
+  return <div>
       <StyleGuideComponentTitle
         title="Progress Bar"
-        id="progress-bar"
+        id="progress_bar"
         link="StyleGuideProgressBar.jsx"
       />
       <p>
@@ -40,8 +39,7 @@ export default class StyleGuideProgressBar extends React.PureComponent {
       <ProgressBar
         sections = {sections}
       />
-      <br />
-    </div>;
-  }
+    <br />
+  </div>;
 
 }

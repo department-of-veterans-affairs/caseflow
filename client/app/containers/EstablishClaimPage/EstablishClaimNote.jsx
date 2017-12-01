@@ -127,6 +127,7 @@ export class EstablishClaimNote extends BaseForm {
       <p>To help better identify this claim, please copy the following note,
       then open VBMS and attach it to the EP you just created.</p>
 
+
       <div className ="cf-vbms-note">
         <TextareaField
           label="VBMS Note:"
@@ -153,14 +154,16 @@ export class EstablishClaimNote extends BaseForm {
       <div className="route-claim-confirmNote-wrapper">
         <Checkbox
           label="I confirm that I have created a VBMS note to help route this claim."
+          fullWidth={true}
           name="confirmNote"
           onChange={this.handleFieldChange('noteForm', 'confirmBox')}
           {...this.state.noteForm.confirmBox}
-          required
+          required={true}
         />
       </div>
     </div>;
   }
+
 
   handleSubmit = () => {
     this.props.handleSubmit(this.vacolsNoteText());
@@ -168,51 +171,51 @@ export class EstablishClaimNote extends BaseForm {
 
   render() {
     return <div>
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h1>Route Claim</h1><h2>{this.headerVacols()}</h2>
+        <div className="cf-app-segment cf-app-segment--alt">
+          <h1>Route Claim</h1><h2>{this.headerVacols()}</h2>
 
-        {this.props.showNotePageAlert && <Alert
-          title="Cannot edit end product"
-          type="warning">
+          {this.props.showNotePageAlert && <Alert
+            title="Cannot edit end product"
+            type="warning">
             You cannot navigate to the previous page because the end
             product has already been created and cannot be edited.
             Please proceed with adding the note below in VBMS.
-        </Alert>}
+          </Alert>}
 
-        <ol className="cf-bold-ordered-list">
-          {this.props.displayVacolsNote &&
+          <ol className="cf-bold-ordered-list">
+            {this.props.displayVacolsNote &&
             <li className={this.props.displayVbmsNote}>
               {this.vacolsSection()}
             </li>}
-        </ol>
-        {(this.props.displayVacolsNote && this.props.displayVbmsNote) && <div className="cf-bottom-border"></div>}
-        <h2>{this.headerVbms()}</h2>
-        <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
-          {this.props.displayVbmsNote &&
+          </ol>
+          {(this.props.displayVacolsNote && this.props.displayVbmsNote) && <div className="cf-bottom-border"></div>}
+          <h2>{this.headerVbms()}</h2>
+          <ol start={this.props.displayVacolsNote ? '2' : ''} className="cf-bold-ordered-list">
+            {this.props.displayVbmsNote &&
             <li>{this.vbmsSection()}</li>}
-        </ol>
+          </ol>
 
-      </div>
-      <div className="cf-app-segment" id="establish-claim-buttons">
-        {!this.props.endProductCreated && <div className="cf-push-left">
-          <Button
-            name={this.props.backToDecisionReviewText}
-            onClick={this.props.handleBackToDecisionReview}
-            classNames={['cf-btn-link']}
-          />
-        </div>}
-        <div className="cf-push-right">
-          <Button
-            app="dispatch"
-            name="Finish routing claim"
-            classNames={['usa-button-primary']}
-            disabled={!this.state.noteForm.confirmBox.value}
-            onClick={this.handleSubmit}
-            loading={this.props.loading}
-          />
         </div>
-      </div>
-    </div>;
+        <div className="cf-app-segment" id="establish-claim-buttons">
+          {!this.props.endProductCreated && <div className="cf-push-left">
+            <Button
+              name={this.props.backToDecisionReviewText}
+              onClick={this.props.handleBackToDecisionReview}
+              classNames={['cf-btn-link']}
+            />
+          </div>}
+          <div className="cf-push-right">
+            <Button
+              app="dispatch"
+              name="Finish routing claim"
+              classNames={['usa-button-primary']}
+              disabled={!this.state.noteForm.confirmBox.value}
+              onClick={this.handleSubmit}
+              loading={this.props.loading}
+            />
+          </div>
+        </div>
+      </div>;
   }
 }
 
@@ -230,7 +233,7 @@ const mapStateToProps = (state) => {
 };
 
 const ConnectedEstablishClaimNote = connect(
-  mapStateToProps
+    mapStateToProps
 )(EstablishClaimNote);
 
 export default ConnectedEstablishClaimNote;

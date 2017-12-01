@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { closeIcon, loadingSymbolHtml } from './RenderFunctions';
+import { closeIcon } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -58,29 +58,6 @@ export default class SearchBar extends React.Component {
     }
   }
 
-  setInputRef = (node) => this.input = node
-
-  setInputFocus = () => this.input.focus()
-  releaseInputFocus = () => this.input.blur();
-
-  clearInput = () => this.input.value = '';
-
-  getInternalField = (spinnerColor = '#ffffff') => {
-    if (this.props.loading) {
-      return <div className="search-text-spinner">
-        { loadingSymbolHtml('', '25px', spinnerColor) }
-      </div>;
-    }
-
-    return <input
-      id="search-internal-text"
-      type="text"
-      value={this.props.internalText}
-      onClick={this.setInputFocus}
-      className="cf-search-internal-text"
-      readOnly />;
-  }
-
   render() {
     let {
       id,
@@ -92,20 +69,15 @@ export default class SearchBar extends React.Component {
       title,
       onSubmit,
       submitUsingEnterKey,
-      placeholder,
-      internalText,
-      spinnerColor
+      placeholder
     } = this.props;
 
     id = id || uuid.v4();
 
-    const hasInternalText = !_.isUndefined(internalText);
-
     const searchTypeClasses = classnames('usa-search', {
       'usa-search-big': size === 'big',
       'usa-search-small': size === 'small',
-      'cf-search-ahead': isSearchAhead,
-      'cf-has-internal-text': hasInternalText
+      'cf-search-ahead': isSearchAhead
     });
 
     const buttonClassNames = classnames({
@@ -117,32 +89,21 @@ export default class SearchBar extends React.Component {
       'usa-search-small': size === 'small'
     });
 
-    const searchClasses = classnames('cf-search-input-with-close', {
-      'cf-search-with-internal-text': hasInternalText
-    });
-
     return <span className={searchTypeClasses} role="search">
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>
       <input
-        ref={this.setInputRef}
-        className={searchClasses}
+        className="cf-search-input-with-close"
         id={id}
         onChange={this.onChange}
         onBlur={this.onBlur}
         type="search"
         name="search"
-        onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
+        value={value}
+        onKeyPress={submitUsingEnterKey ? this.handleKeyPress : null}
         placeholder={placeholder}
-        value={value} />
-      { hasInternalText &&
-      <div>
-        <label className="usa-sr-only" htmlFor="search-internal-text">
-          Search Result Count
-        </label>
-        { this.getInternalField(spinnerColor) }
-      </div>}
+        value={value}/>
       {_.size(value) > 0 &&
         <Button
           ariaLabel="clear search"
@@ -164,7 +125,6 @@ SearchBar.propTypes = {
   title: PropTypes.string,
   size: PropTypes.string,
   onChange: PropTypes.func,
-  onKeyPress: PropTypes.func,
   onClick: PropTypes.func,
   onClearSearch: PropTypes.func,
   recordSearch: PropTypes.func,
@@ -172,7 +132,5 @@ SearchBar.propTypes = {
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
-  submitUsingEnterKey: PropTypes.bool,
-  internalText: PropTypes.string,
-  spinnerColor: PropTypes.string
+  submitUsingEnterKey: PropTypes.bool
 };

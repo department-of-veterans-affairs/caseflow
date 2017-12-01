@@ -2,7 +2,6 @@ import { expect } from 'chai';
 
 import * as Actions from '../../../../app/hearings/actions/Dockets';
 import * as Constants from '../../../../app/hearings/constants/constants';
-import { CATEGORIES, debounceMs } from '../../../../app/hearings/analytics';
 
 describe('.setNotes', () => {
   it('sets notes', () => {
@@ -15,12 +14,6 @@ describe('.setNotes', () => {
         hearingIndex,
         notes,
         date
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.DAILY_DOCKET_PAGE,
-          debounceMs
-        }
       }
     };
 
@@ -108,12 +101,6 @@ describe('.onContentionsChange', () => {
       type: Constants.SET_CONTENTIONS,
       payload: {
         contentions
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs
-        }
       }
     };
 
@@ -129,12 +116,6 @@ describe('.onMilitaryServiceChange', () => {
       type: Constants.SET_MILITARY_SERVICE,
       payload: {
         militaryService
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs
-        }
       }
     };
 
@@ -150,12 +131,6 @@ describe('.onEvidenceChange', () => {
       type: Constants.SET_EVIDENCE,
       payload: {
         evidence
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs
-        }
       }
     };
 
@@ -171,12 +146,6 @@ describe('.onCommentsForAttorneyChange', () => {
       type: Constants.SET_COMMENTS_FOR_ATTORNEY,
       payload: {
         commentsForAttorney
-      },
-      meta: {
-        analytics: {
-          category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-          debounceMs
-        }
       }
     };
 

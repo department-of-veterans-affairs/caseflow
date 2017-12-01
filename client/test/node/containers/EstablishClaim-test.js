@@ -46,7 +46,7 @@ describe('EstablishClaim', () => {
         pdfjsLink=""
         handleAlert={func}
         handleAlertClear={func}
-        task={task} />);
+        task={task}/>);
 
     });
 

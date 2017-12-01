@@ -7,12 +7,8 @@ import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from '../reader/selectors';
 import CommentIcon from './CommentIcon';
 import { keyOfAnnotation, pageNumberOfPageIndex, getPageCoordinatesOfMouseEvent } from './utils';
-import { handleSelectCommentIcon } from '../reader/PdfViewer/PdfViewerActions';
-
-import { placeAnnotation, showPlaceAnnotationIcon,
-  requestMoveAnnotation
-} from '../reader/PdfViewer/AnnotationActions';
-
+import { handleSelectCommentIcon, placeAnnotation,
+  requestMoveAnnotation, showPlaceAnnotationIcon } from '../reader/actions';
 import { CATEGORIES } from '../reader/analytics';
 
 const DIV_STYLING = {
@@ -106,8 +102,7 @@ class CommentLayer extends PureComponent {
 
     const droppedAnnotation = {
       ...this.props.allAnnotations[dragAndDropData.uuid],
-      ...coordinates,
-      page: pageNumberOfPageIndex(this.props.pageIndex)
+      ...coordinates
     };
 
     this.props.requestMoveAnnotation(droppedAnnotation);
@@ -132,7 +127,7 @@ class CommentLayer extends PureComponent {
   getCommentLayerDivRef = (ref) => this.commentLayerDiv = ref
 
   getAnnotationsForPage = () => this.props.comments.concat(this.getPlacingAnnotation()).
-    filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex))
+      filter((comment) => comment.page === pageNumberOfPageIndex(this.props.pageIndex))
 
   getCommentIcons = () => this.getAnnotationsForPage().map((comment) => <CommentIcon
     comment={comment}
@@ -165,7 +160,7 @@ class CommentLayer extends PureComponent {
       <div
         style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
-        className="textLayer" />
+        className="textLayer"/>
     </div>;
   }
 }

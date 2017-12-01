@@ -1,72 +1,46 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
+import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import { onAddIssue } from '../actions/Issue';
-import { filterIssuesOnAppeal } from '../util/IssuesUtil';
 
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
 
-  onAddIssue = (appealId) => () => this.props.onAddIssue(appealId, this.getVacolsSequenceId());
-
-  getMaxVacolsSequenceId = () => {
-    let maxValue = 0;
-
-    _.forEach(this.props.worksheetIssues, (issue) => {
-      if (Number(issue.vacols_sequence_id) > maxValue) {
-        maxValue = Number(issue.vacols_sequence_id);
-      }
-    });
-
-    return maxValue;
-  };
-
-  getVacolsSequenceId = () => {
-    return (this.getMaxVacolsSequenceId() + 1).toString();
-  };
+  onAddIssue = (appealKey) => () => this.props.onAddIssue(appealKey);
 
   render() {
 
     let {
-      worksheetAppeals,
-      worksheetIssues
+      worksheetStreams
     } = this.props;
 
-    let issueCount = 0;
-
     return <div className="cf-hearings-worksheet-data">
-      <h2 className="cf-hearings-worksheet-header">Issues</h2>
-      {Object.values(worksheetAppeals).map((appeal, key) => {
+          <h2 className="cf-hearings-worksheet-header">Issues</h2>
+            {Object.keys(worksheetStreams).map((appeal, key) => {
+                // Iterates over all appeals to create appeal streams inside worksheet
+              let appealId = appeal;
 
-        const appealWorksheetIssues = filterIssuesOnAppeal(worksheetIssues, appeal.id);
-        const currentIssueCount = issueCount;
-
-        issueCount += _.size(appealWorksheetIssues);
-
-        return <div key={appeal.id} id={appeal.id}>
-          <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
-          <HearingWorksheetIssues
-            appealKey={key}
-            worksheetStreamsAppeal={appeal}
-            print={this.props.print}
-            {...this.props}
-            countOfIssuesInPreviousAppeals={currentIssueCount}
-          />
-          {!this.props.print &&
-            <Button
-              classNames={['usa-button-outline', 'hearings-add-issue']}
-              name="+ Add Issue"
-              id={`button-addIssue-${appeal.id}`}
-              onClick={this.onAddIssue(appeal.id)}
-            />
-          }
-          <hr />
+              return <div key={appealId} id={appealId}>
+              <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
+              <HearingWorksheetIssues
+                appealKey={key}
+                worksheetStreamsAppeal={this.props.worksheet.streams[key]}
+                worksheetStreamsIssues={this.props.worksheet.streams[key].worksheet_issues}
+                {...this.props}
+              />
+              <Button
+                classNames={['usa-button-outline', 'hearings-add-issue']}
+                name="+ Add Issue"
+                id={`button-addIssue-${appealId}`}
+                onClick={this.onAddIssue(key)}
+              />
+              <hr />
+              </div>;
+            })}
         </div>;
-      })}
-    </div>;
   }
 }
 
@@ -75,9 +49,12 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  worksheetAppeals: state.worksheetAppeals,
-  worksheetIssues: state.worksheetIssues
+  HearingWorksheetStream: state
 });
+
+HearingWorksheetStream.propTypes = {
+  worksheetStreams: PropTypes.array.isRequired
+};
 
 export default connect(
   mapStateToProps,
