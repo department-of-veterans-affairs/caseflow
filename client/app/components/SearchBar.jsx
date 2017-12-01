@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { closeIcon } from './RenderFunctions';
+import { closeIcon, loadingSymbolHtml } from './RenderFunctions';
 import Button from './Button';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -65,6 +65,22 @@ export default class SearchBar extends React.Component {
 
   clearInput = () => this.input.value = '';
 
+  getInternalField = (spinnerColor = '#ffffff') => {
+    if (this.props.loading) {
+      return <div className="search-text-spinner">
+        { loadingSymbolHtml('', '25px', spinnerColor) }
+      </div>;
+    }
+
+    return <input
+      id="search-internal-text"
+      type="text"
+      value={this.props.internalText}
+      onClick={this.setInputFocus}
+      className="cf-search-internal-text"
+      readOnly />;
+  }
+
   render() {
     let {
       id,
@@ -77,7 +93,8 @@ export default class SearchBar extends React.Component {
       onSubmit,
       submitUsingEnterKey,
       placeholder,
-      internalText
+      internalText,
+      spinnerColor
     } = this.props;
 
     id = id || uuid.v4();
@@ -119,17 +136,12 @@ export default class SearchBar extends React.Component {
         onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value} />
-      {hasInternalText &&
+      { hasInternalText &&
       <div>
         <label className="usa-sr-only" htmlFor="search-internal-text">
           Search Result Count
         </label>
-        <input
-          id="search-internal-text"
-          type="text"
-          value={internalText}
-          onClick={this.setInputFocus}
-          className="cf-search-internal-text" />
+        { this.getInternalField(spinnerColor) }
       </div>}
       {_.size(value) > 0 &&
         <Button
@@ -161,5 +173,6 @@ SearchBar.propTypes = {
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
   submitUsingEnterKey: PropTypes.bool,
-  internalText: PropTypes.string
+  internalText: PropTypes.string,
+  spinnerColor: PropTypes.string
 };
