@@ -1,15 +1,22 @@
 import React from 'react';
 import classnames from 'classnames';
-import { showSelectedClass } from '../containers/StyleGuide/NavigationUtils';
 
 export default class ChildNavLink extends React.PureComponent {
   onClick = () => {
     this.props.setSelectedLink(this.props.index);
   }
 
-  render() {
-    const { name, anchor, index, selectedIndex } = this.props;
+  showSelectedClass = () => {
+    return classnames({ selected: this.props.index === this.props.selectedIndex });
+  }
 
-    return <li><a href={anchor} onClick={this.onClick} className={showSelectedClass(index, selectedIndex)}>{name}</a></li>;
+  componentWillUnmount() {
+    this.props.setSelectedLink(false);
+  }
+
+  render() {
+    const { name, anchor } = this.props;
+
+    return <li><a href={anchor} onClick={this.onClick} className={this.showSelectedClass()}>{name}</a></li>;
   }
 }
