@@ -167,6 +167,7 @@ export const initialState = {
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
       jumpToPageNumber: null,
+      scrollTop: 0,
       hideSearchBar: true
     },
     pdfSidebar: {
@@ -193,7 +194,7 @@ export const initialState = {
   editingAnnotations: {},
   annotations: {},
   documents: {},
-  pages: {},
+  pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
   text: [],
@@ -672,6 +673,14 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SET_DOC_SCROLL_POSITION:
+    return update(state, {
+      ui: {
+        pdf: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(showErrorMessage(state, 'tag'), {
       documents: {
@@ -767,43 +776,21 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_UP_PDF_PAGE:
+  case Constants.SET_UP_PAGE_DIMENSIONS:
     return update(
       state,
       {
-        pages: {
+        pageDimensions: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $set: action.payload.page
+            $set: {
+              ...action.payload.dimensions,
+              file: action.payload.file,
+              pageIndex: action.payload.pageIndex
+            }
           }
         }
       }
     );
-  case Constants.CLEAR_PDF_PAGE: {
-    // We only want to remove the page and container if we're cleaning up the same page that is
-    // currently stored here. This is to avoid a race condition where a user returns to this
-    // page and the new page object is stored here before we have a chance to destroy the
-    // old object.
-    const FILE_PAGE_INDEX = `${action.payload.file}-${action.payload.pageIndex}`;
-
-    if (action.payload.page &&
-      _.get(state.pages, [FILE_PAGE_INDEX, 'page']) === action.payload.page) {
-      return update(
-        state,
-        {
-          pages: {
-            [FILE_PAGE_INDEX]: {
-              $merge: {
-                page: null,
-                container: null
-              }
-            }
-          }
-        }
-      );
-    }
-
-    return state;
-  }
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,

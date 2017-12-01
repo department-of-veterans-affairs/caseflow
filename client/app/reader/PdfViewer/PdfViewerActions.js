@@ -78,6 +78,15 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
+/** Scrolling **/
+
+export const setDocScrollPosition = (scrollTop) => ({
+  type: Constants.SET_DOC_SCROLL_POSITION,
+  payload: {
+    scrollTop
+  }
+});
+
 /** Tags **/
 
 export const newTagRequestSuccess = (docId, createdTags) =>
