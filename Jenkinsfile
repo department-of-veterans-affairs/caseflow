@@ -40,7 +40,7 @@ node('deploy') {
 
     // Checkout the deployment repo for the ansible script. This is needed
     // since the deployment scripts are separated from the source code.
-    stage ('checkout-deploy-repo') {
+    stage ('pull-deploy-repo') {
 
       sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
 
