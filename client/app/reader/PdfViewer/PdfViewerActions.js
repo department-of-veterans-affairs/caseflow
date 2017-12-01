@@ -4,6 +4,7 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
+import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -103,13 +104,16 @@ export const newTagRequestSuccess = (docId, createdTags) =>
   }
 ;
 
-export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
-  payload: {
-    docId,
-    tagsThatWereAttemptedToBeCreated
-  }
-});
+export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => (dispatch) => {
+  dispatch(showErrorMessage('tag'));
+  dispatch({
+    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
+    payload: {
+      docId,
+      tagsThatWereAttemptedToBeCreated
+    }
+  });
+};
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
@@ -121,6 +125,7 @@ export const removeTagRequestFailure = (docId, tagId) => ({
 
 export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
+    dispatch(hideErrorMessage('tag'));
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
       payload: {
@@ -160,6 +165,7 @@ export const addNewTag = (doc, tags) =>
       value();
 
     if (_.size(newTags)) {
+      dispatch(hideErrorMessage('tag'));
       dispatch({
         type: Constants.REQUEST_NEW_TAG_CREATION,
         payload: {
