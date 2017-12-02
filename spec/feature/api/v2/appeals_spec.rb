@@ -189,7 +189,7 @@ describe "Appeals API v2", type: :request do
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc))
+      expect(event_types).to eq(%w(claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc remand_return))
 
       # check the status on the first appeal
       status = json["data"].first["attributes"]["status"]
