@@ -38,19 +38,20 @@ node('deploy') {
       step([$class: 'WsCleanup'])
     }
 
-    if (env.APP_ENV == 'demo') {
+    if (env.APP_ENV == 'prod') {
       stage('deploy-message') {
         checkout scm
-        // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
-
         DEPLOY_MESSAGE = sh (
-          // magical shell script that will find the latest tag for the repository
+          // this script will:
+          // get the latest `deployed` release created by: https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/ansible/utility-roles/deployed-version/files/tag_deployed_commit.py
+          // compare current HEAD commit to the last deployed release
+          // save the message to be announced in Slack by the pipeline
           script: "git log \$(git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git \
-                   | awk '{print \$2}' | grep -E 'manual|stable' \
+                   | awk '{print \$2}' | grep -E 'deployed' \
                    | sort -t/ -nk4 \
                    | awk -F\"/\" '{print \$0}' \
                    | tail -n 1 \
-                   | awk '{print \$1}')..a127c3f146c2c315597136a42f43086d98d2b563 --pretty='format:%h %<(15)%an %s'",
+                   | awk '{print \$1}')..HEAD --pretty='format:%h %<(15)%an %s'",
           returnStdout: true
         ).trim()
       }
