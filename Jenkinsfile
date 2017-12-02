@@ -50,7 +50,7 @@ node('deploy') {
                    | sort -t/ -nk4 \
                    | awk -F\"/\" '{print \$0}' \
                    | tail -n 1 \
-                   | awk '{print \$1}')..a127c3f146c2c315597136a42f43086d98d2b563 --pretty='format:%h %<(20)%an %s'",
+                   | awk '{print \$1}')..a127c3f146c2c315597136a42f43086d98d2b563 --pretty='format:%h %<(15)%an %s'",
           returnStdout: true
         ).trim()
       }
