@@ -212,10 +212,10 @@ describe Appeal do
 
     it "returns list of events" do
       expect(subject.length > 0).to be_truthy
-      expect(subject.select { |event| event.type == :claim_decision }.length > 0).to be_truthy
-      expect(subject.select { |event| event.type == :nod }.length > 0).to be_truthy
-      expect(subject.select { |event| event.type == :soc }.length > 0).to be_truthy
-      expect(subject.select { |event| event.type == :form9 }.length > 0).to be_truthy
+      expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :form9 } > 0).to be_truthy
     end
   end
 

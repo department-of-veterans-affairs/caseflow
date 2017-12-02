@@ -210,7 +210,7 @@ describe AppealEvents do
       end
 
       let(:issues) do
-        [Generators::Issue.build(disposition: issue_disposition, close_date: issue_close_date )]
+        [Generators::Issue.build(disposition: issue_disposition, close_date: issue_close_date)]
       end
 
       let(:issue_disposition) { "Benefits Granted by AOJ" }
