@@ -5,7 +5,7 @@ class Issue
   include ActiveModel::Model
 
   attr_accessor :id, :program, :code, :type, :category, :description, :disposition,
-                :levels, :program_description, :note, :vacols_sequence_id
+                :close_date, :levels, :program_description, :note, :vacols_sequence_id
 
   PROGRAMS = {
     "01" => :vba_burial,
@@ -69,6 +69,7 @@ class Issue
       category: category,
       description: description,
       disposition: disposition,
+      close_date: close_date,
       program_description: program_description,
       note: note
     }
@@ -118,7 +119,8 @@ class Issue
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
         description: description(hash),
-        disposition: disposition
+        disposition: disposition,
+        close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end
 
