@@ -89,6 +89,13 @@ class AppealEvent
     hearing_no_show: :no_show
   }.freeze
 
+  EVENT_TYPE_FOR_ISSUE_DISPOSITIONS = {
+    field_grant: [
+      "Benefits Granted by AOJ",
+      "Advance Allowed in Field"
+    ]
+  }.freeze
+
   attr_accessor :type, :date
 
   def to_hash
@@ -101,6 +108,10 @@ class AppealEvent
 
   def disposition=(disposition)
     self.type = type_from_disposition(disposition)
+  end
+
+  def issue_disposition=(disposition)
+    self.type = type_from_issue_disposition(disposition)
   end
 
   def hearing=(hearing)
@@ -139,5 +150,11 @@ class AppealEvent
     EVENT_TYPE_FOR_DISPOSITIONS.keys.find do |type|
       EVENT_TYPE_FOR_DISPOSITIONS[type].include?(disposition)
     end || :other_close
+  end
+
+  def type_from_issue_disposition(disposition)
+    EVENT_TYPE_FOR_ISSUE_DISPOSITIONS.keys.find do |type|
+      EVENT_TYPE_FOR_ISSUE_DISPOSITIONS[type].include?(disposition)
+    end
   end
 end
