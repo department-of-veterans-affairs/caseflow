@@ -239,13 +239,20 @@ export const hideSearchBar = () => ({
   type: Constants.HIDE_SEARCH_BAR
 });
 
-/** Set current PDF **/
-export const selectCurrentPdfLocally = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
+export const resetSidebarErrors = () => ({
+  type: Constants.RESET_PDF_SIDEBAR_ERRORS
 });
+
+/** Set current PDF **/
+export const selectCurrentPdfLocally = (docId) => (dispatch) => {
+  dispatch(handleSetLastRead(docId));
+  dispatch({
+    type: Constants.SELECT_CURRENT_VIEWER_PDF,
+    payload: {
+      docId
+    }
+  });
+};
 
 export const selectCurrentPdf = (docId) => (dispatch) => {
   ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).

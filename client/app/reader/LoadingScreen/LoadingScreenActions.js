@@ -12,17 +12,29 @@ export const onInitialCaseLoadingFail = (value = true) => ({
   payload: { value }
 });
 
+export const setLoadedVacolsId = (vacolsId) => ({
+  type: Constants.SET_LOADED_APPEAL_ID,
+  payload: {
+    vacolsId
+  }
+});
+
+export const updateFilteredIds = () => ({
+  type: Constants.UPDATE_FILTERED_DOC_IDS
+});
+
 export const onReceiveDocs = (documents, vacolsId) =>
   (dispatch) => {
     dispatch(collectAllTags(documents));
     dispatch(setViewedAssignment(vacolsId));
+    dispatch(setLoadedVacolsId(vacolsId));
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
       payload: {
-        documents,
-        vacolsId
+        documents
       }
     });
+    dispatch(updateFilteredIds());
   };
 
 export const onReceiveAnnotations = (annotations) => ({

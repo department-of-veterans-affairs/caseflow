@@ -872,35 +872,32 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_LOADED_APPEAL_ID:
+    return update(state, {
+      loadedAppealId: {
+        $set: action.payload.vacolsId
+      }
+    });
+
+  case Constants.UPDATE_FILTERED_DOC_IDS:
+    return updateFilteredDocIds(state);
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
     return hideErrorMessage(state, action.payload.messageType);
   case Constants.SHOW_ERROR_MESSAGE:
     return showErrorMessage(state, action.payload.messageType);
-
-  // Documents related
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return updateLastReadDoc(update(state, {
+  case Constants.RESET_PDF_SIDEBAR_ERRORS:
+    return update(state, {
       ui: {
         pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
-      },
-      documents: {
-        $set: documentsReducer(state.documents, action)
       }
-    }), action.payload.docId);
+    });
+
+  // Documents related
+
   case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        documents: {
-          $set: documentsReducer(state.documents, action)
-        },
-        loadedAppealId: {
-          $set: action.payload.vacolsId
-        }
-      }
-    ));
+  case Constants.SELECT_CURRENT_VIEWER_PDF:
   case Constants.TOGGLE_DOCUMENT_CATEGORY:
   case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
   case Constants.ROTATE_PDF_DOCUMENT:
