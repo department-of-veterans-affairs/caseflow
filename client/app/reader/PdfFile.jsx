@@ -194,10 +194,13 @@ export class PdfFile extends React.PureComponent {
 
       if (pageIndex >= 0) {
         if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
+          // if navigating between Marks in the same page and the page is rendered,
+          // PdfPage will set scrollTop in highlightMarkAtIndex
           if (!_.isNull(this.props.scrollTop)) {
             this.scrollToPosition(pageIndex, this.props.scrollTop);
             this.props.setDocScrollPosition(null);
           } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+            // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
             this.list.scrollToRow(pageIndex);
           }
         } else {
