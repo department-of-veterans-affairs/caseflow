@@ -175,7 +175,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPageIndexofMatch = (matchIndex = this.props.currentMatchIndex) => {
-    // get index in matchesPerPage of page containing match index
     let cumulativeMatches = 0;
 
     for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
@@ -195,10 +194,11 @@ export class PdfFile extends React.PureComponent {
 
       if (pageIndex >= 0) {
         if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
-          // todo: scroll to page if page is not rendered
           if (!_.isNull(this.props.scrollTop)) {
             this.scrollToPosition(pageIndex, this.props.scrollTop);
             this.props.setDocScrollPosition(null);
+          } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+            this.list.scrollToRow(pageIndex);
           }
         } else {
           // scroll to mark page before highlighting--may not be in DOM
