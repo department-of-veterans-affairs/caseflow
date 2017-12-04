@@ -11,6 +11,24 @@ export const keyOfAnnotation = ({ temporaryId, id }) => temporaryId || id;
 export const pageNumberOfPageIndex = (pageIndex) => pageIndex + 1;
 export const pageIndexOfPageNumber = (pageNumber) => pageNumber - 1;
 
+/**
+ * We do a lot of work with coordinates to render PDFs.
+ * It is important to keep the various coordinate systems straight.
+ * Here are the systems we use:
+ *
+ *    Root coordinates: The coordinate system for the entire app.
+ *      (0, 0) is the top left hand corner of the entire HTML document that the browser has rendered.
+ *
+ *    Page coordinates: A coordinate system for a given PDF page.
+ *      (0, 0) is the top left hand corner of that PDF page.
+ *
+ * The relationship between root and page coordinates is defined by where the PDF page is within the whole app,
+ * and what the current scale factor is.
+ *
+ * All coordinates in our codebase should have `page` or `root` in the name, to make it clear which
+ * coordinate system they belong to. All converting between coordinate systems should be done with
+ * the proper helper functions.
+ */
 export const pageCoordsOfRootCoords = ({ x, y }, pageBoundingBox, scale) => ({
   x: (x - pageBoundingBox.left) / scale,
   y: (y - pageBoundingBox.top) / scale

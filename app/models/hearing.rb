@@ -8,6 +8,7 @@ class Hearing < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
+  vacols_attr_accessor :transcript_sent_date
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
 
@@ -22,8 +23,29 @@ class Hearing < ActiveRecord::Base
     !!disposition
   end
 
+  def no_show?
+    disposition == :no_show
+  end
+
+  def held?
+    disposition == :held
+  end
+
   def scheduled_pending?
     date && !closed?
+  end
+
+  def held_open?
+    hold_open && hold_open > 0
+  end
+
+  def hold_release_date
+    return unless held_open?
+    date.to_date + hold_open.days
+  end
+
+  def no_show_excuse_letter_due_date
+    date.to_date + 15.days
   end
 
   def active_appeal_streams
@@ -37,6 +59,10 @@ class Hearing < ActiveRecord::Base
     end
   end
 
+  def regional_office_timezone
+    HearingMapper.timezone(regional_office_key)
+  end
+
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
@@ -48,6 +74,7 @@ class Hearing < ActiveRecord::Base
       aod: aod,
       hold_open: hold_open,
       transcript_requested: transcript_requested,
+      transcript_sent_date: transcript_sent_date,
       notes: notes,
       add_on: add_on,
       representative: representative,
@@ -88,6 +115,7 @@ class Hearing < ActiveRecord::Base
         :representative,
         :representative_name,
         :regional_office_name,
+        :regional_office_timezone,
         :venue, :appellant_last_first_mi,
         :veteran_name, :vbms_id
       ],
