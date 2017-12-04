@@ -55,10 +55,10 @@ export class PdfPage extends React.PureComponent {
   highlightMarkAtIndex = (scrollToMark) => {
     _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
 
-    const [pageWithMatch, indexInPage] = this.getIndexInPage();
+    const [pageIndexWithMatch, indexInPage] = this.getIndexInPage();
     const selectedMark = this.marks[indexInPage];
 
-    if (_.endsWith(pageWithMatch.id, `pdf-${this.props.pageIndex}`)) {
+    if (pageIndexWithMatch === this.props.pageIndex) {
       if (selectedMark) {
         selectedMark.classList.add('highlighted');
 
@@ -76,17 +76,20 @@ export class PdfPage extends React.PureComponent {
 
   getIndexInPage = (matchIndex = this.props.currentMatchIndex) => {
     // get page, relative index of match at absolute index
-    let pageIndex = 0;
-    let matchesProcessed = this.props.matchesPerPage[pageIndex].matches;
+    let cumulativeMatches = 0;
 
-    while (matchesProcessed < matchIndex + 1) {
-      pageIndex += 1;
-      matchesProcessed += this.props.matchesPerPage[pageIndex].matches;
+    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
+      if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
+        return [
+          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
+          this.props.currentMatchIndex - cumulativeMatches
+        ];
+      }
+
+      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
     }
 
-    const pageWithMatch = this.props.matchesPerPage[pageIndex];
-
-    return [pageWithMatch, pageWithMatch.matches - (matchesProcessed - this.props.currentMatchIndex)];
+    return [-1, -1];
   }
 
   // This method is the interaction between our component and PDFJS.

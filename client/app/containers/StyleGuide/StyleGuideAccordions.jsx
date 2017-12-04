@@ -40,7 +40,7 @@ export default class StyleGuideAccordions extends React.PureComponent {
         {sgAccordionSections}
       </Accordion>
 
-      <h3 id="bordered_outline">Bordered Outline</h3>
+      <h3 id="bordered-outline">Bordered Outline</h3>
       <Accordion style="outline" accordion>
         {sgAccordionSections}
       </Accordion>

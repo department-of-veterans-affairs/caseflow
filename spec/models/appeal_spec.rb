@@ -207,6 +207,18 @@ describe Appeal do
     end
   end
 
+  context "#events" do
+    subject { appeal.events }
+
+    it "returns list of events" do
+      expect(subject.length > 0).to be_truthy
+      expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :form9 } > 0).to be_truthy
+    end
+  end
+
   context "#documents_match?" do
     let(:nod_document) { Document.new(type: "NOD", received_at: 3.days.ago) }
     let(:soc_document) { Document.new(type: "SOC", received_at: 2.days.ago) }

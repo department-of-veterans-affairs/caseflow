@@ -31,7 +31,12 @@ $color-tab-text-hover: #1f5593;
     }
 
     a {
-      color: $color-primary;
+      color: $color-gray-dark;
+
+      &.selected {
+        color: $color-primary;
+        font-weight: bold;
+      }
     }
   }
 }
