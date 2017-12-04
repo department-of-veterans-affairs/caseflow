@@ -879,12 +879,12 @@ const reducer = (state = {}, action = {}) => {
   }
 };
 
-const combinedReducer = (state = initialState, action = {}) => ({
+export const readerReducer = (state = initialState, action = {}) => ({
   ...reducer(state, action),
   documents: documentsReducer(state.documents, action)
 });
 
 export default timeFunction(
-  combinedReducer,
+  readerReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );
