@@ -94,10 +94,10 @@ export class PdfPage extends React.PureComponent {
 
   getMatchIndexOffsetFromPage = (pageOffsetIndex = this.props.pageIndex) => {
     // get sum of matches from pages below pageOffsetIndex
-    return _(this.props.matchesPerPage)
-      .take(pageOffsetIndex - 1)
-      .map((page) => page.matches)
-      .sum();
+    return _(this.props.matchesPerPage).
+      take(pageOffsetIndex - 1).
+      map((page) => page.matches).
+      sum();
   }
 
   onClick = (event) => {
