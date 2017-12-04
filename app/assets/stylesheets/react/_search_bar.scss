@@ -70,13 +70,25 @@
       cursor: text;
     }
   }
+
+  .search-text-spinner {
+    background-color: $color-white;
+    font-size: 1rem;
+    margin-top: 1px;
+    width: 8rem;
+    text-align: right;
+    padding-right: 2rem;
+    padding-top: 3px;
+  }
 }
 
 .cf-search-ahead-parent {
   display: flex;
 }
 
+// scss-lint:disable PropertyCount
 .cf-search-bar {
+  max-height: 50px;
   top: 5rem;
   transition: top .1s linear;
   position: absolute;
@@ -93,3 +105,4 @@
     top: 0;
   }
 }
+// scss-lint:disable PropertyCount

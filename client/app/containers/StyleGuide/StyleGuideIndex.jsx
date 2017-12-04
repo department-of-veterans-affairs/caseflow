@@ -23,15 +23,28 @@ import StyleGuideFormFields from './StyleGuideFormFields';
 import StyleGuideAccordions from './StyleGuideAccordions';
 import StyleGuideAlerts from './StyleGuideAlerts';
 
-export default class StyleGuideIndex extends React.Component {
+export default class StyleGuideIndex extends React.PureComponent {
+  constructor() {
+    super();
+    this.state = {
+      selected: false
+    };
+  }
+
+  setSelectedLink = (index) => {
+    this.setState({
+      selected: index
+    });
+  }
 
   render() {
     return <div className="cf-app cf-sg-layout cf-app-segment cf-app-segment--alt">
       <StickyNav>
         {
-          componentLinks.map((link, i) => (
-            <NavLink {...link} key={i} />
-          ))
+          componentLinks.map((link, i) => {
+            return <NavLink {...link} setSelectedLink={this.setSelectedLink} index={i} key={i}
+              selectedIndex={this.state.selected} />;
+          })
         }
       </StickyNav>
       <div className="cf-sg-content">
@@ -70,7 +83,7 @@ export default class StyleGuideIndex extends React.Component {
         <div className="cf-help-divider"></div>
         <StyleGuidePlaceholder
           title="Date Input"
-          id="date_input" />
+          id="date-input" />
         <div className="cf-help-divider"></div>
         <StyleGuideTables />
         <div className="cf-help-divider"></div>

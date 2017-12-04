@@ -9,7 +9,7 @@ export default class FontFamily extends React.Component {
     return <div className="cf-sg-font-family-examples">
       <StyleGuideComponentTitle
         title="Font Family"
-        id="font_family"
+        id="font-family"
         isSubsection
       />
       <p className="cf-font-light">Source Sans Pro Light (300)</p>

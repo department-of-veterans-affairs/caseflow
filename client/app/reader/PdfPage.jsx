@@ -5,10 +5,11 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setUpPdfPage, clearPdfPage } from '../reader/Pdf/PdfActions';
-import { text as searchText } from '../reader/selectors';
+import { setPageDimensions } from '../reader/Pdf/PdfActions';
+import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
+import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
-import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from './constants';
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 
@@ -22,25 +23,12 @@ const PAGE_MARGIN_BOTTOM = 25;
 // Base scale used to calculate dimensions and draw text.
 const PAGE_DIMENSION_SCALE = 1;
 
-// This is the maximum squared distance within which pages are drawn.
-// We compare this value with the result of (window_center_x - page_center_x) ^ 2 +
-// (window_center_y - page_center_y) ^ 2 which is the square of the distance between
-// the center of the window, and the page. If this is less than MAX_SQUARED_DISTANCE
-// then we draw the page. A good value for MAX_SQUARED_DISTANCE is determined empirically
-// balancing rendering enough pages in the future with not rendering too many pages in parallel.
-const MAX_SQUARED_DISTANCE = 100000000;
-const NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER = 4;
-
 export class PdfPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.isDrawing = false;
-    this.isDrawn = false;
-    this.didFailDrawing = false;
-    this.previousShouldDraw = false;
-    this.isUnmounting = false;
-    this.isPageSetup = false;
+    this.marks = [];
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -49,24 +37,73 @@ export class PdfPage extends React.PureComponent {
 
   getTextLayerRef = (textLayer) => this.textLayer = textLayer
 
-  markText = (txt) => {
-    this.markInstance.unmark({
-      done: () => this.markInstance.mark(txt, { separateWordSearch: false })
-    });
+  unmarkText = (callback = _.noop) => this.markInstance.unmark({ done: callback });
+  markText = (scrollToMark = false, txt = this.props.searchText) => {
+    this.unmarkText(() => this.markInstance.mark(txt, {
+      separateWordSearch: false,
+      done: () => {
+        if (!this.props.matchesPerPage.length || !this.textLayer) {
+          return;
+        }
+
+        this.marks = this.textLayer.getElementsByTagName('mark');
+        this.highlightMarkAtIndex(scrollToMark);
+      }
+    }));
   };
+
+  highlightMarkAtIndex = (scrollToMark) => {
+    _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
+
+    const [pageIndexWithMatch, indexInPage] = this.getIndexInPage();
+    const selectedMark = this.marks[indexInPage];
+
+    if (pageIndexWithMatch === this.props.pageIndex) {
+      if (selectedMark) {
+        selectedMark.classList.add('highlighted');
+
+        if (scrollToMark) {
+          // mark parent elements are absolutely-positioned divs. account for search bar height
+          this.props.setDocScrollPosition(
+            parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
+          );
+        }
+      } else {
+        console.error('selectedMark not found in DOM');
+      }
+    }
+  }
+
+  getIndexInPage = (matchIndex = this.props.currentMatchIndex) => {
+    // get page, relative index of match at absolute index
+    let cumulativeMatches = 0;
+
+    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
+      if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
+        return [
+          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
+          this.props.currentMatchIndex - cumulativeMatches
+        ];
+      }
+
+      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
+    }
+
+    return [-1, -1];
+  }
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
   // has been drawn with the most up to date scale passed in as a prop.
   // We may execute multiple draws to ensure this property.
-  drawPage = () => {
+  drawPage = (page) => {
     if (this.isDrawing) {
       return Promise.resolve();
     }
     this.isDrawing = true;
 
     const currentScale = this.props.scale;
-    const viewport = this.props.page.getViewport(this.props.scale);
+    const viewport = page.getViewport(this.props.scale);
 
     // We need to set the width and heights of everything based on
     // the width and height of the viewport.
@@ -74,125 +111,67 @@ export class PdfPage extends React.PureComponent {
     this.canvas.width = viewport.width;
 
     // Call PDFJS to actually draw the page.
-    return this.props.page.render({
+    return page.render({
       canvasContext: this.canvas.getContext('2d', { alpha: false }),
       viewport
     }).then(() => {
       this.isDrawing = false;
-      this.isDrawn = true;
-      this.didFailDrawing = false;
 
       // If the scale has changed, draw the page again at the latest scale.
-      if (currentScale !== this.props.scale && this.props.page) {
-        return this.drawPage();
+      if (currentScale !== this.props.scale && page) {
+        return this.drawPage(page);
       }
     }).
       catch(() => {
-        this.didFailDrawing = true;
+        // We might need to do something else here.
         this.isDrawing = false;
-        this.isDrawn = false;
       });
   }
 
-  clearPage = () => {
-    if (this.isDrawn) {
-      this.canvas.getContext('2d', { alpha: false }).clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.props.page.cleanup();
-    }
-
-    this.isDrawn = false;
-  }
-
   componentDidMount = () => {
-    // We only want to setUpPage immediately if it's either on a visible page, or if that page
-    // is in a non-visible page but within the first NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER pages.
-    // These are the pages we are most likely to show to the user. All other pages can wait
-    // until we have idle time.
-    if (this.props.isVisible || this.props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
-      this.setUpPage();
-    } else {
-      window.requestIdleCallback(this.setUpPage);
-    }
-  }
-
-  clearPdfPage = () => {
-    this.props.clearPdfPage(this.props.file, this.props.pageIndex, this.props.page);
+    this.setUpPage();
   }
 
   componentWillUnmount = () => {
     this.isDrawing = false;
-    this.isDrawn = false;
-    this.isUnmounting = true;
     if (this.props.page) {
       this.props.page.cleanup();
       if (this.markInstance) {
         this.markInstance.unmark();
       }
     }
-    // Cleaning up this page from the Redux store should happen when we have idle time.
-    // We don't want to block showing pages because we're too busy cleaning old pages.
-    window.requestIdleCallback(this.clearPdfPage);
-  }
-
-  // This function gets the square of the distance to the center of the scroll window.
-  // We don't calculate linear distance since taking square roots is expensive.
-  getSquaredDistanceToCenter = (props) => {
-    if (!this.pageContainer) {
-      return Number.MAX_SAFE_INTEGER;
-    }
-
-    const square = (num) => num * num;
-    const boundingRect = this.pageContainer.getBoundingClientRect();
-    const pageCenter = {
-      x: (boundingRect.left + boundingRect.right) / 2,
-      y: (boundingRect.top + boundingRect.bottom) / 2
-    };
-
-    return (square(pageCenter.x - props.scrollWindowCenter.x) +
-      square(pageCenter.y - props.scrollWindowCenter.y));
-  }
-
-  // This function determines whether or not it should draw the page based on its distance
-  // from the center of the scroll window, or if it's not visible, then if it's page index
-  // is less than NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER
-  shouldDrawPage = (props) => {
-    if (!props.isVisible) {
-      if (props.pageIndex < NUMBER_OF_NON_VISIBLE_PAGES_TO_RENDER) {
-        return true;
-      }
-
-      return false;
-    }
-
-    return this.getSquaredDistanceToCenter(props) < MAX_SQUARED_DISTANCE;
   }
 
   componentDidUpdate = (prevProps) => {
-    const shouldDraw = this.shouldDrawPage(this.props);
-
-    // We draw the page if there's been a change in the 'shouldDraw' state, scale, or if
-    // the page was just loaded.
-    if (shouldDraw) {
-      // If we have yet to set up the page since we haven't received an idle moment, we force
-      // it to be setup here.
-      this.setUpPage();
-
-      if (this.props.page && !this.props.page.transport.destroyed && (this.didFailDrawing || !this.previousShouldDraw ||
-          prevProps.scale !== this.props.scale || !prevProps.page ||
-          (this.props.isVisible && !prevProps.isVisible))) {
-        this.drawPage();
-      }
-    } else if (this.previousShouldDraw) {
-      this.clearPage();
+    if (prevProps.scale !== this.props.scale) {
+      this.drawPage(this.page);
     }
-    this.previousShouldDraw = shouldDraw;
 
     if (this.markInstance) {
-      this.markText(this.props.searchText);
+      if (this.props.searchText && !this.props.searchBarHidden) {
+        if (!_.isNaN(this.props.currentMatchIndex) && this.props.matchesPerPage && this.marks.length &&
+           (this.props.searchText === prevProps.searchText) &&
+           (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
+          // eslint-disable-next-line no-unused-vars
+          const [matchedPageIndex, indexInPage] = this.getIndexInPage();
+
+          if (this.marks[indexInPage]) {
+            this.highlightMarkAtIndex(true);
+          }
+        } else {
+          this.markText(this.props.currentMatchIndex !== prevProps.currentMatchIndex);
+        }
+      } else {
+        this.unmarkText();
+      }
     }
   }
 
   drawText = (page, text) => {
+    if (!this.textLayer) {
+      return;
+    }
+
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
     this.textLayer.innerHTML = '';
@@ -205,6 +184,9 @@ export class PdfPage extends React.PureComponent {
     });
 
     this.markInstance = new Mark(this.textLayer);
+    if (this.props.searchText && !this.props.searchBarHidden) {
+      this.markText(true);
+    }
   }
 
   getText = (page) => page.getTextContent()
@@ -212,47 +194,19 @@ export class PdfPage extends React.PureComponent {
   // Set up the page component in the Redux store. This includes the page dimensions, text,
   // and PDFJS page object.
   setUpPage = () => {
-    if (this.isPageSetup) {
-      return;
-    }
-
     if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
-      // We mark the page as setup here. If we error on the promise, then we mark the page
-      // as not setup. On every componentDidUpdate we call setUpPage again. This way if
-      // we failed to setup the page here, we'll make our best attempt to update it in the future.
-      this.isPageSetup = true;
       this.props.pdfDocument.getPage(pageNumberOfPageIndex(this.props.pageIndex)).then((page) => {
-        const setUpPageWithText = (text) => {
-          const pageData = {
-            dimensions: this.props.pageDimensions || this.getDimensions(page),
-            page,
-            container: this.pageContainer
-          };
+        this.page = page;
 
-          if (!this.isUnmounting) {
-            this.props.setUpPdfPage(
-              this.props.file,
-              this.props.pageIndex,
-              { ...pageData,
-                text }
-            );
+        this.getText(page).then((text) => {
+          this.drawText(page, text);
+        });
 
-            this.drawText(page, text);
-          }
-        };
-
-        // We don't want to get the text again if we already have it saved. So we either
-        // use our previous text value, or get the text and then pass it in.
-        if (this.props.text) {
-          setUpPageWithText(this.props.text);
-        } else {
-          this.getText(page).then((text) => {
-            setUpPageWithText(text);
-          });
-        }
+        this.drawPage(page);
+        this.getDimensions(page);
       }).
         catch(() => {
-          this.isPageSetup = false;
+          // We might need to do something else here.
         });
     }
   }
@@ -260,7 +214,11 @@ export class PdfPage extends React.PureComponent {
   getDimensions = (page) => {
     const viewport = page.getViewport(PAGE_DIMENSION_SCALE);
 
-    return _.pick(viewport, ['width', 'height']);
+    this.props.setPageDimensions(
+      this.props.file,
+      this.props.pageIndex,
+      { width: viewport.width,
+        height: viewport.height });
   }
 
   getDivDimensions = () => {
@@ -362,21 +320,20 @@ PdfPage.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    clearPdfPage,
-    setUpPdfPage
+    setPageDimensions,
+    setDocScrollPosition
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => {
-  const page = state.readerReducer.pages[`${props.file}-${props.pageIndex}`];
-
   return {
-    pageDimensions: _.get(page, ['dimensions']),
-    page: _.get(page, ['page']),
-    text: _.get(page, ['text']),
+    pageDimensions: _.get(state.readerReducer.pageDimensions, [`${props.file}-${props.pageIndex}`]),
     isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
     rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0),
-    searchText: searchText(state, props)
+    searchText: searchText(state, props),
+    currentMatchIndex: getCurrentMatchIndex(state, props),
+    matchesPerPage: getMatchesPerPageInFile(state, props),
+    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar
   };
 };
 

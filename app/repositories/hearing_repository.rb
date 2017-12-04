@@ -104,6 +104,7 @@ class HearingRepository
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
         hold_open: vacols_record.holddays,
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
+        transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
         veteran_first_name: vacols_record.snamef,
