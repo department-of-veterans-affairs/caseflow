@@ -25,9 +25,6 @@ export const updateFilteredIds = () => ({
 
 export const onReceiveDocs = (documents, vacolsId) =>
   (dispatch) => {
-    dispatch(collectAllTags(documents));
-    dispatch(setViewedAssignment(vacolsId));
-    dispatch(setLoadedVacolsId(vacolsId));
     dispatch({
       type: Constants.RECEIVE_DOCUMENTS,
       payload: {
@@ -35,6 +32,9 @@ export const onReceiveDocs = (documents, vacolsId) =>
       }
     });
     dispatch(updateFilteredIds());
+    dispatch(collectAllTags(documents));
+    dispatch(setViewedAssignment(vacolsId));
+    dispatch(setLoadedVacolsId(vacolsId));
   };
 
 export const onReceiveAnnotations = (annotations) => ({

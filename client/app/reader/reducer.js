@@ -879,8 +879,9 @@ const reducer = (state = {}, action = {}) => {
   }
 };
 
-const combinedReducer = (state = initialState, action = {}) => update(reducer(state, action), {
-  documents: { $set: documentsReducer(state.documents, action) }
+const combinedReducer = (state = initialState, action = {}) => ({
+  ...reducer(state, action),
+  documents: documentsReducer(state.documents, action)
 });
 
 export default timeFunction(
