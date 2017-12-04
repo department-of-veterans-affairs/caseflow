@@ -690,6 +690,12 @@ select {
 .usa-accordion,
 .usa-accordion-bordered-outline {
   margin-bottom: 40px;
+
+  .usa-accordion-button {
+    &, i {
+      color: $color-gray-dark;
+    }
+  }
 }
 
 // candidate for commons
