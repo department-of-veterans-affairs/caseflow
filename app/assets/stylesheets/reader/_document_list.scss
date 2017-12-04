@@ -11,6 +11,10 @@ $tag-backgrond-color: #d6d7d9;
 
   mark {
     background: $color-gold-lightest;
+
+    &.highlighted {
+      background: $color-gold-light;
+    }
   }
 
   .section--no-search-results {
