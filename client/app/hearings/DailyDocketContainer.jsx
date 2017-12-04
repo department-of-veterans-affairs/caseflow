@@ -63,9 +63,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDailyDocket: (dailyDocket) => () => {
+  getDailyDocket: (dailyDocket, date) => () => {
     if (!dailyDocket) {
-      ApiUtil.get('/hearings/dockets/2017-11-22.json', { cache: true }).
+      ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
         then((response) => {
           dispatch(Actions.populateDailyDocket(response.body));
         }, (err) => {
@@ -109,7 +109,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket)
+    getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket, ownProps.date)
   };
 };
 
