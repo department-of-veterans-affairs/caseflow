@@ -2,17 +2,13 @@
 import * as Constants from './constants';
 
 import _ from 'lodash';
+import { combineReducers } from 'redux';
+
 import { update } from '../util/ReducerUtil';
 import { categoryFieldNameOfCategoryName, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 import documentsReducer from './DocumentList/DocumentsReducer';
-
-const updateDocuments = (state, action) => update(state, {
-  documents: {
-    $set: documentsReducer(state.documents, action)
-  }
-});
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -203,7 +199,7 @@ export const initialState = {
   extractedText: {}
 };
 
-export const reducer = (state = initialState, action = {}) => {
+const reducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -880,24 +876,15 @@ export const reducer = (state = initialState, action = {}) => {
         pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
       }
     });
-
-  // Documents related
-
-  case Constants.RECEIVE_DOCUMENTS:
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-  case Constants.TOGGLE_DOCUMENT_CATEGORY:
-  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-  case Constants.ROTATE_PDF_DOCUMENT:
-  case Constants.REQUEST_NEW_TAG_CREATION:
-  case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-  case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-  case Constants.REQUEST_REMOVE_TAG:
-  case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return updateDocuments(state, action);
   default:
     return state;
   }
 };
+
+export const readerReducer = combineReducers({
+  documents: documentsReducer,
+  ...reducer
+});
 
 export default timeFunction(
   reducer,

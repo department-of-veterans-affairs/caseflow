@@ -152,11 +152,8 @@ export const PDF_PAGE_HEIGHT = 1056;
 // errors
 export const SHOW_ERROR_MESSAGE = 'SHOW_ERROR_MESSAGE';
 export const HIDE_ERROR_MESSAGE = 'HIDE_ERROR_MESSAGE';
-<<<<<<< HEAD
 export const RESET_PDF_SIDEBAR_ERRORS = 'RESET_PDF_SIDEBAR_ERRORS';
-=======
 
 // Defined in _search_bar.scss > .cf-search-bar. Max height of
 // search bar, used as offset when scrolling to search results
 export const SEARCH_BAR_HEIGHT = 50;
->>>>>>> origin/issue-2829#4
