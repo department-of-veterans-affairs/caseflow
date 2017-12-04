@@ -95,7 +95,6 @@ export default class TestUsers extends React.PureComponent {
           loading={this.state.isSwitching}
           loadingText="Switching users" />
         <br/><br/>
-        {console.log(this.props.currentUser['roles'])}
         {this.props.currentUser['roles'].includes("Global Admin") && 
         <div>
         <strong>Reproduce user state:</strong>  
