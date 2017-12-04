@@ -2,7 +2,6 @@
 import * as Constants from './constants';
 
 import _ from 'lodash';
-import { combineReducers } from 'redux';
 
 import { update } from '../util/ReducerUtil';
 import { categoryFieldNameOfCategoryName, moveModel } from './utils';
@@ -189,7 +188,6 @@ export const initialState = {
    */
   editingAnnotations: {},
   annotations: {},
-  documents: {},
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
@@ -199,7 +197,7 @@ export const initialState = {
   extractedText: {}
 };
 
-const reducer = (state = initialState, action = {}) => {
+const reducer = (state = {}, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -881,12 +879,12 @@ const reducer = (state = initialState, action = {}) => {
   }
 };
 
-export const readerReducer = combineReducers({
-  documents: documentsReducer,
-  ...reducer
+const combinedReducer = (state = initialState, action = {}) => ({
+  ...reducer(state, action),
+  documents: documentsReducer(state.documents, action)
 });
 
 export default timeFunction(
-  reducer,
+  combinedReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );
