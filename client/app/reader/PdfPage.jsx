@@ -100,7 +100,11 @@ export class PdfPage extends React.PureComponent {
       .sum();
   }
 
-  onClick = () => this.props.setSearchIndex(this.getMatchIndexOffsetFromPage())
+  onClick = (event) => {
+    if (!event.target.classList.contains('comment-icon-path') && this.marks.length) {
+      this.props.setSearchIndex(this.getMatchIndexOffsetFromPage());
+    }
+  }
 
   // This method is the interaction between our component and PDFJS.
   // When this method resolves the returned promise it means the PDF
