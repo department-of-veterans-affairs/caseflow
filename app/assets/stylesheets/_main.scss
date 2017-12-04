@@ -692,7 +692,8 @@ select {
   margin-bottom: 40px;
 
   .usa-accordion-button {
-    &, i {
+    &,
+    i {
       color: $color-gray-dark;
     }
   }
