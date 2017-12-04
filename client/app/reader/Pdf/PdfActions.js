@@ -97,6 +97,13 @@ export const zeroSearchIndex = () => ({
   type: Constants.ZERO_SEARCH_INDEX
 });
 
+export const setSearchIndex = (index) => ({
+  type: Constants.SET_SEARCH_INDEX,
+  payload: {
+    index
+  }
+});
+
 export const searchText = (searchTerm) => (dispatch) => {
   dispatch(zeroSearchIndex());
   dispatch(createSearchAction('extractedText')(searchTerm));

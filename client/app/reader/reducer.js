@@ -859,6 +859,15 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_SEARCH_INDEX:
+    return update(
+      state,
+      {
+        documentSearchIndex: {
+          $set: action.payload.index
+        }
+      }
+    );
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:

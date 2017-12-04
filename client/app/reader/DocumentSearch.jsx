@@ -96,9 +96,9 @@ export class DocumentSearch extends React.PureComponent {
 
     if (_.size(this.searchTerm)) {
       if (this.props.totalMatchesInFile > 0) {
-        internalText = `${this.props.getCurrentMatch + 1} of ${this.props.totalMatchesInFile}`;
+        internalText = `${this.props.currentMatchIndex + 1} of ${this.props.totalMatchesInFile}`;
       } else if (this.props.totalMatchesInFile > 9999) {
-        internalText = `${this.props.getCurrentMatch + 1} of many`;
+        internalText = `${this.props.currentMatchIndex + 1} of many`;
       } else {
         internalText = '0 of 0';
       }
@@ -159,7 +159,7 @@ const mapStateToProps = (state, props) => ({
   pdfText: getTextForFile(state, props),
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
-  getCurrentMatch: getCurrentMatchIndex(state, props),
+  currentMatchIndex: getCurrentMatchIndex(state, props),
   hidden: state.readerReducer.ui.pdf.hideSearchBar,
   textExtracted: !_.isEmpty(state.readerReducer.extractedText)
 });
