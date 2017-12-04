@@ -1,5 +1,6 @@
 export const PAGE_PATHS = {
   BEGIN: '/',
+  SEARCH: '/search',
   REVIEW: '/review-request',
   FINISH: '/finish',
   COMPLETED: '/completed'

@@ -310,6 +310,16 @@ RSpec.feature "RAMP Intake" do
       visit "/intake/finish"
       expect(page).to have_content("Welcome to Caseflow Intake!")
     end
+
+    context "when ramp reentry form is enabled" do
+      before { FeatureToggle.enable!(:intake_reentry_form) }
+      after { FeatureToggle.disable!(:intake_reentry_form) }
+
+      scenario "flow starts with form selection" do
+        visit "/intake"
+        expect(page).to have_content("Which form are you processing?")
+      end
+    end
   end
 
   context "As a user without Mail Intake role" do

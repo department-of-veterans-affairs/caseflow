@@ -13,6 +13,8 @@ import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import BeginPage from './pages/begin';
+import SelectFormPage from './pages/selectForm';
+import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
@@ -74,26 +76,59 @@ class IntakeFrame extends React.PureComponent {
                   lowerMargin
                 />
               }
-              <PageRoute
-                exact
-                path={PAGE_PATHS.BEGIN}
-                title="Begin Intake | Caseflow Intake"
-                component={BeginPage} />
-              <PageRoute
-                exact
-                path={PAGE_PATHS.REVIEW}
-                title="Review Election | Caseflow Intake"
-                component={ReviewPage} />
-              <PageRoute
-                exact
-                path={PAGE_PATHS.FINISH}
-                title="Finish | Caseflow Intake"
-                component={FinishPage} />
-              <PageRoute
-                exact
-                path={PAGE_PATHS.COMPLETED}
-                title="Completed | Caseflow Intake"
-                component={CompletedPage} />
+              { this.props.featureToggles.reentryForm &&
+                <div>
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.BEGIN}
+                    title="Select Form | Caseflow Intake"
+                    component={SelectFormPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.SEARCH}
+                    title="Search | Caseflow Intake"
+                    component={SearchPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.REVIEW}
+                    title="Review Selection | Caseflow Intake"
+                    component={ReviewPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.FINISH}
+                    title="Finish Processing | Caseflow Intake"
+                    component={FinishPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.COMPLETED}
+                    title="Confirmation | Caseflow Intake"
+                    component={CompletedPage} />
+                </div>
+              }
+              { !this.props.featureToggles.reentryForm &&
+                <div>
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.BEGIN}
+                    title="Begin Intake | Caseflow Intake"
+                    component={BeginPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.REVIEW}
+                    title="Review Election | Caseflow Intake"
+                    component={ReviewPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.FINISH}
+                    title="Finish | Caseflow Intake"
+                    component={FinishPage} />
+                  <PageRoute
+                    exact
+                    path={PAGE_PATHS.COMPLETED}
+                    title="Completed | Caseflow Intake"
+                    component={CompletedPage} />
+                </div>
+              }
             </PrimaryAppContent>
             <AppSegment className="cf-workflow-button-wrapper">
               <Route
