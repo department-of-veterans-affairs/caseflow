@@ -8,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
-import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
+import { searchText, getDocumentText, updateSearchIndex, setSearchOffset, setSearchIndex } from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { READER_COLOR } from './constants';
@@ -35,9 +35,18 @@ export class DocumentSearch extends React.PureComponent {
     this.props.searchText(this.searchTerm);
   }
 
-  onKeyPress = (value) => {
-    if (value.key === 'Enter') {
-      this.props.updateSearchIndex(!value.shiftKey);
+  updateSearchIndex = (event) => {
+    if (this.props.matchIndexOffset !== 0) {
+      this.props.setSearchIndex(event.shiftKey ? this.props.matchIndexOffset - 1 : this.props.matchIndexOffset + 1);
+      this.props.setSearchOffset(0);
+    } else {
+      this.props.updateSearchIndex(!event.shiftKey);
+    }
+  }
+
+  onKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      this.updateSearchIndex(event);
     }
   }
 
@@ -50,7 +59,7 @@ export class DocumentSearch extends React.PureComponent {
 
     if (event[metaKey] && event.code === 'KeyG') {
       event.preventDefault();
-      this.props.updateSearchIndex(!event.shiftKey);
+      this.updateSearchIndex(event);
     }
 
     if (event.key === 'Escape') {
@@ -160,6 +169,7 @@ const mapStateToProps = (state, props) => ({
   pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),
+  matchIndexOffset: state.readerReducer.documentSearchOffset,
   hidden: state.readerReducer.ui.pdf.hideSearchBar,
   textExtracted: !_.isEmpty(state.readerReducer.extractedText)
 });
@@ -170,7 +180,9 @@ const mapDispatchToProps = (dispatch) => ({
     getDocumentText,
     updateSearchIndex,
     hideSearchBar,
-    showSearchBar
+    showSearchBar,
+    setSearchIndex,
+    setSearchOffset
   }, dispatch)
 });
 

@@ -200,6 +200,7 @@ export const initialState = {
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
+  documentSearchOffset: 0,
   extractedText: {}
 };
 
@@ -864,6 +865,15 @@ export const reducer = (state = initialState, action = {}) => {
       state,
       {
         documentSearchIndex: {
+          $set: action.payload.index
+        }
+      }
+    );
+  case Constants.SET_SEARCH_OFFSET:
+    return update(
+      state,
+      {
+        documentSearchOffset: {
           $set: action.payload.index
         }
       }

@@ -5,7 +5,7 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPageDimensions, setSearchIndex } from '../reader/Pdf/PdfActions';
+import { setPageDimensions, setSearchOffset } from '../reader/Pdf/PdfActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -97,12 +97,12 @@ export class PdfPage extends React.PureComponent {
     return _(this.props.matchesPerPage).
       take(pageOffsetIndex - 1).
       map((page) => page.matches).
-      sum();
+      sum() - 1;
   }
 
   onClick = (event) => {
     if (!event.target.classList.contains('comment-icon-path') && this.marks.length) {
-      this.props.setSearchIndex(this.getMatchIndexOffsetFromPage());
+      this.props.setSearchOffset(this.getMatchIndexOffsetFromPage());
     }
   }
 
@@ -199,7 +199,7 @@ export class PdfPage extends React.PureComponent {
 
     this.markInstance = new Mark(this.textLayer);
     if (this.props.searchText && !this.props.searchBarHidden) {
-      this.markText(true);
+      this.markText();
     }
   }
 
@@ -337,7 +337,7 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPageDimensions,
     setDocScrollPosition,
-    setSearchIndex
+    setSearchOffset
   }, dispatch)
 });
 

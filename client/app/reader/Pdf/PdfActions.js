@@ -104,6 +104,13 @@ export const setSearchIndex = (index) => ({
   }
 });
 
+export const setSearchOffset = (index) => ({
+  type: Constants.SET_SEARCH_OFFSET,
+  payload: {
+    index
+  }
+});
+
 export const searchText = (searchTerm) => (dispatch) => {
   dispatch(zeroSearchIndex());
   dispatch(createSearchAction('extractedText')(searchTerm));

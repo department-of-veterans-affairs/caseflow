@@ -189,7 +189,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   scrollToSearchTerm = (prevProps) => {
-    if (this.props.searchText && this.props.matchesPerPage.length) {
+    if (this.props.searchText && this.props.matchesPerPage.length && this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
       const pageIndex = this.getPageIndexofMatch();
 
       if (pageIndex >= 0) {
@@ -199,7 +199,7 @@ export class PdfFile extends React.PureComponent {
           if (!_.isNull(this.props.scrollTop)) {
             this.scrollToPosition(pageIndex, this.props.scrollTop);
             this.props.setDocScrollPosition(null);
-          } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+          } else {
             // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
             this.list.scrollToRow(pageIndex);
           }
