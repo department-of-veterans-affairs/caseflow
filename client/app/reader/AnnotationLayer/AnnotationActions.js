@@ -255,7 +255,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
           payload: {
             annotationId: annotation.id
           }
-        })
+        });
       },
       (response) => {
         const responseObject = JSON.parse(response.response.text);
@@ -267,7 +267,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
             errorMessage: responseObject.errors[0].detail
           }
         });
-        dispatch(showErrorMessage('annotation'));        
+        dispatch(showErrorMessage('annotation'));
       }
     );
 };

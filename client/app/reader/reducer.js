@@ -344,7 +344,7 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ) ;
+    );
   case Constants.CLEAR_CATEGORY_FILTER:
     return update(
       state,

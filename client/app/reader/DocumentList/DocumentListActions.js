@@ -17,7 +17,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
         action: 'change-sort-by',
         label: (nextState) => {
-          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 
+          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ?
             'ascending' : 'descending';
 
           return `${sortBy}-${direction}`;
