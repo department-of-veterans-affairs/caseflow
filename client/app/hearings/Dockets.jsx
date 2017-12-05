@@ -22,12 +22,8 @@ export class Dockets extends React.Component {
     return index;
   }
 
-  masterRecord = (docket) => {
-    return docket.hearings_array[0].master_record === true;
-  }
-
   linkToDailyDocket = (docket) => {
-    if (this.masterRecord(docket)) {
+    if (docket.master_record) {
       return moment(docket.date).format('l');
     }
 
@@ -37,7 +33,7 @@ export class Dockets extends React.Component {
   }
 
   scheduled = (docket) => {
-    return (this.masterRecord(docket)) ? 0 : docket.hearings_array.length;
+    return (docket.master_record ? 0 : docket.hearings_count);
   }
 
   render() {

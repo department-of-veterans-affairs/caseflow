@@ -21,7 +21,7 @@ class HearingDocket
 
   def to_hash
     serializable_hash(
-      methods: [:regional_office_name, :hearings_array, :slots]
+      methods: [:regional_office_name, :master_record, :slots, :hearings_count]
     )
   end
 
@@ -32,8 +32,10 @@ class HearingDocket
     }
   end
 
-  def hearings_array
-    hearings.map(&:to_hash)
+  delegate :count, to: :hearings, prefix: true
+
+  def master_record
+    hearings.first.master_record
   end
 
   def slots
