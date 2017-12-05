@@ -26,7 +26,7 @@ export class DocumentSearch extends React.PureComponent {
     this.searchTerm = value;
 
     if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
-      this.loading = Boolean(this.searchTerm.length);
+      this.loading = Boolean(!this.props.pdfText.length && this.searchTerm.length);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
       this.sentAction[this.props.file] = true;
     }
@@ -79,8 +79,7 @@ export class DocumentSearch extends React.PureComponent {
       this.clearSearch();
     }
 
-    // todo: after running a search, this.loading doesn't reset on change documents
-    this.loading = Boolean(!this.props.textExtracted && this.searchTerm.length);
+    this.loading = Boolean(!this.props.pdfText.length && this.searchTerm.length);
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
