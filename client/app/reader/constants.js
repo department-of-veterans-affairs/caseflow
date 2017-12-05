@@ -78,6 +78,8 @@ export const ZERO_SEARCH_INDEX = 'ZERO_SEARCH_INDEX';
 export const UPDATE_SEARCH_INDEX = 'UPDATE_SEARCH_INDEX';
 export const SET_DOCUMENT_LOAD_ERROR = 'SET_DOCUMENT_LOAD_ERROR';
 export const CLEAR_DOCUMENT_LOAD_ERROR = 'CLEAR_DOCUMENT_LOAD_ERROR';
+export const SET_LOADED_APPEAL_ID = 'SET_LOADED_APPEAL_ID';
+export const UPDATE_FILTERED_DOC_IDS = 'UPDATE_FILTERED_DOC_IDS';
 
 export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
 export const SET_VIEWING_DOCUMENTS_OR_COMMENTS = 'SET_VIEWING_DOCUMENTS_OR_COMMENTS';
@@ -150,6 +152,7 @@ export const PDF_PAGE_HEIGHT = 1056;
 // errors
 export const SHOW_ERROR_MESSAGE = 'SHOW_ERROR_MESSAGE';
 export const HIDE_ERROR_MESSAGE = 'HIDE_ERROR_MESSAGE';
+export const RESET_PDF_SIDEBAR_ERRORS = 'RESET_PDF_SIDEBAR_ERRORS';
 
 // Defined in _search_bar.scss > .cf-search-bar. Max height of
 // search bar, used as offset when scrolling to search results

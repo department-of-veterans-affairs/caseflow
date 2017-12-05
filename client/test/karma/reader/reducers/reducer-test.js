@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { expect } from 'chai';
-import { reducer, initialState } from '../../../../app/reader/reducer';
+import { readerReducer, initialState } from '../../../../app/reader/reducer';
 import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../../app/reader/constants';
 
@@ -8,7 +8,7 @@ import * as Constants from '../../../../app/reader/constants';
 
 describe('Reader reducer', () => {
 
-  const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
+  const reduceActions = (actions, state) => actions.reduce(readerReducer, readerReducer(state, {}));
 
   describe(Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS, () => {
     it('switching to Comments mode', () => {
@@ -96,7 +96,12 @@ describe('Reader reducer', () => {
         {
           type: Constants.RECEIVE_DOCUMENTS,
           payload: {
-            documents,
+            documents
+          }
+        },
+        {
+          type: Constants.SET_LOADED_APPEAL_ID,
+          payload: {
             vacolsId
           }
         }
@@ -114,6 +119,10 @@ describe('Reader reducer', () => {
           payload: {
             documents
           }
+        },
+        {
+          type: Constants.SET_LOADED_APPEAL_ID,
+          payload: { }
         }
       ]);
 
