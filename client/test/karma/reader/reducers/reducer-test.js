@@ -96,7 +96,12 @@ describe('Reader reducer', () => {
         {
           type: Constants.RECEIVE_DOCUMENTS,
           payload: {
-            documents,
+            documents
+          }
+        },
+        {
+          type: Constants.SET_LOADED_APPEAL_ID,
+          payload: {
             vacolsId
           }
         }
@@ -114,6 +119,10 @@ describe('Reader reducer', () => {
           payload: {
             documents
           }
+        },
+        {
+          type: Constants.SET_LOADED_APPEAL_ID,
+          payload: { }
         }
       ]);
 
