@@ -13,7 +13,7 @@ import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import BeginPage from './pages/begin';
-import SelectFormPage, { SelectFormButtons } from './pages/selectForm';
+import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
@@ -135,7 +135,7 @@ class IntakeFrame extends React.PureComponent {
                 <Route
                   exact
                   path={PAGE_PATHS.BEGIN}
-                  component={SelectFormButtons} />
+                  component={SelectFormButton} />
               }
               <Route
                 exact
