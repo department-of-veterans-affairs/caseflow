@@ -319,6 +319,7 @@ RSpec.feature "RAMP Intake" do
         visit "/intake"
 
         # Validate that you cant move forward without selecting a form
+        scroll_element_in_to_view(".cf-submit.usa-button")
         expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
         within_fieldset("Which form are you processing?") do
