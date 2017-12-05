@@ -94,7 +94,7 @@ Rails.application.routes.draw do
   resources :intakes, path: "intake", only: [:index, :create]
 
   namespace :intake do
-    resources :ramp_intakes, path: "ramp", only: [:update, :destroy] do
+    resources :ramp_election_intakes, path: "ramp", only: [:update, :destroy] do
       patch 'complete', on: :member
     end
   end

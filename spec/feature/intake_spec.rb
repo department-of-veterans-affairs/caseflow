@@ -101,7 +101,7 @@ RSpec.feature "RAMP Intake" do
         notice_date: 5.days.ago
       )
 
-      RampIntake.create!(
+      RampElectionIntake.create!(
         user: current_user,
         detail: ramp_election,
         completed_at: Time.zone.now,
@@ -140,7 +140,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_current_path("/intake/review-request")
       expect(page).to have_content("Review Ed Merica's opt-in election")
 
-      intake = RampIntake.find_by(veteran_file_number: "12341234")
+      intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
       expect(intake.started_at).to eq(Time.zone.now)
       expect(intake.user).to eq(current_user)
@@ -149,7 +149,7 @@ RSpec.feature "RAMP Intake" do
     scenario "Cancel an intake" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       visit "/intake"
@@ -172,7 +172,7 @@ RSpec.feature "RAMP Intake" do
 
     scenario "Start intake and go back and edit option" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       # Validate that visiting the finish page takes you back to
@@ -231,7 +231,7 @@ RSpec.feature "RAMP Intake" do
         notice_date: Date.new(2017, 8, 7)
       )
 
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       # Validate that visiting the finish page takes you back to
