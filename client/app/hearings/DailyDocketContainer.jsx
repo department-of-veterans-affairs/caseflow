@@ -25,7 +25,7 @@ export class DailyDocketContainer extends React.Component {
       </StatusMessage>;
     }
 
-    if (!this.props.dailyDocket) {
+    if (!this.props.dailyDocket[this.props.date]) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
@@ -37,13 +37,13 @@ export class DailyDocketContainer extends React.Component {
       </div>;
     }
 
-    if (Object.keys(this.props.dailyDocket).length === 0) {
+    if (Object.keys(this.props.dailyDocket[this.props.date]).length === 0) {
       return <div>You have no hearings on this date.</div>;
     }
 
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        save={this.props.save(this.props.dailyDocket, this.props.date)}
+        save={this.props.save(this.props.dailyDocket[this.props.date], this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
@@ -51,7 +51,7 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         veteran_law_judge={this.props.veteran_law_judge}
         date={this.props.date}
-        docket={this.props.dailyDocket}
+        docket={this.props.dailyDocket[this.props.date]}
       />
     </div>;
   }
@@ -64,10 +64,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getDailyDocket: (dailyDocket, date) => () => {
-    if (!dailyDocket) {
+    if (!dailyDocket || !dailyDocket[date]) {
       ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
         then((response) => {
-          dispatch(Actions.populateDailyDocket(response.body));
+          dispatch(Actions.populateDailyDocket(response.body, date));
         }, (err) => {
           dispatch(Actions.handleDocketServerError(err));
         });
@@ -121,7 +121,7 @@ export default connect(
 
 DailyDocketContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  dailyDocket: PropTypes.array,
+  dailyDocket: PropTypes.object,
   date: PropTypes.string.isRequired,
   docketServerError: PropTypes.object
 };

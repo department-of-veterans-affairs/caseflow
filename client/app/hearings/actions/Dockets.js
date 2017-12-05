@@ -9,10 +9,11 @@ export const populateDockets = (dockets) => ({
   }
 });
 
-export const populateDailyDocket = (dailyDocket) => ({
+export const populateDailyDocket = (dailyDocket, date) => ({
   type: Constants.POPULATE_DAILY_DOCKET,
   payload: {
-    dailyDocket
+    dailyDocket,
+    date
   }
 });
 
