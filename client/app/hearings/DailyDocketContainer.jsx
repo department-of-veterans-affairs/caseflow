@@ -17,6 +17,9 @@ export class DailyDocketContainer extends React.Component {
   }
 
   render() {
+
+    const dailyDocket = this.props.dailyDocket[this.props.date];
+
     if (this.props.docketServerError) {
       return <StatusMessage
         title= "Unable to load hearings">
@@ -25,7 +28,7 @@ export class DailyDocketContainer extends React.Component {
       </StatusMessage>;
     }
 
-    if (!this.props.dailyDocket[this.props.date]) {
+    if (!dailyDocket) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
@@ -37,13 +40,13 @@ export class DailyDocketContainer extends React.Component {
       </div>;
     }
 
-    if (Object.keys(this.props.dailyDocket[this.props.date]).length === 0) {
+    if (Object.keys(dailyDocket).length === 0) {
       return <div>You have no hearings on this date.</div>;
     }
 
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        save={this.props.save(this.props.dailyDocket[this.props.date], this.props.date)}
+        save={this.props.save(dailyDocket, this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
@@ -51,7 +54,7 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         veteran_law_judge={this.props.veteran_law_judge}
         date={this.props.date}
-        docket={this.props.dailyDocket[this.props.date]}
+        docket={dailyDocket}
       />
     </div>;
   }
