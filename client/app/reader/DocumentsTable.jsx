@@ -327,7 +327,7 @@ const mapStateToProps = (state) => ({
     _.merge({
       ..._.pick(state.readerReducer, 'documents'),
       ..._.pick(state.readerReducer, 'ui'),
-      ...state.annotationsLayer
+      ...state.annotationLayer
     })
   ),
   ..._.pick(state.readerReducer, 'viewingDocumentsOrComments'),

@@ -243,9 +243,9 @@ const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state.readerReducer),
   appeal: state.readerReducer.appeal,
   pageDimensions: state.readerReducer.pageDimensions,
-  ..._.pick(state.annotationsLayer, 'placingAnnotationIconPageCoords'),
-  ..._.pick(state.annotationsLayer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.annotationsLayer.ui.pdf, 'isPlacingAnnotation'),
+  ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
+  ..._.pick(state.annotationLayer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
+  ..._.pick(state.annotationLayer.ui.pdf, 'isPlacingAnnotation'),
   ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
 });
 

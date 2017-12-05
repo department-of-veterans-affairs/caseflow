@@ -10,6 +10,8 @@ import { timeFunction } from '../util/PerfDebug';
 import documentsReducer from './DocumentList/DocumentsReducer';
 
 const updateFilteredDocIds = (state) => {
+  const updatedNextState = update(state, {});
+
   const { docFilterCriteria } = state.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
@@ -26,7 +28,6 @@ const updateFilteredDocIds = (state) => {
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
-  const updatedNextState = update(state, {});
 
   const filteredIds = _(updatedNextState.documents).
     filter(
@@ -588,9 +589,9 @@ const reducer = (state = {}, action = {}) => {
     return update(state, {
       ui: {
         filteredDocIds: {
-          $set: updateFilteredDocIds(_.merge(
+          $set: updateFilteredDocIds(_.merge({},
             state,
-            action.payload.annotationLayer
+            action.payload.annotationLayer,
           ))
         }
       }

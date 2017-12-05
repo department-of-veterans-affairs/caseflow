@@ -3,8 +3,33 @@ import uuid from 'uuid';
 import * as Constants from './actionTypes';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
-import { openAnnotationDeleteModal, closeAnnotationDeleteModal } from '../../reader/PdfViewer/PdfViewerActions';
 import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
+
+/** Annotation Modal **/
+
+export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
+  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
+  payload: {
+    annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'open-annotation-delete-modal',
+      label: analyticsLabel
+    }
+  }
+});
+
+export const closeAnnotationDeleteModal = (includeMetrics = true) => ({
+  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
+  meta: (includeMetrics ? {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'close-annotation-delete-modal'
+    }
+  } : null)
+});
 
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,

@@ -11,32 +11,6 @@ export const collectAllTags = (documents) => ({
   payload: documents
 });
 
-/** Annotation Modal **/
-
-export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'open-annotation-delete-modal',
-      label: analyticsLabel
-    }
-  }
-});
-
-export const closeAnnotationDeleteModal = (includeMetrics = true) => ({
-  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: (includeMetrics ? {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'close-annotation-delete-modal'
-    }
-  } : null)
-});
-
 /** Jump To Page **/
 
 export const jumpToPage = (pageNumber, docId) => ({

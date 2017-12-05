@@ -52,7 +52,7 @@ class SideBarComments extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
+    ..._.pick(state.annotationLayer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
     error: state.readerReducer.ui.pdfSidebar.error
   };
 };

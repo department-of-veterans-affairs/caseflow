@@ -46,7 +46,7 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   clearPlacingAnnotationState = () => {
-    if (this.props.pdf.isPlacingAnnotation) {
+    if (this.props.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation('from-click-outside-doc');
     }
   }
@@ -189,7 +189,8 @@ const mapStateToProps = (state) => {
   return {
     documentFilters: state.readerReducer.ui.pdfList.filters,
     storeDocuments: state.readerReducer.documents,
-    pdf: state.readerReducer.ui.pdf
+    pdf: state.readerReducer.ui.pdf,
+    isPlacingAnnotation: state.annotationLayer.ui.pdf.isPlacingAnnotation
   };
 };
 
