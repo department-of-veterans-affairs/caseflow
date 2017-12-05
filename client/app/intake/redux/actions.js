@@ -76,6 +76,18 @@ export const setOptionSelected = (optionSelected) => ({
   }
 });
 
+export const setFormSelection = (formSelection) => ({
+  type: ACTIONS.SET_FORM_SELECTION,
+  payload: {
+    formSelection
+  },
+  meta: {
+    analytics: {
+      label: formSelection
+    }
+  }
+});
+
 export const setReceiptDate = (receiptDate) => ({
   type: ACTIONS.SET_RECEIPT_DATE,
   payload: {
