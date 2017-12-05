@@ -8,7 +8,8 @@ import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
-import { searchText, getDocumentText, updateSearchIndex, setSearchOffset, setSearchIndex } from '../reader/Pdf/PdfActions';
+import { searchText, getDocumentText, updateSearchIndex, setSearchOffset, setSearchIndex
+} from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { READER_COLOR } from './constants';
@@ -36,7 +37,7 @@ export class DocumentSearch extends React.PureComponent {
   }
 
   updateSearchIndex = (event) => {
-    if (this.props.matchIndexOffset !== 0) {
+    if (this.props.matchIndexOffset > 0) {
       this.props.setSearchIndex(event.shiftKey ? this.props.matchIndexOffset - 1 : this.props.matchIndexOffset + 1);
       this.props.setSearchOffset(0);
     } else {
