@@ -8,10 +8,10 @@ import StatusMessage from '../components/StatusMessage';
 import Dockets from './Dockets';
 import ApiUtil from '../util/ApiUtil';
 
-export const getDockets = (dispatch) => {
+export const getUpcomingHearings = (dispatch) => {
   ApiUtil.get('/hearings/dockets.json', { cache: true }).
     then((response) => {
-      dispatch(Actions.populateDockets(response.body));
+      dispatch(Actions.populateUpcomingHearings(response.body));
     }, (err) => {
       dispatch(Actions.handleDocketServerError(err));
     });
@@ -20,8 +20,8 @@ export const getDockets = (dispatch) => {
 export class DocketsContainer extends React.Component {
 
   componentDidMount() {
-    if (!this.props.dockets) {
-      this.props.getDockets();
+    if (!this.props.upcomingHearings) {
+      this.props.getUpcomingHearings();
     }
   }
 
@@ -35,7 +35,7 @@ export class DocketsContainer extends React.Component {
       </StatusMessage>;
     }
 
-    if (!this.props.dockets) {
+    if (!this.props.upcomingHearings) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
@@ -47,7 +47,7 @@ export class DocketsContainer extends React.Component {
       </div>;
     }
 
-    if (Object.keys(this.props.dockets).length === 0) {
+    if (Object.keys(this.props.upcomingHearings).length === 0) {
       return <div>You have no upcoming hearings.</div>;
     }
 
@@ -56,13 +56,13 @@ export class DocketsContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets,
+  upcomingHearings: state.upcomingHearings,
   docketServerError: state.docketServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDockets: () => {
-    getDockets(dispatch);
+  getUpcomingHearings: () => {
+    getUpcomingHearings(dispatch);
   }
 });
 
@@ -72,6 +72,6 @@ export default connect(
 )(DocketsContainer);
 
 DocketsContainer.propTypes = {
-  dockets: PropTypes.object,
+  upcomingHearings: PropTypes.object,
   docketServerError: PropTypes.object
 };

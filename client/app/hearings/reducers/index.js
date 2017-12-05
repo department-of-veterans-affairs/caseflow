@@ -44,9 +44,9 @@ export const newHearingWorksheetState = (state, action, spec) => {
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
-  case Constants.POPULATE_DOCKETS:
+  case Constants.POPULATE_UPCOMING_HEARINGS:
     return update(state, {
-      dockets: { $set: action.payload.dockets }
+      upcomingHearings: { $set: action.payload.upcomingHearings }
     });
 
   case Constants.POPULATE_DAILY_DOCKET:

@@ -38,7 +38,7 @@ export class Dockets extends React.Component {
 
   render() {
 
-    const docketIndex = Object.keys(this.props.dockets).sort();
+    const docketIndex = Object.keys(this.props.upcomingHearings).sort();
 
     const columns = [
       {
@@ -71,7 +71,7 @@ export class Dockets extends React.Component {
 
     const rowObjects = docketIndex.map((docketDate) => {
 
-      let docket = this.props.dockets[docketDate];
+      let docket = this.props.upcomingHearings[docketDate];
 
       return {
         date: this.linkToDailyDocket(docket),
@@ -102,7 +102,7 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets
+  upcomingHearings: state.upcomingHearings
 });
 
 export default connect(
@@ -111,5 +111,5 @@ export default connect(
 
 Dockets.propTypes = {
   veteranLawJudge: PropTypes.object.isRequired,
-  dockets: PropTypes.object.isRequired
+  upcomingHearings: PropTypes.object.isRequired
 };
