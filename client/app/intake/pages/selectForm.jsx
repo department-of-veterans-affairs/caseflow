@@ -38,7 +38,7 @@ export default connect(
   }, dispatch)
 )(SelectForm);
 
-class SelectFormButton extends React.PureComponent {
+class SelectFormButtonUnconnected extends React.PureComponent {
   handleClick = () => {
     this.props.history.push('/search');
   }
@@ -54,13 +54,6 @@ class SelectFormButton extends React.PureComponent {
     </Button>;
 }
 
-const SelectFormButtonConnected = connect(
+export const SelectFormButton = connect(
   ({ formSelection }) => ({ formSelection }),
-)(SelectFormButton);
-
-export class SelectFormButtons extends React.PureComponent {
-  render = () =>
-    <div>
-      <SelectFormButtonConnected history={this.props.history} />
-    </div>
-}
+)(SelectFormButtonUnconnected);

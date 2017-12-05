@@ -91,7 +91,7 @@ class IntakeFrame extends React.PureComponent {
                   <PageRoute
                     exact
                     path={PAGE_PATHS.REVIEW}
-                    title="Review Selection | Caseflow Intake"
+                    title="Review Request | Caseflow Intake"
                     component={ReviewPage} />
                   <PageRoute
                     exact
