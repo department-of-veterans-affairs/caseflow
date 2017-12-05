@@ -11,7 +11,7 @@ import { handleSelectCommentIcon } from '../reader/PdfViewer/PdfViewerActions';
 
 import { placeAnnotation, showPlaceAnnotationIcon,
   requestMoveAnnotation
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { CATEGORIES } from '../reader/analytics';
 

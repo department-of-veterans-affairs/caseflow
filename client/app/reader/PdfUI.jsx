@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar, toggleSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
 import { rotateDocument } from '../reader/Pdf/PdfActions';
-import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';

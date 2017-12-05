@@ -9,7 +9,7 @@ import Modal from '../components/Modal';
 import { selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import { update } from '../util/ReducerUtil';

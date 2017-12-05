@@ -11,7 +11,7 @@ import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 

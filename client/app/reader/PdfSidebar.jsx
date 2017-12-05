@@ -21,7 +21,7 @@ import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewe
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
   updateAnnotationContent
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { commentColumns, commentInstructions, documentsColumns,

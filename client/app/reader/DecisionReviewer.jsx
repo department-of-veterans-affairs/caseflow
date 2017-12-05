@@ -13,7 +13,7 @@ import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
-import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';

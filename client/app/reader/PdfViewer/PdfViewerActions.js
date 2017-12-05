@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
+import { selectAnnotation } from '../../reader/AnnotationLayer/AnnotationActions';
 import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 export const collectAllTags = (documents) => ({
@@ -27,14 +27,14 @@ export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
   }
 });
 
-export const closeAnnotationDeleteModal = () => ({
+export const closeAnnotationDeleteModal = (includeMetrics = true) => ({
   type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: {
+  meta: (includeMetrics ? {
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'close-annotation-delete-modal'
     }
-  }
+  } : null)
 });
 
 /** Jump To Page **/

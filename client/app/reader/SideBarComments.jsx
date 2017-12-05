@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
 import { createAnnotation, stopPlacingAnnotation,
   startPlacingAnnotation, updateNewAnnotationContent
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 class SideBarComments extends PureComponent {
   handleAddClick = (event) => {
