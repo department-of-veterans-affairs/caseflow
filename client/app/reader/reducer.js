@@ -1,10 +1,13 @@
 /* eslint-disable max-lines */
 import * as Constants from './constants';
+
 import _ from 'lodash';
+
 import { update } from '../util/ReducerUtil';
 import { categoryFieldNameOfCategoryName, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
+import documentsReducer from './DocumentList/DocumentsReducer';
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -126,8 +129,6 @@ const initialPdfSidebarErrorState = {
 };
 
 export const initialState = {
-  assignments: [],
-  assignmentsLoaded: false,
   loadedAppealId: null,
   loadedAppeal: {},
   initialDataLoadingFail: false,
@@ -161,6 +162,7 @@ export const initialState = {
       isPlacingAnnotation: false,
       hidePdfSidebar: false,
       jumpToPageNumber: null,
+      scrollTop: 0,
       hideSearchBar: true
     },
     pdfSidebar: {
@@ -186,8 +188,7 @@ export const initialState = {
    */
   editingAnnotations: {},
   annotations: {},
-  documents: {},
-  pages: {},
+  pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
   text: [],
@@ -196,7 +197,7 @@ export const initialState = {
   extractedText: {}
 };
 
-export const reducer = (state = initialState, action = {}) => {
+const reducer = (state = {}, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -232,34 +233,6 @@ export const reducer = (state = initialState, action = {}) => {
         $set: action.payload.value
       }
     });
-  case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        documents: {
-          $set: _(action.payload.documents).
-            map((doc) => [
-              doc.id, {
-                ...doc,
-                receivedAt: doc.received_at,
-                listComments: false
-              }
-            ]).
-            fromPairs().
-            value()
-        },
-        loadedAppealId: {
-          $set: action.payload.vacolsId
-        },
-        assignments: {
-          $apply: (existingAssignments) =>
-            existingAssignments.map((assignment) => ({
-              ...assignment,
-              viewed: assignment.vacols_id === action.payload.vacolsId ? true : assignment.viewed
-            }))
-        }
-      }
-    ));
   case Constants.RECEIVE_MANIFESTS:
     return update(state, {
       ui: {
@@ -287,16 +260,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     ));
-  case Constants.RECEIVE_ASSIGNMENTS:
-    return update(state,
-      {
-        assignments: {
-          $set: action.payload.assignments
-        },
-        assignmentsLoaded: {
-          $set: true
-        }
-      });
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -338,45 +301,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     }));
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return updateLastReadDoc(update(state, {
-      ui: {
-        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
-      },
-      documents: {
-        [action.payload.docId]: {
-          $merge: {
-            opened_by_current_user: true
-          }
-        }
-      }
-    }), action.payload.docId);
-  case Constants.TOGGLE_DOCUMENT_CATEGORY:
-    return update(
-      hideErrorMessage(state, 'category'),
-      {
-        documents: {
-          [action.payload.docId]: {
-            [action.payload.categoryKey]: {
-              $set: action.payload.toggleState
-            }
-          }
-        }
-      }
-    );
-  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-    return update(
-      showErrorMessage(state, 'category'),
-      {
-        documents: {
-          [action.payload.docId]: {
-            [action.payload.categoryKey]: {
-              $set: action.payload.categoryValueToRevertTo
-            }
-          }
-        }
-      }
-    );
   case Constants.TOGGLE_FILTER_DROPDOWN:
     return (() => {
       const originalValue = _.get(
@@ -399,93 +323,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       );
     })();
-  case Constants.REQUEST_NEW_TAG_CREATION:
-    return update(hideErrorMessage(state, 'tag'), {
-      documents: {
-        [action.payload.docId]: {
-          tags: {
-            $push: action.payload.newTags
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-    return update(showErrorMessage(state, 'tag'), {
-      documents: {
-        [action.payload.docId]: {
-          tags: {
-            $apply: (tags) =>
-              _.differenceBy(
-                tags,
-                action.payload.tagsThatWereAttemptedToBeCreated,
-                'text'
-              )
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-    return update(
-      state,
-      {
-        documents: {
-          [action.payload.docId]: {
-            tags: {
-
-              /**
-               * We can't just `$set: action.payload.createdTags` here, because that may wipe out additional tags
-               * that have been created on the client since this new tag was created. Consider the following sequence
-               * of events:
-               *
-               *  1) REQUEST_NEW_TAG_CREATION (newTag = 'first')
-               *  2) REQUEST_NEW_TAG_CREATION (newTag = 'second')
-               *  3) REQUEST_NEW_TAG_CREATION_SUCCESS (newTag = 'first')
-               *
-               * At this point, the doc tags are [{text: 'first'}, {text: 'second'}].
-               * Action (3) gives us [{text: 'first}]. If we just do a `$set`, we'll end up with:
-               *
-               *  [{text: 'first'}]
-               *
-               * and we've erroneously erased {text: 'second'}. To fix this, we'll do a merge instead. If we have tags
-               * that have not yet been saved on the server, but we see those tags in action.payload.createdTags, we'll
-               * merge it in. If the pending tag does not have a corresponding saved tag in action.payload.createdTags,
-               * we'll leave it be.
-               */
-              $apply: (docTags) => _.map(docTags, (docTag) => {
-                if (docTag.id) {
-                  return docTag;
-                }
-
-                const createdTag = _.find(action.payload.createdTags, _.pick(docTag, 'text'));
-
-                if (createdTag) {
-                  return createdTag;
-                }
-
-                return docTag;
-              })
-            }
-          }
-        }
-      }
-    );
-  case Constants.ROTATE_PDF_DOCUMENT: {
-    const rotation = (_.get(state.documents, [action.payload.docId, 'rotation'], 0) +
-      Constants.ROTATION_INCREMENTS) % Constants.COMPLETE_ROTATION;
-
-    return update(
-      state,
-      {
-        documents: {
-          [action.payload.docId]: {
-            rotation: {
-              $set: rotation
-            }
-          }
-        }
-      }
-    );
-  }
   case Constants.SET_CATEGORY_FILTER:
     return updateFilteredDocIds(update(
       state,
@@ -584,36 +421,6 @@ export const reducer = (state = initialState, action = {}) => {
           $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
         }
       }));
-  case Constants.REQUEST_REMOVE_TAG:
-    return update(state, {
-      documents: {
-        [action.payload.docId]: {
-          tags: {
-            $apply: (tags) => {
-              const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
-
-              return update(tags, {
-                [removedTagIndex]: {
-                  $merge: {
-                    pendingRemoval: true
-                  }
-                }
-              });
-            }
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return update(hideErrorMessage(state, 'tag'), {
-      documents: {
-        [action.payload.docId]: {
-          tags: {
-            $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
-          }
-        }
-      }
-    });
   case Constants.OPEN_ANNOTATION_DELETE_MODAL:
     return openAnnotationDeleteModalFor(state, action.payload.annotationId);
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
@@ -860,6 +667,14 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.SET_DOC_SCROLL_POSITION:
+    return update(state, {
+      ui: {
+        pdf: {
+          scrollTop: { $set: action.payload.scrollTop }
+        }
+      }
+    });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(showErrorMessage(state, 'tag'), {
       documents: {
@@ -955,43 +770,21 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_UP_PDF_PAGE:
+  case Constants.SET_UP_PAGE_DIMENSIONS:
     return update(
       state,
       {
-        pages: {
+        pageDimensions: {
           [`${action.payload.file}-${action.payload.pageIndex}`]: {
-            $set: action.payload.page
+            $set: {
+              ...action.payload.dimensions,
+              file: action.payload.file,
+              pageIndex: action.payload.pageIndex
+            }
           }
         }
       }
     );
-  case Constants.CLEAR_PDF_PAGE: {
-    // We only want to remove the page and container if we're cleaning up the same page that is
-    // currently stored here. This is to avoid a race condition where a user returns to this
-    // page and the new page object is stored here before we have a chance to destroy the
-    // old object.
-    const FILE_PAGE_INDEX = `${action.payload.file}-${action.payload.pageIndex}`;
-
-    if (action.payload.page &&
-      _.get(state.pages, [FILE_PAGE_INDEX, 'page']) === action.payload.page) {
-      return update(
-        state,
-        {
-          pages: {
-            [FILE_PAGE_INDEX]: {
-              $merge: {
-                page: null,
-                container: null
-              }
-            }
-          }
-        }
-      );
-    }
-
-    return state;
-  }
   case Constants.SET_PDF_DOCUMENT:
     return update(
       state,
@@ -1060,12 +853,38 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_LOADED_APPEAL_ID:
+    return update(state, {
+      loadedAppealId: {
+        $set: action.payload.vacolsId
+      }
+    });
+
+  case Constants.UPDATE_FILTERED_DOC_IDS:
+    return updateFilteredDocIds(state);
+
+  // errors
+  case Constants.HIDE_ERROR_MESSAGE:
+    return hideErrorMessage(state, action.payload.messageType);
+  case Constants.SHOW_ERROR_MESSAGE:
+    return showErrorMessage(state, action.payload.messageType);
+  case Constants.RESET_PDF_SIDEBAR_ERRORS:
+    return update(state, {
+      ui: {
+        pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
+      }
+    });
   default:
     return state;
   }
 };
 
+export const readerReducer = (state = initialState, action = {}) => ({
+  ...reducer(state, action),
+  documents: documentsReducer(state.documents, action)
+});
+
 export default timeFunction(
-  reducer,
+  readerReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );

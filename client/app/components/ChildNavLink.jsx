@@ -1,11 +1,22 @@
 import React from 'react';
+import classnames from 'classnames';
 
 export default class ChildNavLink extends React.PureComponent {
-  render() {
-    const { links } = this.props;
+  onClick = () => {
+    this.props.setSelectedLink(this.props.index);
+  }
 
-    return <ul className="usa-sidenav-sub_list">
-      { links.map((link) => <li key={link.name}><a href={link.anchor}>{link.name}</a></li>) }
-    </ul>;
+  showSelectedClass = () => {
+    return classnames({ selected: this.props.index === this.props.selectedIndex });
+  }
+
+  componentWillUnmount() {
+    this.props.setSelectedLink(false);
+  }
+
+  render() {
+    const { name, anchor } = this.props;
+
+    return <li><a href={anchor} onClick={this.onClick} className={this.showSelectedClass()}>{name}</a></li>;
   }
 }

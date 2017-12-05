@@ -4,6 +4,7 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
+import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
@@ -77,6 +78,15 @@ export const handleSetLastRead = (docId) => ({
   }
 });
 
+/** Scrolling **/
+
+export const setDocScrollPosition = (scrollTop) => ({
+  type: Constants.SET_DOC_SCROLL_POSITION,
+  payload: {
+    scrollTop
+  }
+});
+
 /** Tags **/
 
 export const newTagRequestSuccess = (docId, createdTags) =>
@@ -94,13 +104,16 @@ export const newTagRequestSuccess = (docId, createdTags) =>
   }
 ;
 
-export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => ({
-  type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
-  payload: {
-    docId,
-    tagsThatWereAttemptedToBeCreated
-  }
-});
+export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => (dispatch) => {
+  dispatch(showErrorMessage('tag'));
+  dispatch({
+    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
+    payload: {
+      docId,
+      tagsThatWereAttemptedToBeCreated
+    }
+  });
+};
 
 export const removeTagRequestFailure = (docId, tagId) => ({
   type: Constants.REQUEST_REMOVE_TAG_FAILURE,
@@ -112,6 +125,7 @@ export const removeTagRequestFailure = (docId, tagId) => ({
 
 export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
+    dispatch(hideErrorMessage('tag'));
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
       payload: {
@@ -151,6 +165,7 @@ export const addNewTag = (doc, tags) =>
       value();
 
     if (_.size(newTags)) {
+      dispatch(hideErrorMessage('tag'));
       dispatch({
         type: Constants.REQUEST_NEW_TAG_CREATION,
         payload: {
@@ -233,13 +248,20 @@ export const hideSearchBar = () => ({
   type: Constants.HIDE_SEARCH_BAR
 });
 
-/** Set current PDF **/
-export const selectCurrentPdfLocally = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
+export const resetSidebarErrors = () => ({
+  type: Constants.RESET_PDF_SIDEBAR_ERRORS
 });
+
+/** Set current PDF **/
+export const selectCurrentPdfLocally = (docId) => (dispatch) => {
+  dispatch(handleSetLastRead(docId));
+  dispatch({
+    type: Constants.SELECT_CURRENT_VIEWER_PDF,
+    payload: {
+      docId
+    }
+  });
+};
 
 export const selectCurrentPdf = (docId) => (dispatch) => {
   ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).

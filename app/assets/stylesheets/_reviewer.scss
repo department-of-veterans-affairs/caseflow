@@ -93,8 +93,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   top: 50px;
   bottom: 50px;
   position: absolute;
-  overflow-y: scroll;
-  overflow-x: visible;
   text-align: center;
   z-index: 5;
   will-change: transform;

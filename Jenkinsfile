@@ -11,8 +11,10 @@ def APP_NAME = 'certification';
 // See http://docs.ansible.com/ansible/git_module.html version field
 def APP_VERSION = 'HEAD'
 
+def DEPLOY_MESSAGE = null
+
 // Allows appeals-deployment branch (defaults to master) to be overridden for
-// testing purposes 
+// testing purposes
 def DEPLOY_BRANCH = (env.DEPLOY_BRANCH != null) ? env.DEPLOY_BRANCH : 'master'
 
 /************************ Common Pipeline boilerplate ************************/
@@ -36,20 +38,30 @@ node('deploy') {
       step([$class: 'WsCleanup'])
     }
 
-    // Checkout the deployment repo for the ansible script. This is needed
-    // since the deployment scripts are separated from the source code.
-    stage ('checkout-deploy-repo') {
-
-      sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
-      
-      // For prod deploys we want to pull the latest `stable` tag; the logic here will pass it to ansible git module as APP_VERSION
-      if (env.APP_ENV == 'prod') {
-        APP_VERSION = sh (
-          // magical shell script that will find the latest tag for the repository
-          script: "git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git | awk '{print \$2}' | grep -v '{}' | awk -F\"/\" '{print \$0}' | tail -n 1",
+    if (env.APP_ENV == 'prod') {
+      stage('deploy-message') {
+        checkout scm
+        DEPLOY_MESSAGE = sh (
+          // this script will:
+          // get the latest `deployed` release created by: https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/ansible/utility-roles/deployed-version/files/tag_deployed_commit.py
+          // compare current HEAD commit to the last deployed release
+          // save the message to be announced in Slack by the pipeline
+          script: "git log \$(git ls-remote --tags https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/caseflow.git \
+                   | awk '{print \$2}' | grep -E 'deployed' \
+                   | sort -t/ -nk4 \
+                   | awk -F\"/\" '{print \$0}' \
+                   | tail -n 1 \
+                   | awk '{print \$1}')..HEAD --pretty='format:%h %<(15)%an %s'",
           returnStdout: true
         ).trim()
       }
+    }
+
+    // Checkout the deployment repo for the ansible script. This is needed
+    // since the deployment scripts are separated from the source code.
+    stage ('pull-deploy-repo') {
+
+      sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
       dir ('./appeals-deployment/ansible') {
         // The commmon pipeline script should kick off the deployment.
         commonPipeline = load "../jenkins/common-pipeline.groovy"
@@ -61,4 +73,4 @@ node('deploy') {
 // Execute the common pipeline.
 // Note that this must be outside of the node block since the common pipeline
 // runs another set of stages.
-commonPipeline.deploy(APP_NAME, APP_VERSION);
+commonPipeline.deploy(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
