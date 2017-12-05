@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
 import { connect } from 'react-redux';
-import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
+import { getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
@@ -156,11 +156,9 @@ DocumentSearch.propTypes = {
 const mapStateToProps = (state, props) => ({
   pdfDocument: state.readerReducer.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
-  pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   getCurrentMatch: getCurrentMatchIndex(state, props),
-  hidden: state.readerReducer.ui.pdf.hideSearchBar,
-  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
+  hidden: state.readerReducer.ui.pdf.hideSearchBar
 });
 
 const mapDispatchToProps = (dispatch) => ({
