@@ -25,36 +25,43 @@ export const changeSortState = (sortBy) => (dispatch) => {
       }
     }
   });
+  dispatch(updateFilteredIds());
 };
 
 /* Filters */
 
 // Category filters
 
-export const clearCategoryFilters = () => ({
-  type: Constants.CLEAR_CATEGORY_FILTER,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-category-filters'
+export const clearCategoryFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_CATEGORY_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-category-filters'
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIds());
+};
 
-export const setCategoryFilter = (categoryName, checked) => ({
-  type: Constants.SET_CATEGORY_FILTER,
-  payload: {
-    categoryName,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'select' : 'unselect'}-category-filter`,
-      label: categoryName
+export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_CATEGORY_FILTER,
+    payload: {
+      categoryName,
+      checked
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: `${checked ? 'select' : 'unselect'}-category-filter`,
+        label: categoryName
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIds());
+};
 
 export const toggleDropdownFilterVisibility = (filterName) => ({
   type: Constants.TOGGLE_FILTER_DROPDOWN,
@@ -113,30 +120,36 @@ export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispa
 
 // Tag filters
 
-export const setTagFilter = (text, checked, tagId) => ({
-  type: Constants.SET_TAG_FILTER,
-  payload: {
-    text,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'set' : 'unset'}-tag-filter`,
-      label: tagId
+export const setTagFilter = (text, checked, tagId) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_TAG_FILTER,
+    payload: {
+      text,
+      checked
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: `${checked ? 'set' : 'unset'}-tag-filter`,
+        label: tagId
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIds());
+};
 
-export const clearTagFilters = () => ({
-  type: Constants.CLEAR_TAG_FILTER,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-tag-filters'
+export const clearTagFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_TAG_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-tag-filters'
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIds());
+};
 
 // Scrolling
 
@@ -166,26 +179,31 @@ export const setSearch = (searchQuery) => (dispatch) => {
   dispatch(updateFilteredIds());
 };
 
-export const clearSearch = () => ({
-  type: Constants.CLEAR_ALL_SEARCH,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-search'
+export const clearSearch = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_ALL_SEARCH,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-search'
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIds());
+};
 
-export const clearAllFilters = () => ({
-  type: Constants.CLEAR_ALL_FILTERS,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-all-filters'
+export const clearAllFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_ALL_FILTERS,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-all-filters'
+      }
     }
-  }
-});
-
+  });
+  dispatch(updateFilteredIds());
+};
 export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
   payload: {

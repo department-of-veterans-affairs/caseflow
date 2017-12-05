@@ -9,8 +9,8 @@ import { searchString, commentContainsWords, categoryContainsWords } from './sea
 import { timeFunction } from '../util/PerfDebug';
 import documentsReducer from './DocumentList/DocumentsReducer';
 
-const updateFilteredDocIds = (data, state) => {
-  const { docFilterCriteria } = data.ui;
+const updateFilteredDocIds = (state) => {
+  const { docFilterCriteria } = state.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
     filter(([key, value]) => value). // eslint-disable-line no-unused-vars
@@ -26,9 +26,9 @@ const updateFilteredDocIds = (data, state) => {
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
-  const updatedNextState = update(data, {});
+  const updatedNextState = update(state, {});
 
-  const filteredIds = _(data.documents).
+  const filteredIds = _(updatedNextState.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
         _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
@@ -38,7 +38,7 @@ const updateFilteredDocIds = (data, state) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, data)
+      searchString(searchQuery, updatedNextState)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -67,13 +67,7 @@ const updateFilteredDocIds = (data, state) => {
     filteredIds.reverse();
   }
 
-  return update(state, {
-    ui: {
-      filteredDocIds: {
-        $set: filteredIds
-      }
-    }
-  });
+  return filteredIds;
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
@@ -177,6 +171,7 @@ const reducer = (state = {}, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
+  let filteredDocIds;
 
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
@@ -247,7 +242,7 @@ const reducer = (state = {}, action = {}) => {
       }
     });
   case Constants.SET_SORT:
-    return updateFilteredDocIds(update(state, {
+    return update(state, {
       ui: {
         docFilterCriteria: {
           sort: {
@@ -260,7 +255,7 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    }));
+    });
   case Constants.TOGGLE_FILTER_DROPDOWN:
     return (() => {
       const originalValue = _.get(
@@ -284,7 +279,7 @@ const reducer = (state = {}, action = {}) => {
       );
     })();
   case Constants.SET_CATEGORY_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -296,7 +291,7 @@ const reducer = (state = {}, action = {}) => {
             }
           }
         }
-      }));
+      });
   case Constants.JUMP_TO_PAGE:
     return update(
       state,
@@ -324,7 +319,7 @@ const reducer = (state = {}, action = {}) => {
       }
     );
   case Constants.SET_TAG_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -336,9 +331,9 @@ const reducer = (state = {}, action = {}) => {
             }
           }
         }
-      }));
+      });
   case Constants.CLEAR_TAG_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -349,9 +344,9 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ));
+    ) ;
   case Constants.CLEAR_CATEGORY_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -362,9 +357,9 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ));
+    );
   case Constants.CLEAR_ALL_FILTERS:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -380,7 +375,7 @@ const reducer = (state = {}, action = {}) => {
         viewingDocumentsOrComments: {
           $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
         }
-      }));
+      });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {
@@ -463,7 +458,7 @@ const reducer = (state = {}, action = {}) => {
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
   case Constants.CLEAR_ALL_SEARCH:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -474,7 +469,7 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ));
+    );
   case Constants.SET_OPENED_ACCORDION_SECTIONS:
     return update(
       state,
@@ -591,10 +586,19 @@ const reducer = (state = {}, action = {}) => {
     });
 
   case Constants.UPDATE_FILTERED_DOC_IDS:
-    return updateFilteredDocIds(_.merge(
+    filteredDocIds = updateFilteredDocIds(_.merge(
       state,
       action.payload.annotationLayer
-    ), state);
+    ));
+
+    return update(state, {
+      ui: {
+        filteredDocIds: {
+          $set: filteredDocIds
+        }
+      }
+    });
+
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
