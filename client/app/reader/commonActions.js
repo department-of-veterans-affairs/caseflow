@@ -22,9 +22,13 @@ export const showErrorMessage = (messageType) => ({
 
 // Apply filters
 
-export const updateFilteredIds = (annotationLayer = {}) => ({
-  type: UPDATE_FILTERED_DOC_IDS,
-  payload: {
-    annotationLayer
-  }
-});
+export const updateFilteredIds = () => (dispatch, getState) => {
+  const { annotationLayer } = getState();
+
+  dispatch({
+    type: UPDATE_FILTERED_DOC_IDS,
+    payload: {
+      annotationLayer
+    }
+  });
+}

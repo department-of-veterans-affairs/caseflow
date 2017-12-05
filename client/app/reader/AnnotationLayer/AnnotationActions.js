@@ -3,9 +3,8 @@ import uuid from 'uuid';
 import * as Constants from './actionTypes';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
-import { openAnnotationDeleteModal } from '../../reader/PdfViewer/PdfViewerActions';
+import { openAnnotationDeleteModal, closeAnnotationDeleteModal } from '../../reader/PdfViewer/PdfViewerActions';
 import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
-import { closeAnnotationDeleteModal } from '../PdfViewer/PdfViewerActions';
 
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
@@ -45,17 +44,12 @@ export const stopPlacingAnnotation = (interactionType) => (dispatch) => {
   });
 };
 
-export const onReceiveAnnotations = (annotations) => (dispatch, getState) => {
-
+export const onReceiveAnnotations = (annotations) => (dispatch) => {
   dispatch({
     type: Constants.RECEIVE_ANNOTATIONS,
     payload: { annotations }
   });
-  const { annotationLayer } = getState();
-  
-  console.log(annotationLayer);  
-
-  dispatch(updateFilteredIds(annotationLayer));
+  dispatch(updateFilteredIds());
 };
 
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({

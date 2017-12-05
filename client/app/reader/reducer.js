@@ -9,8 +9,8 @@ import { searchString, commentContainsWords, categoryContainsWords } from './sea
 import { timeFunction } from '../util/PerfDebug';
 import documentsReducer from './DocumentList/DocumentsReducer';
 
-const updateFilteredDocIds = (nextState) => {
-  const { docFilterCriteria } = nextState.ui;
+const updateFilteredDocIds = (data, state) => {
+  const { docFilterCriteria } = data.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
     filter(([key, value]) => value). // eslint-disable-line no-unused-vars
@@ -26,9 +26,9 @@ const updateFilteredDocIds = (nextState) => {
   const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
-  let updatedNextState = update(nextState, {});
+  const updatedNextState = update(data, {});
 
-  const filteredIds = _(nextState.documents).
+  const filteredIds = _(data.documents).
     filter(
       (doc) => !activeCategoryFilters.length ||
         _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
@@ -38,7 +38,7 @@ const updateFilteredDocIds = (nextState) => {
         _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
     ).
     filter(
-      searchString(searchQuery, nextState)
+      searchString(searchQuery, data)
     ).
     sortBy(docFilterCriteria.sort.sortBy).
     map('id').
@@ -67,7 +67,7 @@ const updateFilteredDocIds = (nextState) => {
     filteredIds.reverse();
   }
 
-  return update(updatedNextState, {
+  return update(state, {
     ui: {
       filteredDocIds: {
         $set: filteredIds
@@ -237,7 +237,7 @@ const reducer = (state = {}, action = {}) => {
       }
     );
   case Constants.SET_SEARCH:
-    return updateFilteredDocIds(update(state, {
+    return update(state, {
       ui: {
         docFilterCriteria: {
           searchQuery: {
@@ -245,7 +245,7 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    }));
+    });
   case Constants.SET_SORT:
     return updateFilteredDocIds(update(state, {
       ui: {
@@ -594,7 +594,7 @@ const reducer = (state = {}, action = {}) => {
     return updateFilteredDocIds(_.merge(
       state,
       action.payload.annotationLayer
-    ));
+    ), state);
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:

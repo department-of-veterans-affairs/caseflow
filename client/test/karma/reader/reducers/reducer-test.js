@@ -114,6 +114,9 @@ describe('Reader reducer', () => {
           payload: {
             documents
           }
+        },
+        {
+          type: Constants.SET_LOADED_APPEAL_ID
         }
       ]);
 

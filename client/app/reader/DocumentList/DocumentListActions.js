@@ -2,27 +2,30 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
-import { hideErrorMessage, showErrorMessage } from '../commonActions';
+import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
 
 // Table header actions
 
-export const changeSortState = (sortBy) => ({
-  type: Constants.SET_SORT,
-  payload: {
-    sortBy
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'change-sort-by',
-      label: (nextState) => {
-        const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+export const changeSortState = (sortBy) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_SORT,
+    payload: {
+      sortBy
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'change-sort-by',
+        label: (nextState) => {
+          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 
+            'ascending' : 'descending';
 
-        return `${sortBy}-${direction}`;
+          return `${sortBy}-${direction}`;
+        }
       }
     }
-  }
-});
+  });
+};
 
 /* Filters */
 
@@ -146,19 +149,22 @@ export const setDocListScrollPosition = (scrollTop) => ({
 
 // Document header
 
-export const setSearch = (searchQuery) => ({
-  type: Constants.SET_SEARCH,
-  payload: {
-    searchQuery
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'search',
-      debounceMs: 500
+export const setSearch = (searchQuery) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_SEARCH,
+    payload: {
+      searchQuery
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'search',
+        debounceMs: 500
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIds());
+};
 
 export const clearSearch = () => ({
   type: Constants.CLEAR_ALL_SEARCH,
