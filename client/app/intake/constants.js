@@ -46,4 +46,4 @@ export const RAMP_INTAKE_STATES = {
 export const FORMS = {
   ramp_election: 'RAMP Opt-In Election Form',
   ramp_reentry: '21-4138 RAMP Selection Form'
-}
+};

@@ -4,12 +4,13 @@ import Button from '../../components/Button';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setFormSelection } from '../redux/actions';
-import { FORMS } from '../constants'
+import { FORMS } from '../constants';
 import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = _.map(FORMS, (name, key) => ({ value: key, displayText: name }));
+    const radioOptions = _.map(FORMS, (name, key) => ({ value: key,
+      displayText: name }));
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
@@ -33,13 +34,13 @@ export default connect(
     formSelection: state.formSelection
   }),
   (dispatch) => bindActionCreators({
-    setFormSelection,
+    setFormSelection
   }, dispatch)
 )(SelectForm);
 
 class SelectFormButton extends React.PureComponent {
   handleClick = () => {
-    this.props.history.push('/search')
+    this.props.history.push('/search');
   }
 
   render = () =>

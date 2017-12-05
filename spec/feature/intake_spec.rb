@@ -311,13 +311,19 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Welcome to Caseflow Intake!")
     end
 
-    context "when ramp reentry form is enabled" do
+    context "when ramp reentry form is enabled", focus: true do
       before { FeatureToggle.enable!(:intake_reentry_form) }
       after { FeatureToggle.disable!(:intake_reentry_form) }
 
       scenario "flow starts with form selection" do
         visit "/intake"
-        expect(page).to have_content("Which form are you processing?")
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_current_path("/intake/search")
       end
     end
   end
