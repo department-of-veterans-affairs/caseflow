@@ -1,18 +1,15 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
+import Button from '../../components/Button';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setFormSelection } from '../redux/actions';
+import { FORMS } from '../constants'
+import _ from 'lodash';
 
-export default class SelectForm extends React.PureComponent {
+class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = [
-      {
-        value: 'ramp_opt_in_election',
-        displayText: 'RAMP Opt-In Election Form'
-      },
-      {
-        value: 'ramp_reentry_selection',
-        displayText: '21-4138 RAMP Selection Form'
-      }
-    ];
+    const radioOptions = _.map(FORMS, (name, key) => ({ value: key, displayText: name }));
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
@@ -24,7 +21,45 @@ export default class SelectForm extends React.PureComponent {
         vertical
         strongLabel
         options={radioOptions}
+        onChange={this.props.setFormSelection}
+        value={this.props.formSelection}
       />
     </div>;
   }
+}
+
+export default connect(
+  (state) => ({
+    formSelection: state.formSelection
+  }),
+  (dispatch) => bindActionCreators({
+    setFormSelection,
+  }, dispatch)
+)(SelectForm);
+
+class SelectFormButton extends React.PureComponent {
+  handleClick = () => {
+    this.props.history.push('/search')
+  }
+
+  render = () =>
+    <Button
+      name="continue-to-search"
+      onClick={this.handleClick}
+      legacyStyling={false}
+      disabled={!this.props.formSelection}
+    >
+      Continue to search
+    </Button>;
+}
+
+const SelectFormButtonConnected = connect(
+  ({ formSelection }) => ({ formSelection }),
+)(SelectFormButton);
+
+export class SelectFormButtons extends React.PureComponent {
+  render = () =>
+    <div>
+      <SelectFormButtonConnected history={this.props.history} />
+    </div>
 }

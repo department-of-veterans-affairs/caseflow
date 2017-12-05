@@ -13,7 +13,7 @@ import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
 import BeginPage from './pages/begin';
-import SelectFormPage from './pages/selectForm';
+import SelectFormPage, { SelectFormButtons } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
@@ -131,6 +131,12 @@ class IntakeFrame extends React.PureComponent {
               }
             </PrimaryAppContent>
             <AppSegment className="cf-workflow-button-wrapper">
+              { this.props.featureToggles.reentryForm &&
+                <Route
+                  exact
+                  path={PAGE_PATHS.BEGIN}
+                  component={SelectFormButtons} />
+              }
               <Route
                 exact
                 path={PAGE_PATHS.REVIEW}
