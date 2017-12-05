@@ -18,7 +18,9 @@ export const newHearingState = (state, action, spec) => {
 
   return update(state, {
     dailyDocket: {
-      [action.payload.hearingIndex]: spec
+      [action.payload.date]: {
+        [action.payload.hearingIndex]: spec
+      }
     }
   });
 };
@@ -181,7 +183,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_EDITED_FLAG_TO_FALSE:
     return update(state, {
       dailyDocket: {
-        [action.payload.index]: { edited: { $set: false } }
+        [action.payload.date]: {
+          [action.payload.index]: { edited: { $set: false } }
+        }
       }
     });
 
