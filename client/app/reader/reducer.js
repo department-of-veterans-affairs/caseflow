@@ -584,7 +584,6 @@ const reducer = (state = {}, action = {}) => {
         $set: action.payload.vacolsId
       }
     });
-
   case Constants.UPDATE_FILTERED_DOC_IDS:
     return update(state, {
       ui: {
