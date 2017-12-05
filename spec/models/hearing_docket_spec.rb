@@ -50,7 +50,7 @@ describe HearingDocket do
     it "returns a hash" do
       expect(subject.class).to eq(Hash)
       expect(subject[:date]).to eq(docket.date)
-      expect(subject[:master_record]).to eq(hearing.master_record)
+      expect(subject[:master_record]).to eq(docket.master_record)
       expect(subject[:hearings_count]).to eq(docket.hearings_count)
       expect(subject[:type]).to eq(:video)
       expect(subject[:regional_office_name]).to eq(hearing.regional_office_name)
