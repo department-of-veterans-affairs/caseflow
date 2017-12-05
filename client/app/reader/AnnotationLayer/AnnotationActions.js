@@ -45,12 +45,17 @@ export const stopPlacingAnnotation = (interactionType) => (dispatch) => {
   });
 };
 
-export const onReceiveAnnotations = (annotations) => (dispatch) => {
+export const onReceiveAnnotations = (annotations) => (dispatch, getState) => {
+
   dispatch({
     type: Constants.RECEIVE_ANNOTATIONS,
     payload: { annotations }
   });
-  dispatch(updateFilteredIds());
+  const { annotationLayer } = getState();
+  
+  console.log(annotationLayer);  
+
+  dispatch(updateFilteredIds(annotationLayer));
 };
 
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({

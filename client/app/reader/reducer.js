@@ -591,14 +591,10 @@ const reducer = (state = {}, action = {}) => {
     });
 
   case Constants.UPDATE_FILTERED_DOC_IDS:
-    console.log({
-      ...state,
-      ...action.payload.annotationLayer
-    });
-    return updateFilteredDocIds({
-      ...state,
-      ...action.payload.annotationLayer
-    });
+    return updateFilteredDocIds(_.merge(
+      state,
+      action.payload.annotationLayer
+    ));
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
