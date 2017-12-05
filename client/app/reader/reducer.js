@@ -171,7 +171,6 @@ const reducer = (state = {}, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
-  let filteredDocIds;
 
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
@@ -586,19 +585,16 @@ const reducer = (state = {}, action = {}) => {
     });
 
   case Constants.UPDATE_FILTERED_DOC_IDS:
-    filteredDocIds = updateFilteredDocIds(_.merge(
-      state,
-      action.payload.annotationLayer
-    ));
-
     return update(state, {
       ui: {
         filteredDocIds: {
-          $set: filteredDocIds
+          $set: updateFilteredDocIds(_.merge(
+            state,
+            action.payload.annotationLayer
+          ))
         }
       }
     });
-
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
