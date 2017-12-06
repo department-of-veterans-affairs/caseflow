@@ -68,7 +68,7 @@ gem 'pg', platforms: :ruby
 
 gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dd26fbff2179d400b4f19f91084835686276297f"
 
-gem 'redis-rails'
+gem 'redis-rails', '~> 5.0.2'
 
 # remove when upgrading to rails 5
 gem 'where-or'
