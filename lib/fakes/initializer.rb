@@ -43,7 +43,7 @@ class Fakes::Initializer
 
       User.authentication_service.user_session = {
         "id" => "Fake User",
-        "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment"],
+        "roles" => ["Certify Appeal", "Establish Claim", "Manage Claim Establishment", "Global Admin"],
         "station_id" => "283",
         "email" => "america@example.com",
         "name" => "Cave Johnson"
