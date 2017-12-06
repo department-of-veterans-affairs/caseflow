@@ -37,9 +37,9 @@ export class DocumentSearch extends React.PureComponent {
   }
 
   updateSearchIndex = (event) => {
-    if (this.props.matchIndexOffset > 0) {
+    if (this.props.matchIndexOffset !== null) {
       this.props.setSearchIndex(event.shiftKey ? this.props.matchIndexOffset - 1 : this.props.matchIndexOffset + 1);
-      this.props.setSearchOffset(0);
+      this.props.setSearchOffset(null);
     } else {
       this.props.updateSearchIndex(!event.shiftKey);
     }

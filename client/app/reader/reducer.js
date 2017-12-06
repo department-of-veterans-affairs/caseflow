@@ -200,7 +200,7 @@ export const initialState = {
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
-  documentSearchOffset: 0,
+  documentSearchOffset: null,
   extractedText: {}
 };
 
