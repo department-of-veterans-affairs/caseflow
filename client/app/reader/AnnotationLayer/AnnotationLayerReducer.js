@@ -18,9 +18,7 @@ const initialState = {
   selectedAnnotationId: null,
   deleteAnnotationModalIsOpenFor: null,
   placedButUnsavedAnnotation: null,
-  pdf: {
-    isPlacingAnnotation: false
-  },
+  isPlacingAnnotation: false,
 
   /**
    * `editingAnnotations` is an object of annotations that are currently being edited.
@@ -52,9 +50,7 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
         $set: null
       },
       placedButUnsavedAnnotation: { $set: null },
-      pdf: {
-        isPlacingAnnotation: { $set: false }
-      }
+      isPlacingAnnotation: { $set: false }
     });
   case Constants.RECEIVE_ANNOTATIONS:
     return update(
@@ -229,15 +225,11 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
           type: 'point'
         }
       },
-      pdf: {
-        isPlacingAnnotation: { $set: false }
-      }
+      isPlacingAnnotation: { $set: false }
     });
   case Constants.START_PLACING_ANNOTATION:
     return update(state, {
-      pdf: {
-        isPlacingAnnotation: { $set: true }
-      },
+      isPlacingAnnotation: { $set: true },
       openedAccordionSections: {
         $apply: (sectionKeys) => _.union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
       }

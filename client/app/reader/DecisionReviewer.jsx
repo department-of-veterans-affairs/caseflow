@@ -190,7 +190,7 @@ const mapStateToProps = (state) => {
     documentFilters: state.readerReducer.ui.pdfList.filters,
     storeDocuments: state.readerReducer.documents,
     pdf: state.readerReducer.ui.pdf,
-    isPlacingAnnotation: state.annotationLayer.pdf.isPlacingAnnotation
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
   };
 };
 
