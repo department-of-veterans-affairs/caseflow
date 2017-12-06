@@ -37,11 +37,11 @@ export class DocumentSearch extends React.PureComponent {
   }
 
   updateSearchIndex = (event) => {
-    if (this.props.matchIndexToHighlight !== null) {
+    if (this.props.matchIndexToHighlight === null) {
+      this.props.updateSearchIndex(!event.shiftKey);
+    } else {
       this.props.setSearchIndex(this.props.matchIndexToHighlight);
       this.props.setSearchIndexToHighlight(null);
-    } else {
-      this.props.updateSearchIndex(!event.shiftKey);
     }
   }
 
