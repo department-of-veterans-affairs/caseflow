@@ -3,7 +3,7 @@ import { update } from '../../util/ReducerUtil';
 import _ from 'lodash';
 import { moveModel } from '../utils';
 
-const openAnnotationDeleteModalFor = (state, annotationId) =>
+const toggleAnnotationDeleteModalFor = (state, annotationId) =>
   update(state, {
     deleteAnnotationModalIsOpenFor: {
       $set: annotationId
@@ -32,9 +32,9 @@ const initialState = {
 export const annotationLayerReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.OPEN_ANNOTATION_DELETE_MODAL:
-    return openAnnotationDeleteModalFor(state, action.payload.annotationId);
+    return toggleAnnotationDeleteModalFor(state, action.payload.annotationId);
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
-    return openAnnotationDeleteModalFor(state, null);
+    return toggleAnnotationDeleteModalFor(state, null);
   case Constants.SHOW_PLACE_ANNOTATION_ICON:
     return update(state, {
       placingAnnotationIconPageCoords: {
