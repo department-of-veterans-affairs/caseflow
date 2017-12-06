@@ -196,9 +196,9 @@ CommentLayer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.readerReducer.ui.pdf,
-  ...state.annotationLayer.pdf,
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
   comments: makeGetAnnotationsByDocumentId(state.annotationLayer)(ownProps.documentId),
+  isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
   allAnnotations: state.annotationLayer.annotations,
   rotation: _.get(state.readerReducer.documents, [ownProps.documentId, 'rotation'])
 });
