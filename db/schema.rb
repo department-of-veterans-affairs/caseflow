@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171106153924) do
+ActiveRecord::Schema.define(version: 20171206005110) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -285,8 +285,10 @@ ActiveRecord::Schema.define(version: 20171106153924) do
     t.datetime "completed_at"
     t.string   "completion_status"
     t.string   "error_code"
+    t.string   "type"
   end
 
+  add_index "intakes", ["type"], name: "index_intakes_on_type", using: :btree
   add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
