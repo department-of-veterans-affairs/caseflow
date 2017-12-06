@@ -5,7 +5,7 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPageDimensions, setSearchOffset } from '../reader/Pdf/PdfActions';
+import { setPageDimensions, setSearchIndexToHighlight } from '../reader/Pdf/PdfActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -94,17 +94,15 @@ export class PdfPage extends React.PureComponent {
 
   getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
     // get sum of matches from pages below pageIndex
-    const indexInMPP = _.findIndex(this.props.matchesPerPage, (page) => page.pageIndex === pageIndex);
-
     return _(this.props.matchesPerPage).
-      take(indexInMPP).
+      filter((page) => page.pageIndex < pageIndex).
       map((page) => page.matches).
-      sum() - 1;
+      sum();
   }
 
-  onClick = (event) => {
-    if (!event.target.classList.contains('comment-icon-path') && this.marks.length) {
-      this.props.setSearchOffset(this.getMatchIndexOffsetFromPage());
+  onClick = () => {
+    if (this.marks.length) {
+      this.props.setSearchIndexToHighlight(this.getMatchIndexOffsetFromPage());
     }
   }
 
@@ -339,7 +337,7 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPageDimensions,
     setDocScrollPosition,
-    setSearchOffset
+    setSearchIndexToHighlight
   }, dispatch)
 });
 

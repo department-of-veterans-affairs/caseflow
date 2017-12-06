@@ -104,8 +104,8 @@ export const setSearchIndex = (index) => ({
   }
 });
 
-export const setSearchOffset = (index) => ({
-  type: Constants.SET_SEARCH_OFFSET,
+export const setSearchIndexToHighlight = (index) => ({
+  type: Constants.SET_SEARCH_INDEX_TO_HIGHLIGHT,
   payload: {
     index
   }
