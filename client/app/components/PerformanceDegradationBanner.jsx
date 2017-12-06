@@ -73,7 +73,9 @@ export default class PerformanceDegradationBanner extends React.Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    if (!document.hidden){
+      clearInterval(this.interval);
+    }
   }
 
   render() {
