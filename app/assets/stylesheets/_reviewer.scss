@@ -35,6 +35,7 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
 
 .claim-detail-type-info {
   color: $color-secondary;
+  display: inherit;
 }
 
 .cf-claims-folder-details {

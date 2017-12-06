@@ -128,16 +128,22 @@ export const isUserEditingText = () => _.some(
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
+  let worksheetPdfLink = '';
 
   if (claim.cavc && claim.aod) {
+
     appealTypeInfo = 'AOD, CAVC';
   } else if (claim.cavc) {
     appealTypeInfo = 'CAVC';
   } else if (claim.aod) {
     appealTypeInfo = 'AOD';
+    worksheetPdfLink =  <a target="_blank" href={`/hearings/${claim.hearing_id}/worksheet`}>Hearing Worksheet</a>
   }
 
-  return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
+  return <div><span className="claim-detail-type-info">{appealTypeInfo}</span>
+  <span>{worksheetPdfLink}</span>
+   <span>10/12/2018</span>
+  </div>;
 };
 
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
