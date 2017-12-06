@@ -141,9 +141,11 @@ export const getClaimTypeDetailInfo = (claim) => {
     worksheetPdfLink =  <a target="_blank" href={`/hearings/${claim.hearing_id}/worksheet`}>Hearing Worksheet</a>
   }
 
+
   return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
   <span>{worksheetPdfLink}<DownloadIcon className="downloader"/></span>
   </div>;
+
 };
 
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
