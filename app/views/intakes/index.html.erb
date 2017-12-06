@@ -5,6 +5,9 @@
     dropdownUrls: dropdown_urls,
     page: "Intake",
     feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
-    buildDate: build_date
+    buildDate: build_date,
+    featureToggles: {
+      reentryForm: FeatureToggle.enabled?(:intake_reentry_form)
+    }
   }) %>
 <% end %>
