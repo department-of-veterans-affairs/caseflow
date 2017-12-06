@@ -323,7 +323,13 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  annotationsPerDocument: getAnnotationsPerDocument(state.readerReducer),
+  annotationsPerDocument: getAnnotationsPerDocument(
+    _.merge({
+      ..._.pick(state.readerReducer, 'documents'),
+      ..._.pick(state.readerReducer, 'ui'),
+      ...state.annotationLayer
+    })
+  ),
   ..._.pick(state.readerReducer, 'viewingDocumentsOrComments'),
   ..._.pick(state.readerReducer.ui, 'tagOptions', 'pdfList'),
   ..._.pick(state.readerReducer.ui, 'docFilterCriteria')
