@@ -2,17 +2,12 @@
 import * as Constants from './constants';
 
 import _ from 'lodash';
+
 import { update } from '../util/ReducerUtil';
 import { categoryFieldNameOfCategoryName, moveModel } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 import documentsReducer from './DocumentList/DocumentsReducer';
-
-const updateDocuments = (state, action) => update(state, {
-  documents: {
-    $set: documentsReducer(state.documents, action)
-  }
-});
 
 const updateFilteredDocIds = (nextState) => {
   const { docFilterCriteria } = nextState.ui;
@@ -193,7 +188,6 @@ export const initialState = {
    */
   editingAnnotations: {},
   annotations: {},
-  documents: {},
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
@@ -204,7 +198,7 @@ export const initialState = {
   extractedText: {}
 };
 
-export const reducer = (state = initialState, action = {}) => {
+const reducer = (state = {}, action = {}) => {
   let allTags;
   let uniqueTags;
   let modifiedDocuments;
@@ -878,50 +872,38 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
+  case Constants.SET_LOADED_APPEAL_ID:
+    return update(state, {
+      loadedAppealId: {
+        $set: action.payload.vacolsId
+      }
+    });
+
+  case Constants.UPDATE_FILTERED_DOC_IDS:
+    return updateFilteredDocIds(state);
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
     return hideErrorMessage(state, action.payload.messageType);
   case Constants.SHOW_ERROR_MESSAGE:
     return showErrorMessage(state, action.payload.messageType);
-
-  // Documents related
-  case Constants.SELECT_CURRENT_VIEWER_PDF:
-    return updateLastReadDoc(update(state, {
+  case Constants.RESET_PDF_SIDEBAR_ERRORS:
+    return update(state, {
       ui: {
         pdfSidebar: { error: { $set: initialPdfSidebarErrorState } }
-      },
-      documents: {
-        $set: documentsReducer(state.documents, action)
       }
-    }), action.payload.docId);
-  case Constants.RECEIVE_DOCUMENTS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        documents: {
-          $set: documentsReducer(state.documents, action)
-        },
-        loadedAppealId: {
-          $set: action.payload.vacolsId
-        }
-      }
-    ));
-  case Constants.TOGGLE_DOCUMENT_CATEGORY:
-  case Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL:
-  case Constants.ROTATE_PDF_DOCUMENT:
-  case Constants.REQUEST_NEW_TAG_CREATION:
-  case Constants.REQUEST_NEW_TAG_CREATION_FAILURE:
-  case Constants.REQUEST_NEW_TAG_CREATION_SUCCESS:
-  case Constants.REQUEST_REMOVE_TAG:
-  case Constants.REQUEST_REMOVE_TAG_SUCCESS:
-    return updateDocuments(state, action);
+    });
   default:
     return state;
   }
 };
 
+export const readerReducer = (state = initialState, action = {}) => ({
+  ...reducer(state, action),
+  documents: documentsReducer(state.documents, action)
+});
+
 export default timeFunction(
-  reducer,
+  readerReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );

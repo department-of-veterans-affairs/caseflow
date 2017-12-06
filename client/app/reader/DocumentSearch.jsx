@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
 import { connect } from 'react-redux';
-import { getTextSearch, getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
+import { getTextForFile, getTotalMatchesInFile, getCurrentMatchIndex } from './selectors';
 import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
@@ -27,7 +27,7 @@ export class DocumentSearch extends React.PureComponent {
     this.searchTerm = value;
 
     if (!_.isEmpty(value) && _.isEmpty(this.props.pdfText) && !this.sentAction[this.props.file]) {
-      this.loading = Boolean(this.searchTerm.length);
+      this.loading = Boolean(!this.props.pdfText.length && this.searchTerm.length);
       this.props.getDocumentText(this.props.pdfDocument, this.props.file);
       this.sentAction[this.props.file] = true;
     }
@@ -89,8 +89,7 @@ export class DocumentSearch extends React.PureComponent {
       this.clearSearch();
     }
 
-    // todo: after running a search, this.loading doesn't reset on change documents
-    this.loading = Boolean(!this.props.textExtracted && this.searchTerm.length);
+    this.loading = Boolean(!this.props.pdfText.length && this.searchTerm.length);
   }
 
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
@@ -167,7 +166,6 @@ DocumentSearch.propTypes = {
 const mapStateToProps = (state, props) => ({
   pdfDocument: state.readerReducer.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
-  pageTexts: getTextSearch(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),
   matchIndexToHighlight: state.readerReducer.matchIndexToHighlight,
