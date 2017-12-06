@@ -13,10 +13,11 @@ export const hideErrorMessage = (messageType) => ({
   }
 });
 
-export const showErrorMessage = (messageType) => ({
+export const showErrorMessage = (messageType, errorMessage) => ({
   type: SHOW_ERROR_MESSAGE,
   payload: {
-    messageType
+    messageType,
+    errorMessage
   }
 });
 

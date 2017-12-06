@@ -124,13 +124,13 @@ export const deleteAnnotation = (docId, annotationId) =>
           });
         },
         () => {
-          dispatch(showErrorMessage('annotation'));
           dispatch({
             type: Constants.REQUEST_DELETE_ANNOTATION_FAILURE,
             payload: {
               annotationId
             }
           });
+          dispatch(showErrorMessage('annotation'));          
         });
   };
 
@@ -260,14 +260,13 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
       (response) => {
         const responseObject = JSON.parse(response.response.text);
 
+        dispatch(showErrorMessage('annotation', responseObject.errors[0].detail));
         dispatch({
           type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
           payload: {
-            annotationId: annotation.id,
-            errorMessage: responseObject.errors[0].detail
+            annotationId: annotation.id
           }
         });
-        dispatch(showErrorMessage('annotation'));
       }
     );
 };
@@ -307,12 +306,11 @@ export const createAnnotation = (annotation) => (dispatch) => {
       (response) => {
         const responseObject = JSON.parse(response.response.text);
 
-        dispatch(showErrorMessage('annotation'));
+        dispatch(showErrorMessage('annotation', responseObject.errors[0].detail));
         dispatch({
           type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
           payload: {
-            annotationTemporaryId: temporaryId,
-            errorMessage: responseObject.errors[0].detail
+            annotationTemporaryId: temporaryId
           }
         });
       }

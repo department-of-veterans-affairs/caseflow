@@ -600,7 +600,7 @@ const reducer = (state = {}, action = {}) => {
   case Constants.HIDE_ERROR_MESSAGE:
     return hideErrorMessage(state, action.payload.messageType);
   case Constants.SHOW_ERROR_MESSAGE:
-    return showErrorMessage(state, action.payload.messageType);
+    return showErrorMessage(state, action.payload.messageType, action.payload.errorMessage);
   case Constants.RESET_PDF_SIDEBAR_ERRORS:
     return update(state, {
       ui: {
