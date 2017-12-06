@@ -62,20 +62,19 @@ export default class PerformanceDegradationBanner extends React.Component {
   }
 
   componentDidMount() {
-    if (!document.hidden) {
-      // initial check
-      this.checkDependencies();
-
-      // subsequent checks
-      this.interval = setInterval(() =>
-        this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
+    if (document.hidden) {
+      return;
     }
+    // initial check
+    this.checkDependencies();
+
+    // subsequent checks
+    this.interval = setInterval(() =>
+      this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
   }
 
   componentWillUnmount() {
-    if (!document.hidden) {
-      clearInterval(this.interval);
-    }
+    clearInterval(this.interval);
   }
 
   render() {
