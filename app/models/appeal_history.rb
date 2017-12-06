@@ -193,7 +193,7 @@ class AppealHistory
 
       new(vbms_id: Appeal.vbms_id_for_ssn(appellant_ssn))
         .appeal_series
-        .sort_by(&:api_sort_date)
+        .sort_by(&:api_sort_key)
     end
   end
 end
