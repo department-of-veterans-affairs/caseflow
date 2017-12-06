@@ -137,7 +137,7 @@ export const getClaimTypeDetailInfo = (claim) => {
     appealTypeInfo = 'AOD';
   }
 
-  return <span className="claim-detail-type-info">{appealTypeInfo}</span>;
+  return <span className="reader-red">{appealTypeInfo}</span>;
 };
 
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
