@@ -24,7 +24,7 @@ class IntakesController < ApplicationController
 
   def create
     if intake.start!
-      render json: ramp_intake_data(intake)
+      render json: intake_data(intake)
     else
       render json: {
         error_code: intake.error_code,
@@ -41,16 +41,16 @@ class IntakesController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def ramp_intake_data(ramp_intake)
-    ramp_intake ? ramp_intake.ui_hash : {}
+  def intake_data(intake)
+    intake ? intake.ui_hash : {}
   end
-  helper_method :ramp_intake_data
+  helper_method :intake_data
 
   def fetch_current_intake
-    @current_intake = RampIntake.in_progress.find_by(user: current_user)
+    @current_intake = RampElectionIntake.in_progress.find_by(user: current_user)
   end
 
   def intake
-    @intake ||= RampIntake.new(user: current_user, veteran_file_number: params[:file_number])
+    @intake ||= RampElectionIntake.new(user: current_user, veteran_file_number: params[:file_number])
   end
 end

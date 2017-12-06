@@ -101,7 +101,7 @@ RSpec.feature "RAMP Intake" do
         notice_date: 5.days.ago
       )
 
-      RampIntake.create!(
+      RampElectionIntake.create!(
         user: current_user,
         detail: ramp_election,
         completed_at: Time.zone.now,
@@ -140,7 +140,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_current_path("/intake/review-request")
       expect(page).to have_content("Review Ed Merica's opt-in election")
 
-      intake = RampIntake.find_by(veteran_file_number: "12341234")
+      intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
       expect(intake.started_at).to eq(Time.zone.now)
       expect(intake.user).to eq(current_user)
@@ -149,7 +149,7 @@ RSpec.feature "RAMP Intake" do
     scenario "Cancel an intake" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       visit "/intake"
@@ -172,7 +172,7 @@ RSpec.feature "RAMP Intake" do
 
     scenario "Start intake and go back and edit option" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       # Validate that visiting the finish page takes you back to
@@ -231,7 +231,7 @@ RSpec.feature "RAMP Intake" do
         notice_date: Date.new(2017, 8, 7)
       )
 
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       # Validate that visiting the finish page takes you back to
@@ -309,6 +309,26 @@ RSpec.feature "RAMP Intake" do
       # Validate that the intake is no longer able to be worked on
       visit "/intake/finish"
       expect(page).to have_content("Welcome to Caseflow Intake!")
+    end
+
+    context "when ramp reentry form is enabled" do
+      before { FeatureToggle.enable!(:intake_reentry_form) }
+      after { FeatureToggle.disable!(:intake_reentry_form) }
+
+      scenario "flow starts with form selection" do
+        visit "/intake"
+
+        # Validate that you cant move forward without selecting a form
+        scroll_element_in_to_view(".cf-submit.usa-button")
+        expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        expect(page).to have_current_path("/intake/search")
+      end
     end
   end
 

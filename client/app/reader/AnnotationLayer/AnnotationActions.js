@@ -49,7 +49,7 @@ export const startPlacingAnnotation = (interactionType) => ({
   meta: {
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'startplacing-annotation',
+      action: 'start-placing-annotation',
       label: interactionType
     }
   }
