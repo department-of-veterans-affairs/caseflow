@@ -316,7 +316,8 @@ RSpec.feature "RAMP Intake" do
       after { FeatureToggle.disable!(:intake_reentry_form) }
 
       scenario "flow starts with form selection" do
-        visit "/intake"
+        # Validate that you can't go directly to search
+        visit "/intake/search"
 
         # Validate that you cant move forward without selecting a form
         scroll_element_in_to_view(".cf-submit.usa-button")

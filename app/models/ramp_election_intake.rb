@@ -56,18 +56,11 @@ class RampElectionIntake < Intake
   end
 
   def ui_hash
-    {
-      id: id,
-      veteran_file_number: veteran_file_number,
-      veteran_name: veteran.name.formatted(:readable_short),
-      veteran_form_name: veteran.name.formatted(:form),
-      notice_date: ramp_election.notice_date,
-      option_selected: ramp_election.option_selected,
-      receipt_date: ramp_election.receipt_date,
-      completed_at: completed_at,
-      end_product_description: ramp_election.end_product_description,
-      appeals: serialized_appeal_issues
-    }
+    super.merge(notice_date: ramp_election.notice_date,
+                option_selected: ramp_election.option_selected,
+                receipt_date: ramp_election.receipt_date,
+                end_product_description: ramp_election.end_product_description,
+                appeals: serialized_appeal_issues)
   end
 
   private
