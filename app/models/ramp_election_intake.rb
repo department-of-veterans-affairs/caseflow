@@ -1,4 +1,4 @@
-class RampIntake < Intake
+class RampElectionIntake < Intake
   include CachedAttributes
 
   enum error_code: {
