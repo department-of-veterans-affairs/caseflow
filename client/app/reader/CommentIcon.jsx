@@ -55,7 +55,7 @@ CommentIcon.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.annotationLayer.ui, 'selectedAnnotationId')
+  ..._.pick(state.annotationLayer, 'selectedAnnotationId')
 });
 
 export default connect(mapStateToProps)(CommentIcon);
