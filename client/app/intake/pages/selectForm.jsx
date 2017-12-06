@@ -3,7 +3,7 @@ import RadioField from '../../components/RadioField';
 import Button from '../../components/Button';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setFormSelection } from '../redux/actions';
+import { setFormType } from '../redux/actions';
 import { FORMS } from '../constants';
 import _ from 'lodash';
 
@@ -22,8 +22,8 @@ class SelectForm extends React.PureComponent {
         vertical
         strongLabel
         options={radioOptions}
-        onChange={this.props.setFormSelection}
-        value={this.props.formSelection}
+        onChange={this.props.setFormType}
+        value={this.props.formType}
       />
     </div>;
   }
@@ -31,10 +31,10 @@ class SelectForm extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    formSelection: state.formSelection
+    formType: state.formType
   }),
   (dispatch) => bindActionCreators({
-    setFormSelection
+    setFormType
   }, dispatch)
 )(SelectForm);
 
@@ -48,12 +48,12 @@ class SelectFormButtonUnconnected extends React.PureComponent {
       name="continue-to-search"
       onClick={this.handleClick}
       legacyStyling={false}
-      disabled={!this.props.formSelection}
+      disabled={!this.props.formType}
     >
       Continue to search
     </Button>;
 }
 
 export const SelectFormButton = connect(
-  ({ formSelection }) => ({ formSelection }),
+  ({ formType }) => ({ formType }),
 )(SelectFormButtonUnconnected);
