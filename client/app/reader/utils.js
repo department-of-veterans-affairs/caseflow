@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
+ import { DownloadIcon } from '../components/RenderFunctions';
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
@@ -140,9 +141,8 @@ export const getClaimTypeDetailInfo = (claim) => {
     worksheetPdfLink =  <a target="_blank" href={`/hearings/${claim.hearing_id}/worksheet`}>Hearing Worksheet</a>
   }
 
-  return <div><span className="claim-detail-type-info">{appealTypeInfo}</span>
-  <span>{worksheetPdfLink}</span>
-   <span>10/12/2018</span>
+  return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
+  <span>{worksheetPdfLink}<DownloadIcon className="downloader"/></span>
   </div>;
 };
 
