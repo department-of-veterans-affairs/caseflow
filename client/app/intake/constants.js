@@ -7,7 +7,7 @@ export const PAGE_PATHS = {
 };
 
 export const ACTIONS = {
-  SET_FORM_SELECTION: 'SET_FORM_SELECTION',
+  SET_FORM_TYPE: 'SET_FORM_TYPE',
   START_NEW_INTAKE: 'START_NEW_INTAKE',
   SET_FILE_NUMBER_SEARCH: 'SET_FILE_NUMBER_SEARCH',
   FILE_NUMBER_SEARCH_START: 'FILE_NUMBER_SEARCH_START',
@@ -45,5 +45,5 @@ export const RAMP_INTAKE_STATES = {
 
 export const FORMS = {
   ramp_election: 'RAMP Opt-In Election Form',
-  ramp_reentry: '21-4138 RAMP Selection Form'
+  ramp_refiling: '21-4138 RAMP Selection Form'
 };
