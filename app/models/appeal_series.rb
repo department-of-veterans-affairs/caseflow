@@ -13,7 +13,7 @@ class AppealSeries < ActiveRecord::Base
 
   def api_sort_key
     earliest_nod = appeals.map(&:nod_date).min
-    earliest_nod ? earliest_nod.to_time.to_f : Float::INFINITY
+    earliest_nod ? earliest_nod.to_time_in_current_zone.to_f : Float::INFINITY
   end
 
   def location
