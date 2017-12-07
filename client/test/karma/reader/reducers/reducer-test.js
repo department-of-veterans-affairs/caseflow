@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import { expect } from 'chai';
 import { readerReducer, initialState } from '../../../../app/reader/reducer';
 import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';

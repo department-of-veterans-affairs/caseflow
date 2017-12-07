@@ -2,6 +2,8 @@ import { expect } from 'chai';
 import { annotationLayerReducer } from '../../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
 import * as Constants from '../../../../app/reader/AnnotationLayer/actionTypes';
 
+/* eslint-disable no-undefined */
+
 describe('AnnotationLayerReducer reducer', () => {
 
   const reduceActions = (actions, state) => actions.reduce(annotationLayerReducer, annotationLayerReducer(state, {}));
