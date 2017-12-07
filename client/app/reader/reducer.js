@@ -165,6 +165,7 @@ export const initialState = {
   text: [],
   documentSearchString: null,
   documentSearchIndex: 0,
+  matchIndexToHighlight: null,
   extractedText: {}
 };
 
@@ -575,6 +576,24 @@ const reducer = (state = {}, action = {}) => {
       {
         documentSearchIndex: {
           $apply: (index) => action.payload.increment ? index + 1 : index - 1
+        }
+      }
+    );
+  case Constants.SET_SEARCH_INDEX:
+    return update(
+      state,
+      {
+        documentSearchIndex: {
+          $set: action.payload.index
+        }
+      }
+    );
+  case Constants.SET_SEARCH_INDEX_TO_HIGHLIGHT:
+    return update(
+      state,
+      {
+        matchIndexToHighlight: {
+          $set: action.payload.index
         }
       }
     );
