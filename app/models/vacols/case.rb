@@ -146,7 +146,8 @@ class VACOLS::Case < VACOLS::Record
 
   JOIN_AOD = "
     left join (
-      select BRIEFF.BFKEY AODKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
+      select BRIEFF.BFKEY AODKEY,
+        (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
       from BRIEFF
 
       left join (

@@ -46,11 +46,12 @@ class AppealRepository
                           service: :vacols,
                           name: "appeals_by_vbms_id_with_preloaded_aod_and_issues") do
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
-                          .includes(:folder, :correspondent, :folder => :outcoder)
-                          .references(:folder, :correspondent, :folder => :outcoder)
+                          .includes(:folder, :correspondent, folder: :outcoder)
+                          .references(:folder, :correspondent, folder: :outcoder)
                           .joins(VACOLS::Case::JOIN_AOD)
       vacols_ids = cases.map(&:bfkey)
-      issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey) # Note that this does not load issue descriptions
+      # Load issues, but note that we do so without including descriptions
+      issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
 
       cases.map do |case_record|
         appeal = build_appeal(case_record)
