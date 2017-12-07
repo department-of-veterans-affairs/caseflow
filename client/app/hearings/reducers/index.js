@@ -17,11 +17,9 @@ export const newHearingState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
 
   return update(state, {
-    dockets: {
+    dailyDocket: {
       [action.payload.date]: {
-        hearings_array: {
-          [action.payload.hearingIndex]: spec
-        }
+        [action.payload.hearingIndex]: spec
       }
     }
   });
@@ -46,9 +44,16 @@ export const newHearingWorksheetState = (state, action, spec) => {
 
 export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
   switch (action.type) {
-  case Constants.POPULATE_DOCKETS:
+  case Constants.POPULATE_UPCOMING_HEARINGS:
     return update(state, {
-      dockets: { $set: action.payload.dockets }
+      upcomingHearings: { $set: action.payload.upcomingHearings }
+    });
+
+  case Constants.POPULATE_DAILY_DOCKET:
+    return update(state, {
+      dailyDocket: {
+        [action.payload.date]: { $set: action.payload.dailyDocket }
+      }
     });
 
   case Constants.POPULATE_WORKSHEET: {
@@ -177,11 +182,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_EDITED_FLAG_TO_FALSE:
     return update(state, {
-      dockets: {
+      dailyDocket: {
         [action.payload.date]: {
-          hearings_array: {
-            [action.payload.index]: { edited: { $set: false } }
-          }
+          [action.payload.index]: { edited: { $set: false } }
         }
       }
     });
