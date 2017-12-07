@@ -41,6 +41,25 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record) }
   end
 
+  def self.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
+    MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_aod_and_issues",
+                          service: :vacols,
+                          name: "appeals_by_vbms_id_with_preloaded_aod_and_issues") do
+      cases = VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent)
+      vacols_ids = cases.map(&:bfkey)
+      aod = VACOLS::Case.aod(vacols_ids)
+      issues = VACOLS::CaseIssue.descriptions(vacols_ids)
+
+      cases.map do |case_record|
+        appeal = build_appeal(case_record)
+        appeal.aod = aod[appeal.vacols_id]
+        appeal.issues = (issues[appeal.vacols_id] || []).map { |issue_hash| Issue.load_from_vacols(issue_hash) }
+        appeal.save
+        appeal
+      end
+    end
+  end
+
   def self.appeals_ready_for_hearing(vbms_id)
     cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
                                   service: :vacols,
