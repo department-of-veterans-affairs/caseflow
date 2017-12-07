@@ -61,7 +61,7 @@ const updateStateWithSavedIntake = (state, intake) => {
 
 export const mapDataToInitialState = (data = { currentIntake: {} }) => (
   updateStateWithSavedIntake({
-    formSelection: null,
+    formType: null,
     veteran: {
       name: '',
       formName: '',
@@ -125,10 +125,10 @@ export const reducer = (state = mapDataToInitialState(), action) => {
         }
       }
     });
-  case ACTIONS.SET_FORM_SELECTION:
+  case ACTIONS.SET_FORM_TYPE:
     return update(state, {
-      formSelection: {
-        $set: action.payload.formSelection
+      formType: {
+        $set: action.payload.formType
       }
     });
   case ACTIONS.SET_OPTION_SELECTED:
