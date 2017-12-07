@@ -5,6 +5,9 @@ class AppealSeries < ActiveRecord::Base
            :active?,
            :type_code,
            :aod,
+           :ramp_notice_date,
+           :ramp_due_date,
+           :eligible_for_ramp?,
            to: :latest_appeal
 
   def latest_appeal
@@ -36,23 +39,6 @@ class AppealSeries < ActiveRecord::Base
 
   def alerts
     @alerts ||= AppealAlerts.new(appeal_series: self).all
-  end
-
-  def ramp_notice_date
-    @ramp_notice_date = RampElection.where(veteran_file_number: latest_appeal.sanitized_vbms_id)
-                                    .minimum(:notice_date)
-  end
-
-  def ramp_notice_sent
-    !!ramp_notice_date
-  end
-
-  def ramp_eligible
-    ramp_notice_sent && latest_appeal.eligible_for_ramp?
-  end
-
-  def ramp_due_date
-    ramp_notice_date + 60.days if ramp_notice_date
   end
 
   private

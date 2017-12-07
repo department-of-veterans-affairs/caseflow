@@ -123,6 +123,6 @@ class AppealEvents
   end
 
   def ramp_notice_event
-    AppealEvent.new(type: :ramp_notice, date: appeal.appeal_series.ramp_notice_date)
+    AppealEvent.new(type: :ramp_notice, date: appeal.ramp_notice_date)
   end
 end
