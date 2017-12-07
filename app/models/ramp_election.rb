@@ -3,7 +3,7 @@ class RampElection < ActiveRecord::Base
 
   attr_reader :saving_receipt
 
-  has_many :ramp_intakes, as: :detail
+  has_many :intakes, as: :detail, class_name: "RampElectionIntake"
 
   enum option_selected: {
     supplemental_claim: "supplemental_claim",
@@ -38,7 +38,7 @@ class RampElection < ActiveRecord::Base
   end
 
   def successfully_received?
-    ramp_intakes.where(completion_status: "success").any?
+    intakes.where(completion_status: "success").any?
   end
 
   def end_product_description

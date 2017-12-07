@@ -12,7 +12,7 @@ import ApiUtil from '../util/ApiUtil';
 export class DocketsContainer extends React.Component {
 
   getUpcomingHearings = () => {
-    ApiUtil.get('/hearings/dockets.json', {cache: true}).then((response) => {
+    ApiUtil.get('/hearings/dockets.json', { cache: true }).then((response) => {
       this.props.dispatch(Actions.populateUpcomingHearings(response.body));
     }, (err) => {
       this.props.dispatch(Actions.handleDocketServerError(err));
