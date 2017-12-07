@@ -49,7 +49,7 @@ class VACOLS::CaseHearing < VACOLS::Record
       id = connection.quote(css_id)
 
       select_hearings.where("staff.sdomainid = #{id}")
-                     .where("hearing_date > ?", 1.week.ago)
+                     .where("hearing_date > ?", 30.days.ago.beginning_of_day)
                      .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 
@@ -72,7 +72,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_date, :hearing_type,
              :notes1, :folder_nr,
              :vdkey, :aod,
-             :holddays, :tranreq,
+             :holddays, :tranreq, :transent,
              :repname, :addon,
              :board_member, :mduser,
              :mdtime, :sattyid,

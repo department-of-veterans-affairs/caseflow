@@ -4,6 +4,8 @@ class Document < ActiveRecord::Base
   has_many :documents_tags
   has_many :tags, through: :documents_tags
 
+  self.inheritance_column = nil
+
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
   # some of these names are confusing and are overriden
@@ -47,7 +49,7 @@ class Document < ActiveRecord::Base
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :efolder_id, :type, :alt_types, :received_at, :filename, :vacols_date
+  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -77,19 +79,21 @@ class Document < ActiveRecord::Base
       :other
   end
 
-  def self.from_efolder(hash)
+  def self.from_efolder(hash, file_number)
     new(efolder_id: hash["id"],
         type: type_from_vbms_type(hash["type_id"]),
         received_at: hash["received_at"],
-        vbms_document_id: hash["external_document_id"])
+        vbms_document_id: hash["external_document_id"],
+        file_number: file_number)
   end
 
-  def self.from_vbms_document(vbms_document)
+  def self.from_vbms_document(vbms_document, file_number)
     new(type: type_from_vbms_type(vbms_document.doc_type),
         alt_types: (vbms_document.alt_doc_types || []).map { |type| ALT_TYPES[type] },
         received_at: vbms_document.received_at,
         vbms_document_id: vbms_document.document_id,
-        filename: vbms_document.filename)
+        filename: vbms_document.filename,
+        file_number: file_number)
   end
 
   def self.type_id(type)

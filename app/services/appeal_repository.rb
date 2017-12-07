@@ -9,6 +9,12 @@ class AppealRepository
     VACOLS::Record.connection.active?
   end
 
+  def self.transaction
+    VACOLS::Case.transaction do
+      yield
+    end
+  end
+
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
@@ -97,7 +103,6 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
-      veteran_date_of_birth: normalize_vacols_date(correspondent_record.sdob),
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
@@ -123,9 +128,11 @@ class AppealRepository
       case_review_date: folder_record.tidktime,
       case_record: case_record,
       disposition: VACOLS::Case::DISPOSITIONS[case_record.bfdc],
+      location_code: case_record.bfcurloc,
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
+      last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
       docket_number: folder_record.tinum,
@@ -331,6 +338,10 @@ class AppealRepository
         appeal
       end
     end
+  end
+
+  def self.case_assignment_exists?(vacols_id)
+    VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
   # :nocov:
 end

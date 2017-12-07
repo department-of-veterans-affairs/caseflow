@@ -1,5 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
+import { CATEGORIES, debounceMs } from '../analytics';
 
 export const populateDockets = (dockets) => ({
   type: Constants.POPULATE_DOCKETS,
@@ -43,13 +44,18 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-
 export const setNotes = (hearingIndex, notes, date) => ({
   type: Constants.SET_NOTES,
   payload: {
     hearingIndex,
     notes,
     date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      debounceMs
+    }
   }
 });
 
@@ -80,15 +86,6 @@ export const setAod = (hearingIndex, aod, date) => ({
   }
 });
 
-export const setAddOn = (hearingIndex, addOn, date) => ({
-  type: Constants.SET_ADD_ON,
-  payload: {
-    hearingIndex,
-    addOn,
-    date
-  }
-});
-
 export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) => ({
   type: Constants.SET_TRANSCRIPT_REQUESTED,
   payload: {
@@ -102,6 +99,12 @@ export const onContentionsChange = (contentions) => ({
   type: Constants.SET_CONTENTIONS,
   payload: {
     contentions
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      debounceMs
+    }
   }
 });
 
@@ -109,6 +112,12 @@ export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
     militaryService
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      debounceMs
+    }
   }
 });
 
@@ -116,6 +125,12 @@ export const onEvidenceChange = (evidence) => ({
   type: Constants.SET_EVIDENCE,
   payload: {
     evidence
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      debounceMs
+    }
   }
 });
 
@@ -123,6 +138,12 @@ export const onCommentsForAttorneyChange = (commentsForAttorney) => ({
   type: Constants.SET_COMMENTS_FOR_ATTORNEY,
   payload: {
     commentsForAttorney
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      debounceMs
+    }
   }
 });
 

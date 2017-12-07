@@ -21,6 +21,7 @@ class VACOLS::CaseIssue < VACOLS::Record
         ISSUES.ISSKEY,
         ISSUES.ISSSEQ,
         ISSUES.ISSDC,
+        ISSUES.ISSDCLS,
         ISSUES.ISSDESC,
         ISSUES.ISSPROG,
         ISSUES.ISSCODE,
@@ -70,7 +71,7 @@ class VACOLS::CaseIssue < VACOLS::Record
     SQL
 
     issues_result = MetricsService.record("VACOLS: CaseIssue.descriptions for #{vacols_ids}",
-                                          name: "CaseIssue.descriptions",
+                                          name: "CaseIssue.descriptios",
                                           service: :vacols) do
       conn.exec_query(sanitize_sql_array([query, vacols_ids]))
     end

@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import {
-  onReceiveAssignments, onInitialCaseLoadingFail
+  onInitialCaseLoadingFail
 } from '../reader/LoadingScreen/LoadingScreenActions';
+import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import StatusMessage from '../components/StatusMessage';
 import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
@@ -43,7 +44,7 @@ export class CaseSelectLoadingScreen extends React.Component {
           </StatusMessage> :
           <LoadingScreen
             spinnerColor={Constants.READER_COLOR}
-            message="Loading cases in Reader..."/>
+            message="Loading cases in Reader..." />
         }
       </div>
     </div>;
@@ -52,8 +53,8 @@ export class CaseSelectLoadingScreen extends React.Component {
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.readerReducer, 'initialCaseLoadingFail'),
-  assignments: state.readerReducer.assignments,
-  assignmentsLoaded: state.readerReducer.assignmentsLoaded
+  assignments: state.caseSelect.assignments,
+  assignmentsLoaded: state.caseSelect.assignmentsLoaded
 });
 
 const mapDispatchToProps = (dispatch) => (

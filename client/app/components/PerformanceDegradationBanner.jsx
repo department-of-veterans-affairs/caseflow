@@ -3,7 +3,6 @@ import WrenchIcon from './WrenchIcon';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 
-
 /*
  * Caseflow Performance Degradation Banner.
  * Shared between all Certification pages.
@@ -17,6 +16,17 @@ export default class PerformanceDegradationBanner extends React.Component {
       showBanner: false,
       isRequesting: false
     };
+
+    this.dependencies = {
+      certification: ['BGS.AddressService', 'BGS.OrganizationPoaService', 'BGS.PersonFilenumberService',
+        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference'],
+      reader: ['VBMS', 'VACOLS'],
+      hearing: ['VACOLS'],
+      dispatch: ['BGS.BenefitsService', 'VBMS', 'VACOLS'],
+      other: ['BGS.AddressService', 'BGS.BenefitsService', 'BGS.ClaimantFlashesService', 'BGS.OrganizationPoaService',
+        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference',
+        'VVA']
+    };
   }
 
   checkDependencies() {
@@ -26,13 +36,21 @@ export default class PerformanceDegradationBanner extends React.Component {
       return;
     }
 
+    this.appName = Object.keys(this.dependencies).filter((key) => {
+      return window.location.pathname.includes(key);
+    })[0] || 'other';
+
     this.setState({ isRequesting: true });
     ApiUtil.get('/dependencies-check').
       then((data) => {
-        let outage = JSON.parse(data.text).dependencies_outage;
+        let report = JSON.parse(data.text).dependencies_report;
+        // Each app has a relevant report
+        let outageAffectingCurrentApp = report.filter((key) => {
+          return this.dependencies[this.appName].includes(key);
+        });
 
         this.setState({
-          showBanner: Boolean(outage),
+          showBanner: Boolean(outageAffectingCurrentApp.length > 0),
           isRequesting: false
         });
       }, () => {
@@ -63,7 +81,7 @@ export default class PerformanceDegradationBanner extends React.Component {
         <div className="usa-banner">
           <div className="usa-grid usa-banner-inner">
             <div className="banner-icon">
-              <WrenchIcon/>
+              <WrenchIcon />
             </div>
             <span className="banner-text">
               We've detected technical issues in our system.

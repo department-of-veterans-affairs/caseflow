@@ -4,11 +4,22 @@
 class Issue
   include ActiveModel::Model
 
-  attr_accessor :id, :program, :type, :category, :description, :disposition, :levels,
-                :program_description, :note, :vacols_sequence_id
+  attr_accessor :id, :program, :code, :type, :category, :description, :disposition,
+                :close_date, :levels, :program_description, :note, :vacols_sequence_id
 
   PROGRAMS = {
-    "02" => :compensation
+    "01" => :vba_burial,
+    "02" => :compensation,
+    "03" => :education,
+    "04" => :insurance,
+    "05" => :loan_guaranty,
+    "06" => :medical,
+    "07" => :pension,
+    "08" => :vre,
+    "09" => :other,
+    "10" => :bva,
+    "11" => :nca_burial,
+    "12" => :fiduciary
   }.freeze
 
   TYPES = {
@@ -18,6 +29,10 @@ class Issue
   CATEGORIES = {
     "04" => :new_material
   }.freeze
+
+  def issue_code
+    "#{program}-#{code}"
+  end
 
   def non_new_material_allowed?
     !new_material? && allowed?
@@ -54,6 +69,7 @@ class Issue
       category: category,
       description: description,
       disposition: disposition,
+      close_date: close_date,
       program_description: program_description,
       note: note
     }
@@ -97,12 +113,14 @@ class Issue
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
+        code: hash["isscode"],
         type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
         note: hash["issdesc"],
         category: CATEGORIES[category_code],
         program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
         description: description(hash),
-        disposition: disposition
+        disposition: disposition,
+        close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end
 

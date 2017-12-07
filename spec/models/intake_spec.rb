@@ -17,6 +17,25 @@ describe Intake do
 
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
 
+  context ".build" do
+    subject { Intake.build(form_type: form_type, veteran_file_number: veteran_file_number, user: user) }
+
+    context "when form_type is supported" do
+      let(:form_type) { "ramp_election" }
+
+      it { is_expected.to be_a(RampElectionIntake) }
+      it { is_expected.to have_attributes(veteran_file_number: veteran_file_number, user: user) }
+    end
+
+    context "when form_type is not supported" do
+      let(:form_type) { "not_a_real_form" }
+
+      it "raises error" do
+        expect { subject }.to raise_error(Intake::FormTypeNotSupported)
+      end
+    end
+  end
+
   context ".in_progress" do
     subject { Intake.in_progress }
 
@@ -65,7 +84,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -74,7 +93,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -83,7 +102,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -92,7 +111,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -101,7 +120,7 @@ describe Intake do
 
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:invalid_file_number)
+        expect(intake.error_code).to eq("invalid_file_number")
       end
     end
 
@@ -110,7 +129,7 @@ describe Intake do
 
       it "adds veteran_not_found and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:veteran_not_found)
+        expect(intake.error_code).to eq("veteran_not_found")
       end
     end
 
@@ -121,7 +140,7 @@ describe Intake do
 
       it "adds veteran_not_accessible and returns false" do
         expect(subject).to eq(false)
-        expect(intake.error_code).to eq(:veteran_not_accessible)
+        expect(intake.error_code).to eq("veteran_not_accessible")
       end
     end
 

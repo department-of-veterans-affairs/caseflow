@@ -23,12 +23,12 @@ class IntakesController < ApplicationController
   end
 
   def create
-    if intake.start!
-      render json: ramp_intake_data(intake)
+    if new_intake.start!
+      render json: new_intake.ui_hash
     else
       render json: {
-        error_code: intake.error_code,
-        error_data: intake.error_data
+        error_code: new_intake.error_code,
+        error_data: new_intake.error_data
       }, status: 422
     end
   end
@@ -41,28 +41,19 @@ class IntakesController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def ramp_intake_data(ramp_intake)
-    return {} unless ramp_intake
-
-    {
-      id: ramp_intake.id,
-      veteran_file_number: ramp_intake.veteran_file_number,
-      veteran_name: ramp_intake.veteran.name.formatted(:readable_short),
-      veteran_form_name: ramp_intake.veteran.name.formatted(:form),
-      notice_date: ramp_intake.detail.notice_date,
-      option_selected: ramp_intake.detail.option_selected,
-      receipt_date: ramp_intake.detail.receipt_date,
-      completed_at: ramp_intake.completed_at,
-      appeals: ramp_intake.serialized_appeal_issues
-    }
-  end
-  helper_method :ramp_intake_data
-
   def fetch_current_intake
-    @current_intake = RampIntake.in_progress.find_by(user: current_user)
+    @current_intake = Intake.in_progress.find_by(user: current_user)
   end
 
-  def intake
-    @intake ||= RampIntake.new(user: current_user, veteran_file_number: params[:file_number])
+  def new_intake
+    @new_intake ||= Intake.build(
+      user: current_user,
+      veteran_file_number: params[:file_number],
+      form_type: form_type
+    )
+  end
+
+  def form_type
+    FeatureToggle.enabled?(:intake_reentry_form) ? params[:form_type] : "ramp_election"
   end
 end

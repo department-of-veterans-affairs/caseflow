@@ -3,7 +3,7 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 
-export default class StyleGuideTextInputError extends React.Component {
+export default class StyleGuideTextInputError extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -26,7 +26,7 @@ export default class StyleGuideTextInputError extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Text Input Error"
-        id="text_input_error"
+        id="text-input-error"
         link="StyleGuideTextInputError.jsx"
         isSubsection
       />
@@ -42,10 +42,10 @@ export default class StyleGuideTextInputError extends React.Component {
         onChange={(value) => {
           this.setState({ value });
         }}
-        errorMessage={this.state.errorMessage}/>
+        errorMessage={this.state.errorMessage} />
       <Button
         name="Submit"
-        onClick={this.onButtonClick}/>
+        onClick={this.onButtonClick} />
     </div>;
   }
 }

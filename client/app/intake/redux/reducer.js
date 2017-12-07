@@ -48,6 +48,9 @@ const updateStateWithSavedIntake = (state, intake) => {
       },
       isComplete: {
         $set: Boolean(intake.completed_at)
+      },
+      endProductDescription: {
+        $set: intake.end_product_description
       }
     },
     appeals: {
@@ -58,6 +61,7 @@ const updateStateWithSavedIntake = (state, intake) => {
 
 export const mapDataToInitialState = (data = { currentIntake: {} }) => (
   updateStateWithSavedIntake({
+    formType: null,
     veteran: {
       name: '',
       formName: '',
@@ -119,6 +123,12 @@ export const reducer = (state = mapDataToInitialState(), action) => {
         fileNumberSearch: {
           $set: action.payload.fileNumber
         }
+      }
+    });
+  case ACTIONS.SET_FORM_TYPE:
+    return update(state, {
+      formType: {
+        $set: action.payload.formType
       }
     });
   case ACTIONS.SET_OPTION_SELECTED:
@@ -246,7 +256,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
-    return update(state, {
+    return updateStateWithSavedIntake(update(state, {
       rampElection: {
         isComplete: {
           $set: true
@@ -257,7 +267,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       }
-    });
+    }), action.payload.intake);
   case ACTIONS.COMPLETE_INTAKE_FAIL:
     return update(state, {
       requestStatus: {

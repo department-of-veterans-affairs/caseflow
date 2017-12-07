@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -15,9 +17,11 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
+import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
-
+import sinon from 'sinon';
+import { AutoSizer } from 'react-virtualized';
 const vacolsId = 'reader_id1';
 
 // This is the route history preset in react router
@@ -38,8 +42,18 @@ describe('DecisionReviewer', () => {
     PdfJsStub.beforeEach();
     ApiUtilStub.beforeEach();
 
+    /* eslint-disable no-underscore-dangle */
+    sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
+      return <div ref={this._setRef}>
+        {this.props.children({ width: 200,
+          height: 100 })}
+      </div>;
+    });
+    /* eslint-enable no-underscore-dangle */
+
     const store = createStore(
       combineReducers({
+        caseSelect: caseSelectReducer,
         readerReducer,
         search: searchReducer
       }),
@@ -73,8 +87,8 @@ describe('DecisionReviewer', () => {
       <Provider store={store}>
         <DecisionReviewer
           featureToggles={{}}
-          userDisplayName={'Name'}
-          feedbackUrl={'fakeurl'}
+          userDisplayName="Name"
+          feedbackUrl="fakeurl"
           dropdownUrls={[{
             title: 'title',
             link: 'link'
@@ -94,6 +108,7 @@ describe('DecisionReviewer', () => {
     wrapper.detach();
     ApiUtilStub.afterEach();
     PdfJsStub.afterEach();
+    AutoSizer.prototype.render.restore();
   });
 
   context('Loading Spinner', () => {
@@ -151,6 +166,9 @@ describe('DecisionReviewer', () => {
 
     context('rotate', () => {
       it('turns pages', asyncTest(async() => {
+        // Stub ApiUtil.get() calls so request to content_url return some fake response.
+        ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
+
         // Click on first document link
         wrapper.find('a').filterWhere(
           (link) => link.text() === documents[0].type).
@@ -201,6 +219,9 @@ describe('DecisionReviewer', () => {
           document_id: 1,
           uuid: commentId
         };
+
+        // Stub ApiUtil.get() calls so request to content_url return some fake response.
+        ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
 
         // Stub out post requests to return the commentId
         ApiUtilStub.apiPost.resolves({ text: `{ "id": ${commentId} }` });
@@ -345,7 +366,6 @@ describe('DecisionReviewer', () => {
       it('type ordered correctly', () => {
         wrapper.find('#type-header').simulate('click');
         expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
-
 
         let textArray = wrapper.find('tr').map((node) => node.text());
 

@@ -21,7 +21,6 @@ export class Footer extends React.Component {
     this.props.toggleCancellationModal();
   };
 
-
   render() {
     let {
       loading,
@@ -33,7 +32,6 @@ export class Footer extends React.Component {
       certificationId,
       showCancellationModal
     } = this.props;
-
 
     return <div className="cf-app-segment">
       <Button

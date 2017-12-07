@@ -5,19 +5,24 @@ describe Appeal do
 
   let(:appeal) do
     Generators::Appeal.build(
+      notification_date: notification_date,
       nod_date: nod_date,
       soc_date: soc_date,
       form9_date: form9_date,
       ssoc_dates: ssoc_dates,
+      certification_date: certification_date,
       documents: documents,
       hearing_request_type: hearing_request_type,
       video_hearing_requested: video_hearing_requested,
       appellant_first_name: "Joe",
       appellant_middle_initial: "E",
       appellant_last_name: "Tester",
-      decision_date: nil,
+      decision_date: decision_date,
       manifest_vbms_fetched_at: appeal_manifest_vbms_fetched_at,
-      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at
+      manifest_vva_fetched_at: appeal_manifest_vva_fetched_at,
+      location_code: location_code,
+      status: status,
+      disposition: disposition
     )
   end
 
@@ -36,13 +41,19 @@ describe Appeal do
     )
   end
 
+  let(:notification_date) { 1.month.ago }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
   let(:form9_date) { 1.day.ago }
   let(:ssoc_dates) { [] }
+  let(:certification_date) { nil }
+  let(:decision_date) { nil }
   let(:documents) { [] }
   let(:hearing_request_type) { :central_office }
   let(:video_hearing_requested) { false }
+  let(:location_code) { nil }
+  let(:status) { "Advance" }
+  let(:disposition) { nil }
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
@@ -154,14 +165,57 @@ describe Appeal do
     it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
   end
 
-  context "#events" do
-    subject { appeal.events }
+  context "#v1_events" do
+    subject { appeal.v1_events }
     let(:soc_date) { 5.days.ago }
 
     it "returns list of events sorted from oldest to newest by date" do
       expect(subject.length > 1).to be_truthy
       expect(subject.first.date).to eq(5.days.ago)
       expect(subject.first.type).to eq(:soc)
+    end
+  end
+
+  context "#form9_due_date" do
+    subject { appeal.form9_due_date }
+
+    context "when the notification date is within the last year" do
+      it { is_expected.to eq((notification_date + 1.year).to_date) }
+    end
+
+    context "when the notification date is older" do
+      let(:notification_date) { 1.year.ago }
+      it { is_expected.to eq((soc_date + 60.days).to_date) }
+    end
+
+    context "when missing notification date or soc date" do
+      let(:soc_date) { nil }
+      it { is_expected.to eq(nil) }
+    end
+  end
+
+  context "#cavc_due_date" do
+    subject { appeal.cavc_due_date }
+
+    context "when there is no decision date" do
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is a decision date" do
+      let(:decision_date) { 30.days.ago }
+      it { is_expected.to eq(90.days.from_now.to_date) }
+    end
+  end
+
+  context "#events" do
+    subject { appeal.events }
+
+    it "returns list of events" do
+      expect(subject.length > 0).to be_truthy
+      expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
+      expect(subject.count { |event| event.type == :form9 } > 0).to be_truthy
     end
   end
 
@@ -443,6 +497,35 @@ describe Appeal do
     end
   end
 
+  context "#in_location?" do
+    subject { appeal.in_location?(location) }
+    let(:location) { :remand_returned_to_bva }
+
+    context "when location is not recognized" do
+      let(:location) { :never_never_land }
+
+      it "raises error" do
+        expect { subject }.to raise_error(Appeal::UnknownLocationError)
+      end
+    end
+
+    context "when is in location" do
+      let(:location_code) { "96" }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when is not in location" do
+      let(:location_code) { "97" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#case_assignment_exists?" do
+    subject { appeal.case_assignment_exists? }
+
+    it { is_expected.to be_truthy }
+  end
+
   context ".find_or_create_by_vacols_id" do
     let!(:vacols_appeal) do
       Generators::Appeal.build(vacols_id: "123C", vbms_id: "456VBMS")
@@ -506,44 +589,88 @@ describe Appeal do
     end
   end
 
-  context "#close!" do
+  context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
     let(:user) { Generators::User.build }
+    let(:disposition) { "RAMP Opt-in" }
 
-    subject { appeal.close!(user: user, closed_on: 4.days.ago, disposition: disposition) }
-
-    context "when disposition is not valid" do
-      let(:disposition) { "I'm not a disposition" }
+    context "when called with both appeal and appeals" do
+      let(:vacols_record) { :ready_to_certify }
 
       it "should raise error" do
-        expect { subject }.to raise_error(/Disposition/)
+        expect do
+          Appeal.close(
+            appeal: appeal,
+            appeals: [appeal, another_appeal],
+            user: user,
+            closed_on: 4.days.ago,
+            disposition: disposition
+          )
+        end.to raise_error("Only pass either appeal or appeals")
       end
     end
 
-    context "when disposition is valid" do
-      let(:disposition) { "RAMP Opt-in" }
+    context "when multiple appeals" do
+      it "closes each appeal" do
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
+        expect(Fakes::AppealRepository).to receive(:close!).with(
+          appeal: another_appeal,
+          user: user,
+          closed_on: 4.days.ago,
+          disposition_code: "P"
+        )
 
-      context "when appeal is not active" do
-        let(:vacols_record) { :full_grant_decided }
+        Appeal.close(
+          appeals: [appeal, another_appeal],
+          user: user,
+          closed_on: 4.days.ago,
+          disposition: disposition
+        )
+      end
+    end
+
+    context "when just one appeal" do
+      subject do
+        Appeal.close(appeal: appeal, user: user, closed_on: 4.days.ago, disposition: disposition)
+      end
+
+      context "when disposition is not valid" do
+        let(:disposition) { "I'm not a disposition" }
 
         it "should raise error" do
-          expect { subject }.to raise_error(/active/)
+          expect { subject }.to raise_error(/Disposition/)
         end
       end
 
-      context "when appeal is active" do
-        let(:vacols_record) { :ready_to_certify }
+      context "when disposition is valid" do
+        context "when appeal is not active" do
+          let(:vacols_record) { :full_grant_decided }
 
-        it "closes the appeal in VACOLS" do
-          expect(Fakes::AppealRepository).to receive(:close!).with(
-            appeal: appeal,
-            user: user,
-            closed_on: 4.days.ago,
-            disposition_code: "P"
-          )
+          it "should raise error" do
+            expect { subject }.to raise_error(/active/)
+          end
+        end
 
-          subject
+        context "when appeal is active" do
+          let(:vacols_record) { :ready_to_certify }
+
+          it "closes the appeal in VACOLS" do
+            expect(Fakes::AppealRepository).to receive(:close!).with(
+              appeal: appeal,
+              user: user,
+              closed_on: 4.days.ago,
+              disposition_code: "P"
+            )
+
+            subject
+          end
         end
       end
     end
@@ -783,14 +910,34 @@ describe Appeal do
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
-    context "is false if status is not advance" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
+    let(:appeal) do
+      Generators::Appeal.build(vacols_id: "123", status: status, location_code: location_code)
+    end
+
+    let(:location_code) { nil }
+
+    context "is false if status is not advance or remand" do
+      let(:status) { "Active" }
       it { is_expected.to be_falsey }
     end
 
-    context "is true if status is advance" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Advance") }
+    context "status is remand" do
+      let(:status) { "Remand" }
       it { is_expected.to be_truthy }
+    end
+
+    context "status is advance" do
+      let(:status) { "Advance" }
+
+      context "location is remand_returned_to_bva" do
+        let(:location_code) { "96" }
+        it { is_expected.to be_falsey }
+      end
+
+      context "location is not remand_returned_to_bva" do
+        let(:location_code) { "90" }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 
@@ -906,7 +1053,7 @@ describe Appeal do
     end
 
     context "when regional office key is not mapped to a station" do
-      let(:regional_office_key) { "ROXX" }
+      let(:regional_office_key) { "SO62" }
       it { is_expected.to be_nil }
     end
   end
@@ -1144,6 +1291,29 @@ describe Appeal do
           city: "SAN FRANCISCO",
           zip: "94103")
       end
+    end
+  end
+
+  context "#issue_codes" do
+    subject { appeal.issue_codes }
+
+    let(:appeal) do
+      Generators::Appeal.build(issues: issues)
+    end
+
+    let(:issues) do
+      [
+        Generators::Issue.build(program: :compensation, code: "01"),
+        Generators::Issue.build(program: :compensation, code: "02"),
+        Generators::Issue.build(program: :compensation, code: "01")
+      ]
+    end
+
+    it { is_expected.to include("compensation-01") }
+    it { is_expected.to include("compensation-02") }
+    it { is_expected.to_not include("compensation-03") }
+    it "returns uniqued issue codes" do
+      expect(subject.length).to eq(2)
     end
   end
 

@@ -22,6 +22,5 @@ export const ENDPOINT_NAMES = {
   APPEAL_DETAILS: 'appeal-details',
   APPEAL_DETAILS_BY_VET_ID: 'appeal-details-by-vet-id',
   CLAIMS_FOLDER_SEARCHES: 'claims-folder-searches',
-  DOCUMENTS: 'documents',
-  DOCUMENT_CONTENT: 'document-content'
+  DOCUMENTS: 'documents'
 };

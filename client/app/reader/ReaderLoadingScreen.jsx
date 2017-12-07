@@ -10,11 +10,13 @@ import LoadingScreen from '../components/LoadingScreen';
 import * as Constants from './constants';
 import _ from 'lodash';
 
-const PARALLEL_DOCUMENT_REQUESTS = 3;
-
 export class ReaderLoadingScreen extends React.Component {
 
   componentDidMount = () => {
+    if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
+      return;
+    }
+
     // We clear any loading failures before trying to load.
     this.props.onInitialDataLoadingFail(false);
 
@@ -26,23 +28,6 @@ export class ReaderLoadingScreen extends React.Component {
       this.props.onReceiveDocs(documents, this.props.vacolsId);
       this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
       this.props.onReceiveAnnotations(annotations);
-
-      const downloadDocuments = (documentUrls, index) => {
-        if (index >= documentUrls.length) {
-          return;
-        }
-
-        ApiUtil.get(documentUrls[index], {
-          cache: true,
-          withCredentials: true
-        }, ENDPOINT_NAMES.DOCUMENT_CONTENT).then(
-          () => downloadDocuments(documentUrls, index + PARALLEL_DOCUMENT_REQUESTS)
-        );
-      };
-
-      for (let i = 0; i < PARALLEL_DOCUMENT_REQUESTS; i++) {
-        downloadDocuments(_.map(documents, 'content_url'), i);
-      }
     }, this.props.onInitialDataLoadingFail);
   }
 
@@ -61,7 +46,7 @@ export class ReaderLoadingScreen extends React.Component {
           </StatusMessage> :
           <LoadingScreen
             spinnerColor={Constants.READER_COLOR}
-            message="Loading claims folder in Reader..."/>
+            message="Loading claims folder in Reader..." />
         }
       </div>
     </div>;

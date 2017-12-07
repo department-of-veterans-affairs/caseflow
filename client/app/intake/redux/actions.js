@@ -23,13 +23,16 @@ export const setFileNumberSearch = (fileNumber) => ({
   }
 });
 
-export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
+export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
   dispatch({
     type: ACTIONS.FILE_NUMBER_SEARCH_START,
     meta: { analytics }
   });
 
-  return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }, ENDPOINT_NAMES.INTAKE).
+  const data = { file_number: fileNumberSearch,
+    form_type: formType };
+
+  return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.INTAKE).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);
@@ -72,6 +75,18 @@ export const setOptionSelected = (optionSelected) => ({
   meta: {
     analytics: {
       label: optionSelected
+    }
+  }
+});
+
+export const setFormType = (formType) => ({
+  type: ACTIONS.SET_FORM_TYPE,
+  payload: {
+    formType
+  },
+  meta: {
+    analytics: {
+      label: formType
     }
   }
 });
@@ -143,9 +158,14 @@ export const completeIntake = (rampElection) => (dispatch) => {
 
   return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`, {}, ENDPOINT_NAMES.INTAKE_RAMP_COMPLETE).
     then(
-      () => {
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+          payload: {
+            intake: responseObject
+          },
           meta: { analytics }
         });
 

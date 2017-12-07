@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import * as Constants from '../constants';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
-import { openAnnotationDeleteModal } from '../../reader/actions';
+import { openAnnotationDeleteModal } from '../../reader/PdfViewer/PdfViewerActions';
 
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
@@ -23,7 +23,7 @@ export const startPlacingAnnotation = (interactionType) => ({
   meta: {
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'startplacing-annotation',
+      action: 'start-placing-annotation',
       label: interactionType
     }
   }
@@ -172,9 +172,9 @@ export const updateNewAnnotationContent = (content) => ({
 });
 
 export const requestEditAnnotation = (annotation) => (dispatch) => {
-  // If the user removed all text content in the annotation, ask them if they're
-  // intending to delete it.
-  if (!annotation.comment) {
+  // If the user removed all text content in the annotation (or if only whitespace characters remain),
+  // ask the user if they're intending to delete it.
+  if (!annotation.comment.trim()) {
     dispatch(openAnnotationDeleteModal(annotation.id, 'open-by-deleting-all-annotation-content'));
 
     return;
@@ -203,15 +203,19 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
           annotationId: annotation.id
         }
       }),
-      () => dispatch({
-        type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
-        payload: {
-          annotationId: annotation.id
-        }
-      })
+      (response) => {
+        const responseObject = JSON.parse(response.response.text);
+
+        dispatch({
+          type: Constants.REQUEST_EDIT_ANNOTATION_FAILURE,
+          payload: {
+            annotationId: annotation.id,
+            errorMessage: responseObject.errors[0].detail
+          }
+        });
+      }
     );
 };
-
 
 export const createAnnotation = (annotation) => (dispatch) => {
   const temporaryId = uuid.v4();
@@ -244,11 +248,16 @@ export const createAnnotation = (annotation) => (dispatch) => {
           }
         });
       },
-      () => dispatch({
-        type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
-        payload: {
-          annotationTemporaryId: temporaryId
-        }
-      })
+      (response) => {
+        const responseObject = JSON.parse(response.response.text);
+
+        dispatch({
+          type: Constants.REQUEST_CREATE_ANNOTATION_FAILURE,
+          payload: {
+            annotationTemporaryId: temporaryId,
+            errorMessage: responseObject.errors[0].detail
+          }
+        });
+      }
     );
 };

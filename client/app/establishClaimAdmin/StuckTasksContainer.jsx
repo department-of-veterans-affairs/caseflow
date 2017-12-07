@@ -27,7 +27,7 @@ export class StuckTasksContainer extends Component {
       </div>;
     }
 
-    return <StuckTasks {...this.props}/>;
+    return <StuckTasks {...this.props} />;
   }
 }
 

@@ -31,15 +31,12 @@ RSpec.describe "Reader Appeal Requests", type: :request do
       get "/reader/appeal/veteran-id", nil, headers
       expect(JSON.parse(response.body)["appeals"].size).to be(0)
     end
+  end
 
-    it "fails routing validation" do
-      headers["HTTP_VETERAN_ID"] = "2"
-      get "/reader/appeal/veteran-id", nil, headers
-      expect(response).to have_http_status(:not_acceptable)
-
-      headers["HTTP_VETERAN_ID"] = nil
-      get "/reader/appeal/veteran-id", nil, headers
-      expect(response).to have_http_status(:not_acceptable)
+  describe "Appeals controller #show in html" do
+    it "redirects the page to Case page" do
+      get "/reader/appeal/#{appeal.vacols_id}"
+      expect(response).to have_http_status(:redirect)
     end
   end
 end

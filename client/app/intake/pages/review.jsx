@@ -20,9 +20,9 @@ class Review extends React.PureComponent {
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN}/>;
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.COMPLETED:
-      return <Redirect to={PAGE_PATHS.COMPLETED}/>;
+      return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
 
@@ -42,7 +42,7 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      <h1>Review { veteranName }'s opt-in request</h1>
+      <h1>Review { veteranName }'s opt-in election</h1>
       <p>Check the Veteran's RAMP Opt-In Election form in the Centralized Portal.</p>
 
       <RadioField

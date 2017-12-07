@@ -1,6 +1,4 @@
 class Api::V2::AppealsController < Api::ApplicationController
-  before_action :verify_feature_enabled
-
   rescue_from Caseflow::Error::InvalidSSN, with: :invalid_ssn
 
   def index
@@ -20,22 +18,18 @@ class Api::V2::AppealsController < Api::ApplicationController
       ActiveModelSerializers::SerializableResource.new(
         appeals,
         each_serializer: ::V2::AppealSerializer,
-        include: "scheduled_hearings"
+        key_transform: :camel_lower
       ).as_json
     end
   end
 
   def appeals
-    @appeals ||= Appeal.for_api(appellant_ssn: ssn)
+    @appeals ||= AppealHistory.for_api(appellant_ssn: ssn)
   end
 
   # Cache can't be busted in prod
   def reload?
     !!params[:reload] && !Rails.deploy_env?(:prod)
-  end
-
-  def verify_feature_enabled
-    unauthorized unless FeatureToggle.enabled?(:appeals_status)
   end
 
   def veteran_not_found

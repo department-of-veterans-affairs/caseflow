@@ -4,6 +4,8 @@ import { mount } from 'enzyme';
 import AutoSave from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
+// eslint-disable-next-line no-unused-vars
+import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
 
 export const saveFunction = () => ({ my: 'action' });
 
@@ -67,7 +69,7 @@ describe('AutoSave', () => {
       const saveFunc = sinon.spy(saveFunction);
 
       mount(
-        <AutoSave save={saveFunc} intervalInMs={intervalInMs}/>
+        <AutoSave save={saveFunc} intervalInMs={intervalInMs} />
       );
 
       clock.tick(intervalInMs);

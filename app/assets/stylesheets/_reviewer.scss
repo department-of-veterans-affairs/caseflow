@@ -33,10 +33,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
-.claim-detail-type-info {
-  color: $color-secondary;
-}
-
 .cf-claims-folder-details {
   p {
     margin-top: 15px;
@@ -93,8 +89,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   top: 50px;
   bottom: 50px;
   position: absolute;
-  overflow-y: scroll;
-  overflow-x: visible;
   text-align: center;
   z-index: 5;
   will-change: transform;
@@ -152,6 +146,7 @@ svg[aria-hidden=true],
   }
 
   .usa-alert {
+    float: left;
     margin-top: 15px;
   }
 }
@@ -203,6 +198,8 @@ svg[aria-hidden=true],
   position: absolute;
   opacity: 1;
   padding: 15px 23px 15px 15px;
+  // .cf-pdf-scroll-view is 5, .cf-search-bar is 6
+  z-index: 7;
 
   .category-icons-and-doc-type {
     display: flex;
@@ -711,8 +708,8 @@ input[type="search"].cf-search-input-with-close {
   }
 }
 
-.cf-table-borderless + .cf-keyboard-modal-table thead th {
-  width: 23%;
+.cf-table-borderless.cf-keyboard-modal-table > thead > tr > th {
+  width: 200px;
 }
 
 .section--case-select {
@@ -737,5 +734,19 @@ input[type="search"].cf-search-input-with-close {
     }
 
   }
+}
 
+.cf-increment-search-match {
+  height: 3.3rem;
+  padding-top: 3px;
+  width: 4rem;
+
+  &.cf-prev-match {
+    border-radius: 1rem 0 0 1rem;
+  }
+
+  &.cf-next-match {
+    border-radius: 0 1rem 1rem 0;
+    margin-left: 5px !important;
+  }
 }

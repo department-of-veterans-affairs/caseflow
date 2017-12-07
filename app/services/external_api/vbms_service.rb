@@ -47,7 +47,7 @@ class ExternalApi::VBMSService
     {
       manifest_vbms_fetched_at: nil,
       manifest_vva_fetched_at: nil,
-      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document) }
+      documents: documents.map { |vbms_document| Document.from_vbms_document(vbms_document, sanitized_id) }
     }
   end
 
@@ -117,7 +117,8 @@ class ExternalApi::VBMSService
   def self.init_vbms_client
     VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
-      env_name: ENV["CONNECT_VBMS_ENV"]
+      env_name: ENV["CONNECT_VBMS_ENV"],
+      use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
   end
 

@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import InlineForm from '../../components/InlineForm';
 
-export default class StyleGuideInlineForm extends React.Component {
+export default class StyleGuideInlineForm extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -20,7 +20,7 @@ export default class StyleGuideInlineForm extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Inline Form"
-        id="inline_form"
+        id="inline-form"
         link="StyleGuideInlineForm.jsx"
         isSubsection
       />

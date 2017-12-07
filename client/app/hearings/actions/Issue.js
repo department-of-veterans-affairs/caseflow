@@ -1,6 +1,7 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
+import { CATEGORIES, ACTIONS } from '../analytics';
 
 export const onProgramChange = (program, issueId) => ({
   type: Constants.SET_PROGRAM,
@@ -39,6 +40,13 @@ export const onToggleReopen = (reopen, issueId) => ({
   payload: {
     reopen,
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
+      label: 'reopen'
+    }
   }
 });
 
@@ -47,6 +55,13 @@ export const onToggleAllow = (allow, issueId) => ({
   payload: {
     allow,
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
+      label: 'allow'
+    }
   }
 });
 
@@ -55,6 +70,13 @@ export const onToggleDeny = (deny, issueId) => ({
   payload: {
     deny,
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
+      label: 'deny'
+    }
   }
 });
 
@@ -63,6 +85,13 @@ export const onToggleRemand = (remand, issueId) => ({
   payload: {
     remand,
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
+      label: 'remand'
+    }
   }
 });
 
@@ -71,6 +100,13 @@ export const onToggleDismiss = (dismiss, issueId) => ({
   payload: {
     dismiss,
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
+      label: 'dismiss'
+    }
   }
 });
 
@@ -79,6 +115,13 @@ export const onToggleVHA = (vha, issueId) => ({
   payload: {
     vha,
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+      action: ACTIONS.TOGGLE_PRELIMINARY_IMPRESSION,
+      label: 'vha'
+    }
   }
 });
 
@@ -97,7 +140,13 @@ export const onAddIssue = (appealId, vacolsSequenceId) => (dispatch) => {
       })[0];
 
       dispatch({ type: Constants.ADD_ISSUE,
-        payload: { issue } });
+        payload: { issue },
+        meta: {
+          analytics: {
+            category: CATEGORIES.HEARING_WORKSHEET_PAGE
+          }
+        }
+      });
     });
 };
 
@@ -105,9 +154,13 @@ export const onDeleteIssue = (issueId) => ({
   type: Constants.DELETE_ISSUE,
   payload: {
     issueId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.HEARING_WORKSHEET_PAGE
+    }
   }
 });
-
 
 export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
   type: Constants.TOGGLE_ISSUE_DELETE_MODAL,
@@ -124,7 +177,14 @@ export const saveIssues = (worksheetIssues) => (dispatch) => {
         worksheet_issues_attributes: [issue] } } }).
         then(() => {
           dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
-            payload: { issueId: issue.id } });
+            payload: { issueId: issue.id },
+            meta: {
+              analytics: {
+                category: CATEGORIES.HEARING_WORKSHEET_PAGE,
+                action: ACTIONS.EDIT_ISSUE
+              }
+            }
+          });
         },
         () => {
           dispatch({ type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,

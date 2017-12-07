@@ -293,6 +293,7 @@ body {
   }
 }
 
+//candidate for commons
 .cf-red-text {
   color: $color-secondary;
 }
@@ -398,6 +399,17 @@ body {
   &.cf-success-emoji-text {
     width: auto;
   }
+}
+
+.pdfViewer.singlePageView .cf-msg-screen-deck {
+  width: auto;
+}
+
+.cf-warning {
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-left: 3rem;
+  background-color: inherit;
 }
 
 .cf-tab-window-body {
@@ -679,6 +691,13 @@ select {
 .usa-accordion,
 .usa-accordion-bordered-outline {
   margin-bottom: 40px;
+
+  .usa-accordion-button {
+    &,
+    i {
+      color: $color-gray-dark;
+    }
+  }
 }
 
 // candidate for commons

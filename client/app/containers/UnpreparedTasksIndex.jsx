@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
 
-
 export default class UnpreparedTasksIndex extends React.Component {
   render() {
     let {

@@ -2,7 +2,7 @@ import React from 'react';
 import DropdownMenu from '../../components/DropdownMenu';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
-export default class StyleGuideUserDropdownMenu extends React.Component {
+export default class StyleGuideUserDropdownMenu extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +38,7 @@ export default class StyleGuideUserDropdownMenu extends React.Component {
       <br />
       <StyleGuideComponentTitle
         title="User dropdown menu"
-        id="user_dropdown_menu"
+        id="user-dropdown-menu"
         link="StyleGuideUserDropdownMenu.jsx"
         isSubsection
       />

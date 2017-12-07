@@ -2,7 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import TextField from '../../components/TextField';
 
-export default class StyleGuideTextInput extends React.Component {
+export default class StyleGuideTextInput extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -16,7 +16,7 @@ export default class StyleGuideTextInput extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Text Input"
-        id="text_input"
+        id="text-input"
         link="StyleGuideTextInput.jsx"
         isSubsection
       />
@@ -40,7 +40,7 @@ export default class StyleGuideTextInput extends React.Component {
         required={false}
         onChange={(value) => {
           this.setState({ value });
-        }}/>
+        }} />
     </div>;
   }
 }

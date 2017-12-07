@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171013213546) do
+ActiveRecord::Schema.define(version: 20171206005110) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,11 @@ ActiveRecord::Schema.define(version: 20171013213546) do
 
   add_index "api_keys", ["consumer_name"], name: "index_api_keys_on_consumer_name", unique: true, using: :btree
   add_index "api_keys", ["key_digest"], name: "index_api_keys_on_key_digest", unique: true, using: :btree
+
+  create_table "appeal_series", force: :cascade do |t|
+    t.boolean "incomplete",          default: false
+    t.integer "merged_appeal_count"
+  end
 
   create_table "appeal_views", force: :cascade do |t|
     t.integer  "user_id",        null: false
@@ -77,8 +82,10 @@ ActiveRecord::Schema.define(version: 20171013213546) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands",            default: false
     t.string  "dispatched_to_station"
+    t.integer "appeal_series_id"
   end
 
+  add_index "appeals", ["appeal_series_id"], name: "index_appeals_on_appeal_series_id", using: :btree
   add_index "appeals", ["vacols_id"], name: "index_appeals_on_vacols_id", unique: true, using: :btree
 
   create_table "certification_cancellations", force: :cascade do |t|
@@ -167,6 +174,9 @@ ActiveRecord::Schema.define(version: 20171013213546) do
     t.boolean "category_procedural"
     t.boolean "category_medical"
     t.boolean "category_other"
+    t.date    "received_at"
+    t.string  "type"
+    t.string  "file_number"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
@@ -267,26 +277,38 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   end
 
   create_table "intakes", force: :cascade do |t|
-    t.integer  "detail_id",           null: false
-    t.string   "detail_type",         null: false
+    t.integer  "detail_id"
+    t.string   "detail_type"
     t.integer  "user_id",             null: false
     t.string   "veteran_file_number"
     t.datetime "started_at"
     t.datetime "completed_at"
     t.string   "completion_status"
+    t.string   "error_code"
+    t.string   "type"
   end
 
+  add_index "intakes", ["type"], name: "index_intakes_on_type", using: :btree
   add_index "intakes", ["user_id"], name: "index_intakes_on_user_id", using: :btree
   add_index "intakes", ["veteran_file_number"], name: "index_intakes_on_veteran_file_number", using: :btree
 
   create_table "ramp_elections", force: :cascade do |t|
-    t.string "veteran_file_number", null: false
-    t.date   "notice_date",         null: false
+    t.string "veteran_file_number",      null: false
+    t.date   "notice_date",              null: false
     t.date   "receipt_date"
     t.string "option_selected"
+    t.string "end_product_reference_id"
   end
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
+
+  create_table "reader_users", force: :cascade do |t|
+    t.integer  "user_id",              null: false
+    t.datetime "documents_fetched_at"
+  end
+
+  add_index "reader_users", ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at", using: :btree
+  add_index "reader_users", ["user_id"], name: "index_reader_users_on_user_id", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "text"
@@ -363,5 +385,6 @@ ActiveRecord::Schema.define(version: 20171013213546) do
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
 
   add_foreign_key "annotations", "users"
+  add_foreign_key "appeals", "appeal_series"
   add_foreign_key "certifications", "users"
 end

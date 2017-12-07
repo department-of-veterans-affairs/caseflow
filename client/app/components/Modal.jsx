@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { closeSymbolHtml } from './RenderFunctions.jsx';
-import Button from './Button.jsx';
+import { closeSymbolHtml } from './RenderFunctions';
+import Button from './Button';
 import _ from 'lodash';
 
 export default class Modal extends React.Component {
@@ -37,12 +37,15 @@ export default class Modal extends React.Component {
     }
   }
 
+  modalCloseFocus = (modalClose) => this.modalClose = modalClose
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.keyHandler);
+    this.modalClose.focus();
   }
 
   generateButtons() {
@@ -113,6 +116,7 @@ export default class Modal extends React.Component {
           id={`${this.buttonIdPrefix}close`}
           className="cf-modal-close"
           onClick={closeHandler}
+          ref={this.modalCloseFocus}
         >
           {closeSymbolHtml()}
         </button>
