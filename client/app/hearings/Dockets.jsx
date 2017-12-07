@@ -32,7 +32,7 @@ export class Dockets extends React.Component {
     </Link>;
   }
 
-  scheduled = (docket) => {
+  getScheduledCount = (docket) => {
     return (docket.master_record ? 0 : docket.hearings_count);
   }
 
@@ -79,7 +79,7 @@ export class Dockets extends React.Component {
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: docket.slots,
-        scheduled: this.scheduled(docket)
+        scheduled: this.getScheduledCount(docket)
       };
     });
 

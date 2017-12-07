@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
+import _ from 'lodash';
 import LoadingContainer from '../components/LoadingContainer';
 import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
@@ -40,7 +41,7 @@ export class DailyDocketContainer extends React.Component {
       </div>;
     }
 
-    if (Object.keys(dailyDocket).length === 0) {
+    if (_.isEmpty(dailyDocket)) {
       return <div>You have no hearings on this date.</div>;
     }
 
@@ -67,7 +68,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getDailyDocket: (dailyDocket, date) => () => {
-    if (!dailyDocket || !dailyDocket[date]) {
+    if (!dailyDocket[date]) {
       ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
         then((response) => {
           dispatch(Actions.populateDailyDocket(response.body, date));

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import * as Actions from './actions/Dockets';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingContainer from '../components/LoadingContainer';
@@ -8,20 +9,19 @@ import StatusMessage from '../components/StatusMessage';
 import Dockets from './Dockets';
 import ApiUtil from '../util/ApiUtil';
 
-export const getUpcomingHearings = (dispatch) => {
-  ApiUtil.get('/hearings/dockets.json', { cache: true }).
-    then((response) => {
-      dispatch(Actions.populateUpcomingHearings(response.body));
-    }, (err) => {
-      dispatch(Actions.handleDocketServerError(err));
-    });
-};
-
 export class DocketsContainer extends React.Component {
+
+  getUpcomingHearings = () => {
+    ApiUtil.get('/hearings/dockets.json', {cache: true}).then((response) => {
+      this.props.dispatch(Actions.populateUpcomingHearings(response.body));
+    }, (err) => {
+      this.props.dispatch(Actions.handleDocketServerError(err));
+    });
+  };
 
   componentDidMount() {
     if (!this.props.upcomingHearings) {
-      this.props.getUpcomingHearings();
+      this.getUpcomingHearings();
     }
   }
 
@@ -47,7 +47,7 @@ export class DocketsContainer extends React.Component {
       </div>;
     }
 
-    if (Object.keys(this.props.upcomingHearings).length === 0) {
+    if (_.isEmpty(this.props.upcomingHearings)) {
       return <div>You have no upcoming hearings.</div>;
     }
 
@@ -60,15 +60,8 @@ const mapStateToProps = (state) => ({
   docketServerError: state.docketServerError
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  getUpcomingHearings: () => {
-    getUpcomingHearings(dispatch);
-  }
-});
-
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(DocketsContainer);
 
 DocketsContainer.propTypes = {
