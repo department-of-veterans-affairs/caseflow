@@ -130,7 +130,7 @@ export const deleteAnnotation = (docId, annotationId) =>
               annotationId
             }
           });
-          dispatch(showErrorMessage('annotation'));          
+          dispatch(showErrorMessage('annotation'));
         });
   };
 

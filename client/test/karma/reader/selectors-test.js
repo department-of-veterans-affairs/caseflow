@@ -126,20 +126,18 @@ describe('Reader utils', () => {
             documentId: 800
           }
         },
-        ui: {
-          pendingEditingAnnotations: {
-            250: {
-              id: 250,
-              comment: 'pending edit',
-              documentId
-            }
-          },
-          pendingAnnotations: {
-            'temp-guid': {
-              id: 'temp-guid',
-              comment: 'pending annotation',
-              documentId
-            }
+        pendingEditingAnnotations: {
+          250: {
+            id: 250,
+            comment: 'pending edit',
+            documentId
+          }
+        },
+        pendingAnnotations: {
+          'temp-guid': {
+            id: 'temp-guid',
+            comment: 'pending annotation',
+            documentId
           }
         }
       };
