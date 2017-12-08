@@ -4,7 +4,6 @@ import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations } from './LoadingScreen/LoadingScreenActions';
 import { connect } from 'react-redux';
-import StatusMessage from '../components/StatusMessage';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
 

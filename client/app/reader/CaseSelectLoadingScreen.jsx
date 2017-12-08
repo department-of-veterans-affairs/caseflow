@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
-import StatusMessage from '../components/StatusMessage';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
 

@@ -18,7 +18,6 @@ import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import StatusMessage from '../components/StatusMessage';
 
 class EntryPointRedirect extends React.Component {
   render() {
@@ -140,6 +139,8 @@ export class Certification extends React.Component {
     return <LoadingDataDisplay
       loadPromise={this.state.loadPromise}
       promiseStartTimeMs={this.state.promiseStartTimeMs}
+      slowLoadThresholdMs={AppConstants.LONGER_THAN_USUAL_TIMEOUT}
+      timeoutMs={AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT}
       slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
       loadingScreenProps={{
         message: 'Loading and checking documents from the Veteran’s file…',
@@ -149,7 +150,7 @@ export class Certification extends React.Component {
         title: 'Technical Difficulties'
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
-      { this.state.certification && 
+      { this.state.certification &&
         <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
           <BrowserRouter>
             <div>
