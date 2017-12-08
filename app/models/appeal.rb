@@ -238,7 +238,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def ramp_election
-    RampElection.where(veteran_file_number: sanitized_vbms_id).first
+    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
   end
 
   def in_location?(location)
