@@ -33,11 +33,10 @@ class LoadingDataDisplay extends React.PureComponent {
         this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
       },
       () => {
-        debugger;
         if (!promise === this.props.loadPromise) {
           return;
         }
-
+        
         this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
       }
     );

@@ -12,20 +12,27 @@ import _ from 'lodash';
 
 export class ReaderLoadingScreen extends React.Component {
 
+  constructor() {
+    super();
+    this.state = {};
+  }
+
   componentDidMount = () => {
     if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
       return;
     }
 
     this.promiseStartTimeMs = Date.now();
-    this.loadPromise = ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-      const documents = returnedObject.appealDocuments;
-      const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
+    this.setState({
+      loadPromise: ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
+        const returnedObject = JSON.parse(response.text);
+        const documents = returnedObject.appealDocuments;
+        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-      this.props.onReceiveDocs(documents, this.props.vacolsId);
-      this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
-      this.props.onReceiveAnnotations(annotations);
+        this.props.onReceiveDocs(documents, this.props.vacolsId);
+        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+        this.props.onReceiveAnnotations(annotations);
+      })
     });
   }
 
@@ -36,7 +43,7 @@ export class ReaderLoadingScreen extends React.Component {
     // componentWillMount() instead, but React docs tell us not to introduce side-effects
     // in that method. I don't know why that's a bad idea. But this approach lets us
     // keep the side effects in componentDidMount().
-    if (!this.loadPromise) {
+    if (!this.state.loadPromise) {
       return null;
     }
 
@@ -47,7 +54,7 @@ export class ReaderLoadingScreen extends React.Component {
     </StatusMessage>;
 
     return <LoadingDataDisplay
-      loadPromise={this.loadPromise}
+      loadPromise={this.state.loadPromise}
       promiseStartTimeMs={this.promiseStartTimeMs}
       timeoutMs={30 * 1000}
       slowLoadThresholdMs={15 * 1000}
