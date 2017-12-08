@@ -98,7 +98,7 @@ module StubbableUser
             "station_id" => "283",
             "email" => "test@example.com",
             "roles" => roles || ["Certify Appeal"] }
-        }, OpenStruct.new(remote_ip: "127.0.0.1"))
+        })
     end
 
     def tester!(roles: nil)
@@ -108,7 +108,7 @@ module StubbableUser
             "station_id" => "283",
             "email" => "test@example.com",
             "roles" => roles || ["Certify Appeal"] }
-        }, OpenStruct.new(remote_ip: "127.0.0.1"))
+        })
     end
 
     def current_user
@@ -124,8 +124,8 @@ module StubbableUser
       self.stub = nil
     end
 
-    def from_session(session, request)
-      @stub || super(session, request)
+    def from_session(session)
+      @stub || super(session)
     end
   end
 
