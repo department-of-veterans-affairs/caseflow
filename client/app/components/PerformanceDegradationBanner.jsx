@@ -62,6 +62,9 @@ export default class PerformanceDegradationBanner extends React.Component {
   }
 
   componentDidMount() {
+    if (document.hidden) {
+      return;
+    }
     // initial check
     this.checkDependencies();
 

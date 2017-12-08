@@ -22,12 +22,8 @@ export class Dockets extends React.Component {
     return index;
   }
 
-  masterRecord = (docket) => {
-    return docket.hearings_array[0].master_record === true;
-  }
-
   linkToDailyDocket = (docket) => {
-    if (this.masterRecord(docket)) {
+    if (docket.master_record) {
       return moment(docket.date).format('l');
     }
 
@@ -36,13 +32,13 @@ export class Dockets extends React.Component {
     </Link>;
   }
 
-  scheduled = (docket) => {
-    return (this.masterRecord(docket)) ? 0 : docket.hearings_array.length;
+  getScheduledCount = (docket) => {
+    return (docket.master_record ? 0 : docket.hearings_count);
   }
 
   render() {
 
-    const docketIndex = Object.keys(this.props.dockets).sort();
+    const docketIndex = Object.keys(this.props.upcomingHearings).sort();
 
     const columns = [
       {
@@ -75,7 +71,7 @@ export class Dockets extends React.Component {
 
     const rowObjects = docketIndex.map((docketDate) => {
 
-      let docket = this.props.dockets[docketDate];
+      let docket = this.props.upcomingHearings[docketDate];
 
       return {
         date: this.linkToDailyDocket(docket),
@@ -83,7 +79,7 @@ export class Dockets extends React.Component {
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: docket.slots,
-        scheduled: this.scheduled(docket)
+        scheduled: this.getScheduledCount(docket)
       };
     });
 
@@ -106,7 +102,7 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets
+  upcomingHearings: state.upcomingHearings
 });
 
 export default connect(
@@ -115,5 +111,5 @@ export default connect(
 
 Dockets.propTypes = {
   veteranLawJudge: PropTypes.object.isRequired,
-  dockets: PropTypes.object.isRequired
+  upcomingHearings: PropTypes.object.isRequired
 };

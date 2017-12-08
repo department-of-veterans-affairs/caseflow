@@ -78,7 +78,7 @@ Rails.application.routes.draw do
   end
 
   namespace :hearings do
-    resources :dockets, only: [:index, :show]
+    resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
   end
@@ -94,7 +94,7 @@ Rails.application.routes.draw do
   resources :intakes, path: "intake", only: [:index, :create]
 
   namespace :intake do
-    resources :ramp_intakes, path: "ramp", only: [:update, :destroy] do
+    resources :ramp_election_intakes, path: "ramp", only: [:update, :destroy] do
       patch 'complete', on: :member
     end
   end

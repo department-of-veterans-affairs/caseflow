@@ -1,4 +1,6 @@
 class Intake < ActiveRecord::Base
+  class FormTypeNotSupported < StandardError; end
+
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
@@ -14,10 +16,23 @@ class Intake < ActiveRecord::Base
     veteran_not_accessible: "veteran_not_accessible"
   }.freeze
 
+  FORM_TYPES = {
+    ramp_election: "RampElectionIntake",
+    ramp_refiling: "RampRefilingIntake"
+  }.freeze
+
   attr_reader :error_data
 
   def self.in_progress
     where(completed_at: nil).where.not(started_at: nil)
+  end
+
+  def self.build(form_type:, veteran_file_number:, user:)
+    intake_classname = FORM_TYPES[form_type.to_sym]
+
+    fail FormTypeNotSupported unless intake_classname
+
+    intake_classname.constantize.new(veteran_file_number: veteran_file_number, user: user)
   end
 
   def start!
@@ -64,6 +79,21 @@ class Intake < ActiveRecord::Base
 
   def veteran
     @veteran ||= Veteran.new(file_number: veteran_file_number).load_bgs_record!
+  end
+
+  def ui_hash
+    {
+      id: id,
+      form_type: form_type,
+      veteran_file_number: veteran_file_number,
+      veteran_name: veteran.name.formatted(:readable_short),
+      veteran_form_name: veteran.name.formatted(:form),
+      completed_at: completed_at
+    }
+  end
+
+  def form_type
+    FORM_TYPES.key(self.class.name)
   end
 
   private

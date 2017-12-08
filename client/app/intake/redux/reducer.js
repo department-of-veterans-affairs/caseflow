@@ -61,6 +61,7 @@ const updateStateWithSavedIntake = (state, intake) => {
 
 export const mapDataToInitialState = (data = { currentIntake: {} }) => (
   updateStateWithSavedIntake({
+    formType: null,
     veteran: {
       name: '',
       formName: '',
@@ -122,6 +123,12 @@ export const reducer = (state = mapDataToInitialState(), action) => {
         fileNumberSearch: {
           $set: action.payload.fileNumber
         }
+      }
+    });
+  case ACTIONS.SET_FORM_TYPE:
+    return update(state, {
+      formType: {
+        $set: action.payload.formType
       }
     });
   case ACTIONS.SET_OPTION_SELECTED:
