@@ -14,8 +14,8 @@ export class Dockets extends React.Component {
 
   getDate = (date) => {
     return moment(date).tz('America/New_York').
-        format('h:mm a z').
-        replace(/(a|p)(m)/, '$1.$2.');
+      format('h:mm a z').
+      replace(/(a|p)(m)/, '$1.$2.');
   };
 
   getKeyForRow = (index) => {
