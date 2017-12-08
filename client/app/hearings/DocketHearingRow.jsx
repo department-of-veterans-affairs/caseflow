@@ -60,8 +60,7 @@ export class DocketHearingRow extends React.PureComponent {
 
     let getRoTime = (date) => {
       return moment(date).tz(roTimeZone).
-        format('h:mm a z').
-        replace(/(a|p)(m)/, '$1.$2.');
+        format('h:mm a z');
     };
 
     const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
