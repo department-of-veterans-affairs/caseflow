@@ -9,6 +9,7 @@ import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested }
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
+import { getDate } from './util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -35,12 +36,6 @@ const aodOptions = [{ value: 'granted',
   label: 'Filed' },
 { value: 'none',
   label: 'None' }];
-
-const getDate = (date) => {
-  return moment(date).tz('America/New_York').
-    format('h:mm a z').
-    replace(/(a|p)(m)/, '$1.$2.');
-};
 
 export class DocketHearingRow extends React.PureComponent {
 
