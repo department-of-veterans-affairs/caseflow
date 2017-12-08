@@ -102,7 +102,8 @@ class User < ActiveRecord::Base
     opened_appeals = viewed_appeals(appeals.map(&:id))
 
     appeals.map do |appeal|
-      appeal.to_hash(viewed: opened_appeals[appeal.id], issues: appeal.issues, hearings: 18)
+      hearing_id = !appeal.hearings.empty? ? appeal.hearings[0].id : nil
+      appeal.to_hash(viewed: opened_appeals[appeal.id], issues: appeal.issues, hearing_id: hearing_id)
     end
   end
 
