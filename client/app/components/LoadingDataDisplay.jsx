@@ -65,7 +65,7 @@ class LoadingDataDisplay extends React.PureComponent {
     }
 
     const isSlow = Date.now() - this.props.promiseStartTimeMs > this.props.slowLoadThresholdMs;
-    const loadingScreenProps = {...this.props.loadingScreenProps};
+    const loadingScreenProps = { ...this.props.loadingScreenProps };
 
     if (isSlow) {
       loadingScreenProps.message = this.props.slowLoadMessage;

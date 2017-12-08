@@ -18,7 +18,7 @@ export class CaseSelectLoadingScreen extends React.Component {
 
   componentDidMount = () => {
     if (this.props.assignments) {
-      
+
       // We append an unneeded query param to avoid caching the json object. If we get thrown
       // to a page outside of the SPA and then hit back, we want the cached version of this
       // page to be the HTML page, not the JSON object.
@@ -31,7 +31,7 @@ export class CaseSelectLoadingScreen extends React.Component {
       this.setState({
         promiseStartTimeMs: Date.now(),
         loadPromise
-      })
+      });
     }
   }
 

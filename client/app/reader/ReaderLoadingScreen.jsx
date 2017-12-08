@@ -32,7 +32,7 @@ export class ReaderLoadingScreen extends React.Component {
 
     this.setState({
       promiseStartTimeMs: Date.now(),
-      loadPromise 
+      loadPromise
     });
   }
 

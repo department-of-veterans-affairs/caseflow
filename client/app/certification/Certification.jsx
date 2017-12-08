@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
+import _ from 'lodash';
 
 import ConfigUtil from '../util/ConfigUtil';
 import Success from './Success';
@@ -15,8 +16,8 @@ import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
-import LoadingScreen from '../components/LoadingScreen';
 import * as AppConstants from '../constants/AppConstants';
+import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import StatusMessage from '../components/StatusMessage';
 
 class EntryPointRedirect extends React.Component {
@@ -88,126 +89,115 @@ export class Certification extends React.Component {
   }
 
   checkCertificationData() {
-    ApiUtil.get(`/certifications/${this.props.vacolsId}`).
-      then((data) => {
-        this.setState({
-          loadingData: JSON.parse(data.text).loading_data,
-          loadingDataFailed: JSON.parse(data.text).loading_data_failed,
-          certification: JSON.parse(data.text).certification,
-          form9PdfPath: JSON.parse(data.text).form9PdfPath
-        });
-      }, () => {
-        this.setState({
-          loadingDataFailed: true
-        });
-      });
+    const loadPromise = new Promise((resolve, reject) => {
+      const makePollAttempt = () => {
+        ApiUtil.get(`/certifications/${this.props.vacolsId}`).
+          then(({ text }) => {
+            const response = JSON.parse(text);
+
+            if (response.loading_data_failed) {
+              reject(new Error('Backend failed to load data'));
+            }
+
+            if (response.loading_data) {
+              setTimeout(makePollAttempt, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
+
+              return;
+            }
+
+            this.setState(_.pick(response, ['certification', 'form9PdfPath']));
+            resolve();
+          }, reject);
+      };
+
+      makePollAttempt();
+    });
+
+    this.setState({
+      promiseStartTimeMs: Date.now(),
+      loadPromise
+    });
   }
 
   componentDidMount() {
     // initial check
     this.checkCertificationData();
-    // Timer for longer-than-usual message
-    setTimeout(
-      () => {
-        this.setState(
-          Object.assign({}, this.state, {
-            longerThanUsual: true
-          }));
-      },
-      AppConstants.LONGER_THAN_USUAL_TIMEOUT
-    );
-    // Timer for overall timeout
-    setTimeout(
-      () => {
-        this.setState(
-          Object.assign({}, this.state, {
-            overallTimeout: true
-          }));
-      },
-      AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT
-    );
-  }
-
-  componentDidUpdate() {
-    // subsequent checks if data is still loading
-    if (!this.state.certification && !this.state.loadingDataFailed && !this.state.overallTimeout) {
-      setTimeout(() =>
-        this.checkCertificationData(), AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
-    }
   }
 
   render() {
+    // We create this.loadPromise in componentDidMount().
+    // componentDidMount() is only called after the component is inserted into the DOM,
+    // which means that render() will be called beforehand. My inclination was to use
+    // componentWillMount() instead, but React docs tell us not to introduce side-effects
+    // in that method. I don't know why that's a bad idea. But this approach lets us
+    // keep the side effects in componentDidMount().
+    if (!this.state.loadPromise) {
+      return null;
+    }
 
-    const initialMessage = 'Loading and checking documents from the Veteran’s file…';
-
-    const longerThanUsualMessage = 'Documents are taking longer to load than usual. Thanks for your patience!';
-
-    const failureMessage = <StatusMessage
-      title="Technical Difficulties">
-                              Systems that Caseflow Certification connects to are experiencing technical difficulties
-                              and Caseflow is unable to load.
-                We apologize for any inconvenience. Please try again later.
+    const failureMessage = <StatusMessage title="Technical Difficulties">
+      Systems that Caseflow Certification connects to are experiencing technical difficulties
+      and Caseflow is unable to load.
+      We apologize for any inconvenience. Please try again later.
     </StatusMessage>;
 
-    let message = this.state.longerThanUsual ? longerThanUsualMessage : initialMessage;
+    let successComponent = <div></div>;
 
-    return <div>
-      {
-        !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) &&
-        <LoadingScreen
-          message={message}
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION} />
-      }
+    if (this.state.certification) {
+      successComponent = <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
+        <BrowserRouter>
+          <div>
+            <Route path="/certifications/new/:vacols_id"
+              component={EntryPointRedirect} />
+            <PageRoute
+              title="Check Documents | Caseflow Certification"
+              path="/certifications/:vacols_id/check_documents"
+              component={DocumentsCheck}
+            />
+            <PageRoute
+              title="Confirm Case Details | Caseflow Certification"
+              path="/certifications/:vacols_id/confirm_case_details"
+              component={ConfirmCaseDetails}
+            />
+            <PageRoute
+              title="Confirm Hearing | Caseflow Certification"
+              path="/certifications/:vacols_id/confirm_hearing"
+              component={ConfirmHearing}
+            />
+            <PageRoute
+              title="Sign and Certify | Caseflow Certification"
+              path="/certifications/:vacols_id/sign_and_certify"
+              component={SignAndCertify} />
+            <PageRoute
+              title="Success! | Caseflow Certification"
+              path="/certifications/:vacols_id/success"
+              component={Success}
+            />
+            <PageRoute
+              title="Error | Caseflow Certification"
+              path="/certifications/error"
+              component={ErrorMessage}
+            />
+            <PageRoute
+              title="Not Certified | Caseflow Certification"
+              path="/certification_cancellations/"
+              component={CancelCertificationConfirmation}
+            />
+          </div>
+        </BrowserRouter>
+      </Provider>;
+    }
 
-      {
-        (this.state.loadingDataFailed || this.state.overallTimeout) && !this.state.certification && failureMessage
-      }
-
-      { this.state.certification && !this.state.loading_data &&
-      <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
-        <div>
-          <BrowserRouter>
-            <div>
-              <Route path="/certifications/new/:vacols_id"
-                component={EntryPointRedirect} />
-              <PageRoute
-                title="Check Documents | Caseflow Certification"
-                path="/certifications/:vacols_id/check_documents"
-                component={DocumentsCheck}
-              />
-              <PageRoute
-                title="Confirm Case Details | Caseflow Certification"
-                path="/certifications/:vacols_id/confirm_case_details"
-                component={ConfirmCaseDetails}
-              />
-              <PageRoute
-                title="Confirm Hearing | Caseflow Certification"
-                path="/certifications/:vacols_id/confirm_hearing"
-                component={ConfirmHearing}
-              />
-              <PageRoute
-                title="Sign and Certify | Caseflow Certification"
-                path="/certifications/:vacols_id/sign_and_certify"
-                component={SignAndCertify} />
-              <PageRoute
-                title="Success! | Caseflow Certification"
-                path="/certifications/:vacols_id/success"
-                component={Success}
-              />
-              <PageRoute
-                title="Error | Caseflow Certification"
-                path="/certifications/error"
-                component={ErrorMessage}
-              />
-              <PageRoute
-                title="Not Certified | Caseflow Certification"
-                path="/certification_cancellations/"
-                component={CancelCertificationConfirmation}
-              />
-            </div>
-          </BrowserRouter>
-        </div>
-      </Provider> }
-    </div>;
+    return <LoadingDataDisplay
+      loadPromise={this.state.loadPromise}
+      promiseStartTimeMs={this.state.promiseStartTimeMs}
+      slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
+      loadingScreenProps={{
+        message: 'Loading and checking documents from the Veteran’s file…',
+        spinnerColor: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION
+      }}
+      successComponent={successComponent}
+      failureComponent={failureMessage}
+    />;
   }
 }
