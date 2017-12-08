@@ -16,17 +16,21 @@ class LoadingDataDisplay extends React.PureComponent {
   componentDidMount() {
     this.listenToPromise(this.props.loadPromise);
     this.intervalId = window.setInterval(this.forceUpdate.bind(this), 100);
+    this.isMounted = true;
   }
 
   componentWillUnmount() {
     window.clearInterval(this.intervalId);
+    this.isMounted = false;
   }
 
   listenToPromise = (promise) => {
-    // TODO These promise handlers may fire after the component unmounts.
+    // Promise does not give us a way to "un-then" and stop listening 
+    // when the component unmounts. So we'll leave this reference dangling,
+    // but at least we can use this.isMounted to avoid taking action if necessary.
     promise.then(
       () => {
-        if (!promise === this.props.loadPromise) {
+        if (this.isMounted && !promise === this.props.loadPromise) {
           return;
         }
 
@@ -34,7 +38,7 @@ class LoadingDataDisplay extends React.PureComponent {
         window.clearInterval(this.intervalId);
       },
       () => {
-        if (!promise === this.props.loadPromise) {
+        if (this.isMounted && !promise === this.props.loadPromise) {
           return;
         }
 
