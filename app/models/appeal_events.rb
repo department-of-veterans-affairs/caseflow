@@ -19,6 +19,7 @@ class AppealEvents
         hearing_transcript_events,
         decision_event,
         issue_event,
+        ramp_notice_event,
         cavc_decision_events
       ].flatten.uniq.select(&:valid?)
     end
@@ -119,5 +120,9 @@ class AppealEvents
     appeal.cavc_decisions.map(&:decision_date).uniq.map do |cavc_decision_date|
       AppealEvent.new(type: :cavc_decision, date: cavc_decision_date)
     end
+  end
+
+  def ramp_notice_event
+    AppealEvent.new(type: :ramp_notice, date: appeal.ramp_election.try(:notice_date))
   end
 end
