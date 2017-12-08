@@ -52,6 +52,9 @@ Rails.application.configure do
     end
   end
 
+  # This should be the localhost ip address
+  config.user_ip_address = "127.0.0.1"
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
