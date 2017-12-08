@@ -131,58 +131,11 @@ export class Certification extends React.Component {
       return null;
     }
 
-    const failureMessage = <StatusMessage title="Technical Difficulties">
+    const failStatusMessageChildren = <div>
       Systems that Caseflow Certification connects to are experiencing technical difficulties
       and Caseflow is unable to load.
       We apologize for any inconvenience. Please try again later.
-    </StatusMessage>;
-
-    let successComponent = <div></div>;
-
-    if (this.state.certification) {
-      successComponent = <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
-        <BrowserRouter>
-          <div>
-            <Route path="/certifications/new/:vacols_id"
-              component={EntryPointRedirect} />
-            <PageRoute
-              title="Check Documents | Caseflow Certification"
-              path="/certifications/:vacols_id/check_documents"
-              component={DocumentsCheck}
-            />
-            <PageRoute
-              title="Confirm Case Details | Caseflow Certification"
-              path="/certifications/:vacols_id/confirm_case_details"
-              component={ConfirmCaseDetails}
-            />
-            <PageRoute
-              title="Confirm Hearing | Caseflow Certification"
-              path="/certifications/:vacols_id/confirm_hearing"
-              component={ConfirmHearing}
-            />
-            <PageRoute
-              title="Sign and Certify | Caseflow Certification"
-              path="/certifications/:vacols_id/sign_and_certify"
-              component={SignAndCertify} />
-            <PageRoute
-              title="Success! | Caseflow Certification"
-              path="/certifications/:vacols_id/success"
-              component={Success}
-            />
-            <PageRoute
-              title="Error | Caseflow Certification"
-              path="/certifications/error"
-              component={ErrorMessage}
-            />
-            <PageRoute
-              title="Not Certified | Caseflow Certification"
-              path="/certification_cancellations/"
-              component={CancelCertificationConfirmation}
-            />
-          </div>
-        </BrowserRouter>
-      </Provider>;
-    }
+    </div>;
 
     return <LoadingDataDisplay
       loadPromise={this.state.loadPromise}
@@ -192,8 +145,53 @@ export class Certification extends React.Component {
         message: 'Loading and checking documents from the Veteran’s file…',
         spinnerColor: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION
       }}
-      successComponent={successComponent}
-      failureComponent={failureMessage}
-    />;
+      failStatusMessageProps={{
+        title: 'Technical Difficulties'
+      }}
+      failStatusMessageChildren={failStatusMessageChildren}>
+      { this.state.certification && 
+        <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
+          <BrowserRouter>
+            <div>
+              <Route path="/certifications/new/:vacols_id"
+                component={EntryPointRedirect} />
+              <PageRoute
+                title="Check Documents | Caseflow Certification"
+                path="/certifications/:vacols_id/check_documents"
+                component={DocumentsCheck}
+              />
+              <PageRoute
+                title="Confirm Case Details | Caseflow Certification"
+                path="/certifications/:vacols_id/confirm_case_details"
+                component={ConfirmCaseDetails}
+              />
+              <PageRoute
+                title="Confirm Hearing | Caseflow Certification"
+                path="/certifications/:vacols_id/confirm_hearing"
+                component={ConfirmHearing}
+              />
+              <PageRoute
+                title="Sign and Certify | Caseflow Certification"
+                path="/certifications/:vacols_id/sign_and_certify"
+                component={SignAndCertify} />
+              <PageRoute
+                title="Success! | Caseflow Certification"
+                path="/certifications/:vacols_id/success"
+                component={Success}
+              />
+              <PageRoute
+                title="Error | Caseflow Certification"
+                path="/certifications/error"
+                component={ErrorMessage}
+              />
+              <PageRoute
+                title="Not Certified | Caseflow Certification"
+                path="/certification_cancellations/"
+                component={CancelCertificationConfirmation}
+              />
+            </div>
+          </BrowserRouter>
+        </Provider> }
+    </LoadingDataDisplay>;
   }
 }

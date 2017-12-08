@@ -48,11 +48,10 @@ export class ReaderLoadingScreen extends React.Component {
       return null;
     }
 
-    const failComponent = <StatusMessage
-      title="Unable to load documents">
+    const failStatusMessageChildren = <div>
         It looks like Caseflow was unable to load this case.<br />
         Please <a href="">refresh the page</a> and try again.
-    </StatusMessage>;
+    </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
       loadPromise={this.state.loadPromise}
@@ -61,9 +60,12 @@ export class ReaderLoadingScreen extends React.Component {
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading claims folder in Reader...'
       }}
-      successComponent={this.props.children}
-      failureComponent={failComponent}
-    />;
+      failStatusMessageProps={{
+        title: 'Unable to load documents'
+      }}
+      failStatusMessageChildren={failStatusMessageChildren}>
+      {this.props.children}
+    </LoadingDataDisplay>;
 
     return <div className="usa-grid">
       <div className="cf-app">

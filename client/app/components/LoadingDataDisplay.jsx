@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import React from 'react';
 import PropTypes from 'prop-types';
-import LoadingScreen from '../components/LoadingScreen';
+import LoadingScreen from './LoadingScreen';
+import StatusMessage from './StatusMessage';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
@@ -16,12 +18,12 @@ class LoadingDataDisplay extends React.PureComponent {
   componentDidMount() {
     this.listenToPromise(this.props.loadPromise);
     this.intervalId = window.setInterval(this.forceUpdate.bind(this), 100);
-    this.isMounted = true;
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
     window.clearInterval(this.intervalId);
-    this.isMounted = false;
+    this._isMounted = false;
   }
 
   listenToPromise = (promise) => {
@@ -30,7 +32,7 @@ class LoadingDataDisplay extends React.PureComponent {
     // but at least we can use this.isMounted to avoid taking action if necessary.
     promise.then(
       () => {
-        if (this.isMounted && !promise === this.props.loadPromise) {
+        if (this._isMounted && !promise === this.props.loadPromise) {
           return;
         }
 
@@ -38,7 +40,7 @@ class LoadingDataDisplay extends React.PureComponent {
         window.clearInterval(this.intervalId);
       },
       () => {
-        if (this.isMounted && !promise === this.props.loadPromise) {
+        if (this._isMounted && !promise === this.props.loadPromise) {
           return;
         }
 
@@ -60,11 +62,13 @@ class LoadingDataDisplay extends React.PureComponent {
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
-      return this.props.failureComponent;
+      return <StatusMessage {...this.props.failStatusMessageProps}>
+        {this.props.failStatusMessageChildren}
+      </StatusMessage>;
     }
 
     if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
-      return this.props.successComponent;
+      return this.props.children;
     }
 
     const isSlow = Date.now() - this.props.promiseStartTimeMs > this.props.slowLoadThresholdMs;
@@ -79,9 +83,7 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  loadPromise: PropTypes.object.isRequired,
-  successComponent: PropTypes.element.isRequired,
-  failureComponent: PropTypes.element.isRequired
+  loadPromise: PropTypes.object.isRequired
 };
 
 LoadingDataDisplay.defaultProps = {
