@@ -131,17 +131,6 @@ describe('Reader reducer', () => {
     });
   });
 
-  describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
-    const state = reduceActions([{
-      type: Constants.REQUEST_INITIAL_DATA_FAILURE,
-      payload: {
-        value: true
-      }
-    }]);
-
-    expect(state.initialDataLoadingFail).to.equal(true);
-  });
-
   describe(Constants.REQUEST_INITIAL_CASE_FAILURE, () => {
     const state = reduceActions([{
       type: Constants.REQUEST_INITIAL_CASE_FAILURE,

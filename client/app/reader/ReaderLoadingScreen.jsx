@@ -2,13 +2,11 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations, onInitialDataLoadingFail
-} from './LoadingScreen/LoadingScreenActions';
+import { onReceiveDocs, onReceiveManifests, onReceiveAnnotations } from './LoadingScreen/LoadingScreenActions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
-import _ from 'lodash';
 
 export class ReaderLoadingScreen extends React.Component {
 
@@ -70,13 +68,11 @@ export class ReaderLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer, 'initialDataLoadingFail'),
   loadedAppealId: state.readerReducer.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    onInitialDataLoadingFail,
     onReceiveDocs,
     onReceiveManifests,
     onReceiveAnnotations
