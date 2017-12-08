@@ -74,12 +74,8 @@ export class Certification extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loadingData: true,
-      loadingDataFailed: false,
       certification: null,
-      form9PdfPath: null,
-      longerThanUsual: false,
-      overallTimeout: false
+      form9PdfPath: null
     };
 
     // Allow test harness to trigger reloads
