@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
-import 'moment-timezone';
 import { Link } from 'react-router-dom';
 import { getDate } from './util/DateUtil';
 
