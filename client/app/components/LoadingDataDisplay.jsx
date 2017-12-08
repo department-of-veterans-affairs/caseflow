@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingScreen from '../components/LoadingScreen';
-import _ from 'lodash';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',

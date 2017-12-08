@@ -1,7 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import _ from 'lodash';
 
 import { CaseSelectLoadingScreen } from '../../../app/reader/CaseSelectLoadingScreen';
 

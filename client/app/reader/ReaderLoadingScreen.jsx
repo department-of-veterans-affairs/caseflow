@@ -20,15 +20,16 @@ export class ReaderLoadingScreen extends React.Component {
       return;
     }
 
-    const loadPromise = ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
-      const returnedObject = JSON.parse(response.text);
-      const documents = returnedObject.appealDocuments;
-      const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
+    const loadPromise = ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).
+      then((response) => {
+        const returnedObject = JSON.parse(response.text);
+        const documents = returnedObject.appealDocuments;
+        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-      this.props.onReceiveDocs(documents, this.props.vacolsId);
-      this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
-      this.props.onReceiveAnnotations(annotations);
-    });
+        this.props.onReceiveDocs(documents, this.props.vacolsId);
+        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+        this.props.onReceiveAnnotations(annotations);
+      });
 
     this.setState({
       promiseStartTimeMs: Date.now(),
