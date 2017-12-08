@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingScreen from '../components/LoadingScreen';
+import _ from 'lodash';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
@@ -37,7 +38,7 @@ class LoadingDataDisplay extends React.PureComponent {
         if (!promise === this.props.loadPromise) {
           return;
         }
-        
+
         this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
         window.clearInterval(this.intervalId);
       }
@@ -51,22 +52,26 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-    if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
-      return this.props.successComponent;
-    }
-    
     const isTimedOut = Date.now() - this.props.promiseStartTimeMs > this.props.timeoutMs;
-    
+
+    // Because we put this first, we'll show the error state if the timeout has elapsed,
+    // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
       return this.props.failureComponent;
     }
-    
-    const isSlow = Date.now() - this.props.promiseStartTimeMs > this.props.slowLoadThresholdMs;
-    // eslint-disable-next-line no-undefined
-    const message = isSlow ? this.props.slowLoadMessage : undefined;
-    console.log('render', isSlow, Date.now() - this.props.promiseStartTimeMs, this.props.slowLoadThresholdMs);
 
-    return <LoadingScreen {...this.props.loadingScreenProps} message={message} />;
+    if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
+      return this.props.successComponent;
+    }
+
+    const isSlow = Date.now() - this.props.promiseStartTimeMs > this.props.slowLoadThresholdMs;
+    const loadingScreenProps = {...this.props.loadingScreenProps};
+
+    if (isSlow) {
+      loadingScreenProps.message = this.props.slowLoadMessage;
+    }
+
+    return <LoadingScreen {...loadingScreenProps} />;
   }
 }
 
