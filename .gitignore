@@ -37,3 +37,6 @@ client/.agignore
 
 # Generated js bundles
 /app/assets/webpack/*
+
+# Hidden files
+.*

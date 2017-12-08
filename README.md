@@ -44,6 +44,28 @@ For the frontend, you'll need to install Node and the relevant npm modules. [Ins
 
     cd client && yarn
 
+### Ansible Vault
+1. [Install pip](https://pip.pypa.io/en/stable/installing/)
+1. [Install virtualenv](https://virtualenv.pypa.io/en/stable/installation/)
+1. Create a virtualenv:
+
+    ```bash
+    virtualenv .venv
+    ```
+
+1. Activate the virtualenv:
+
+    ```bash
+    source .venv/bin/activate
+    ```
+
+    (You'll have to do this every time that you want to run Vault.)
+1. Install Vault:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
