@@ -237,6 +237,10 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def ramp_election
+    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
+  end
+
   def in_location?(location)
     fail UnknownLocationError unless LOCATION_CODES[location]
 

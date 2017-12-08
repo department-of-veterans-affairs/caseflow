@@ -28,9 +28,9 @@ const rampIneligibleInstructions = <div>
   </ul>
 </div>;
 
-class Begin extends React.PureComponent {
+class Search extends React.PureComponent {
   handleSearchSubmit = () => (
-    this.props.doFileNumberSearch('ramp_election', this.props.fileNumberSearchInput)
+    this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
   )
 
   clearSearch = () => this.props.setFileNumberSearch('')
@@ -86,8 +86,13 @@ class Begin extends React.PureComponent {
     const {
       searchErrorCode,
       searchErrorData,
-      rampElectionStatus
+      rampElectionStatus,
+      formType
     } = this.props;
+
+    if (!formType) {
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.STARTED:
@@ -102,8 +107,11 @@ class Begin extends React.PureComponent {
     return <div>
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
-      <h1>Welcome to Caseflow Intake!</h1>
-      <p>To begin processing this opt-in election, please enter the Veteran ID below.</p>
+      <h1>Search for Veteran by ID</h1>
+      <p>
+        To continue processing this form,
+        enter the Veteran’s 8 or 9 digit ID number into the search bar below.
+      </p>
 
       <SearchBar
         size="small"
@@ -124,10 +132,11 @@ export default connect(
     fileNumberSearchRequestStatus: state.requestStatus.fileNumberSearch,
     rampElectionStatus: getRampElectionStatus(state),
     searchErrorCode: state.searchErrorCode,
-    searchErrorData: state.searchErrorData
+    searchErrorData: state.searchErrorData,
+    formType: state.formType
   }),
   (dispatch) => bindActionCreators({
     doFileNumberSearch,
     setFileNumberSearch
   }, dispatch)
-)(Begin);
+)(Search);

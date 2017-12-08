@@ -3,11 +3,8 @@
     userDisplayName: current_user.display_name,
     dropdownUrls: dropdown_urls,
     page: "DecisionReviewer",
-    feedbackUrl: ENV["CASEFLOW_FEEDBACK_URL"],
+    feedbackUrl: feedback_url,
     pdfWorker: asset_path('pdf.worker.js'),
-    buildDate: build_date,
-    featureToggles: {
-      search: FeatureToggle.enabled?(:search, user: current_user)
-    }
+    buildDate: build_date
   }) %>
 <% end %>
