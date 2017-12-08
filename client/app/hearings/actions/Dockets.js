@@ -2,10 +2,18 @@ import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, debounceMs } from '../analytics';
 
-export const populateDockets = (dockets) => ({
-  type: Constants.POPULATE_DOCKETS,
+export const populateUpcomingHearings = (upcomingHearings) => ({
+  type: Constants.POPULATE_UPCOMING_HEARINGS,
   payload: {
-    dockets
+    upcomingHearings
+  }
+});
+
+export const populateDailyDocket = (dailyDocket, date) => ({
+  type: Constants.POPULATE_DAILY_DOCKET,
+  payload: {
+    dailyDocket,
+    date
   }
 });
 
