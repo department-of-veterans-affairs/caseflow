@@ -218,7 +218,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Finish processing Supplemental Claim election")
 
       # Validate the appeal & issue also shows up
-      expect(page).to have_content("This Veteran has 1 active appeal, with the following issues")
+      expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
       expect(page).to have_content("5252 - Knee, limitation of flexion of")
       expect(page).to have_content("knee movement")
     end
