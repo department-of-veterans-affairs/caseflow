@@ -32,7 +32,7 @@ export default class PerformanceDegradationBanner extends React.Component {
   checkDependencies() {
     // Don't make a subsequent request for dependency check
     // if the first one hasn't returned from the server still
-    if (this.state.isRequesting) {
+    if (this.state.isRequesting && document.hidden) {
       return;
     }
 
@@ -62,14 +62,12 @@ export default class PerformanceDegradationBanner extends React.Component {
   }
 
   componentDidMount() {
-    if (!document.hidden) {
-      // initial check
-      this.checkDependencies();
+    // initial check
+    this.checkDependencies();
 
-      // subsequent checks
-      this.interval = setInterval(() =>
-        this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
-    }
+    // subsequent checks
+    this.interval = setInterval(() =>
+      this.checkDependencies(), AppConstants.DEPENDENCY_OUTAGE_POLLING_INTERVAL);
   }
 
   componentWillUnmount() {

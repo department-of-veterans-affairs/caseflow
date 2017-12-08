@@ -23,12 +23,12 @@ class IntakesController < ApplicationController
   end
 
   def create
-    if intake.start!
-      render json: intake_data(intake)
+    if new_intake.start!
+      render json: new_intake.ui_hash
     else
       render json: {
-        error_code: intake.error_code,
-        error_data: intake.error_data
+        error_code: new_intake.error_code,
+        error_data: new_intake.error_data
       }, status: 422
     end
   end
@@ -41,16 +41,19 @@ class IntakesController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def intake_data(intake)
-    intake ? intake.ui_hash : {}
-  end
-  helper_method :intake_data
-
   def fetch_current_intake
-    @current_intake = RampElectionIntake.in_progress.find_by(user: current_user)
+    @current_intake = Intake.in_progress.find_by(user: current_user)
   end
 
-  def intake
-    @intake ||= RampElectionIntake.new(user: current_user, veteran_file_number: params[:file_number])
+  def new_intake
+    @new_intake ||= Intake.build(
+      user: current_user,
+      veteran_file_number: params[:file_number],
+      form_type: form_type
+    )
+  end
+
+  def form_type
+    FeatureToggle.enabled?(:intake_reentry_form) ? params[:form_type] : "ramp_election"
   end
 end
