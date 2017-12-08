@@ -11,6 +11,7 @@ class AppealAlerts
       scheduled_hearing,
       hearing_no_show,
       held_for_evidence,
+      ramp,
       cavc_option
     ].compact
   end
@@ -96,5 +97,16 @@ class AppealAlerts
         due_date: cavc_due_date
       }
     }
+  end
+
+  def ramp
+    if appeal_series.ramp_election && Time.zone.today <= appeal_series.ramp_election.due_date
+      {
+        type: appeal_series.eligible_for_ramp? ? :ramp_eligible : :ramp_ineligible,
+        details: {
+          due_date: appeal_series.ramp_election.due_date
+        }
+      }
+    end
   end
 end

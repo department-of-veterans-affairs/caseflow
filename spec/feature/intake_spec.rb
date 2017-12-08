@@ -101,7 +101,7 @@ RSpec.feature "RAMP Intake" do
         notice_date: 5.days.ago
       )
 
-      RampIntake.create!(
+      RampElectionIntake.create!(
         user: current_user,
         detail: ramp_election,
         completed_at: Time.zone.now,
@@ -140,7 +140,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_current_path("/intake/review-request")
       expect(page).to have_content("Review Ed Merica's opt-in election")
 
-      intake = RampIntake.find_by(veteran_file_number: "12341234")
+      intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
       expect(intake.started_at).to eq(Time.zone.now)
       expect(intake.user).to eq(current_user)
@@ -149,7 +149,7 @@ RSpec.feature "RAMP Intake" do
     scenario "Cancel an intake" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       visit "/intake"
@@ -172,7 +172,7 @@ RSpec.feature "RAMP Intake" do
 
     scenario "Start intake and go back and edit option" do
       RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       # Validate that visiting the finish page takes you back to
@@ -231,7 +231,7 @@ RSpec.feature "RAMP Intake" do
         notice_date: Date.new(2017, 8, 7)
       )
 
-      intake = RampIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       # Validate that visiting the finish page takes you back to
@@ -309,6 +309,70 @@ RSpec.feature "RAMP Intake" do
       # Validate that the intake is no longer able to be worked on
       visit "/intake/finish"
       expect(page).to have_content("Welcome to Caseflow Intake!")
+    end
+
+    context "when ramp reentry form is enabled" do
+      before { FeatureToggle.enable!(:intake_reentry_form) }
+      after { FeatureToggle.disable!(:intake_reentry_form) }
+
+      scenario "Attempt to start RAMP refiling for a veteran without a complete RAMP election" do
+        # Create an incomplete RAMP election
+        RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 3.days.ago
+        )
+
+        # Validate that you can't go directly to search
+        visit "/intake"
+
+        # Validate that you cant move forward without selecting a form
+        scroll_element_in_to_view(".cf-submit.usa-button")
+        expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        # TODO: Show the proper error message
+        expect(page).to have_content("Something went wrong")
+
+        expect(RampRefilingIntake.last).to have_attributes(error_code: "no_complete_ramp_election")
+      end
+
+      scenario "Start a RAMP refiling" do
+        # Create an complete RAMP election
+        ramp_election = RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 3.days.ago,
+          end_product_reference_id: "123"
+        )
+
+        # Validate that you can't go directly to search
+        visit "/intake/search"
+
+        # Validate that you cant move forward without selecting a form
+        scroll_element_in_to_view(".cf-submit.usa-button")
+        expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review-request")
+
+        ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
+
+        expect(ramp_refiling).to_not be_nil
+        expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
+      end
     end
   end
 

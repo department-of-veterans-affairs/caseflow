@@ -94,7 +94,7 @@ describe RampElection do
 
     context "when there is a successful intake referencing the election" do
       let!(:intake) do
-        RampIntake.create!(
+        RampElectionIntake.create!(
           user: Generators::User.build,
           detail: ramp_election,
           completed_at: Time.zone.now,
@@ -107,7 +107,7 @@ describe RampElection do
 
     context "when there is a canceled intake referencing the election" do
       let!(:intake) do
-        RampIntake.create!(
+        RampElectionIntake.create!(
           user: Generators::User.build,
           detail: ramp_election,
           completed_at: Time.zone.now,
