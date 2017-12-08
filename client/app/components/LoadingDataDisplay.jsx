@@ -33,6 +33,7 @@ class LoadingDataDisplay extends React.PureComponent {
         this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
       },
       () => {
+        debugger;
         if (!promise === this.props.loadPromise) {
           return;
         }
@@ -43,7 +44,9 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.listenToPromise(nextProps.loadPromise);
+    if (this.props.loadPromise !== nextProps.loadPromise) {
+      this.listenToPromise(nextProps.loadPromise);
+    }
   }
 
   render() {
@@ -67,7 +70,9 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  loadPromise: PropTypes.object.isRequired
+  loadPromise: PropTypes.object.isRequired,
+  successComponent: PropTypes.element.isRequired,
+  failureComponent: PropTypes.element.isRequired
 };
 
 export default LoadingDataDisplay;

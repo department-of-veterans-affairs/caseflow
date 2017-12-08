@@ -57,7 +57,7 @@ export class ReaderLoadingScreen extends React.Component {
         message: 'Loading claims folder in Reader...'
       }}
       successComponent={this.props.children}
-      failComponent={failComponent}
+      failureComponent={failComponent}
     />;
   }
 }
