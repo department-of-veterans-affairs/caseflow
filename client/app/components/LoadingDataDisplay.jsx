@@ -15,11 +15,11 @@ class LoadingDataDisplay extends React.PureComponent {
 
   componentDidMount() {
     this.listenToPromise(this.props.loadPromise);
-    this.cancelInterval = setInterval(this.forceUpdate.bind(this), 100);
+    this.intervalId = window.setInterval(this.forceUpdate.bind(this), 100);
   }
 
   componentWillUnmount() {
-    this.cancelInterval();
+    this.intervalId();
   }
 
   listenToPromise = (promise) => {
@@ -31,6 +31,7 @@ class LoadingDataDisplay extends React.PureComponent {
         }
 
         this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
+        window.clearInterval(this.intervalId);
       },
       () => {
         if (!promise === this.props.loadPromise) {
@@ -38,6 +39,7 @@ class LoadingDataDisplay extends React.PureComponent {
         }
         
         this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
+        window.clearInterval(this.intervalId);
       }
     );
   }
@@ -49,22 +51,22 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-
     if (this.state.promiseResult === PROMISE_RESULTS.SUCCESS) {
       return this.props.successComponent;
     }
-
+    
     const isTimedOut = Date.now() - this.props.promiseStartTimeMs > this.props.timeoutMs;
-
+    
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
       return this.props.failureComponent;
     }
-
+    
     const isSlow = Date.now() - this.props.promiseStartTimeMs > this.props.slowLoadThresholdMs;
     // eslint-disable-next-line no-undefined
     const message = isSlow ? this.props.slowLoadMessage : undefined;
+    console.log('render', isSlow, Date.now() - this.props.promiseStartTimeMs, this.props.slowLoadThresholdMs);
 
-    return <LoadingScreen message={message} {...this.props.loadingScreenProps} />;
+    return <LoadingScreen {...this.props.loadingScreenProps} message={message} />;
   }
 }
 
