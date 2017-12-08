@@ -5,7 +5,7 @@ class StartCertificationJob < ActiveJob::Base
   def perform(certification, user = nil)
     @certification = certification
     RequestStore.store[:current_user] = user if user
-   
+
     # Results in calls to VBMS and VACOLS
 
     if @certification.can_be_updated?
