@@ -20,17 +20,19 @@ export class ReaderLoadingScreen extends React.Component {
       return;
     }
 
-    this.promiseStartTimeMs = Date.now();
-    this.setState({
-      loadPromise: ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
-        const returnedObject = JSON.parse(response.text);
-        const documents = returnedObject.appealDocuments;
-        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
+    const loadPromise = ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).then((response) => {
+      const returnedObject = JSON.parse(response.text);
+      const documents = returnedObject.appealDocuments;
+      const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
 
-        this.props.onReceiveDocs(documents, this.props.vacolsId);
-        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
-        this.props.onReceiveAnnotations(annotations);
-      })
+      this.props.onReceiveDocs(documents, this.props.vacolsId);
+      this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+      this.props.onReceiveAnnotations(annotations);
+    });
+
+    this.setState({
+      promiseStartTimeMs: Date.now(),
+      loadPromise 
     });
   }
 
@@ -51,12 +53,9 @@ export class ReaderLoadingScreen extends React.Component {
         Please <a href="">refresh the page</a> and try again.
     </StatusMessage>;
 
-    return <LoadingDataDisplay
+    const loadingDataDisplay = <LoadingDataDisplay
       loadPromise={this.state.loadPromise}
-      promiseStartTimeMs={this.promiseStartTimeMs}
-      timeoutMs={30 * 1000}
-      slowLoadThresholdMs={15 * 1000}
-      slowLoadMessage="Loading is taking longer than usual..."
+      promiseStartTimeMs={this.state.promiseStartTimeMs}
       loadingScreenProps={{
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading claims folder in Reader...'
@@ -64,6 +63,12 @@ export class ReaderLoadingScreen extends React.Component {
       successComponent={this.props.children}
       failureComponent={failComponent}
     />;
+
+    return <div className="usa-grid">
+      <div className="cf-app">
+        {loadingDataDisplay}
+      </div>
+    </div>;
   }
 }
 

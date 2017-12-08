@@ -10,42 +10,65 @@ import {
 } from '../reader/LoadingScreen/LoadingScreenActions';
 import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import StatusMessage from '../components/StatusMessage';
-import LoadingScreen from '../components/LoadingScreen';
+import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
 
 export class CaseSelectLoadingScreen extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+  }
+  
   componentDidMount = () => {
-    // We append an unneeded query param to avoid caching the json object. If we get thrown
-    // to a page outside of the SPA and then hit back, we want the cached version of this
-    // page to be the HTML page, not the JSON object.
     if (this.props.assignments) {
-      this.props.onInitialCaseLoadingFail(false);
-
-      ApiUtil.get('/reader/appeal?json', {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
+      
+      // We append an unneeded query param to avoid caching the json object. If we get thrown
+      // to a page outside of the SPA and then hit back, we want the cached version of this
+      // page to be the HTML page, not the JSON object.
+      const loadPromise = ApiUtil.get('/reader/appeal?json', {}, ENDPOINT_NAMES.APPEAL_DETAILS).then((response) => {
         const returnedObject = JSON.parse(response.text);
 
         this.props.onReceiveAssignments(returnedObject.cases);
-      }, this.props.onInitialCaseLoadingFail);
+      });
+
+      this.setState({
+        promiseStartTimeMs: Date.now(),
+        loadPromise
+      })
     }
   }
 
   render() {
-    if (this.props.assignmentsLoaded) {
-      return this.props.children;
+    // We create this.loadPromise in componentDidMount().
+    // componentDidMount() is only called after the component is inserted into the DOM,
+    // which means that render() will be called beforehand. My inclination was to use
+    // componentWillMount() instead, but React docs tell us not to introduce side-effects
+    // in that method. I don't know why that's a bad idea. But this approach lets us
+    // keep the side effects in componentDidMount().
+    if (!this.state.loadPromise) {
+      return null;
     }
+
+    const failComponent = <StatusMessage
+      title="Unable to load the welcome page">
+        It looks like Caseflow was unable to load the welcome page.<br />
+        Please <a href="">refresh the page</a> and try again.
+    </StatusMessage>;
+
+    const loadingDataDisplay = <LoadingDataDisplay
+      loadPromise={this.state.loadPromise}
+      promiseStartTimeMs={this.state.promiseStartTimeMs}
+      loadingScreenProps={{
+        spinnerColor: Constants.READER_COLOR,
+        message: 'Loading cases in Reader...'
+      }}
+      successComponent={this.props.children}
+      failureComponent={failComponent}
+    />;
 
     return <div className="usa-grid">
       <div className="cf-app">
-        {this.props.initialCaseLoadingFail ?
-          <StatusMessage
-            title="Unable to load the welcome page">
-              It looks like Caseflow was unable to load the welcome page.<br />
-              Please <a href="">refresh the page</a> and try again.
-          </StatusMessage> :
-          <LoadingScreen
-            spinnerColor={Constants.READER_COLOR}
-            message="Loading cases in Reader..." />
-        }
+        {loadingDataDisplay}
       </div>
     </div>;
   }

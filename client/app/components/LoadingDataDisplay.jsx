@@ -81,4 +81,10 @@ LoadingDataDisplay.propTypes = {
   failureComponent: PropTypes.element.isRequired
 };
 
+LoadingDataDisplay.defaultProps = {
+  slowLoadThresholdMs: 15 * 1000,
+  timeoutMs: 30 * 1000,
+  slowLoadMessage: 'Loading is taking longer than usual...'
+};
+
 export default LoadingDataDisplay;
