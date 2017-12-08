@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
+import 'moment-timezone';
 import { Link } from 'react-router-dom';
 
 export class Dockets extends React.Component {
@@ -12,10 +13,9 @@ export class Dockets extends React.Component {
   }
 
   getDate = (date) => {
-    return moment(date).
-      format('LT').
-      replace('AM', 'a.m.').
-      replace('PM', 'p.m.');
+    return moment(date).tz('America/New_York').
+        format('h:mm a z').
+        replace(/(a|p)(m)/, '$1.$2.');
   };
 
   getKeyForRow = (index) => {
@@ -75,7 +75,7 @@ export class Dockets extends React.Component {
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: `${this.getDate(docket.date)} EDT`,
+        start_time: `${this.getDate(docket.date)}`,
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: docket.slots,
