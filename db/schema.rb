@@ -302,6 +302,16 @@ ActiveRecord::Schema.define(version: 20171208210245) do
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
+  create_table "ramp_refilings", force: :cascade do |t|
+    t.string  "veteran_file_number",      null: false
+    t.integer "ramp_election_id"
+    t.string  "option_selected"
+    t.date    "receipt_date"
+    t.string  "end_product_reference_id"
+  end
+
+  add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree
+
   create_table "reader_users", force: :cascade do |t|
     t.integer  "user_id",              null: false
     t.datetime "documents_fetched_at"
