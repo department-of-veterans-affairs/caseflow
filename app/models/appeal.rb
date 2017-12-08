@@ -237,13 +237,8 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
-  def ramp_notice_date
-    @ramp_notice_date = RampElection.where(veteran_file_number: sanitized_vbms_id)
-                                    .minimum(:notice_date)
-  end
-
-  def ramp_due_date
-    ramp_notice_date + 60.days if ramp_notice_date
+  def ramp_election
+    RampElection.where(veteran_file_number: sanitized_vbms_id).first
   end
 
   def in_location?(location)
