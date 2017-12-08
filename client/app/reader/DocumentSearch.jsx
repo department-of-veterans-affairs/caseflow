@@ -8,7 +8,8 @@ import SearchBar from '../components/SearchBar';
 import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
-import { searchText, getDocumentText, updateSearchIndex } from '../reader/Pdf/PdfActions';
+import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex
+} from '../reader/Pdf/PdfActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { READER_COLOR } from './constants';
@@ -35,9 +36,18 @@ export class DocumentSearch extends React.PureComponent {
     this.props.searchText(this.searchTerm);
   }
 
-  onKeyPress = (value) => {
-    if (value.key === 'Enter') {
-      this.props.updateSearchIndex(!value.shiftKey);
+  updateSearchIndex = (event) => {
+    if (this.props.matchIndexToHighlight === null) {
+      this.props.updateSearchIndex(!event.shiftKey);
+    } else {
+      this.props.setSearchIndex(this.props.matchIndexToHighlight);
+      this.props.setSearchIndexToHighlight(null);
+    }
+  }
+
+  onKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      this.updateSearchIndex(event);
     }
   }
 
@@ -50,7 +60,7 @@ export class DocumentSearch extends React.PureComponent {
 
     if (event[metaKey] && event.code === 'KeyG') {
       event.preventDefault();
-      this.props.updateSearchIndex(!event.shiftKey);
+      this.updateSearchIndex(event);
     }
 
     if (event.key === 'Escape') {
@@ -95,9 +105,9 @@ export class DocumentSearch extends React.PureComponent {
 
     if (_.size(this.searchTerm)) {
       if (this.props.totalMatchesInFile > 0) {
-        internalText = `${this.props.getCurrentMatch + 1} of ${this.props.totalMatchesInFile}`;
+        internalText = `${this.props.currentMatchIndex + 1} of ${this.props.totalMatchesInFile}`;
       } else if (this.props.totalMatchesInFile > 9999) {
-        internalText = `${this.props.getCurrentMatch + 1} of many`;
+        internalText = `${this.props.currentMatchIndex + 1} of many`;
       } else {
         internalText = '0 of 0';
       }
@@ -157,8 +167,10 @@ const mapStateToProps = (state, props) => ({
   pdfDocument: state.readerReducer.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
-  getCurrentMatch: getCurrentMatchIndex(state, props),
-  hidden: state.readerReducer.ui.pdf.hideSearchBar
+  currentMatchIndex: getCurrentMatchIndex(state, props),
+  matchIndexToHighlight: state.readerReducer.matchIndexToHighlight,
+  hidden: state.readerReducer.ui.pdf.hideSearchBar,
+  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -167,7 +179,9 @@ const mapDispatchToProps = (dispatch) => ({
     getDocumentText,
     updateSearchIndex,
     hideSearchBar,
-    showSearchBar
+    showSearchBar,
+    setSearchIndex,
+    setSearchIndexToHighlight
   }, dispatch)
 });
 
