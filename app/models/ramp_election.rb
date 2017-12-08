@@ -53,6 +53,10 @@ class RampElection < ActiveRecord::Base
     notice_date + RESPOND_BY_TIME if notice_date
   end
 
+  def self.completed
+    where.not(end_product_reference_id: nil)
+  end
+
   private
 
   def end_product
