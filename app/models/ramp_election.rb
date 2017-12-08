@@ -45,6 +45,10 @@ class RampElection < ActiveRecord::Base
     end_product_reference_id && end_product.description_with_routing
   end
 
+  def self.completed
+    where.not(end_product_reference_id: nil)
+  end
+
   private
 
   def end_product
