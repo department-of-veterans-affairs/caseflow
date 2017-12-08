@@ -192,6 +192,14 @@ export const initialState = {
   pdfDocuments: {},
   documentErrors: {},
   text: [],
+  search: {
+    // todo
+    // term: null,
+    // index: 0,
+    // indexToHighlight: null,
+    relativeIndex: 0,
+    pageIndex: null
+  },
   documentSearchString: null,
   documentSearchIndex: 0,
   matchIndexToHighlight: null,
@@ -869,6 +877,26 @@ const reducer = (state = {}, action = {}) => {
       {
         matchIndexToHighlight: {
           $set: action.payload.index
+        }
+      }
+    );
+  case Constants.UPDATE_SEARCH_INDEX_PAGE_INDEX:
+    return update(state,
+      {
+        search: {
+          pageIndex: {
+            $set: action.payload.index
+          }
+        }
+      }
+    );
+  case Constants.UPDATE_SEARCH_RELATIVE_INDEX:
+    return update(state,
+      {
+        search: {
+          relativeIndex: {
+            $set: action.payload.index
+          }
         }
       }
     );

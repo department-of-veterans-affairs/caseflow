@@ -55,10 +55,9 @@ export class PdfPage extends React.PureComponent {
   highlightMarkAtIndex = (scrollToMark) => {
     _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
 
-    const [pageIndexWithMatch, indexInPage] = this.getIndexInPage();
-    const selectedMark = this.marks[indexInPage];
+    if (this.props.search.pageIndex === this.props.pageIndex) {
+      const selectedMark = this.marks[this.props.search.relativeIndex];
 
-    if (pageIndexWithMatch === this.props.pageIndex) {
       if (selectedMark) {
         selectedMark.classList.add('highlighted');
 
@@ -72,24 +71,6 @@ export class PdfPage extends React.PureComponent {
         console.error('selectedMark not found in DOM');
       }
     }
-  }
-
-  getIndexInPage = (matchIndex = this.props.currentMatchIndex) => {
-    // get page, relative index of match at absolute index
-    let cumulativeMatches = 0;
-
-    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
-      if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
-        return [
-          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
-          this.props.currentMatchIndex - cumulativeMatches
-        ];
-      }
-
-      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
-    }
-
-    return [-1, -1];
   }
 
   getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
@@ -162,21 +143,15 @@ export class PdfPage extends React.PureComponent {
     }
 
     if (this.markInstance) {
-      if (this.props.searchText && !this.props.searchBarHidden) {
-        if (!_.isNaN(this.props.currentMatchIndex) && this.props.matchesPerPage && this.marks.length &&
-           (this.props.searchText === prevProps.searchText) &&
-           (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
-          // eslint-disable-next-line no-unused-vars
-          const [matchedPageIndex, indexInPage] = this.getIndexInPage();
-
-          if (this.marks[indexInPage]) {
-            this.highlightMarkAtIndex(true);
-          }
-        } else {
-          this.markText(this.props.currentMatchIndex !== prevProps.currentMatchIndex);
-        }
-      } else {
+      if (this.props.searchBarHidden || !this.props.searchText) {
         this.unmarkText();
+      } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+        if (_.isNaN(this.props.currentMatchIndex) || !this.props.matchesPerPage || !this.marks.length ||
+            this.props.searchText !== prevProps.searchText) {
+          this.markText(true);
+        } else if (this.marks[this.props.search.relativeIndex]) {
+          this.highlightMarkAtIndex(true);
+        }
       }
     }
   }
@@ -349,7 +324,8 @@ const mapStateToProps = (state, props) => {
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar
+    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar,
+    ..._.pick(state.readerReducer, 'search')
   };
 };
 

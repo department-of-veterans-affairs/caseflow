@@ -8,8 +8,8 @@ import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
-import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
-} from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
+  updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/Pdf/PdfActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
@@ -175,39 +175,51 @@ export class PdfFile extends React.PureComponent {
   }
 
   getPageIndexofMatch = (matchIndex = this.props.currentMatchIndex) => {
+    // get page, relative index of match at absolute index
     let cumulativeMatches = 0;
 
     for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
-      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
-
-      if (matchIndex < cumulativeMatches) {
-        return this.props.matchesPerPage[matchesPerPageIndex].pageIndex;
+      if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
+        return [
+          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
+          matchIndex - cumulativeMatches
+        ];
       }
+
+      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
     }
 
-    return -1;
+    return [-1, -1];
   }
 
   scrollToSearchTerm = (prevProps) => {
-    if (this.props.searchText && this.props.matchesPerPage.length) {
-      const pageIndex = this.getPageIndexofMatch();
+    const [pageIndex, indexInPage] = this.getPageIndexofMatch();
 
-      if (pageIndex >= 0) {
-        if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
-          // if navigating between Marks in the same page and the page is rendered,
-          // PdfPage will set scrollTop in highlightMarkAtIndex
-          if (!_.isNull(this.props.scrollTop)) {
-            this.scrollToPosition(pageIndex, this.props.scrollTop);
-            this.props.setDocScrollPosition(null);
-          } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
-            // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
-            this.list.scrollToRow(pageIndex);
-          }
-        } else {
-          // scroll to mark page before highlighting--may not be in DOM
+    if (pageIndex === -1) {
+      return;
+    }
+
+    if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+      this.props.updateSearchRelativeIndex(indexInPage);
+      if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)[0]) {
+        // if navigating between Marks in the same page and the page is rendered,
+        // PdfPage will set scrollTop in highlightMarkAtIndex
+        if (!_.isNull(this.props.scrollTop)) {
+          this.scrollToPosition(pageIndex, this.props.scrollTop);
+          this.props.setDocScrollPosition(null);
+        } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+          // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
           this.list.scrollToRow(pageIndex);
         }
+      } else {
+        // scroll to mark page before highlighting--may not be in DOM
+        this.list.scrollToRow(pageIndex);
+        this.props.updateSearchIndexPage(pageIndex);
       }
+    } else if (this.props.scrollTop !== null && this.props.scrollTop !== prevProps.scrollTop) {
+      // after ticking currentMatchIndex, scrollTop is set and this gets called again
+      this.scrollToPosition(pageIndex, this.props.scrollTop);
+      this.props.setDocScrollPosition(null);
     }
   }
 
@@ -218,7 +230,9 @@ export class PdfFile extends React.PureComponent {
       this.jumpToPage();
       this.jumpToComment();
 
-      this.scrollToSearchTerm(prevProps);
+      if (this.props.searchText && this.props.matchesPerPage.length) {
+        this.scrollToSearchTerm(prevProps);
+      }
     }
   }
 
@@ -358,7 +372,9 @@ const mapDispatchToProps = (dispatch) => ({
     showPlaceAnnotationIcon,
     setDocumentLoadError,
     clearDocumentLoadError,
-    setDocScrollPosition
+    setDocScrollPosition,
+    updateSearchIndexPage,
+    updateSearchRelativeIndex
   }, dispatch)
 });
 

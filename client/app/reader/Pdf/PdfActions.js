@@ -111,6 +111,20 @@ export const setSearchIndexToHighlight = (index) => ({
   }
 });
 
+export const updateSearchIndexPage = (index) => ({
+  type: Constants.UPDATE_SEARCH_INDEX_PAGE_INDEX,
+  payload: {
+    index
+  }
+});
+
+export const updateSearchRelativeIndex = (index) => ({
+  type: Constants.UPDATE_SEARCH_RELATIVE_INDEX,
+  payload: {
+    index
+  }
+});
+
 export const searchText = (searchTerm) => (dispatch) => {
   dispatch(zeroSearchIndex());
   dispatch(createSearchAction('extractedText')(searchTerm));
