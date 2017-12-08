@@ -12,7 +12,7 @@ class CancelButton extends React.PureComponent {
       willNeverBeLoading
       onClick={this.props.toggleCancelModal}
     >
-      Cancel Intake
+      Cancel intake
     </Button>
 }
 
