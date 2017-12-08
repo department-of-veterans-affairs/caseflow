@@ -19,7 +19,7 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    this.intervalId();
+    window.clearInterval(this.intervalId);
   }
 
   listenToPromise = (promise) => {
