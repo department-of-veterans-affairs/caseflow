@@ -132,7 +132,6 @@ export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
   didLoadAppealFail: false,
-  initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
@@ -221,12 +220,6 @@ const reducer = (state = {}, action = {}) => {
         }
       }
     );
-  case Constants.REQUEST_INITIAL_CASE_FAILURE:
-    return update(state, {
-      initialCaseLoadingFail: {
-        $set: action.payload.value
-      }
-    });
   case Constants.RECEIVE_MANIFESTS:
     return update(state, {
       ui: {

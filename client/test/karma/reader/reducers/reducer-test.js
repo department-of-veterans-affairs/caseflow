@@ -131,17 +131,6 @@ describe('Reader reducer', () => {
     });
   });
 
-  describe(Constants.REQUEST_INITIAL_CASE_FAILURE, () => {
-    const state = reduceActions([{
-      type: Constants.REQUEST_INITIAL_CASE_FAILURE,
-      payload: {
-        value: true
-      }
-    }]);
-
-    expect(state.initialCaseLoadingFail).to.equal(true);
-  });
-
   describe(Constants.REQUEST_CREATE_ANNOTATION_FAILURE, () => {
     const getContext = () => {
       const annotationTemporaryId = 'some-guid';

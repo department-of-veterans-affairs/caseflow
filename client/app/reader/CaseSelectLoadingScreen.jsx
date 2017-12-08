@@ -5,9 +5,6 @@ import { connect } from 'react-redux';
 
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import {
-  onInitialCaseLoadingFail
-} from '../reader/LoadingScreen/LoadingScreenActions';
 import { onReceiveAssignments } from '../reader/CaseSelect/CaseSelectActions';
 import StatusMessage from '../components/StatusMessage';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
@@ -18,7 +15,7 @@ export class CaseSelectLoadingScreen extends React.Component {
     super();
     this.state = {};
   }
-  
+
   componentDidMount = () => {
     if (this.props.assignments) {
       
@@ -75,14 +72,12 @@ export class CaseSelectLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.readerReducer, 'initialCaseLoadingFail'),
   assignments: state.caseSelect.assignments,
   assignmentsLoaded: state.caseSelect.assignmentsLoaded
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    onInitialCaseLoadingFail,
     onReceiveAssignments
   }, dispatch)
 );
