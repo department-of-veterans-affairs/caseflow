@@ -159,3 +159,5 @@ export const RESET_PDF_SIDEBAR_ERRORS = 'RESET_PDF_SIDEBAR_ERRORS';
 // Defined in _search_bar.scss > .cf-search-bar. Max height of
 // search bar, used as offset when scrolling to search results
 export const SEARCH_BAR_HEIGHT = 50;
+
+export const OVERSCAN_ROWS = 5;
