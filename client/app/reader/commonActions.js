@@ -1,7 +1,11 @@
+import _ from 'lodash';
+import { updateFilteredDocIds  } from './searchFilters';
+
 import {
   HIDE_ERROR_MESSAGE,
   SHOW_ERROR_MESSAGE,
-  UPDATE_FILTERED_DOC_IDS
+  UPDATE_FILTERED_RESULTS,
+  ASSIGN_DOCUMENTS
 } from './constants';
 
 // errors
@@ -24,12 +28,24 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 // Apply filters
 
 export const updateFilteredIds = () => (dispatch, getState) => {
-  const { annotationLayer } = getState();
+  const { annotationLayer, readerReducer } = getState();
+  const filteredResults = updateFilteredDocIds(_.merge({},
+    readerReducer,
+    annotationLayer,
+  ));
 
   dispatch({
-    type: UPDATE_FILTERED_DOC_IDS,
+    type: ASSIGN_DOCUMENTS,
     payload: {
-      annotationLayer
+      documents: filteredResults.documents
+    }
+  });
+
+  dispatch({
+    type: UPDATE_FILTERED_RESULTS,
+    payload: {
+      searchCategoryHighlights: filteredResults.searchCategoryHighlights,
+      filteredIds: filteredResults.filteredIds
     }
   });
 };
