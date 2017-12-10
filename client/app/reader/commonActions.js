@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { updateFilteredDocIds  } from './searchFilters';
+import { updateFilteredDocIds } from './searchFilters';
 
 import {
   HIDE_ERROR_MESSAGE,
