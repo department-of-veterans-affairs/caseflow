@@ -8,18 +8,12 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
 
 export class ReaderLoadingScreen extends React.Component {
-
-  constructor() {
-    super();
-    this.state = {};
-  }
-
-  componentDidMount = () => {
+  createLoadPromise = () => {
     if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
-      return;
+      return Promise.resolve();
     }
 
-    const loadPromise = ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).
+    return ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
@@ -29,32 +23,16 @@ export class ReaderLoadingScreen extends React.Component {
         this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
         this.props.onReceiveAnnotations(annotations);
       });
-
-    this.setState({
-      promiseStartTimeMs: Date.now(),
-      loadPromise
-    });
   }
 
   render() {
-    // We create this.loadPromise in componentDidMount().
-    // componentDidMount() is only called after the component is inserted into the DOM,
-    // which means that render() will be called beforehand. My inclination was to use
-    // componentWillMount() instead, but React docs tell us not to introduce side-effects
-    // in that method. I don't know why that's a bad idea. But this approach lets us
-    // keep the side effects in componentDidMount().
-    if (!this.state.loadPromise) {
-      return null;
-    }
-
     const failStatusMessageChildren = <div>
         It looks like Caseflow was unable to load this case.<br />
         Please <a href="">refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
-      loadPromise={this.state.loadPromise}
-      promiseStartTimeMs={this.state.promiseStartTimeMs}
+      createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading claims folder in Reader...'

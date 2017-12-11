@@ -16,7 +16,30 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.listenToPromise(this.props.loadPromise);
+    const promise = this.props.createLoadPromise();
+    this.setState({promiseStartTimeMs: Date.now()});
+
+    // Promise does not give us a way to "un-then" and stop listening 
+    // when the component unmounts. So we'll leave this reference dangling,
+    // but at least we can use this.isMounted to avoid taking action if necessary.
+    promise.then(
+      () => {
+        if (this._isMounted && !promise === this.props.loadPromise) {
+          return;
+        }
+  
+        this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
+        window.clearInterval(this.intervalId);
+      },
+      () => {
+        if (this._isMounted && !promise === this.props.loadPromise) {
+          return;
+        }
+  
+        this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
+        window.clearInterval(this.intervalId);
+      }
+    );
     this.intervalId = window.setInterval(this.forceUpdate.bind(this), 100);
     this._isMounted = true;
   }
@@ -26,33 +49,9 @@ class LoadingDataDisplay extends React.PureComponent {
     this._isMounted = false;
   }
 
-  listenToPromise = (promise) => {
-    // Promise does not give us a way to "un-then" and stop listening 
-    // when the component unmounts. So we'll leave this reference dangling,
-    // but at least we can use this.isMounted to avoid taking action if necessary.
-    promise.then(
-      () => {
-        if (this._isMounted && !promise === this.props.loadPromise) {
-          return;
-        }
-
-        this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
-        window.clearInterval(this.intervalId);
-      },
-      () => {
-        if (this._isMounted && !promise === this.props.loadPromise) {
-          return;
-        }
-
-        this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
-        window.clearInterval(this.intervalId);
-      }
-    );
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (this.props.loadPromise !== nextProps.loadPromise) {
-      this.listenToPromise(nextProps.loadPromise);
+    if (this.props.createLoadPromise !== nextProps.createLoadPromise) {
+      throw new Error("Once LoadingDataDisplay is instantiated, you can't change the createLoadPromise function.");
     }
   }
 
@@ -83,7 +82,7 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  loadPromise: PropTypes.object.isRequired
+  createLoadPromise: PropTypes.func.isRequired
 };
 
 LoadingDataDisplay.defaultProps = {
