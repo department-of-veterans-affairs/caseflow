@@ -218,7 +218,7 @@ RSpec.feature "RAMP Intake" do
       expect(page).to have_content("Finish processing Supplemental Claim election")
 
       # Validate the appeal & issue also shows up
-      expect(page).to have_content("This Veteran has 1 active appeal, with the following issues")
+      expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
       expect(page).to have_content("5252 - Knee, limitation of flexion of")
       expect(page).to have_content("knee movement")
     end
@@ -315,7 +315,42 @@ RSpec.feature "RAMP Intake" do
       before { FeatureToggle.enable!(:intake_reentry_form) }
       after { FeatureToggle.disable!(:intake_reentry_form) }
 
-      scenario "flow starts with form selection" do
+      scenario "Attempt to start RAMP refiling for a veteran without a complete RAMP election" do
+        # Create an incomplete RAMP election
+        RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 3.days.ago
+        )
+
+        # Validate that you can't go directly to search
+        visit "/intake"
+
+        # Validate that you cant move forward without selecting a form
+        scroll_element_in_to_view(".cf-submit.usa-button")
+        expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "21-4138 RAMP Selection Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        # TODO: Show the proper error message
+        expect(page).to have_content("Something went wrong")
+
+        expect(RampRefilingIntake.last).to have_attributes(error_code: "no_complete_ramp_election")
+      end
+
+      scenario "Start a RAMP refiling" do
+        # Create an complete RAMP election
+        ramp_election = RampElection.create!(
+          veteran_file_number: "12341234",
+          notice_date: 3.days.ago,
+          end_product_reference_id: "123"
+        )
+
         # Validate that you can't go directly to search
         visit "/intake/search"
 
@@ -328,7 +363,15 @@ RSpec.feature "RAMP Intake" do
         end
         safe_click ".cf-submit.usa-button"
 
-        expect(page).to have_current_path("/intake/search")
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review-request")
+
+        ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
+
+        expect(ramp_refiling).to_not be_nil
+        expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
       end
     end
   end
