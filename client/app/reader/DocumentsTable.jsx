@@ -324,7 +324,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(
-    _.merge({
+    _.assign({}, {
       ..._.pick(state.readerReducer, 'documents'),
       ..._.pick(state.readerReducer, 'ui'),
       ...state.annotationLayer
