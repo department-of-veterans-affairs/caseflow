@@ -9,6 +9,7 @@ import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested }
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
+import { getDate } from './util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -36,12 +37,6 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
-const getDate = (date) => {
-  return moment(date).
-    format('h:mm a').
-    replace(/(a|p)(m)/, '$1.$2.');
-};
-
 export class DocketHearingRow extends React.PureComponent {
 
   setDisposition = ({ value }) => this.props.setDisposition(this.props.index, value, this.props.hearingDate);
@@ -65,8 +60,7 @@ export class DocketHearingRow extends React.PureComponent {
 
     let getRoTime = (date) => {
       return moment(date).tz(roTimeZone).
-        format('h:mm a z').
-        replace(/(a|p)(m)/, '$1.$2.');
+        format('h:mm a z');
     };
 
     const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
@@ -76,7 +70,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date)} EDT /<br />
+            {getDate(hearing.date)} /<br />
             {getRoTime(hearing.date)}
           </span>
           <span>
