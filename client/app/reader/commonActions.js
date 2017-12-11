@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { updateFilteredDocIds } from './searchFilters';
+import { getUpdatedFilteredResults } from './searchFilters';
 
 import {
   HIDE_ERROR_MESSAGE,
@@ -29,7 +29,7 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 
 export const updateFilteredIdsAndDocs = () => (dispatch, getState) => {
   const { annotationLayer, readerReducer } = getState();
-  const filteredResults = updateFilteredDocIds(_.merge({},
+  const filteredResults = getUpdatedFilteredResults(_.merge({},
     readerReducer,
     annotationLayer,
   ));

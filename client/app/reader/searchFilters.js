@@ -3,7 +3,7 @@ import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
 
-export const updateFilteredDocIds = (state) => {
+export const getUpdatedFilteredResults = (state) => {
   const updatedNextState = update(state, {});
   const documents = update(state.documents, {});
   const searchCategoryHighlights = update(state.ui.searchCategoryHighlights, {});
