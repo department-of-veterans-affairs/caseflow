@@ -48,8 +48,7 @@ class SessionsController < ApplicationController
 
   # :nocov:
   def destroy
-    session.delete(:regional_office)
-    session.delete("user")
+    reset_session
     redirect_to "/"
   end
   # :nocov:
