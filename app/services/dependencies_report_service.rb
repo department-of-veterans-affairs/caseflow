@@ -3,6 +3,13 @@ class DependenciesReportService
     ALL_DEPENDENCIES =
       ["BGS.FilenumberService",
        "BGS.PoaService",
+       "BGS.AddressService",
+       "BGS.OrganizationPoaService",
+       "BGS.VeteranService",
+       "BGS.AddressService",
+       "BGS.BenefitsService",
+       "BGS.ClaimantFlashesService",
+       "BGS.PersonFilenumberService",
        "VACOLS",
        "VBMS",
        "VBMS.FindDocumentVersionReference",
