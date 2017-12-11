@@ -22,10 +22,10 @@ class LoadingDataDisplay extends React.PureComponent {
 
     // Promise does not give us a way to "un-then" and stop listening 
     // when the component unmounts. So we'll leave this reference dangling,
-    // but at least we can use this.isMounted to avoid taking action if necessary.
+    // but at least we can use this._isMounted to avoid taking action if necessary.
     promise.then(
       () => {
-        if (this._isMounted && !promise === this.props.loadPromise) {
+        if (!this._isMounted) {
           return;
         }
 
@@ -33,7 +33,7 @@ class LoadingDataDisplay extends React.PureComponent {
         window.clearInterval(this.intervalId);
       },
       () => {
-        if (this._isMounted && !promise === this.props.loadPromise) {
+        if (!this._isMounted) {
           return;
         }
 
@@ -57,7 +57,7 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-    const isTimedOut = Date.now() - this.props.promiseStartTimeMs > this.props.timeoutMs;
+    const isTimedOut = Date.now() - this.state.promiseStartTimeMs > this.props.timeoutMs;
 
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
@@ -71,7 +71,7 @@ class LoadingDataDisplay extends React.PureComponent {
       return this.props.children;
     }
 
-    const isSlow = Date.now() - this.props.promiseStartTimeMs > this.props.slowLoadThresholdMs;
+    const isSlow = Date.now() - this.state.promiseStartTimeMs > this.props.slowLoadThresholdMs;
     const loadingScreenProps = { ...this.props.loadingScreenProps };
 
     if (isSlow) {
@@ -83,7 +83,8 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  createLoadPromise: PropTypes.func.isRequired
+  createLoadPromise: PropTypes.func.isRequired,
+  children: PropTypes.element.isRequired
 };
 
 LoadingDataDisplay.defaultProps = {
