@@ -150,6 +150,24 @@ const documentsReducer = (state = {}, action = {}) => {
         }
       }
     });
+  case Constants.REQUEST_REMOVE_TAG_FAILURE:
+    return update(state, {
+      [action.payload.docId]: {
+        tags: {
+          $apply: (tags) => {
+            const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+
+            return update(tags, {
+              [removedTagIndex]: {
+                $merge: {
+                  pendingRemoval: false
+                }
+              }
+            });
+          }
+        }
+      }
+    });
   default:
     return state;
   }

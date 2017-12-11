@@ -339,23 +339,7 @@ const reducer = (state = {}, action = {}) => {
     });
   case Constants.REQUEST_REMOVE_TAG_FAILURE:
     return update(showErrorMessage(state, 'tag'), {
-      documents: {
-        [action.payload.docId]: {
-          tags: {
-            $apply: (tags) => {
-              const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
 
-              return update(tags, {
-                [removedTagIndex]: {
-                  $merge: {
-                    pendingRemoval: false
-                  }
-                }
-              });
-            }
-          }
-        }
-      }
     });
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
