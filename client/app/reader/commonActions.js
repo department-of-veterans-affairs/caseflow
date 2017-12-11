@@ -29,9 +29,10 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 
 export const updateFilteredIdsAndDocs = () => (dispatch, getState) => {
   const { annotationLayer, readerReducer } = getState();
-  const filteredResults = getUpdatedFilteredResults(_.merge({},
-    readerReducer,
-    annotationLayer,
+
+  const filteredResults = getUpdatedFilteredResults(_.assign({},
+    { ...readerReducer },
+    { ...annotationLayer }
   ));
 
   dispatch({
