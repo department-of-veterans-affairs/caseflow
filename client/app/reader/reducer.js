@@ -341,21 +341,6 @@ const reducer = (state = {}, action = {}) => {
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
-  case Constants.TOGGLE_COMMENT_LIST:
-    modifiedDocuments = update(state.documents,
-      {
-        [action.payload.docId]: {
-          $merge: {
-            listComments: !state.documents[action.payload.docId].listComments
-          }
-        }
-      });
-
-    return update(
-      state,
-      {
-        documents: { $set: modifiedDocuments }
-      });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return update(state,
       { ui: { pdf: { hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } } } }

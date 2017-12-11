@@ -47,7 +47,7 @@ export const updateFilteredDocIds = (state) => {
 
     // getting all the truthy values from the object
     // {'medical': true, 'procedural': false } turns into {'medical': true}
-    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
+  const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
 
     // update the state for all the search category highlights
     if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
