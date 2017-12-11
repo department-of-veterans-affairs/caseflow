@@ -41,7 +41,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     docId: doc.id,
     expanded: doc.listComments,
-    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.docId))
+    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state.annotationLayer)(ownProps.docId))
   };
 };
 
