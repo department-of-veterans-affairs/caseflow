@@ -259,14 +259,6 @@ describe('DecisionReviewer', () => {
           calledWith(`/document/${documents[0].id}/annotation/${commentId}`)).
           to.be.true;
       }));
-
-      it('comment has page number', asyncTest(async() => {
-        wrapper.find('a').filterWhere(
-          (link) => link.text() === documents[1].type).
-          simulate('click', { button: 0 });
-
-        expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
-      }));
     });
   });
 

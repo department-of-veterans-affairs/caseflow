@@ -492,6 +492,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
+      expect(page.find('#comments-header')).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
@@ -1270,7 +1271,7 @@ RSpec.feature "Reader" do
       )
     end
 
-    scenario "Document viewer when doc list is filtered", focus: true do
+    scenario "Document viewer when doc list is filtered" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       fill_in "searchBar", with: documents[0].type
       click_on documents[0].type
