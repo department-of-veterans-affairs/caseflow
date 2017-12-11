@@ -337,10 +337,6 @@ const reducer = (state = {}, action = {}) => {
         }
       }
     });
-  case Constants.REQUEST_REMOVE_TAG_FAILURE:
-    return update(showErrorMessage(state, 'tag'), {
-
-    });
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
