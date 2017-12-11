@@ -246,3 +246,5 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
     return state;
   }
 };
+
+export default annotationLayerReducer;
