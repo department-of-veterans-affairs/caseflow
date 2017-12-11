@@ -18,6 +18,7 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
+import documentsReducer from '../../../app/reader/DocumentList/DocumentsReducer';
 import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
 
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
@@ -60,6 +61,7 @@ describe('DecisionReviewer', () => {
         caseSelect: caseSelectReducer,
         readerReducer,
         search: searchReducer,
+        documents: documentsReducer,
         annotationLayer: annotationLayerReducer
       }),
       compose(
