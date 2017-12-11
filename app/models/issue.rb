@@ -4,8 +4,26 @@
 class Issue
   include ActiveModel::Model
 
-  attr_accessor :id, :program, :code, :type, :category, :description, :disposition,
-                :close_date, :levels, :program_description, :note, :vacols_sequence_id
+  attr_accessor :id, :program, :code, :category, :disposition,
+                :close_date, :levels, :note, :vacols_sequence_id
+
+  # These attributes are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
+  attr_writer :type, :description, :program_description
+
+  def type
+    fail Caseflow::Error::AttributeNotLoaded if @type == :not_loaded
+    @type
+  end
+
+  def description
+    fail Caseflow::Error::AttributeNotLoaded if @description == :not_loaded
+    @description
+  end
+
+  def program_description
+    fail Caseflow::Error::AttributeNotLoaded if @program_description == :not_loaded
+    @program_description
+  end
 
   PROGRAMS = {
     "01" => :vba_burial,
@@ -103,25 +121,27 @@ class Issue
     end
 
     def load_from_vacols(hash)
-      category_code = hash["isslev1"] || hash["isslev2"] || hash["isslev3"]
-
-      disposition = (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other")
-                    .parameterize.underscore.to_sym
-
-      new(
+      attributes = {
         id: hash["isskey"],
         levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
         program: PROGRAMS[hash["issprog"]],
         code: hash["isscode"],
-        type: { name: TYPES[hash["isscode"]], label: hash["isscode_label"] },
         note: hash["issdesc"],
-        category: CATEGORIES[category_code],
-        program_description: "#{hash['issprog']} - #{hash['issprog_label']}",
-        description: description(hash),
-        disposition: disposition,
+        category: CATEGORIES[(hash["isslev1"] || hash["isslev2"] || hash["isslev3"])],
+        disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other").parameterize.underscore.to_sym,
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
-      )
+      }
+
+      if hash.key? "issprog_label"
+        attributes[:type] = { name: TYPES[hash["isscode"]], label: hash["isscode_label"] }
+        attributes[:description] = description(hash)
+        attributes[:program_description] = "#{hash['issprog']} - #{hash['issprog_label']}"
+      else
+        attributes[:type] = attributes[:description] = attributes[:program_description] = :not_loaded
+      end
+
+      new(**attributes)
     end
 
     def repository
