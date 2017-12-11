@@ -42,9 +42,6 @@ Rails.application.configure do
 
   config.google_analytics_account = "UA-74789258-5"
 
-  # This should reflect the value of whatever certification.cf.preprod.ds.va.gov resolves to
-  config.user_ip_address = "10.236.66.244"
-
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 

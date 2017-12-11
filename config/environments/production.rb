@@ -80,7 +80,4 @@ Rails.application.configure do
 
   config.google_analytics_account = ENV["GA_TRACKING_ID"]
 
-  # This should reflect the value of whatever certification.cf.ds.va.gov resolves to
-  config.user_ip_address = "10.236.66.134"
-
 end

@@ -80,9 +80,6 @@ Rails.application.configure do
 
   config.google_analytics_account = "UA-74789258-5"
 
-  # This should reflect the value of whatever certification.cf.uat.ds.va.gov resolves to
-  config.user_ip_address = "10.236.66.243"
-
   ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
 
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
