@@ -622,7 +622,7 @@ RSpec.feature "RAMP Intake" do
           # Validate that you can't go directly to search
           visit "/intake"
 
-          # Validate that you cant move forward without selecting a form
+          # Validate that you can't move forward without selecting a form
           scroll_element_in_to_view(".cf-submit.usa-button")
           expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
@@ -651,7 +651,7 @@ RSpec.feature "RAMP Intake" do
           # Validate that you can't go directly to search
           visit "/intake/search"
 
-          # Validate that you cant move forward without selecting a form
+          # Validate that you can't move forward without selecting a form
           scroll_element_in_to_view(".cf-submit.usa-button")
           expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
