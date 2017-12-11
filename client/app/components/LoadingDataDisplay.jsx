@@ -41,6 +41,12 @@ class LoadingDataDisplay extends React.PureComponent {
         window.clearInterval(this.intervalId);
       }
     );
+    // Generally, forceUpdate is not recommended. The reason we're doing it is that we
+    // have a promise start time, and we want to render differently based on how much
+    // time has elapsed since then. We could use setState and increment a timeElapsed
+    // variable. However, that would essentially store computed state in this.state,
+    // which is also not recommended. I chose this approach because I preferred not to
+    // store computed state.
     this.intervalId = window.setInterval(this.forceUpdate.bind(this), 100);
     this._isMounted = true;
   }
