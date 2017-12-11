@@ -290,11 +290,8 @@ class VACOLS::Case < VACOLS::Record
         conn.exec_query(sanitize_sql_array([query, vacols_ids]))
       end
 
-      result.to_hash.reduce({}) do |memo, row|
-        # return false instead of nil if no remand return date so this value is cached
-        datetime = VacolsHelper.normalize_vacols_datetime(row["rem_return"]) || false
-        memo[(row["bfkey"]).to_s] = datetime
-        memo
+      result.to_hash.each_with_object({}) do |row, hsh|
+        hsh[(row["bfkey"]).to_s] = VacolsHelper.normalize_vacols_datetime(row["rem_return"])
       end
     end
   end
