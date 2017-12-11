@@ -16,7 +16,7 @@ export default class StyleGuideHorizontalLine extends React.PureComponent {
   Caseflow horizontal lines should always be light grey and have 30 px
   of space between the bottom of the section or component and the top of the horizontal line.</p>
 
-      <div className="cf-divider"></div>
+      <div className="cf-help-divider"></div>
     </div>;
   }
 }
