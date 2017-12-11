@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
 const documentsReducer = (state = {}, action = {}) => {

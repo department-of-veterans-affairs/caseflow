@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import { getSearchSelectors } from 'redux-search';
 
-const getFilteredDocIds = (state) => state.readerReducer.ui.filteredDocIds;
+const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
 
 export const getFilteredDocuments = createSelector(
@@ -50,7 +50,7 @@ export const getAnnotationsPerDocument = createSelector(
       value()
 );
 
-const getDocFilterCriteria = (state) => state.ui.docFilterCriteria;
+const getDocFilterCriteria = (state) => state.documentList.docFilterCriteria;
 
 /* eslint-disable newline-per-chained-call */
 
