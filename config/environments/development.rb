@@ -58,9 +58,6 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
-  
-  # This should be the localhost ip address
-  config.user_ip_address = "127.0.0.1"
 
   # configure pry
   silence_warnings do
