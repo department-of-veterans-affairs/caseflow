@@ -9,7 +9,7 @@ import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
-import documentsReducer from './DocumentList/DocumentsReducer';
+import documentsReducer from './Documents/DocumentsReducer';
 import documentListReducer from './DocumentList/DocumentListReducer';
 
 // eslint-disable-next-line no-underscore-dangle
