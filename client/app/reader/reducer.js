@@ -108,7 +108,6 @@ export const initialState = {
 const reducer = (state = {}, action = {}) => {
   let allTags;
   let uniqueTags;
-  let modifiedDocuments;
 
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
@@ -387,13 +386,6 @@ const reducer = (state = {}, action = {}) => {
       {
         viewingDocumentsOrComments: {
           $set: action.payload.documentsOrComments
-        },
-        documents: {
-          $apply: (docs) =>
-            _.mapValues(docs, (doc) => ({
-              ...doc,
-              listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-            }))
         }
       }
     );
