@@ -2,8 +2,9 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveDocs, onReceiveManifests, onInitialDataLoadingFail
+import { onReceiveDocs, onInitialDataLoadingFail
 } from './LoadingScreen/LoadingScreenActions';
+import { onReceiveManifests } from './DocumentList/DocumentListActions';
 import { onReceiveAnnotations } from './AnnotationLayer/AnnotationActions';
 import { connect } from 'react-redux';
 import StatusMessage from '../components/StatusMessage';

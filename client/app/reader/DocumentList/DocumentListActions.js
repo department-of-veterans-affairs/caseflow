@@ -1,8 +1,15 @@
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
 import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
+
+export const handleSetLastRead = (docId) => ({
+  type: Constants.LAST_READ_DOCUMENT,
+  payload: {
+    docId
+  }
+});
 
 // Table header actions
 
@@ -231,3 +238,10 @@ export const handleToggleCommentOpened = (docId) => ({
     }
   }
 });
+
+export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+  type: Constants.RECEIVE_MANIFESTS,
+  payload: { manifestVbmsFetchedAt,
+    manifestVvaFetchedAt }
+});
+

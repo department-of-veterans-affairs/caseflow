@@ -41,8 +41,6 @@ export const COMMENT_ACCORDION_KEY = 'Comments';
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 
-export const COMPLETE_ROTATION = 360;
-
 // Arrange the directions such that each direction + 1 modulo 4 rotates clockwise.
 export const MOVE_ANNOTATION_ICON_DIRECTIONS = {
   UP: 0,

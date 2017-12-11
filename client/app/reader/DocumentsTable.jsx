@@ -10,7 +10,6 @@ import DocumentCategoryIcons from './DocumentCategoryIcons';
 import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
-import * as Constants from './constants';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
@@ -18,6 +17,7 @@ import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
   setTagFilter, setCategoryFilter, toggleDropdownFilterVisibility
 } from '../reader/DocumentList/DocumentListActions';
+import * as Constants from './DocumentList/actionTypes';
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';

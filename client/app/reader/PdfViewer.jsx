@@ -6,16 +6,18 @@ import { connect } from 'react-redux';
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
-import { selectCurrentPdf, fetchAppealDetails, showSearchBar
+import { fetchAppealDetails, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation, closeAnnotationDeleteModal
 } from '../reader/AnnotationLayer/AnnotationActions';
+import { selectCurrentPdf } from '../reader/Documents/DocumentsActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import { update } from '../util/ReducerUtil';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
 import * as Constants from './constants';
+import { ROTATION_INCREMENTS } from './Documents/actionTypes';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from './analytics';
 
 const NUMBER_OF_DIRECTIONS = 4;
@@ -27,7 +29,7 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
   // There are four valid rotations: 0, 90, 180, 270. We transform those values to 0, -1, -2, -3.
   // We then use that value to rotate the direction. I.E. Hitting up (value 0) on the
   // keyboard when rotated 90 degrees corresponds to moving left (value 3) on the document.
-  const rotationIncrements = -(rotation / Constants.ROTATION_INCREMENTS) % NUMBER_OF_DIRECTIONS;
+  const rotationIncrements = -(rotation / ROTATION_INCREMENTS) % NUMBER_OF_DIRECTIONS;
   const transformedDirection = Constants.MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[
     (direction + rotationIncrements + NUMBER_OF_DIRECTIONS) % NUMBER_OF_DIRECTIONS];
   const moveAmountPx = 5;

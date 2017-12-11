@@ -3,11 +3,9 @@ import _ from 'lodash';
 import { update } from '../../util/ReducerUtil';
 
 const updateLastReadDoc = (state, docId) => update(state, {
-  ui: {
-    pdfList: {
-      lastReadDocId: {
-        $set: docId
-      }
+  pdfList: {
+    lastReadDocId: {
+      $set: docId
     }
   }
 });
