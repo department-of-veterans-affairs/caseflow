@@ -76,14 +76,9 @@ export class Certification extends React.Component {
       certification: null,
       form9PdfPath: null
     };
-
-    // Allow test harness to trigger reloads
-    window.reloadCertification = () => {
-      this.checkCertificationData();
-    };
   }
 
-  checkCertificationData() {
+  createLoadPromise = () => {
     const loadPromise = new Promise((resolve, reject) => {
       const makePollAttempt = () => {
         ApiUtil.get(`/certifications/${this.props.vacolsId}`).
@@ -108,28 +103,10 @@ export class Certification extends React.Component {
       makePollAttempt();
     });
 
-    this.setState({
-      promiseStartTimeMs: Date.now(),
-      loadPromise
-    });
-  }
-
-  componentDidMount() {
-    // initial check
-    this.checkCertificationData();
+    return loadPromise;
   }
 
   render() {
-    // We create this.loadPromise in componentDidMount().
-    // componentDidMount() is only called after the component is inserted into the DOM,
-    // which means that render() will be called beforehand. My inclination was to use
-    // componentWillMount() instead, but React docs tell us not to introduce side-effects
-    // in that method. I don't know why that's a bad idea. But this approach lets us
-    // keep the side effects in componentDidMount().
-    if (!this.state.loadPromise) {
-      return null;
-    }
-
     const failStatusMessageChildren = <div>
       Systems that Caseflow Certification connects to are experiencing technical difficulties
       and Caseflow is unable to load.
@@ -137,8 +114,7 @@ export class Certification extends React.Component {
     </div>;
 
     return <LoadingDataDisplay
-      loadPromise={this.state.loadPromise}
-      promiseStartTimeMs={this.state.promiseStartTimeMs}
+      createLoadPromise={this.createLoadPromise}
       slowLoadThresholdMs={AppConstants.LONGER_THAN_USUAL_TIMEOUT}
       timeoutMs={AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT}
       slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"

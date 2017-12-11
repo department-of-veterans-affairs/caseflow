@@ -17,7 +17,8 @@ class LoadingDataDisplay extends React.PureComponent {
 
   componentDidMount() {
     const promise = this.props.createLoadPromise();
-    this.setState({promiseStartTimeMs: Date.now()});
+
+    this.setState({ promiseStartTimeMs: Date.now() });
 
     // Promise does not give us a way to "un-then" and stop listening 
     // when the component unmounts. So we'll leave this reference dangling,
@@ -27,7 +28,7 @@ class LoadingDataDisplay extends React.PureComponent {
         if (this._isMounted && !promise === this.props.loadPromise) {
           return;
         }
-  
+
         this.setState({ promiseResult: PROMISE_RESULTS.SUCCESS });
         window.clearInterval(this.intervalId);
       },
@@ -35,7 +36,7 @@ class LoadingDataDisplay extends React.PureComponent {
         if (this._isMounted && !promise === this.props.loadPromise) {
           return;
         }
-  
+
         this.setState({ promiseResult: PROMISE_RESULTS.FAILURE });
         window.clearInterval(this.intervalId);
       }
