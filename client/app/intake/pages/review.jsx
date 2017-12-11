@@ -11,7 +11,7 @@ class Review extends React.PureComponent {
     <SwitchOnForm
       formComponentMapping={{
         ramp_election: <RampElectionPage />,
-        ramp_reentry: <RampRefilingPage />
+        ramp_refiling: <RampRefilingPage />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;
@@ -26,7 +26,7 @@ class ReviewButtonsUnconnected extends React.PureComponent {
     <SwitchOnForm
       formComponentMapping={{
         ramp_election: <RampElectionButtons history={this.props.history} />,
-        ramp_reentry: <RampRefilingButtons history={this.props.history} />
+        ramp_refiling: <RampRefilingButtons history={this.props.history} />
       }}
     />
 }

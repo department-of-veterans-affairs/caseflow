@@ -3,17 +3,17 @@ import { connect } from 'react-redux';
 
 class SwitchOnForm extends React.PureComponent {
     render = () => {
-      const { formSelection, formComponentMapping, componentForNoFormSelected } = this.props;
+      const { formType, formComponentMapping, componentForNoFormSelected } = this.props;
 
-      if (!formSelection) {
+      if (!formType) {
         return componentForNoFormSelected;
       }
 
-      const child = formComponentMapping[formSelection];
+      const child = formComponentMapping[formType];
 
       // eslint-disable-next-line no-undefined
       if (child === undefined) {
-        throw new Error(`SwitchOnForm does not have a mapping for current form selection: '${formSelection}'`);
+        throw new Error(`SwitchOnForm does not have a mapping for current form selection: '${formType}'`);
       }
 
       return child;
@@ -25,7 +25,7 @@ SwitchOnForm.defaultProps = {
 };
 
 const ConnectedSwitchOnForm = connect(
-  ({ formSelection }) => ({ formSelection })
+  ({ formType }) => ({ formType })
 )(SwitchOnForm);
 
 export default ConnectedSwitchOnForm;
