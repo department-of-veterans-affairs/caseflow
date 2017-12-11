@@ -25,7 +25,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIdsAndDocsAndDocs());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 /* Filters */
