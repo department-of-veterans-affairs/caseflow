@@ -569,7 +569,3 @@ describe('DecisionReviewer', () => {
     });
   });
 });
-
-/* eslint-enable max-statements */
-/* eslint-enable no-unused-expressions */
-/* eslint-enable camelcase */
