@@ -144,26 +144,6 @@ describe('DecisionReviewer', () => {
       }));
     });
 
-    context('navigation buttons', () => {
-      it('are hidden when there is no next or previous pdf', () => {
-        // Filter documents on the second document's type
-        wrapper.find('input').simulate('change',
-          { target: { value: documents[1].type } });
-
-        // Enter the pdf view
-        wrapper.find('a').filterWhere(
-          (link) => link.text() === documents[1].type).
-          simulate('click', { button: 0 });
-
-        // Verify the arrow navigations keys are not present
-        expect(wrapper.find('#button-next')).to.have.length(0);
-        expect(wrapper.find('#button-previous')).to.have.length(0);
-
-        // Verify there is still a back to claims folder
-        expect(wrapper.find('a').filterWhere((link) => link.text().includes('Back to claims'))).to.have.length(1);
-      });
-    });
-
     context('rotate', () => {
       it('turns pages', asyncTest(async() => {
         // Stub ApiUtil.get() calls so request to content_url return some fake response.

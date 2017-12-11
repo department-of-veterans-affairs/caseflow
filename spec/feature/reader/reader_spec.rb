@@ -1270,6 +1270,16 @@ RSpec.feature "Reader" do
       )
     end
 
+    scenario "Document viewer when doc list is filtered", focus: true do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      fill_in "searchBar", with: documents[0].type
+      click_on documents[0].type
+
+      expect(page).to have_no_selector("#button-next")
+      expect(page).to have_no_selector("#button-previous")
+      expect(page).to have_content("Back to claims")
+    end
+
     scenario "When user search term is not found" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       search_query = "does not exist in annotations"

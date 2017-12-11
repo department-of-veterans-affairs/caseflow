@@ -15,7 +15,7 @@ export default {
       // and we just ignored the errors. Giving an empty response here will allow
       // the API response handlers to not crash.
 
-      return Promise.resolve({text: '{}'})
+      return Promise.resolve({ text: '{}' });
     };
 
     this.apiPatch = sinon.stub(ApiUtil, 'patch').returns(makeFakePromise());
