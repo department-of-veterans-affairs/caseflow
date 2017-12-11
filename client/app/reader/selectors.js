@@ -50,7 +50,7 @@ export const getAnnotationsPerDocument = createSelector(
       value()
 );
 
-const getDocFilterCriteria = (state) => state.ui.docFilterCriteria;
+const getDocFilterCriteria = (state) => state.readerReducer.ui.docFilterCriteria;
 
 /* eslint-disable newline-per-chained-call */
 
