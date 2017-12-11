@@ -285,8 +285,8 @@ const mapStateToProps = (state, props) => {
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
 
   return {
-    ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
-    docListIsFiltered: docListIsFiltered(state.readerReducer),
+    ..._.pick(state.documentList, 'filteredDocIds'),
+    docListIsFiltered: docListIsFiltered(state),
     loadError: state.readerReducer.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     ...state.readerReducer.ui.pdf,

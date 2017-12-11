@@ -8,10 +8,12 @@ const typeContainsString = (searchQuery, doc) => {
   return (doc.type.toLowerCase().includes(searchQuery));
 };
 
-const commentContainsString = (searchQuery, state, doc) =>
-  makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
+const commentContainsString = (searchQuery, state, doc) => {
+  console.log(state);
+  return makeGetAnnotationsByDocumentId(state)(doc.id).reduce((acc, annotation) =>
     acc || annotation.comment.toLowerCase().includes(searchQuery)
     , false);
+}
 
 export const commentContainsWords = (searchQuery, state, doc) => {
   let queryTokens = _.compact(searchQuery.split(' '));

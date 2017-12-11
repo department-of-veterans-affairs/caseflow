@@ -17,7 +17,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
         action: 'change-sort-by',
         label: (nextState) => {
-          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ?
+          const direction = nextState.documentList.docFilterCriteria.sort.sortAscending ?
             'ascending' : 'descending';
 
           return `${sortBy}-${direction}`;
@@ -227,7 +227,7 @@ export const handleToggleCommentOpened = (docId) => ({
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
-      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
+      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

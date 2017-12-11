@@ -39,7 +39,8 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    error: state.readerReducer.ui.pdfSidebar.error
+    error: state.readerReducer.ui.pdfSidebar.error,
+    documents: state.documents
   };
 };
 
