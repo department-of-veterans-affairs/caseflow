@@ -1,8 +1,13 @@
 import * as Constants from '../constants';
-import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import { categoryFieldNameOfCategoryName } from '../utils';
-import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
+import { CATEGORIES } from '../analytics';
+import { updateFilteredIdsAndDocs } from '../commonActions';
+
+export const handleSetLastRead = (docId) => ({
+  type: Constants.LAST_READ_DOCUMENT,
+  payload: {
+    docId
+  }
+});
 
 // Table header actions
 
@@ -17,7 +22,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
         action: 'change-sort-by',
         label: (nextState) => {
-          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ?
+          const direction = nextState.documentList.docFilterCriteria.sort.sortAscending ?
             'ascending' : 'descending';
 
           return `${sortBy}-${direction}`;
@@ -25,7 +30,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 /* Filters */
@@ -42,7 +47,7 @@ export const clearCategoryFilters = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
@@ -60,7 +65,7 @@ export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const toggleDropdownFilterVisibility = (filterName) => ({
@@ -76,47 +81,6 @@ export const toggleDropdownFilterVisibility = (filterName) => ({
     }
   }
 });
-
-export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) =>
-  (dispatch) => {
-    dispatch(showErrorMessage('category'));
-    dispatch({
-      type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
-      payload: {
-        docId,
-        categoryKey,
-        categoryValueToRevertTo
-      }
-    });
-  };
-
-export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
-  const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-  ApiUtil.patch(
-    `/document/${docId}`,
-    { data: { [categoryKey]: toggleState } },
-    ENDPOINT_NAMES.DOCUMENT
-  ).catch(() =>
-    dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
-  );
-  dispatch(hideErrorMessage('category'));
-  dispatch({
-    type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-    payload: {
-      categoryKey,
-      toggleState,
-      docId
-    },
-    meta: {
-      analytics: {
-        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-        action: `${toggleState ? 'set' : 'unset'} document category`,
-        label: categoryName
-      }
-    }
-  });
-};
 
 // Tag filters
 
@@ -135,7 +99,7 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const clearTagFilters = () => (dispatch) => {
@@ -148,7 +112,7 @@ export const clearTagFilters = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 // Scrolling
@@ -176,7 +140,7 @@ export const setSearch = (searchQuery) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const clearSearch = () => (dispatch) => {
@@ -189,7 +153,7 @@ export const clearSearch = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const clearAllFilters = () => (dispatch) => {
@@ -202,7 +166,7 @@ export const clearAllFilters = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
@@ -218,6 +182,12 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   }
 });
 
+export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+  type: Constants.RECEIVE_MANIFESTS,
+  payload: { manifestVbmsFetchedAt,
+    manifestVvaFetchedAt }
+});
+
 export const handleToggleCommentOpened = (docId) => ({
   type: Constants.TOGGLE_COMMENT_LIST,
   payload: {
@@ -227,7 +197,7 @@ export const handleToggleCommentOpened = (docId) => ({
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
-      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
+      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

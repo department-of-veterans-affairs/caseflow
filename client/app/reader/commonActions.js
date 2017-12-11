@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import { updateFilteredDocIds } from './searchFilters';
+import { getUpdatedFilteredResults } from './searchFilters';
 
 import {
   HIDE_ERROR_MESSAGE,
@@ -27,8 +26,8 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 
 // Apply filters
 
-export const updateFilteredIds = () => (dispatch, getState) => {
-  const filteredResults = updateFilteredDocIds(getState());
+export const updateFilteredIdsAndDocs = () => (dispatch, getState) => {
+  const filteredResults = getUpdatedFilteredResults(getState());
 
   dispatch({
     type: ASSIGN_DOCUMENTS,

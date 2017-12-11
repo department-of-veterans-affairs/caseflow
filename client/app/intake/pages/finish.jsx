@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { getRampElectionStatus } from '../redux/selectors';
 import _ from 'lodash';
 
-const submitText = "I've completed all steps";
+const submitText = 'Finish intake';
 
 class Finish extends React.PureComponent {
   getIssuesAlertContent = (appeals) => {
@@ -80,7 +80,7 @@ class Finish extends React.PureComponent {
     );
 
     const issuesAlertTitle = `This Veteran has ${appeals.length} ` +
-                             `active ${appeals.length === 1 ? 'appeal' : 'appeals'}` +
+                             `eligible ${appeals.length === 1 ? 'appeal' : 'appeals'}` +
                              ', with the following issues';
 
     return <div>
@@ -100,7 +100,7 @@ class Finish extends React.PureComponent {
       </Alert>
 
       <Checkbox
-        label="I’m ready to move to the next step and close the VACOLS record."
+        label="I've completed the above steps outside Caseflow."
         name="confirm-finish"
         required
         value={rampElection.finishConfirmed}
