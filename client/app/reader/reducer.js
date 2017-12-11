@@ -193,16 +193,11 @@ export const initialState = {
   documentErrors: {},
   text: [],
   search: {
-    // todo
-    // term: null,
-    // index: 0,
-    // indexToHighlight: null,
+    index: 0,
+    indexToHighlight: null,
     relativeIndex: 0,
     pageIndex: null
   },
-  documentSearchString: null,
-  documentSearchIndex: 0,
-  matchIndexToHighlight: null,
   extractedText: {}
 };
 
@@ -848,8 +843,10 @@ const reducer = (state = {}, action = {}) => {
     return update(
       state,
       {
-        documentSearchIndex: {
-          $set: 0
+        search: {
+          index: {
+            $set: 0
+          }
         }
       }
     );
@@ -857,8 +854,10 @@ const reducer = (state = {}, action = {}) => {
     return update(
       state,
       {
-        documentSearchIndex: {
-          $apply: (index) => action.payload.increment ? index + 1 : index - 1
+        search: {
+          index: {
+            $apply: (index) => action.payload.increment ? index + 1 : index - 1
+          }
         }
       }
     );
@@ -866,8 +865,10 @@ const reducer = (state = {}, action = {}) => {
     return update(
       state,
       {
-        documentSearchIndex: {
-          $set: action.payload.index
+        search: {
+          index: {
+            $set: action.payload.index
+          }
         }
       }
     );
@@ -875,8 +876,10 @@ const reducer = (state = {}, action = {}) => {
     return update(
       state,
       {
-        matchIndexToHighlight: {
-          $set: action.payload.index
+        search: {
+          indexToHighlight: {
+            $set: action.payload.index
+          }
         }
       }
     );
