@@ -8,6 +8,7 @@ import readerReducer from './reducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
+import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -15,7 +16,8 @@ const store = createStore(
   combineReducers({
     caseSelect: caseSelectReducer,
     readerReducer,
-    search: searchReducer
+    search: searchReducer,
+    annotationLayer: annotationLayerReducer
   }),
   composeEnhancers(
     applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware()),

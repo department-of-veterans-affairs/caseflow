@@ -18,8 +18,12 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
+import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
+
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
-import { onReceiveDocs, onReceiveAnnotations } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
+import { onReceiveDocs } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
+import { onReceiveAnnotations } from '../../../app/reader/AnnotationLayer/AnnotationActions';
+
 import sinon from 'sinon';
 import { AutoSizer } from 'react-virtualized';
 const vacolsId = 'reader_id1';
@@ -55,7 +59,8 @@ describe('DecisionReviewer', () => {
       combineReducers({
         caseSelect: caseSelectReducer,
         readerReducer,
-        search: searchReducer
+        search: searchReducer,
+        annotationLayer: annotationLayerReducer
       }),
       compose(
         applyMiddleware(thunk),
