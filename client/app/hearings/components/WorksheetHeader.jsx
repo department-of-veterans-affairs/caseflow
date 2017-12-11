@@ -93,7 +93,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>Veteran ID:</div>
-          <div><b>{worksheet.vbms_id}</b></div>
+          <div><b>{worksheet.vbms_id.slice(0, -1)}</b></div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
