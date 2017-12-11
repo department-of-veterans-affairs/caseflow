@@ -34,7 +34,7 @@ class ReviewButtonsUnconnected extends React.PureComponent {
     case FORM_TYPES.RAMP_REFILING.key:
       return <RampRefilingButtons history={this.props.history} />;
     default:
-      return <div></div>;
+      return null;
     }
   }
 }
