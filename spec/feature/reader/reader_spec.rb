@@ -346,7 +346,7 @@ RSpec.feature "Reader" do
         end
       end
 
-      scenario "with mutiple appeals" do
+      scenario "with multiple appeals" do
         visit "/reader/appeal"
         fill_in "searchBar", with: (appeal4.vbms_id + "\n")
 
