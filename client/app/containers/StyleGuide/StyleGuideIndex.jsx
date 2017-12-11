@@ -64,47 +64,47 @@ export default class StyleGuideIndex extends React.PureComponent {
             href="https://github.com/department-of-veterans-affairs/appeals-design-research/issues/8">
             Download UI Kit</a>
         </p>
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideBranding />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideTypography />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideColors />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideButton />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideSearch />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideSearchableDropdown />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideCheckboxes />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideRadioField />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuidePlaceholder
           title="Date Input"
           id="date-input" />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideTables />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideTabs />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideAccordions />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideFormFields />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideLoaders />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideAlerts />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideLayout />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideMessages />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideDashboard />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideModal />
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
         <StyleGuideProgressBar />
       </div>
     </div>;

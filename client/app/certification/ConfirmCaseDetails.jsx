@@ -331,7 +331,7 @@ export class ConfirmCaseDetails extends React.Component {
           slowReRendersAreOk
         />
 
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
 
         <RadioField
           name="Does the representative information from VBMS and VACOLS match?"

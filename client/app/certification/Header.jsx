@@ -38,7 +38,7 @@ export class Header extends React.Component {
           </button>
         </div>
       </div>}
-      <div className="cf-help-divider"></div>
+      <div className="cf-divider"></div>
     </div>;
   }
 }

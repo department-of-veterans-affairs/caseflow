@@ -262,7 +262,7 @@ export class ConfirmHearing extends React.Component {
           {hearingCheckText}
         </div>
 
-        <div className="cf-help-divider"></div>
+        <div className="cf-divider"></div>
 
         {/*
             TODO: would we be better served by

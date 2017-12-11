@@ -62,7 +62,7 @@ class HearingWorksheetStream extends Component {
               onClick={this.onAddIssue(appeal.id)}
             />
           }
-          <hr />
+          <div className="cf-divider"></div>
         </div>;
       })}
     </div>;

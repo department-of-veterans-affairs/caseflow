@@ -476,6 +476,12 @@ select {
   }
 }
 
+//Candidate for commons: to replace cf-help-divider class for horizontal line
+.cf-divider {
+  margin: 30px auto;
+  border-bottom: 1px solid $color-gray-light;
+}
+
 .cf-react-loading-indicator {
   background-color: $color-white;
   border-radius: 5px;
