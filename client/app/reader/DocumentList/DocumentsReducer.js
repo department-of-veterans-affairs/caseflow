@@ -5,6 +5,8 @@ import { update } from '../../util/ReducerUtil';
 
 const documentsReducer = (state = {}, action = {}) => {
   switch (action.type) {
+  case Constants.ASSIGN_DOCUMENTS:
+    return Object.assign({}, action.payload.documents);
   case Constants.RECEIVE_DOCUMENTS:
     return _(action.payload.documents).map((doc) => [
       doc.id, {
