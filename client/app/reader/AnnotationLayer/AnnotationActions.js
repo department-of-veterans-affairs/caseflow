@@ -3,7 +3,7 @@ import uuid from 'uuid';
 import * as Constants from './actionTypes';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
-import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
+import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
 
 /** Annotation Modal **/
 
@@ -74,7 +74,7 @@ export const onReceiveAnnotations = (annotations) => (dispatch) => {
     type: Constants.RECEIVE_ANNOTATIONS,
     payload: { annotations }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const placeAnnotation = (pageNumber, coordinates, documentId) => ({

@@ -1,7 +1,7 @@
 import * as Constants from '../constants';
 import { collectAllTags } from '../PdfViewer/PdfViewerActions';
 import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
-import { updateFilteredIds } from '../commonActions';
+import { updateFilteredIdsAndDocs } from '../commonActions';
 
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,
@@ -28,7 +28,7 @@ export const onReceiveDocs = (documents, vacolsId) =>
         documents
       }
     });
-    dispatch(updateFilteredIds());
+    dispatch(updateFilteredIdsAndDocs());
     dispatch(collectAllTags(documents));
     dispatch(setViewedAssignment(vacolsId));
     dispatch(setLoadedVacolsId(vacolsId));

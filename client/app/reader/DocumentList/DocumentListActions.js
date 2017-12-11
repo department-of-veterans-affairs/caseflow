@@ -2,7 +2,7 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
-import { hideErrorMessage, showErrorMessage, updateFilteredIds } from '../commonActions';
+import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
 
 // Table header actions
 
@@ -25,7 +25,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocsAndDocs());
 };
 
 /* Filters */
@@ -42,7 +42,7 @@ export const clearCategoryFilters = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
@@ -60,7 +60,7 @@ export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const toggleDropdownFilterVisibility = (filterName) => ({
@@ -135,7 +135,7 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const clearTagFilters = () => (dispatch) => {
@@ -148,7 +148,7 @@ export const clearTagFilters = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 // Scrolling
@@ -176,7 +176,7 @@ export const setSearch = (searchQuery) => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const clearSearch = () => (dispatch) => {
@@ -189,7 +189,7 @@ export const clearSearch = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 
 export const clearAllFilters = () => (dispatch) => {
@@ -202,7 +202,7 @@ export const clearAllFilters = () => (dispatch) => {
       }
     }
   });
-  dispatch(updateFilteredIds());
+  dispatch(updateFilteredIdsAndDocs());
 };
 export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
