@@ -5,7 +5,7 @@ class DependenciesReportService
        "BGS.PoaService",
        "VACOLS",
        "VBMS",
-       "VBMS.FindDocumentSeriesReference",
+       "VBMS.FindDocumentVersionReference",
        "VVA"].freeze
 
     # this method is in case we need list of dependencies/services that are degraded
