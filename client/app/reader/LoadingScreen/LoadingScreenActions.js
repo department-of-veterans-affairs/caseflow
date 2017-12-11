@@ -1,6 +1,7 @@
 import * as Constants from '../constants';
 import { collectAllTags } from '../PdfViewer/PdfViewerActions';
 import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
+import { updateFilteredIdsAndDocs } from '../commonActions';
 
 export const onInitialDataLoadingFail = (value = true) => ({
   type: Constants.REQUEST_INITIAL_DATA_FAILURE,
@@ -19,10 +20,6 @@ export const setLoadedVacolsId = (vacolsId) => ({
   }
 });
 
-export const updateFilteredIds = () => ({
-  type: Constants.UPDATE_FILTERED_DOC_IDS
-});
-
 export const onReceiveDocs = (documents, vacolsId) =>
   (dispatch) => {
     dispatch({
@@ -31,16 +28,11 @@ export const onReceiveDocs = (documents, vacolsId) =>
         documents
       }
     });
-    dispatch(updateFilteredIds());
+    dispatch(updateFilteredIdsAndDocs());
     dispatch(collectAllTags(documents));
     dispatch(setViewedAssignment(vacolsId));
     dispatch(setLoadedVacolsId(vacolsId));
   };
-
-export const onReceiveAnnotations = (annotations) => ({
-  type: Constants.RECEIVE_ANNOTATIONS,
-  payload: { annotations }
-});
 
 export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
   type: Constants.RECEIVE_MANIFESTS,
