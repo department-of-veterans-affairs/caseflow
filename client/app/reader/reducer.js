@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import { update } from '../util/ReducerUtil';
 import { timeFunction } from '../util/PerfDebug';
-import documentsReducer from './DocumentList/DocumentsReducer';
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
   update(
@@ -105,7 +104,7 @@ export const initialState = {
   extractedText: {}
 };
 
-const reducer = (state = {}, action = {}) => {
+const readerReducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
 
@@ -519,11 +518,6 @@ const reducer = (state = {}, action = {}) => {
     return state;
   }
 };
-
-export const readerReducer = (state = initialState, action = {}) => ({
-  ...reducer(state, action),
-  documents: documentsReducer(state.documents, action)
-});
 
 export default timeFunction(
   readerReducer,

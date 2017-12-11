@@ -28,11 +28,7 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 // Apply filters
 
 export const updateFilteredIds = () => (dispatch, getState) => {
-  const { annotationLayer, readerReducer } = getState();
-  const filteredResults = updateFilteredDocIds(_.merge({},
-    readerReducer,
-    annotationLayer,
-  ));
+  const filteredResults = updateFilteredDocIds(getState());
 
   dispatch({
     type: ASSIGN_DOCUMENTS,

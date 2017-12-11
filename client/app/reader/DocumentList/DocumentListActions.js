@@ -227,7 +227,7 @@ export const handleToggleCommentOpened = (docId) => ({
     analytics: {
       category: CATEGORIES.CLAIMS_FOLDER_PAGE,
       action: 'toggle-comment-list',
-      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
+      label: (nextState) => nextState.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

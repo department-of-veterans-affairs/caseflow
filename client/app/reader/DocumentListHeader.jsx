@@ -59,7 +59,7 @@ DocumentListHeader.propTypes = {
 
 const mapStateToProps = (state) => ({
   numberOfDocuments: state.readerReducer.ui.filteredDocIds ?
-    state.readerReducer.ui.filteredDocIds.length : _.size(state.readerReducer.documents),
+    state.readerReducer.ui.filteredDocIds.length : _.size(state.documents),
   docFilterCriteria: state.readerReducer.ui.docFilterCriteria,
   vacolsId: state.readerReducer.loadedAppealId
 });

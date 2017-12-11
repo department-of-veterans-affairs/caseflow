@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import { getSearchSelectors } from 'redux-search';
 
-const getFilteredDocIds = (state) => state.ui.filteredDocIds;
+const getFilteredDocIds = (state) => state.readerReducer.ui.filteredDocIds;
 const getAllDocs = (state) => state.documents;
 
 export const getFilteredDocuments = createSelector(
@@ -13,10 +13,10 @@ export const getFilteredDocuments = createSelector(
     _.values(allDocs)
 );
 
-const getEditingAnnotations = (state) => state.editingAnnotations;
-const getPendingEditingAnnotations = (state) => state.pendingEditingAnnotations;
-const getAnnotations = (state) => state.annotations;
-const getPendingAnnotations = (state) => state.pendingAnnotations;
+const getEditingAnnotations = (state) => state.annotationLayer.editingAnnotations;
+const getPendingEditingAnnotations = (state) => state.annotationLayer.pendingEditingAnnotations;
+const getAnnotations = (state) => state.annotationLayer.annotations;
+const getPendingAnnotations = (state) => state.annotationLayer.pendingAnnotations;
 
 export const makeGetAnnotationsByDocumentId = createSelector(
   [getEditingAnnotations, getPendingEditingAnnotations, getAnnotations, getPendingAnnotations],
