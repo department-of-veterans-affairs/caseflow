@@ -66,8 +66,8 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>City/State:</div>
-          <div>{Boolean(worksheet.appellant_city && worksheet.appellant_state) ?
-              `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
+          <div>{worksheet.appellant_city && worksheet.appellant_state ?
+            `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Regional Office:</div>
