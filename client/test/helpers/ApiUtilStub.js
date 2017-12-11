@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import ApiUtil from '../../app/util/ApiUtil';
-import _ from 'lodash';
 
 export default {
   apiPatch: null,
@@ -11,11 +10,12 @@ export default {
 
   beforeEach() {
     const makeFakePromise = () => {
-      const promise = Promise.resolve();
+      // The Reader tests manually populate data, but they also allowing the calling
+      // code to make API requests. In the past, those requests have all failed,
+      // and we just ignored the errors. Giving an empty response here will allow
+      // the API response handlers to not crash.
 
-      promise.end = _.noop;
-
-      return promise;
+      return Promise.resolve({text: '{}'})
     };
 
     this.apiPatch = sinon.stub(ApiUtil, 'patch').returns(makeFakePromise());
