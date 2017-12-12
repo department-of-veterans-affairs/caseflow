@@ -53,23 +53,24 @@ export class PdfPage extends React.PureComponent {
   };
 
   highlightMarkAtIndex = (scrollToMark) => {
-    _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
+    if (this.props.search.pageIndex !== this.props.pageIndex) {
+      return;
+    }
 
-    if (this.props.search.pageIndex === this.props.pageIndex) {
-      const selectedMark = this.marks[this.props.search.relativeIndex];
+    const selectedMark = this.marks[this.props.search.relativeIndex];
 
-      if (selectedMark) {
-        selectedMark.classList.add('highlighted');
+    if (selectedMark) {
+      selectedMark.classList.add('highlighted');
 
-        if (scrollToMark) {
-          // mark parent elements are absolutely-positioned divs. account for search bar height
-          this.props.setDocScrollPosition(
-            parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
-          );
-        }
-      } else {
-        console.error('selectedMark not found in DOM');
+      if (scrollToMark) {
+        // mark parent elements are absolutely-positioned divs. account for search bar height
+        this.props.setDocScrollPosition(
+          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
+        );
       }
+    } else {
+      console.error('selectedMark not found in DOM: ' +
+        `${this.props.search.relativeIndex} on pg ${this.props.search.pageIndex} (${this.props.currentMatchIndex})`);
     }
   }
 
@@ -145,12 +146,16 @@ export class PdfPage extends React.PureComponent {
     if (this.markInstance) {
       if (this.props.searchBarHidden || !this.props.searchText) {
         this.unmarkText();
-      } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
-        if (_.isNaN(this.props.currentMatchIndex) || !this.props.matchesPerPage || !this.marks.length ||
-            this.props.searchText !== prevProps.searchText) {
-          this.markText(true);
-        } else if (this.marks[this.props.search.relativeIndex]) {
-          this.highlightMarkAtIndex(true);
+      } else {
+        const searchTextChanged = this.props.searchText !== prevProps.searchText;
+        const currentMatchIdxChanged = !_.isNaN(this.props.currentMatchIndex) &&
+          this.props.currentMatchIndex !== prevProps.currentMatchIndex;
+
+        if (this.props.matchesPerPage.length || searchTextChanged) {
+          this.markText(currentMatchIdxChanged || searchTextChanged);
+        } else {
+          _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
+          this.highlightMarkAtIndex(currentMatchIdxChanged);
         }
       }
     }
