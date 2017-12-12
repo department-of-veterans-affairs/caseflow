@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
-import { DownloadIcon } from '../components/RenderFunctions';
+import { DownloaderIcon } from '../components/RenderFunctions';
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
@@ -129,20 +129,20 @@ export const isUserEditingText = () => _.some(
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let worksheetPdfLink = '';
+  let worksheetPdfLink;
+  let appealHasHearing = claim.hearing_id;
 
   if (claim.cavc && claim.aod) {
-
     appealTypeInfo = 'AOD, CAVC';
   } else if (claim.cavc) {
     appealTypeInfo = 'CAVC';
   } else if (claim.aod) {
     appealTypeInfo = 'AOD';
-    worksheetPdfLink = <a target="_blank" href={`/hearings/${claim.hearing_id}/worksheet`}>Hearing Worksheet</a>;
+    worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet`}>Hearing Worksheet</a>;
   }
 
   return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
-    <span>{worksheetPdfLink}<DownloadIcon className="downloader" /></span>
+    {appealHasHearing && <span>{worksheetPdfLink}<DownloaderIcon className="downloader" /></span> }
   </div>;
 
 };
