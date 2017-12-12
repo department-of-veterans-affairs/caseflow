@@ -41,13 +41,14 @@ class LoadingDataDisplay extends React.PureComponent {
         window.clearInterval(this.intervalId);
       }
     );
-    // Generally, forceUpdate is not recommended. The reason we're doing it is that we
-    // have a promise start time, and we want to render differently based on how much
-    // time has elapsed since then. We could use setState and increment a timeElapsed
-    // variable. However, that would essentially store computed state in this.state,
-    // which is also not recommended. I chose this approach because I preferred not to
-    // store computed state.
-    this.intervalId = window.setInterval(this.forceUpdate.bind(this), 100);
+    this.intervalId = window.setInterval(() => {
+      // We are storing computed state here, which is generally an anti-pattern in React.
+      // The alternative is to use forceUpdate, but Mark did not want to introduce any
+      // forceUpdate usage into the codebase.
+      this.setState({
+        promiseTimeElapsedMs: Date.now() - this.state.promiseStartTimeMs
+      })
+    }, 100);
     this._isMounted = true;
   }
 
@@ -63,7 +64,7 @@ class LoadingDataDisplay extends React.PureComponent {
   }
 
   render() {
-    const isTimedOut = Date.now() - this.state.promiseStartTimeMs > this.props.timeoutMs;
+    const isTimedOut = this.state.promiseTimeElapsedMs > this.props.timeoutMs;
 
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
@@ -77,7 +78,7 @@ class LoadingDataDisplay extends React.PureComponent {
       return this.props.children;
     }
 
-    const isSlow = Date.now() - this.state.promiseStartTimeMs > this.props.slowLoadThresholdMs;
+    const isSlow = this.state.promiseTimeElapsedMs > this.props.slowLoadThresholdMs;
     const loadingScreenProps = { ...this.props.loadingScreenProps };
 
     if (isSlow) {

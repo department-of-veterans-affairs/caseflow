@@ -242,7 +242,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_content("Loading")
       certification = Certification.find_by(vacols_id: appeal_ready_exact_match.vacols_id)
       certification.update_attributes(loading_data_failed: true)
-      page.driver.navigate.refresh
+      visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
       expect(page).to have_content("Technical Difficulties")
     end
 
