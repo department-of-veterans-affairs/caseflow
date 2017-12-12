@@ -572,6 +572,9 @@ describe('DecisionReviewer', () => {
     });
   });
   
+  // In theory, we can come up with a nicer way to share logic between these two
+  // describe blocks. However, I failed to do so after spending substantial time.
+  // I think the approach below is reasonable.
   describe('without ApiUtil stubbing', () => {
     beforeEach(() => {
       const store = getStore();
