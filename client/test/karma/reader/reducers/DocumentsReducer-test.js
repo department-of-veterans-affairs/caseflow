@@ -14,7 +14,7 @@ describe('CaseSelect reducer', () => {
         ...initialState,
         0: {
           id: 0,
-          listComments: false 
+          listComments: false
         },
         1: {
           id: 1,
@@ -90,7 +90,6 @@ describe('CaseSelect reducer', () => {
       ]);
 
       expect(state[documents[0].id]).to.deep.equal(documents[0]);
-      //expect(state.loadedAppealId).to.deep.equal(vacolsId);
     });
     it('updates documents object when null is passed', () => {
       const documents = null;
