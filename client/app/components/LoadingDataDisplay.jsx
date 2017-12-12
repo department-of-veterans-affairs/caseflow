@@ -47,7 +47,7 @@ class LoadingDataDisplay extends React.PureComponent {
       // forceUpdate usage into the codebase.
       this.setState({
         promiseTimeElapsedMs: Date.now() - this.state.promiseStartTimeMs
-      })
+      });
     }, 100);
     this._isMounted = true;
   }
