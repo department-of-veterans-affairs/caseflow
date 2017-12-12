@@ -32,6 +32,30 @@ const INITIAL_ENTRIES = [
   `/${vacolsId}/documents/${documents[0].id}`
 ];
 
+const getStore = () => createStore(
+  combineReducers({
+    caseSelect: caseSelectReducer,
+    readerReducer,
+    search: searchReducer
+  }),
+  compose(
+    applyMiddleware(thunk),
+    reduxSearch({
+      // Configure redux-search by telling it which resources to index for searching
+      resourceIndexes: {
+        // In this example Books will be searchable by :title and :author
+        extractedText: ['text']
+      },
+      // This selector is responsible for returning each collection of searchable resources
+      resourceSelector: (resourceName, state) => {
+        // In our example, all resources are stored in the state under a :resources Map
+        // For example "books" are stored under state.resources.books
+        return state.readerReducer[resourceName];
+      }
+    })
+  )
+)
+
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
@@ -55,29 +79,7 @@ describe('DecisionReviewer', () => {
       });
       /* eslint-enable no-underscore-dangle */
 
-      const store = createStore(
-        combineReducers({
-          caseSelect: caseSelectReducer,
-          readerReducer,
-          search: searchReducer
-        }),
-        compose(
-          applyMiddleware(thunk),
-          reduxSearch({
-          // Configure redux-search by telling it which resources to index for searching
-            resourceIndexes: {
-            // In this example Books will be searchable by :title and :author
-              extractedText: ['text']
-            },
-            // This selector is responsible for returning each collection of searchable resources
-            resourceSelector: (resourceName, state) => {
-            // In our example, all resources are stored in the state under a :resources Map
-            // For example "books" are stored under state.resources.books
-              return state.readerReducer[resourceName];
-            }
-          })
-        )
-      );
+      const store = getStore();
 
       setUpDocuments = () => {
       // We simulate receiving the documents from the endpoint, and dispatch the
@@ -569,29 +571,7 @@ describe('DecisionReviewer', () => {
   });
   describe('without ApiUtil stubbing', () => {
     beforeEach(() => {
-      const store = createStore(
-        combineReducers({
-          caseSelect: caseSelectReducer,
-          readerReducer,
-          search: searchReducer
-        }),
-        compose(
-          applyMiddleware(thunk),
-          reduxSearch({
-            // Configure redux-search by telling it which resources to index for searching
-            resourceIndexes: {
-              // In this example Books will be searchable by :title and :author
-              extractedText: ['text']
-            },
-            // This selector is responsible for returning each collection of searchable resources
-            resourceSelector: (resourceName, state) => {
-              // In our example, all resources are stored in the state under a :resources Map
-              // For example "books" are stored under state.resources.books
-              return state.readerReducer[resourceName];
-            }
-          })
-        )
-      );
+      const store = getStore();
 
       wrapper = mount(
         <Provider store={store}>
