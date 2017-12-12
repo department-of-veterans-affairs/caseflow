@@ -59,7 +59,7 @@ const getStore = () => createStore(
       }
     })
   )
-)
+);
 
 const getWrapper = (store) => mount(
   <Provider store={store}>
@@ -576,7 +576,7 @@ describe('DecisionReviewer', () => {
       });
     });
   });
-  
+
   // In theory, we can come up with a nicer way to share logic between these two
   // describe blocks. However, I failed to do so after spending substantial time.
   // I think the approach below is reasonable.
@@ -593,6 +593,7 @@ describe('DecisionReviewer', () => {
 
     context('Loading Spinner', () => {
       it('renders', () => {
+        // eslint-disable-next-line no-empty-function
         const eternalPromise = new Promise(() => {});
 
         sinon.stub(ApiUtil, 'get').returns(eternalPromise);
