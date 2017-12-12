@@ -53,9 +53,7 @@ const initialPdfSidebarErrorState = {
 export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
-  initialDataLoadingFail: false,
   didLoadAppealFail: false,
-  initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
@@ -129,18 +127,6 @@ const reducer = (state = {}, action = {}) => {
         }
       }
     );
-  case Constants.REQUEST_INITIAL_DATA_FAILURE:
-    return update(state, {
-      initialDataLoadingFail: {
-        $set: action.payload.value
-      }
-    });
-  case Constants.REQUEST_INITIAL_CASE_FAILURE:
-    return update(state, {
-      initialCaseLoadingFail: {
-        $set: action.payload.value
-      }
-    });
   case Constants.RECEIVE_MANIFESTS:
     return update(state, {
       ui: {

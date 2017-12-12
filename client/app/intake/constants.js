@@ -43,7 +43,9 @@ export const RAMP_INTAKE_STATES = {
   COMPLETED: 'COMPLETED'
 };
 
-export const FORMS = {
-  ramp_election: 'RAMP Opt-In Election Form',
-  ramp_refiling: '21-4138 RAMP Selection Form'
+export const FORM_TYPES = {
+  RAMP_ELECTION: { key: 'ramp_election',
+    name: 'RAMP Opt-In Election Form' },
+  RAMP_REFILING: { key: 'ramp_refiling',
+    name: '21-4138 RAMP Selection Form' }
 };
