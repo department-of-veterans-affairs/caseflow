@@ -5,14 +5,14 @@ import Textarea from 'react-textarea-autosize';
 import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from './actions/Dockets';
+import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
 import { Link } from 'react-router-dom';
-import { getDate } from './util/DateUtil';
+import { getDate } from '../util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
-  label: 'Held' }
+  label: 'Held' },
 { value: 'no_show',
   label: 'No Show' },
 { value: 'cancelled',
