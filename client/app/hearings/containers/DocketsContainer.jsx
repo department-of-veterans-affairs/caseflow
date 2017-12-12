@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import * as Actions from './actions/Dockets';
-import * as AppConstants from '../constants/AppConstants';
-import LoadingContainer from '../components/LoadingContainer';
-import StatusMessage from '../components/StatusMessage';
-import Dockets from './Dockets';
-import ApiUtil from '../util/ApiUtil';
+import * as Actions from '../actions/Dockets';
+import * as AppConstants from '../../constants/AppConstants';
+import LoadingContainer from '../../components/LoadingContainer';
+import StatusMessage from '../../components/StatusMessage';
+import Dockets from '../Dockets';
+import ApiUtil from '../../util/ApiUtil';
 
 export class DocketsContainer extends React.Component {
 

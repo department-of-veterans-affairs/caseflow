@@ -6,9 +6,9 @@ import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
-import DocketsContainer from './DocketsContainer';
+import DocketsContainer from './containers/DocketsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
-import HearingWorksheetContainer from './HearingWorksheetContainer';
+import HearingWorksheetContainer from './containers//HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';

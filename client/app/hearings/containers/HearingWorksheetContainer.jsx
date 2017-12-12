@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as Actions from './actions/Dockets';
-import LoadingContainer from '../components/LoadingContainer';
-import StatusMessage from '../components/StatusMessage';
-import * as AppConstants from '../constants/AppConstants';
-import HearingWorksheet from './HearingWorksheet';
-import ApiUtil from '../util/ApiUtil';
+import * as Actions from '../actions/Dockets';
+import LoadingContainer from '../../components/LoadingContainer';
+import StatusMessage from '../../components/StatusMessage';
+import * as AppConstants from '../../constants/AppConstants';
+import HearingWorksheet from '../HearingWorksheet';
+import ApiUtil from '../../util/ApiUtil';
 import querystring from 'querystring';
 
 export const getWorksheet = (id, dispatch) => {
