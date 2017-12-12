@@ -12,7 +12,7 @@ class RampElectionIntake < Intake
     detail
   end
 
-  def find_or_create_initial_detail
+  def find_or_build_initial_detail
     matching_ramp_election
   end
 

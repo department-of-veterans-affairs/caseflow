@@ -14,9 +14,9 @@ export const getFilteredDocuments = createSelector(
 );
 
 const getEditingAnnotations = (state) => state.editingAnnotations;
-const getPendingEditingAnnotations = (state) => state.ui.pendingEditingAnnotations;
+const getPendingEditingAnnotations = (state) => state.pendingEditingAnnotations;
 const getAnnotations = (state) => state.annotations;
-const getPendingAnnotations = (state) => state.ui.pendingAnnotations;
+const getPendingAnnotations = (state) => state.pendingAnnotations;
 
 export const makeGetAnnotationsByDocumentId = createSelector(
   [getEditingAnnotations, getPendingEditingAnnotations, getAnnotations, getPendingAnnotations],

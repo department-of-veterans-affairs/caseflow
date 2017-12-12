@@ -196,7 +196,7 @@ export const submitCancel = (rampElection) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`, {}, ENDPOINT_NAMES.INTAKE_RAMP).
+  return ApiUtil.delete(`/intake/${rampElection.intakeId}`, {}, ENDPOINT_NAMES.INTAKE_RAMP).
     then(
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
