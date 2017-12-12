@@ -3,7 +3,9 @@ import _ from 'lodash';
 import * as Constants from '../constants';
 import { update } from '../../util/ReducerUtil';
 
-const documentsReducer = (state = {}, action = {}) => {
+export const initialState = {};
+
+const documentsReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.ASSIGN_DOCUMENTS:
     return Object.assign({}, action.payload.documents);
