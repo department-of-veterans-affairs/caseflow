@@ -6,7 +6,6 @@ class User < ActiveRecord::Base
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_accessor :ip_address
-  attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
                "Reader", "Hearing Prep", "Mail Intake"].freeze
@@ -28,10 +27,10 @@ class User < ActiveRecord::Base
   end
 
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
-  def regional_office
+  def get_regional_office(office)
     upcase = ->(str) { str ? str.upcase : str }
 
-    ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
+    ro_is_ambiguous_from_station_office? ? upcase.call(office) : station_offices
   end
 
   def ro_is_ambiguous_from_station_office?
@@ -140,14 +139,17 @@ class User < ActiveRecord::Base
 
       return nil if user.nil?
 
-      find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
+      user_from_session = find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
         u.ip_address = request.remote_ip
-        u.regional_office = session[:regional_office]
         u.save
       end
+
+      ro = user_from_session.get_regional_office(session[:regional_office])
+      user_from_session.update(regional_office: ro)
+      user_from_session
     end
 
     def authentication_service
