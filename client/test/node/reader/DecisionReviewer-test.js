@@ -36,6 +36,8 @@ const INITIAL_ENTRIES = [
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
 describe('DecisionReviewer', () => {
+  describe('with ApiUtil stubbing', () => {
+
   let wrapper;
   let setUpDocuments;
 
@@ -564,77 +566,79 @@ describe('DecisionReviewer', () => {
     });
   });
 });
-describe('DecisionReviewer', () => {
-  let wrapper;
+  describe('without ApiUtil stubbing', () => {
+    let wrapper;
 
-  beforeEach(() => {
-    PdfJsStub.beforeEach();
+    beforeEach(() => {
+      PdfJsStub.beforeEach();
 
-    /* eslint-disable no-underscore-dangle */
-    sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
-      return <div ref={this._setRef}>
-        {this.props.children({ width: 200,
-          height: 100 })}
-      </div>;
+      /* eslint-disable no-underscore-dangle */
+      sinon.stub(AutoSizer.prototype, 'render').callsFake(function () {
+        return <div ref={this._setRef}>
+          {this.props.children({ width: 200,
+            height: 100 })}
+        </div>;
+      });
+      /* eslint-enable no-underscore-dangle */
+
+      const store = createStore(
+        combineReducers({
+          caseSelect: caseSelectReducer,
+          readerReducer,
+          search: searchReducer
+        }),
+        compose(
+          applyMiddleware(thunk),
+          reduxSearch({
+            // Configure redux-search by telling it which resources to index for searching
+            resourceIndexes: {
+              // In this example Books will be searchable by :title and :author
+              extractedText: ['text']
+            },
+            // This selector is responsible for returning each collection of searchable resources
+            resourceSelector: (resourceName, state) => {
+              // In our example, all resources are stored in the state under a :resources Map
+              // For example "books" are stored under state.resources.books
+              return state.readerReducer[resourceName];
+            }
+          })
+        )
+      );
+
+      wrapper = mount(
+        <Provider store={store}>
+          <DecisionReviewer
+            featureToggles={{}}
+            userDisplayName="Name"
+            feedbackUrl="fakeurl"
+            dropdownUrls={[{
+              title: 'title',
+              link: 'link'
+            }]}
+            pdfWorker="worker"
+            url="url"
+            router={MemoryRouter}
+            routerTestProps={{
+              initialEntries: INITIAL_ENTRIES
+            }}
+
+          />
+        </Provider>, { attachTo: document.getElementById('app') });
     });
-    /* eslint-enable no-underscore-dangle */
 
-    const store = createStore(
-      combineReducers({
-        caseSelect: caseSelectReducer,
-        readerReducer,
-        search: searchReducer
-      }),
-      compose(
-        applyMiddleware(thunk),
-        reduxSearch({
-          // Configure redux-search by telling it which resources to index for searching
-          resourceIndexes: {
-            // In this example Books will be searchable by :title and :author
-            extractedText: ['text']
-          },
-          // This selector is responsible for returning each collection of searchable resources
-          resourceSelector: (resourceName, state) => {
-            // In our example, all resources are stored in the state under a :resources Map
-            // For example "books" are stored under state.resources.books
-            return state.readerReducer[resourceName];
-          }
-        })
-      )
-    );
+    afterEach(() => {
+      wrapper.detach();
+      PdfJsStub.afterEach();
+      AutoSizer.prototype.render.restore();
+    });
 
-    wrapper = mount(
-      <Provider store={store}>
-        <DecisionReviewer
-          featureToggles={{}}
-          userDisplayName="Name"
-          feedbackUrl="fakeurl"
-          dropdownUrls={[{
-            title: 'title',
-            link: 'link'
-          }]}
-          pdfWorker="worker"
-          url="url"
-          router={MemoryRouter}
-          routerTestProps={{
-            initialEntries: INITIAL_ENTRIES
-          }}
-
-        />
-      </Provider>, { attachTo: document.getElementById('app') });
-  });
-
-  afterEach(() => {
-    wrapper.detach();
-    PdfJsStub.afterEach();
-    AutoSizer.prototype.render.restore();
-  });
-
-  context('Loading Spinner', () => {
-    it('renders', () => {
-      const eternalPromise = new Promise(() => {});
-      sinon.stub(ApiUtil, 'get').returns(eternalPromise);
-      expect(wrapper.text()).to.include('Loading claims folder');
+    context('Loading Spinner', () => {
+      it('renders', () => {
+        const eternalPromise = new Promise(() => {});
+        sinon.stub(ApiUtil, 'get').returns(eternalPromise);
+        expect(wrapper.text()).to.include('Loading claims folder');
+      });
     });
   });
 });
+
