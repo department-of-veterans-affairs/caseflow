@@ -124,9 +124,9 @@ class ExternalApi::VBMSService
 
   def self.send_and_log_request(vbms_id, request)
     name = request.class.name.split("::").last
-    MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
-                          service: :vbms,
-                          name: name) do
+    ExternalApi::ApiService.request("sent VBMS request #{request.class} for #{vbms_id}",
+                                    service: :vbms,
+                                    name: name) do
       @vbms_client.send_request(request)
     end
 

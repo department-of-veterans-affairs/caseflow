@@ -7,7 +7,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
 
   class << self
     def active_cases_for_user(css_id)
-      id = connection.quote(css_id.upcase)
+      id = connection_pool.with_connection do |connection|
+        connection.quote(css_id.upcase)
+      end
 
       select_assignments.where("staff.sdomainid = #{id}")
     end
@@ -38,26 +40,26 @@ class VACOLS::CaseAssignment < VACOLS::Record
     end
 
     def exists_for_appeals(vacols_ids)
-      conn = connection
+      connection_pool.with_connection do |conn|
+        conn.transaction do
+          query = <<-SQL
+            select BRIEFF.BFKEY, count(DECASS.DEASSIGN) N
+            from BRIEFF
+            left join DECASS on BRIEFF.BFKEY = DECASS.DEFOLDER
+            where BRIEFF.BFKEY in (?)
+            group by BRIEFF.BFKEY
+          SQL
 
-      conn.transaction do
-        query = <<-SQL
-          select BRIEFF.BFKEY, count(DECASS.DEASSIGN) N
-          from BRIEFF
-          left join DECASS on BRIEFF.BFKEY = DECASS.DEFOLDER
-          where BRIEFF.BFKEY in (?)
-          group by BRIEFF.BFKEY
-        SQL
+          result = MetricsService.record("VACOLS: CaseAssignment.exists_for_appeals for #{vacols_ids}",
+                                         name: "CaseAssignment.exists_for_appeals",
+                                         service: :vacols) do
+            conn.exec_query(sanitize_sql_array([query, vacols_ids]))
+          end
 
-        result = MetricsService.record("VACOLS: CaseAssignment.exists_for_appeals for #{vacols_ids}",
-                                       name: "CaseAssignment.exists_for_appeals",
-                                       service: :vacols) do
-          conn.exec_query(sanitize_sql_array([query, vacols_ids]))
-        end
-
-        result.to_hash.reduce({}) do |memo, row|
-          memo[(row["bfkey"]).to_s] = (row["n"] > 0)
-          memo
+          result.to_hash.reduce({}) do |memo, row|
+            memo[(row["bfkey"]).to_s] = (row["n"] > 0)
+            memo
+          end
         end
       end
     end

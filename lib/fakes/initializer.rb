@@ -5,9 +5,9 @@ class Fakes::Initializer
       User.authentication_service = Fakes::AuthenticationService
       Hearing.repository = Fakes::HearingRepository
       HearingDocket.repository = Fakes::HearingRepository
-      Appeal.repository = Fakes::AppealRepository
+      Appeal.repository = AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      User.appeal_repository = Fakes::AppealRepository
+      User.appeal_repository = AppealRepository
     end
 
     # This method is called only 1 time during application bootup

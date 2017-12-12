@@ -233,39 +233,40 @@ class VACOLS::Case < VACOLS::Record
   # This method takes an array of vacols ids and fetches their aod status.
   #
   def self.aod(vacols_ids)
-    conn = connection
+    connection_pool.with_connection do |conn|
 
-    conn.transaction do
-      query = <<-SQL
-        SELECT BRIEFF.BFKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
-        FROM BRIEFF
+      conn.transaction do
+        query = <<-SQL
+          SELECT BRIEFF.BFKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
+          FROM BRIEFF
 
-        LEFT JOIN (
-          SELECT TSKTKNM, count(*) CNT
-          FROM ASSIGN
-          WHERE TSKACTCD in ('B', 'B1', 'B2')
-          GROUP BY TSKTKNM
-        ) AOD_DIARIES
-        ON AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
-        LEFT JOIN (
-          SELECT FOLDER_NR, count(*) CNT
-          FROM HEARSCHED
-          WHERE HEARING_TYPE IN ('C', 'T', 'V')
-            AND AOD IN ('G', 'Y')
-          GROUP BY FOLDER_NR
-        ) AOD_HEARINGS
-        ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-        WHERE BRIEFF.BFKEY IN (?)
-      SQL
+          LEFT JOIN (
+            SELECT TSKTKNM, count(*) CNT
+            FROM ASSIGN
+            WHERE TSKACTCD in ('B', 'B1', 'B2')
+            GROUP BY TSKTKNM
+          ) AOD_DIARIES
+          ON AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
+          LEFT JOIN (
+            SELECT FOLDER_NR, count(*) CNT
+            FROM HEARSCHED
+            WHERE HEARING_TYPE IN ('C', 'T', 'V')
+              AND AOD IN ('G', 'Y')
+            GROUP BY FOLDER_NR
+          ) AOD_HEARINGS
+          ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
+          WHERE BRIEFF.BFKEY IN (?)
+        SQL
 
-      aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
-                                                                               service: :vacols) do
-        conn.exec_query(sanitize_sql_array([query, vacols_ids]))
-      end
+        aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
+                                                                                 service: :vacols) do
+          conn.exec_query(sanitize_sql_array([query, vacols_ids]))
+        end
 
-      aod_result.to_hash.reduce({}) do |memo, result|
-        memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
-        memo
+        aod_result.to_hash.reduce({}) do |memo, result|
+          memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
+          memo
+        end
       end
     end
   end

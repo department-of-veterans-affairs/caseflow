@@ -316,7 +316,10 @@ class AppealRepository
   end
 
   def self.load_user_case_assignments_from_vacols(css_id)
-    MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
+    # conns = VACOLS::Record.connection_pool.connections
+    # active = conns.count { |c| c.in_use? && c.owner.alive? }
+
+    x = MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
                           service: :vacols,
                           name: "active_cases_for_user") do
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
@@ -338,6 +341,11 @@ class AppealRepository
         appeal
       end
     end
+
+    # VACOLS::Record.connection_pool.release_connection
+    # sleep 30
+
+    x
   end
 
   def self.case_assignment_exists?(vacols_id)
