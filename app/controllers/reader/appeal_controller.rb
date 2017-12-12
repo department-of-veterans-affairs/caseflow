@@ -29,6 +29,7 @@ class Reader::AppealController < Reader::ApplicationController
     vacols_id = params[:id]
 
     respond_to do |format|
+      format.html { redirect_to reader_appeal_documents_path(appeal_id: vacols_id) }
       format.json do
         MetricsService.record("VACOLS: Get appeal information for #{vacols_id}",
                               name: "AppealController.show") do

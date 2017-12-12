@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
-import { selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal, showSearchBar
+import { selectCurrentPdf, fetchAppealDetails, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
-import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation
-} from '../reader/PdfViewer/AnnotationActions';
+import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation, closeAnnotationDeleteModal
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import { update } from '../util/ReducerUtil';
@@ -23,7 +23,7 @@ const NUMBER_OF_DIRECTIONS = 4;
 // Given a direction, the current coordinates, an array of the div elements for each page,
 // the file, and rotation of the document, this function calculates the next location of the comment.
 // eslint-disable-next-line max-len
-export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pages, file, rotation = 0) => {
+export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIconPageCoords, pageDimensions, file, rotation = 0) => {
   // There are four valid rotations: 0, 90, 180, 270. We transform those values to 0, -1, -2, -3.
   // We then use that value to rotate the direction. I.E. Hitting up (value 0) on the
   // keyboard when rotated 90 degrees corresponds to moving left (value 3) on the document.
@@ -49,7 +49,7 @@ export const getNextAnnotationIconPageCoords = (direction, placingAnnotationIcon
     }
   });
 
-  const pageCoordsBounds = pages[`${file}-${pageIndex}`].dimensions;
+  const pageCoordsBounds = pageDimensions[`${file}-${pageIndex}`];
 
   // This calculation is not quite right, because we are not using the scale
   // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where
@@ -85,7 +85,7 @@ export class PdfViewer extends React.Component {
       const constrainedCoords = getNextAnnotationIconPageCoords(
         direction,
         this.props.placingAnnotationIconPageCoords,
-        this.props.pages,
+        this.props.pageDimensions,
         this.selectedDoc().content_url,
         this.selectedDoc().rotation
       );
@@ -118,12 +118,6 @@ export class PdfViewer extends React.Component {
       );
       this.props.showPdf(this.getNextDocId())();
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
-    }
-
-    const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
-
-    if (event[metaKey] && event.code === 'KeyF') {
-      this.props.showSearchBar();
     }
   }
 
@@ -183,7 +177,7 @@ export class PdfViewer extends React.Component {
   showClaimsFolderNavigation = () => this.props.allDocuments.length > 1;
 
   shouldComponentUpdate(nextProps, nextState) {
-    const getRenderProps = (props) => _.omit(props, 'pages');
+    const getRenderProps = (props) => _.omit(props, 'pageDimensions');
 
     return !(_.isEqual(this.state, nextState) && _.isEqual(getRenderProps(this.props), getRenderProps(nextProps)));
   }
@@ -248,10 +242,10 @@ export class PdfViewer extends React.Component {
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state.readerReducer),
   appeal: state.readerReducer.appeal,
-  pages: state.readerReducer.pages,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-  ..._.pick(state.readerReducer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
+  pageDimensions: state.readerReducer.pageDimensions,
+  ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
+    'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
+  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
 });
 
 const mapDispatchToProps = (dispatch) => ({

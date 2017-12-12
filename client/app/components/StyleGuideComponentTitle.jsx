@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { GithubIcon } from './RenderFunctions';
 
-export default class StyleGuideComponentTitle extends React.Component {
+export default class StyleGuideComponentTitle extends React.PureComponent {
   render() {
-    let {
+    const {
       id,
       isExternalLink,
       link,
@@ -14,7 +14,7 @@ export default class StyleGuideComponentTitle extends React.Component {
 
     let baseUrl;
 
-    let getBaseUrl = () => {
+    const getBaseUrl = () => {
       /* eslint-disable max-len */
       if (isExternalLink) {
         // isExternalLink is for any code sample that's outside the StyleGuide container directory
@@ -27,7 +27,7 @@ export default class StyleGuideComponentTitle extends React.Component {
       return baseUrl;
     };
 
-    let ViewSourceCodeLink = (props) => {
+    const ViewSourceCodeLink = (props) => {
 
       return <span>
         <a className="usa-button" href={getBaseUrl() + props.link} target="_blank">

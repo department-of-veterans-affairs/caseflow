@@ -5,6 +5,7 @@ import StringUtil from '../util/StringUtil';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
+import TextField from '../components/TextField';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -88,12 +89,27 @@ export default class TestUsers extends React.PureComponent {
           options={userOptions} searchable={false}
           onChange={this.handleUserSelect}
           value={this.state.userSelect} />
-
         <Button
           onClick={this.handleUserSwitch}
           name="Switch user"
           loading={this.state.isSwitching}
           loadingText="Switching users" />
+        <br /><br />
+        {this.props.currentUser.roles.includes('Global Admin') &&
+        <div>
+          <strong>Reproduce user state:</strong>
+          <TextField
+            label="User ID:"
+            name="userID" />
+          <TextField
+            label="Station ID:"
+            name="stationID" />
+          <Button
+            onClick={this.handleLogInAsUser}
+            name="Log in as user"
+            loading={this.state.isLoggingInAsUser}
+            loadingText="Logging in" />
+        </div>}
       </div>
       <p>
         Not all applications are available to every user. Additionally,

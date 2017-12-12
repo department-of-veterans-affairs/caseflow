@@ -10,7 +10,7 @@ import Example5 from './CheckboxExamples/Example5';
 import Example6 from './CheckboxExamples/Example6';
 import Example7 from './CheckboxExamples/Example7';
 
-export default class StyleGuideCheckboxes extends React.Component {
+export default class StyleGuideCheckboxes extends React.PureComponent {
   render = () => {
     return <div>
       <StyleGuideComponentTitle
@@ -23,16 +23,16 @@ export default class StyleGuideCheckboxes extends React.Component {
         Checkboxes allow an alternative way to selection key responses
         through out Caseflow Applications. This layout is used when there
         are at most 2 options.</p>
-      <h3>Single Checkbox</h3>
+      <h3 id="single-checkbox">Single Checkbox</h3>
       <Example1 />
-      <h3>Single Checkbox with value set</h3>
+      <h4>Single Checkbox with value set</h4>
       <Example2 />
       <Example3 />
       <Example4 />
       <Example5 />
-      <h3>Required Checkboxes</h3>
+      <h3 id="required-checkboxes">Required Checkboxes</h3>
       <Example6 />
-      <h3>Acknowledgements</h3>
+      <h3 id="acknowledgements">Acknowledgements</h3>
       <p>In certain circumstances we ask the user to click a checkbox agreeing
         to an action before proceeding. The text here should be limited to 75
         characters and indented so it doesn't flow under the checkbox.  Most of

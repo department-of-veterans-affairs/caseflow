@@ -103,7 +103,6 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
-      veteran_date_of_birth: normalize_vacols_date(correspondent_record.sdob),
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
@@ -133,6 +132,7 @@ class AppealRepository
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
+      last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
       docket_number: folder_record.tinum,
@@ -144,7 +144,7 @@ class AppealRepository
 
   # :nocov:
   def self.issues(vacols_id)
-    (VACOLS::CaseIssue.active_issues([vacols_id])[vacols_id] || []).map do |issue_hash|
+    (VACOLS::CaseIssue.descriptions([vacols_id])[vacols_id] || []).map do |issue_hash|
       Issue.load_from_vacols(issue_hash)
     end
   end
@@ -322,7 +322,7 @@ class AppealRepository
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
-      active_cases_issues = VACOLS::CaseIssue.active_issues(active_cases_vacols_ids)
+      active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
       active_cases_for_user.map do |assignment|
         assignment_issues_hash_array = active_cases_issues[assignment.vacols_id] || []
 
@@ -338,6 +338,10 @@ class AppealRepository
         appeal
       end
     end
+  end
+
+  def self.case_assignment_exists?(vacols_id)
+    VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
   # :nocov:
 end

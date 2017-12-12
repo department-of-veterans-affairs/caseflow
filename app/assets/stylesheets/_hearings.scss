@@ -84,8 +84,7 @@ $color-hearings-saving: #777;
 
     // TODO: see if this can become a part of the general style
     .is-searchable.is-open > .Select-control {
-      box-shadow: 0 1px 4px 0 $color-dropdown-shadow;
-      border: 1px solid $color-gray-medium;
+      box-shadow: 0 0 8px $color-dropdown-shadow;
     }
 
     tbody {
@@ -188,23 +187,15 @@ $color-hearings-saving: #777;
     }
   }
 
-  .addOn,
   .transcriptRequested {
     display: inline-block;
     text-align: left;
     padding: 0 .32em;
+    width: 100%;
 
     .cf-form-checkboxes {
       margin-bottom: 0;
     }
-  }
-
-  .addOn {
-    width: 33%;
-  }
-
-  .transcriptRequested {
-    width: 67%;
   }
 }
 
@@ -277,6 +268,10 @@ $color-hearings-saving: #777;
     position: absolute;
     top: 0;
     right: 0;
+  }
+
+  .cf-hearings-worksheet-header {
+    margin-bottom: 1em;
   }
 
   .cf-modal {
@@ -440,6 +435,47 @@ $color-hearings-saving: #777;
       .cf-hearings-docket-notes {
         textarea {
           width: 80%;
+        }
+      }
+    }
+  }
+}
+
+@page {
+  size: 8.5in 11in;
+  margin: 0;
+}
+
+@media print {
+  h1 {
+    font-size: 25px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .cf-print-page-break {
+    break-after: page;
+  }
+
+  .cf-hearings-worksheet {
+    margin-bottom: 0;
+    padding-bottom: 0;
+
+    .cf-hearings-second-page {
+      min-height: 11in;
+      display: flex;
+      flex-direction: column;
+
+      .cf-hearings-worksheet-form {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+
+        .cf-hearings-worksheet-data:last-child {
+          margin-bottom: inherit;
         }
       }
     }

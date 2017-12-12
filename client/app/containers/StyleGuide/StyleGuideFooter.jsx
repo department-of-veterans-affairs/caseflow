@@ -20,7 +20,7 @@ const options = [
   }
 ];
 
-export default class StyleGuideFooter extends React.Component {
+export default class StyleGuideFooter extends React.PureComponent {
   render() {
 
     return <div>

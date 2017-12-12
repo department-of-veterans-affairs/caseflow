@@ -10,9 +10,13 @@ class Hearings::DocketsController < HearingsController
 
   def show
     @hearing_page_title = "Daily Docket"
-    date = date_from_string(params[:id])
+    date = date_from_string(params[:docket_date])
     return not_found unless date && judge.docket?(date)
-    render template: "hearings/index"
+
+    respond_to do |format|
+      format.html { render template: "hearings/index" }
+      format.json { render json: judge.upcoming_hearings_on(date).map(&:to_hash) }
+    end
   end
 
   private

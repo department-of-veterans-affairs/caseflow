@@ -2,7 +2,9 @@ class AnnotationController < ApplicationController
   before_action :verify_access
 
   rescue_from ActiveRecord::RecordInvalid do |e|
-    render json: { "errors": ["status": 500, "title": e.class.to_s, "detail": e.message] }, status: 500
+    Rails.logger.error "AnnotationController failed validation: #{e.message}"
+
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
   end
 
   ANNOTATION_AUTHORIZED_ROLES = ["Reader"].freeze

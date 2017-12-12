@@ -2,55 +2,66 @@ import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { categoryFieldNameOfCategoryName } from '../utils';
+import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
 
 // Table header actions
 
-export const changeSortState = (sortBy) => ({
-  type: Constants.SET_SORT,
-  payload: {
-    sortBy
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'change-sort-by',
-      label: (nextState) => {
-        const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending';
+export const changeSortState = (sortBy) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_SORT,
+    payload: {
+      sortBy
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'change-sort-by',
+        label: (nextState) => {
+          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ?
+            'ascending' : 'descending';
 
-        return `${sortBy}-${direction}`;
+          return `${sortBy}-${direction}`;
+        }
       }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
 /* Filters */
 
 // Category filters
 
-export const clearCategoryFilters = () => ({
-  type: Constants.CLEAR_CATEGORY_FILTER,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-category-filters'
+export const clearCategoryFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_CATEGORY_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-category-filters'
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
-export const setCategoryFilter = (categoryName, checked) => ({
-  type: Constants.SET_CATEGORY_FILTER,
-  payload: {
-    categoryName,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'select' : 'unselect'}-category-filter`,
-      label: categoryName
+export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_CATEGORY_FILTER,
+    payload: {
+      categoryName,
+      checked
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: `${checked ? 'select' : 'unselect'}-category-filter`,
+        label: categoryName
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
 export const toggleDropdownFilterVisibility = (filterName) => ({
   type: Constants.TOGGLE_FILTER_DROPDOWN,
@@ -66,14 +77,18 @@ export const toggleDropdownFilterVisibility = (filterName) => ({
   }
 });
 
-export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) => ({
-  type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
-  payload: {
-    docId,
-    categoryKey,
-    categoryValueToRevertTo
-  }
-});
+export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) =>
+  (dispatch) => {
+    dispatch(showErrorMessage('category'));
+    dispatch({
+      type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
+      payload: {
+        docId,
+        categoryKey,
+        categoryValueToRevertTo
+      }
+    });
+  };
 
 export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
   const categoryKey = categoryFieldNameOfCategoryName(categoryName);
@@ -85,7 +100,7 @@ export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispa
   ).catch(() =>
     dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
   );
-
+  dispatch(hideErrorMessage('category'));
   dispatch({
     type: Constants.TOGGLE_DOCUMENT_CATEGORY,
     payload: {
@@ -105,30 +120,36 @@ export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispa
 
 // Tag filters
 
-export const setTagFilter = (text, checked, tagId) => ({
-  type: Constants.SET_TAG_FILTER,
-  payload: {
-    text,
-    checked
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: `${checked ? 'set' : 'unset'}-tag-filter`,
-      label: tagId
+export const setTagFilter = (text, checked, tagId) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_TAG_FILTER,
+    payload: {
+      text,
+      checked
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: `${checked ? 'set' : 'unset'}-tag-filter`,
+        label: tagId
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
-export const clearTagFilters = () => ({
-  type: Constants.CLEAR_TAG_FILTER,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-tag-filters'
+export const clearTagFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_TAG_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-tag-filters'
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
 // Scrolling
 
@@ -141,40 +162,48 @@ export const setDocListScrollPosition = (scrollTop) => ({
 
 // Document header
 
-export const setSearch = (searchQuery) => ({
-  type: Constants.SET_SEARCH,
-  payload: {
-    searchQuery
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'search',
-      debounceMs: 500
+export const setSearch = (searchQuery) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_SEARCH,
+    payload: {
+      searchQuery
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'search',
+        debounceMs: 500
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
-export const clearSearch = () => ({
-  type: Constants.CLEAR_ALL_SEARCH,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-search'
+export const clearSearch = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_ALL_SEARCH,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-search'
+      }
     }
-  }
-});
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
-export const clearAllFilters = () => ({
-  type: Constants.CLEAR_ALL_FILTERS,
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'clear-all-filters'
+export const clearAllFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_ALL_FILTERS,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-all-filters'
+      }
     }
-  }
-});
-
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
   payload: {

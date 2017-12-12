@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { getDate } from './util/DateUtil';
 
 export class Dockets extends React.Component {
 
@@ -11,23 +12,12 @@ export class Dockets extends React.Component {
     return (type === 'central_office') ? 'CO' : type;
   }
 
-  getDate = (date) => {
-    return moment(date).
-      format('LT').
-      replace('AM', 'a.m.').
-      replace('PM', 'p.m.');
-  };
-
   getKeyForRow = (index) => {
     return index;
   }
 
-  masterRecord = (docket) => {
-    return docket.hearings_array[0].master_record === true;
-  }
-
   linkToDailyDocket = (docket) => {
-    if (this.masterRecord(docket)) {
+    if (docket.master_record) {
       return moment(docket.date).format('l');
     }
 
@@ -36,13 +26,13 @@ export class Dockets extends React.Component {
     </Link>;
   }
 
-  scheduled = (docket) => {
-    return (this.masterRecord(docket)) ? 0 : docket.hearings_array.length;
+  getScheduledCount = (docket) => {
+    return (docket.master_record ? 0 : docket.hearings_count);
   }
 
   render() {
 
-    const docketIndex = Object.keys(this.props.dockets).sort();
+    const docketIndex = Object.keys(this.props.upcomingHearings).sort();
 
     const columns = [
       {
@@ -75,15 +65,15 @@ export class Dockets extends React.Component {
 
     const rowObjects = docketIndex.map((docketDate) => {
 
-      let docket = this.props.dockets[docketDate];
+      let docket = this.props.upcomingHearings[docketDate];
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: `${this.getDate(docket.date)} EDT`,
+        start_time: getDate(docket.date),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: docket.slots,
-        scheduled: this.scheduled(docket)
+        scheduled: this.getScheduledCount(docket)
       };
     });
 
@@ -91,7 +81,7 @@ export class Dockets extends React.Component {
       <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
           <h1>Upcoming Hearing Days</h1>
-          <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+          <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
         </div>
         <Table
           className="dockets"
@@ -106,7 +96,7 @@ export class Dockets extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets
+  upcomingHearings: state.upcomingHearings
 });
 
 export default connect(
@@ -114,6 +104,6 @@ export default connect(
 )(Dockets);
 
 Dockets.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
-  dockets: PropTypes.object.isRequired
+  veteranLawJudge: PropTypes.object.isRequired,
+  upcomingHearings: PropTypes.object.isRequired
 };

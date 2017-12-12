@@ -33,10 +33,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
-.claim-detail-type-info {
-  color: $color-secondary;
-}
-
 .cf-claims-folder-details {
   p {
     margin-top: 15px;
@@ -93,8 +89,6 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   top: 50px;
   bottom: 50px;
   position: absolute;
-  overflow-y: scroll;
-  overflow-x: visible;
   text-align: center;
   z-index: 5;
   will-change: transform;

@@ -14,6 +14,12 @@ class Judge
     upcoming_hearings_on(date).count > 0
   end
 
+  def upcoming_hearings_on(date)
+    upcoming_hearings.select do |hearing|
+      hearing.date.between?(date, date.end_of_day)
+    end
+  end
+
   private
 
   def upcoming_hearings_grouped_by_date
@@ -22,11 +28,5 @@ class Judge
 
   def upcoming_hearings
     Hearing.repository.upcoming_hearings_for_judge(user.css_id).sort_by(&:date)
-  end
-
-  def upcoming_hearings_on(date)
-    upcoming_hearings.select do |hearing|
-      hearing.date.between?(date, date.end_of_day)
-    end
   end
 end

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Actions from './actions/Dockets';
+import _ from 'lodash';
 import LoadingContainer from '../components/LoadingContainer';
 import StatusMessage from '../components/StatusMessage';
 import * as AppConstants from '../constants/AppConstants';
@@ -13,41 +14,40 @@ import ApiUtil from '../util/ApiUtil';
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    this.props.getDockets();
-  }
-
-  docket = () => {
-    return this.props.dockets[this.props.date].hearings_array;
+    this.props.getDailyDocket();
   }
 
   render() {
+
+    const dailyDocket = this.props.dailyDocket[this.props.date];
+
     if (this.props.docketServerError) {
       return <StatusMessage
-        title="Unable to load hearings">
+        title= "Unable to load hearings">
           It looks like Caseflow was unable to load hearings.<br />
           Please <a href="">refresh the page</a> and try again.
       </StatusMessage>;
     }
 
-    if (!this.props.dockets) {
+    if (!dailyDocket) {
       return <div className="loading-hearings">
         <div className="cf-sg-loader">
           <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}>
             <div className="cf-image-loader">
             </div>
-            <p className="cf-txt-c">Loading dockets, please wait...</p>
+            <p className="cf-txt-c">Loading hearings, please wait...</p>
           </LoadingContainer>
         </div>
       </div>;
     }
 
-    if (Object.keys(this.props.dockets).length === 0) {
-      return <div>You have no upcoming hearings.</div>;
+    if (_.isEmpty(dailyDocket)) {
+      return <div>You have no hearings on this date.</div>;
     }
 
     return <div className="cf-hearings-daily-docket-container">
       <AutoSave
-        save={this.props.save(this.docket(), this.props.date)}
+        save={this.props.save(dailyDocket, this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
@@ -55,23 +55,23 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         veteran_law_judge={this.props.veteran_law_judge}
         date={this.props.date}
-        docket={this.docket()}
+        docket={dailyDocket}
       />
     </div>;
   }
 }
 
 const mapStateToProps = (state) => ({
-  dockets: state.dockets,
+  dailyDocket: state.dailyDocket,
   docketServerError: state.docketServerError
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getDockets: (dockets) => () => {
-    if (!dockets) {
-      ApiUtil.get('/hearings/dockets.json', { cache: true }).
+  getDailyDocket: (dailyDocket, date) => () => {
+    if (!dailyDocket[date]) {
+      ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
         then((response) => {
-          dispatch(Actions.populateDockets(response.body));
+          dispatch(Actions.populateDailyDocket(response.body, date));
         }, (err) => {
           dispatch(Actions.handleDocketServerError(err));
         });
@@ -113,7 +113,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    getDockets: dispatchProps.getDockets(stateProps.dockets)
+    getDailyDocket: dispatchProps.getDailyDocket(stateProps.dailyDocket, ownProps.date)
   };
 };
 
@@ -125,7 +125,7 @@ export default connect(
 
 DailyDocketContainer.propTypes = {
   veteran_law_judge: PropTypes.object.isRequired,
-  dockets: PropTypes.object,
+  dailyDocket: PropTypes.object,
   date: PropTypes.string.isRequired,
   docketServerError: PropTypes.object
 };

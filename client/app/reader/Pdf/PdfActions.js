@@ -10,21 +10,12 @@ export const onScrollToComment = (scrollToComment) => ({
 
 /** PDF Page **/
 
-export const setUpPdfPage = (file, pageIndex, page) => ({
-  type: Constants.SET_UP_PDF_PAGE,
+export const setPageDimensions = (file, pageIndex, dimensions) => ({
+  type: Constants.SET_UP_PAGE_DIMENSIONS,
   payload: {
     file,
     pageIndex,
-    page
-  }
-});
-
-export const clearPdfPage = (file, pageIndex, page) => ({
-  type: Constants.CLEAR_PDF_PAGE,
-  payload: {
-    file,
-    pageIndex,
-    page
+    dimensions
   }
 });
 
@@ -104,6 +95,20 @@ export const updateSearchIndex = (increment) => ({
 
 export const zeroSearchIndex = () => ({
   type: Constants.ZERO_SEARCH_INDEX
+});
+
+export const setSearchIndex = (index) => ({
+  type: Constants.SET_SEARCH_INDEX,
+  payload: {
+    index
+  }
+});
+
+export const setSearchIndexToHighlight = (index) => ({
+  type: Constants.SET_SEARCH_INDEX_TO_HIGHLIGHT,
+  payload: {
+    index
+  }
 });
 
 export const searchText = (searchTerm) => (dispatch) => {

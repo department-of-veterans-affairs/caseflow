@@ -1,27 +1,37 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
-
+import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH } from './constants';
-import { setPdfDocument, clearPdfDocument, setDocumentLoadError, clearDocumentLoadError }
-  from '../reader/Pdf/PdfActions';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
+} from '../reader/Pdf/PdfActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { List, AutoSizer } from 'react-virtualized';
+import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
+import { startPlacingAnnotation, showPlaceAnnotationIcon
+} from '../reader/AnnotationLayer/AnnotationActions';
+import { INTERACTION_TYPES } from '../reader/analytics';
+import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.isDrawing = false;
-    this.isDrawn = false;
-    this.previousShouldDraw = 0;
     this.loadingTask = null;
     this.pdfDocument = null;
+    this.list = null;
+    this.startIndex = 0;
+    this.scrollTop = 0;
+    this.scrollLocation = {};
+    this.clientHeight = 0;
+    this.currentPage = 0;
   }
 
   componentDidMount = () => {
@@ -33,6 +43,8 @@ export class PdfFile extends React.PureComponent {
       timeout: true,
       responseType: 'arraybuffer'
     };
+
+    window.addEventListener('keydown', this.keyListener);
 
     this.props.clearDocumentLoadError(this.props.file);
 
@@ -60,6 +72,8 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentWillUnmount = () => {
+    window.removeEventListener('keydown', this.keyListener);
+
     if (this.loadingTask) {
       this.loadingTask.destroy();
     }
@@ -69,27 +83,200 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPages = () => {
-    // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
-    // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
-    // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
-    // pdfDocument in the Redux state. So we must check that the transport is not destroyed
-    // before trying to render the page.
-    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed) {
-      return _.range(this.props.pdfDocument.pdfInfo.numPages).map((pageIndex) => <PdfPage
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isVisible !== this.props.isVisible) {
+      this.currentPage = 0;
+    }
+
+    if (this.list && nextProps.scale !== this.props.scale) {
+      // Set the scroll location based on the current page and where you
+      // are on that page scaled by the zoom factor.
+      const zoomFactor = nextProps.scale / this.props.scale;
+      const nonZoomedLocation = (this.scrollTop - this.list.getOffsetForRow({ index: this.startIndex }));
+
+      this.scrollLocation = {
+        page: this.startIndex,
+        locationOnPage: nonZoomedLocation * zoomFactor
+      };
+    }
+  }
+
+  getPage = ({ index, key, style }) => {
+    return <div key={key} style={style}>
+      <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
-        key={pageIndex}
         file={this.props.file}
-        pageIndex={pageIndex}
+        pageIndex={index}
         isVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
-      />);
+      />
+    </div>;
+  }
+
+  pageDimensions = (index) => this.props.pageDimensions[`${this.props.file}-${index}`]
+
+  pageHeight = (index) =>
+    _.get(this.pageDimensions(index), ['height'], this.props.baseHeight)
+
+  getRowHeight = ({ index }) => {
+    return (this.pageHeight(index) + 25) * this.props.scale;
+  }
+
+  getList = (list) => {
+    this.list = list;
+
+    if (this.list) {
+      // eslint-disable-next-line react/no-find-dom-node
+      const domNode = ReactDOM.findDOMNode(this.list);
+
+      domNode.focus();
+      this.list.recomputeRowHeights();
+    }
+  }
+
+  scrollToPosition = (pageIndex, locationOnPage = 0) => {
+    const position = this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage;
+
+    this.list.scrollToPosition(Math.max(position, 0));
+  }
+
+  jumpToPage = () => {
+    // We want to jump to the page, after the react virtualized has initialized the scroll window.
+    if (this.props.jumpToPageNumber && this.clientHeight > 0) {
+      const scrollToIndex = this.props.jumpToPageNumber ? pageIndexOfPageNumber(this.props.jumpToPageNumber) : -1;
+
+      this.list.scrollToRow(scrollToIndex);
+      this.props.resetJumpToPage();
+    }
+  }
+
+  jumpToComment = () => {
+    // We want to jump to the comment, after the react virtualized has initialized the scroll window.
+    if (this.props.scrollToComment && this.clientHeight > 0) {
+      const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
+      const transformedY = rotateCoordinates(this.props.scrollToComment,
+        this.pageDimensions(pageIndex), -this.props.rotation).y * this.props.scale;
+      const scrollToY = transformedY - (this.pageHeight(pageIndex) / 2);
+
+      this.scrollToPosition(pageIndex, scrollToY);
+      this.props.onScrollToComment(null);
+    }
+  }
+
+  scrollWhenFinishedZooming = () => {
+    if (this.scrollLocation.page) {
+      this.scrollToPosition(this.scrollLocation.page, this.scrollLocation.locationOnPage);
+
+      this.scrollLocation = {};
+    }
+  }
+
+  getPageIndexofMatch = (matchIndex = this.props.currentMatchIndex) => {
+    let cumulativeMatches = 0;
+
+    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
+      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
+
+      if (matchIndex < cumulativeMatches) {
+        return this.props.matchesPerPage[matchesPerPageIndex].pageIndex;
+      }
     }
 
-    return null;
+    return -1;
+  }
+
+  scrollToSearchTerm = (prevProps) => {
+    if (this.props.searchText && this.props.matchesPerPage.length) {
+      const pageIndex = this.getPageIndexofMatch();
+
+      if (pageIndex >= 0) {
+        if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)) {
+          // if navigating between Marks in the same page and the page is rendered,
+          // PdfPage will set scrollTop in highlightMarkAtIndex
+          if (!_.isNull(this.props.scrollTop)) {
+            this.scrollToPosition(pageIndex, this.props.scrollTop);
+            this.props.setDocScrollPosition(null);
+          } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+            // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
+            this.list.scrollToRow(pageIndex);
+          }
+        } else {
+          // scroll to mark page before highlighting--may not be in DOM
+          this.list.scrollToRow(pageIndex);
+        }
+      }
+    }
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (this.list && this.props.isVisible) {
+      this.list.recomputeRowHeights();
+      this.scrollWhenFinishedZooming();
+      this.jumpToPage();
+      this.jumpToComment();
+
+      this.scrollToSearchTerm(prevProps);
+    }
+  }
+
+  onRowsRendered = ({ startIndex }) => {
+    this.startIndex = startIndex;
+  }
+
+  onPageChange = (index, clientHeight) => {
+    this.currentPage = index;
+    this.props.onPageChange(pageNumberOfPageIndex(index), clientHeight / this.pageHeight(index));
+  }
+
+  onScroll = ({ clientHeight, scrollTop }) => {
+    this.scrollTop = scrollTop;
+
+    if (this.list) {
+      let lastIndex = 0;
+
+      _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
+        const offset = this.list.getOffsetForRow({ index });
+
+        if (offset < scrollTop + (clientHeight / 2)) {
+          lastIndex = index;
+        }
+      });
+
+      this.onPageChange(lastIndex, clientHeight);
+    }
+  }
+
+  handleAltC = () => {
+    if (this.props.sidebarHidden) {
+      this.props.togglePdfSidebar();
+    }
+
+    this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
+
+    const { width, height } = this.pageDimensions(this.currentPage);
+    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.list.getOffsetForRow({ index: this.currentPage }));
+
+    const initialCommentCoordinates = {
+      x: ((width - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale,
+      y: ((scrolledLocationOnPage + height - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale
+    };
+
+    this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
+  }
+
+  keyListener = (event) => {
+    if (isUserEditingText() || !this.props.isVisible) {
+      return;
+    }
+
+    if (event.altKey) {
+      if (event.code === 'KeyC') {
+        this.handleAltC();
+      }
+    }
   }
 
   displayErrorMessage = () => {
@@ -118,28 +305,79 @@ export class PdfFile extends React.PureComponent {
   }
 
   render() {
-    return <div>
-      {this.props.loadError ? this.displayErrorMessage() : this.getPages()}
-    </div>;
+    if (this.props.loadError) {
+      return <div>{this.displayErrorMessage()}</div>;
+    }
+
+    // Consider the following scenario: A user loads PDF 1, they then move to PDF 3 and
+    // PDF 1 is unloaded, the pdfDocument object is cleaned up. However, before the Redux
+    // state is nulled out the user moves back to PDF 1. We still can access the old destroyed
+    // pdfDocument in the Redux state. So we must check that the transport is not destroyed
+    // before trying to render the page.
+    if (this.props.pdfDocument && !this.props.pdfDocument.transport.destroyed && this.props.isVisible) {
+      return <AutoSizer>{
+        ({ width, height }) => {
+          if (this.clientHeight !== height) {
+            _.defer(this.onPageChange, this.currentPage, height);
+            this.clientHeight = height;
+          }
+
+          return <List
+            ref={this.getList}
+            onRowsRendered={this.onRowsRendered}
+            onScroll={this.onScroll}
+            height={height}
+            rowCount={this.props.pdfDocument.pdfInfo.numPages}
+            rowHeight={this.getRowHeight}
+            rowRenderer={this.getPage}
+            scrollToAlignment="start"
+            width={width}
+            scale={this.props.scale}
+          />;
+        }
+      }
+      </AutoSizer>;
+    }
+
+    return null;
   }
 }
 
 PdfFile.propTypes = {
-  pdfDocument: PropTypes.object
+  pdfDocument: PropTypes.object,
+  setDocScrollPosition: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPdfDocument,
     clearPdfDocument,
+    resetJumpToPage,
+    onScrollToComment,
+    startPlacingAnnotation,
+    showPlaceAnnotationIcon,
     setDocumentLoadError,
-    clearDocumentLoadError
+    clearDocumentLoadError,
+    setDocScrollPosition
   }, dispatch)
 });
 
-const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file],
-  loadError: state.readerReducer.documentErrors[props.file]
-});
+const mapStateToProps = (state, props) => {
+  const dimensionValues = _.filter(state.readerReducer.pageDimensions, (dimension) => dimension.file === props.file);
+  const baseHeight = _.get(dimensionValues, [0, 'height'], PDF_PAGE_HEIGHT);
+
+  return {
+    pdfDocument: state.readerReducer.pdfDocuments[props.file],
+    pageDimensions: state.readerReducer.pageDimensions,
+    baseHeight,
+    jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber,
+    scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
+    loadError: state.readerReducer.documentErrors[props.file],
+    currentMatchIndex: getCurrentMatchIndex(state, props),
+    matchesPerPage: getMatchesPerPageInFile(state, props),
+    searchText: searchText(state, props),
+    scrollTop: state.readerReducer.ui.pdf.scrollTop
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PdfFile);

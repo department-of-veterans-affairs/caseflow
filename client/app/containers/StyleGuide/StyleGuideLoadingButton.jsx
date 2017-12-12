@@ -33,7 +33,7 @@ export default class StyleGuideLoadingButton extends React.Component {
     return <div>
       <StyleGuideComponentTitle
         title="Loading Buttons"
-        id="loading_buttons"
+        id="loading-buttons"
         link="StyleGuideLoadingButton.jsx"
       />
       <p>

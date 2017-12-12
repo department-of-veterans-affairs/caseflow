@@ -29,7 +29,9 @@ const rampIneligibleInstructions = <div>
 </div>;
 
 class Begin extends React.PureComponent {
-  handleSearchSubmit = () => this.props.doFileNumberSearch(this.props.fileNumberSearchInput)
+  handleSearchSubmit = () => (
+    this.props.doFileNumberSearch('ramp_election', this.props.fileNumberSearchInput)
+  )
 
   clearSearch = () => this.props.setFileNumberSearch('')
 

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar, toggleSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
 import { rotateDocument } from '../reader/Pdf/PdfActions';
-import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
@@ -237,14 +237,14 @@ export class PdfUI extends React.Component {
             ariaLabel="download pdf">
             <DownloadIcon />
           </Button>
-          {this.props.featureToggles.search && <Button
+          <Button
             name="search"
             classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
             ariaLabel="search text"
             type="submit"
             onClick={this.props.toggleSearchBar}>
             <SearchIcon />
-          </Button>}
+          </Button>
           {this.props.hidePdfSidebar &&
             <span className="cf-pdf-open-menu">
               <Button
@@ -259,7 +259,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
-        {this.props.featureToggles.search && <DocumentSearch file={this.props.doc.content_url} />}
+        <DocumentSearch file={this.props.doc.content_url} />
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}
@@ -288,6 +288,7 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
     docListIsFiltered: docListIsFiltered(state.readerReducer),
     loadError: state.readerReducer.documentErrors[props.doc.content_url],
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     ...state.readerReducer.ui.pdf,
     numPages
   };
