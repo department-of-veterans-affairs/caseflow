@@ -16,7 +16,7 @@ import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
 import { List, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
 

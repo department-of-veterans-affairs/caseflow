@@ -21,7 +21,7 @@ import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewe
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
   updateAnnotationContent
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
 import { commentColumns, commentInstructions, documentsColumns,
@@ -254,8 +254,8 @@ PdfSidebar.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.doc.id),
+    ..._.pick(state.annotationLayer, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
+    comments: makeGetAnnotationsByDocumentId(state.annotationLayer)(ownProps.doc.id),
     scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
     error: state.readerReducer.ui.pdfSidebar.error,
