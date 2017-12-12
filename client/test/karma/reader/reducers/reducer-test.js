@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { reducer, initialState } from '../../../../app/reader/reducer';
-import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
+import { reducer } from '../../../../app/reader/reducer';
 import * as Constants from '../../../../app/reader/constants';
 
 /* eslint-disable no-undefined */
