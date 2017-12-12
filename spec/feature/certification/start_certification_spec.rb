@@ -242,8 +242,7 @@ RSpec.feature "Start Certification" do
       expect(page).to have_content("Loading")
       certification = Certification.find_by(vacols_id: appeal_ready_exact_match.vacols_id)
       certification.update_attributes(loading_data_failed: true)
-      visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
-      expect(page).to have_content("Technical Difficulties")
+      expect(page).to have_content("Technical Difficulties", wait: 30)
     end
 
     scenario "When appeal is not ready for certificaition" do

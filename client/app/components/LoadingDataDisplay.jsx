@@ -90,8 +90,7 @@ class LoadingDataDisplay extends React.PureComponent {
 }
 
 LoadingDataDisplay.propTypes = {
-  createLoadPromise: PropTypes.func.isRequired,
-  children: PropTypes.element.isRequired
+  createLoadPromise: PropTypes.func.isRequired
 };
 
 LoadingDataDisplay.defaultProps = {
