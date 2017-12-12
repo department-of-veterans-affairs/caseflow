@@ -36,9 +36,9 @@ export class DocumentSearch extends React.PureComponent {
     this.props.searchText(this.searchTerm);
   }
 
-  updateSearchIndex = (event) => {
+  updateSearchIndex = (iterateForwards) => {
     if (this.props.matchIndexToHighlight === null) {
-      this.props.updateSearchIndex(!event.shiftKey);
+      this.props.updateSearchIndex(iterateForwards);
     } else {
       this.props.setSearchIndex(this.props.matchIndexToHighlight);
       this.props.setSearchIndexToHighlight(null);
@@ -47,7 +47,7 @@ export class DocumentSearch extends React.PureComponent {
 
   onKeyPress = (event) => {
     if (event.key === 'Enter') {
-      this.updateSearchIndex(event);
+      this.updateSearchIndex(!event.shiftKey);
     }
   }
 
@@ -60,7 +60,7 @@ export class DocumentSearch extends React.PureComponent {
 
     if (event[metaKey] && event.code === 'KeyG') {
       event.preventDefault();
-      this.updateSearchIndex(event);
+      this.updateSearchIndex(!event.shiftKey);
     }
 
     if (event.key === 'Escape') {
@@ -95,8 +95,8 @@ export class DocumentSearch extends React.PureComponent {
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
   componentWillUnmount = () => window.removeEventListener('keydown', this.shortcutHandler)
 
-  nextMatch = () => this.props.updateSearchIndex(true)
-  prevMatch = () => this.props.updateSearchIndex(false)
+  nextMatch = () => this.updateSearchIndex(true)
+  prevMatch = () => this.updateSearchIndex(false)
 
   searchBarRef = (node) => this.searchBar = node
 

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import logger from 'redux-logger';
+import _ from 'lodash';
 
 import ConfigUtil from '../util/ConfigUtil';
 import Success from './Success';
@@ -15,9 +16,8 @@ import { certificationReducers, mapDataToInitialState } from './reducers/index';
 import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
-import LoadingScreen from '../components/LoadingScreen';
 import * as AppConstants from '../constants/AppConstants';
-import StatusMessage from '../components/StatusMessage';
+import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 class EntryPointRedirect extends React.Component {
   render() {
@@ -73,99 +73,61 @@ export class Certification extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loadingData: true,
-      loadingDataFailed: false,
       certification: null,
-      form9PdfPath: null,
-      longerThanUsual: false,
-      overallTimeout: false
-    };
-
-    // Allow test harness to trigger reloads
-    window.reloadCertification = () => {
-      this.checkCertificationData();
+      form9PdfPath: null
     };
   }
 
-  checkCertificationData() {
-    ApiUtil.get(`/certifications/${this.props.vacolsId}`).
-      then((data) => {
-        this.setState({
-          loadingData: JSON.parse(data.text).loading_data,
-          loadingDataFailed: JSON.parse(data.text).loading_data_failed,
-          certification: JSON.parse(data.text).certification,
-          form9PdfPath: JSON.parse(data.text).form9PdfPath
-        });
-      }, () => {
-        this.setState({
-          loadingDataFailed: true
-        });
-      });
-  }
+  createLoadPromise = () => {
+    const loadPromise = new Promise((resolve, reject) => {
+      const makePollAttempt = () => {
+        ApiUtil.get(`/certifications/${this.props.vacolsId}`).
+          then(({ text }) => {
+            const response = JSON.parse(text);
 
-  componentDidMount() {
-    // initial check
-    this.checkCertificationData();
-    // Timer for longer-than-usual message
-    setTimeout(
-      () => {
-        this.setState(
-          Object.assign({}, this.state, {
-            longerThanUsual: true
-          }));
-      },
-      AppConstants.LONGER_THAN_USUAL_TIMEOUT
-    );
-    // Timer for overall timeout
-    setTimeout(
-      () => {
-        this.setState(
-          Object.assign({}, this.state, {
-            overallTimeout: true
-          }));
-      },
-      AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT
-    );
-  }
+            if (response.loading_data_failed) {
+              reject(new Error('Backend failed to load data'));
+            }
 
-  componentDidUpdate() {
-    // subsequent checks if data is still loading
-    if (!this.state.certification && !this.state.loadingDataFailed && !this.state.overallTimeout) {
-      setTimeout(() =>
-        this.checkCertificationData(), AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
-    }
+            if (response.loading_data) {
+              setTimeout(makePollAttempt, AppConstants.CERTIFICATION_DATA_POLLING_INTERVAL);
+
+              return;
+            }
+
+            this.setState(_.pick(response, ['certification', 'form9PdfPath']));
+            resolve();
+          }, reject);
+      };
+
+      makePollAttempt();
+    });
+
+    return loadPromise;
   }
 
   render() {
+    const failStatusMessageChildren = <div>
+      Systems that Caseflow Certification connects to are experiencing technical difficulties
+      and Caseflow is unable to load.
+      We apologize for any inconvenience. Please try again later.
+    </div>;
 
-    const initialMessage = 'Loading and checking documents from the Veteran’s file…';
-
-    const longerThanUsualMessage = 'Documents are taking longer to load than usual. Thanks for your patience!';
-
-    const failureMessage = <StatusMessage
-      title="Technical Difficulties">
-                              Systems that Caseflow Certification connects to are experiencing technical difficulties
-                              and Caseflow is unable to load.
-                We apologize for any inconvenience. Please try again later.
-    </StatusMessage>;
-
-    let message = this.state.longerThanUsual ? longerThanUsualMessage : initialMessage;
-
-    return <div>
-      {
-        !(this.state.certification || this.state.loadingDataFailed || this.state.overallTimeout) &&
-        <LoadingScreen
-          message={message}
-          spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION} />
-      }
-
-      {
-        (this.state.loadingDataFailed || this.state.overallTimeout) && !this.state.certification && failureMessage
-      }
-
-      { this.state.certification && !this.state.loading_data &&
-      <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
-        <div>
+    return <LoadingDataDisplay
+      createLoadPromise={this.createLoadPromise}
+      slowLoadThresholdMs={AppConstants.LONGER_THAN_USUAL_TIMEOUT}
+      timeoutMs={AppConstants.CERTIFICATION_DATA_OVERALL_TIMEOUT}
+      slowLoadMessage="Documents are taking longer to load than usual. Thanks for your patience!"
+      loadingScreenProps={{
+        message: 'Loading and checking documents from the Veteran’s file…',
+        spinnerColor: AppConstants.LOADING_INDICATOR_COLOR_CERTIFICATION
+      }}
+      failStatusMessageProps={{
+        title: 'Technical Difficulties'
+      }}
+      failStatusMessageChildren={failStatusMessageChildren}>
+      { this.state.certification &&
+        <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
           <BrowserRouter>
             <div>
               <Route path="/certifications/new/:vacols_id"
@@ -206,8 +168,7 @@ export class Certification extends React.Component {
               />
             </div>
           </BrowserRouter>
-        </div>
-      </Provider> }
-    </div>;
+        </Provider> }
+    </LoadingDataDisplay>;
   }
 }

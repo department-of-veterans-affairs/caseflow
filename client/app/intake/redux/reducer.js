@@ -19,6 +19,12 @@ const formatAppeals = (appeals) => {
 
 const updateStateWithSavedIntake = (state, intake) => {
   return update(state, {
+    formType: {
+      $set: intake.form_type
+    },
+    intakeId: {
+      $set: intake.id
+    },
     veteran: {
       name: {
         $set: intake.veteran_name
@@ -62,6 +68,7 @@ const updateStateWithSavedIntake = (state, intake) => {
 export const mapDataToInitialState = (data = { currentIntake: {} }) => (
   updateStateWithSavedIntake({
     formType: null,
+    intakeId: null,
     veteran: {
       name: '',
       formName: '',

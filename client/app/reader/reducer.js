@@ -4,77 +4,8 @@ import * as Constants from './constants';
 import _ from 'lodash';
 
 import { update } from '../util/ReducerUtil';
-import { categoryFieldNameOfCategoryName, moveModel } from './utils';
-import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { timeFunction } from '../util/PerfDebug';
 import documentsReducer from './DocumentList/DocumentsReducer';
-
-const updateFilteredDocIds = (nextState) => {
-  const { docFilterCriteria } = nextState.ui;
-  const activeCategoryFilters = _(docFilterCriteria.category).
-    toPairs().
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => categoryFieldNameOfCategoryName(key)).
-    value();
-
-  const activeTagFilters = _(docFilterCriteria.tag).
-    toPairs().
-    filter(([key, value]) => value). // eslint-disable-line no-unused-vars
-    map(([key]) => key).
-    value();
-
-  const searchQuery = _.get(docFilterCriteria, 'searchQuery', '').toLowerCase();
-
-  // ensure we have a deep clone so we are not mutating the original state
-  let updatedNextState = update(nextState, {});
-
-  const filteredIds = _(nextState.documents).
-    filter(
-      (doc) => !activeCategoryFilters.length ||
-        _.some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
-    ).
-    filter(
-      (doc) => !activeTagFilters.length ||
-        _.some(activeTagFilters, (tagText) => _.find(doc.tags, { text: tagText }))
-    ).
-    filter(
-      searchString(searchQuery, nextState)
-    ).
-    sortBy(docFilterCriteria.sort.sortBy).
-    map('id').
-    value();
-
-  // looping through all the documents to update category highlights and expanding comments
-  _.forEach(updatedNextState.documents, (doc) => {
-    const containsWords = commentContainsWords(searchQuery, updatedNextState, doc);
-
-    // getting all the truthy values from the object
-    // {'medical': true, 'procedural': false } turns into {'medical': true}
-    const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
-
-    // update the state for all the search category highlights
-    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
-      updatedNextState.ui.searchCategoryHighlights[doc.id] = matchesCategories;
-    }
-
-    // updating the state of all annotations for expanded comments
-    if (containsWords !== doc.listComments) {
-      updatedNextState.documents[doc.id].listComments = containsWords;
-    }
-  });
-
-  if (docFilterCriteria.sort.sortAscending) {
-    filteredIds.reverse();
-  }
-
-  return update(updatedNextState, {
-    ui: {
-      filteredDocIds: {
-        $set: filteredIds
-      }
-    }
-  });
-};
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
   update(
@@ -110,15 +41,6 @@ const updateLastReadDoc = (state, docId) =>
     }
   );
 
-const openAnnotationDeleteModalFor = (state, annotationId) =>
-  update(state, {
-    ui: {
-      deleteAnnotationModalIsOpenFor: {
-        $set: annotationId
-      }
-    }
-  });
-
 const initialPdfSidebarErrorState = {
   tag: { visible: false,
     message: null },
@@ -131,22 +53,14 @@ const initialPdfSidebarErrorState = {
 export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
-  initialDataLoadingFail: false,
   didLoadAppealFail: false,
-  initialCaseLoadingFail: false,
   viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
-  placingAnnotationIconPageCoords: null,
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
     tagOptions: [],
     searchCategoryHighlights: {},
-    pendingAnnotations: {},
-    pendingEditingAnnotations: {},
-    selectedAnnotationId: null,
-    deleteAnnotationModalIsOpenFor: null,
-    placedButUnsavedAnnotation: null,
     filteredDocIds: null,
     docFilterCriteria: {
       sort: {
@@ -159,7 +73,6 @@ export const initialState = {
     },
     pdf: {
       pdfsReadyToShow: {},
-      isPlacingAnnotation: false,
       hidePdfSidebar: false,
       jumpToPageNumber: null,
       scrollTop: 0,
@@ -180,14 +93,6 @@ export const initialState = {
     manifestVvaFetchedAt: null
   },
 
-  /**
-   * `editingAnnotations` is an object of annotations that are currently being edited.
-   * When a user starts editing an annotation, we copy it from `annotations` to `editingAnnotations`.
-   * To commit the edits, we copy from `editingAnnotations` back into `annotations`.
-   * To discard the edits, we delete from `editingAnnotations`.
-   */
-  editingAnnotations: {},
-  annotations: {},
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
@@ -222,18 +127,6 @@ const reducer = (state = {}, action = {}) => {
         }
       }
     );
-  case Constants.REQUEST_INITIAL_DATA_FAILURE:
-    return update(state, {
-      initialDataLoadingFail: {
-        $set: action.payload.value
-      }
-    });
-  case Constants.REQUEST_INITIAL_CASE_FAILURE:
-    return update(state, {
-      initialCaseLoadingFail: {
-        $set: action.payload.value
-      }
-    });
   case Constants.RECEIVE_MANIFESTS:
     return update(state, {
       ui: {
@@ -245,22 +138,6 @@ const reducer = (state = {}, action = {}) => {
         }
       }
     });
-  case Constants.RECEIVE_ANNOTATIONS:
-    return updateFilteredDocIds(update(
-      state,
-      {
-        annotations: {
-          $set: _(action.payload.annotations).
-            map((annotation) => ({
-              documentId: annotation.document_id,
-              uuid: annotation.id,
-              ...annotation
-            })).
-            keyBy('id').
-            value()
-        }
-      }
-    ));
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -278,7 +155,7 @@ const reducer = (state = {}, action = {}) => {
       }
     );
   case Constants.SET_SEARCH:
-    return updateFilteredDocIds(update(state, {
+    return update(state, {
       ui: {
         docFilterCriteria: {
           searchQuery: {
@@ -286,9 +163,9 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    }));
+    });
   case Constants.SET_SORT:
-    return updateFilteredDocIds(update(state, {
+    return update(state, {
       ui: {
         docFilterCriteria: {
           sort: {
@@ -301,7 +178,7 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    }));
+    });
   case Constants.TOGGLE_FILTER_DROPDOWN:
     return (() => {
       const originalValue = _.get(
@@ -325,7 +202,7 @@ const reducer = (state = {}, action = {}) => {
       );
     })();
   case Constants.SET_CATEGORY_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -337,7 +214,7 @@ const reducer = (state = {}, action = {}) => {
             }
           }
         }
-      }));
+      });
   case Constants.JUMP_TO_PAGE:
     return update(
       state,
@@ -365,7 +242,7 @@ const reducer = (state = {}, action = {}) => {
       }
     );
   case Constants.SET_TAG_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -377,9 +254,9 @@ const reducer = (state = {}, action = {}) => {
             }
           }
         }
-      }));
+      });
   case Constants.CLEAR_TAG_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -390,9 +267,9 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ));
+    );
   case Constants.CLEAR_CATEGORY_FILTER:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -403,9 +280,9 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ));
+    );
   case Constants.CLEAR_ALL_FILTERS:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -421,237 +298,7 @@ const reducer = (state = {}, action = {}) => {
         viewingDocumentsOrComments: {
           $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
         }
-      }));
-  case Constants.OPEN_ANNOTATION_DELETE_MODAL:
-    return openAnnotationDeleteModalFor(state, action.payload.annotationId);
-  case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
-    return openAnnotationDeleteModalFor(state, null);
-  case Constants.REQUEST_DELETE_ANNOTATION:
-    return update(
-      hideErrorMessage(openAnnotationDeleteModalFor(state, null), 'annotation'),
-      {
-        editingAnnotations: {
-          [action.payload.annotationId]: {
-            $apply: (annotation) => annotation && {
-              ...annotation,
-              pendingDeletion: true
-            }
-          }
-        },
-        annotations: {
-          [action.payload.annotationId]: {
-            $merge: {
-              pendingDeletion: true
-            }
-          }
-        }
-      }
-    );
-  case Constants.REQUEST_DELETE_ANNOTATION_FAILURE:
-    return update(showErrorMessage(state, 'annotation'), {
-      editingAnnotations: {
-        [action.payload.annotationId]: {
-          $unset: 'pendingDeletion'
-        }
-      },
-      annotations: {
-        [action.payload.annotationId]: {
-          $unset: 'pendingDeletion'
-        }
-      }
-    });
-  case Constants.REQUEST_DELETE_ANNOTATION_SUCCESS:
-    return update(
-      state,
-      {
-        editingAnnotations: {
-          $unset: action.payload.annotationId
-        },
-        annotations: {
-          $unset: action.payload.annotationId
-        }
-      }
-    );
-  case Constants.REQUEST_MOVE_ANNOTATION:
-    return update(hideErrorMessage(state, 'annotation'), {
-      ui: {
-        pendingEditingAnnotations: {
-          [action.payload.annotation.id]: {
-            $set: action.payload.annotation
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_MOVE_ANNOTATION_SUCCESS:
-    return moveModel(
-      state,
-      ['ui', 'pendingEditingAnnotations'],
-      ['annotations'],
-      action.payload.annotationId
-    );
-  case Constants.REQUEST_MOVE_ANNOTATION_FAILURE:
-    return update(showErrorMessage(state, 'annotation'), {
-      ui: {
-        pendingEditingAnnotations: {
-          $unset: action.payload.annotationId
-        }
-      }
-    });
-  case Constants.PLACE_ANNOTATION:
-    return update(state, {
-      ui: {
-        placedButUnsavedAnnotation: {
-          $set: {
-            ...action.payload,
-            class: 'Annotation',
-            type: 'point'
-          }
-        },
-        pdf: {
-          isPlacingAnnotation: { $set: false }
-        }
-      }
-    });
-  case Constants.START_PLACING_ANNOTATION:
-    return update(state, {
-      ui: {
-        pdf: {
-          isPlacingAnnotation: { $set: true }
-        }
-      },
-      openedAccordionSections: {
-        $apply: (sectionKeys) => _.union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
-      }
-    });
-  case Constants.SHOW_PLACE_ANNOTATION_ICON:
-    return update(state, {
-      placingAnnotationIconPageCoords: {
-        $set: {
-          pageIndex: action.payload.pageIndex,
-          ...action.payload.pageCoords
-        }
-      }
-    });
-  case Constants.STOP_PLACING_ANNOTATION:
-    return update(hideErrorMessage(state, 'annotation'), {
-      placingAnnotationIconPageCoords: {
-        $set: null
-      },
-      ui: {
-        placedButUnsavedAnnotation: { $set: null },
-        pdf: {
-          isPlacingAnnotation: { $set: false }
-        }
-      }
-    });
-  case Constants.REQUEST_CREATE_ANNOTATION:
-    return update(hideErrorMessage(state, 'annotation'), {
-      ui: {
-        placedButUnsavedAnnotation: { $set: null },
-        pendingAnnotations: {
-          [action.payload.annotation.id]: {
-            $set: action.payload.annotation
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_CREATE_ANNOTATION_SUCCESS:
-    return update(state, {
-      ui: {
-        pendingAnnotations: {
-          $unset: action.payload.annotationTemporaryId
-        }
-      },
-      annotations: {
-        [action.payload.annotation.id]: {
-          $set: {
-            // These two duplicate fields exist on annotations throughout the app.
-            // I am not sure why this is, but we'll patch it here to make everything work.
-            document_id: action.payload.annotation.documentId,
-            uuid: action.payload.annotation.id,
-
-            ...action.payload.annotation
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_CREATE_ANNOTATION_FAILURE:
-    return update(showErrorMessage(state, 'annotation', action.payload.errorMessage), {
-      ui: {
-        // This will cause a race condition if the user has created multiple annotations.
-        // Whichever annotation failed most recently is the one that'll be in the
-        // "new annotation" text box. For now, I think that's ok.
-        placedButUnsavedAnnotation: {
-          $set: state.ui.pendingAnnotations[action.payload.annotationTemporaryId]
-        },
-        pendingAnnotations: {
-          $unset: action.payload.annotationTemporaryId
-        }
-      }
-    });
-  case Constants.START_EDIT_ANNOTATION:
-    return update(state, {
-      editingAnnotations: {
-        [action.payload.annotationId]: {
-          $set: state.annotations[action.payload.annotationId]
-        }
-      }
-    });
-  case Constants.CANCEL_EDIT_ANNOTATION:
-    return update(state, {
-      editingAnnotations: {
-        $unset: action.payload.annotationId
-      }
-    });
-  case Constants.UPDATE_ANNOTATION_CONTENT:
-    return update(state, {
-      editingAnnotations: {
-        [action.payload.annotationId]: {
-          comment: {
-            $set: action.payload.content
-          }
-        }
-      }
-    });
-  case Constants.UPDATE_NEW_ANNOTATION_CONTENT:
-    return update(state, {
-      ui: {
-        placedButUnsavedAnnotation: {
-          comment: {
-            $set: action.payload.content
-          }
-        }
-      }
-    });
-  case Constants.REQUEST_EDIT_ANNOTATION:
-    return moveModel(
-      hideErrorMessage(state, 'annotation'),
-      ['editingAnnotations'],
-      ['ui', 'pendingEditingAnnotations'],
-      action.payload.annotationId
-    );
-  case Constants.REQUEST_EDIT_ANNOTATION_SUCCESS:
-    return moveModel(
-      hideErrorMessage(state, 'annotation'),
-      ['ui', 'pendingEditingAnnotations'],
-      ['annotations'],
-      action.payload.annotationId
-    );
-  case Constants.REQUEST_EDIT_ANNOTATION_FAILURE:
-    return moveModel(
-      showErrorMessage(state, 'annotation', action.payload.errorMessage),
-      ['ui', 'pendingEditingAnnotations'],
-      ['editingAnnotations'],
-      action.payload.annotationId
-    );
-  case Constants.SELECT_ANNOTATION:
-    return update(state, {
-      ui: {
-        selectedAnnotationId: {
-          $set: action.payload.annotationId
-        }
-      }
-    });
+      });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {
@@ -734,7 +381,7 @@ const reducer = (state = {}, action = {}) => {
   case Constants.LAST_READ_DOCUMENT:
     return updateLastReadDoc(state, action.payload.docId);
   case Constants.CLEAR_ALL_SEARCH:
-    return updateFilteredDocIds(update(
+    return update(
       state,
       {
         ui: {
@@ -745,7 +392,7 @@ const reducer = (state = {}, action = {}) => {
           }
         }
       }
-    ));
+    );
   case Constants.SET_OPENED_ACCORDION_SECTIONS:
     return update(
       state,
@@ -878,15 +525,19 @@ const reducer = (state = {}, action = {}) => {
         $set: action.payload.vacolsId
       }
     });
-
-  case Constants.UPDATE_FILTERED_DOC_IDS:
-    return updateFilteredDocIds(state);
+  case Constants.UPDATE_FILTERED_RESULTS:
+    return update(state, {
+      ui: {
+        filteredDocIds: { $set: action.payload.filteredIds },
+        searchCategoryHighlights: { $set: action.payload.searchCategoryHighlights }
+      }
+    });
 
   // errors
   case Constants.HIDE_ERROR_MESSAGE:
     return hideErrorMessage(state, action.payload.messageType);
   case Constants.SHOW_ERROR_MESSAGE:
-    return showErrorMessage(state, action.payload.messageType);
+    return showErrorMessage(state, action.payload.messageType, action.payload.errorMessage);
   case Constants.RESET_PDF_SIDEBAR_ERRORS:
     return update(state, {
       ui: {

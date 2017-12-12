@@ -84,8 +84,7 @@ $color-hearings-saving: #777;
 
     // TODO: see if this can become a part of the general style
     .is-searchable.is-open > .Select-control {
-      box-shadow: 0 1px 4px 0 $color-dropdown-shadow;
-      border: 1px solid $color-gray-medium;
+      box-shadow: 0 0 8px $color-dropdown-shadow;
     }
 
     tbody {
@@ -269,6 +268,10 @@ $color-hearings-saving: #777;
     position: absolute;
     top: 0;
     right: 0;
+  }
+
+  .cf-hearings-worksheet-header {
+    margin-bottom: 1em;
   }
 
   .cf-modal {

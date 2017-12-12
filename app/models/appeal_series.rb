@@ -5,6 +5,8 @@ class AppealSeries < ActiveRecord::Base
            :active?,
            :type_code,
            :aod,
+           :ramp_election,
+           :eligible_for_ramp?,
            to: :latest_appeal
 
   def latest_appeal

@@ -3,38 +3,12 @@ import _ from 'lodash';
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
+import { selectAnnotation } from '../../reader/AnnotationLayer/AnnotationActions';
 import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
-});
-
-/** Annotation Modal **/
-
-export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'open-annotation-delete-modal',
-      label: analyticsLabel
-    }
-  }
-});
-
-export const closeAnnotationDeleteModal = () => ({
-  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'close-annotation-delete-modal'
-    }
-  }
 });
 
 /** Jump To Page **/
