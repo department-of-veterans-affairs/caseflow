@@ -1,7 +1,5 @@
 import { expect } from 'chai';
-import documentsReducer, {
-  initialState
-} from '../../../../app/reader/DocumentList/DocumentsReducer';
+import documentsReducer from '../../../../app/reader/DocumentList/DocumentsReducer';
 import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../../app/reader/constants';
 
@@ -11,7 +9,6 @@ describe('CaseSelect reducer', () => {
   describe(Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS, () => {
     it('switching to Comments mode', () => {
       const state = {
-        ...initialState,
         0: {
           id: 0,
           listComments: false
@@ -27,7 +24,6 @@ describe('CaseSelect reducer', () => {
       ], state);
 
       expect(nextState).to.deep.equal({
-        ...initialState,
         0: {
           id: 0,
           listComments: true
@@ -41,7 +37,6 @@ describe('CaseSelect reducer', () => {
 
     it('switching to Documents mode', () => {
       const state = {
-        ...initialState,
         0: {
           id: 0,
           listComments: false
@@ -57,7 +52,6 @@ describe('CaseSelect reducer', () => {
       ], state);
 
       expect(nextState).to.deep.equal({
-        ...initialState,
         0: {
           id: 0,
           listComments: false
