@@ -190,6 +190,11 @@ describe AppealSeries do
         let(:ssoc_dates) { [1.day.ago] }
         it { is_expected.to eq(:remand_ssoc) }
       end
+
+      context "and it has a pre-decision ssoc" do
+        let(:ssoc_dates) { [5.day.ago] }
+        it { is_expected.to eq(:remand) }
+      end
     end
 
     context "when it is in motion status" do
