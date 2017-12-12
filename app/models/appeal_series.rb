@@ -65,7 +65,7 @@ class AppealSeries < ActiveRecord::Base
     when "Complete"
       disambiguate_status_complete
     when "Remand"
-      :remand
+      disambiguate_status_remand
     when "Motion"
       :motion
     when "CAVC"
@@ -80,7 +80,10 @@ class AppealSeries < ActiveRecord::Base
       return :on_docket
     end
 
-    return :pending_certification if latest_appeal.form9_date
+    if latest_appeal.form9_date
+      return :pending_certification_ssoc if latest_appeal.ssoc_dates.length > 0
+      return :pending_certification
+    end
 
     return :pending_form9 if latest_appeal.soc_date
 
@@ -96,9 +99,9 @@ class AppealSeries < ActiveRecord::Base
     when "55"
       :at_vso
     when "19", "20"
-      :opinion_request
+      :bva_development
     when "14", "16", "18", "24"
-      latest_appeal.case_assignment_exists? ? :abeyance : :on_docket
+      latest_appeal.case_assignment_exists? ? :bva_development : :on_docket
     else
       latest_appeal.case_assignment_exists? ? :decision_in_progress : :on_docket
     end
@@ -124,6 +127,12 @@ class AppealSeries < ActiveRecord::Base
     else
       :other_close
     end
+  end
+
+  def disambiguate_status_remand
+    post_decision_ssocs = latest_appeal.ssoc_dates.select { |ssoc| ssoc > latest_appeal.decision_date }
+    return :remand_ssoc if post_decision_ssocs.length > 0
+    :remand
   end
 
   def details_for_status
