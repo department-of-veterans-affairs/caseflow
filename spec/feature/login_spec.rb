@@ -23,6 +23,7 @@ RSpec.feature "Login" do
     expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/check_documents")
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO14)")
     expect(user.reload.email).to eq "world@example.com"
+    expect(user.selected_regional_office).to be_nil
   end
 
   def select_ro_from_dropdown
@@ -58,12 +59,13 @@ RSpec.feature "Login" do
   end
   # :nocov:
 
-  scenario "email should be set on login" do
+  scenario "email and selected regional office should be set on login" do
     user = User.create(css_id: "ANNE MERICA", station_id: "405")
     visit "certifications/new/#{appeal.vacols_id}"
     select_ro_from_dropdown
     click_on "Log in"
     expect(user.reload.email).to eq "test@example.com"
+    expect(user.selected_regional_office).to eq "RO05"
   end
 
   # :nocov:
