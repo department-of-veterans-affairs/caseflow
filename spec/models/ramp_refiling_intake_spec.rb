@@ -6,11 +6,21 @@ describe RampRefilingIntake do
   let(:user) { Generators::User.build }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:veteran_file_number) { "64205555" }
+  let(:detail) { nil }
 
   let(:intake) do
     RampRefilingIntake.new(
       user: user,
-      veteran_file_number: veteran_file_number
+      veteran_file_number: veteran_file_number,
+      detail: detail
+    )
+  end
+
+  let(:completed_ramp_election) do
+    RampElection.create!(
+      veteran_file_number: "64205555",
+      notice_date: 3.days.ago,
+      end_product_reference_id: "123"
     )
   end
 
@@ -42,7 +52,7 @@ describe RampRefilingIntake do
     subject { intake.validate_start }
 
     context "there is not a completed ramp election for veteran" do
-      let!(:completed_ramp_election) do
+      let!(:not_complete_ramp_election) do
         RampElection.create!(
           veteran_file_number: "64205555",
           notice_date: 3.days.ago
@@ -56,15 +66,29 @@ describe RampRefilingIntake do
     end
 
     context "there is a completed ramp election for veteran" do
-      let!(:completed_ramp_election) do
-        RampElection.create!(
-          veteran_file_number: "64205555",
-          notice_date: 3.days.ago,
-          end_product_reference_id: "123"
-        )
+      let!(:ramp_election) do
+        completed_ramp_election
       end
 
       it { is_expected.to eq(true) }
+    end
+  end
+
+  context "#cancel!" do
+    subject { intake.cancel! }
+
+    let(:detail) do
+      RampRefiling.create!(
+        ramp_election: completed_ramp_election,
+        veteran_file_number: veteran_file_number
+      )
+    end
+
+    it "cancels and deletes the refiling record created" do
+      subject
+
+      expect(intake.reload).to be_canceled
+      expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end
