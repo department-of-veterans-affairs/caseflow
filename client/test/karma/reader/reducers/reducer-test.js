@@ -130,28 +130,6 @@ describe('Reader reducer', () => {
     });
   });
 
-  describe(Constants.REQUEST_INITIAL_DATA_FAILURE, () => {
-    const state = reduceActions([{
-      type: Constants.REQUEST_INITIAL_DATA_FAILURE,
-      payload: {
-        value: true
-      }
-    }]);
-
-    expect(state.initialDataLoadingFail).to.equal(true);
-  });
-
-  describe(Constants.REQUEST_INITIAL_CASE_FAILURE, () => {
-    const state = reduceActions([{
-      type: Constants.REQUEST_INITIAL_CASE_FAILURE,
-      payload: {
-        value: true
-      }
-    }]);
-
-    expect(state.initialCaseLoadingFail).to.equal(true);
-  });
-
   describe(Constants.REQUEST_NEW_TAG_CREATION_SUCCESS, () => {
     it('successfully merges tags', () => {
       const state = reduceActions([
