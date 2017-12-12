@@ -56,6 +56,26 @@ const getStore = () => createStore(
   )
 )
 
+const getWrapper = (store) => mount(
+  <Provider store={store}>
+    <DecisionReviewer
+      featureToggles={{}}
+      userDisplayName="Name"
+      feedbackUrl="fakeurl"
+      dropdownUrls={[{
+        title: 'title',
+        link: 'link'
+      }]}
+      pdfWorker="worker"
+      url="url"
+      router={MemoryRouter}
+      routerTestProps={{
+        initialEntries: INITIAL_ENTRIES
+      }}
+
+    />
+  </Provider>, { attachTo: document.getElementById('app') });
+
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-statements */
@@ -89,25 +109,7 @@ describe('DecisionReviewer', () => {
         store.dispatch(onReceiveAnnotations(annotations));
       };
 
-      wrapper = mount(
-        <Provider store={store}>
-          <DecisionReviewer
-            featureToggles={{}}
-            userDisplayName="Name"
-            feedbackUrl="fakeurl"
-            dropdownUrls={[{
-              title: 'title',
-              link: 'link'
-            }]}
-            pdfWorker="worker"
-            url="url"
-            router={MemoryRouter}
-            routerTestProps={{
-              initialEntries: INITIAL_ENTRIES
-            }}
-
-          />
-        </Provider>, { attachTo: document.getElementById('app') });
+      wrapper = getWrapper(store);
     });
 
     afterEach(() => {
@@ -569,29 +571,12 @@ describe('DecisionReviewer', () => {
       });
     });
   });
+  
   describe('without ApiUtil stubbing', () => {
     beforeEach(() => {
       const store = getStore();
 
-      wrapper = mount(
-        <Provider store={store}>
-          <DecisionReviewer
-            featureToggles={{}}
-            userDisplayName="Name"
-            feedbackUrl="fakeurl"
-            dropdownUrls={[{
-              title: 'title',
-              link: 'link'
-            }]}
-            pdfWorker="worker"
-            url="url"
-            router={MemoryRouter}
-            routerTestProps={{
-              initialEntries: INITIAL_ENTRIES
-            }}
-
-          />
-        </Provider>, { attachTo: document.getElementById('app') });
+      wrapper = getWrapper(store);
     });
 
     afterEach(() => {
