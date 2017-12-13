@@ -174,6 +174,11 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
+  scrollToScrollTop = (pageIndex, locationOnPage = this.props.scrollTop) => {
+    this.scrollToPosition(pageIndex, locationOnPage);
+    this.props.setDocScrollPosition(null);
+  }
+
   getPageIndexofMatch = (matchIndex = this.props.currentMatchIndex) => {
     // get page, relative index of match at absolute index
     let cumulativeMatches = 0;
@@ -204,9 +209,8 @@ export class PdfFile extends React.PureComponent {
       if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)[0]) {
         // if navigating between Marks in the same page and the page is rendered,
         // PdfPage will set scrollTop in highlightMarkAtIndex
-        if (!_.isNull(this.props.scrollTop)) {
-          this.scrollToPosition(pageIndex, this.props.scrollTop);
-          this.props.setDocScrollPosition(null);
+        if (this.props.scrollTop !== null) {
+          this.scrollToScrollTop(pageIndex);
         } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
           // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
           this.list.scrollToRow(pageIndex);
@@ -218,8 +222,7 @@ export class PdfFile extends React.PureComponent {
       }
     } else if (this.props.scrollTop !== null && this.props.scrollTop !== prevProps.scrollTop) {
       // after ticking currentMatchIndex, scrollTop is set and this gets called again
-      this.scrollToPosition(pageIndex, this.props.scrollTop);
-      this.props.setDocScrollPosition(null);
+      this.scrollToScrollTop(pageIndex);
     }
   }
 
