@@ -1,14 +1,10 @@
 require "benchmark"
-require 'dogapi'
+require "dogapi"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-
-  dog = Dogapi::Client.new(ENV["DATADOG_API_KEY"])
-
-  def emit_datadog_point(metric_name, metric_value)
-    dog.emit_point(metric_name, metric_value, :service => service, :env => Rails.env, :host => `hostname`.strip)
-  end    
+  
+  @dog = Dogapi::Client.new(ENV["DATADOG_API_KEY"])
 
   # rubocop:disable Metrics/MethodLength
   def self.record(description, service: nil, name: "unknown")
@@ -25,7 +21,7 @@ class MetricsService
 
       latency = stopwatch.real
       metric.set({ app: app, name: name }, latency)
-      emit_datadog_point("service_request_latency", latency)
+      self.emit_datadog_point("service_request_latency", latency, service)
       
     end
     
@@ -35,7 +31,7 @@ class MetricsService
     if service
       metric = PrometheusService.send("#{service}_request_error_counter".to_sym)
       metric.increment(app: app, name: name)
-      emit_datadog_point("service_request_error", 1)
+      self.emit_datadog_point("service_request_error", 1, service)
     end
     
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
@@ -45,7 +41,13 @@ class MetricsService
     if service
       metric = PrometheusService.send("#{service}_request_attempt_counter".to_sym)
       metric.increment(app: app, name: name)
-      emit_datadog_point("service_request_attempt", 1)
+      self.emit_datadog_point("service_request_attempt", 1, service)
     end
   end
+
+  private
+
+  def self.emit_datadog_point(metric_name, metric_value, service)
+    @dog.emit_point(metric_name, metric_value, :service => service, :env => Rails.env, :host => `hostname`.strip)
+  end    
 end
