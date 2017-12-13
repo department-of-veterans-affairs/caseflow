@@ -11,7 +11,7 @@ import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
 import { resetJumpToPage, togglePdfSidebar, toggleSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
-import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentActions';
+import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
