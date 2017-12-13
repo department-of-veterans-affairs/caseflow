@@ -46,6 +46,10 @@ class MetricsService
 
   private_class_method def self.emit_datadog_point(metric_name, metric_value, service)
     @dog.emit_point("caseflow.service.#{metric_name}", metric_value,
-                    service: service, env: Rails.env, host: `hostname`.strip)
+                    host: `hostname`.strip, type: "counter",
+                    tags: [
+                      "service:#{service}",
+                      "env:#{Rails.env}",
+                    ])
   end
 end
