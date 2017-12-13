@@ -5,6 +5,7 @@ describe AppealSeries do
     Generators::Appeal.build(
       nod_date: nod_date,
       soc_date: soc_date,
+      ssoc_dates: ssoc_dates,
       form9_date: form9_date,
       certification_date: certification_date,
       decision_date: decision_date,
@@ -16,6 +17,7 @@ describe AppealSeries do
 
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 1.day.ago }
+  let(:ssoc_dates) { [] }
   let(:form9_date) { 1.day.ago }
   let(:certification_date) { nil }
   let(:decision_date) { nil }
@@ -89,6 +91,11 @@ describe AppealSeries do
     context "when it is in advance status" do
       it { is_expected.to eq(:pending_certification) }
 
+      context "and it has received one or more ssocs" do
+        let(:ssoc_dates) { [1.day.ago] }
+        it { is_expected.to eq(:pending_certification_ssoc) }
+      end
+
       context "and it has been certified" do
         let(:certification_date) { 1.day.ago }
         it { is_expected.to eq(:on_docket) }
@@ -121,12 +128,12 @@ describe AppealSeries do
 
       context "and it is in location 20" do
         let(:location_code) { "20" }
-        it { is_expected.to eq(:opinion_request) }
+        it { is_expected.to eq(:bva_development) }
       end
 
       context "and it is in location 18" do
         let(:location_code) { "18" }
-        it { is_expected.to eq(:abeyance) }
+        it { is_expected.to eq(:bva_development) }
       end
     end
 
@@ -176,7 +183,18 @@ describe AppealSeries do
 
     context "when it is in remand status" do
       let(:status) { "Remand" }
+      let(:decision_date) { 3.days.ago }
       it { is_expected.to eq(:remand) }
+
+      context "and it has received a post-decision ssoc" do
+        let(:ssoc_dates) { [1.day.ago] }
+        it { is_expected.to eq(:remand_ssoc) }
+      end
+
+      context "and it has a pre-decision ssoc" do
+        let(:ssoc_dates) { [5.days.ago] }
+        it { is_expected.to eq(:remand) }
+      end
     end
 
     context "when it is in motion status" do
