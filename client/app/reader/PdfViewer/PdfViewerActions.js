@@ -89,13 +89,16 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   });
 };
 
-export const removeTagRequestFailure = (docId, tagId) => ({
-  type: Constants.REQUEST_REMOVE_TAG_FAILURE,
-  payload: {
-    docId,
-    tagId
-  }
-});
+export const removeTagRequestFailure = (docId, tagId) => (dispatch) => {
+  dispatch(showErrorMessage('tag'));
+  dispatch({
+    type: Constants.REQUEST_REMOVE_TAG_FAILURE,
+    payload: {
+      docId,
+      tagId
+    }
+  });
+};
 
 export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
