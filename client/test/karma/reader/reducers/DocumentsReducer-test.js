@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import documentsReducer from '../../../../app/reader/DocumentList/DocumentsReducer';
+import documentsReducer from '../../../../app/reader/Documents/DocumentsReducer';
 import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
-import * as Constants from '../../../../app/reader/constants';
+import * as Constants from '../../../../app/reader/Documents/actionTypes';
 
 describe('CaseSelect reducer', () => {
   const reduceActions = (actions, state) => actions.reduce(documentsReducer, documentsReducer(state, {}));
