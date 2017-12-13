@@ -192,7 +192,7 @@ describe AppealSeries do
       end
 
       context "and it has a pre-decision ssoc" do
-        let(:ssoc_dates) { [5.day.ago] }
+        let(:ssoc_dates) { [5.days.ago] }
         it { is_expected.to eq(:remand) }
       end
     end
