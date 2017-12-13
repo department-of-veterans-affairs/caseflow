@@ -3,9 +3,16 @@ class DependenciesReportService
     ALL_DEPENDENCIES =
       ["BGS.FilenumberService",
        "BGS.PoaService",
+       "BGS.AddressService",
+       "BGS.OrganizationPoaService",
+       "BGS.VeteranService",
+       "BGS.AddressService",
+       "BGS.BenefitsService",
+       "BGS.ClaimantFlashesService",
+       "BGS.PersonFilenumberService",
        "VACOLS",
        "VBMS",
-       "VBMS.FindDocumentSeriesReference",
+       "VBMS.FindDocumentVersionReference",
        "VVA"].freeze
 
     # this method is in case we need list of dependencies/services that are degraded
