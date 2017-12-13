@@ -115,12 +115,3 @@ export const searchText = (searchTerm) => (dispatch) => {
   dispatch(zeroSearchIndex());
   dispatch(createSearchAction('extractedText')(searchTerm));
 };
-
-/** Rotate Pages **/
-
-export const rotateDocument = (docId) => ({
-  type: Constants.ROTATE_PDF_DOCUMENT,
-  payload: {
-    docId
-  }
-});
