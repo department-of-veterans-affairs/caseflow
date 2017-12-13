@@ -148,7 +148,7 @@ class Fakes::AppealRepository
     end
   end
 
-  def self.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
+  def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
     appeals_by_vbms_id(vbms_id)
   end
 
