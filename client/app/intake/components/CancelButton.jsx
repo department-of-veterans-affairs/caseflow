@@ -7,12 +7,13 @@ import { bindActionCreators } from 'redux';
 class CancelButton extends React.PureComponent {
   render = () =>
     <Button
+      id="cancel-intake"
       legacyStyling={false}
       linkStyling
       willNeverBeLoading
       onClick={this.props.toggleCancelModal}
     >
-      Cancel Intake
+      Cancel intake
     </Button>
 }
 

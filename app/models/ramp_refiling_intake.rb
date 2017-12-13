@@ -5,6 +5,13 @@ class RampRefilingIntake < Intake
     no_complete_ramp_election: "no_complete_ramp_election"
   }.merge(Intake::ERROR_CODES)
 
+  def cancel!
+    transaction do
+      detail.destroy!
+      complete_with_status!(:canceled)
+    end
+  end
+
   private
 
   def validate_detail_on_start

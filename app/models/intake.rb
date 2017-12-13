@@ -52,6 +52,10 @@ class Intake < ActiveRecord::Base
     end
   end
 
+  def cancel!
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
   def complete_with_status!(status)
     update_attributes!(
       completed_at: Time.zone.now,
