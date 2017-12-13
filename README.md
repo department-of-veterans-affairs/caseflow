@@ -131,10 +131,16 @@ sudo ln -s libclntsh.so.12.1 libclntsh.so
 
 ### Environment variables
 
-Clone the [appeals-deployment](https://github.com/department-of-veterans-affairs/appeals-deployment/) repo, and with the Ansible vault password obtained from another team member, run:
+We'll need to obtain the Ansible vault password using credstash:
 
 ```sh
-./decrypt.sh $VAULT_PASS
+export VAULT_PASSWORD=$(credstash -t appeals-credstash get devops.vault_pass)
+```
+
+Clone the [appeals-deployment](https://github.com/department-of-veterans-affairs/appeals-deployment/) repo, and run:
+
+```sh
+./decrypt.sh $VAULT_PASSWORD
 ```
 
 In order to load these environment variables, run:
