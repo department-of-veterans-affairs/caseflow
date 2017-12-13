@@ -204,14 +204,17 @@ export class PdfFile extends React.PureComponent {
       return;
     }
 
-    if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+    const currentMatchChanged = this.props.currentMatchIndex !== prevProps.currentMatchIndex;
+    const searchTextChanged = this.props.searchText !== prevProps.searchText;
+
+    if (currentMatchChanged || searchTextChanged) {
       this.props.updateSearchRelativeIndex(indexInPage);
-      if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)[0]) {
+      if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)[0] && !searchTextChanged) {
         // if navigating between Marks in the same page and the page is rendered,
         // PdfPage will set scrollTop in highlightMarkAtIndex
         if (this.props.scrollTop !== null) {
           this.scrollToScrollTop(pageIndex);
-        } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
+        } else if (currentMatchChanged) {
           // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
           this.list.scrollToRow(pageIndex);
         }
@@ -395,7 +398,8 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
-    scrollTop: state.readerReducer.ui.pdf.scrollTop
+    scrollTop: state.readerReducer.ui.pdf.scrollTop,
+    ..._.pick(state.readerReducer, 'search')
   };
 };
 
