@@ -36,7 +36,7 @@ class ExternalApi::VBMSService
 
     sanitized_id = appeal.sanitized_vbms_id
     request = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
-                VBMS::Requests::FindDocumentSeriesReference.new(sanitized_id)
+                VBMS::Requests::FindDocumentVersionReference.new(sanitized_id)
               else
                 VBMS::Requests::ListDocuments.new(sanitized_id)
               end

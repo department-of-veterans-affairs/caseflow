@@ -1,12 +1,13 @@
 import React from 'react';
 import Button from '../../components/Button';
-import { toggleCancelModal } from '../redux/actions';
+import { toggleCancelModal } from '../actions/common';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 class CancelButton extends React.PureComponent {
   render = () =>
     <Button
+      id="cancel-intake"
       legacyStyling={false}
       linkStyling
       willNeverBeLoading

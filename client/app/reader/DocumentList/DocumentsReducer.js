@@ -3,7 +3,9 @@ import _ from 'lodash';
 import * as Constants from '../constants';
 import { update } from '../../util/ReducerUtil';
 
-const documentsReducer = (state = {}, action = {}) => {
+export const initialState = {};
+
+const documentsReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.ASSIGN_DOCUMENTS:
     return Object.assign({}, action.payload.documents);
@@ -147,6 +149,24 @@ const documentsReducer = (state = {}, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
+        }
+      }
+    });
+  case Constants.REQUEST_REMOVE_TAG_FAILURE:
+    return update(state, {
+      [action.payload.docId]: {
+        tags: {
+          $apply: (tags) => {
+            const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+
+            return update(tags, {
+              [removedTagIndex]: {
+                $merge: {
+                  pendingRemoval: false
+                }
+              }
+            });
+          }
         }
       }
     });

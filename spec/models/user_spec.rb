@@ -4,7 +4,7 @@ User.authentication_service = Fakes::AuthenticationService
 
 describe User do
   let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
-  let(:user) { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
+  let(:user) { User.from_session(session) }
 
   before(:all) do
     User.appeal_repository = Fakes::AppealRepository
@@ -238,13 +238,12 @@ describe User do
   end
 
   context ".from_session" do
-    subject { User.from_session(session, OpenStruct.new(remote_ip: "127.0.0.1")) }
+    subject { User.from_session(session) }
     context "gets a user object from a session" do
       before do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
-        session["user"]["ip_address"] = "127.0.0.1"
       end
 
       it do

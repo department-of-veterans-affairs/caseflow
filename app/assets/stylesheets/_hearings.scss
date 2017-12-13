@@ -84,8 +84,7 @@ $color-hearings-saving: #777;
 
     // TODO: see if this can become a part of the general style
     .is-searchable.is-open > .Select-control {
-      box-shadow: 0 1px 4px 0 $color-dropdown-shadow;
-      border: 1px solid $color-gray-medium;
+      box-shadow: 0 0 8px $color-dropdown-shadow;
     }
 
     tbody {
@@ -320,7 +319,7 @@ $color-hearings-saving: #777;
   }
 
   h2 {
-    border-bottom: 1px solid $color-gray-light;
+    border-bottom: 1px solid $color-gray-lighter;
     margin-bottom: .5em;
   }
 }
