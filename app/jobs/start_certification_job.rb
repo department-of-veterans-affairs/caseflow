@@ -2,12 +2,10 @@ class StartCertificationJob < ActiveJob::Base
   queue_as :high_priority
   attr_accessor :certification
 
-  def perform(certification, user = nil, ip_address = nil)
+  def perform(certification, user = nil)
     @certification = certification
     RequestStore.store[:current_user] = user if user
-    # Passing in ip address since it's only available when
-    # the session is.
-    RequestStore.store[:ip_address] = ip_address if ip_address
+
     # Results in calls to VBMS and VACOLS
 
     if @certification.can_be_updated?
