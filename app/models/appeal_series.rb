@@ -13,8 +13,9 @@ class AppealSeries < ActiveRecord::Base
     @latest_appeal ||= fetch_latest_appeal
   end
 
-  def api_sort_date
-    appeals.map(&:nod_date).min || DateTime::Infinity.new
+  def api_sort_key
+    earliest_nod = appeals.map(&:nod_date).min
+    earliest_nod ? earliest_nod.in_time_zone.to_f : Float::INFINITY
   end
 
   def location
