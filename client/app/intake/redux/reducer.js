@@ -67,6 +67,7 @@ const updateStateWithSavedIntake = (state, intake) => {
 
 export const mapDataToInitialState = (data = { currentIntake: {} }) => (
   updateStateWithSavedIntake({
+    featureToggles: data.featureToggles || {},
     formType: null,
     intakeId: null,
     veteran: {
@@ -105,6 +106,11 @@ export const mapDataToInitialState = (data = { currentIntake: {} }) => (
   }, data.currentIntake)
 );
 
+const resetIntakeState = (state) => mapDataToInitialState(
+  { currentIntake: {},
+    featureToggles: state.featureToggles }
+);
+
 const getOptionSelectedError = (responseErrorCodes) => (
   _.get(responseErrorCodes.option_selected, 0) && 'Please select an option.'
 );
@@ -123,7 +129,7 @@ const getReceiptDateError = (responseErrorCodes, state) => (
 export const reducer = (state = mapDataToInitialState(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return mapDataToInitialState();
+    return resetIntakeState(state);
   case ACTIONS.SET_FILE_NUMBER_SEARCH:
     return update(state, {
       inputs: {
@@ -301,7 +307,7 @@ export const reducer = (state = mapDataToInitialState(), action) => {
       $toggle: ['cancelModalVisible']
     });
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
-    return update(mapDataToInitialState(), {
+    return update(resetIntakeState(state), {
       requestStatus: {
         cancelIntake: {
           $set: REQUEST_STATE.SUCCEEDED

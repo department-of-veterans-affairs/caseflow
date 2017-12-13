@@ -165,8 +165,7 @@ export class PdfSidebar extends React.Component {
             <SideBarDocumentInformation appeal={appeal} doc={this.props.doc} />
           </AccordionSection>
           <AccordionSection title="Categories">
-            <SideBarCategories doc={this.props.doc}
-              documents={this.props.documents} />
+            <SideBarCategories doc={this.props.doc} />
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <SideBarIssueTags
@@ -255,7 +254,7 @@ PdfSidebar.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.annotationLayer, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    comments: makeGetAnnotationsByDocumentId(state.annotationLayer)(ownProps.doc.id),
+    comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
     scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
     hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
     error: state.readerReducer.ui.pdfSidebar.error,

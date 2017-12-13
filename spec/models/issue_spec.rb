@@ -46,6 +46,31 @@ describe Issue do
       expect(subject.disposition).to eq(:remanded)
       expect(subject.close_date).to eq(AppealRepository.normalize_vacols_date(3.days.ago))
     end
+
+    context "when issues are loaded without label joins" do
+      let(:issue_hash) do
+        # NOTE: This is the exact structure pulled from VACOLS
+        # please do not touch this!
+        { "isskey" => "12345678",
+          "issseq" => 1,
+          "issdc" => "3",
+          "issdcls" => 3.days.ago,
+          "issdesc" => "CERVICAL CONDITION AS CLAIMED",
+          "issprog" => "02",
+          "isscode" => "15",
+          "isslev1" => "02",
+          "isslev2" => "03",
+          "isslev3" => "04"
+        }
+      end
+
+      it "raise exceptions for unloaded attributes" do
+        expect(subject.note).to eq("CERVICAL CONDITION AS CLAIMED")
+        expect { subject.type }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
+        expect { subject.description }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
+        expect { subject.program_description }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
+      end
+    end
   end
 
   context ".parse_levels_from_vacols" do
