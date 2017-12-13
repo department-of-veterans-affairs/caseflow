@@ -398,8 +398,7 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
-    scrollTop: state.readerReducer.ui.pdf.scrollTop,
-    ..._.pick(state.readerReducer, 'search')
+    scrollTop: state.readerReducer.ui.pdf.scrollTop
   };
 };
 
