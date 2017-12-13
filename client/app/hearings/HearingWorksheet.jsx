@@ -122,7 +122,7 @@ export class HearingWorksheet extends React.PureComponent {
         </Link>
         <Link
           name="review-efolder"
-          href={`${readerLink}?category=case_summary`}
+          href={`${window.location.replace(readerLink)}?category=case_summary`}
           button="primary"
           target="_blank">
             Review eFolder</Link>
