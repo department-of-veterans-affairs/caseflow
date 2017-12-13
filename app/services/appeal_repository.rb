@@ -56,7 +56,7 @@ class AppealRepository
       cases.map do |case_record|
         appeal = build_appeal(case_record)
         appeal.aod = case_record["aod"] == 1
-        appeal.issues = (issues[appeal.vacols_id] || []).map { |issue_hash| Issue.load_from_vacols(issue_hash) }
+        appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
         appeal.save
         appeal
       end
