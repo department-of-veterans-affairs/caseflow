@@ -165,7 +165,6 @@ export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRe
     });
   };
 
-
 export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
   const categoryKey = categoryFieldNameOfCategoryName(categoryName);
 

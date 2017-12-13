@@ -6,7 +6,7 @@ import {
   UPDATE_FILTERED_RESULTS
 } from './constants';
 
-import { 
+import {
   ASSIGN_DOCUMENTS
 } from './Documents/actionTypes';
 

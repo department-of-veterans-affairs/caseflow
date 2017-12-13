@@ -2,8 +2,9 @@ import { expect } from 'chai';
 import documentsReducer from '../../../../app/reader/Documents/DocumentsReducer';
 import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../../app/reader/Documents/actionTypes';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../../app/reader/constants';
 
-describe('CaseSelect reducer', () => {
+describe('Documents reducer', () => {
   const reduceActions = (actions, state) => actions.reduce(documentsReducer, documentsReducer(state, {}));
 
   describe(Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS, () => {
@@ -20,7 +21,7 @@ describe('CaseSelect reducer', () => {
       };
 
       const nextState = reduceActions([
-        setViewingDocumentsOrComments(Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS)
+        setViewingDocumentsOrComments(DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS)
       ], state);
 
       expect(nextState).to.deep.equal({
@@ -48,7 +49,7 @@ describe('CaseSelect reducer', () => {
       };
 
       const nextState = reduceActions([
-        setViewingDocumentsOrComments(Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS)
+        setViewingDocumentsOrComments(DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS)
       ], state);
 
       expect(nextState).to.deep.equal({
