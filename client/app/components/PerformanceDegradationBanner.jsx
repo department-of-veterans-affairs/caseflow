@@ -19,12 +19,12 @@ export default class PerformanceDegradationBanner extends React.Component {
 
     this.dependencies = {
       certification: ['BGS.AddressService', 'BGS.OrganizationPoaService', 'BGS.PersonFilenumberService',
-        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference'],
+        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference'],
       reader: ['VBMS', 'VACOLS'],
       hearing: ['VACOLS'],
       dispatch: ['BGS.BenefitsService', 'VBMS', 'VACOLS'],
       other: ['BGS.AddressService', 'BGS.BenefitsService', 'BGS.ClaimantFlashesService', 'BGS.OrganizationPoaService',
-        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference',
+        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference',
         'VVA']
     };
   }

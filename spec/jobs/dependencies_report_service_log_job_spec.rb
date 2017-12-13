@@ -6,7 +6,7 @@ describe DependenciesReportServiceLogJob do
   "BGS":{"name":"BGS","up_rate_5":100.0},
   "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
   "VBMS":{"name":"VBMS","up_rate_5":49.0},
-  "VBMS.FindDocumentSeriesReference":{"name":"VBMS.FindDocumentSeriesReference",
+  "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
     "up_rate_5":100.0}
 }
   EOF
