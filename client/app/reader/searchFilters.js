@@ -6,9 +6,9 @@ import { update } from '../util/ReducerUtil';
 export const getUpdatedFilteredResults = (state) => {
   const updatedNextState = update(state, {});
   const documents = update(state.documents, {});
-  const searchCategoryHighlights = update(state.ui.searchCategoryHighlights, {});
+  const searchCategoryHighlights = update(state.readerReducer.ui.searchCategoryHighlights, {});
 
-  const { docFilterCriteria } = state.ui;
+  const { docFilterCriteria } = state.readerReducer.ui;
   const activeCategoryFilters = _(docFilterCriteria.category).
     toPairs().
     filter(([key, value]) => value). // eslint-disable-line no-unused-vars
@@ -50,7 +50,7 @@ export const getUpdatedFilteredResults = (state) => {
     const matchesCategories = _.pickBy(categoryContainsWords(searchQuery, doc));
 
     // update the state for all the search category highlights
-    if (matchesCategories !== updatedNextState.ui.searchCategoryHighlights[doc.id]) {
+    if (matchesCategories !== updatedNextState.readerReducer.ui.searchCategoryHighlights[doc.id]) {
       searchCategoryHighlights[doc.id] = matchesCategories;
     }
 
