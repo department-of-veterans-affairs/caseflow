@@ -5,6 +5,7 @@ describe AppealAlerts do
   let(:series) { AppealSeries.create(appeals: [appeal]) }
   let(:appeal) do
     Generators::Appeal.build(
+      vbms_id: "999887777S",
       status: status,
       notification_date: 1.year.ago,
       soc_date: soc_date,
@@ -122,6 +123,34 @@ describe AppealAlerts do
 
         it "does not include an alert" do
           expect(alerts.find { |alert| alert[:type] == :held_for_evidence }).to be_nil
+        end
+      end
+    end
+
+    context "ramp alert" do
+      let!(:ramp_election) { RampElection.create(veteran_file_number: "999887777", notice_date: notice_date) }
+      let(:notice_date) { 30.days.ago }
+
+      context "when notice date is within the last 60 days" do
+        it "includes an alert" do
+          expect(alerts.find { |alert| alert[:type] == :ramp_eligible }).to_not be_nil
+        end
+      end
+
+      context "when no longer eligible" do
+        let(:status) { "Complete" }
+
+        it "includes an ineligible alert" do
+          expect(alerts.find { |alert| alert[:type] == :ramp_ineligible }).to_not be_nil
+        end
+      end
+
+      context "when not a Board decision" do
+        let(:notice_date) { 61.days.ago }
+
+        it "does not include an alert" do
+          expect(alerts.find { |alert| alert[:type] == :ramp_eligible }).to be_nil
+          expect(alerts.find { |alert| alert[:type] == :ramp_ineligible }).to be_nil
         end
       end
     end

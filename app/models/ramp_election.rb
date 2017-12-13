@@ -19,6 +19,8 @@ class RampElection < ActiveRecord::Base
 
   END_PRODUCT_STATION = "397".freeze # AMC
 
+  RESPOND_BY_TIME = 60.days.freeze
+
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_receipt
   validate :validate_receipt_date
 
@@ -43,6 +45,16 @@ class RampElection < ActiveRecord::Base
 
   def end_product_description
     end_product_reference_id && end_product.description_with_routing
+  end
+
+  # RAMP letters request that Veterans respond within 60 days; elections will
+  # be accepted after this point, however, so this "due date" is soft.
+  def due_date
+    notice_date + RESPOND_BY_TIME if notice_date
+  end
+
+  def self.completed
+    where.not(end_product_reference_id: nil)
   end
 
   private

@@ -19,12 +19,12 @@ export default class PerformanceDegradationBanner extends React.Component {
 
     this.dependencies = {
       certification: ['BGS.AddressService', 'BGS.OrganizationPoaService', 'BGS.PersonFilenumberService',
-        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference'],
+        'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference'],
       reader: ['VBMS', 'VACOLS'],
       hearing: ['VACOLS'],
       dispatch: ['BGS.BenefitsService', 'VBMS', 'VACOLS'],
       other: ['BGS.AddressService', 'BGS.BenefitsService', 'BGS.ClaimantFlashesService', 'BGS.OrganizationPoaService',
-        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentSeriesReference',
+        'BGS.PersonFilenumberService', 'BGS.VeteranService', 'VACOLS', 'VBMS', 'VBMS.FindDocumentVersionReference',
         'VVA']
     };
   }
@@ -32,7 +32,7 @@ export default class PerformanceDegradationBanner extends React.Component {
   checkDependencies() {
     // Don't make a subsequent request for dependency check
     // if the first one hasn't returned from the server still
-    if (this.state.isRequesting) {
+    if (this.state.isRequesting || document.hidden) {
       return;
     }
 
@@ -62,9 +62,6 @@ export default class PerformanceDegradationBanner extends React.Component {
   }
 
   componentDidMount() {
-    if (document.hidden) {
-      return;
-    }
     // initial check
     this.checkDependencies();
 
