@@ -21,7 +21,7 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
                 staff.sattyid = tbmem3 OR
                 staff.sattyid = tbmem4")
         .where("staff.sdomainid = #{id}")
-        .where("tbstdate > ?", 30.days.ago.beginning_of_day)
+        .where("tbstdate > ?", 60.days.ago.beginning_of_day)
     end
   end
 
