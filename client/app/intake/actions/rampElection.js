@@ -1,68 +1,9 @@
-import { ACTIONS } from '../constants';
+import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { formatDateStringForApi } from '../../util/DateUtil';
 import _ from 'lodash';
 
 const analytics = true;
-
-const ENDPOINT_NAMES = {
-  INTAKE: 'intake',
-  INTAKE_RAMP: 'intake-ramp',
-  INTAKE_RAMP_COMPLETE: 'intake-ramp-complete'
-};
-
-export const startNewIntake = () => ({
-  type: ACTIONS.START_NEW_INTAKE,
-  meta: { analytics }
-});
-
-export const setFileNumberSearch = (fileNumber) => ({
-  type: ACTIONS.SET_FILE_NUMBER_SEARCH,
-  payload: {
-    fileNumber
-  }
-});
-
-export const doFileNumberSearch = (fileNumberSearch) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.FILE_NUMBER_SEARCH_START,
-    meta: { analytics }
-  });
-
-  return ApiUtil.post('/intake', { data: { file_number: fileNumberSearch } }, ENDPOINT_NAMES.INTAKE).
-    then(
-      (response) => {
-        const responseObject = JSON.parse(response.text);
-
-        dispatch({
-          type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
-          payload: {
-            intake: responseObject
-          },
-          meta: { analytics }
-        });
-      },
-      (error) => {
-        const responseObject = JSON.parse(error.response.text);
-        const errorCode = responseObject.error_code;
-
-        dispatch({
-          type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
-          payload: {
-            errorCode,
-            errorData: responseObject.error_data || {}
-          },
-          meta: {
-            analytics: {
-              label: errorCode
-            }
-          }
-        });
-
-        throw error;
-      }
-    );
-};
 
 export const setOptionSelected = (optionSelected) => ({
   type: ACTIONS.SET_OPTION_SELECTED,
@@ -159,37 +100,6 @@ export const completeIntake = (rampElection) => (dispatch) => {
       (error) => {
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
-          meta: { analytics }
-        });
-        throw error;
-      }
-    );
-};
-
-export const toggleCancelModal = () => ({
-  type: ACTIONS.TOGGLE_CANCEL_MODAL,
-  meta: {
-    analytics: {
-      label: (nextState) => nextState.cancelModalVisible ? 'show' : 'hide'
-    }
-  }
-});
-
-export const submitCancel = (rampElection) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.CANCEL_INTAKE_START,
-    meta: { analytics }
-  });
-
-  return ApiUtil.delete(`/intake/ramp/${rampElection.intakeId}`, {}, ENDPOINT_NAMES.INTAKE_RAMP).
-    then(
-      () => dispatch({
-        type: ACTIONS.CANCEL_INTAKE_SUCCEED,
-        meta: { analytics }
-      }),
-      (error) => {
-        dispatch({
-          type: ACTIONS.CANCEL_INTAKE_FAIL,
           meta: { analytics }
         });
         throw error;

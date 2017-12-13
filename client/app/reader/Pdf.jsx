@@ -11,7 +11,7 @@ import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { INTERACTION_TYPES, CATEGORIES } from '../reader/analytics';
 
@@ -33,7 +33,7 @@ export class Pdf extends React.PureComponent {
 
   handleAltBackspace = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
-    this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
+    this.props.stopPlacingAnnotation('from-back-to-documents');
     this.props.history.push(this.props.documentPathBase);
   }
 
@@ -99,9 +99,10 @@ export class Pdf extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     ...state.readerReducer.ui.pdf,
-    ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation']),
-    sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar
+    ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
+    rotation: _.get(state.documents, [props.documentId, 'rotation']),
+    sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar,
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
   };
 };
 

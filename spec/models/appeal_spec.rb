@@ -1557,6 +1557,22 @@ describe Appeal do
       end
     end
 
+    context "when ssn is more than 9 characters" do
+      let(:ssn) { "9998877777" }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
+    context "when ssn is non-numeric" do
+      let(:ssn) { "99988777A" }
+
+      it "raises InvalidSSN error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidSSN)
+      end
+    end
+
     context "when SSN not found in BGS" do
       before do
         Fakes::BGSService.ssn_not_found = true

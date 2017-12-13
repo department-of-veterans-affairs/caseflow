@@ -243,6 +243,10 @@ class Appeal < ActiveRecord::Base
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def ramp_election
+    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
+  end
+
   def in_location?(location)
     fail UnknownLocationError unless LOCATION_CODES[location]
 
@@ -554,7 +558,7 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
 
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.

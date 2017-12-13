@@ -5,6 +5,7 @@ describe AppealEvents do
 
   let(:appeal) do
     Generators::Appeal.build(
+      vbms_id: "999887777S",
       status: status,
       notification_date: notification_date,
       nod_date: nod_date,
@@ -271,6 +272,21 @@ describe AppealEvents do
 
       context "when appeal doesn't have a cavc decision" do
         it { is_expected.to be_empty }
+      end
+    end
+
+    context "ramp notice event" do
+      subject do
+        events.find { |event| event.type == :ramp_notice && event.date == 30.days.ago.to_date }
+      end
+
+      context "when the Veteran has been sent a RAMP notice" do
+        let!(:ramp_election) { RampElection.create(veteran_file_number: "999887777", notice_date: 30.days.ago) }
+        it { is_expected.to_not be_nil }
+      end
+
+      context "when the Veteran has not yet been sent a RAMP notice" do
+        it { is_expected.to be_nil }
       end
     end
   end

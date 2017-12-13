@@ -3,38 +3,12 @@ import _ from 'lodash';
 import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
+import { selectAnnotation } from '../../reader/AnnotationLayer/AnnotationActions';
 import { hideErrorMessage, showErrorMessage } from '../commonActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
-});
-
-/** Annotation Modal **/
-
-export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'open-annotation-delete-modal',
-      label: analyticsLabel
-    }
-  }
-});
-
-export const closeAnnotationDeleteModal = () => ({
-  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'close-annotation-delete-modal'
-    }
-  }
 });
 
 /** Jump To Page **/
@@ -115,13 +89,16 @@ export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => 
   });
 };
 
-export const removeTagRequestFailure = (docId, tagId) => ({
-  type: Constants.REQUEST_REMOVE_TAG_FAILURE,
-  payload: {
-    docId,
-    tagId
-  }
-});
+export const removeTagRequestFailure = (docId, tagId) => (dispatch) => {
+  dispatch(showErrorMessage('tag'));
+  dispatch({
+    type: Constants.REQUEST_REMOVE_TAG_FAILURE,
+    payload: {
+      docId,
+      tagId
+    }
+  });
+};
 
 export const removeTagRequestSuccess = (docId, tagId) =>
   (dispatch, getState) => {
@@ -248,13 +225,20 @@ export const hideSearchBar = () => ({
   type: Constants.HIDE_SEARCH_BAR
 });
 
-/** Set current PDF **/
-export const selectCurrentPdfLocally = (docId) => ({
-  type: Constants.SELECT_CURRENT_VIEWER_PDF,
-  payload: {
-    docId
-  }
+export const resetSidebarErrors = () => ({
+  type: Constants.RESET_PDF_SIDEBAR_ERRORS
 });
+
+/** Set current PDF **/
+export const selectCurrentPdfLocally = (docId) => (dispatch) => {
+  dispatch(handleSetLastRead(docId));
+  dispatch({
+    type: Constants.SELECT_CURRENT_VIEWER_PDF,
+    payload: {
+      docId
+    }
+  });
+};
 
 export const selectCurrentPdf = (docId) => (dispatch) => {
   ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).

@@ -1,11 +1,13 @@
 export const PAGE_PATHS = {
   BEGIN: '/',
+  SEARCH: '/search',
   REVIEW: '/review-request',
   FINISH: '/finish',
   COMPLETED: '/completed'
 };
 
 export const ACTIONS = {
+  SET_FORM_TYPE: 'SET_FORM_TYPE',
   START_NEW_INTAKE: 'START_NEW_INTAKE',
   SET_FILE_NUMBER_SEARCH: 'SET_FILE_NUMBER_SEARCH',
   FILE_NUMBER_SEARCH_START: 'FILE_NUMBER_SEARCH_START',
@@ -39,4 +41,17 @@ export const RAMP_INTAKE_STATES = {
   STARTED: 'STARTED',
   REVIEWED: 'REVIEWED',
   COMPLETED: 'COMPLETED'
+};
+
+export const ENDPOINT_NAMES = {
+  INTAKE: 'intake',
+  INTAKE_RAMP: 'intake-ramp',
+  INTAKE_RAMP_COMPLETE: 'intake-ramp-complete'
+};
+
+export const FORM_TYPES = {
+  RAMP_ELECTION: { key: 'ramp_election',
+    name: 'RAMP Opt-In Election Form' },
+  RAMP_REFILING: { key: 'ramp_refiling',
+    name: '21-4138 RAMP Selection Form' }
 };

@@ -41,6 +41,28 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record) }
   end
 
+  def self.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
+    MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_aod_and_issues",
+                          service: :vacols,
+                          name: "appeals_by_vbms_id_with_preloaded_aod_and_issues") do
+      cases = VACOLS::Case.where(bfcorlid: vbms_id)
+                          .includes(:folder, :correspondent, folder: :outcoder)
+                          .references(:folder, :correspondent, folder: :outcoder)
+                          .joins(VACOLS::Case::JOIN_AOD)
+      vacols_ids = cases.map(&:bfkey)
+      # Load issues, but note that we do so without including descriptions
+      issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
+
+      cases.map do |case_record|
+        appeal = build_appeal(case_record)
+        appeal.aod = case_record["aod"] == 1
+        appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
+        appeal.save
+        appeal
+      end
+    end
+  end
+
   def self.appeals_ready_for_hearing(vbms_id)
     cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
                                   service: :vacols,
@@ -144,7 +166,7 @@ class AppealRepository
 
   # :nocov:
   def self.issues(vacols_id)
-    (VACOLS::CaseIssue.active_issues([vacols_id])[vacols_id] || []).map do |issue_hash|
+    (VACOLS::CaseIssue.descriptions([vacols_id])[vacols_id] || []).map do |issue_hash|
       Issue.load_from_vacols(issue_hash)
     end
   end
@@ -326,7 +348,7 @@ class AppealRepository
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
-      active_cases_issues = VACOLS::CaseIssue.active_issues(active_cases_vacols_ids)
+      active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
       active_cases_for_user.map do |assignment|
         assignment_issues_hash_array = active_cases_issues[assignment.vacols_id] || []
 

@@ -9,7 +9,7 @@ import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
 import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
-import { fetchAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
+import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 
 export class PdfListView extends React.Component {
@@ -23,6 +23,11 @@ export class PdfListView extends React.Component {
       } else {
         this.props.fetchAppealDetails(this.props.match.params.vacolsId);
       }
+
+      // if appeal is loaded from the assignments and it matches the vacols id
+      // in the url
+    } else if (this.props.appeal.vacols_id === this.props.match.params.vacolsId) {
+      this.props.onReceiveAppealDetails(this.props.appeal);
     }
   }
 
@@ -52,13 +57,13 @@ export class PdfListView extends React.Component {
       <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
       { this.props.manifestVvaFetchedAt ?
         <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
-        '' }
+        <div className="cf-red-text">Unable to display VVA documents at this time</div> }
     </div>;
   }
 }
 
 const mapStateToProps = (state, props) => {
-  return { documents: getFilteredDocuments(state.readerReducer),
+  return { documents: getFilteredDocuments(state),
     ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.readerReducer.loadedAppeal,
@@ -70,6 +75,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
+    onReceiveAppealDetails,
     fetchAppealDetails
   }, dispatch)
 );

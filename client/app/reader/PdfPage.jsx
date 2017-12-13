@@ -5,7 +5,7 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPageDimensions } from '../reader/Pdf/PdfActions';
+import { setPageDimensions, setSearchIndexToHighlight } from '../reader/Pdf/PdfActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -90,6 +90,20 @@ export class PdfPage extends React.PureComponent {
     }
 
     return [-1, -1];
+  }
+
+  getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
+    // get sum of matches from pages below pageIndex
+    return _(this.props.matchesPerPage).
+      filter((page) => page.pageIndex < pageIndex).
+      map((page) => page.matches).
+      sum();
+  }
+
+  onClick = () => {
+    if (this.marks.length) {
+      this.props.setSearchIndexToHighlight(this.getMatchIndexOffsetFromPage());
+    }
   }
 
   // This method is the interaction between our component and PDFJS.
@@ -185,7 +199,7 @@ export class PdfPage extends React.PureComponent {
 
     this.markInstance = new Mark(this.textLayer);
     if (this.props.searchText && !this.props.searchBarHidden) {
-      this.markText(true);
+      this.markText();
     }
   }
 
@@ -277,6 +291,7 @@ export class PdfPage extends React.PureComponent {
       id={this.props.isVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
       className={pageClassNames}
       style={divPageStyle}
+      onClick={this.onClick}
       ref={this.getPageContainerRef}>
       <div
         id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
@@ -321,15 +336,16 @@ PdfPage.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setPageDimensions,
-    setDocScrollPosition
+    setDocScrollPosition,
+    setSearchIndexToHighlight
   }, dispatch)
 });
 
 const mapStateToProps = (state, props) => {
   return {
     pageDimensions: _.get(state.readerReducer.pageDimensions, [`${props.file}-${props.pageIndex}`]),
-    isPlacingAnnotation: state.readerReducer.ui.pdf.isPlacingAnnotation,
-    rotation: _.get(state.readerReducer.documents, [props.documentId, 'rotation'], 0),
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+    rotation: _.get(state.documents, [props.documentId, 'rotation'], 0),
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),

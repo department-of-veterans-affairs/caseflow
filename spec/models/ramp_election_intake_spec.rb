@@ -1,4 +1,4 @@
-describe RampIntake do
+describe RampElectionIntake do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -10,7 +10,7 @@ describe RampIntake do
   let(:appeal_vacols_record) { :ready_to_certify }
 
   let(:intake) do
-    RampIntake.new(
+    RampElectionIntake.new(
       user: user,
       detail: detail,
       veteran_file_number: veteran_file_number
@@ -216,7 +216,7 @@ describe RampIntake do
 
       context "the ramp election is complete" do
         let!(:complete_intake) do
-          RampIntake.create!(
+          RampElectionIntake.create!(
             user: user,
             detail: ramp_election,
             completed_at: Time.zone.now,

@@ -1,4 +1,4 @@
-class Intake::RampIntakesController < ApplicationController
+class Intake::RampElectionIntakesController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 
   def set_application
@@ -23,24 +23,19 @@ class Intake::RampIntakesController < ApplicationController
     end
   end
 
-  def destroy
-    intake.cancel!
-    render json: {}
-  end
-
   def complete
     intake.complete!
-    render json: ramp_intake_data(intake)
+    render json: intake_data(intake)
   end
 
   private
 
-  def ramp_intake_data(ramp_intake)
-    ramp_intake ? ramp_intake.ui_hash : {}
+  def intake_data(intake)
+    intake ? intake.ui_hash : {}
   end
 
   def intake
-    @intake ||= RampIntake.where(user: current_user).find(params[:id])
+    @intake ||= RampElectionIntake.where(user: current_user).find(params[:id])
   end
 
   def ramp_election
