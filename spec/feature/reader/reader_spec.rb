@@ -1367,7 +1367,7 @@ RSpec.feature "Reader" do
       fill_in "search-ahead", with: "decision"
 
       first_match_scroll_top = scroll_top
-      expect(first_match_scroll_top).to be > 0
+      expect(first_match_scroll_top).to be >= 0
 
       find(".cf-next-match").click
       expect(scroll_top).to be > first_match_scroll_top

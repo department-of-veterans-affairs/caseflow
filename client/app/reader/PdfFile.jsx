@@ -197,6 +197,7 @@ export class PdfFile extends React.PureComponent {
     return [-1, -1];
   }
 
+  // eslint-disable-next-line max-statements
   scrollToSearchTerm = (prevProps) => {
     const [pageIndex, indexInPage] = this.getPageIndexofMatch();
 
