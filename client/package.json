@@ -10,7 +10,7 @@
     "test:karma": "NODE_ENV=test karma start",
     "test:karma:watch": "yarn run test:karma --no-single-run",
     "test:legacy:watch": "yarn run test:legacy --watch",
-    "lint": "eslint . .eslintrc.js --no-ignore --ext .jsx --ext .js --max-warnings 0",
+    "lint": "eslint . .eslintrc.js --no-ignore --ext .jsx --ext .js --max-warnings 0 --cache",
     "lint:fix": "yarn run lint --fix",
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test yarn run build",
