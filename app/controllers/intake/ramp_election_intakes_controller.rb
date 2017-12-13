@@ -23,11 +23,6 @@ class Intake::RampElectionIntakesController < ApplicationController
     end
   end
 
-  def destroy
-    intake.cancel!
-    render json: {}
-  end
-
   def complete
     intake.complete!
     render json: intake_data(intake)

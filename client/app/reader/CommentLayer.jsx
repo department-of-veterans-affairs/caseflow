@@ -11,7 +11,7 @@ import { handleSelectCommentIcon } from '../reader/PdfViewer/PdfViewerActions';
 
 import { placeAnnotation, showPlaceAnnotationIcon,
   requestMoveAnnotation
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { CATEGORIES } from '../reader/analytics';
 
@@ -196,10 +196,11 @@ CommentLayer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   ...state.readerReducer.ui.pdf,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-  comments: makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.documentId),
-  allAnnotations: state.readerReducer.annotations,
-  rotation: _.get(state.readerReducer.documents, [ownProps.documentId, 'rotation'])
+  ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
+  comments: makeGetAnnotationsByDocumentId(state)(ownProps.documentId),
+  isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+  allAnnotations: state.annotationLayer.annotations,
+  rotation: _.get(state.documents, [ownProps.documentId, 'rotation'])
 });
 
 const mapDispatchToProps = (dispatch) => ({

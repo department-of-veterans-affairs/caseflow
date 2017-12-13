@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
 import Modal from '../components/Modal';
-import { selectCurrentPdf, fetchAppealDetails, closeAnnotationDeleteModal, showSearchBar
+import { selectCurrentPdf, fetchAppealDetails, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
-import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation
-} from '../reader/PdfViewer/AnnotationActions';
+import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation, closeAnnotationDeleteModal
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import { update } from '../util/ReducerUtil';
@@ -240,12 +240,12 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  documents: getFilteredDocuments(state.readerReducer),
+  documents: getFilteredDocuments(state),
   appeal: state.readerReducer.appeal,
   pageDimensions: state.readerReducer.pageDimensions,
-  ..._.pick(state.readerReducer, 'placingAnnotationIconPageCoords'),
-  ..._.pick(state.readerReducer.ui, 'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation'),
-  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar', 'isPlacingAnnotation')
+  ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
+    'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
+  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
 });
 
 const mapDispatchToProps = (dispatch) => ({
