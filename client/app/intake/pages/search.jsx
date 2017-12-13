@@ -4,7 +4,7 @@ import Alert from '../../components/Alert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { doFileNumberSearch, setFileNumberSearch } from '../redux/actions';
+import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { getRampElectionStatus } from '../redux/selectors';
 
