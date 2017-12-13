@@ -6,7 +6,7 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
-import { setOptionSelected, setReceiptDate, submitReview } from '../../redux/actions';
+import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampElection';
 import { getRampElectionStatus } from '../../redux/selectors';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
 

@@ -8,7 +8,7 @@ import Table from '../../components/Table';
 import { Redirect } from 'react-router-dom';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
-import { completeIntake, confirmFinishIntake } from '../redux/actions';
+import { completeIntake, confirmFinishIntake } from '../actions/rampElection';
 import { bindActionCreators } from 'redux';
 import { getRampElectionStatus } from '../redux/selectors';
 import _ from 'lodash';

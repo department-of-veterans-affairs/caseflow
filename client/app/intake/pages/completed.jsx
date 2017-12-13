@@ -3,7 +3,7 @@ import Button from '../../components/Button';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { startNewIntake } from '../redux/actions';
+import { startNewIntake } from '../actions/common';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { getRampElectionStatus } from '../redux/selectors';

@@ -13,7 +13,7 @@ class ApplicationController < ApplicationBaseController
 
   def current_user
     @current_user ||= begin
-      user = User.from_session(session, request)
+      user = User.from_session(session)
       RequestStore.store[:current_user] = user
       user
     end
