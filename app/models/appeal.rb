@@ -507,6 +507,7 @@ class Appeal < ActiveRecord::Base
 
   def fetch_documents_from_service!
     return if @fetched_documents
+
     doc_struct = document_service.fetch_documents_for(self, RequestStore.store[:current_user])
 
     @fetched_documents = doc_struct[:documents]

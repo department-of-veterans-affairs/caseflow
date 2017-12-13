@@ -144,6 +144,31 @@ class VACOLS::Case < VACOLS::Record
     on ISSKEY = BFKEY
   ".freeze
 
+  JOIN_AOD = "
+    left join (
+      select BRIEFF.BFKEY AODKEY,
+        (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
+      from BRIEFF
+
+      left join (
+        select TSKTKNM, count(*) CNT
+        from ASSIGN
+        where TSKACTCD in ('B', 'B1', 'B2')
+        group by TSKTKNM
+      ) AOD_DIARIES
+      on AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
+      left join (
+        select FOLDER_NR, count(*) CNT
+        from HEARSCHED
+        where HEARING_TYPE IN ('C', 'T', 'V')
+          AND AOD IN ('G', 'Y')
+        group by FOLDER_NR
+      ) AOD_HEARINGS
+      on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
+    )
+    on AODKEY = BFKEY
+  ".freeze
+
   WHERE_PAPERLESS_REMAND_LOC97 = "
     BFMPRO = 'REM'
     -- Remand status.
@@ -233,41 +258,14 @@ class VACOLS::Case < VACOLS::Record
   # This method takes an array of vacols ids and fetches their aod status.
   #
   def self.aod(vacols_ids)
-    connection_pool.with_connection do |conn|
+    aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
+                                                                             service: :vacols) do
+      VACOLS::Case.joins(JOIN_AOD).where(bfkey: vacols_ids).select("bfkey", "aod")
+    end
 
-      conn.transaction do
-        query = <<-SQL
-          SELECT BRIEFF.BFKEY, (case when (nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0)) > 0 then 1 else 0 end) AOD
-          FROM BRIEFF
-
-          LEFT JOIN (
-            SELECT TSKTKNM, count(*) CNT
-            FROM ASSIGN
-            WHERE TSKACTCD in ('B', 'B1', 'B2')
-            GROUP BY TSKTKNM
-          ) AOD_DIARIES
-          ON AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
-          LEFT JOIN (
-            SELECT FOLDER_NR, count(*) CNT
-            FROM HEARSCHED
-            WHERE HEARING_TYPE IN ('C', 'T', 'V')
-              AND AOD IN ('G', 'Y')
-            GROUP BY FOLDER_NR
-          ) AOD_HEARINGS
-          ON AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-          WHERE BRIEFF.BFKEY IN (?)
-        SQL
-
-        aod_result = MetricsService.record("VACOLS: Case.aod for #{vacols_ids}", name: "Case.aod",
-                                                                                 service: :vacols) do
-          conn.exec_query(sanitize_sql_array([query, vacols_ids]))
-        end
-
-        aod_result.to_hash.reduce({}) do |memo, result|
-          memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
-          memo
-        end
-      end
+    aod_result.reduce({}) do |memo, result|
+      memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
+      memo
     end
   end
 
