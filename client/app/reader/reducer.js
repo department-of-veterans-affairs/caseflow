@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import { update } from '../util/ReducerUtil';
 import { timeFunction } from '../util/PerfDebug';
-import documentsReducer from './DocumentList/DocumentsReducer';
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
   update(
@@ -103,10 +102,9 @@ export const initialState = {
   extractedText: {}
 };
 
-const reducer = (state = {}, action = {}) => {
+export const reducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
-  let modifiedDocuments;
 
   switch (action.type) {
   case Constants.COLLECT_ALL_TAGS_FOR_OPTIONS:
@@ -323,45 +321,10 @@ const reducer = (state = {}, action = {}) => {
         }
       }
     });
-  case Constants.REQUEST_REMOVE_TAG_FAILURE:
-    return update(showErrorMessage(state, 'tag'), {
-      documents: {
-        [action.payload.docId]: {
-          tags: {
-            $apply: (tags) => {
-              const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
-
-              return update(tags, {
-                [removedTagIndex]: {
-                  $merge: {
-                    pendingRemoval: false
-                  }
-                }
-              });
-            }
-          }
-        }
-      }
-    });
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
       ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
-  case Constants.TOGGLE_COMMENT_LIST:
-    modifiedDocuments = update(state.documents,
-      {
-        [action.payload.docId]: {
-          $merge: {
-            listComments: !state.documents[action.payload.docId].listComments
-          }
-        }
-      });
-
-    return update(
-      state,
-      {
-        documents: { $set: modifiedDocuments }
-      });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return update(state,
       { ui: { pdf: { hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } } } }
@@ -408,13 +371,6 @@ const reducer = (state = {}, action = {}) => {
       {
         viewingDocumentsOrComments: {
           $set: action.payload.documentsOrComments
-        },
-        documents: {
-          $apply: (docs) =>
-            _.mapValues(docs, (doc) => ({
-              ...doc,
-              listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-            }))
         }
       }
     );
@@ -549,12 +505,7 @@ const reducer = (state = {}, action = {}) => {
   }
 };
 
-export const readerReducer = (state = initialState, action = {}) => ({
-  ...reducer(state, action),
-  documents: documentsReducer(state.documents, action)
-});
-
 export default timeFunction(
-  readerReducer,
+  reducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );

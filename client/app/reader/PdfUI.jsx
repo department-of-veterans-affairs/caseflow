@@ -286,7 +286,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
-    docListIsFiltered: docListIsFiltered(state.readerReducer),
+    docListIsFiltered: docListIsFiltered(state),
     loadError: state.readerReducer.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     ...state.readerReducer.ui.pdf,
