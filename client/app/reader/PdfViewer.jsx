@@ -240,7 +240,7 @@ export class PdfViewer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  documents: getFilteredDocuments(state.readerReducer),
+  documents: getFilteredDocuments(state),
   appeal: state.readerReducer.appeal,
   pageDimensions: state.readerReducer.pageDimensions,
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',

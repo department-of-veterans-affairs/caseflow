@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { getUpdatedFilteredResults } from './searchFilters';
 
 import {
@@ -28,12 +27,7 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 // Apply filters
 
 export const updateFilteredIdsAndDocs = () => (dispatch, getState) => {
-  const { annotationLayer, readerReducer } = getState();
-
-  const filteredResults = getUpdatedFilteredResults(_.assign({},
-    { ...readerReducer },
-    { ...annotationLayer }
-  ));
+  const filteredResults = getUpdatedFilteredResults(getState());
 
   dispatch({
     type: ASSIGN_DOCUMENTS,

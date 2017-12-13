@@ -5,9 +5,7 @@ describe('Reader utils', () => {
   describe('moveModel', () => {
     it('moves a model in the state', () => {
       const state = {
-        ui: {
-          editingAnnotations: {}
-        },
+        editingAnnotations: {},
         annotations: {
           123: {
             comment: 'text'
@@ -18,16 +16,14 @@ describe('Reader utils', () => {
       const newState = moveModel(
         state,
         ['annotations'],
-        ['ui', 'editingAnnotations'],
+        ['editingAnnotations'],
         123
       );
 
       expect(newState).to.deep.equal({
-        ui: {
-          editingAnnotations: {
-            123: {
-              comment: 'text'
-            }
+        editingAnnotations: {
+          123: {
+            comment: 'text'
           }
         },
         annotations: {}
