@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { handleToggleCommentOpened } from '../reader/DocumentList/DocumentListActions';
+import { handleToggleCommentOpened } from '../reader/Documents/DocumentsActions';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
