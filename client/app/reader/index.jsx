@@ -9,6 +9,7 @@ import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
+import documentsReducer from './Documents/DocumentsReducer';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -17,6 +18,7 @@ const store = createStore(
     caseSelect: caseSelectReducer,
     readerReducer,
     search: searchReducer,
+    documents: documentsReducer,
     annotationLayer: annotationLayerReducer
   }),
   composeEnhancers(

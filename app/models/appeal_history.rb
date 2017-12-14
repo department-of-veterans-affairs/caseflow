@@ -4,7 +4,7 @@ class AppealHistory
   attr_accessor :vbms_id
 
   def appeals
-    @appeals ||= Appeal.repository.appeals_by_vbms_id(vbms_id)
+    @appeals ||= Appeal.repository.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
   end
 
   def appeal_series
@@ -193,7 +193,7 @@ class AppealHistory
 
       new(vbms_id: Appeal.vbms_id_for_ssn(appellant_ssn))
         .appeal_series
-        .sort_by(&:api_sort_date)
+        .sort_by(&:api_sort_key)
     end
   end
 end

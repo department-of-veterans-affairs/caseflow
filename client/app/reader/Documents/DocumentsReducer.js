@@ -1,9 +1,12 @@
 import _ from 'lodash';
 
-import * as Constants from '../constants';
+import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from '../constants';
 
-const documentsReducer = (state = {}, action = {}) => {
+export const initialState = {};
+
+const documentsReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.ASSIGN_DOCUMENTS:
     return Object.assign({}, action.payload.documents);
@@ -36,7 +39,7 @@ const documentsReducer = (state = {}, action = {}) => {
   case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
     return _.mapValues(state, (doc) => ({
       ...doc,
-      listComments: action.payload.documentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
+      listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
     }));
   case Constants.TOGGLE_COMMENT_LIST:
     return update(state, {
@@ -147,6 +150,24 @@ const documentsReducer = (state = {}, action = {}) => {
       [action.payload.docId]: {
         tags: {
           $apply: (tags) => _.reject(tags, { id: action.payload.tagId })
+        }
+      }
+    });
+  case Constants.REQUEST_REMOVE_TAG_FAILURE:
+    return update(state, {
+      [action.payload.docId]: {
+        tags: {
+          $apply: (tags) => {
+            const removedTagIndex = _.findIndex(tags, { id: action.payload.tagId });
+
+            return update(tags, {
+              [removedTagIndex]: {
+                $merge: {
+                  pendingRemoval: false
+                }
+              }
+            });
+          }
         }
       }
     });
