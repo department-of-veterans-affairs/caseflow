@@ -52,7 +52,7 @@ export class HearingWorksheet extends React.PureComponent {
   openEfolderInNewWindow = () => {
     window.open(`/reader/appeal/${this.props.worksheet.appeal_vacols_id}/documents`,
       'openEfolder',
-      'resizable=yes,scrollbars=yes');
+      'resizable=yes,scrollbars=yes,location=0,titlebar=yes,menubar=no');
   }
 
   render() {
