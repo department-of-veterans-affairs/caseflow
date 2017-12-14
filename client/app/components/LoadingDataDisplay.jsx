@@ -95,7 +95,7 @@ LoadingDataDisplay.propTypes = {
 
 LoadingDataDisplay.defaultProps = {
   slowLoadThresholdMs: 15 * 1000,
-  timeoutMs: 30 * 1000,
+  timeoutMs: Infinity,
   slowLoadMessage: 'Loading is taking longer than usual...'
 };
 
