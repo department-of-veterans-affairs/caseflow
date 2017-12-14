@@ -2,16 +2,19 @@ import { createSelector } from 'reselect';
 import { RAMP_INTAKE_STATES } from '../constants';
 import _ from 'lodash';
 
-const getRelevantFields = (rampElection) => _.pick(rampElection, ['isComplete', 'isReviewed', 'intakeId']);
+const getRampElectionStatusSelector = ({ rampElection, intake }) => ({
+  ..._.pick(rampElection, ['isComplete', 'isReviewed']),
+  intakeId: intake.id
+});
 
 export const getRampElectionStatus = createSelector(
-  [getRelevantFields],
-  (rampElection) => {
-    if (rampElection.isComplete) {
+  [getRampElectionStatusSelector],
+  (state) => {
+    if (state.isComplete) {
       return RAMP_INTAKE_STATES.COMPLETED;
-    } else if (rampElection.isReviewed) {
+    } else if (state.isReviewed) {
       return RAMP_INTAKE_STATES.REVIEWED;
-    } else if (rampElection.intakeId) {
+    } else if (state.intakeId) {
       return RAMP_INTAKE_STATES.STARTED;
     }
 
