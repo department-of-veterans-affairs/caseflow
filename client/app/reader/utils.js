@@ -129,9 +129,7 @@ export const isUserEditingText = () => _.some(
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let worksheetPdfLink;
-  let appealHasHearing = 7;
-  worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet/print`}>Hearing Worksheet<span className="hearing-date"> 11/12/17 <DownloaderIcon className="downloader" /></span></a>;
+  let appealHasHearing = claim.hearing;
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -141,11 +139,20 @@ export const getClaimTypeDetailInfo = (claim) => {
     appealTypeInfo = 'AOD';
   }
 
-  return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
-    {appealHasHearing && <span>{worksheetPdfLink}
-    </span> }
-  </div>;
+  return <div className="claim-detail-container">
+    <span className="claim-detail-type-info">{appealTypeInfo}</span>
 
+    {appealHasHearing &&
+      <span>
+        <a target="_blank" href={`/hearings/${appealHasHearing.id}/worksheet/print`}>
+          Hearing Worksheet
+          <span className="hearing-date">10/12/17
+            <DownloaderIcon className="downloader" />
+          </span>
+        </a>
+      </span>
+    }
+  </div>;
 };
 
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||

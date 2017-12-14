@@ -41,8 +41,8 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 
   svg {
-    display: inline-block;
-    margin-left: 3px;
+    position: absolute;
+    margin: 3px;
   }
 
   .hearing-date {
