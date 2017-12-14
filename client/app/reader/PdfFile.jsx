@@ -185,21 +185,21 @@ export class PdfFile extends React.PureComponent {
 
     for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
       if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
-        return [
-          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
-          matchIndex - cumulativeMatches
-        ];
+        return {
+          pageIndex: this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
+          relativeIndex: matchIndex - cumulativeMatches
+        };
       }
 
       cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
     }
 
-    return [-1, -1];
+    return { pageIndex: -1, relativeIndex: -1 };
   }
 
   // eslint-disable-next-line max-statements
   scrollToSearchTerm = (prevProps) => {
-    const [pageIndex, indexInPage] = this.getPageIndexofMatch();
+    const { pageIndex, relativeIndex } = this.getPageIndexofMatch();
 
     if (pageIndex === -1) {
       return;
@@ -209,8 +209,8 @@ export class PdfFile extends React.PureComponent {
     const searchTextChanged = this.props.searchText !== prevProps.searchText;
 
     if (currentMatchChanged || searchTextChanged) {
-      this.props.updateSearchRelativeIndex(indexInPage);
-      if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex)[0] && !searchTextChanged) {
+      this.props.updateSearchRelativeIndex(relativeIndex);
+      if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex).pageIndex && !searchTextChanged) {
         // if navigating between Marks in the same page and the page is rendered,
         // PdfPage will set scrollTop in highlightMarkAtIndex
         if (this.props.scrollTop !== null) {
