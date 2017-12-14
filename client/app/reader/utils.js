@@ -131,6 +131,7 @@ export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
   let worksheetPdfLink;
   let appealHasHearing = claim.hearing_id;
+  worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet/print`}>Hearing Worksheet</a>
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -138,7 +139,6 @@ export const getClaimTypeDetailInfo = (claim) => {
     appealTypeInfo = 'CAVC';
   } else if (claim.aod) {
     appealTypeInfo = 'AOD';
-    worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet/print`}>Hearing Worksheet</a>;
   }
 
   return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
