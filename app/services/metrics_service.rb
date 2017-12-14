@@ -49,7 +49,7 @@ class MetricsService
                     host: `hostname`.strip, type: "counter",
                     tags: [
                       "service:#{service}",
-                      "env:#{Rails.env}",
+                      "env:#{Rails.env}"
                     ])
   end
 end
