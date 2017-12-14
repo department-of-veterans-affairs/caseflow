@@ -92,21 +92,23 @@ module StubbableUser
       end
 
       self.stub = User.from_session(
-        "user" =>
+        { "user" =>
           { "id" => "DSUSER",
             "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] })
+            "roles" => roles || ["Certify Appeal"] }
+        }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
     def tester!(roles: nil)
       self.stub = User.from_session(
-        "user" =>
+        { "user" =>
           { "id" => ENV["TEST_USER_ID"],
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] })
+            "roles" => roles || ["Certify Appeal"] }
+        }, OpenStruct.new(remote_ip: "127.0.0.1"))
     end
 
     def current_user
@@ -122,8 +124,8 @@ module StubbableUser
       self.stub = nil
     end
 
-    def from_session(session)
-      @stub || super(session)
+    def from_session(session, request)
+      @stub || super(session, request)
     end
   end
 
