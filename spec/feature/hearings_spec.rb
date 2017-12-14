@@ -197,15 +197,14 @@ RSpec.feature "Hearings" do
       end
     end
 
-    scenario "Can click from hearing worksheet to reader" do
+    scenario "Can click from hearing worksheet to reader", focus:true do
       visit "/hearings/1/worksheet"
       link = find("#review-efolder")
-      link_href = link[:href]
       expect(page).to have_content("Review eFolder")
       click_on "Review eFolder"
-      new_window = windows.last
+      new_window = window_opened_by { click_on "Review eFolder" }
       page.within_window new_window do
-        visit link_href
+        visit "/reader/appeal/e60d82118/documents"
         expect(page).to have_content("You've viewed 0 out of 4 documents")
       end
     end
