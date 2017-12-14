@@ -2,16 +2,17 @@ class Fakes::Initializer
   class << self
     def load!
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
-      User.authentication_service = Fakes::AuthenticationService
       Hearing.repository = Fakes::HearingRepository
       HearingDocket.repository = Fakes::HearingRepository
-      Appeal.repository = AppealRepository
+      Appeal.repository = Fakes::AppealRepository
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      User.appeal_repository = AppealRepository
+      User.appeal_repository = Fakes::AppealRepository
     end
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
+      User.authentication_service = Fakes::AuthenticationService
+
       if rails_env.development? || rails_env.demo?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
