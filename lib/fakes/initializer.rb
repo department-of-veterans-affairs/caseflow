@@ -1,8 +1,8 @@
 class Fakes::Initializer
   class << self
     def load!
-      User.authentication_service = Fakes::AuthenticationService
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
+      User.authentication_service = Fakes::AuthenticationService
       Hearing.repository = Fakes::HearingRepository
       HearingDocket.repository = Fakes::HearingRepository
       Appeal.repository = Fakes::AppealRepository
