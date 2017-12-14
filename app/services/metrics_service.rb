@@ -32,7 +32,7 @@ class MetricsService
     end
 
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
-    # This is just to capture the metric
+    # This is just to capture the metric.
     raise
   ensure
     if service
@@ -49,7 +49,6 @@ class MetricsService
       metric_value: metric_value,
       app_name: app_name,
       attrs: {
-        app: app_name,
         endpoint: endpoint_name
       }
     )
