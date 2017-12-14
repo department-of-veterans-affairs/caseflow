@@ -3,15 +3,6 @@ require "dogapi"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  datadog_api_key = ENV["DATADOG_API_KEY"]
-  if datadog_api_key.nil?
-    Rails.logger.warn "Env var DATADOG_API_KEY is not set, so DataDog metrics will not be tracked."
-    # Setting the API key to an empty string will make tracking requests silently fail, which is what we want.
-    datadog_api_key = ""
-  end
-
-  @dog = Dogapi::Client.new(datadog_api_key)
-
   # rubocop:disable Metrics/MethodLength
   def self.record(description, service: nil, name: "unknown")
     return_value = nil
@@ -51,14 +42,16 @@ class MetricsService
     end
   end
 
-  private_class_method def self.emit_datadog_point(metric_name, metric_value, service, endpoint_name, app_name)
-    @dog.emit_point("caseflow.service.#{metric_name}", metric_value,
-                    host: `hostname`.strip, type: "counter",
-                    tags: [
-                      "app:#{app_name}",
-                      "service:#{service}",
-                      "env:#{Rails.env}",
-                      "endpoint_name:#{endpoint_name}"
-                    ])
+  private_class_method def self.emit_datadog_point(metric_name, metric_value, _service, endpoint_name, app_name)
+    DataDogService.emit_datadog_point(
+      metric_group: "service",
+      metric_name: metric_name,
+      metric_value: metric_value,
+      app_name: app_name,
+      attrs: {
+        app: app_name,
+        endpoint: endpoint_name
+      }
+    )
   end
 end
