@@ -22,7 +22,7 @@ class MetricsService
         metric_group: "service",
         metric_name: "request_latency",
         metric_value: latency,
-        app_name: name,
+        app_name: app,
         attrs: {
           service: service,
           endpoint: name
