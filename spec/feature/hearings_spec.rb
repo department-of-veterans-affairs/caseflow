@@ -204,7 +204,6 @@ RSpec.feature "Hearings" do
       link.click
       new_window = windows.last
       page.within_window new_window do
-        visit "/reader/appeal/e60d82118/documents"
         expect(page).to have_content("You've viewed 0 out of 4 documents")
       end
     end
