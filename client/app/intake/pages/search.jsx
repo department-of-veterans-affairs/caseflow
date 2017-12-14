@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
-import { getRampElectionStatus } from '../helpers/rampElection';
+import { getRampElectionStatus } from '../redux/selectors';
 
 const rampIneligibleInstructions = <div>
   <p>
@@ -86,7 +86,7 @@ class Search extends React.PureComponent {
     const {
       searchErrorCode,
       searchErrorData,
-      rampElection,
+      rampElectionStatus,
       formType
     } = this.props;
 
@@ -94,7 +94,7 @@ class Search extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    switch (getRampElectionStatus(rampElection)) {
+    switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     case RAMP_INTAKE_STATES.REVIEWED:
@@ -129,6 +129,7 @@ class Search extends React.PureComponent {
 export default connect(
   ({ intake, rampElection }) => ({
     rampElection,
+    rampElectionStatus: getRampElectionStatus(rampElection),
     fileNumberSearchInput: intake.fileNumberSearch,
     fileNumberSearchRequestStatus: intake.requestStatus.fileNumberSearch,
     searchErrorCode: intake.searchErrorCode,
