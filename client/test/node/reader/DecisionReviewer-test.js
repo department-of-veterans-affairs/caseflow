@@ -19,7 +19,9 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
-import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
+import annotationLayerReducer from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
+import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer';
+
 import documentsReducer from '../../../app/reader/Documents/DocumentsReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs } from '../../../app/reader/Documents/DocumentsActions';
@@ -42,6 +44,7 @@ const getStore = () => createStore(
     readerReducer,
     search: searchReducer,
     documents: documentsReducer,
+    documentList: documentListReducer,
     annotationLayer: annotationLayerReducer
   }),
   compose(

@@ -68,7 +68,7 @@ export const initialState = {
   extractedText: {}
 };
 
-const readerReducer = (state = initialState, action = {}) => {
+export const reducer = (state = initialState, action = {}) => {
   let allTags;
   let uniqueTags;
 
@@ -303,6 +303,6 @@ const readerReducer = (state = initialState, action = {}) => {
 };
 
 export default timeFunction(
-  readerReducer,
+  reducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );
