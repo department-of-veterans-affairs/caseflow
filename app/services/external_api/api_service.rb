@@ -5,11 +5,11 @@
 class ExternalApi::ApiService
   def self.request(description, service: nil, name: "unknown")
     if FeatureToggle.enabled?(:release_db_connections)
-      if VACOLS::Record.connection.open_transactions == 0
-        VACOLS::Record.connection_pool.release_connection
+      if VACOLS::Record.connection_pool.active_connection?
+        VACOLS::Record.connection_pool.release_connection if VACOLS::Record.connection.open_transactions == 0
       end
-      if ActiveRecord::Base.connection.open_transactions == 0
-        ActiveRecord::Base.connection_pool.release_connection
+      if ActiveRecord::Base.connection_pool.active_connection?
+        ActiveRecord::Base.connection_pool.release_connection if ActiveRecord::Base.connection.open_transactions == 0
       end
     end
 
