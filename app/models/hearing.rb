@@ -117,7 +117,7 @@ class Hearing < ActiveRecord::Base
         :regional_office_name,
         :regional_office_timezone,
         :venue, :appellant_last_first_mi,
-        :veteran_name, :vbms_id
+        :veteran_name, :vbms_id, :issue_count
       ],
       except: :military_service
     )
@@ -140,6 +140,10 @@ class Hearing < ActiveRecord::Base
 
   def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
+  end
+
+  def issue_count
+    active_appeal_streams.map(&:worksheet_issues_count).reduce(0, :+)
   end
 
   # If we do not yet have the military_service saved in Caseflow's DB, then
