@@ -138,7 +138,7 @@ export const getClaimTypeDetailInfo = (claim) => {
     appealTypeInfo = 'CAVC';
   } else if (claim.aod) {
     appealTypeInfo = 'AOD';
-    worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet`}>Hearing Worksheet</a>;
+    worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet/print`}>Hearing Worksheet</a>;
   }
 
   return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
