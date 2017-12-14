@@ -454,7 +454,7 @@ class Appeal < ActiveRecord::Base
     v1_events.last.try(:date)
   end
 
-  def to_hash(viewed: nil, issues: nil, hearing_id: nil)
+  def to_hash(viewed: nil, issues: nil, hearing: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
@@ -462,7 +462,7 @@ class Appeal < ActiveRecord::Base
       hash["viewed"] = viewed
       hash["issues"] = issues
       hash["regional_office"] = regional_office_hash
-      hash["hearing_id"] = hearing_id
+      hash["hearing"] = hearing ? hearing.to_hash : nil
     end
   end
 

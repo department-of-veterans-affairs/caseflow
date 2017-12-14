@@ -130,9 +130,8 @@ export const isUserEditingText = () => _.some(
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
   let worksheetPdfLink;
-  let appealHasHearing = claim.hearing_id;
-
-  worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet/print`}>Hearing Worksheet</a>;
+  let appealHasHearing = 7;
+  worksheetPdfLink = <a target="_blank" href={`/hearings/${appealHasHearing}/worksheet/print`}>Hearing Worksheet<span className="hearing-date"> 11/12/17 <DownloaderIcon className="downloader" /></span></a>;
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -143,7 +142,8 @@ export const getClaimTypeDetailInfo = (claim) => {
   }
 
   return <div className="claim-detail-container"><span className="claim-detail-type-info">{appealTypeInfo}</span>
-    {appealHasHearing && <span>{worksheetPdfLink}<DownloaderIcon className="downloader" /></span> }
+    {appealHasHearing && <span>{worksheetPdfLink}
+    </span> }
   </div>;
 
 };

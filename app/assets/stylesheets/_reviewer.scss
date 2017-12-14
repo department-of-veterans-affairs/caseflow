@@ -44,6 +44,10 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
     display: inline-block;
     margin-left: 3px;
   }
+
+  .hearing-date {
+    display: block;
+  }
 }
 
 .cf-claims-folder-details {
