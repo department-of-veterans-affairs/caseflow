@@ -127,14 +127,14 @@ class Search extends React.PureComponent {
 }
 
 export default connect(
-  ({ intake, rampElection }) => ({
-    rampElection,
-    rampElectionStatus: getRampElectionStatus(rampElection),
-    fileNumberSearchInput: intake.fileNumberSearch,
-    fileNumberSearchRequestStatus: intake.requestStatus.fileNumberSearch,
-    searchErrorCode: intake.searchErrorCode,
-    searchErrorData: intake.searchErrorData,
-    formType: intake.formType
+  (state) => ({
+    rampElection: state.rampElection,
+    rampElectionStatus: getRampElectionStatus(state),
+    fileNumberSearchInput: state.intake.fileNumberSearch,
+    fileNumberSearchRequestStatus: state.intake.requestStatus.fileNumberSearch,
+    searchErrorCode: state.intake.searchErrorCode,
+    searchErrorData: state.intake.searchErrorData,
+    formType: state.intake.formType
   }),
   (dispatch) => bindActionCreators({
     doFileNumberSearch,
