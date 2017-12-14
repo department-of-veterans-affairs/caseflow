@@ -1,7 +1,6 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {

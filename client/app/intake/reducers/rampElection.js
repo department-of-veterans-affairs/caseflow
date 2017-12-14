@@ -65,8 +65,6 @@ export const mapDataToInitialRampElection = (data = { serverIntake: {} }) => (
   }, data.serverIntake)
 );
 
-const resetRampElection = (state) => mapDataToInitialRampElection();
-
 const getOptionSelectedError = (responseErrorCodes) => (
   _.get(responseErrorCodes.option_selected, 0) && 'Please select an option.'
 );
@@ -85,11 +83,11 @@ const getReceiptDateError = (responseErrorCodes, state) => (
 export const rampElectionReducer = (state = mapDataToInitialRampElection(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return resetRampElection(state);
+    return mapDataToInitialRampElection();
   case ACTIONS.FILE_NUMBER_SEARCH_SUCCEED:
     return updateFromServerIntake(state, action.payload.intake);
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
-    return resetRampElection();
+    return mapDataToInitialRampElection();
   case ACTIONS.SET_OPTION_SELECTED:
     return update(state, {
       optionSelected: {
