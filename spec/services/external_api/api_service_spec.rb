@@ -1,5 +1,5 @@
 describe ExternalApi::ApiService do
-  context ".request" do  
+  context ".request" do
     subject do
       ExternalApi::ApiService.request("Test ApiService",
                                       service: :efolder,
