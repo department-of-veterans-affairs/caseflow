@@ -3,6 +3,7 @@ import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
 import { DownloaderIcon } from '../components/RenderFunctions';
+import moment from 'moment';
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
@@ -129,7 +130,7 @@ export const isUserEditingText = () => _.some(
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let appealHasHearing = claim.hearing;
+  let appealHasHearing = 7;
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -146,7 +147,8 @@ export const getClaimTypeDetailInfo = (claim) => {
       <span>
         <a target="_blank" href={`/hearings/${appealHasHearing.id}/worksheet/print`}>
           Hearing Worksheet
-          <span className="hearing-date">10/12/17
+          <span className="hearing-date">
+            {moment(appealHasHearing.date).format('l')}
             <DownloaderIcon className="downloader" />
           </span>
         </a>
