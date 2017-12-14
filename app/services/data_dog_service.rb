@@ -9,6 +9,7 @@ class DataDogService
   end
 
   @dog = Dogapi::Client.new(datadog_api_key)
+  @host = `curl http://instance-data/latest/meta-data/instance-id || echo "not-ec2"`.strip
 
   # rubocop:disable Metrics/ParameterLists
   def self.emit_datadog_point(
@@ -18,7 +19,7 @@ class DataDogService
       tags << "#{key}:#{val}"
     end
     @dog.emit_point("dsva-appeals.#{metric_group}.#{metric_name}", metric_value,
-                    host: `hostname`.strip, type: metric_type,
+                    host: @host, type: metric_type,
                     tags: [
                       "app:#{app_name}",
                       "env:#{Rails.env}"
