@@ -3,7 +3,14 @@ require "dogapi"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  @dog = Dogapi::Client.new(ENV["DATADOG_API_KEY"])
+  datadog_api_key = ENV["DATADOG_API_KEY"]
+  if datadog_api_key.nil?
+    Rails.logger.warn "Env var DATADOG_API_KEY is not set, so DataDog metrics will not be tracked."
+    # Setting the API key to an empty string will make tracking requests silently fail, which is what we want.
+    datadog_api_key = ''
+  end
+
+  @dog = Dogapi::Client.new(datadog_api_key)
 
   # rubocop:disable Metrics/MethodLength
   def self.record(description, service: nil, name: "unknown")
