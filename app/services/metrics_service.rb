@@ -18,8 +18,16 @@ class MetricsService
 
       latency = stopwatch.real
       metric.set({ app: app, name: name }, latency)
-      emit_datadog_point("request_latency", latency, service, name, app)
-
+      DataDogService.emit_gauge(
+        metric_group: "service",
+        metric_name: "request_latency",
+        metric_value: latency,
+        app_name: name,
+        attrs: {
+          service: service,
+          endpoint: name
+        }
+      )
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
@@ -28,7 +36,7 @@ class MetricsService
     if service
       metric = PrometheusService.send("#{service}_request_error_counter".to_sym)
       metric.increment(app: app, name: name)
-      emit_datadog_point("request_error", 1, service, name, app)
+      increment_datadog_counter("request_error", service, name, app)
     end
 
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
@@ -38,17 +46,17 @@ class MetricsService
     if service
       metric = PrometheusService.send("#{service}_request_attempt_counter".to_sym)
       metric.increment(app: app, name: name)
-      emit_datadog_point("request_attempt", 1, service, name, app)
+      increment_datadog_counter("request_attempt", service, name, app)
     end
   end
 
-  private_class_method def self.emit_datadog_point(metric_name, metric_value, _service, endpoint_name, app_name)
-    DataDogService.emit_datadog_point(
+  private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
+    DataDogService.increment_counter(
       metric_group: "service",
       metric_name: metric_name,
-      metric_value: metric_value,
       app_name: app_name,
       attrs: {
+        service: service,
         endpoint: endpoint_name
       }
     )

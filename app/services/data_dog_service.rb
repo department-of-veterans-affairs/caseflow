@@ -9,11 +9,23 @@ class DataDogService
   end
 
   @dog = Dogapi::Client.new(datadog_api_key)
-  @host = `curl http://instance-data/latest/meta-data/instance-id || echo "not-ec2"`.strip
+  @host = `curl http://instance-data/latest/meta-data/instance-id --silent || echo "not-ec2"`.strip
+
+  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
+    emit_datadog_point(
+      metric_group: metric_group, metric_name: metric_name, app_name: app_name,
+      attrs: attrs, metric_type: "counter", metric_value: 1)
+  end
+
+  def self.emit_gauge(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
+    emit_datadog_point(
+      metric_group: metric_group, metric_name: metric_name, metric_value: metric_value, app_name: app_name,
+      attrs: attrs, metric_type: "gauge")
+  end
 
   # rubocop:disable Metrics/ParameterLists
-  def self.emit_datadog_point(
-    metric_group:, metric_name:, metric_value:, app_name:, attrs: {}, metric_type: "counter"
+  private_class_method def self.emit_datadog_point(
+    metric_group:, metric_name:, metric_value:, app_name:, attrs:, metric_type:
   )
     extra_tags = attrs.reduce([]) do |tags, (key, val)|
       tags << "#{key}:#{val}"
