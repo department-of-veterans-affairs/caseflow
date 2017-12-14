@@ -25,7 +25,7 @@ class DocumentsCommentsButton extends PureComponent {
 
 export default connect(
   (state) => ({
-    viewingDocumentsOrComments: state.readerReducer.viewingDocumentsOrComments
+    viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
   }),
   (dispatch) => bindActionCreators({
     setViewingDocumentsOrComments
