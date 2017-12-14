@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
-import { TIMEOUT_SETTINGS } from '../util/ApiUtil';
+import { STANDARD_API_TIMEOUT_MILLISECONDS } from '../util/ApiUtil';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
@@ -96,7 +96,7 @@ LoadingDataDisplay.propTypes = {
 
 LoadingDataDisplay.defaultProps = {
   slowLoadThresholdMs: 15 * 1000,
-  timeoutMs: TIMEOUT_SETTINGS.STANDARD_API_TIMEOUT_MILLISECONDS,
+  timeoutMs: STANDARD_API_TIMEOUT_MILLISECONDS,
   slowLoadMessage: 'Loading is taking longer than usual...'
 };
 
