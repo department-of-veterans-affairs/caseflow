@@ -197,7 +197,6 @@ export class PdfFile extends React.PureComponent {
     return { pageIndex: -1, relativeIndex: -1 };
   }
 
-  // eslint-disable-next-line max-statements
   scrollToSearchTerm = (prevProps) => {
     const { pageIndex, relativeIndex } = this.getPageIndexofMatch();
 
@@ -208,25 +207,20 @@ export class PdfFile extends React.PureComponent {
     const currentMatchChanged = this.props.currentMatchIndex !== prevProps.currentMatchIndex;
     const searchTextChanged = this.props.searchText !== prevProps.searchText;
 
-    if (currentMatchChanged || searchTextChanged) {
+    if (this.props.scrollTop !== null && this.props.scrollTop !== prevProps.scrollTop) {
+      // after currentMatchIndex is updated, scrollTop gets set in PdfPage, and this gets called again
+      this.scrollToScrollTop(pageIndex);
+    } else if (currentMatchChanged || searchTextChanged) {
       this.props.updateSearchRelativeIndex(relativeIndex);
-      if (pageIndex === this.getPageIndexofMatch(prevProps.currentMatchIndex).pageIndex && !searchTextChanged) {
-        // if navigating between Marks in the same page and the page is rendered,
-        // PdfPage will set scrollTop in highlightMarkAtIndex
-        if (this.props.scrollTop !== null) {
-          this.scrollToScrollTop(pageIndex);
-        } else if (currentMatchChanged) {
-          // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
-          this.list.scrollToRow(pageIndex);
-        }
-      } else {
+
+      if (pageIndex !== this.getPageIndexofMatch(prevProps.currentMatchIndex).pageIndex || searchTextChanged) {
         // scroll to mark page before highlighting--may not be in DOM
         this.list.scrollToRow(pageIndex);
         this.props.updateSearchIndexPage(pageIndex);
+      } else if (currentMatchChanged) {
+        // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
+        this.list.scrollToRow(pageIndex);
       }
-    } else if (this.props.scrollTop !== null && this.props.scrollTop !== prevProps.scrollTop) {
-      // after ticking currentMatchIndex, scrollTop is set and this gets called again
-      this.scrollToScrollTop(pageIndex);
     }
   }
 
