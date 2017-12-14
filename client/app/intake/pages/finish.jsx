@@ -10,7 +10,7 @@ import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../actions/rampElection';
 import { bindActionCreators } from 'redux';
-import { getRampElectionStatus } from '../redux/selectors';
+import { getRampElectionStatus } from '../helpers/rampElection';
 import _ from 'lodash';
 
 const submitText = 'Finish intake';
@@ -50,7 +50,7 @@ class Finish extends React.PureComponent {
   render() {
     const { rampElection, appeals, requestState } = this.props;
 
-    switch (this.props.rampElectionStatus) {
+    switch (getRampElectionStatus(rampElection)) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
@@ -113,7 +113,7 @@ class Finish extends React.PureComponent {
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.completeIntake(this.props.rampElection).then(
+    this.props.completeIntake(this.props.intakeId, this.props.rampElection).then(
       (completeWasSuccessful) => {
         if (completeWasSuccessful) {
           this.props.history.push('/completed');
@@ -134,8 +134,9 @@ class FinishNextButton extends React.PureComponent {
 }
 
 const FinishNextButtonConnected = connect(
-  ({ rampElection, requestStatus }) => ({
-    requestState: requestStatus.completeIntake,
+  ({ rampElection, intake }) => ({
+    requestState: rampElection.requestStatus.completeIntake,
+    intakeId: intake.id,
     rampElection
   }),
   (dispatch) => bindActionCreators({
@@ -152,11 +153,10 @@ export class FinishButtons extends React.PureComponent {
 }
 
 export default connect(
-  (state) => ({
-    rampElection: state.rampElection,
-    appeals: state.appeals,
-    requestState: state.requestStatus.completeIntake,
-    rampElectionStatus: getRampElectionStatus(state)
+  ({ rampElection }) => ({
+    rampElection,
+    appeals: rampElection.appeals,
+    requestState: rampElection.requestStatus.completeIntake
   }),
   (dispatch) => bindActionCreators({
     confirmFinishIntake

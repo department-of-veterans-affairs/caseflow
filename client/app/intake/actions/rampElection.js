@@ -24,7 +24,7 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-export const submitReview = (rampElection) => (dispatch) => {
+export const submitReview = (intakeId, rampElection) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
@@ -35,7 +35,7 @@ export const submitReview = (rampElection) => (dispatch) => {
     receipt_date: formatDateStringForApi(rampElection.receiptDate)
   };
 
-  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}`, { data }, ENDPOINT_NAMES.INTAKE_RAMP).
+  return ApiUtil.patch(`/intake/ramp/${intakeId}`, { data }, ENDPOINT_NAMES.INTAKE_RAMP).
     then(
       () => dispatch({
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
@@ -67,7 +67,7 @@ export const submitReview = (rampElection) => (dispatch) => {
     );
 };
 
-export const completeIntake = (rampElection) => (dispatch) => {
+export const completeIntake = (intakeId, rampElection) => (dispatch) => {
   if (!rampElection.finishConfirmed) {
     dispatch({
       type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED,
@@ -82,7 +82,7 @@ export const completeIntake = (rampElection) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.patch(`/intake/ramp/${rampElection.intakeId}/complete`, {}, ENDPOINT_NAMES.INTAKE_RAMP_COMPLETE).
+  return ApiUtil.patch(`/intake/ramp/${intakeId}/complete`, {}, ENDPOINT_NAMES.INTAKE_RAMP_COMPLETE).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);

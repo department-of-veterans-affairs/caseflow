@@ -7,18 +7,17 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampElection';
-import { getRampElectionStatus } from '../../redux/selectors';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { getRampElectionStatus } from '../../helpers/rampElection';
 
 class Review extends React.PureComponent {
   render() {
     const {
       rampElection,
-      veteranName,
-      rampElectionStatus
+      veteranName
     } = this.props;
 
-    switch (rampElectionStatus) {
+    switch (getRampElectionStatus(rampElection)) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.COMPLETED:
@@ -69,8 +68,8 @@ class Review extends React.PureComponent {
 
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.submitReview(this.props.rampElection).then(
-      () => this.props.history.push('/finish')
+    this.props.submitReview(this.props.intakeId, this.props.rampElection).then(
+      () => this.props.history.push('/finish');
     );
   }
 
@@ -86,8 +85,9 @@ class ReviewNextButton extends React.PureComponent {
 }
 
 const ReviewNextButtonConnected = connect(
-  ({ rampElection, requestStatus }) => ({
-    requestState: requestStatus.submitReview,
+  ({ rampElection, intake }) => ({
+    intakeId: intake.id,
+    requestState: rampElection.requestStatus.submitReview,
     rampElection
   }),
   (dispatch) => bindActionCreators({
@@ -104,10 +104,9 @@ export class ReviewButtons extends React.PureComponent {
 }
 
 export default connect(
-  (state) => ({
-    veteranName: state.veteran.name,
-    rampElection: state.rampElection,
-    rampElectionStatus: getRampElectionStatus(state)
+  ({ intake, rampElection }) => ({
+    veteranName: intake.veteran.name,
+    rampElection
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
