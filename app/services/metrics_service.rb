@@ -55,6 +55,7 @@ class MetricsService
     @dog.emit_point("caseflow.service.#{metric_name}", metric_value,
                     host: `hostname`.strip, type: "counter",
                     tags: [
+                      "app:caseflow",
                       "service:#{service}",
                       "env:#{Rails.env}",
                       "endpoint_name:#{endpoint_name}"
