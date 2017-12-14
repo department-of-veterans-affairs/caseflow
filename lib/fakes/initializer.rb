@@ -1,6 +1,7 @@
 class Fakes::Initializer
   class << self
     def load!
+      User.authentication_service = Fakes::AuthenticationService
       PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
       Hearing.repository = Fakes::HearingRepository
       HearingDocket.repository = Fakes::HearingRepository
@@ -11,7 +12,9 @@ class Fakes::Initializer
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
-      User.authentication_service = Fakes::AuthenticationService
+      if rails_env.ssh_forwarding?
+        User.authentication_service = Fakes::AuthenticationService
+      end
 
       if rails_env.development? || rails_env.demo?
         # If we are running a rake command like `rake db:seed` or
