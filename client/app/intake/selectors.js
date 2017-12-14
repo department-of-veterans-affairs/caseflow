@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RAMP_INTAKE_STATES } from '../constants';
+import { RAMP_INTAKE_STATES } from './constants';
 import _ from 'lodash';
 
 const getRampElectionStatusSelector = ({ rampElection, intake }) => ({

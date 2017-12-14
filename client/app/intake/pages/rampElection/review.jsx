@@ -8,16 +8,20 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampElection';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
-import { getRampElectionStatus } from '../../helpers/rampElection';
+import { getRampElectionStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
   render() {
     const {
-      rampElection,
-      veteranName
+      rampElectionStatus,
+      veteranName,
+      optionSelected,
+      optionSelectedError,
+      receiptDate,
+      receiptDateError
     } = this.props;
 
-    switch (getRampElectionStatus(rampElection)) {
+    switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.COMPLETED:
@@ -50,16 +54,16 @@ class Review extends React.PureComponent {
         strongLabel
         options={radioOptions}
         onChange={this.props.setOptionSelected}
-        errorMessage={rampElection.optionSelectedError}
-        value={rampElection.optionSelected}
+        errorMessage={optionSelectedError}
+        value={optionSelected}
       />
 
       <DateSelector
         name="receipt-date"
         label="What is the Receipt Date for this election form?"
-        value={rampElection.receiptDate}
+        value={receiptDate}
         onChange={this.props.setReceiptDate}
-        errorMessage={rampElection.receiptDateError}
+        errorMessage={receiptDateError}
         strongLabel
       />
     </div>;
@@ -104,9 +108,13 @@ export class ReviewButtons extends React.PureComponent {
 }
 
 export default connect(
-  ({ intake, rampElection }) => ({
-    veteranName: intake.veteran.name,
-    rampElection
+  (state) => ({
+    veteranName: state.intake.veteran.name,
+    rampElectionStatus: getRampElectionStatus(state),
+    optionSelected: state.rampElection.optionSelected,
+    optionSelectedError: state.rampElection.optionSelectedError,
+    receiptDate: state.rampElection.receiptDate,
+    receiptDateError: state.rampElection.receiptDateError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,

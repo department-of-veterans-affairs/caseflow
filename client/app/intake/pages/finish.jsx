@@ -10,7 +10,7 @@ import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../actions/rampElection';
 import { bindActionCreators } from 'redux';
-import { getRampElectionStatus } from '../helpers/rampElection';
+import { getRampElectionStatus } from '../selectors';
 import _ from 'lodash';
 
 const submitText = 'Finish intake';
@@ -48,9 +48,16 @@ class Finish extends React.PureComponent {
   }
 
   render() {
-    const { rampElection, appeals, requestState } = this.props;
+    const {
+      optionSelected,
+      rampElectionStatus,
+      appeals,
+      requestState,
+      finishConfirmed,
+      finishConfirmedError
+    } = this.props;
 
-    switch (getRampElectionStatus(rampElection)) {
+    switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
@@ -62,7 +69,7 @@ class Finish extends React.PureComponent {
 
     let optionName;
 
-    if (this.props.rampElection.optionSelected === 'supplemental_claim') {
+    if (optionSelected === 'supplemental_claim') {
       optionName = 'Supplemental Claim';
     } else {
       optionName = 'Higher-Level Review';
@@ -103,9 +110,9 @@ class Finish extends React.PureComponent {
         label="I've completed the above steps outside Caseflow."
         name="confirm-finish"
         required
-        value={rampElection.finishConfirmed}
+        value={finishConfirmed}
         onChange={this.props.confirmFinishIntake}
-        errorMessage={rampElection.finishConfirmedError}
+        errorMessage={finishConfirmedError}
       />
     </div>;
   }
@@ -153,10 +160,13 @@ export class FinishButtons extends React.PureComponent {
 }
 
 export default connect(
-  ({ rampElection }) => ({
-    rampElection,
-    appeals: rampElection.appeals,
-    requestState: rampElection.requestStatus.completeIntake
+  (state) => ({
+    optionSelected: state.rampElection.optionSelected,
+    finishConfirmed: state.rampElection.finishConfirmed,
+    finishConfirmedError: state.rampElection.finishConfirmedError,
+    rampElectionStatus: getRampElectionStatus(state),
+    appeals: state.rampElection.appeals,
+    requestState: state.rampElection.requestStatus.completeIntake
   }),
   (dispatch) => bindActionCreators({
     confirmFinishIntake
