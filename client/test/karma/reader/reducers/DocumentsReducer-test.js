@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import documentsReducer from '../../../../app/reader/Documents/DocumentsReducer';
 import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../../app/reader/Documents/actionTypes';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../../app/reader/constants';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../../app/reader/DocumentList/actionTypes';
 
 describe('Documents reducer', () => {
   const reduceActions = (actions, state) => actions.reduce(documentsReducer, documentsReducer(state, {}));

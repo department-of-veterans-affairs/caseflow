@@ -10,12 +10,10 @@ describe('Reader utils', () => {
           3: {},
           5: {}
         },
-        readerReducer: {
-          ui: {
-            filteredDocIds: [1, 3, 5],
-            docFilterCriteria: {
-              searchQuery: ''
-            }
+        documentList: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: ''
           }
         }
       };
@@ -30,12 +28,10 @@ describe('Reader utils', () => {
           3: {},
           5: {}
         },
-        readerReducer: {
-          ui: {
-            filteredDocIds: [1, 3, 5],
-            docFilterCriteria: {
-              searchQuery: 'something that matches all docs'
-            }
+        documentList: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: 'something that matches all docs'
           }
         }
       };
@@ -50,14 +46,12 @@ describe('Reader utils', () => {
           3: {},
           5: {}
         },
-        readerReducer: {
-          ui: {
-            filteredDocIds: [1, 3, 5],
-            docFilterCriteria: {
-              searchQuery: '',
-              category: {
-                procedural: true
-              }
+        documentList: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: '',
+            category: {
+              procedural: true
             }
           }
         }
@@ -73,14 +67,12 @@ describe('Reader utils', () => {
           3: {},
           5: {}
         },
-        readerReducer: {
-          ui: {
-            filteredDocIds: [1, 3, 5],
-            docFilterCriteria: {
-              searchQuery: '',
-              tag: {
-                'some tag': true
-              }
+        documentList: {
+          filteredDocIds: [1, 3, 5],
+          docFilterCriteria: {
+            searchQuery: '',
+            tag: {
+              'some tag': true
             }
           }
         }

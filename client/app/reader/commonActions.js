@@ -2,13 +2,11 @@ import { getUpdatedFilteredResults } from './searchFilters';
 
 import {
   HIDE_ERROR_MESSAGE,
-  SHOW_ERROR_MESSAGE,
-  UPDATE_FILTERED_RESULTS
+  SHOW_ERROR_MESSAGE
 } from './constants';
 
-import {
-  ASSIGN_DOCUMENTS
-} from './Documents/actionTypes';
+import { UPDATE_FILTERED_RESULTS } from './DocumentList/actionTypes';
+import { ASSIGN_DOCUMENTS } from './Documents/actionTypes';
 
 // errors
 

@@ -6,6 +6,8 @@ import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
+import documentListReducer from './DocumentList/DocumentListReducer';
+
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
@@ -19,6 +21,7 @@ const store = createStore(
     readerReducer,
     search: searchReducer,
     documents: documentsReducer,
+    documentList: documentListReducer,
     annotationLayer: annotationLayerReducer
   }),
   composeEnhancers(

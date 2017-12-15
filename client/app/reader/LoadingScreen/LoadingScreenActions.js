@@ -6,10 +6,3 @@ export const setLoadedVacolsId = (vacolsId) => ({
     vacolsId
   }
 });
-
-export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
-  type: Constants.RECEIVE_MANIFESTS,
-  payload: { manifestVbmsFetchedAt,
-    manifestVvaFetchedAt }
-});
-
