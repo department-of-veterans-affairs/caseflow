@@ -1,12 +1,14 @@
-import _ from 'lodash';
 import { getUpdatedFilteredResults } from './searchFilters';
 
 import {
   HIDE_ERROR_MESSAGE,
   SHOW_ERROR_MESSAGE,
-  UPDATE_FILTERED_RESULTS,
-  ASSIGN_DOCUMENTS
+  UPDATE_FILTERED_RESULTS
 } from './constants';
+
+import {
+  ASSIGN_DOCUMENTS
+} from './Documents/actionTypes';
 
 // errors
 
@@ -28,12 +30,7 @@ export const showErrorMessage = (messageType, errorMessage) => ({
 // Apply filters
 
 export const updateFilteredIdsAndDocs = () => (dispatch, getState) => {
-  const { annotationLayer, readerReducer } = getState();
-
-  const filteredResults = getUpdatedFilteredResults(_.assign({},
-    { ...readerReducer },
-    { ...annotationLayer }
-  ));
+  const filteredResults = getUpdatedFilteredResults(getState());
 
   dispatch({
     type: ASSIGN_DOCUMENTS,

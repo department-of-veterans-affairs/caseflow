@@ -1,8 +1,6 @@
 import * as Constants from '../constants';
-import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import { categoryFieldNameOfCategoryName } from '../utils';
-import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
+import { CATEGORIES } from '../analytics';
+import { updateFilteredIdsAndDocs } from '../commonActions';
 
 // Table header actions
 
@@ -76,47 +74,6 @@ export const toggleDropdownFilterVisibility = (filterName) => ({
     }
   }
 });
-
-export const toggleDocumentCategoryFail = (docId, categoryKey, categoryValueToRevertTo) =>
-  (dispatch) => {
-    dispatch(showErrorMessage('category'));
-    dispatch({
-      type: Constants.TOGGLE_DOCUMENT_CATEGORY_FAIL,
-      payload: {
-        docId,
-        categoryKey,
-        categoryValueToRevertTo
-      }
-    });
-  };
-
-export const handleCategoryToggle = (docId, categoryName, toggleState) => (dispatch) => {
-  const categoryKey = categoryFieldNameOfCategoryName(categoryName);
-
-  ApiUtil.patch(
-    `/document/${docId}`,
-    { data: { [categoryKey]: toggleState } },
-    ENDPOINT_NAMES.DOCUMENT
-  ).catch(() =>
-    dispatch(toggleDocumentCategoryFail(docId, categoryKey, !toggleState))
-  );
-  dispatch(hideErrorMessage('category'));
-  dispatch({
-    type: Constants.TOGGLE_DOCUMENT_CATEGORY,
-    payload: {
-      categoryKey,
-      toggleState,
-      docId
-    },
-    meta: {
-      analytics: {
-        category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-        action: `${toggleState ? 'set' : 'unset'} document category`,
-        label: categoryName
-      }
-    }
-  });
-};
 
 // Tag filters
 
@@ -214,20 +171,6 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'set-viewing-documents-or-comments',
       label: documentsOrComments
-    }
-  }
-});
-
-export const handleToggleCommentOpened = (docId) => ({
-  type: Constants.TOGGLE_COMMENT_LIST,
-  payload: {
-    docId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'toggle-comment-list',
-      label: (nextState) => nextState.readerReducer.documents[docId].listComments ? 'open' : 'close'
     }
   }
 });

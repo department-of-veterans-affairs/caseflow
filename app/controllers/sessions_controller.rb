@@ -43,6 +43,7 @@ class SessionsController < ApplicationController
     # :nocov:
     # The presence of the regional_office field is used to mark a user as logged in.
     session[:regional_office] = current_user.regional_office = regional_office.upcase
+    current_user.update(selected_regional_office: regional_office.upcase)
     render json: {}
   end
 

@@ -19,11 +19,11 @@ import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
-import { toggleCancelModal, submitCancel } from './redux/actions';
+import { toggleCancelModal, submitCancel } from './actions/common';
 
 class IntakeFrame extends React.PureComponent {
   handleSubmitCancel = () => (
-    this.props.submitCancel(this.props.rampElection)
+    this.props.submitCancel(this.props.intakeId)
   )
 
   render() {
@@ -163,9 +163,9 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus, cancelModalVisible, rampElection }) => ({
+  ({ veteran, requestStatus, cancelModalVisible, intakeId }) => ({
     veteran,
-    rampElection,
+    intakeId,
     cancelModalVisible,
     requestStatus
   }),

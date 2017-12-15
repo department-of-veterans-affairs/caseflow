@@ -102,6 +102,7 @@ class Hearing < ActiveRecord::Base
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
+    :sanitized_vbms_id, \
     to: :appeal, allow_nil: true
 
   def to_hash
@@ -134,7 +135,8 @@ class Hearing < ActiveRecord::Base
                 :appellant_state,
                 :military_service,
                 :appellant_mi_formatted,
-                :veteran_mi_formatted]
+                :veteran_mi_formatted,
+                :sanitized_vbms_id]
     ).merge(to_hash)
   end
 
