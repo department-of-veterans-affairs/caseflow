@@ -141,7 +141,7 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
   case Constants.CLEAR_ALL_FILTERS:
-    return update(state,{
+    return update(state, {
       docFilterCriteria: {
         category: {
           $set: {}
