@@ -1,16 +1,22 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
 import Button from '../../components/Button';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setFormType } from '../redux/actions';
-import { FORMS } from '../constants';
+import { setFormType } from '../actions/common';
+import { FORM_TYPES, PAGE_PATHS } from '../constants';
 import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = _.map(FORMS, (name, key) => ({ value: key,
-      displayText: name }));
+    const radioOptions = _.map(FORM_TYPES,
+      (form) => ({ value: form.key,
+        displayText: form.name }));
+
+    if (this.props.intakeId) {
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
+    }
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
@@ -30,8 +36,9 @@ class SelectForm extends React.PureComponent {
 }
 
 export default connect(
-  (state) => ({
-    formType: state.formType
+  ({ intake }) => ({
+    formType: intake.formType,
+    intakeId: intake.id
   }),
   (dispatch) => bindActionCreators({
     setFormType
@@ -55,5 +62,5 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ formType }) => ({ formType }),
+  ({ intake }) => ({ formType: intake.formType }),
 )(SelectFormButtonUnconnected);

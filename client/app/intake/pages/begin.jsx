@@ -4,9 +4,9 @@ import Alert from '../../components/Alert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { doFileNumberSearch, setFileNumberSearch } from '../redux/actions';
+import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
-import { getRampElectionStatus } from '../redux/selectors';
+import { getRampElectionStatus } from '../selectors';
 
 const rampIneligibleInstructions = <div>
   <p>
@@ -120,11 +120,11 @@ class Begin extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    fileNumberSearchInput: state.inputs.fileNumberSearch,
-    fileNumberSearchRequestStatus: state.requestStatus.fileNumberSearch,
     rampElectionStatus: getRampElectionStatus(state),
-    searchErrorCode: state.searchErrorCode,
-    searchErrorData: state.searchErrorData
+    fileNumberSearchInput: state.intake.fileNumberSearch,
+    fileNumberSearchRequestStatus: state.intake.requestStatus.fileNumberSearch,
+    searchErrorCode: state.intake.searchErrorCode,
+    searchErrorData: state.intake.searchErrorData
   }),
   (dispatch) => bindActionCreators({
     doFileNumberSearch,

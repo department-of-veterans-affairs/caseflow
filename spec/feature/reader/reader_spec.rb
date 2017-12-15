@@ -346,7 +346,7 @@ RSpec.feature "Reader" do
         end
       end
 
-      scenario "with mutiple appeals" do
+      scenario "with multiple appeals" do
         visit "/reader/appeal"
         fill_in "searchBar", with: (appeal4.vbms_id + "\n")
 
@@ -492,6 +492,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
+      expect(page.find('#comments-header')).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
@@ -1268,6 +1269,16 @@ RSpec.feature "Reader" do
         appeal_id: appeal.id,
         query: "BVA"
       )
+    end
+
+    scenario "Document viewer when doc list is filtered" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      fill_in "searchBar", with: documents[0].type
+      click_on documents[0].type
+
+      expect(page).to have_no_selector("#button-next")
+      expect(page).to have_no_selector("#button-previous")
+      expect(page).to have_content("Back to claims")
     end
 
     scenario "When user search term is not found" do

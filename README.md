@@ -87,7 +87,7 @@ To see the worker view, you need the following role: [Establish Claim].
 From this view you can start a new task and go through the flow of establishing a claim.
 
 ## Running Caseflow connected to external depedencies
-To test the app connected to external dependencies follow
+To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
 
 ### Set up Oracle
 First you'll need to install the libraries required to connect to the VACOLS Oracle database:
@@ -104,6 +104,8 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 ```
 
+If you prefer to use Homebrew, see the documentation on the [appeals-data](https://github.com/department-of-veterans-affairs/appeals-data#installing-roracle) repo.
+
 #### Windows
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
 
@@ -111,33 +113,54 @@ sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib
 
 3) Add `[DIR]` to your `PATH`
 
-### Linux
+#### Linux
 Note: This has only been tested on Debian based OS. However, it should also work
 for Fedora based OS.
+
  1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
 
  1. Unzip both packages into `/opt/oracle/instantclient_11_2`
 
  1. Setup both packages according to the Oracle documentation:
+ 
 ```sh
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
 
+### Environment variables
+
+We'll need to obtain the Ansible vault password using credstash:
+
+```sh
+export VAULT_PASSWORD=$(credstash -t appeals-credstash get devops.vault_pass)
+```
+
+Clone the [appeals-deployment](https://github.com/department-of-veterans-affairs/appeals-deployment/) repo, and run:
+
+```sh
+./decrypt.sh $VAULT_PASSWORD
+```
+
+In order to load these environment variables, run:
+
+```sh
+source /path/to/appeals-deployment/decrypted/uat/env.sh
+```
+
+### Install staging gems
+Install the gems required to run the app connected to VBMS and VACOLS:
+
+```sh
+bundle install --with staging
+```
+
 ### Run the app
-Now you'll be able to install the gems required to run the app connected to VBMS and VACOLS:
-    bundle install --with staging
 
-Set the development VACOLS credentials as environment variables.
-(ask a team member for them)
+```sh
+rails s -e staging
 ```
-export VACOLS_USERNAME=username
-export VACOLS_PASSWORD=secret_password
-```
-
-Finally, just run Rails in the staging environment!
-    rails s -e staging
 
 ## Changing between test users
 Select 'Switch User' from the dropdown or navigate to

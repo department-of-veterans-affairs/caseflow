@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171206005110) do
+ActiveRecord::Schema.define(version: 20171212231913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -302,6 +302,16 @@ ActiveRecord::Schema.define(version: 20171206005110) do
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
+  create_table "ramp_refilings", force: :cascade do |t|
+    t.string  "veteran_file_number",      null: false
+    t.integer "ramp_election_id"
+    t.string  "option_selected"
+    t.date    "receipt_date"
+    t.string  "end_product_reference_id"
+  end
+
+  add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree
+
   create_table "reader_users", force: :cascade do |t|
     t.integer  "user_id",              null: false
     t.datetime "documents_fetched_at"
@@ -356,11 +366,12 @@ ActiveRecord::Schema.define(version: 20171206005110) do
   add_index "user_quotas", ["team_quota_id", "user_id"], name: "index_user_quotas_on_team_quota_id_and_user_id", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string "station_id", null: false
-    t.string "css_id",     null: false
+    t.string "station_id",               null: false
+    t.string "css_id",                   null: false
     t.string "full_name"
     t.string "email"
-    t.string "roles",                   array: true
+    t.string "roles",                                 array: true
+    t.string "selected_regional_office"
   end
 
   add_index "users", ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true, using: :btree
