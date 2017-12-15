@@ -53,11 +53,8 @@ const httpMethods = {
     let promise = request.
       get(url).
       set(getHeadersObject(options.headers)).
-      query(options.query);
-
-    if (options.timeout) {
-      promise.timeout(timeoutSettings);
-    }
+      query(options.query).
+      timeout(timeoutSettings);
 
     if (options.responseType) {
       promise.responseType(options.responseType);
