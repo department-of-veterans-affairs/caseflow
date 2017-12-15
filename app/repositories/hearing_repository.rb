@@ -8,7 +8,11 @@ class HearingRepository
         VACOLS::CaseHearing.upcoming_for_judge(css_id) +
           VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
       end
-      hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
+      hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
+      hearings_appeals = hearings.map(&:appeal)
+      hearings_appeals_issues = VACOLS::CaseIssue.descriptions(hearings_appeals.map(&:vacols_id))
+      hearings_appeals_issues.each { |i| WorksheetIssue.create_from_issue(self, i) }
+      hearings
     end
 
     def hearings_for_appeal(appeal_vacols_id)
