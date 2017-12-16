@@ -67,13 +67,12 @@ class RampElection < ActiveRecord::Base
   def fetch_established_end_product
     return nil unless end_product_reference_id
 
-    Veteran.new(file_number: veteran_file_number).end_products.find do |end_product|
+    result = Veteran.new(file_number: veteran_file_number).end_products.find do |end_product|
       end_product.claim_id == end_product_reference_id
-    end.tap do |result|
-      # All end_product_reference_ids should have a cooresponding end product.
-      # if not, throw an error so we know about it.
-      fail EstablishedEndProductNotFound unless result
     end
+
+    fail EstablishedEndProductNotFound unless result
+    result
   end
 
   def end_product
