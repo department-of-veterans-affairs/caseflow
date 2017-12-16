@@ -1,5 +1,6 @@
 class RampElection < ActiveRecord::Base
   class InvalidEndProductError < StandardError; end
+  class EstablishedEndProductNotFound < StandardError; end
 
   attr_reader :saving_receipt
 
@@ -57,7 +58,23 @@ class RampElection < ActiveRecord::Base
     where.not(end_product_reference_id: nil)
   end
 
+  def established_end_product
+    @established_end_product ||= fetch_established_end_product
+  end
+
   private
+
+  def fetch_established_end_product
+    return nil unless end_product_reference_id
+
+    Veteran.new(file_number: veteran_file_number).end_products.find do |end_product|
+      end_product.claim_id == end_product_reference_id
+    end.tap do |result|
+      # All end_product_reference_ids should have a cooresponding end product.
+      # if not, throw an error so we know about it.
+      fail EstablishedEndProductNotFound unless result
+    end
+  end
 
   def end_product
     @end_product ||= EndProduct.new(
