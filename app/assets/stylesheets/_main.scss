@@ -293,11 +293,6 @@ body {
   }
 }
 
-//candidate for commons
-.cf-red-text {
-  color: $color-secondary;
-}
-
 .cf-associated-header {
   color: $color-gray;
   font-size: 24px;
@@ -562,11 +557,6 @@ select {
 }
 
 // add to commons
-.cf-font-light {
-  font-weight: 300;
-}
-
-// add to commons
 .cf-form-textarea {
   margin-bottom: 40px;
 
@@ -670,7 +660,7 @@ select {
   color: $color-gray;
 }
 
-//candidate for commons
+//candidate for commons if used outside of main caseflow repo
 .usa-accordion-button {
   background-image: url(asset-path('minus.svg'));
 
@@ -679,14 +669,14 @@ select {
   }
 }
 
-//candidate for commons
+//candidate for commons if used outside of main caseflow repo
 .usa-accordion-bordered-outline {
   .usa-accordion-button {
     border: 1px solid $color-gray-light;
   }
 }
 
-//candidate for commons
+//candidate for commons if used outside of main caseflow repo
 .usa-accordion-bordered,
 .usa-accordion,
 .usa-accordion-bordered-outline {
@@ -698,11 +688,6 @@ select {
       color: $color-gray-dark;
     }
   }
-}
-
-// candidate for commons
-.usa-alert-heading {
-  font-family: 'Source Sans Pro';
 }
 
 .cf-work-assignments {
