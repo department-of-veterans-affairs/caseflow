@@ -20,10 +20,12 @@ import { formatDateStr } from '../../../app/util/DateUtil';
 import readerReducer from '../../../app/reader/reducer';
 import searchActionReducer from '../../../app/reader/reducers/searchActionReducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
-import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
-import documentsReducer from '../../../app/reader/DocumentList/DocumentsReducer';
+import annotationLayerReducer from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
+import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer';
+
+import documentsReducer from '../../../app/reader/Documents/DocumentsReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
-import { onReceiveDocs } from '../../../app/reader/LoadingScreen/LoadingScreenActions';
+import { onReceiveDocs } from '../../../app/reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from '../../../app/reader/AnnotationLayer/AnnotationActions';
 
 import sinon from 'sinon';
@@ -44,6 +46,7 @@ const getStore = () => createStore(
     searchActionReducer,
     search: searchReducer,
     documents: documentsReducer,
+    documentList: documentListReducer,
     annotationLayer: annotationLayerReducer
   }),
   compose(

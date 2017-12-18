@@ -36,8 +36,10 @@ class SelectForm extends React.PureComponent {
 }
 
 export default connect(
-  ({ formType, intakeId }) => ({ formType,
-    intakeId }),
+  ({ intake }) => ({
+    formType: intake.formType,
+    intakeId: intake.id
+  }),
   (dispatch) => bindActionCreators({
     setFormType
   }, dispatch)
@@ -60,5 +62,5 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ formType }) => ({ formType }),
+  ({ intake }) => ({ formType: intake.formType }),
 )(SelectFormButtonUnconnected);

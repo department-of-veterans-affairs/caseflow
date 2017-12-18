@@ -44,12 +44,3 @@ export const clearDocumentLoadError = (file) => ({
   type: Constants.CLEAR_DOCUMENT_LOAD_ERROR,
   payload: { file }
 });
-
-/** Rotate Pages **/
-
-export const rotateDocument = (docId) => ({
-  type: Constants.ROTATE_PDF_DOCUMENT,
-  payload: {
-    docId
-  }
-});

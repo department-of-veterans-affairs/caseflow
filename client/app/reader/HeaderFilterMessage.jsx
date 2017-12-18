@@ -50,7 +50,7 @@ HeaderFilterMessage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  viewingDocumentsOrComments: state.readerReducer.viewingDocumentsOrComments
+  viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderFilterMessage);

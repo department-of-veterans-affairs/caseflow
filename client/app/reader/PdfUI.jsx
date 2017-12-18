@@ -9,9 +9,9 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar, toggleSearchBar
+import { resetJumpToPage, togglePdfSidebar, toggleSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
-import { rotateDocument } from '../reader/Pdf/PdfActions';
+import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
@@ -285,7 +285,7 @@ const mapStateToProps = (state, props) => {
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
 
   return {
-    ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
+    ..._.pick(state.documentList, 'filteredDocIds'),
     docListIsFiltered: docListIsFiltered(state),
     loadError: state.readerReducer.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,

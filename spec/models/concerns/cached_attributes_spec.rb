@@ -62,6 +62,18 @@ describe CachedAttributes do
       end
     end
 
+    context "when value is nil" do
+      before do
+        model.clear_cached_attr!(:rating)
+        model.not_cached_rating = nil
+      end
+      it "does not cache" do
+        expect(model.rating).to eq(nil)
+        model.not_cached_rating = true
+        expect(model.rating).to eq(true)
+      end
+    end
+
     context "when cached value" do
       before do
         model.rating

@@ -7,10 +7,12 @@ import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 import searchActionReducer from './reducers/searchActionReducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
+import documentListReducer from './DocumentList/DocumentListReducer';
+
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
-import documentsReducer from './DocumentList/DocumentsReducer';
+import documentsReducer from './Documents/DocumentsReducer';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -21,6 +23,7 @@ const store = createStore(
     search: searchReducer,
     searchActionReducer,
     documents: documentsReducer,
+    documentList: documentListReducer,
     annotationLayer: annotationLayerReducer
   }),
   composeEnhancers(
