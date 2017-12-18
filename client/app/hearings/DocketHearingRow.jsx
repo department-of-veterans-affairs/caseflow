@@ -82,7 +82,7 @@ export class DocketHearingRow extends React.PureComponent {
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
-        <td className="cf-hearings-docket-actions" rowSpan="2">
+        <td className="cf-hearings-docket-actions" rowSpan="3">
           <SearchableDropdown
             label="Disposition"
             name={`${hearing.id}.disposition`}
@@ -115,6 +115,12 @@ export class DocketHearingRow extends React.PureComponent {
               onChange={this.setTranscriptRequested}
             />
           </div>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td colSpan="2">
+          {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
         </td>
       </tr>
       <tr>
