@@ -3,7 +3,6 @@ import { createSearchAction } from 'redux-search';
 
 import * as Constants from '../constants';
 
-
 export const getDocumentText = (pdfDocument, file) =>
   (dispatch) => {
     const getTextForPage = (index) => {
@@ -27,7 +26,7 @@ export const getDocumentText = (pdfDocument, file) =>
             text: concatenated,
             pageIndex
           }
-        }
+        };
       }, {});
 
       dispatch({
@@ -35,7 +34,7 @@ export const getDocumentText = (pdfDocument, file) =>
         payload: {
           textObject
         }
-      })
+      });
     });
   };
 

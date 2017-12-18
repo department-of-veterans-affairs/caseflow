@@ -195,7 +195,10 @@ export class PdfFile extends React.PureComponent {
       cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
     }
 
-    return { pageIndex: -1, relativeIndex: -1 };
+    return {
+      pageIndex: -1,
+      relativeIndex: -1
+    };
   }
 
   scrollToSearchTerm = (prevProps) => {
