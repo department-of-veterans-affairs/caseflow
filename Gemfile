@@ -30,6 +30,8 @@ gem 'active_model_serializers', '~> 0.10.0'
 # soft delete gem
 gem "paranoia", "~> 2.2"
 
+gem "dogapi" 
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
