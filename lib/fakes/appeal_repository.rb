@@ -148,7 +148,7 @@ class Fakes::AppealRepository
     end
   end
 
-  def self.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
+  def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
     appeals_by_vbms_id(vbms_id)
   end
 
@@ -499,6 +499,10 @@ class Fakes::AppealRepository
 
   def self.case_assignment_exists?(_vacols_id)
     true
+  end
+
+  def self.remand_return_date(_vacols_id)
+    2.days.ago
   end
 end
 # rubocop:enable Metrics/ClassLength

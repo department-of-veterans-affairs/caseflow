@@ -1,3 +1,5 @@
+require "dogapi"
+
 # Simple middleware that collects gauge metrics whenever
 # a GET /metrics request is made. This ensures we regularly
 # get a snapshot of instance information
@@ -31,6 +33,10 @@ class MetricsCollector
     PrometheusService.postgres_db_connections.set({ type: "active" }, active)
     PrometheusService.postgres_db_connections.set({ type: "dead" }, dead)
     PrometheusService.postgres_db_connections.set({ type: "idle" }, idle)
+
+    emit_datadog_point("postgres", "active", active)
+    emit_datadog_point("postgres", "dead", dead)
+    emit_datadog_point("postgres", "idle", idle)
   end
 
   def collect_vacols_metrics
@@ -42,5 +48,22 @@ class MetricsCollector
     PrometheusService.vacols_db_connections.set({ type: "active" }, active)
     PrometheusService.vacols_db_connections.set({ type: "dead" }, dead)
     PrometheusService.vacols_db_connections.set({ type: "idle" }, idle)
+
+    emit_datadog_point("vacols", "active", active)
+    emit_datadog_point("vacols", "dead", dead)
+    emit_datadog_point("vacols", "idle", idle)
+  end
+
+  def emit_datadog_point(db_name, type, count)
+    DataDogService.emit_datadog_point(
+      metric_group: "database",
+      metric_name: "#{type}_connections",
+      metric_value: count,
+      metric_type: "gauge",
+      app_name: "caseflow",
+      attrs: {
+        database: db_name
+      }
+    )
   end
 end

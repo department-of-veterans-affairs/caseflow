@@ -139,6 +139,14 @@ describe Appeal do
     it { is_expected.to be_truthy }
   end
 
+  context "#remand_return_date" do
+    subject { appeal.remand_return_date }
+
+    context "when the appeal is active" do
+      it { is_expected.to eq(nil) }
+    end
+  end
+
   context "#ssocs" do
     subject { appeal.ssocs }
 
