@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Button from '../components/Button';
+import DateSelector from '../components/DateSelector';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
@@ -57,6 +58,12 @@ export default class EditComment extends React.Component {
 
   render() {
     return <div>
+      <DateSelector
+        name="Relevant Date"
+        onChange={this.changeDate}
+        value={this.props.comment.relevant_date}
+        type="date"
+      />
       <textarea
         className="comment-container comment-textarea"
         name="Edit Comment"

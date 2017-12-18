@@ -133,7 +133,8 @@ export class PdfSidebar extends React.Component {
           uuid={comment.uuid}
           selected={comment.id === this.props.selectedAnnotationId}
           onClick={handleClick}
-          page={comment.page}>
+          page={comment.page}
+          date={comment.relevant_date}>
           {comment.comment}
         </Comment>
       </div>;

@@ -7,6 +7,7 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 // A regex that will match as much of a mm/dd/yyyy date as possible.
 // TODO (mdbenjam): modify this to not accept months like 13 or days like 34
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
+const HYPHENATED_DATE_REGEX = /(\d+)-(\d+)-(\d+)/g
 
 export default class DateSelector extends React.Component {
   dateFill = (initialValue) => {
@@ -22,6 +23,11 @@ export default class DateSelector extends React.Component {
       value = `${value}/`;
     } else if (propsValue.charAt(propsValue.length - 1) === '/') {
       value = value.substr(0, value.length - 1);
+    } else if (HYPHENATED_DATE_REGEX.exec(value)) {
+      // input type=date returns yyyy-mm-dd, convert to mm/dd/yyyy
+      const dateParts = HYPHENATED_DATE_REGEX.exec(value);
+
+      value = `${dateParts[2]}/${dateParts[3]}/${dateParts[1]}`;
     }
 
     // Test the input agains the date regex above. The regex matches
