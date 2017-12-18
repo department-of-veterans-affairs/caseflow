@@ -29,7 +29,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Hearing Prep")
+    verify_authorized_roles("Hearing Prep", "Reader")
   end
 
   def set_application

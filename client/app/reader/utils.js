@@ -130,7 +130,7 @@ export const isUserEditingText = () => _.some(
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let appealHasHearing = 7;
+  let appealHasHearing = claim.hearing;
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
