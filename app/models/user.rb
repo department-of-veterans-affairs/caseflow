@@ -102,7 +102,7 @@ class User < ActiveRecord::Base
     opened_appeals = viewed_appeals(appeals.map(&:id))
 
     appeals.map do |appeal|
-      hearing = Hearing.find_by(appeal_id: appeal.id)
+      hearing = Hearing.where(appeal_id: appeal.id)
       appeal.to_hash(viewed: opened_appeals[appeal.id], issues: appeal.issues, hearing: hearing)
     end
   end

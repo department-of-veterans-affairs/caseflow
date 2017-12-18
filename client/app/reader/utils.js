@@ -128,9 +128,26 @@ export const isUserEditingText = () => _.some(
   (elem) => document.activeElement === elem
 );
 
+export const GetHearingWorksheetLink = (claim) => {
+  let appealHearings = claim.hearing;
+
+  return (
+    <span>
+      {appealHearings.map((hearing, key) => {
+        return <a target="_blank"href={`/hearings/${hearing.id}/worksheet/print`} key={key}>Hearing Worksheet
+          <span className="hearing-date">
+            {moment(appealHearings.date).format('l')}
+            <DownloadIcon className="downloader" />
+          </span>
+        </a>;
+      })}
+    </span>
+  );
+};
+
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let appealHasHearing = claim.hearing;
+  let appealHasHearing = claim.hearing.length > 0;
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -142,18 +159,7 @@ export const getClaimTypeDetailInfo = (claim) => {
 
   return <div className="claim-detail-container">
     <span className="claim-detail-type-info">{appealTypeInfo}</span>
-
-    {appealHasHearing &&
-      <span>
-        <a target="_blank" href={`/hearings/${appealHasHearing.id}/worksheet/print`}>
-          Hearing Worksheet
-          <span className="hearing-date">
-            {moment(appealHasHearing.date).format('l')}
-            <DownloadIcon className="downloader" />
-          </span>
-        </a>
-      </span>
-    }
+    { appealHasHearing && <GetHearingWorksheetLink /> }
   </div>;
 };
 

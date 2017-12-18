@@ -468,7 +468,7 @@ class Appeal < ActiveRecord::Base
       hash["viewed"] = viewed
       hash["issues"] = issues
       hash["regional_office"] = regional_office_hash
-      hash["hearing"] = hearing ? hearing.to_hash : nil
+      hash["hearing"] = hearing ? hearing : nil
     end
   end
 
