@@ -18,6 +18,7 @@ import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
+import searchActionReducer from '../../../app/reader/reducers/searchActionReducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
 import documentsReducer from '../../../app/reader/DocumentList/DocumentsReducer';
@@ -40,6 +41,7 @@ const getStore = () => createStore(
   combineReducers({
     caseSelect: caseSelectReducer,
     readerReducer,
+    searchActionReducer,
     search: searchReducer,
     documents: documentsReducer,
     annotationLayer: annotationLayerReducer

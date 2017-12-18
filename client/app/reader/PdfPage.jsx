@@ -5,7 +5,8 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPageDimensions, setSearchIndexToHighlight } from '../reader/Pdf/PdfActions';
+import { setPageDimensions } from '../reader/Pdf/PdfActions';
+import { setSearchIndexToHighlight } from './Pdf/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -53,11 +54,11 @@ export class PdfPage extends React.PureComponent {
   };
 
   highlightMarkAtIndex = (scrollToMark) => {
-    if (this.props.search.pageIndex !== this.props.pageIndex) {
+    if (this.props.pageIndexWithMatch !== this.props.pageIndex) {
       return;
     }
 
-    const selectedMark = this.marks[this.props.search.relativeIndex];
+    const selectedMark = this.marks[this.props.relativeIndex];
 
     if (selectedMark) {
       selectedMark.classList.add('highlighted');
@@ -70,7 +71,7 @@ export class PdfPage extends React.PureComponent {
       }
     } else {
       console.error('selectedMark not found in DOM: ' +
-        `${this.props.search.relativeIndex} on pg ${this.props.search.pageIndex} (${this.props.currentMatchIndex})`);
+        `${this.props.relativeIndex} on pg ${this.props.pageIndex} (${this.props.currentMatchIndex})`);
     }
   }
 
@@ -330,7 +331,7 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar,
-    ..._.pick(state.readerReducer, 'search')
+    ...state.searchActionReducer
   };
 };
 

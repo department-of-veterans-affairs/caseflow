@@ -96,12 +96,6 @@ export const initialState = {
   pdfDocuments: {},
   documentErrors: {},
   text: [],
-  search: {
-    index: 0,
-    indexToHighlight: null,
-    relativeIndex: 0,
-    pageIndex: null
-  },
   extractedText: {}
 };
 
@@ -439,70 +433,6 @@ export const reducer = (state = initialState, action = {}) => {
       {
         extractedText: {
           $merge: action.payload.textObject
-        }
-      }
-    );
-  case Constants.ZERO_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        search: {
-          index: {
-            $set: 0
-          }
-        }
-      }
-    );
-  case Constants.UPDATE_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        search: {
-          index: {
-            $apply: (index) => action.payload.increment ? index + 1 : index - 1
-          }
-        }
-      }
-    );
-  case Constants.SET_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        search: {
-          index: {
-            $set: action.payload.index
-          }
-        }
-      }
-    );
-  case Constants.SET_SEARCH_INDEX_TO_HIGHLIGHT:
-    return update(
-      state,
-      {
-        search: {
-          indexToHighlight: {
-            $set: action.payload.index
-          }
-        }
-      }
-    );
-  case Constants.UPDATE_SEARCH_INDEX_PAGE_INDEX:
-    return update(state,
-      {
-        search: {
-          pageIndex: {
-            $set: action.payload.index
-          }
-        }
-      }
-    );
-  case Constants.UPDATE_SEARCH_RELATIVE_INDEX:
-    return update(state,
-      {
-        search: {
-          relativeIndex: {
-            $set: action.payload.index
-          }
         }
       }
     );

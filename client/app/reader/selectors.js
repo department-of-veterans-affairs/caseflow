@@ -108,7 +108,7 @@ export const getTotalMatchesInFile = createSelector(
     sum()
 );
 
-const getSelectedIndex = (state) => state.readerReducer.search.index;
+const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;
 
 export const getCurrentMatchIndex = createSelector(
   [getTotalMatchesInFile, getSelectedIndex],

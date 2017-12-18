@@ -5,6 +5,7 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
+import searchActionReducer from './reducers/searchActionReducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
@@ -18,6 +19,7 @@ const store = createStore(
     caseSelect: caseSelectReducer,
     readerReducer,
     search: searchReducer,
+    searchActionReducer,
     documents: documentsReducer,
     annotationLayer: annotationLayerReducer
   }),

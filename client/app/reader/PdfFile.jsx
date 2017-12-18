@@ -8,8 +8,9 @@ import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
-import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError,
-  updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/Pdf/PdfActions';
+import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
+} from '../reader/Pdf/PdfActions';
+import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/Pdf/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
