@@ -43,6 +43,10 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   svg {
     position: absolute;
     margin: 3px;
+
+    g {
+      fill: $color-primary;
+    }
   }
 
   .hearing-date {
@@ -636,6 +640,10 @@ svg[aria-hidden=true],
 
 [type="button"].cf-pdf-download-icon {
   margin-left: 0;
+
+  svg g {
+    fill: $color-white;
+  }
 }
 
 // scss-lint:disable QualifyingElement
