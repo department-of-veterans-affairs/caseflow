@@ -10,7 +10,7 @@ import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
 import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../actions/rampElection';
 import { bindActionCreators } from 'redux';
-import { getRampElectionStatus } from '../redux/selectors';
+import { getRampElectionStatus } from '../selectors';
 import _ from 'lodash';
 
 const submitText = 'Finish intake';
@@ -48,9 +48,16 @@ class Finish extends React.PureComponent {
   }
 
   render() {
-    const { rampElection, appeals, requestState } = this.props;
+    const {
+      optionSelected,
+      rampElectionStatus,
+      appeals,
+      requestState,
+      finishConfirmed,
+      finishConfirmedError
+    } = this.props;
 
-    switch (this.props.rampElectionStatus) {
+    switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     case RAMP_INTAKE_STATES.STARTED:
@@ -62,7 +69,7 @@ class Finish extends React.PureComponent {
 
     let optionName;
 
-    if (this.props.rampElection.optionSelected === 'supplemental_claim') {
+    if (optionSelected === 'supplemental_claim') {
       optionName = 'Supplemental Claim';
     } else {
       optionName = 'Higher-Level Review';
@@ -103,9 +110,9 @@ class Finish extends React.PureComponent {
         label="I've completed the above steps outside Caseflow."
         name="confirm-finish"
         required
-        value={rampElection.finishConfirmed}
+        value={finishConfirmed}
         onChange={this.props.confirmFinishIntake}
-        errorMessage={rampElection.finishConfirmedError}
+        errorMessage={finishConfirmedError}
       />
     </div>;
   }
@@ -113,7 +120,7 @@ class Finish extends React.PureComponent {
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
-    this.props.completeIntake(this.props.rampElection).then(
+    this.props.completeIntake(this.props.intakeId, this.props.rampElection).then(
       (completeWasSuccessful) => {
         if (completeWasSuccessful) {
           this.props.history.push('/completed');
@@ -134,8 +141,9 @@ class FinishNextButton extends React.PureComponent {
 }
 
 const FinishNextButtonConnected = connect(
-  ({ rampElection, requestStatus }) => ({
-    requestState: requestStatus.completeIntake,
+  ({ rampElection, intake }) => ({
+    requestState: rampElection.requestStatus.completeIntake,
+    intakeId: intake.id,
     rampElection
   }),
   (dispatch) => bindActionCreators({
@@ -153,10 +161,12 @@ export class FinishButtons extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    rampElection: state.rampElection,
-    appeals: state.appeals,
-    requestState: state.requestStatus.completeIntake,
-    rampElectionStatus: getRampElectionStatus(state)
+    optionSelected: state.rampElection.optionSelected,
+    finishConfirmed: state.rampElection.finishConfirmed,
+    finishConfirmedError: state.rampElection.finishConfirmedError,
+    rampElectionStatus: getRampElectionStatus(state),
+    appeals: state.rampElection.appeals,
+    requestState: state.rampElection.requestStatus.completeIntake
   }),
   (dispatch) => bindActionCreators({
     confirmFinishIntake

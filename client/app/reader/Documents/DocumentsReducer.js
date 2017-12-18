@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../constants';
+import { SET_VIEWING_DOCUMENTS_OR_COMMENTS, DOCUMENTS_OR_COMMENTS_ENUM } from '../DocumentList/actionTypes';
 
 export const initialState = {};
 
@@ -36,7 +36,7 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
+  case SET_VIEWING_DOCUMENTS_OR_COMMENTS:
     return _.mapValues(state, (doc) => ({
       ...doc,
       listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS

@@ -44,13 +44,6 @@ export const handleSelectCommentIcon = (comment) => (dispatch) => {
   });
 };
 
-export const handleSetLastRead = (docId) => ({
-  type: Constants.LAST_READ_DOCUMENT,
-  payload: {
-    docId
-  }
-});
-
 /** Scrolling **/
 
 export const setDocScrollPosition = (scrollTop) => ({

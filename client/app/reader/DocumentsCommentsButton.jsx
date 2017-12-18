@@ -4,7 +4,7 @@ import ToggleButton from '../components/ToggleButton';
 import Button from '../components/Button';
 import { connect } from 'react-redux';
 import { setViewingDocumentsOrComments } from '../reader/DocumentList/DocumentListActions';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from './constants';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 class DocumentsCommentsButton extends PureComponent {
   render = () => <div className="cf-documents-comments-control">
@@ -25,7 +25,7 @@ class DocumentsCommentsButton extends PureComponent {
 
 export default connect(
   (state) => ({
-    viewingDocumentsOrComments: state.readerReducer.viewingDocumentsOrComments
+    viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
   }),
   (dispatch) => bindActionCreators({
     setViewingDocumentsOrComments
