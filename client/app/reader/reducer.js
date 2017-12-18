@@ -91,12 +91,10 @@ export const initialState = {
     manifestVbmsFetchedAt: null,
     manifestVvaFetchedAt: null
   },
-
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
-  text: [],
-  extractedText: {}
+  text: []
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -427,15 +425,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.GET_DOCUMENT_TEXT:
-    return update(
-      state,
-      {
-        extractedText: {
-          $merge: action.payload.textObject
-        }
-      }
-    );
   case Constants.SET_LOADED_APPEAL_ID:
     return update(state, {
       loadedAppealId: {

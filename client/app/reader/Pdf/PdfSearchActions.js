@@ -45,13 +45,6 @@ export const updateSearchIndex = (increment) => ({
   }
 });
 
-export const zeroSearchIndex = () => ({
-  type: Constants.SET_SEARCH_INDEX,
-  payload: {
-    index: 0
-  }
-});
-
 export const setSearchIndex = (index) => ({
   type: Constants.SET_SEARCH_INDEX,
   payload: {
@@ -81,6 +74,6 @@ export const updateSearchRelativeIndex = (index) => ({
 });
 
 export const searchText = (searchTerm) => (dispatch) => {
-  dispatch(zeroSearchIndex());
+  dispatch(setSearchIndex(0));
   dispatch(createSearchAction('extractedText')(searchTerm));
 };

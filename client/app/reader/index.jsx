@@ -35,7 +35,7 @@ const store = createStore(
       resourceSelector: (resourceName, state) => {
         // In our example, all resources are stored in the state under a :resources Map
         // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
+        return state.searchActionReducer[resourceName];
       }
     })
   )

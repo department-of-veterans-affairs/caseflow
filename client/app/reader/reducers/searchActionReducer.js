@@ -5,7 +5,8 @@ const initialState = {
   matchIndex: 0,
   indexToHighlight: null,
   relativeIndex: 0,
-  pageIndexWithMatch: null
+  pageIndexWithMatch: null,
+  extractedText: {}
 };
 
 export default function searchReducer(state = initialState, action = {}) {
@@ -38,6 +39,12 @@ export default function searchReducer(state = initialState, action = {}) {
     return update(state, {
       relativeIndex: {
         $set: action.payload.index
+      }
+    });
+  case Constants.GET_DOCUMENT_TEXT:
+    return update(state, {
+      extractedText: {
+        $merge: action.payload.textObject
       }
     });
   default:
