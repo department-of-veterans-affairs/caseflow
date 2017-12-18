@@ -49,14 +49,10 @@ export class HearingWorksheet extends React.PureComponent {
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
-  openEfolderInNewWindow = () => {
-    window.open(`/reader/appeal/${this.props.worksheet.appeal_vacols_id}/documents`,
-      'openEfolder',
-      'resizable=yes,scrollbars=yes,location=0,titlebar=yes,menubar=no');
-  }
 
   render() {
     let { worksheet } = this.props;
+    let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
     const appellant = worksheet.appellant_mi_formatted ?
       worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
@@ -126,8 +122,9 @@ export class HearingWorksheet extends React.PureComponent {
         </Link>
         <Link
           name="review-efolder"
-          onClick={this.openEfolderInNewWindow}
-          button="primary">
+          href={`${readerLink}?category=case_summary`}
+          button="primary"
+          target="_blank">
             Review eFolder</Link>
       </div>
       }
