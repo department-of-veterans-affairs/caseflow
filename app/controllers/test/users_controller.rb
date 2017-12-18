@@ -66,22 +66,23 @@ class Test::UsersController < ApplicationController
 
   # Set end products in DEMO
   def set_end_products
-    case params[:type]
-    when "full"
-      BGSService.end_product_data = BGSService.existing_full_grants
-    when "partial"
-      BGSService.end_product_data = BGSService.existing_partial_grants
-    when "none"
-      BGSService.end_product_data = BGSService.no_grants
-    when "all"
-      BGSService.end_product_data = BGSService.all_grants
-    end
+    BGSService.end_product_records[:default] = new_default_end_products
 
     render nothing: true, status: 200
   end
 
   def require_demo
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  private
+
+  def new_default_end_products
+    {
+      "full" => BGSService.existing_full_grants,
+      "partial" => BGSService.existing_partial_grants,
+      "all" => BGSService.all_grants
+    }[params[:type]] || BGSService.no_grants
   end
   # :nocov:
 end

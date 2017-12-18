@@ -1,6 +1,13 @@
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import { CATEGORIES } from '../analytics';
 import { updateFilteredIdsAndDocs } from '../commonActions';
+
+export const handleSetLastRead = (docId) => ({
+  type: Constants.LAST_READ_DOCUMENT,
+  payload: {
+    docId
+  }
+});
 
 // Table header actions
 
@@ -15,7 +22,7 @@ export const changeSortState = (sortBy) => (dispatch) => {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
         action: 'change-sort-by',
         label: (nextState) => {
-          const direction = nextState.readerReducer.ui.docFilterCriteria.sort.sortAscending ?
+          const direction = nextState.documentList.docFilterCriteria.sort.sortAscending ?
             'ascending' : 'descending';
 
           return `${sortBy}-${direction}`;
@@ -173,4 +180,10 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
       label: documentsOrComments
     }
   }
+});
+
+export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+  type: Constants.RECEIVE_MANIFESTS,
+  payload: { manifestVbmsFetchedAt,
+    manifestVvaFetchedAt }
 });

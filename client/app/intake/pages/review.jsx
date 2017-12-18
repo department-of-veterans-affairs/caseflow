@@ -18,7 +18,7 @@ class Review extends React.PureComponent {
 }
 
 export default connect(
-  ({ formType }) => ({ formType })
+  ({ intake }) => ({ formType: intake.formType })
 )(Review);
 
 class ReviewButtonsUnconnected extends React.PureComponent {
@@ -32,6 +32,6 @@ class ReviewButtonsUnconnected extends React.PureComponent {
 }
 
 export const ReviewButtons = connect(
-  ({ formType }) => ({ formType })
+  ({ intake }) => ({ formType: intake.formType })
 )(ReviewButtonsUnconnected);
 
