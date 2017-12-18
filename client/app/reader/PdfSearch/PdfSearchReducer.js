@@ -1,5 +1,5 @@
 import { update } from '../../util/ReducerUtil';
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 
 const initialState = {
   matchIndex: 0,

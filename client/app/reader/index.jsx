@@ -5,7 +5,7 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
-import searchActionReducer from './reducers/searchActionReducer';
+import searchActionReducer from './PdfSearch/PdfSearchReducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import documentListReducer from './DocumentList/DocumentListReducer';
 

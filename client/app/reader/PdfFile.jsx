@@ -10,7 +10,7 @@ import StatusMessage from '../components/StatusMessage';
 import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
 } from '../reader/Pdf/PdfActions';
-import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/Pdf/PdfSearchActions';
+import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
@@ -216,15 +216,10 @@ export class PdfFile extends React.PureComponent {
       this.scrollToScrollTop(pageIndex);
     } else if (currentMatchChanged || searchTextChanged) {
       this.props.updateSearchRelativeIndex(relativeIndex);
+      this.props.updateSearchIndexPage(pageIndex);
 
-      if (pageIndex !== this.getPageIndexofMatch(prevProps.currentMatchIndex).pageIndex || searchTextChanged) {
-        // scroll to mark page before highlighting--may not be in DOM
-        this.list.scrollToRow(pageIndex);
-        this.props.updateSearchIndexPage(pageIndex);
-      } else if (currentMatchChanged) {
-        // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
-        this.list.scrollToRow(pageIndex);
-      }
+      // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
+      this.list.scrollToRow(pageIndex);
     }
   }
 

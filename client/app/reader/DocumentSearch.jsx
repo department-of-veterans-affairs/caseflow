@@ -9,7 +9,7 @@ import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex
-} from '../reader/Pdf/PdfSearchActions';
+} from '../reader/PdfSearch/PdfSearchActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { READER_COLOR } from './constants';

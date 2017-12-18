@@ -6,7 +6,7 @@ import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { setPageDimensions } from '../reader/Pdf/PdfActions';
-import { setSearchIndexToHighlight } from './Pdf/PdfSearchActions';
+import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -154,9 +154,6 @@ export class PdfPage extends React.PureComponent {
 
         if (this.props.matchesPerPage.length || searchTextChanged) {
           this.markText(currentMatchIdxChanged || searchTextChanged);
-        } else {
-          _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
-          this.highlightMarkAtIndex(currentMatchIdxChanged);
         }
       }
     }

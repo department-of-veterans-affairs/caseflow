@@ -18,7 +18,7 @@ import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
-import searchActionReducer from '../../../app/reader/reducers/searchActionReducer';
+import searchActionReducer from '../../../app/reader/PdfSearch/PdfSearchReducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import annotationLayerReducer from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
 import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer';
