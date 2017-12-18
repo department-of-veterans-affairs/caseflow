@@ -45,6 +45,10 @@ class WorksheetFormEntry extends React.PureComponent {
   }
 }
 export class HearingWorksheet extends React.PureComponent {
+  componentDidMount() {
+    document.title = `${this.props.worksheet.appellant_mi_formatted}'s Hearing Worksheet`;
+  }
+
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
   onEvidenceChange = (event) => this.props.onEvidenceChange(event.target.value);

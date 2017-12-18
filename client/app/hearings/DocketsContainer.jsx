@@ -20,6 +20,9 @@ export class DocketsContainer extends React.Component {
   };
 
   componentDidMount() {
+
+    document.title = 'Upcoming Hearing Days';
+
     if (!this.props.upcomingHearings) {
       this.getUpcomingHearings();
     }
