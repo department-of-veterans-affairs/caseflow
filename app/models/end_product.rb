@@ -2,6 +2,7 @@ class EndProduct
   include ActiveModel::Model
   include ActiveModel::Validations
 
+  # NOTE: This is not a comprehensive list of possible statuses
   STATUSES = {
     "PEND" => "Pending",
     "CLR" => "Cleared",

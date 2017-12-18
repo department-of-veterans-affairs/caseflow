@@ -6,8 +6,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
 
-    BGSService.end_product_data = []
-
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
@@ -594,22 +592,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(task.reload.completion_status).to eq("special_issue_emailed")
       end
 
-      # :nocov:
-      context "When there is an existing 070 EP",
-              skip: "This test hangs somewhat regularly for unknown reasons" do
-        before do
-          BGSService.end_product_data = [
-            {
-              benefit_claim_id: "1",
-              claim_receive_date: 10.days.ago.to_formatted_s(:short_date),
+      context "When there is an existing 070 EP" do
+        let!(:end_product) do
+          Generators::EndProduct.build(
+            bgs_attrs: {
               claim_type_code: "070BVAGRARC",
               end_product_type_code: "070",
               status_type_code: "PEND"
             }
-          ]
+          )
         end
 
-        skip "Assigning it to complete the claims establishment" do
+        scenario "Assigning it to complete the claims establishment" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
@@ -620,13 +614,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           expect(page).to have_content("Success!")
 
-          expect(task.reload.outgoing_reference_id).to eq("1")
+          expect(task.reload.outgoing_reference_id).to eq(end_product.claim_id)
           expect(task.reload.completion_status).to eq("assigned_existing_ep")
         end
       end
     end
-
-    # :nocov:
 
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
@@ -802,16 +794,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       context "When there is an existing 070 EP" do
-        before do
-          BGSService.end_product_data = [
-            {
-              benefit_claim_id: "2",
-              claim_receive_date: 10.days.from_now.to_formatted_s(:short_date),
+        let!(:end_product) do
+          Generators::EndProduct.build(
+            bgs_attrs: {
               claim_type_code: "070RMND",
               end_product_type_code: "070",
               status_type_code: "PEND"
             }
-          ]
+          )
         end
 
         scenario "Establish a new claim defaults to creating a 071 EP" do
