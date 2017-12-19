@@ -7,9 +7,9 @@
 // The application name as defined in appeals-deployment aws-config.yml
 def APP_NAME = 'certification';
 
-// The application version to checkout.
+// The application version to check out.
 // See http://docs.ansible.com/ansible/git_module.html version field
-def APP_VERSION = 'HEAD'
+def APP_VERSION = env.APP_VERSION ?: 'HEAD';
 
 def DEPLOY_MESSAGE = null
 
