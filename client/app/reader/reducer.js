@@ -23,7 +23,7 @@ export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
-      scrollToComment: { $set: action.payload.scrollToComment }
+      ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
     });
   case Constants.SET_UP_PAGE_DIMENSIONS:
     return update(
