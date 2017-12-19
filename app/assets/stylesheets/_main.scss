@@ -660,7 +660,7 @@ select {
   color: $color-gray;
 }
 
-//candidate for commons if used outside of main caseflow repo
+//move to commons if/when accordions are used for any non-React apps
 .usa-accordion-button {
   background-image: url(asset-path('minus.svg'));
 
@@ -669,14 +669,14 @@ select {
   }
 }
 
-//candidate for commons if used outside of main caseflow repo
+//move to commons if/when accordions are used for any non-React apps
 .usa-accordion-bordered-outline {
   .usa-accordion-button {
     border: 1px solid $color-gray-light;
   }
 }
 
-//candidate for commons if used outside of main caseflow repo
+//move to commons if/when accordions are used for any non-React apps
 .usa-accordion-bordered,
 .usa-accordion,
 .usa-accordion-bordered-outline {
