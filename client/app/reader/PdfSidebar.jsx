@@ -256,7 +256,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.annotationLayer, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
     comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
-    scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
+    scrollToSidebarComment: state.pdfViewer.scrollToSidebarComment,
     error: state.pdfViewer.pdfSideBarError,
     appeal: state.pdfViewer.loadedAppeal,
     openedAccordionSections: state.pdfViewer.openedAccordionSections,

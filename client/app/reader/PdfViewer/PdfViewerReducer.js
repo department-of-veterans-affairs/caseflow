@@ -24,7 +24,8 @@ export const initialState = {
   scrollTop: 0,
   hideSearchBar: true,
   pdfSideBarError: initialPdfSidebarErrorState,
-  didLoadAppealFail: false
+  didLoadAppealFail: false,
+  scrollToSidebarComment: null
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
@@ -131,11 +132,7 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
     });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
-      ui: {
-        pdf: {
-          scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
-        }
-      }
+      scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
     });
 
   // errors
