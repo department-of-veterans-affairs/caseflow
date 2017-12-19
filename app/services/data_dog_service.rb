@@ -2,7 +2,6 @@ require "datadog/statsd"
 
 class DataDogService
   @statsd = Datadog::Statsd.new
-  @host = `curl http://instance-data/latest/meta-data/instance-id --silent || echo "not-ec2"`.strip
 
   def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
