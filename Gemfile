@@ -148,3 +148,5 @@ group :development do
 end
 
 gem 'shoryuken', '3.1.11'
+
+gem 'danger', '5.5.5'
