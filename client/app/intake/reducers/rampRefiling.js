@@ -49,7 +49,7 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
   default:
   }
 
-  // The rest of the actions only should be processed if a RampElection intake is being processed
+  // The rest of the actions only should be processed if a RampRefiling intake is being processed
   if (!state.isStarted) {
     return state;
   }
