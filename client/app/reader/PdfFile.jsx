@@ -386,13 +386,12 @@ const mapStateToProps = (state, props) => {
     pdfDocument: state.readerReducer.pdfDocuments[props.file],
     pageDimensions: state.readerReducer.pageDimensions,
     baseHeight,
-    jumpToPageNumber: state.pdfViewer.jumpToPageNumber,
     scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
     loadError: state.readerReducer.documentErrors[props.file],
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
-    scrollTop: state.readerReducer.ui.pdf.scrollTop
+    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop')
   };
 };
 

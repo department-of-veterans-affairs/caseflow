@@ -23,7 +23,8 @@ export const initialState = {
   jumpToPageNumber: null,
   scrollTop: 0,
   hideSearchBar: true,
-  pdfSideBarError: initialPdfSidebarErrorState
+  pdfSideBarError: initialPdfSidebarErrorState,
+  didLoadAppealFail: false
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
@@ -88,7 +89,7 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
     });
   case Constants.TOGGLE_PDF_SIDEBAR:
     return update(state, {
-      hidePdfSidebar: { $set: !state.ui.pdf.hidePdfSidebar } }
+      hidePdfSidebar: { $set: !state.hidePdfSidebar } }
     );
   case Constants.SET_DOC_SCROLL_POSITION:
     return update(state, {
