@@ -1,5 +1,5 @@
 class HearingsController < ApplicationController
-  before_action :verify_access, :except => [:show_print]
+  before_action :verify_access, except: [:show_print]
   before_action :check_hearing_prep_out_of_service
   before_action :verify_access_to_reader_or_hearings, only: [:show_print]
 
