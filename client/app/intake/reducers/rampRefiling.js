@@ -2,33 +2,15 @@ import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import { getOptionSelectedError, getReceiptDateError } from '../util/index';
-import _ from 'lodash';
-
-const formatAppeals = (appeals) => {
-  return _.map(appeals, (appeal) => (
-    {
-      id: appeal.id,
-      issues: appeal.issues.map(
-        ({ program_description, ...rest }) => ({
-          programDescription: program_description,
-          ...rest
-        })
-      )
-    }
-  ));
-};
 
 const updateFromServerIntake = (state, serverIntake) => {
-  if (serverIntake.form_type !== FORM_TYPES.RAMP_ELECTION.key) {
+  if (serverIntake.form_type !== FORM_TYPES.RAMP_REFILING.key) {
     return state;
   }
 
-  return update(state, {
+  const result = update(state, {
     isStarted: {
       $set: Boolean(serverIntake.id)
-    },
-    noticeDate: {
-      $set: serverIntake.notice_date && formatDateStr(serverIntake.notice_date)
     },
     optionSelected: {
       $set: serverIntake.option_selected
@@ -38,42 +20,30 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    endProductDescription: {
-      $set: serverIntake.end_product_description
-    },
-    appeals: {
-      $set: formatAppeals(serverIntake.appeals)
     }
   });
+
+  return result;
 };
 
-export const mapDataToInitialRampElection = (data = { serverIntake: {} }) => (
+export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
-    noticeDate: null,
     optionSelected: null,
     optionSelectedError: null,
     receiptDate: null,
     receiptDateError: null,
     isStarted: false,
     isReviewed: false,
-    isComplete: false,
-    finishConfirmed: false,
-    finishConfirmedError: null,
     requestStatus: {
-      submitReview: REQUEST_STATE.NOT_STARTED,
-      completeIntake: REQUEST_STATE.NOT_STARTED
+      submitReview: REQUEST_STATE.NOT_STARTED
     }
   }, data.serverIntake)
 );
 
-export const rampElectionReducer = (state = mapDataToInitialRampElection(), action) => {
+export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
-    return mapDataToInitialRampElection();
+    return mapDataToInitialRampRefiling();
   case ACTIONS.FILE_NUMBER_SEARCH_SUCCEED:
     return updateFromServerIntake(state, action.payload.intake);
   default:
@@ -86,7 +56,7 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
 
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
-    return mapDataToInitialRampElection();
+    return mapDataToInitialRampRefiling();
   case ACTIONS.SET_OPTION_SELECTED:
     return update(state, {
       optionSelected: {
@@ -115,21 +85,12 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
       receiptDateError: {
         $set: null
       },
-      finishConfirmed: {
-        $set: null
-      },
-      finishConfirmedError: {
-        $set: null
-      },
       isReviewed: {
         $set: true
       },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
-        },
-        completeIntake: {
-          $set: REQUEST_STATE.NOT_STARTED
         }
       }
     });
@@ -143,45 +104,6 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
       },
       requestStatus: {
         submitReview: {
-          $set: REQUEST_STATE.FAILED
-        }
-      }
-    });
-  case ACTIONS.CONFIRM_FINISH_INTAKE:
-    return update(state, {
-      finishConfirmed: {
-        $set: action.payload.isConfirmed
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED:
-    return update(state, {
-      finishConfirmedError: {
-        $set: "You must confirm you've completed the steps"
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_START:
-    return update(state, {
-      requestStatus: {
-        completeIntake: {
-          $set: REQUEST_STATE.IN_PROGRESS
-        }
-      }
-    });
-  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
-    return updateFromServerIntake(update(state, {
-      isComplete: {
-        $set: true
-      },
-      requestStatus: {
-        completeIntake: {
-          $set: REQUEST_STATE.SUCCEEDED
-        }
-      }
-    }), action.payload.intake);
-  case ACTIONS.COMPLETE_INTAKE_FAIL:
-    return update(state, {
-      requestStatus: {
-        completeIntake: {
           $set: REQUEST_STATE.FAILED
         }
       }
