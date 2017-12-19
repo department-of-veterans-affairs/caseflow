@@ -131,6 +131,8 @@ group :development, :test do
   gem 'database_cleaner'
   # to save and open specific page in capybara tests
   gem 'launchy'
+
+  gem 'danger', '5.5.5'
 end
 
 group :development do
@@ -149,4 +151,3 @@ end
 
 gem 'shoryuken', '3.1.11'
 
-gem 'danger', '5.5.5'
