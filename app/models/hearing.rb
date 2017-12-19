@@ -124,6 +124,12 @@ class Hearing < ActiveRecord::Base
     )
   end
 
+  def to_hash_for_reader
+    serializable_hash(
+      methods: [:date]
+    )
+  end
+
   def to_hash_for_worksheet
     serializable_hash(
       methods: [:appeal_id,
