@@ -22,6 +22,10 @@ class Hearings::WorksheetsController < HearingsController
     render json: { worksheet: hearing_worksheet }
   end
 
+  def mark_as_viewed
+    render json: {viewed: true}
+  end
+
   private
 
   def worksheet_params
