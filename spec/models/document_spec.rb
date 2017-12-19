@@ -2,7 +2,8 @@ require "rails_helper"
 require "faker"
 
 describe Document do
-  let(:document) { Document.new(type: "NOD", vbms_document_id: "123", received_at: received_at) }
+  let(:document_type) { "NOD" }
+  let(:document) { Document.new(type: document_type, vbms_document_id: "123", received_at: received_at) }
   let(:file) { document.default_path }
   let(:received_at) { nil }
   let(:case_file_number) { Random.rand(999_999_999).to_s }
@@ -59,9 +60,18 @@ describe Document do
       it { is_expected.to eq(true) }
     end
 
-    let(:old_document) { Generators::Document.build(type: "not normally in case summary", received_at: 31.days.ago) }
-    let(:new_document) { Generators::Document.build(type: "not normally in case summary", received_at: 1.days.ago) }
-    
+    context "by received_at" do
+      let(:document_type) { "not normally in case summary" }
+      context "when document is recently received" do
+        let(:received_at) { 1.day.ago }
+        it { is_expected.to eq(true) }
+      end
+
+      context "when document is not recently received" do
+        let(:received_at) { 1.day.ago }
+        it { is_expected.to eq(false) }
+      end
+    end
   end
 
   context ".content_url" do
