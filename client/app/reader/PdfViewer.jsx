@@ -245,9 +245,10 @@ const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
   appeal: state.readerReducer.appeal,
   pageDimensions: state.readerReducer.pageDimensions,
+  ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
     'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
-  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment', 'hidePdfSidebar')
+  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment')
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import { selectAnnotation } from '../../reader/AnnotationLayer/AnnotationActions';
@@ -102,7 +102,7 @@ export const togglePdfSidebar = () => ({
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'toggle-pdf-sidebar',
-      label: (nextState) => nextState.readerReducer.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+      label: (nextState) => nextState.pdfViewer.hidePdfSidebar ? 'hide' : 'show'
     }
   }
 });

@@ -370,7 +370,7 @@ const mapStateToProps = (state, props) => {
     pdfDocument: state.readerReducer.pdfDocuments[props.file],
     pageDimensions: state.readerReducer.pageDimensions,
     baseHeight,
-    jumpToPageNumber: state.readerReducer.ui.pdf.jumpToPageNumber,
+    jumpToPageNumber: state.pdfViewer.jumpToPageNumber,
     scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
     loadError: state.readerReducer.documentErrors[props.file],
     currentMatchIndex: getCurrentMatchIndex(state, props),

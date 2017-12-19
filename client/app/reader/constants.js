@@ -3,20 +3,10 @@ import React from 'react';
 
 // actions
 export const RECEIVE_ANNOTATIONS = 'RECEIVE_ANNOTATIONS';
-export const RECEIVE_APPEAL_DETAILS = 'RECEIVE_APPEAL_DETAILS';
-export const RECEIVE_APPEAL_DETAILS_FAILURE = 'RECEIVE_APPEAL_DETAILS_FAILURE';
 export const SHOW_NEXT_PDF = 'SHOW_NEXT_PDF';
 export const SHOW_PREV_PDF = 'SHOW_PREV_PDF';
 export const SCROLL_TO_COMMENT = 'SCROLL_TO_COMMENT';
-export const TOGGLE_PDF_SIDEBAR = 'TOGGLE_PDF_SIDEBAR';
-export const TOGGLE_SEARCH_BAR = 'TOGGLE_SEARCH_BAR';
-export const SHOW_SEARCH_BAR = 'SHOW_SEARCH_BAR';
-export const HIDE_SEARCH_BAR = 'HIDE_SEARCH_BAR';
 export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
-export const COLLECT_ALL_TAGS_FOR_OPTIONS = 'COLLECT_ALL_TAGS_FOR_OPTIONS';
-export const SET_DOC_SCROLL_POSITION = 'SET_DOC_SCROLL_POSITION';
-export const JUMP_TO_PAGE = 'JUMP_TO_PAGE';
-export const RESET_JUMP_TO_PAGE = 'RESET_JUMP_TO_PAGE';
 
 export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
 export const SET_UP_PAGE_DIMENSIONS = 'SET_UP_PAGE_DIMENSIONS';
@@ -31,9 +21,8 @@ export const SET_DOCUMENT_LOAD_ERROR = 'SET_DOCUMENT_LOAD_ERROR';
 export const CLEAR_DOCUMENT_LOAD_ERROR = 'CLEAR_DOCUMENT_LOAD_ERROR';
 export const SET_LOADED_APPEAL_ID = 'SET_LOADED_APPEAL_ID';
 
-export const SET_OPENED_ACCORDION_SECTIONS = 'SET_OPENED_ACCORDION_SECTIONS';
-
-export const COMMENT_ACCORDION_KEY = 'Comments';
+export const RECEIVE_APPEAL_DETAILS = 'RECEIVE_APPEAL_DETAILS';
+export const RECEIVE_APPEAL_DETAILS_FAILURE = 'RECEIVE_APPEAL_DETAILS_FAILURE';
 
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
@@ -89,11 +78,6 @@ export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
 // able to expand/contract the height of the pages as we zoom.
 export const PDF_PAGE_WIDTH = 816;
 export const PDF_PAGE_HEIGHT = 1056;
-
-// errors
-export const SHOW_ERROR_MESSAGE = 'SHOW_ERROR_MESSAGE';
-export const HIDE_ERROR_MESSAGE = 'HIDE_ERROR_MESSAGE';
-export const RESET_PDF_SIDEBAR_ERRORS = 'RESET_PDF_SIDEBAR_ERRORS';
 
 // Defined in _search_bar.scss > .cf-search-bar. Max height of
 // search bar, used as offset when scrolling to search results

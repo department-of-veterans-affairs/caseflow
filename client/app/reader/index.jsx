@@ -7,6 +7,7 @@ import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
 import documentListReducer from './DocumentList/DocumentListReducer';
+import pdfViewerReducer from './PdfViewer/PdfViewerReducer';
 
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
@@ -22,6 +23,7 @@ const store = createStore(
     search: searchReducer,
     documents: documentsReducer,
     documentList: documentListReducer,
+    pdfViewer: pdfViewerReducer,
     annotationLayer: annotationLayerReducer
   }),
   composeEnhancers(
