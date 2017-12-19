@@ -26,10 +26,7 @@ class DataDogService
     end
     [
       "app:#{app_name}",
-      "env:#{Rails.env}",
-      # I am not sure that dogstatsd lets us set the hostname.
-      # https://github.com/DataDog/dogstatsd-ruby/issues/66
-      "hostname:#{@host}"
+      "env:#{Rails.env}"
     ] + extra_tags
   end
 end
