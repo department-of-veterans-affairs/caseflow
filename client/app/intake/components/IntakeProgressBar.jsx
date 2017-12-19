@@ -65,7 +65,7 @@ class IntakeProgressBarInnerUnconnected extends React.PureComponent {
 }
 
 const IntakeProgressBarInner = connect(
-  ({ featureToggles }) => ({ featureToggles })
+  ({ intake }) => ({ featureToggles: intake.featureToggles })
 )(IntakeProgressBarInnerUnconnected);
 
 export default class IntakeProgressBar extends React.Component {
