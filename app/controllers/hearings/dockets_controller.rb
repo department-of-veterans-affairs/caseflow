@@ -4,22 +4,26 @@ class Hearings::DocketsController < HearingsController
   def index
     respond_to do |format|
       format.html { render template: "hearings/index" }
-      format.json { render json: (current_user_dockets.transform_values do |hearing|
-        hearing.to_hash(current_user.id)
-      end) }
+      format.json do
+        render json: (current_user_dockets.transform_values do |hearing|
+                        hearing.to_hash(current_user.id)
+                      end)
+      end
     end
   end
-  
+
   def show
     @hearing_page_title = "Daily Docket"
     date = date_from_string(params[:docket_date])
     return not_found unless date && judge.docket?(date)
-    
+
     respond_to do |format|
       format.html { render template: "hearings/index" }
-      format.json { render json: (judge.upcoming_hearings_on(date).map do |hearing|
-        hearing.to_hash(current_user.id)
-      end) }
+      format.json do
+        render json: (judge.upcoming_hearings_on(date).map do |hearing|
+                        hearing.to_hash(current_user.id)
+                      end)
+      end
     end
   end
 
