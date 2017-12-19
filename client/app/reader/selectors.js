@@ -74,10 +74,10 @@ export const {
   result
 } = getSearchSelectors({
   resourceName: 'extractedText',
-  resourceSelector: (resourceName, state) => state.readerReducer[resourceName]
+  resourceSelector: (resourceName, state) => state.searchActionReducer[resourceName]
 });
 
-const getExtractedText = (state) => state.readerReducer.extractedText;
+const getExtractedText = (state) => state.searchActionReducer.extractedText;
 const getFile = (state, props) => props.file;
 
 export const getTextSearch = createSelector(
@@ -108,7 +108,7 @@ export const getTotalMatchesInFile = createSelector(
     sum()
 );
 
-const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
+const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;
 
 export const getCurrentMatchIndex = createSelector(
   [getTotalMatchesInFile, getSelectedIndex],
