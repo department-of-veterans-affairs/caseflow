@@ -18,6 +18,7 @@ import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
+import searchActionReducer from '../../../app/reader/PdfSearch/PdfSearchReducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import annotationLayerReducer from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
 import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer';
@@ -42,6 +43,7 @@ const getStore = () => createStore(
   combineReducers({
     caseSelect: caseSelectReducer,
     readerReducer,
+    searchActionReducer,
     search: searchReducer,
     documents: documentsReducer,
     documentList: documentListReducer,
@@ -59,7 +61,7 @@ const getStore = () => createStore(
       resourceSelector: (resourceName, state) => {
         // In our example, all resources are stored in the state under a :resources Map
         // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
+        return state.searchActionReducer[resourceName];
       }
     })
   )

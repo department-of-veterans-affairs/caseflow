@@ -54,6 +54,10 @@ class Veteran
     self
   end
 
+  def end_products
+    @end_products ||= fetch_end_products
+  end
+
   def periods_of_service
     return [] unless service
     service.inject([]) do |result, s|
@@ -97,6 +101,10 @@ class Veteran
         bgs_record[bgs_attribute]
       )
     end
+  end
+
+  def fetch_end_products
+    self.class.bgs.get_end_products(file_number).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
   end
 
   def period_of_service(s)

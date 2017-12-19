@@ -1356,6 +1356,29 @@ RSpec.feature "Reader" do
       end
     end
 
+    scenario "Navigating Search Results scrolls page" do
+      def scroll_top
+        page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
+      end
+
+      open_search_bar
+      expect(scroll_top).to be(0)
+
+      fill_in "search-ahead", with: "decision"
+
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+
+      first_match_scroll_top = scroll_top
+      expect(first_match_scroll_top).to be > 0
+
+      find(".cf-next-match").click
+      expect(scroll_top).to be > first_match_scroll_top
+
+      # this doc has 2 matches for "decision", search index wraps around
+      find(".cf-next-match").click
+      expect(scroll_top).to eq(first_match_scroll_top)
+    end
+
     scenario "Download PDF file" do
       DownloadHelpers.clear_downloads
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
