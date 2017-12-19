@@ -41,6 +41,6 @@ class Hearings::WorksheetsController < HearingsController
   helper_method :worksheet
 
   def hearing_worksheet
-    worksheet.to_hash_for_worksheet
+    worksheet.to_hash_for_worksheet(current_user.id)
   end
 end

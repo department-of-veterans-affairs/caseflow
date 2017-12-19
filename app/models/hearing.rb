@@ -106,7 +106,7 @@ class Hearing < ActiveRecord::Base
     :sanitized_vbms_id, \
     to: :appeal, allow_nil: true
 
-  def to_hash
+  def to_hash(current_user_id)
     serializable_hash(
       methods: [
         :date, :request_type,
@@ -124,12 +124,12 @@ class Hearing < ActiveRecord::Base
       except: :military_service
     ).merge(
       viewed_by_current_user: hearing_views.any? do |hearing_view|
-        hearing_view.user_id == user.id
+        hearing_view.user_id == current_user_id
       end
     )
   end
 
-  def to_hash_for_worksheet
+  def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
                 :appeal_vacols_id,
@@ -142,7 +142,7 @@ class Hearing < ActiveRecord::Base
                 :appellant_mi_formatted,
                 :veteran_mi_formatted,
                 :sanitized_vbms_id]
-    ).merge(to_hash)
+    ).merge(to_hash(current_user_id))
   end
 
   def appeals_ready_for_hearing
