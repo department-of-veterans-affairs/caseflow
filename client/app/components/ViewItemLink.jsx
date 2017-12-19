@@ -13,8 +13,7 @@ export default class ViewItemLink extends React.PureComponent {
   render = () => <BoldOnCondition condition={this.props.boldCondition}>
     <Link
       {...this.props.linkProps}
-      onMouseUp={this.onClick}
-      onClick={this.onClick}>
+      onMouseUp={this.onClick}>
       {this.props.children}
     </Link>
   </BoldOnCondition>

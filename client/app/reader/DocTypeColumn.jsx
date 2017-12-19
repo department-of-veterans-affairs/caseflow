@@ -18,16 +18,16 @@ class DocTypeColumn extends React.PureComponent {
     // also need to add a mouseUp event since middle clicking doesn't trigger an onClick.
     // This will not work if someone right clicks and opens in a new tab.
     return <ViewItemLink
-        boldCondition={!doc.opened_by_current_user}
-        onOpen={this.onClick}
-        linkProps={{
-          to: `${this.props.documentPathBase}/${doc.id}`,
-          'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')  
-        }}>
-        <Highlight>
-          {doc.type}
-        </Highlight>
-      </ViewItemLink>;
+      boldCondition={!doc.opened_by_current_user}
+      onOpen={this.onClick}
+      linkProps={{
+        to: `${this.props.documentPathBase}/${doc.id}`,
+        'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')
+      }}>
+      <Highlight>
+        {doc.type}
+      </Highlight>
+    </ViewItemLink>;
   }
 }
 

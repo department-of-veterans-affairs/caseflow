@@ -6,8 +6,8 @@ import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { 
-  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed 
+import {
+  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed
 } from './actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
@@ -88,9 +88,9 @@ export class DocketHearingRow extends React.PureComponent {
             onOpen={this.setHearingViewed}
             linkProps={{
               to: `/hearings/${hearing.id}/worksheet`,
-              target: "_blank"
+              target: '_blank'
             }}>
-              {hearing.vbms_id}
+            {hearing.vbms_id}
           </ViewItemLink>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
