@@ -258,7 +258,7 @@ const mapStateToProps = (state, ownProps) => {
     comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
     scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
     error: state.pdfViewer.pdfSideBarError,
-    appeal: state.readerReducer.loadedAppeal,
+    appeal: state.pdfViewer.loadedAppeal,
     openedAccordionSections: state.pdfViewer.openedAccordionSections,
     hidePdfSidebar: state.pdfViewer.hidePdfSidebar
   };

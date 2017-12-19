@@ -74,6 +74,13 @@ export const fetchAppealDetails = (vacolsId) =>
     }, () => dispatch(onAppealDetailsLoadingFail()));
   };
 
+export const setLoadedVacolsId = (vacolsId) => ({
+  type: Constants.SET_LOADED_APPEAL_ID,
+  payload: {
+    vacolsId
+  }
+});
+
 /** Sidebar and Accordion controls **/
 
 export const setOpenedAccordionSections = (openedAccordionSections, prevSections) => ({

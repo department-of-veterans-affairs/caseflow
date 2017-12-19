@@ -6,16 +6,7 @@ import _ from 'lodash';
 import { update } from '../util/ReducerUtil';
 import { timeFunction } from '../util/PerfDebug';
 
-
-
-
-
 export const initialState = {
-  loadedAppealId: null,
-  loadedAppeal: {},
-  initialDataLoadingFail: false,
-  didLoadAppealFail: false,
-  initialCaseLoadingFail: false,
   ui: {
     pdf: {
       scrollToComment: null
@@ -34,7 +25,6 @@ export const initialState = {
 export const reducer = (state = initialState, action = {}) => {
 
   switch (action.type) {
-
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
       scrollToComment: { $set: action.payload.scrollToComment }
@@ -140,13 +130,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_LOADED_APPEAL_ID:
-    return update(state, {
-      loadedAppealId: {
-        $set: action.payload.vacolsId
-      }
-    });
-
   default:
     return state;
   }

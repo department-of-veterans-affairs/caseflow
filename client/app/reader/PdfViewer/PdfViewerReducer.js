@@ -13,6 +13,8 @@ const initialPdfSidebarErrorState = {
 };
 
 export const initialState = {
+  loadedAppealId: null,
+  loadedAppeal: {},
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
@@ -42,6 +44,29 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
   let uniqueTags;
 
   switch (action.type) {
+  case Constants.RECEIVE_APPEAL_DETAILS:
+    return update(state,
+      {
+        loadedAppeal: {
+          $set: action.payload.appeal
+        }
+      }
+    );
+  case Constants.RECEIVE_APPEAL_DETAILS_FAILURE:
+    return update(state,
+      {
+        didLoadAppealFail: {
+          $set: action.payload.failedToLoad
+        }
+      }
+    );
+  case Constants.SET_LOADED_APPEAL_ID:
+    return update(state, {
+      loadedAppealId: {
+        $set: action.payload.vacolsId
+      }
+    });
+
   case Constants.SET_OPENED_ACCORDION_SECTIONS:
     return update(state, {
       openedAccordionSections: {
