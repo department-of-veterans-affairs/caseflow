@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   has_many :tasks
   has_many :document_views
   has_many :appeal_views
+  has_many :hearing_views
   has_many :annotations
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session

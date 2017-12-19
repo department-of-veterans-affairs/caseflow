@@ -14,6 +14,7 @@ class Hearing < ActiveRecord::Base
 
   belongs_to :appeal
   belongs_to :user # the judge
+  has_many :hearing_views
 
   def venue
     self.class.venues[venue_key]
