@@ -290,7 +290,6 @@ const mapStateToProps = (state, props) => {
     loadError: state.readerReducer.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
-    ...state.readerReducer.ui.pdf,
     numPages
   };
 };
