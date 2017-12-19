@@ -57,15 +57,10 @@ export const initialState = {
       error: initialPdfSidebarErrorState
     }
   },
-
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
-  text: [],
-  documentSearchString: null,
-  documentSearchIndex: 0,
-  matchIndexToHighlight: null,
-  extractedText: {}
+  text: []
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -234,51 +229,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.GET_DOCUMENT_TEXT:
-    return update(
-      state,
-      {
-        extractedText: {
-          $merge: action.payload.textObject
-        }
-      }
-    );
-  case Constants.ZERO_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        documentSearchIndex: {
-          $set: 0
-        }
-      }
-    );
-  case Constants.UPDATE_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        documentSearchIndex: {
-          $apply: (index) => action.payload.increment ? index + 1 : index - 1
-        }
-      }
-    );
-  case Constants.SET_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        documentSearchIndex: {
-          $set: action.payload.index
-        }
-      }
-    );
-  case Constants.SET_SEARCH_INDEX_TO_HIGHLIGHT:
-    return update(
-      state,
-      {
-        matchIndexToHighlight: {
-          $set: action.payload.index
-        }
-      }
-    );
   case Constants.SET_LOADED_APPEAL_ID:
     return update(state, {
       loadedAppealId: {
