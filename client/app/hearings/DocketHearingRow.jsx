@@ -78,7 +78,11 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{appellantDisplay}</b>
+          {
+            hearing.viewed_by_current_user ?
+              appellantDisplay :
+              <b>{appellantDisplay}</b>
+          }
           <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>

@@ -123,10 +123,11 @@ class Hearing < ActiveRecord::Base
       ],
       except: :military_service
     ).merge(
-      viewed_by_current_user: hearing_views.any? do |hearing_view|
+      viewed_by_current_user: HearingView.where(:hearing_id => id).any? do |hearing_view|
         hearing_view.user_id == user.id
       end
     )
+    # binding.pry
   end
 
   def to_hash_for_worksheet
