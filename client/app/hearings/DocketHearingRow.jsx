@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
+import BoldOnCondition from '../components/BoldOnCondition';
 import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
@@ -78,12 +79,12 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          {
-            hearing.viewed_by_current_user ?
-              appellantDisplay :
-              <b>{appellantDisplay}</b>
-          }
-          <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
+          <b>{appellantDisplay}</b>
+          <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">
+            <BoldOnCondition condition={!hearing.viewed_by_current_user}>
+              {hearing.vbms_id}
+            </BoldOnCondition>
+          </Link>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">

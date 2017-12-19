@@ -4,18 +4,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { selectCurrentPdfLocally } from '../reader/Documents/DocumentsActions';
 
+import BoldOnCondition from '../components/BoldOnCondition';
 import Link from '../components/Link';
 import Highlight from '../components/Highlight';
 
 class DocTypeColumn extends React.PureComponent {
-  boldUnreadContent = (content, doc) => {
-    if (!doc.opened_by_current_user) {
-      return <strong>{content}</strong>;
-    }
-
-    return content;
-  };
-
   onClick = (id) => () => {
     // Annoyingly if we make this call in the thread, it won't follow the link. Instead
     // we use setTimeout to force it to run at a later point.
@@ -29,7 +22,7 @@ class DocTypeColumn extends React.PureComponent {
     // This will get fired in the current tab, as the link is followed in a new tab. We
     // also need to add a mouseUp event since middle clicking doesn't trigger an onClick.
     // This will not work if someone right clicks and opens in a new tab.
-    return this.boldUnreadContent(
+    return <BoldOnCondition condition={!doc.opened_by_current_user}>
       <Link
         onMouseUp={this.onClick(doc.id)}
         onClick={this.onClick(doc.id)}
@@ -38,7 +31,8 @@ class DocTypeColumn extends React.PureComponent {
         <Highlight>
           {doc.type}
         </Highlight>
-      </Link>, doc);
+      </Link>
+    </BoldOnCondition>;
   }
 }
 
