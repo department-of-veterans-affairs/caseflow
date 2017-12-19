@@ -55,11 +55,10 @@ class MetricsCollector
   end
 
   def emit_datadog_point(db_name, type, count)
-    DataDogService.emit_datadog_point(
+    DataDogService.emit_gauge(
       metric_group: "database",
       metric_name: "#{type}_connections",
       metric_value: count,
-      metric_type: "gauge",
       app_name: "caseflow",
       attrs: {
         database: db_name
