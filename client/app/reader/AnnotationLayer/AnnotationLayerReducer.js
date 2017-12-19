@@ -171,6 +171,16 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.UPDATE_ANNOTATION_RELEVANT_DATE:
+    return update(state, {
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          relevant_date: {
+            $set: action.payload.relevant_date
+          }
+        }
+      }
+    });
   case Constants.REQUEST_EDIT_ANNOTATION:
     return moveModel(state,
       ['editingAnnotations'],

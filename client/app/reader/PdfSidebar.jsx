@@ -20,7 +20,7 @@ import * as Constants from '../reader/constants';
 import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
-  updateAnnotationContent
+  updateAnnotationContent, updateAnnotationRelevantDate
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
@@ -112,6 +112,7 @@ export class PdfSidebar extends React.Component {
           comment={comment}
           onCancelCommentEdit={this.props.cancelEditAnnotation}
           onChange={this.props.updateAnnotationContent}
+          onChangeDate={this.props.updateAnnotationRelevantDate}
           value={comment.comment}
           onSaveCommentEdit={this.props.requestEditAnnotation}
           key={keyOfAnnotation(comment)}
@@ -270,6 +271,7 @@ const mapDispatchToProps = (dispatch) => ({
     selectAnnotation,
     startEditAnnotation,
     updateAnnotationContent,
+    updateAnnotationRelevantDate,
     cancelEditAnnotation,
     requestEditAnnotation
   }, dispatch),
