@@ -180,3 +180,8 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
         payload: { saveFailed: true } });
     });
 };
+
+export const setHearingViewed = (hearingId) => ({
+  type: Constants.SET_HEARING_VIEWED,
+  payload: { hearingId }
+})

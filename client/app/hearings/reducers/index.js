@@ -94,6 +94,22 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       military_service: { $set: action.payload.militaryService }
     });
 
+  case Constants.SET_HEARING_VIEWED:
+    return (() => {
+      const dailyDocketKey = _.findKey(state.dailyDocket, hearings => _.some(hearings, {id: action.payload.hearingId}))
+      const hearingIndex = _.findIndex(state.dailyDocket[dailyDocketKey], {id: action.payload.hearingId})
+      
+      return update(state, {
+        dailyDocket: {
+          [dailyDocketKey]: {
+            [hearingIndex]: {
+              viewed_by_current_user: { $set: true }
+            }
+          }
+        }
+      });
+    })();
+
   case Constants.SET_EVIDENCE:
     return newHearingWorksheetState(state, action, {
       evidence: { $set: action.payload.evidence }
