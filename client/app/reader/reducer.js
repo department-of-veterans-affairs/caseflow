@@ -26,20 +26,6 @@ const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
 const hideErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, false, errorMsg);
 const showErrorMessage = (state, errorType, errorMsg = null) => setErrorMessageState(state, errorType, true, errorMsg);
 
-const updateLastReadDoc = (state, docId) =>
-  update(
-    state,
-    {
-      ui: {
-        pdfList: {
-          lastReadDocId: {
-            $set: docId
-          }
-        }
-      }
-    }
-  );
-
 const initialPdfSidebarErrorState = {
   tag: { visible: false,
     message: null },
@@ -52,24 +38,14 @@ const initialPdfSidebarErrorState = {
 export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
+  initialDataLoadingFail: false,
   didLoadAppealFail: false,
-  viewingDocumentsOrComments: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
+  initialCaseLoadingFail: false,
   openedAccordionSections: [
     'Categories', 'Issue tags', Constants.COMMENT_ACCORDION_KEY
   ],
   ui: {
     tagOptions: [],
-    searchCategoryHighlights: {},
-    filteredDocIds: null,
-    docFilterCriteria: {
-      sort: {
-        sortBy: 'receivedAt',
-        sortAscending: true
-      },
-      category: {},
-      tag: {},
-      searchQuery: ''
-    },
     pdf: {
       pdfsReadyToShow: {},
       hidePdfSidebar: false,
@@ -79,27 +55,12 @@ export const initialState = {
     },
     pdfSidebar: {
       error: initialPdfSidebarErrorState
-    },
-    pdfList: {
-      scrollTop: null,
-      lastReadDocId: null,
-      dropdowns: {
-        tag: false,
-        category: false
-      }
-    },
-    manifestVbmsFetchedAt: null,
-    manifestVvaFetchedAt: null
+    }
   },
-
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
-  text: [],
-  documentSearchString: null,
-  documentSearchIndex: 0,
-  matchIndexToHighlight: null,
-  extractedText: {}
+  text: []
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -125,17 +86,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.RECEIVE_MANIFESTS:
-    return update(state, {
-      ui: {
-        manifestVbmsFetchedAt: {
-          $set: action.payload.manifestVbmsFetchedAt
-        },
-        manifestVvaFetchedAt: {
-          $set: action.payload.manifestVvaFetchedAt
-        }
-      }
-    });
   case Constants.RECEIVE_APPEAL_DETAILS:
     return update(state,
       {
@@ -152,67 +102,6 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_SEARCH:
-    return update(state, {
-      ui: {
-        docFilterCriteria: {
-          searchQuery: {
-            $set: action.payload.searchQuery
-          }
-        }
-      }
-    });
-  case Constants.SET_SORT:
-    return update(state, {
-      ui: {
-        docFilterCriteria: {
-          sort: {
-            sortBy: {
-              $set: action.payload.sortBy
-            },
-            sortAscending: {
-              $apply: (prevVal) => !prevVal
-            }
-          }
-        }
-      }
-    });
-  case Constants.TOGGLE_FILTER_DROPDOWN:
-    return (() => {
-      const originalValue = _.get(
-        state,
-        ['ui', 'pdfList', 'dropdowns', action.payload.filterName],
-        false
-      );
-
-      return update(state,
-        {
-          ui: {
-            pdfList: {
-              dropdowns: {
-                [action.payload.filterName]: {
-                  $set: !originalValue
-                }
-              }
-            }
-          }
-        }
-      );
-    })();
-  case Constants.SET_CATEGORY_FILTER:
-    return update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            category: {
-              [action.payload.categoryName]: {
-                $set: action.payload.checked
-              }
-            }
-          }
-        }
-      });
   case Constants.JUMP_TO_PAGE:
     return update(
       state,
@@ -239,77 +128,11 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     );
-  case Constants.SET_TAG_FILTER:
-    return update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            tag: {
-              [action.payload.text]: {
-                $set: action.payload.checked
-              }
-            }
-          }
-        }
-      });
-  case Constants.CLEAR_TAG_FILTER:
-    return update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            tag: {
-              $set: {}
-            }
-          }
-        }
-      }
-    );
-  case Constants.CLEAR_CATEGORY_FILTER:
-    return update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            category: {
-              $set: {}
-            }
-          }
-        }
-      }
-    );
-  case Constants.CLEAR_ALL_FILTERS:
-    return update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            category: {
-              $set: {}
-            },
-            tag: {
-              $set: {}
-            }
-          }
-        },
-        viewingDocumentsOrComments: {
-          $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
-        }
-      });
   case Constants.SCROLL_TO_SIDEBAR_COMMENT:
     return update(state, {
       ui: {
         pdf: {
           scrollToSidebarComment: { $set: action.payload.scrollToSidebarComment }
-        }
-      }
-    });
-  case Constants.SET_DOC_LIST_SCROLL_POSITION:
-    return update(state, {
-      ui: {
-        pdfList: {
-          scrollTop: { $set: action.payload.scrollTop }
         }
       }
     });
@@ -341,36 +164,12 @@ export const reducer = (state = initialState, action = {}) => {
     return update(state,
       { ui: { pdf: { hideSearchBar: { $set: true } } } }
     );
-  case Constants.LAST_READ_DOCUMENT:
-    return updateLastReadDoc(state, action.payload.docId);
-  case Constants.CLEAR_ALL_SEARCH:
-    return update(
-      state,
-      {
-        ui: {
-          docFilterCriteria: {
-            searchQuery: {
-              $set: ''
-            }
-          }
-        }
-      }
-    );
   case Constants.SET_OPENED_ACCORDION_SECTIONS:
     return update(
       state,
       {
         openedAccordionSections: {
           $set: action.payload.openedAccordionSections
-        }
-      }
-    );
-  case Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS:
-    return update(
-      state,
-      {
-        viewingDocumentsOrComments: {
-          $set: action.payload.documentsOrComments
         }
       }
     );
@@ -430,62 +229,10 @@ export const reducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.GET_DOCUMENT_TEXT:
-    return update(
-      state,
-      {
-        extractedText: {
-          $merge: action.payload.textObject
-        }
-      }
-    );
-  case Constants.ZERO_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        documentSearchIndex: {
-          $set: 0
-        }
-      }
-    );
-  case Constants.UPDATE_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        documentSearchIndex: {
-          $apply: (index) => action.payload.increment ? index + 1 : index - 1
-        }
-      }
-    );
-  case Constants.SET_SEARCH_INDEX:
-    return update(
-      state,
-      {
-        documentSearchIndex: {
-          $set: action.payload.index
-        }
-      }
-    );
-  case Constants.SET_SEARCH_INDEX_TO_HIGHLIGHT:
-    return update(
-      state,
-      {
-        matchIndexToHighlight: {
-          $set: action.payload.index
-        }
-      }
-    );
   case Constants.SET_LOADED_APPEAL_ID:
     return update(state, {
       loadedAppealId: {
         $set: action.payload.vacolsId
-      }
-    });
-  case Constants.UPDATE_FILTERED_RESULTS:
-    return update(state, {
-      ui: {
-        filteredDocIds: { $set: action.payload.filteredIds },
-        searchCategoryHighlights: { $set: action.payload.searchCategoryHighlights }
       }
     });
 

@@ -10,7 +10,7 @@ import DocumentCategoryIcons from './DocumentCategoryIcons';
 import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
-import * as Constants from './constants';
+import * as Constants from './DocumentList/actionTypes';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';
@@ -324,9 +324,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state.readerReducer, 'viewingDocumentsOrComments'),
-  ..._.pick(state.readerReducer.ui, 'tagOptions', 'pdfList'),
-  ..._.pick(state.readerReducer.ui, 'docFilterCriteria')
+  ..._.pick(state.documentList, 'viewingDocumentsOrComments', 'docFilterCriteria', 'pdfList'),
+  ..._.pick(state.readerReducer.ui, 'tagOptions')
 });
 
 export default connect(

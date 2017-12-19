@@ -169,6 +169,18 @@ class VACOLS::Case < VACOLS::Record
     on AODKEY = BFKEY
   ".freeze
 
+  JOIN_REMAND_RETURN = "
+    left join (
+      select BRIEFF.BFKEY REM_RETURN_KEY, max(PRIORLOC.LOCDOUT) REM_RETURN
+      from BRIEFF
+      left join PRIORLOC
+        on PRIORLOC.LOCKEY = BRIEFF.BFKEY
+          and PRIORLOC.LOCSTTO = '96'
+      group by BRIEFF.BFKEY
+    )
+    on REM_RETURN_KEY = BFKEY
+  ".freeze
+
   WHERE_PAPERLESS_REMAND_LOC97 = "
     BFMPRO = 'REM'
     -- Remand status.
@@ -266,6 +278,18 @@ class VACOLS::Case < VACOLS::Record
     aod_result.reduce({}) do |memo, result|
       memo[(result["bfkey"]).to_s] = (result["aod"] == 1)
       memo
+    end
+  end
+
+  def self.remand_return_date(vacols_ids)
+    result = MetricsService.record("VACOLS: Case.remand_return_date for #{vacols_ids}",
+                                   name: "Case.remand_return_date",
+                                   service: :vacols) do
+      VACOLS::Case.joins(JOIN_REMAND_RETURN).where(bfkey: vacols_ids).select("bfkey", "rem_return")
+    end
+
+    result.each_with_object({}) do |row, memo|
+      memo[(row["bfkey"]).to_s] = VacolsHelper.normalize_vacols_datetime(row["rem_return"])
     end
   end
 

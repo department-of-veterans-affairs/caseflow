@@ -6,6 +6,7 @@ describe AppealEvents do
   let(:appeal) do
     Generators::Appeal.build(
       vbms_id: "999887777S",
+      status: status,
       notification_date: notification_date,
       nod_date: nod_date,
       soc_date: soc_date,
@@ -20,6 +21,7 @@ describe AppealEvents do
     )
   end
 
+  let(:status) { "Active" }
   let(:notification_date) { 4.days.ago }
   let(:nod_date) { 3.days.ago }
   let(:soc_date) { 2.days.ago }
@@ -122,6 +124,21 @@ describe AppealEvents do
       end
 
       context "when certification date is not set" do
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "remand return event" do
+      subject do
+        events.find { |event| event.type == :remand_return && event.date == 2.days.ago }
+      end
+
+      context "when the appeal is complete" do
+        let(:status) { "Complete" }
+        it { is_expected.to_not be_nil }
+      end
+
+      context "when the appeal is open" do
         it { is_expected.to be_nil }
       end
     end
