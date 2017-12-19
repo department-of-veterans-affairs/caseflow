@@ -68,7 +68,7 @@ describe Document do
       end
 
       context "when document is not recently received" do
-        let(:received_at) { 1.day.ago }
+        let(:received_at) { 31.days.ago }
         it { is_expected.to eq(false) }
       end
     end
