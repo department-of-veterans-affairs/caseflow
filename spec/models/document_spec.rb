@@ -58,6 +58,10 @@ describe Document do
     context "when category is part of case summary" do
       it { is_expected.to eq(true) }
     end
+
+    let(:old_document) { Generators::Document.build(type: "not normally in case summary", received_at: 31.days.ago) }
+    let(:new_document) { Generators::Document.build(type: "not normally in case summary", received_at: 1.days.ago) }
+    
   end
 
   context ".content_url" do
