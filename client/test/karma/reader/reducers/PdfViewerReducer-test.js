@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import { reducer } from '../../../../app/reader/reducer';
-import * as Constants from '../../../../app/reader/constants';
+import pdfViewerReducer from '../../../../app/reader/PdfViewer/PdfViewerReducer';
+import * as Constants from '../../../../app/reader/PdfViewer/actionTypes';
 
 /* eslint-disable no-undefined */
 
 describe('Reader reducer', () => {
 
-  const reduceActions = (actions, state) => actions.reduce(reducer, reducer(state, {}));
+  const reduceActions = (actions, state) => actions.reduce(pdfViewerReducer, pdfViewerReducer(state, {}));
 
   describe(Constants.SET_LOADED_APPEAL_ID, () => {
     it('updates loadedAppealId object when received', () => {

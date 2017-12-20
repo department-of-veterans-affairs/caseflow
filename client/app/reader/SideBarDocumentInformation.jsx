@@ -69,7 +69,7 @@ SideBarDocumentInformation.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  didLoadAppealFail: state.readerReducer.didLoadAppealFail
+  didLoadAppealFail: state.pdfViewer.didLoadAppealFail
 });
 
 export default connect(
