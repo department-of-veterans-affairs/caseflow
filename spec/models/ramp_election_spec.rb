@@ -157,7 +157,7 @@ describe RampElection do
 
     context "option_selected" do
       context "when saving receipt" do
-        before { ramp_election.start_saving_receipt }
+        before { ramp_election.start_review! }
 
         context "when it is set" do
           context "when it is a valid option" do
@@ -204,7 +204,7 @@ describe RampElection do
       end
 
       context "when saving receipt" do
-        before { ramp_election.start_saving_receipt }
+        before { ramp_election.start_review! }
 
         context "when it is nil" do
           let(:receipt_date) { nil }
