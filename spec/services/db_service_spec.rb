@@ -1,7 +1,7 @@
-describe ExternalApi::ApiService do
+describe DBService do
   context ".request" do
     subject do
-      ExternalApi::ApiService.release_db_connections
+      DBService.release_db_connections
     end
 
     context "when feature flag is turned on", db_clean: :truncation do

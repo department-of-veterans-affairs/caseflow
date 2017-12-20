@@ -41,7 +41,7 @@ class ExternalApi::EfolderService
   end
 
   def self.get_efolder_response(endpoint, user, headers = {})
-    ExternalApi::ApiService.release_db_connections
+    DBService.release_db_connections
 
     url = URI.escape(efolder_base_url + endpoint)
     request = HTTPI::Request.new(url)

@@ -2,7 +2,7 @@
 # Our external dependencies are slow and unreliable. If an external dependency takes a long
 # time to respond we end up holding on to DB connections for an unreasonable amount of time.
 # By default we'll release all DB connections before making the API call.
-class ExternalApi::ApiService
+class DBService
   def self.release_db_connections
     if FeatureToggle.enabled?(:release_db_connections)
       if VACOLS::Record.connection_pool.active_connection?

@@ -19,7 +19,7 @@ end
 
 class ExternalApi::VBMSService
   def self.fetch_document_file(document)
-    ExternalApi::ApiService.release_db_connections
+    DBService.release_db_connections
 
     @vbms_client ||= init_vbms_client
 
@@ -34,7 +34,7 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
-    ExternalApi::ApiService.release_db_connections
+    DBService.release_db_connections
 
     @vbms_client ||= init_vbms_client
 
