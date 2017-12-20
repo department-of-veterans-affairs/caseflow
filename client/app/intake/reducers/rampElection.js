@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getOptionSelectedError, getReceiptDateError } from '../util/index';
+import { getOptionSelectedError, getReceiptDateError } from '../util';
 import _ from 'lodash';
 
 const formatAppeals = (appeals) => {
