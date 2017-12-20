@@ -46,6 +46,8 @@ class Document < ActiveRecord::Base
     "VA 21-527EZ, Fully Developed Claim (Pension)"
   ].freeze
 
+  CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF = 30.days.ago.freeze
+
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
@@ -173,7 +175,7 @@ class Document < ActiveRecord::Base
   end
 
   def category_case_summary
-    CASE_SUMMARY_TYPES.include?(type)
+    CASE_SUMMARY_TYPES.include?(type) || received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF
   end
 
   def serialized_vacols_date

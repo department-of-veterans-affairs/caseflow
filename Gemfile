@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8377075a22dd209a200726ba3853c91d8eaa976c"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b7102ffb3b81ea6770719f921a1d06ef88c9ba92"
 
 gem "moment_timezone-rails"
 
@@ -30,7 +30,7 @@ gem 'active_model_serializers', '~> 0.10.0'
 # soft delete gem
 gem "paranoia", "~> 2.2"
 
-gem "dogapi" 
+gem "dogstatsd-ruby" 
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
