@@ -5,7 +5,7 @@ class BoldOnCondition extends React.PureComponent {
   render = () => this.props.condition ? <strong>{this.props.children}</strong> : this.props.children
 }
 
-export default class ViewItemLink extends React.PureComponent {
+export default class ViewableItemLink extends React.PureComponent {
   // Annoyingly, if we make this call in this event loop iteration, it won't follow the link. 
   // Instead, we use setTimeout to force it to run at a later point.
   onClick = () => setTimeout(this.props.onOpen);

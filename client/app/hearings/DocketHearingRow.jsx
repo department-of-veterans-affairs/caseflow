@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchableDropdown from '../components/SearchableDropdown';
-import ViewItemLink from '../components/ViewItemLink';
+import ViewableItemLink from '../components/ViewableItemLink';
 import Textarea from 'react-textarea-autosize';
 import Checkbox from '../components/Checkbox';
 import { connect } from 'react-redux';
@@ -83,7 +83,7 @@ export class DocketHearingRow extends React.PureComponent {
         </td>
         <td className="cf-hearings-docket-appellant">
           <b>{appellantDisplay}</b>
-          <ViewItemLink
+          <ViewableItemLink
             boldCondition={!hearing.viewed_by_current_user}
             onOpen={this.setHearingViewed}
             linkProps={{
@@ -91,7 +91,7 @@ export class DocketHearingRow extends React.PureComponent {
               target: '_blank'
             }}>
             {hearing.vbms_id}
-          </ViewItemLink>
+          </ViewableItemLink>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="2">
