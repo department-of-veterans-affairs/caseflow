@@ -7,8 +7,7 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import _ from 'lodash';
-import { submitReview } from '../../actions/rampElection';
-import { setOptionSelected, setReceiptDate } from '../../actions/common';
+import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getRampElectionStatus } from '../../selectors';
 
