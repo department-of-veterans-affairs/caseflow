@@ -1,7 +1,6 @@
-# This class calls MetricsService to record API metrics while also releasing DB connections.
 # Our external dependencies are slow and unreliable. If an external dependency takes a long
 # time to respond we end up holding on to DB connections for an unreasonable amount of time.
-# By default we'll release all DB connections before making the API call.
+# This enables us to release connections before making an external call.
 class DBService
   def self.release_db_connections
     if FeatureToggle.enabled?(:release_db_connections)
