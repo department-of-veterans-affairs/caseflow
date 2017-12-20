@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
-import { DownloadIcon } from '../components/RenderFunctions';
 import moment from 'moment';
 
 export const categoryFieldNameOfCategoryName =
@@ -135,7 +134,6 @@ export const getHearingWorksheetLink = (hearings) => {
         return <a target="_blank"href={`/hearings/${hearing.id}/worksheet/print`} key={key}>Hearing Worksheet
           <span className="hearing-date">
             {moment(hearing.date).format('l')}
-            <DownloadIcon className="downloader" />
           </span>
         </a>;
       })}
@@ -145,7 +143,7 @@ export const getHearingWorksheetLink = (hearings) => {
 
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
-  let appealHasHearing = claim.hearings.length > 0;
+  let appealHasHearing = (claim.hearings && claim.hearings.length > 0);
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
