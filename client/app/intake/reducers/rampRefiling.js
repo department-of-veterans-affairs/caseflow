@@ -2,6 +2,7 @@ import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import { getOptionSelectedError, getReceiptDateError } from '../util/index';
+import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.RAMP_REFILING.key) {
@@ -18,6 +19,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
     },
+    electionReceiptDate: {
+      $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.election_receipt_date)
+    },
     isReviewed: {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
     }
@@ -30,6 +34,7 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     optionSelected: null,
     optionSelectedError: null,
+    hasInvalidOption: false,
     receiptDate: null,
     receiptDateError: null,
     isStarted: false,
@@ -38,6 +43,10 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
       submitReview: REQUEST_STATE.NOT_STARTED
     }
   }, data.serverIntake)
+);
+
+const getHasInvalidOption = (responseErrorCodes) => (
+  _.get(responseErrorCodes.option_selected, 0) === 'higher_level_review_invalid'
 );
 
 export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), action) => {
@@ -85,6 +94,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       receiptDateError: {
         $set: null
       },
+      hasInvalidOption: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -96,6 +108,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
     });
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
+      hasInvalidOption: {
+        $set: getHasInvalidOption(action.payload.responseErrorCodes)
+      },
       optionSelectedError: {
         $set: getOptionSelectedError(action.payload.responseErrorCodes)
       },
