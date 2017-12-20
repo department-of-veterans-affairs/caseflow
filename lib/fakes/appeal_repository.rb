@@ -475,6 +475,14 @@ class Fakes::AppealRepository
         vbms_id: "#{i + 1}5555555C",
         issues: (1..2).map { Generators::Issue.build }
       )
+
+      Generators::EndProduct.build(
+        veteran_file_number: "#{i + 1}5555555",
+        bgs_attrs: {
+          benefit_claim_id: "FAKEEP123",
+          status_type_code: (i == 0 ? "PEND" : "CLR")
+        }
+      )
     end
 
     Generators::Appeal.build(
@@ -491,6 +499,8 @@ class Fakes::AppealRepository
       vbms_id: "25555555C",
       issues: (1..3).map { Generators::Issue.build }
     )
+
+    Fakes::VBMSService.end_product_claim_id = "FAKEEP123"
   end
 
   def self.aod(_vacols_id)

@@ -634,10 +634,38 @@ RSpec.feature "RAMP Intake" do
           fill_in "Search small", with: "12341234"
           click_on "Search"
 
-          # TODO: Show the proper error message
-          expect(page).to have_content("Something went wrong")
-
+          expect(page).to have_content("No RAMP Opt-In Election")
           expect(RampRefilingIntake.last).to have_attributes(error_code: "no_complete_ramp_election")
+        end
+
+        scenario "Attempt to start RAMP refiling for a veteran with an active RAMP Election EP" do
+          # Create an RAMP election with a pending EP
+          RampElection.create!(
+            veteran_file_number: "12341234",
+            notice_date: 3.days.ago,
+            end_product_reference_id: Generators::EndProduct.build(
+              veteran_file_number: "12341234",
+              bgs_attrs: { status_type_code: "PEND" }
+            ).claim_id
+          )
+
+          # Validate that you can't go directly to search
+          visit "/intake"
+
+          # Validate that you can't move forward without selecting a form
+          scroll_element_in_to_view(".cf-submit.usa-button")
+          expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
+
+          within_fieldset("Which form are you processing?") do
+            find("label", text: "21-4138 RAMP Selection Form").click
+          end
+          safe_click ".cf-submit.usa-button"
+
+          fill_in "Search small", with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_content("This Veteran has a pending RAMP EP in VBMS")
+          expect(RampRefilingIntake.last).to have_attributes(error_code: "ramp_election_is_active")
         end
 
         scenario "Start a RAMP refiling with an invalid option" do
@@ -647,7 +675,10 @@ RSpec.feature "RAMP Intake" do
             notice_date: 5.days.ago,
             option_selected: "higher_level_review_with_hearing",
             receipt_date: 4.days.ago,
-            end_product_reference_id: "123"
+            end_product_reference_id: Generators::EndProduct.build(
+              veteran_file_number: "12341234",
+              bgs_attrs: { status_type_code: "CLR" }
+            ).claim_id
           )
 
           intake = RampRefilingIntake.create!(
@@ -672,12 +703,15 @@ RSpec.feature "RAMP Intake" do
         end
 
         scenario "Start a RAMP refiling" do
-          # Create an complete RAMP election
+          # Create an RAMP election with a cleared EP
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",
             notice_date: 5.days.ago,
             receipt_date: 4.days.ago,
-            end_product_reference_id: "123"
+            end_product_reference_id: Generators::EndProduct.build(
+              veteran_file_number: "12341234",
+              bgs_attrs: { status_type_code: "CLR" }
+            ).claim_id
           )
 
           # Validate that you can't go directly to search
