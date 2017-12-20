@@ -153,7 +153,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
-      expect(page.title).to eq "Hearing Worksheet for AppellantLastName, AppellantFirstName A."
+      expect(page.title).to eq "Appellant First Name A. Appellant Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
