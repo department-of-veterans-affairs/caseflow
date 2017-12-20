@@ -239,10 +239,7 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
     });
   case Constants.START_PLACING_ANNOTATION:
     return update(state, {
-      isPlacingAnnotation: { $set: true },
-      openedAccordionSections: {
-        $apply: (sectionKeys) => _.union(sectionKeys, [Constants.COMMENT_ACCORDION_KEY])
-      }
+      isPlacingAnnotation: { $set: true }
     });
   case Constants.UPDATE_NEW_ANNOTATION_CONTENT:
     return update(state, {

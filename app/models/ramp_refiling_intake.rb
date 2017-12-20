@@ -12,6 +12,22 @@ class RampRefilingIntake < Intake
     end
   end
 
+  def review!(request_params)
+    detail.start_review!
+    detail.update_attributes(request_params.permit(:receipt_date, :option_selected))
+  end
+
+  def review_errors
+    detail.errors.messages
+  end
+
+  def ui_hash
+    super.merge(
+      option_selected: detail.option_selected,
+      receipt_date: detail.receipt_date
+    )
+  end
+
   private
 
   def validate_detail_on_start

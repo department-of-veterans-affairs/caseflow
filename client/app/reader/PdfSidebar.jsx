@@ -29,6 +29,7 @@ import { commentColumns, commentInstructions, documentsColumns,
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { CATEGORIES } from './analytics';
+import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -173,7 +174,7 @@ export class PdfSidebar extends React.Component {
             <SideBarIssueTags
               doc={this.props.doc} />
           </AccordionSection>
-          <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
+          <AccordionSection title={COMMENT_ACCORDION_KEY} id="comments-header">
             <SideBarComments
               comments={comments}
             />
@@ -257,11 +258,11 @@ const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.annotationLayer, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
     comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
-    scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
-    hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
-    error: state.readerReducer.ui.pdfSidebar.error,
-    appeal: state.readerReducer.loadedAppeal,
-    ..._.pick(state.readerReducer, 'documents', 'openedAccordionSections')
+    scrollToSidebarComment: state.pdfViewer.scrollToSidebarComment,
+    error: state.pdfViewer.pdfSideBarError,
+    appeal: state.pdfViewer.loadedAppeal,
+    openedAccordionSections: state.pdfViewer.openedAccordionSections,
+    hidePdfSidebar: state.pdfViewer.hidePdfSidebar
   };
 };
 const mapDispatchToProps = (dispatch) => ({
