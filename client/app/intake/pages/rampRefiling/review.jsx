@@ -8,7 +8,7 @@ import Button from '../../../components/Button';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
-import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampRefiling';
+import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/common';
 import { getRampElectionStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
