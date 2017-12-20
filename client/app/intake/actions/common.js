@@ -26,7 +26,7 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
     form_type: formType
   };
 
-  return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.INTAKE).
+  return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.START_INTAKE).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);
@@ -86,7 +86,7 @@ export const submitCancel = (intakeId) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.delete(`/intake/${intakeId}`, {}, ENDPOINT_NAMES.INTAKE_RAMP).
+  return ApiUtil.delete(`/intake/${intakeId}`, {}, ENDPOINT_NAMES.CANCEL_INTAKE).
     then(
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
