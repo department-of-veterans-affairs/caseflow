@@ -26,7 +26,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "brieff.bfcorlid as vbms_id",
              "corres.snamef as veteran_first_name",
              "corres.snamemi as veteran_middle_initial",
-             "corres.snamel as veteran_last_name")
+             "corres.snamel as veteran_last_name",
+             "brieff.bfac as type")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder

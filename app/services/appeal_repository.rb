@@ -356,7 +356,10 @@ class AppealRepository
         # if that appeal is not found, it intializes a new appeal with the
         # assignments vacols_id
         appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
-        appeal.attributes = assignment.attributes
+        attribute_copy = assignment.attributes
+        attribute_copy["cavc"] = VACOLS::Case::TYPES[attribute_copy["type"]] == VACOLS::Case::TYPES[CAVC_TYPE]
+        attribute_copy.delete("type")
+        appeal.attributes = attribute_copy
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
 
         # fetching Issue objects using the issue hash

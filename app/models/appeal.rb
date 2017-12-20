@@ -460,6 +460,16 @@ class Appeal < ActiveRecord::Base
     v1_events.last.try(:date)
   end
 
+  def assigned_to_user_to_hash(viewed: nil, issues: nil)
+    serializable_hash(
+      methods: [:veteran_full_name, :cavc, :aod],
+      includes: [:vbms_id, :vacols_id]
+    ).tap do |hash|
+      hash["viewed"] = viewed
+      hash["issues"] = issues
+    end
+  end
+
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
