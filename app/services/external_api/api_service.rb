@@ -3,7 +3,7 @@
 # time to respond we end up holding on to DB connections for an unreasonable amount of time.
 # By default we'll release all DB connections before making the API call.
 class ExternalApi::ApiService
-  def self.request(description, service: nil, name: "unknown")
+  def self.release_db_connections
     if FeatureToggle.enabled?(:release_db_connections)
       if VACOLS::Record.connection_pool.active_connection?
         VACOLS::Record.connection_pool.release_connection if VACOLS::Record.connection.open_transactions == 0
@@ -11,10 +11,6 @@ class ExternalApi::ApiService
       if ActiveRecord::Base.connection_pool.active_connection?
         ActiveRecord::Base.connection_pool.release_connection if ActiveRecord::Base.connection.open_transactions == 0
       end
-    end
-
-    MetricsService.record(description, service: service, name: name) do
-      yield
     end
   end
 end

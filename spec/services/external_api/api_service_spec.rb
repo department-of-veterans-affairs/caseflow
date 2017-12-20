@@ -1,11 +1,7 @@
-describe ExternalApi::ApiService do
+describe ExternalApi::ApiService, focus: true do
   context ".request" do
     subject do
-      ExternalApi::ApiService.request("Test ApiService",
-                                      service: :efolder,
-                                      name: "endpoint") do
-        "Do Nothing"
-      end
+      ExternalApi::ApiService.release_db_connections
     end
 
     context "when feature flag is turned on", db_clean: :truncation do
@@ -26,11 +22,6 @@ describe ExternalApi::ApiService do
           # Force grabbing connections
           ActiveRecord::Base.connection
           VACOLS::Record.connection
-        end
-
-        it "calls MetricsService" do
-          expect(MetricsService).to receive(:record).once
-          subject
         end
 
         it "when not in a transaction, connections are released" do
@@ -85,8 +76,7 @@ describe ExternalApi::ApiService do
         allow(ActiveRecord::Base).to receive(:connection).and_call_original
       end
 
-      it "only calls MetricsService" do
-        expect(MetricsService).to receive(:record).once
+      it "doesn't do anything" do
         subject
         expect(VACOLS::Record).to_not have_received(:connection)
         expect(ActiveRecord::Base).to_not have_received(:connection)

@@ -41,6 +41,8 @@ class ExternalApi::EfolderService
   end
 
   def self.get_efolder_response(endpoint, user, headers = {})
+    ExternalApi::ApiService.release_db_connections
+
     url = URI.escape(efolder_base_url + endpoint)
     request = HTTPI::Request.new(url)
     request.auth.ssl.ssl_version  = :TLSv1_2
@@ -50,9 +52,9 @@ class ExternalApi::EfolderService
     headers["CSS-ID"] = user.css_id.to_s
     headers["STATION-ID"] = user.station_id.to_s
     request.headers = headers
-    ExternalApi::ApiService.request("eFolder GET request to #{url}",
-                                    service: :efolder,
-                                    name: endpoint) do
+    MetricsService.record("eFolder GET request to #{url}",
+                          service: :efolder,
+                          name: endpoint) do
       HTTPI.get(request)
     end
   end
