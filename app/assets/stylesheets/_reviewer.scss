@@ -665,18 +665,6 @@ input[type="search"].cf-search-input-with-close {
   height: 580px;
   overflow: auto;
   display: block;
-
-  // Candidate for commons
-  table {
-    margin: 0 0 2em;
-  }
-
-  // Candidate for commons - all modals should have dark gray x
-  .cf-icon-close {
-    path {
-      fill: $color-gray-dark;
-    }
-  }
 }
 
 // This is override some bad styling in PDFJS. Note selection is not
