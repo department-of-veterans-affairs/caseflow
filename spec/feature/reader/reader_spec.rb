@@ -300,8 +300,24 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
       end
 
+      let(:hearing) do
+        Generators::Hearing.create(appeal: appeal2)
+      end
+
       before do
         Fakes::AppealRepository.appeal_records = [appeal, appeal2, appeal3, appeal4, appeal5]
+      end
+
+      scenario "View Hearing Worksheet" do
+        visit "/reader/appeal"
+        new_window = window_opened_by { click_on "Hearing Worksheet" }
+        within_window new_window do
+          expect(page).to have_content("Hearing Worksheet")
+          expect(page).to have_content("Periods and circumstances of service")
+          expect(page).to have_content("Contentions")
+          expect(page).to have_content("Evidence")
+          expect(page).to have_content("Comments and special instructions to attorneys")
+        end
       end
 
       scenario "Enter a case" do
