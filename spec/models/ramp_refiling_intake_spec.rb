@@ -4,8 +4,8 @@ describe RampRefilingIntake do
   end
 
   let(:user) { Generators::User.build }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:veteran_file_number) { "64205555" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:detail) { nil }
 
   let(:intake) do
@@ -18,9 +18,12 @@ describe RampRefilingIntake do
 
   let(:completed_ramp_election) do
     RampElection.create!(
-      veteran_file_number: "64205555",
+      veteran_file_number: veteran_file_number,
       notice_date: 3.days.ago,
-      end_product_reference_id: "123"
+      end_product_reference_id: Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: { status_type_code: "CLR" }
+      ).claim_id
     )
   end
 
@@ -28,13 +31,7 @@ describe RampRefilingIntake do
     subject { intake.start! }
 
     context "valid to start" do
-      let!(:completed_ramp_election) do
-        RampElection.create!(
-          veteran_file_number: "64205555",
-          notice_date: 3.days.ago,
-          end_product_reference_id: "123"
-        )
-      end
+      let!(:ramp_election) { completed_ramp_election }
 
       it "saves intake and sets detail to ramp election" do
         expect(subject).to be_truthy

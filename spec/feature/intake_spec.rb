@@ -675,7 +675,10 @@ RSpec.feature "RAMP Intake" do
             notice_date: 5.days.ago,
             option_selected: "higher_level_review_with_hearing",
             receipt_date: 4.days.ago,
-            end_product_reference_id: "123"
+            end_product_reference_id: Generators::EndProduct.build(
+              veteran_file_number: "12341234",
+              bgs_attrs: { status_type_code: "CLR" }
+            ).claim_id
           )
 
           intake = RampRefilingIntake.create!(
