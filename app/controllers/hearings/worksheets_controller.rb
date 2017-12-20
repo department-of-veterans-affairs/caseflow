@@ -2,6 +2,8 @@ class Hearings::WorksheetsController < HearingsController
   def show
     @hearing_page_title = "Daily Docket | Hearing Worksheet"
 
+    HearingView.find_or_create_by(hearing_id: params[:hearing_id], user_id: current_user.id).touch
+
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
@@ -39,6 +41,6 @@ class Hearings::WorksheetsController < HearingsController
   helper_method :worksheet
 
   def hearing_worksheet
-    worksheet.to_hash_for_worksheet
+    worksheet.to_hash_for_worksheet(current_user.id)
   end
 end
