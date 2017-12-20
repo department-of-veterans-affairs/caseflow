@@ -176,7 +176,7 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
       editingAnnotations: {
         [action.payload.annotationId]: {
           relevant_date: {
-            $set: action.payload.relevant_date
+            $set: action.payload.relevantDate
           }
         }
       }

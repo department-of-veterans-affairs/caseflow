@@ -45,8 +45,8 @@ export default class EditComment extends React.Component {
 
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
-  onChangeDate = (relevant_date) => this.props.onChangeDate(
-    formatDateStringForApi(relevant_date), this.props.comment.uuid
+  onChangeDate = (relevantDate) => this.props.onChangeDate(
+    formatDateStringForApi(relevantDate), this.props.comment.uuid
   );
 
   onCancelCommentEdit = () => {
