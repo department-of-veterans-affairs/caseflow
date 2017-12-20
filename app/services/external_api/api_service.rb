@@ -6,9 +6,11 @@ class ExternalApi::ApiService
   def self.release_db_connections
     if FeatureToggle.enabled?(:release_db_connections)
       if VACOLS::Record.connection_pool.active_connection?
+        Rails.logger.info("Releasing VACOLS DB Connection")
         VACOLS::Record.connection_pool.release_connection if VACOLS::Record.connection.open_transactions == 0
       end
       if ActiveRecord::Base.connection_pool.active_connection?
+        Rails.logger.info("Releasing PG DB Connection")
         ActiveRecord::Base.connection_pool.release_connection if ActiveRecord::Base.connection.open_transactions == 0
       end
     end
