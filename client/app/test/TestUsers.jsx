@@ -13,7 +13,8 @@ export default class TestUsers extends React.PureComponent {
     this.state = {
       currentUser: props.currentUser,
       userSelect: props.currentUser.id,
-      isSwitching: false
+      isSwitching: false,
+      isLoggingIn: false
     };
   }
 
@@ -29,6 +30,25 @@ export default class TestUsers extends React.PureComponent {
       this.setState({ isSwitching: false });
     }).
       catch((err) => {
+        console.warn(err);
+      });
+  };
+
+  userIDOnChange = (value) => this.setState({ userID: value });
+  stationIDOnChange = (value) => this.setState({ stationID: value });
+
+  handleLogInAsUser = () => {
+    this.setState({ isLoggingIn: true });
+    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userID}&station_id=${this.state.stationID}`).then(() => {
+      window.location.reload();
+      this.setState({ isLoggingIn: false });
+    }).
+      catch((err) => {
+        this.setState({ isLoggingIn: false });
+        this.setState(
+          { isLoggingIn: false,
+            userID: '',
+            stationID: '' });
         console.warn(err);
       });
   }
@@ -97,17 +117,21 @@ export default class TestUsers extends React.PureComponent {
         <br /><br />
         {this.props.currentUser.roles.includes('Global Admin') &&
         <div>
-          <strong>Reproduce user state:</strong>
+          <strong>Log in as user:</strong>
           <TextField
             label="User ID:"
-            name="userID" />
+            name="userID"
+            value={this.state.userID}
+            onChange={this.userIDOnChange} />
           <TextField
             label="Station ID:"
-            name="stationID" />
+            name="stationID"
+            value={this.state.stationID}
+            onChange={this.stationIDOnChange} />
           <Button
             onClick={this.handleLogInAsUser}
             name="Log in as user"
-            loading={this.state.isLoggingInAsUser}
+            loading={this.state.isLoggingIn}
             loadingText="Logging in" />
         </div>}
       </div>

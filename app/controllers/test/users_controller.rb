@@ -1,5 +1,5 @@
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_demo, only: [:set_user, :log_in_as_user, :set_end_products]
 
   APPS = [
     {
@@ -61,7 +61,17 @@ class Test::UsersController < ApplicationController
     User.before_set_user # for testing only
 
     session["user"] = User.authentication_service.get_user_session(params[:id])
-    render nothing: true, status: 200
+    head :ok
+  end
+
+  def log_in_as_user
+    user = User.find_by(css_id: params[:id], station_id: params[:station_id])
+    return head :not_found if user.nil?
+    session["user"] = user.to_hash
+    session["user"]["id"] = user.css_id
+    session["user"]["name"] = user.full_name
+    session[:regional_office] = user.selected_regional_office ? user.selected_regional_office : user.regional_office
+    head :ok
   end
 
   # Set end products in DEMO
