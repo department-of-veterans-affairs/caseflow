@@ -1,4 +1,4 @@
-describe ExternalApi::ApiService, focus: true do
+describe ExternalApi::ApiService do
   context ".request" do
     subject do
       ExternalApi::ApiService.release_db_connections
@@ -24,12 +24,16 @@ describe ExternalApi::ApiService, focus: true do
           VACOLS::Record.connection
         end
 
-        it "when not in a transaction, connections are released" do
+        it "when not in a transaction, connections are released and can be re-grabbed" do
           expect(active_record_connections).to eq(1)
           expect(vacols_connections).to eq(1)
           subject
           expect(active_record_connections).to eq(0)
           expect(vacols_connections).to eq(0)
+          ActiveRecord::Base.connection
+          VACOLS::Record.connection
+          expect(active_record_connections).to eq(1)
+          expect(vacols_connections).to eq(1)
         end
 
         it "when in an ActiveRecord transaction, ActiveRecord connections are not released" do
