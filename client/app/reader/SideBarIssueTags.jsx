@@ -54,8 +54,8 @@ class SideBarIssueTags extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    error: state.readerReducer.ui.pdfSidebar.error,
-    ..._.pick(state.readerReducer.ui, 'tagOptions')
+    error: state.pdfViewer.pdfSideBarError,
+    ..._.pick(state.pdfViewer, 'tagOptions')
   };
 };
 
