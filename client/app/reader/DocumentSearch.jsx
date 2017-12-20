@@ -169,7 +169,7 @@ const mapStateToProps = (state, props) => ({
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),
   matchIndexToHighlight: state.searchActionReducer.indexToHighlight,
-  hidden: state.readerReducer.ui.pdf.hideSearchBar,
+  hidden: state.pdfViewer.hideSearchBar,
   textExtracted: !_.isEmpty(state.searchActionReducer.extractedText)
 });
 

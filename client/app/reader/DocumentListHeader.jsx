@@ -61,7 +61,7 @@ const mapStateToProps = (state) => ({
   numberOfDocuments: state.documentList.filteredDocIds ?
     state.documentList.filteredDocIds.length : _.size(state.documents),
   docFilterCriteria: state.documentList.docFilterCriteria,
-  vacolsId: state.readerReducer.loadedAppealId
+  vacolsId: state.pdfViewer.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => ({
