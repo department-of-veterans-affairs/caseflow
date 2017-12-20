@@ -317,6 +317,7 @@ RSpec.feature "Reader" do
           expect(page).to have_content("Contentions")
           expect(page).to have_content("Evidence")
           expect(page).to have_content("Comments and special instructions to attorneys")
+          page.driver.browser.close
         end
       end
 
