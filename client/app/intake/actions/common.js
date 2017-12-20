@@ -103,3 +103,22 @@ export const submitCancel = (intakeId) => (dispatch) => {
       }
     );
 };
+
+export const setOptionSelected = (optionSelected) => ({
+  type: ACTIONS.SET_OPTION_SELECTED,
+  payload: {
+    optionSelected
+  },
+  meta: {
+    analytics: {
+      label: optionSelected
+    }
+  }
+});
+
+export const setReceiptDate = (receiptDate) => ({
+  type: ACTIONS.SET_RECEIPT_DATE,
+  payload: {
+    receiptDate
+  }
+});

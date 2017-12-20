@@ -5,25 +5,6 @@ import _ from 'lodash';
 
 const analytics = true;
 
-export const setOptionSelected = (optionSelected) => ({
-  type: ACTIONS.SET_OPTION_SELECTED,
-  payload: {
-    optionSelected
-  },
-  meta: {
-    analytics: {
-      label: optionSelected
-    }
-  }
-});
-
-export const setReceiptDate = (receiptDate) => ({
-  type: ACTIONS.SET_RECEIPT_DATE,
-  payload: {
-    receiptDate
-  }
-});
-
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
