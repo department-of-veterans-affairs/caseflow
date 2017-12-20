@@ -109,7 +109,7 @@ RSpec.feature "Hearings" do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
-    scenario "Link on daily docket opens worksheet in new tab", focus: true do
+    scenario "Link on daily docket opens worksheet in new tab" do
       visit "/hearings/dockets/2017-01-06"
       link_cell = find(".cf-hearings-docket-appellant", match: :first)
       
