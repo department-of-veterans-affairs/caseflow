@@ -106,7 +106,7 @@ class Hearing < ActiveRecord::Base
     :sanitized_vbms_id, \
     to: :appeal, allow_nil: true
 
-    def to_hash(current_user_id)
+  def to_hash(current_user_id)
     serializable_hash(
       methods: [
         :date, :request_type,
