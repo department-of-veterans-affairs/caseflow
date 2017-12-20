@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { getRowObjects } from '../../../app/reader/DocumentsTable';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../app/reader/constants';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../app/reader/DocumentList/actionTypes';
 
 describe('DocumentsTable', () => {
   it('in documents mode, only adds comment rows for docs which have comments and listComments set', () => {

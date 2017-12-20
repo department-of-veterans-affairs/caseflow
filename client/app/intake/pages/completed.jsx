@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../actions/common';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
-import { getRampElectionStatus } from '../redux/selectors';
+import { getRampElectionStatus } from '../selectors';
 
 class Completed extends React.PureComponent {
   render() {
@@ -62,7 +62,7 @@ export const CompletedNextButton = connect(
 
 export default connect(
   (state) => ({
-    veteran: state.veteran,
+    veteran: state.intake.veteran,
     endProductDescription: state.rampElection.endProductDescription,
     rampElectionStatus: getRampElectionStatus(state)
   })

@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { addNewTag, removeTag } from '../reader/PdfViewer/PdfViewerActions';
+import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
 class SideBarIssueTags extends PureComponent {
   render() {
@@ -54,8 +54,8 @@ class SideBarIssueTags extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    error: state.readerReducer.ui.pdfSidebar.error,
-    ..._.pick(state.readerReducer.ui, 'tagOptions')
+    error: state.pdfViewer.pdfSideBarError,
+    ..._.pick(state.pdfViewer, 'tagOptions')
   };
 };
 

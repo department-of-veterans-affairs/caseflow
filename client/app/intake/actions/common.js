@@ -21,8 +21,10 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
     meta: { analytics }
   });
 
-  const data = { file_number: fileNumberSearch,
-    form_type: formType };
+  const data = {
+    file_number: fileNumberSearch,
+    form_type: formType
+  };
 
   return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.INTAKE).
     then(
@@ -75,7 +77,7 @@ export const toggleCancelModal = () => ({
   type: ACTIONS.TOGGLE_CANCEL_MODAL,
   meta: {
     analytics: {
-      label: (nextState) => nextState.cancelModalVisible ? 'show' : 'hide'
+      label: (nextState) => nextState.intake.cancelModalVisible ? 'show' : 'hide'
     }
   }
 });

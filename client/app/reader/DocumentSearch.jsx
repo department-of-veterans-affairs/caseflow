@@ -9,7 +9,7 @@ import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex
-} from '../reader/Pdf/PdfActions';
+} from '../reader/PdfSearch/PdfSearchActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { READER_COLOR } from './constants';
@@ -168,9 +168,9 @@ const mapStateToProps = (state, props) => ({
   pdfText: getTextForFile(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),
-  matchIndexToHighlight: state.readerReducer.matchIndexToHighlight,
-  hidden: state.readerReducer.ui.pdf.hideSearchBar,
-  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
+  matchIndexToHighlight: state.searchActionReducer.indexToHighlight,
+  hidden: state.pdfViewer.hideSearchBar,
+  textExtracted: !_.isEmpty(state.searchActionReducer.extractedText)
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -25,7 +25,7 @@ SwitchOnForm.defaultProps = {
 };
 
 const ConnectedSwitchOnForm = connect(
-  ({ formType }) => ({ formType })
+  ({ intake }) => ({ formType: intake.formType })
 )(SwitchOnForm);
 
 export default ConnectedSwitchOnForm;

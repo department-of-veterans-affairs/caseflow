@@ -8,13 +8,15 @@ describe RampElection do
   let(:notice_date) { 1.day.ago }
   let(:receipt_date) { 1.day.ago }
   let(:option_selected) { nil }
+  let(:end_product_reference_id) { nil }
 
   let(:ramp_election) do
     RampElection.new(
       veteran_file_number: veteran_file_number,
       notice_date: notice_date,
       option_selected: option_selected,
-      receipt_date: receipt_date
+      receipt_date: receipt_date,
+      end_product_reference_id: end_product_reference_id
     )
   end
 
@@ -120,6 +122,33 @@ describe RampElection do
 
     context "when there is no intake referencing the election" do
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#established_end_product" do
+    subject { ramp_election.established_end_product }
+
+    let!(:other_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
+    let!(:matching_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
+
+    context "when matching end product has not yet been established" do
+      context "when end_product_reference_id is nil" do
+        it { is_expected.to be_nil }
+      end
+
+      context "when end_product_reference_id is set" do
+        let(:end_product_reference_id) { "not matching" }
+
+        it "raises EstablishedEndProductNotFound error" do
+          expect { subject }.to raise_error(RampElection::EstablishedEndProductNotFound)
+        end
+      end
+    end
+
+    context "when a matching end product has been established" do
+      let(:end_product_reference_id) { matching_ep.claim_id }
+
+      it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
     end
   end
 

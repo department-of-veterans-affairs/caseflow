@@ -64,12 +64,12 @@ export class PdfListView extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state),
-    ..._.pick(state.readerReducer.ui, 'docFilterCriteria'),
+    ..._.pick(state.documentList, 'docFilterCriteria'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
-      state.readerReducer.loadedAppeal,
+      state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
-    manifestVbmsFetchedAt: state.readerReducer.ui.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.readerReducer.ui.manifestVvaFetchedAt
+    manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
+    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt
   };
 };
 
