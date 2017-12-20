@@ -1,6 +1,7 @@
-import { ACTIONS, REQUEST_STATE } from '../constants';
+import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
+import { getOptionSelectedError, getReceiptDateError } from '../util';
 import _ from 'lodash';
 
 const formatAppeals = (appeals) => {
@@ -18,6 +19,10 @@ const formatAppeals = (appeals) => {
 };
 
 const updateFromServerIntake = (state, serverIntake) => {
+  if (serverIntake.form_type !== FORM_TYPES.RAMP_ELECTION.key) {
+    return state;
+  }
+
   return update(state, {
     isStarted: {
       $set: Boolean(serverIntake.id)
@@ -65,27 +70,21 @@ export const mapDataToInitialRampElection = (data = { serverIntake: {} }) => (
   }, data.serverIntake)
 );
 
-const getOptionSelectedError = (responseErrorCodes) => (
-  _.get(responseErrorCodes.option_selected, 0) && 'Please select an option.'
-);
-
-const getReceiptDateError = (responseErrorCodes, state) => (
-  {
-    blank:
-      'Please enter a valid receipt date.',
-    in_future:
-      'Receipt date cannot be in the future.',
-    before_notice_date: 'Receipt date cannot be earlier than the election notice ' +
-      `date of ${state.noticeDate}`
-  }[_.get(responseErrorCodes.receipt_date, 0)]
-);
-
 export const rampElectionReducer = (state = mapDataToInitialRampElection(), action) => {
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialRampElection();
   case ACTIONS.FILE_NUMBER_SEARCH_SUCCEED:
     return updateFromServerIntake(state, action.payload.intake);
+  default:
+  }
+
+  // The rest of the actions only should be processed if a RampElection intake is being processed
+  if (!state.isStarted) {
+    return state;
+  }
+
+  switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
     return mapDataToInitialRampElection();
   case ACTIONS.SET_OPTION_SELECTED:
