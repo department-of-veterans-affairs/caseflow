@@ -231,17 +231,21 @@ end
 
 def scroll_element_in_to_view(selector)
   expect do
-    page.evaluate_script <<-EOS
-      function() {
-        var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
-        if (!elem) {
-          return false;
-        }
-        elem.scrollIntoView();
-        return true;
-      }();
-    EOS
-  end.to become_truthy
+    scroll_to_element_in_view_with_script(selector)
+  end.to become_truthy, "Could not find element #{selector}"
+end
+
+def scroll_to_element_in_view_with_script(selector)
+  page.evaluate_script <<-EOS
+    function() {
+      var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
+      if (!elem) {
+        return false;
+      }
+      elem.scrollIntoView();
+      return true;
+    }();
+  EOS
 end
 
 # We generally avoid writing our own polling code, since proper Cappybara use generally
