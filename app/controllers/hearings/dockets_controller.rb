@@ -5,9 +5,7 @@ class Hearings::DocketsController < HearingsController
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
-        render json: (current_user_dockets.transform_values do |hearing|
-                        hearing.to_hash(current_user.id)
-                      end)
+        render json: current_user_dockets.transform_values(&:to_hash)
       end
     end
   end
