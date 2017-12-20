@@ -13,6 +13,11 @@ export default class DateSelector extends React.Component {
     let value = initialValue || '';
     let propsValue = this.props.value || '';
 
+    if (this.props.type === 'date' && this.props.onChange) {
+      // input type=date handles validation, returns yyyy-mm-dd, displays mm/dd/yyyy
+      return this.props.onChange(value);
+    }
+
     // If the user added characters we append a '/' before putting
     // it through the regex. If this spot doesn't accept a '/' then
     // the regex test will strip it. Otherwise, the user doesn't have
@@ -22,8 +27,6 @@ export default class DateSelector extends React.Component {
       value = `${value}/`;
     } else if (propsValue.charAt(propsValue.length - 1) === '/') {
       value = value.substr(0, value.length - 1);
-    } else {
-      value = this.hyphenatedDateToSlashed(value);
     }
 
     // Test the input agains the date regex above. The regex matches
@@ -36,14 +39,6 @@ export default class DateSelector extends React.Component {
     if (this.props.onChange) {
       this.props.onChange(value);
     }
-  }
-
-  hyphenatedDateToSlashed = (date) => {
-    // input type=date returns yyyy-mm-dd, convert to mm/dd/yyyy
-    const HYPHENATED_DATE_REGEX = /(\d+)-(\d+)-(\d+)/g;
-    const dateParts = HYPHENATED_DATE_REGEX.exec(date);
-
-    return dateParts ? `${dateParts[2]}/${dateParts[3]}/${dateParts[1]}` : date;
   }
 
   render() {

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import Button from '../components/Button';
 import DateSelector from '../components/DateSelector';
-import { formatDateStringForApi } from '../util/DateUtil';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
@@ -45,9 +44,7 @@ export default class EditComment extends React.Component {
 
   onChange = (event) => this.props.onChange(event.target.value, this.props.comment.uuid);
 
-  onChangeDate = (relevantDate) => this.props.onChangeDate(
-    formatDateStringForApi(relevantDate), this.props.comment.uuid
-  );
+  onChangeDate = (relevantDate) => this.props.onChangeDate(relevantDate, this.props.comment.uuid);
 
   onCancelCommentEdit = () => {
     this.shouldAutosave = false;
