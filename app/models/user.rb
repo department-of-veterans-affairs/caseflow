@@ -5,7 +5,6 @@ class User < ActiveRecord::Base
   has_many :annotations
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
-  attr_accessor :ip_address
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
@@ -132,15 +131,14 @@ class User < ActiveRecord::Base
     def before_set_user
     end
 
-    def system_user(ip_address)
+    def system_user
       new(
         station_id: "283",
-        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1",
-        ip_address: ip_address
+        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
     end
 
-    def from_session(session, request)
+    def from_session(session)
       user = session["user"] ||= authentication_service.default_user_session
 
       return nil if user.nil?
@@ -149,7 +147,6 @@ class User < ActiveRecord::Base
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
-        u.ip_address = request.remote_ip
         u.regional_office = session[:regional_office]
         u.save
       end

@@ -55,7 +55,7 @@ export class ReaderLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  loadedAppealId: state.readerReducer.loadedAppealId
+  loadedAppealId: state.pdfViewer.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (

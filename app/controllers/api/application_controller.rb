@@ -26,7 +26,7 @@ class Api::ApplicationController < ActionController::Base
 
   # For API calls, we use the system user to make all BGS calls
   def set_api_user
-    RequestStore.store[:current_user] = User.system_user(request.remote_ip)
+    RequestStore.store[:current_user] = User.system_user
   end
 
   def verify_authentication_token
