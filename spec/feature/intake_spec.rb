@@ -665,10 +665,20 @@ RSpec.feature "RAMP Intake" do
 
           expect(page).to have_current_path("/intake/review-request")
 
-          ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
+          within_fieldset("Which review lane did the Veteran select?") do
+            find("label", text: "Appeal to Board").click
+          end
 
+          fill_in "What is the Receipt Date of this form?", with: "11/12/2017"
+          safe_click "#button-submit-review"
+
+          expect(page).to have_content("Finish Processing refiling")
+
+          ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
           expect(ramp_refiling).to_not be_nil
           expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
+          expect(ramp_refiling.option_selected).to eq("appeal")
+          expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 11, 12))
         end
       end
     end
