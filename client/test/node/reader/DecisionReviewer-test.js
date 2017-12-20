@@ -22,6 +22,7 @@ import searchActionReducer from '../../../app/reader/PdfSearch/PdfSearchReducer'
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
 import annotationLayerReducer from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
 import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer';
+import pdfViewerReducer from '../../../app/reader/PdfViewer/PdfViewerReducer';
 
 import documentsReducer from '../../../app/reader/Documents/DocumentsReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
@@ -47,6 +48,7 @@ const getStore = () => createStore(
     search: searchReducer,
     documents: documentsReducer,
     documentList: documentListReducer,
+    pdfViewer: pdfViewerReducer,
     annotationLayer: annotationLayerReducer
   }),
   compose(

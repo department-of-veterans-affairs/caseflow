@@ -66,7 +66,7 @@ const mapStateToProps = (state, props) => {
   return { documents: getFilteredDocuments(state),
     ..._.pick(state.documentList, 'docFilterCriteria'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
-      state.readerReducer.loadedAppeal,
+      state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
     manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt

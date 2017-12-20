@@ -24,15 +24,15 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-export const submitReview = (intakeId, rampElection) => (dispatch) => {
+export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
   });
 
   const data = {
-    option_selected: rampElection.optionSelected,
-    receipt_date: formatDateStringForApi(rampElection.receiptDate)
+    option_selected: rampRefiling.optionSelected,
+    receipt_date: formatDateStringForApi(rampRefiling.receiptDate)
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
@@ -66,53 +66,3 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
       }
     );
 };
-
-export const completeIntake = (intakeId, rampElection) => (dispatch) => {
-  if (!rampElection.finishConfirmed) {
-    dispatch({
-      type: ACTIONS.COMPLETE_INTAKE_NOT_CONFIRMED,
-      meta: { analytics }
-    });
-
-    return Promise.resolve(false);
-  }
-
-  dispatch({
-    type: ACTIONS.COMPLETE_INTAKE_START,
-    meta: { analytics }
-  });
-
-  return ApiUtil.patch(`/intake/${intakeId}/complete`, {}, ENDPOINT_NAMES.COMPLETE_INTAKE).
-    then(
-      (response) => {
-        const responseObject = JSON.parse(response.text);
-
-        dispatch({
-          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
-          payload: {
-            intake: responseObject
-          },
-          meta: { analytics }
-        });
-
-        return true;
-      },
-      (error) => {
-        dispatch({
-          type: ACTIONS.COMPLETE_INTAKE_FAIL,
-          meta: { analytics }
-        });
-        throw error;
-      }
-    );
-};
-
-export const confirmFinishIntake = (isConfirmed) => ({
-  type: ACTIONS.CONFIRM_FINISH_INTAKE,
-  payload: { isConfirmed },
-  meta: {
-    analytics: {
-      label: isConfirmed ? 'confirmed' : 'not-confirmed'
-    }
-  }
-});
