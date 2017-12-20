@@ -122,7 +122,6 @@ RSpec.feature "Hearings" do
       link.click
 
       # Link should not be bolded after we click the link to view the worksheet
-
       expect(link_cell).to_not have_css("strong a")
 
       new_window = windows.last
