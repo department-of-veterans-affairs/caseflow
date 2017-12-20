@@ -252,6 +252,14 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.UPDATE_NEW_ANNOTATION_RELEVANT_DATE:
+    return update(state, {
+      placedButUnsavedAnnotation: {
+        relevant_date: {
+          $set: action.payload.relevantDate
+        }
+      }
+    });
   default:
     return state;
   }

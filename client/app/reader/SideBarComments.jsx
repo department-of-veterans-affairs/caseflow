@@ -8,7 +8,7 @@ import Button from '../components/Button';
 import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
 import { createAnnotation, stopPlacingAnnotation,
-  startPlacingAnnotation, updateNewAnnotationContent, updateAnnotationRelevantDate
+  startPlacingAnnotation, updateNewAnnotationContent, updateNewAnnotationRelevantDate
 } from '../reader/AnnotationLayer/AnnotationActions';
 
 class SideBarComments extends PureComponent {
@@ -41,7 +41,7 @@ class SideBarComments extends PureComponent {
             id="addComment"
             disableOnEmpty
             onChange={this.props.updateNewAnnotationContent}
-            onChangeDate={this.props.updateAnnotationRelevantDate}
+            onChangeDate={this.props.updateNewAnnotationRelevantDate}
             onCancelCommentEdit={this.stopPlacingAnnotation}
             onSaveCommentEdit={this.props.createAnnotation} />}
           {comments}
@@ -61,7 +61,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     updateNewAnnotationContent,
-    updateAnnotationRelevantDate,
+    updateNewAnnotationRelevantDate,
     createAnnotation,
     stopPlacingAnnotation,
     startPlacingAnnotation

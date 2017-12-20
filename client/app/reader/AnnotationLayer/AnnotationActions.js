@@ -229,6 +229,13 @@ export const updateNewAnnotationContent = (content) => ({
   }
 });
 
+export const updateNewAnnotationRelevantDate = (relevantDate) => ({
+  type: Constants.UPDATE_NEW_ANNOTATION_RELEVANT_DATE,
+  payload: {
+    relevantDate
+  }
+});
+
 export const requestEditAnnotation = (annotation) => (dispatch) => {
   // If the user removed all text content in the annotation (or if only whitespace characters remain),
   // ask the user if they're intending to delete it.
