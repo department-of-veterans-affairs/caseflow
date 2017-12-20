@@ -6,8 +6,9 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
+import _ from 'lodash';
 import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampElection';
-import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getRampElectionStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -29,20 +30,11 @@ class Review extends React.PureComponent {
     default:
     }
 
-    const radioOptions = [
-      {
-        value: 'supplemental_claim',
-        displayText: 'Supplemental Claim'
-      },
-      {
-        value: 'higher_level_review_with_hearing',
-        displayText: 'Higher Level Review with Informal Conference'
-      },
-      {
-        value: 'higher_level_review',
-        displayText: 'Higher Level Review'
-      }
-    ];
+    const rampElectionReviewOptions = _.reject(REVIEW_OPTIONS, REVIEW_OPTIONS.APPEAL);
+    const radioOptions = _.map(rampElectionReviewOptions, (option) => ({
+      value: option.key,
+      displayText: option.name
+    }));
 
     return <div>
       <h1>Review { veteranName }'s opt-in election</h1>
