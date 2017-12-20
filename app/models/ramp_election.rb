@@ -1,32 +1,14 @@
-class RampElection < ActiveRecord::Base
+class RampElection < RampReview
   class InvalidEndProductError < StandardError; end
+  class EstablishedEndProductNotFound < StandardError; end
 
   attr_reader :saving_receipt
 
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
 
-  enum option_selected: {
-    supplemental_claim: "supplemental_claim",
-    higher_level_review: "higher_level_review",
-    higher_level_review_with_hearing: "higher_level_review_with_hearing"
-  }
-
-  END_PRODUCT_DATA_BY_OPTION = {
-    "supplemental_claim" => { code: "683SCRRRAMP", modifier: "683" },
-    "higher_level_review" => { code: "682HLRRRAMP", modifier: "682" },
-    "higher_level_review_with_hearing" => { code: "682HLRRRAMP", modifier: "682" }
-  }.freeze
-
-  END_PRODUCT_STATION = "397".freeze # AMC
-
   RESPOND_BY_TIME = 60.days.freeze
 
-  validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_receipt
   validate :validate_receipt_date
-
-  def start_saving_receipt
-    @saving_receipt = true
-  end
 
   def create_end_product!
     fail InvalidEndProductError unless end_product.valid?
@@ -57,7 +39,22 @@ class RampElection < ActiveRecord::Base
     where.not(end_product_reference_id: nil)
   end
 
+  def established_end_product
+    @established_end_product ||= fetch_established_end_product
+  end
+
   private
+
+  def fetch_established_end_product
+    return nil unless end_product_reference_id
+
+    result = Veteran.new(file_number: veteran_file_number).end_products.find do |end_product|
+      end_product.claim_id == end_product_reference_id
+    end
+
+    fail EstablishedEndProductNotFound unless result
+    result
+  end
 
   def end_product
     @end_product ||= EndProduct.new(

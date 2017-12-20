@@ -187,9 +187,8 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    documentFilters: state.readerReducer.ui.pdfList.filters,
+    documentFilters: state.documentList.pdfList.filters,
     storeDocuments: state.documents,
-    pdf: state.readerReducer.ui.pdf,
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
   };
 };

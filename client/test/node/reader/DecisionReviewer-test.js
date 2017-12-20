@@ -18,8 +18,12 @@ import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
 import readerReducer from '../../../app/reader/reducer';
+import searchActionReducer from '../../../app/reader/PdfSearch/PdfSearchReducer';
 import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
-import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
+import annotationLayerReducer from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
+import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer';
+import pdfViewerReducer from '../../../app/reader/PdfViewer/PdfViewerReducer';
+
 import documentsReducer from '../../../app/reader/Documents/DocumentsReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs } from '../../../app/reader/Documents/DocumentsActions';
@@ -40,8 +44,11 @@ const getStore = () => createStore(
   combineReducers({
     caseSelect: caseSelectReducer,
     readerReducer,
+    searchActionReducer,
     search: searchReducer,
     documents: documentsReducer,
+    documentList: documentListReducer,
+    pdfViewer: pdfViewerReducer,
     annotationLayer: annotationLayerReducer
   }),
   compose(
@@ -56,7 +63,7 @@ const getStore = () => createStore(
       resourceSelector: (resourceName, state) => {
         // In our example, all resources are stored in the state under a :resources Map
         // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
+        return state.searchActionReducer[resourceName];
       }
     })
   )

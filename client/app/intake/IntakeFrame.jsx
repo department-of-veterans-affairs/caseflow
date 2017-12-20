@@ -65,7 +65,7 @@ class IntakeFrame extends React.PureComponent {
           <AppFrame>
             <IntakeProgressBar />
             <PrimaryAppContent>
-              { this.props.requestStatus.cancelIntake === REQUEST_STATE.FAILED &&
+              { this.props.cancelIntakeRequestStatus === REQUEST_STATE.FAILED &&
                 <Alert
                   type="error"
                   title="Error"
@@ -163,11 +163,11 @@ class IntakeFrame extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, requestStatus, cancelModalVisible, intakeId }) => ({
-    veteran,
-    intakeId,
-    cancelModalVisible,
-    requestStatus
+  ({ intake }) => ({
+    intakeId: intake.id,
+    veteran: intake.veteran,
+    cancelModalVisible: intake.cancelModalVisible,
+    cancelIntakeRequestStatus: intake.requestStatus.cancel
   }),
   (dispatch) => bindActionCreators({
     toggleCancelModal,

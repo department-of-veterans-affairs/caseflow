@@ -10,9 +10,10 @@ import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = _.map(FORM_TYPES,
-      (form) => ({ value: form.key,
-        displayText: form.name }));
+    const radioOptions = _.map(FORM_TYPES, (form) => ({
+      value: form.key,
+      displayText: form.name
+    }));
 
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
@@ -36,8 +37,10 @@ class SelectForm extends React.PureComponent {
 }
 
 export default connect(
-  ({ formType, intakeId }) => ({ formType,
-    intakeId }),
+  ({ intake }) => ({
+    formType: intake.formType,
+    intakeId: intake.id
+  }),
   (dispatch) => bindActionCreators({
     setFormType
   }, dispatch)
@@ -60,5 +63,5 @@ class SelectFormButtonUnconnected extends React.PureComponent {
 }
 
 export const SelectFormButton = connect(
-  ({ formType }) => ({ formType }),
+  ({ intake }) => ({ formType: intake.formType }),
 )(SelectFormButtonUnconnected);

@@ -5,7 +5,11 @@ import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
 import readerReducer from './reducer';
+import searchActionReducer from './PdfSearch/PdfSearchReducer';
 import caseSelectReducer from './CaseSelect/CaseSelectReducer';
+import documentListReducer from './DocumentList/DocumentListReducer';
+import pdfViewerReducer from './PdfViewer/PdfViewerReducer';
+
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import { reducer as searchReducer, reduxSearch } from 'redux-search';
 import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
@@ -18,7 +22,10 @@ const store = createStore(
     caseSelect: caseSelectReducer,
     readerReducer,
     search: searchReducer,
+    searchActionReducer,
     documents: documentsReducer,
+    documentList: documentListReducer,
+    pdfViewer: pdfViewerReducer,
     annotationLayer: annotationLayerReducer
   }),
   composeEnhancers(
@@ -33,7 +40,7 @@ const store = createStore(
       resourceSelector: (resourceName, state) => {
         // In our example, all resources are stored in the state under a :resources Map
         // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
+        return state.searchActionReducer[resourceName];
       }
     })
   )
