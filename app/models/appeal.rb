@@ -460,6 +460,10 @@ class Appeal < ActiveRecord::Base
     v1_events.last.try(:date)
   end
 
+  # This is a special to_hash function to speed up the welcome gate
+  # it avoids using the associated_vacols_model to make extra calls
+  # to VACOLS. Don't add anything to it without also adding it to
+  # the query in VACOLS::CaseAssignment.
   def assigned_to_user_to_hash(viewed: nil, issues: nil)
     serializable_hash(
       methods: [:veteran_full_name, :cavc, :aod],
