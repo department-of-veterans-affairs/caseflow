@@ -112,24 +112,24 @@ RSpec.feature "Hearings" do
     scenario "Link on daily docket opens worksheet in new tab" do
       visit "/hearings/dockets/2017-01-06"
       link_cell = find(".cf-hearings-docket-appellant", match: :first)
-      
+
       # Link should be bolded before the worksheet has been viewed
       expect(link_cell).to have_css("strong a")
-      
+
       link = link_cell.find("a")
       link_href = link[:href]
-      
+
       link.click
-      
+
       # Link should not be bolded after we click the linke to view the worksheet
       expect(link_cell).to_not have_css("strong a")
-      
+
       new_window = windows.last
       page.within_window new_window do
         visit link_href
         expect(page).to have_content("Hearing Worksheet")
       end
-      
+
       # If we refresh the page, the view hearing link should still be unbolded.
       visit "/hearings/dockets/2017-01-06"
       link_cell = find(".cf-hearings-docket-appellant", match: :first)
