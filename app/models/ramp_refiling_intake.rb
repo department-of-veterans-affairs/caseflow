@@ -25,7 +25,8 @@ class RampRefilingIntake < Intake
   def ui_hash
     super.merge(
       option_selected: detail.option_selected,
-      receipt_date: detail.receipt_date
+      receipt_date: detail.receipt_date,
+      election_receipt_date: detail.election_receipt_date
     )
   end
 
