@@ -82,10 +82,11 @@ export class Comment extends React.Component {
 
     if (this.props.horizontalLayout) {
       commentToRender = <div className="horizontal-comment">
+        <div className="comment-relevant-date">
+          {this.props.date && <strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong>}
+        </div>
         <div className="comment-page-number">
           <h4>Page {this.props.page}</h4>
-        </div>
-        <div className="comment-jump-to-section">
           <strong>{jumpToSectionButton}</strong>
         </div>
         <div

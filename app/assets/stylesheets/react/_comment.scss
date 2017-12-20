@@ -31,10 +31,13 @@
   word-wrap: break-word;
   word-break: break-word;
   background-color: $color-white;
-  border-radius: 3px;
-  padding: 15px;
+  padding: 25px 15px;
   margin-bottom: 15px;
-  border: 1px solid $color-gray-lighter;
+
+  &:not(.comment-horizontal-container) {
+    border-radius: 3px;
+    border: 1px solid $color-gray-lighter;
+  }
 }
 
 .comment-horizontal-container {
