@@ -22,8 +22,6 @@ class ExternalApi::BGSService
   # :nocov:
 
   def get_end_products(vbms_id)
-    ExternalApi::ApiService.release_db_connections
-
     @end_products[vbms_id] ||=
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
                             service: :bgs,
@@ -33,8 +31,6 @@ class ExternalApi::BGSService
   end
 
   def fetch_veteran_info(vbms_id)
-    ExternalApi::ApiService.release_db_connections
-
     @veteran_info[vbms_id] ||=
       MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
                             service: :bgs,
@@ -44,8 +40,6 @@ class ExternalApi::BGSService
   end
 
   def fetch_file_number_by_ssn(ssn)
-    ExternalApi::ApiService.release_db_connections
-
     @people_by_ssn[ssn] ||=
       MetricsService.record("BGS: fetch person by ssn: #{ssn}",
                             service: :bgs,
@@ -57,8 +51,6 @@ class ExternalApi::BGSService
   end
 
   def fetch_poa_by_file_number(file_number)
-    ExternalApi::ApiService.release_db_connections
-
     unless @poas[file_number]
       bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
                                       service: :bgs,
@@ -72,8 +64,6 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
-    ExternalApi::ApiService.release_db_connections
-
     unless @poa_addresses[participant_id]
       bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
                                           service: :bgs,
@@ -92,8 +82,6 @@ class ExternalApi::BGSService
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
   def can_access?(vbms_id)
-    ExternalApi::ApiService.release_db_connections
-
     MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
                           service: :bgs,
                           name: "can_access?") do

@@ -27,10 +27,6 @@ demo:
   <<: *default
   database: caseflow_certification_demo
 
-ssh_forwarding:
-  <<: *default
-  database: caseflow_certification_ssh_forwarding
-
 staging:
   <<: *default
   database: caseflow_certification_staging
@@ -52,14 +48,6 @@ demo_vacols:
   pool: 5
   timeout: 5000
   database: db/demo-vacols.sqlite3
-
-ssh_forwarding_vacols:
-  adapter: oracle_enhanced
-  host: localhost
-  port: 1526
-  username: <%= ENV["VACOLS_USERNAME"] %>
-  password: <%= ENV["VACOLS_PASSWORD"] %>
-  database: BVAP
 
 staging_vacols:
   adapter: oracle_enhanced
