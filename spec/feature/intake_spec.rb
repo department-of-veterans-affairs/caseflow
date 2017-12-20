@@ -640,11 +640,43 @@ RSpec.feature "RAMP Intake" do
           expect(RampRefilingIntake.last).to have_attributes(error_code: "no_complete_ramp_election")
         end
 
+        scenario "Start a RAMP refiling with an invalid option" do
+          # Create an complete Higher level review RAMP election
+          ramp_election = RampElection.create!(
+            veteran_file_number: "12341234",
+            notice_date: 5.days.ago,
+            option_selected: "higher_level_review_with_hearing",
+            receipt_date: 4.days.ago,
+            end_product_reference_id: "123"
+          )
+
+          intake = RampRefilingIntake.create!(
+            veteran_file_number: "12341234",
+            user: current_user,
+            detail: RampRefiling.create!(
+              veteran_file_number: "12341234",
+              ramp_election: ramp_election
+            )
+          )
+          intake.start!
+
+          visit "/intake"
+
+          fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+          within_fieldset("Which review lane did the Veteran select?") do
+            find("label", text: "Higher Level Review", match: :prefer_exact).click
+          end
+          safe_click "#button-submit-review"
+
+          expect(page).to have_content("Ineligible for Higher-Level Review")
+        end
+
         scenario "Start a RAMP refiling" do
           # Create an complete RAMP election
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",
-            notice_date: 3.days.ago,
+            notice_date: 5.days.ago,
+            receipt_date: 4.days.ago,
             end_product_reference_id: "123"
           )
 
@@ -665,11 +697,20 @@ RSpec.feature "RAMP Intake" do
 
           expect(page).to have_current_path("/intake/review-request")
 
+          # Validate validation
+          fill_in "What is the Receipt Date of this form?", with: "08/02/2017"
+
           within_fieldset("Which review lane did the Veteran select?") do
             find("label", text: "Appeal to Board").click
           end
 
-          fill_in "What is the Receipt Date of this form?", with: "11/12/2017"
+          safe_click "#button-submit-review"
+
+          expect(page).to have_content(
+            "Receipt date cannot be earlier than the original RAMP election receipt date of 08/03/2017"
+          )
+
+          fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Finish Processing refiling")
@@ -678,7 +719,7 @@ RSpec.feature "RAMP Intake" do
           expect(ramp_refiling).to_not be_nil
           expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
           expect(ramp_refiling.option_selected).to eq("appeal")
-          expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 11, 12))
+          expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 8, 3))
         end
       end
     end
