@@ -1,29 +1,24 @@
-/* eslint-disable max-lines */
-import * as Constants from './constants';
 
 import _ from 'lodash';
 
-import { update } from '../util/ReducerUtil';
-import { timeFunction } from '../util/PerfDebug';
+import * as Constants from './actionTypes';
+import { update } from '../../util/ReducerUtil';
+import { timeFunction } from '../../util/PerfDebug';
 
 export const initialState = {
-  ui: {
-    pdf: {
-      scrollToComment: null
-    }
-  },
+  scrollToComment: null,
   pageDimensions: {},
   pdfDocuments: {},
   documentErrors: {},
   text: []
 };
 
-export const reducer = (state = initialState, action = {}) => {
+export const pdfReducer = (state = initialState, action = {}) => {
 
   switch (action.type) {
   case Constants.SCROLL_TO_COMMENT:
     return update(state, {
-      ui: { pdf: { scrollToComment: { $set: action.payload.scrollToComment } } }
+      scrollToComment: { $set: action.payload.scrollToComment }
     });
   case Constants.SET_UP_PAGE_DIMENSIONS:
     return update(
@@ -87,6 +82,6 @@ export const reducer = (state = initialState, action = {}) => {
 };
 
 export default timeFunction(
-  reducer,
+  pdfReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );
