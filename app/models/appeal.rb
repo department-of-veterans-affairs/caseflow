@@ -466,7 +466,7 @@ class Appeal < ActiveRecord::Base
   # Adding anything to this to_hash can trigger a lazy load which slows down
   # welcome gate dramatically. Don't add anything to it without also adding it to
   # the query in VACOLS::CaseAssignment.
-  def to_hash(viewed: nil, issues: nil)
+  def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
@@ -474,6 +474,7 @@ class Appeal < ActiveRecord::Base
       hash["viewed"] = viewed
       hash["issues"] = issues
       hash["regional_office"] = regional_office_hash
+      hash["hearings"] = hearings
     end
   end
 
