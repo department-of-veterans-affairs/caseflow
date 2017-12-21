@@ -327,7 +327,7 @@ const mapStateToProps = (state, props) => {
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar,
+    searchBarHidden: state.pdfViewer.hideSearchBar,
     ...state.searchActionReducer
   };
 };

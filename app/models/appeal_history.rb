@@ -23,6 +23,7 @@ class AppealHistory
   end
 
   def needs_update?
+    return false if appeals.length == 0
     return true if appeals.any? { |appeal| appeal.appeal_series.nil? }
 
     # If a new appeal has been merged, we need to regenerate the series
