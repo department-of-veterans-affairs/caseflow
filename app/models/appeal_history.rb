@@ -4,7 +4,7 @@ class AppealHistory
   attr_accessor :vbms_id
 
   def appeals
-    @appeals ||= Appeal.repository.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
+    @appeals ||= Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
   end
 
   def appeal_series
@@ -23,6 +23,7 @@ class AppealHistory
   end
 
   def needs_update?
+    return false if appeals.length == 0
     return true if appeals.any? { |appeal| appeal.appeal_series.nil? }
 
     # If a new appeal has been merged, we need to regenerate the series

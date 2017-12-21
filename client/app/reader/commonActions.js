@@ -2,10 +2,11 @@ import { getUpdatedFilteredResults } from './searchFilters';
 
 import {
   HIDE_ERROR_MESSAGE,
-  SHOW_ERROR_MESSAGE,
-  UPDATE_FILTERED_RESULTS,
-  ASSIGN_DOCUMENTS
-} from './constants';
+  SHOW_ERROR_MESSAGE
+} from './PdfViewer/actionTypes';
+
+import { UPDATE_FILTERED_RESULTS } from './DocumentList/actionTypes';
+import { ASSIGN_DOCUMENTS } from './Documents/actionTypes';
 
 // errors
 
