@@ -11,15 +11,19 @@ class HearingRepository
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
       non_master_record_hearings = hearings.select { |h| h.master_record == false }
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
-      issues = VACOLS::CaseIssue.descriptions(non_master_record_hearings.map(&:appeal_vacols_id))
-      non_master_record_hearings.map do |hearing|
+      Hearing.repository.load_issues(non_master_record_hearings)
+      hearings
+    end
+
+    def load_issues(hearings)
+      issues = VACOLS::CaseIssue.descriptions(hearings.map(&:appeal_vacols_id))
+      hearings.map do |hearing|
         appeal_issues_hash_array = issues[hearing.appeal_vacols_id] || []
         appeal = Appeal.find_or_initialize_by(vacols_id: hearing.appeal_vacols_id)
         if appeal.worksheet_issues.empty?
           appeal_issues_hash_array.map { |i| WorksheetIssue.create_from_issue(appeal, i) }
         end
       end
-      hearings
     end
 
     def hearings_for_appeal(appeal_vacols_id)
