@@ -127,14 +127,7 @@ export class PdfViewer extends React.Component {
     document.title = `${this.selectedDoc().type} | Document Viewer | Caseflow Reader`;
   }
 
-  componentDidUpdate = () => {
-    if (this.props.placedButUnsavedAnnotation) {
-      let commentBox = document.getElementById('addComment');
-
-      commentBox.focus();
-    }
-    this.updateWindowTitle();
-  }
+  componentDidUpdate = () => this.updateWindowTitle();
 
   componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
