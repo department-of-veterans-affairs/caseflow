@@ -5,7 +5,6 @@ module Fakes::Data::AppealData
     [
       Generators::Appeal.build(
         type: "Court Remand",
-        cavc: true,
         vacols_id: "reader_id1",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
@@ -44,7 +43,6 @@ module Fakes::Data::AppealData
         ]),
       Generators::Appeal.build(
         type: "Remand",
-        cavc: false,
         vacols_id: "reader_id2",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: nil,
@@ -83,7 +81,6 @@ module Fakes::Data::AppealData
         ]),
       Generators::Appeal.build(
         type: "Remand",
-        cavc: false,
         vacols_id: "reader_id3",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
         date_received: "2013-04-29 00:00:00 UTC".to_datetime,
