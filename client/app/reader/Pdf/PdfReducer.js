@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import * as Constants from './actionTypes';
 import { update } from '../../util/ReducerUtil';
-import { timeFunction } from '../../util/PerfDebug';
 
 export const initialState = {
   scrollToComment: null,
@@ -81,7 +80,4 @@ export const pdfReducer = (state = initialState, action = {}) => {
   }
 };
 
-export default timeFunction(
-  pdfReducer,
-  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
-);
+export default pdfReducer;

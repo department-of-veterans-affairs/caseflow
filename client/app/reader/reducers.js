@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { timeFunction } from '../util/PerfDebug';
 
 import pdfReducer from './Pdf/PdfReducer';
 import searchActionReducer from './PdfSearch/PdfSearchReducer';
@@ -20,4 +21,8 @@ const rootReducer = combineReducers({
   annotationLayer: annotationLayerReducer
 });
 
-export default rootReducer;
+
+export default timeFunction(
+  rootReducer,
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+);
