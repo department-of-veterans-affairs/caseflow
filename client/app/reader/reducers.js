@@ -21,7 +21,6 @@ const rootReducer = combineReducers({
   annotationLayer: annotationLayerReducer
 });
 
-
 export default timeFunction(
   rootReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
