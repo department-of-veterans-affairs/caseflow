@@ -21,8 +21,8 @@ class Fakes::AppealRepository
     def load_user_case_assignments_from_vacols(_css_id)
       user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
       appeal = user_case_assignments.first
-      # Create a fake hearing for the first appeal if one doesn't already exist
-      Generators::Hearing.create(appeal: appeal) if Hearing.where(appeal: appeal).length == 0
+      # Create fake hearings for the first appeal if one doesn't already exist
+      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).length == 0
       user_case_assignments
     end
   end
