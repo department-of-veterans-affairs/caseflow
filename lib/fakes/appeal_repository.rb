@@ -371,7 +371,7 @@ class Fakes::AppealRepository
   # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
     Generators::Appeal.build(
-      vacols_id: "3619754",
+      vacols_id: "reader_id1",
       vbms_id: "DEMO123",
       vacols_record: {
         template: :ready_to_certify,
