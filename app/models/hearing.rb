@@ -8,7 +8,7 @@ class Hearing < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
-  vacols_attr_accessor :transcript_sent_date
+  vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
 
@@ -160,10 +160,6 @@ class Hearing < ActiveRecord::Base
       update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
-  end
-
-  def appeal_vacols_id
-    appeal.try(:vacols_id)
   end
 
   class << self

@@ -9,15 +9,14 @@ class HearingRepository
           VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
-      hearings_appeals = hearings.select { |h| h.master_record == false }.map(&:appeal)
+      non_master_record_hearings = hearings.select { |h| h.master_record == false }
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
-      hearings_appeals_issues = VACOLS::CaseIssue.descriptions(hearings_appeals.map(&:vacols_id))
-      hearings_appeals.map do |hearing_appeal|
-        appeal_issues_hash_array = hearings_appeals_issues[hearing_appeal.vacols_id] || []
-        appeal = Appeal.find_or_initialize_by(vacols_id: hearing_appeal.vacols_id)
-        if appeal.worksheet_issues.empty? do
-             appeal_issues_hash_array.map { |i| WorksheetIssue.create_from_issue(appeal, i) }
-           end
+      issues = VACOLS::CaseIssue.descriptions(non_master_record_hearings.map(&:appeal_vacols_id))
+      non_master_record_hearings.map do |hearing|
+        appeal_issues_hash_array = issues[hearing.appeal_vacols_id] || []
+        appeal = Appeal.find_or_initialize_by(vacols_id: hearing.appeal_vacols_id)
+        if appeal.worksheet_issues.empty?
+          appeal_issues_hash_array.map { |i| WorksheetIssue.create_from_issue(appeal, i) }
         end
       end
       hearings
@@ -109,6 +108,7 @@ class HearingRepository
                                                   type: type)
       {
         vacols_record: vacols_record,
+        appeal_vacols_id: vacols_record.bfkey,
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
         representative_name: vacols_record.repname,

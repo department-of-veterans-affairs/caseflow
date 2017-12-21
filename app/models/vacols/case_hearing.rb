@@ -77,7 +77,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :board_member, :mduser,
              :mdtime, :sattyid,
              :bfregoff, :bfso,
-             :bfcorkey, :bfddec, :bfdc,
+             :bfcorkey, :bfddec, :bfdc, :bfkey,
              "staff.slogid",
              "corres.snamef, corres.snamemi",
              "corres.snamel, corres.sspare1",
