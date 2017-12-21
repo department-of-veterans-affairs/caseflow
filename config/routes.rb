@@ -91,12 +91,10 @@ Rails.application.routes.draw do
 
 
   match '/intake/:any' => 'intakes#index', via: [:get]
-  resources :intakes, path: "intake", only: [:index, :create, :destroy]
 
-  namespace :intake do
-    resources :ramp_election_intakes, path: "ramp", only: :update do
-      patch 'complete', on: :member
-    end
+  resources :intakes, path: "intake", only: [:index, :create, :destroy] do
+    patch 'review', on: :member
+    patch 'complete', on: :member
   end
 
   get "health-check", to: "health_checks#show"

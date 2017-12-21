@@ -10,9 +10,10 @@ import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
   render() {
-    const radioOptions = _.map(FORM_TYPES,
-      (form) => ({ value: form.key,
-        displayText: form.name }));
+    const radioOptions = _.map(FORM_TYPES, (form) => ({
+      value: form.key,
+      displayText: form.name
+    }));
 
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
