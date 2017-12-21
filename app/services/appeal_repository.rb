@@ -1,5 +1,4 @@
 class AppealRepository
-
   # :nocov:
   # Used by healthcheck endpoint
   # Calling .active? triggers a query to VACOLS

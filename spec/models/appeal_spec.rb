@@ -1489,7 +1489,6 @@ describe Appeal do
           docket_number: "13 11-265",
           regional_office_key: "RO13",
           type: "Court Remand",
-          cavc: true,
           vacols_record: {
             soc_date: 4.days.ago
           }
