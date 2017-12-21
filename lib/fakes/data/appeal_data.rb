@@ -14,7 +14,6 @@ module Fakes::Data::AppealData
         veteran_middle_initial: "A",
         veteran_last_name: "Case",
         docket_number: "13 11-265",
-        hearing_date: "2017-12-21 00:00:00 UTC".to_date,
         regional_office_key: "RO13",
         issues: [
           { disposition: :remanded,

@@ -30,15 +30,12 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "corres.snamel as veteran_last_name",
              "brieff.bfac as bfac",
              "brieff.bfregoff as regional_office_key",
-             "folder.tinum as docket_number",
-             "hearsched.hearing_date")
+             "folder.tinum as docket_number")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
           LEFT JOIN corres
             ON brieff.bfcorkey = corres.stafkey
-          LEFT JOIN hearsched
-            ON brieff.bfkey = hearsched.folder_nr
           JOIN staff
             ON brieff.bfcurloc = staff.slogid
           JOIN folder
