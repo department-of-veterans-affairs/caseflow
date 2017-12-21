@@ -37,6 +37,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
+  vacols_attr_accessor :hearing_date
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -468,7 +469,7 @@ class Appeal < ActiveRecord::Base
   # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
+      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod, :hearing_date],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed

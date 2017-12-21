@@ -127,13 +127,13 @@ export const isUserEditingText = () => _.some(
   (elem) => document.activeElement === elem
 );
 
-export const getHearingWorksheetLink = (hearings) => {
+export const getHearingWorksheetLink = (claim) => {
   return (
     <span>
-      {hearings.map((hearing, key) => {
+      {claim.hearings.map((hearing, key) => {
         return <a target="_blank"href={`/hearings/${hearing.id}/worksheet/print`} key={key}>Hearing Worksheet
           <span className="hearing-date">
-            {moment(hearing.date).format('l')}
+            {moment(claim.hearing_date).format('l')}
           </span>
         </a>;
       })}
@@ -155,7 +155,7 @@ export const getClaimTypeDetailInfo = (claim) => {
 
   return <div className="claim-detail-container">
     <span className="claim-detail-type-info">{appealTypeInfo}</span>
-    { appealHasHearing && getHearingWorksheetLink(claim.hearings) }
+    { appealHasHearing && getHearingWorksheetLink(claim) }
   </div>;
 };
 
