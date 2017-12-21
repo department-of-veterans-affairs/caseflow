@@ -65,6 +65,7 @@ export default class EditComment extends React.Component {
         onChange={this.onChangeDate}
         value={this.props.comment.relevant_date}
         type="date"
+        strongLabel
       />
       <textarea
         className="comment-container comment-textarea"
