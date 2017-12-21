@@ -156,8 +156,7 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum,
-      hearing_date: case_record.hearing_date
+      docket_number: folder_record.tinum
     )
 
     appeal
