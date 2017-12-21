@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchableDropdown from '../components/SearchableDropdown';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import ViewableItemLink from '../../components/ViewableItemLink';
 import Textarea from 'react-textarea-autosize';
-import Checkbox from '../components/Checkbox';
+import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested } from './actions/Dockets';
+import {
+  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed
+} from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
-import { Link } from 'react-router-dom';
-import { getDate } from './util/DateUtil';
+import { getDate } from '../util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -50,6 +52,8 @@ export class DocketHearingRow extends React.PureComponent {
 
   setNotes = (event) => this.props.setNotes(this.props.index, event.target.value, this.props.hearingDate);
 
+  setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
+
   render() {
     const {
       index,
@@ -79,7 +83,15 @@ export class DocketHearingRow extends React.PureComponent {
         </td>
         <td className="cf-hearings-docket-appellant">
           <b>{appellantDisplay}</b>
-          <Link to={`/hearings/${hearing.id}/worksheet`} target="_blank">{hearing.vbms_id}</Link>
+          <ViewableItemLink
+            boldCondition={!hearing.viewed_by_current_user}
+            onOpen={this.setHearingViewed}
+            linkProps={{
+              to: `/hearings/${hearing.id}/worksheet`,
+              target: '_blank'
+            }}>
+            {hearing.vbms_id}
+          </ViewableItemLink>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="3">
@@ -149,6 +161,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDisposition,
   setHoldOpen,
   setAod,
+  setHearingViewed,
   setTranscriptRequested
 }, dispatch);
 

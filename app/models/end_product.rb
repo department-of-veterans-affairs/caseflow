@@ -117,6 +117,10 @@ class EndProduct
     regional_office ? regional_office.station_description : "Unknown"
   end
 
+  def active?
+    !INACTIVE_STATUSES.include?(status_type_code)
+  end
+
   private
 
   def label
@@ -137,10 +141,6 @@ class EndProduct
 
   def assignable?
     status_type_code != "CAN"
-  end
-
-  def active?
-    !INACTIVE_STATUSES.include?(status_type_code)
   end
 
   def regional_office
