@@ -8,7 +8,6 @@ import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
-import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
@@ -111,7 +110,6 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    onScrollToComment,
     togglePdfSidebar
   }, dispatch)
 });
@@ -133,11 +131,6 @@ Pdf.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageChange: PropTypes.func,
-  scrollToComment: PropTypes.shape({
-    id: PropTypes.number,
-    page: PropTypes.number,
-    y: PropTypes.number
-  }),
   onIconMoved: PropTypes.func,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   rotation: PropTypes.number,

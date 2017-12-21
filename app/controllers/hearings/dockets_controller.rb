@@ -15,7 +15,11 @@ class Hearings::DocketsController < HearingsController
 
     respond_to do |format|
       format.html { render template: "hearings/index" }
-      format.json { render json: judge.upcoming_hearings_on(date).map(&:to_hash) }
+      format.json do
+        render json: (judge.upcoming_hearings_on(date).map do |hearing|
+                        hearing.to_hash(current_user.id)
+                      end)
+      end
     end
   end
 

@@ -13,6 +13,11 @@ export default class DateSelector extends React.Component {
     let value = initialValue || '';
     let propsValue = this.props.value || '';
 
+    if (this.props.type === 'date' && this.props.onChange) {
+      // input type=date handles validation, returns yyyy-mm-dd, displays mm/dd/yyyy
+      return this.props.onChange(value);
+    }
+
     // If the user added characters we append a '/' before putting
     // it through the regex. If this spot doesn't accept a '/' then
     // the regex test will strip it. Otherwise, the user doesn't have

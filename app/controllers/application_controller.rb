@@ -13,7 +13,7 @@ class ApplicationController < ApplicationBaseController
 
   def current_user
     @current_user ||= begin
-      user = User.from_session(session, request)
+      user = User.from_session(session)
       RequestStore.store[:current_user] = user
       user
     end
@@ -209,7 +209,7 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.development? || Rails.env.test? || Rails.env.demo?
+      Rails.env.development? || Rails.env.test? || Rails.env.demo? || Rails.env.ssh_forwarding?
     end
   end
 end

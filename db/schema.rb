@@ -11,20 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212231913) do
+ActiveRecord::Schema.define(version: 20171219182526) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "annotations", force: :cascade do |t|
-    t.integer  "document_id", null: false
-    t.string   "comment",     null: false
+    t.integer  "document_id",   null: false
+    t.string   "comment",       null: false
     t.integer  "page"
     t.integer  "x"
     t.integer  "y"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "relevant_date"
   end
 
   add_index "annotations", ["document_id"], name: "index_annotations_on_document_id", using: :btree
@@ -264,6 +265,15 @@ ActiveRecord::Schema.define(version: 20171212231913) do
   end
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
+
+  create_table "hearing_views", force: :cascade do |t|
+    t.integer  "hearing_id", null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hearing_views", ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true, using: :btree
 
   create_table "hearings", force: :cascade do |t|
     t.integer "user_id"

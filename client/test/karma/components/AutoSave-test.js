@@ -5,7 +5,7 @@ import AutoSave from '../../../app/components/AutoSave';
 import * as AppConstants from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
 // eslint-disable-next-line no-unused-vars
-import DailyDocketContainer from '../../../app/hearings/DailyDocketContainer';
+import DailyDocketContainer from '../../../app/hearings/containers/DailyDocketContainer';
 
 export const saveFunction = () => ({ my: 'action' });
 

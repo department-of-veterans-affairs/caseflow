@@ -12,6 +12,13 @@ class Fakes::Initializer
 
     # This method is called only 1 time during application bootup
     def app_init!(rails_env)
+      if rails_env.ssh_forwarding?
+        User.authentication_service = Fakes::AuthenticationService
+        # This sets up the Fake::VBMSService with documents for the VBMS ID DEMO123. We normally
+        # set this up in Fakes::AppealRepository.seed! which we don't call for this environment.
+        Fakes::VBMSService.document_records = { "DEMO123" => Fakes::AppealRepository.static_reader_documents }
+      end
+
       if rails_env.development? || rails_env.demo?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes

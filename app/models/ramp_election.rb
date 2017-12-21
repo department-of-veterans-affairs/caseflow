@@ -1,4 +1,4 @@
-class RampElection < ActiveRecord::Base
+class RampElection < RampReview
   class InvalidEndProductError < StandardError; end
   class EstablishedEndProductNotFound < StandardError; end
 
@@ -6,28 +6,9 @@ class RampElection < ActiveRecord::Base
 
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
 
-  enum option_selected: {
-    supplemental_claim: "supplemental_claim",
-    higher_level_review: "higher_level_review",
-    higher_level_review_with_hearing: "higher_level_review_with_hearing"
-  }
-
-  END_PRODUCT_DATA_BY_OPTION = {
-    "supplemental_claim" => { code: "683SCRRRAMP", modifier: "683" },
-    "higher_level_review" => { code: "682HLRRRAMP", modifier: "682" },
-    "higher_level_review_with_hearing" => { code: "682HLRRRAMP", modifier: "682" }
-  }.freeze
-
-  END_PRODUCT_STATION = "397".freeze # AMC
-
   RESPOND_BY_TIME = 60.days.freeze
 
-  validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_receipt
   validate :validate_receipt_date
-
-  def start_saving_receipt
-    @saving_receipt = true
-  end
 
   def create_end_product!
     fail InvalidEndProductError unless end_product.valid?
@@ -107,8 +88,8 @@ class RampElection < ActiveRecord::Base
 
     if notice_date > receipt_date
       errors.add(:receipt_date, "before_notice_date")
-    elsif Time.zone.today < receipt_date
-      errors.add(:receipt_date, "in_future")
+    else
+      validate_receipt_date_not_in_future
     end
   end
 end
