@@ -95,7 +95,7 @@ class SeedDB
     number.times do |i|
       RampElection.create!(
         veteran_file_number: "#{i + 1}5555555",
-        notice_date: i.weeks.ago
+        notice_date: 1.week.ago
       )
     end
 

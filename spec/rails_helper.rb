@@ -92,23 +92,21 @@ module StubbableUser
       end
 
       self.stub = User.from_session(
-        { "user" =>
+        "user" =>
           { "id" => "DSUSER",
             "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-        }, OpenStruct.new(remote_ip: "127.0.0.1"))
+            "roles" => roles || ["Certify Appeal"] })
     end
 
     def tester!(roles: nil)
       self.stub = User.from_session(
-        { "user" =>
+        "user" =>
           { "id" => ENV["TEST_USER_ID"],
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-        }, OpenStruct.new(remote_ip: "127.0.0.1"))
+            "roles" => roles || ["Certify Appeal"] })
     end
 
     def current_user
@@ -124,8 +122,8 @@ module StubbableUser
       self.stub = nil
     end
 
-    def from_session(session, request)
-      @stub || super(session, request)
+    def from_session(session)
+      @stub || super(session)
     end
   end
 
@@ -233,17 +231,21 @@ end
 
 def scroll_element_in_to_view(selector)
   expect do
-    page.evaluate_script <<-EOS
-      function() {
-        var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
-        if (!elem) {
-          return false;
-        }
-        elem.scrollIntoView();
-        return true;
-      }();
-    EOS
-  end.to become_truthy
+    scroll_to_element_in_view_with_script(selector)
+  end.to become_truthy, "Could not find element #{selector}"
+end
+
+def scroll_to_element_in_view_with_script(selector)
+  page.evaluate_script <<-EOS
+    function() {
+      var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
+      if (!elem) {
+        return false;
+      }
+      elem.scrollIntoView();
+      return true;
+    }();
+  EOS
 end
 
 # We generally avoid writing our own polling code, since proper Cappybara use generally

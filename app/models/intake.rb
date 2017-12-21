@@ -52,6 +52,14 @@ class Intake < ActiveRecord::Base
     end
   end
 
+  def review_errors
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  def review!(_review_params)
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
   def cancel!
     fail Caseflow::Error::MustImplementInSubclass
   end
