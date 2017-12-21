@@ -49,7 +49,7 @@ class HearingWorksheetDocs extends Component {
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
             <div>Certification:</div>
-            <div>{formatDate(appeal.certification_date)} {notCertified && <span>Not Certified</span>}</div>
+            <div>{formatDate(appeal.certification_date)} {notCertified && <span>Not certified</span>}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Docs since Certification:</div>
