@@ -41,7 +41,7 @@ RSpec.feature "Hearings" do
     scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
-      expect(page).to have_content("Upcoming Hearing Days")
+      expect(page).to have_content("Your Hearing Days")
 
       # Verify user
       expect(page).to have_content("VLJ: Lauren Roth")
@@ -90,7 +90,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_selector("tbody", 2)
 
       find_link("Back to Upcoming Hearing Days").click
-      expect(page).to have_content("Upcoming Hearing Days")
+      expect(page).to have_content("Your Hearing Days")
     end
 
     scenario "Daily docket saves to the backend" do
