@@ -9,7 +9,7 @@ class HearingRepository
           VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
-      hearings_appeals = hearings.map(&:appeal)
+      hearings_appeals = hearings.select { |h| h.master_record == false }.map(&:appeal)
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
       hearings_appeals_issues = VACOLS::CaseIssue.descriptions(hearings_appeals.map(&:vacols_id))
       hearings_appeals.map do |hearing_appeal|
