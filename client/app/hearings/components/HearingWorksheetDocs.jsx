@@ -14,6 +14,8 @@ class HearingWorksheetDocs extends Component {
 
       {Object.values(worksheetAppeals).map((appeal, key) => {
 
+        let notCertified = !appeal.certification_date;
+
         return <div key={appeal.id} id={appeal.id}><div>
           <p className="cf-appeal-stream-label">APPEAL STREAM <span>{key + 1}</span></p>
         </div>
@@ -46,13 +48,12 @@ class HearingWorksheetDocs extends Component {
             <div>{formatArrayOfDateStrings(appeal.ssoc_dates)}</div>
           </div>
           <div className="cf-hearings-worksheet-data-cell column-3">
+            <div>Certification:</div>
+            <div>{formatDate(appeal.certification_date)} {notCertified && <span>Not Certified</span>}</div>
+          </div>
+          <div className="cf-hearings-worksheet-data-cell column-4">
             <div>Docs since Certification:</div>
             <div>{appeal.cached_number_of_documents_after_certification}</div>
-          </div>
-
-          <div className="cf-hearings-worksheet-data-cell column-4">
-            <div>Certification:</div>
-            <div>{formatDate(appeal.certification_date)}</div>
           </div>
 
         </div>
