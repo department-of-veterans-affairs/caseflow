@@ -14,6 +14,7 @@ class Fakes::Initializer
     def app_init!(rails_env)
       if rails_env.ssh_forwarding?
         User.authentication_service = Fakes::AuthenticationService
+        Fakes::VBMSService.document_records = { DEMO123: Fakes::AppealRepository.static_reader_documents }
       end
 
       if rails_env.development? || rails_env.demo?

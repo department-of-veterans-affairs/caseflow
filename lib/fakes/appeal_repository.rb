@@ -371,14 +371,13 @@ class Fakes::AppealRepository
   # rubocop:disable Metrics/MethodLength
   def self.seed_reader_data!
     Generators::Appeal.build(
-      vacols_id: "reader_id1",
+      vacols_id: "3619754",
       vbms_id: "DEMO123",
       vacols_record: {
         template: :ready_to_certify,
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Court Remand",
-        cavc: true,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -403,7 +402,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Remand",
-        cavc: false,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -430,7 +428,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Remand",
-        cavc: false,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -448,7 +445,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Court Remand",
-        cavc: true,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
