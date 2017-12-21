@@ -53,8 +53,7 @@ class Test::UsersController < ApplicationController
   # :nocov:
   def index
     @test_users = User.all.select do |u|
-      User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") ||
-        u.css_id.include?("Global Admin")
+      User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin")
     end
     @ep_types = %w(full partial none all)
     render "index"

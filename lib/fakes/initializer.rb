@@ -55,7 +55,7 @@ class Fakes::Initializer
         "name" => "Cave Johnson"
       }
 
-      Functions.grant!("Global Admin", users: ["Global Admin"])
+      Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
