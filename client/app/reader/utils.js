@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import { ANNOTATION_ICON_SIDE_LENGTH } from '../reader/constants';
 import { update } from '../util/ReducerUtil';
-import moment from 'moment';
 
 export const categoryFieldNameOfCategoryName =
   (categoryName) => `category_${categoryName}`;
