@@ -49,3 +49,7 @@
 .comment-textarea {
   border-color: $color-gray-dark;
 }
+
+input[type="date"].comment-relevant-date:invalid {
+  border: 3px solid red;
+}

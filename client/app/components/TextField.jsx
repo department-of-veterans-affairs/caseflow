@@ -24,7 +24,8 @@ export default class TextField extends React.Component {
       title,
       onKeyPress,
       strongLabel,
-      maxLength
+      maxLength,
+      min
     } = this.props;
 
     let textInputClass = className.concat(
@@ -69,6 +70,7 @@ export default class TextField extends React.Component {
           placeholder={placeholder}
           title={title}
           maxLength={maxLength}
+          min={min}
         />
       }
 
@@ -103,6 +105,7 @@ TextField.propTypes = {
       }
     }
   },
+  onKeyPress: PropTypes.func,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,
@@ -112,5 +115,6 @@ TextField.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
-  ])
+  ]),
+  min: PropTypes.string
 };
