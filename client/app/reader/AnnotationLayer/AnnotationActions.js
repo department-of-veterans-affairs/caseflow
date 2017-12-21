@@ -214,10 +214,25 @@ export const updateAnnotationContent = (content, annotationId) => ({
   }
 });
 
+export const updateAnnotationRelevantDate = (relevantDate, annotationId) => ({
+  type: Constants.UPDATE_ANNOTATION_RELEVANT_DATE,
+  payload: {
+    annotationId,
+    relevantDate
+  }
+});
+
 export const updateNewAnnotationContent = (content) => ({
   type: Constants.UPDATE_NEW_ANNOTATION_CONTENT,
   payload: {
     content
+  }
+});
+
+export const updateNewAnnotationRelevantDate = (relevantDate) => ({
+  type: Constants.UPDATE_NEW_ANNOTATION_RELEVANT_DATE,
+  payload: {
+    relevantDate
   }
 });
 

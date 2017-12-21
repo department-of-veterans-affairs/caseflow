@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
+import classNames from 'classnames';
 
 import Button from '../components/Button';
 import _ from 'lodash';
@@ -41,12 +43,10 @@ export class Comment extends React.Component {
   }
 
   render() {
-    let className = 'comment-container';
-
-    if (this.props.selected) {
-      className = `${className} comment-container-selected`;
-    }
-
+    const className = classNames('comment-container', {
+      'comment-container-selected': this.props.selected,
+      'comment-horizontal-container comment-content': this.props.horizontalLayout
+    });
     let jumpToSectionButton = null;
 
     if (this.props.onJumpToComment) {
@@ -58,6 +58,13 @@ export class Comment extends React.Component {
           Jump to section
       </Button>;
     }
+
+    let textToRender = this.props.children;
+
+    if (this.props.date) {
+      textToRender = <div><strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong> - {textToRender}</div>;
+    }
+
     let commentToRender = <div>
       <div className="comment-control-button-container">
         <h4>Page {this.props.page} {jumpToSectionButton}</h4>
@@ -69,12 +76,11 @@ export class Comment extends React.Component {
         className={className}
         id={this.props.id}
         onClick={this.onClick}>
-        {this.props.children}
+        {textToRender}
       </div>
     </div>;
 
     if (this.props.horizontalLayout) {
-      className = `${className} comment-horizontal-container`;
       commentToRender = <div className="horizontal-comment">
         <div className="comment-page-number">
           <h4>Page {this.props.page}</h4>
@@ -83,7 +89,7 @@ export class Comment extends React.Component {
           <strong>{jumpToSectionButton}</strong>
         </div>
         <div
-          className={`${className} comment-content`}
+          className={className}
           key={this.props.children.toString()}
           id={this.props.id}
           onClick={this.onClick}>
