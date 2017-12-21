@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
 import Button from '../components/Button';
-import { handleToggleCommentOpened } from '../reader/DocumentList/DocumentListActions';
+import { handleToggleCommentOpened } from '../reader/Documents/DocumentsActions';
 
 class CommentIndicator extends React.PureComponent {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
@@ -36,12 +36,12 @@ class CommentIndicator extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const doc = state.readerReducer.documents[ownProps.docId];
+  const doc = state.documents[ownProps.docId];
 
   return {
     docId: doc.id,
     expanded: doc.listComments,
-    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state.readerReducer)(ownProps.docId))
+    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state)(ownProps.docId))
   };
 };
 

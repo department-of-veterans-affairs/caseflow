@@ -43,7 +43,39 @@ export const RAMP_INTAKE_STATES = {
   COMPLETED: 'COMPLETED'
 };
 
-export const FORMS = {
-  ramp_election: 'RAMP Opt-In Election Form',
-  ramp_refiling: '21-4138 RAMP Selection Form'
+export const REVIEW_OPTIONS = {
+  SUPPLEMENTAL_CLAIM: {
+    key: 'supplemental_claim',
+    name: 'Supplemental Claim'
+  },
+  HIGHER_LEVEL_REVIEW: {
+    key: 'higher_level_review',
+    name: 'Higher Level Review'
+  },
+  HIGHER_LEVEL_REVIEW_WITH_HEARING: {
+    key: 'higher_level_review_with_hearing',
+    name: 'Higher Level Review with Informal Conference'
+  },
+  APPEAL: {
+    key: 'appeal',
+    name: 'Appeal to Board'
+  }
+};
+
+export const ENDPOINT_NAMES = {
+  START_INTAKE: 'start-intake',
+  REVIEW_INTAKE: 'review-intake',
+  CANCEL_INTAKE: 'cancel-intake',
+  COMPLETE_INTAKE: 'complete-intake'
+};
+
+export const FORM_TYPES = {
+  RAMP_ELECTION: {
+    key: 'ramp_election',
+    name: 'RAMP Opt-In Election Form'
+  },
+  RAMP_REFILING: {
+    key: 'ramp_refiling',
+    name: '21-4138 RAMP Selection Form'
+  }
 };

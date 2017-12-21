@@ -22,6 +22,8 @@ class ExternalApi::BGSService
   # :nocov:
 
   def get_end_products(vbms_id)
+    DBService.release_db_connections
+
     @end_products[vbms_id] ||=
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
                             service: :bgs,
@@ -31,6 +33,8 @@ class ExternalApi::BGSService
   end
 
   def fetch_veteran_info(vbms_id)
+    DBService.release_db_connections
+
     @veteran_info[vbms_id] ||=
       MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
                             service: :bgs,
@@ -40,6 +44,8 @@ class ExternalApi::BGSService
   end
 
   def fetch_file_number_by_ssn(ssn)
+    DBService.release_db_connections
+
     @people_by_ssn[ssn] ||=
       MetricsService.record("BGS: fetch person by ssn: #{ssn}",
                             service: :bgs,
@@ -51,6 +57,8 @@ class ExternalApi::BGSService
   end
 
   def fetch_poa_by_file_number(file_number)
+    DBService.release_db_connections
+
     unless @poas[file_number]
       bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
                                       service: :bgs,
@@ -64,6 +72,8 @@ class ExternalApi::BGSService
   end
 
   def find_address_by_participant_id(participant_id)
+    DBService.release_db_connections
+
     unless @poa_addresses[participant_id]
       bgs_address = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
                                           service: :bgs,
@@ -82,6 +92,8 @@ class ExternalApi::BGSService
   # in BGS. Cases in BGS are assigned a "sensitivity level" which may be
   # higher than that of the current employee
   def can_access?(vbms_id)
+    DBService.release_db_connections
+
     MetricsService.record("BGS: can_access? (find_flashes): #{vbms_id}",
                           service: :bgs,
                           name: "can_access?") do
@@ -95,17 +107,12 @@ class ExternalApi::BGSService
     # Fetch current_user from global thread
     current_user = RequestStore[:current_user]
 
-    # This is here to make sure StartCertificationJob
-    # can pass the ip address to the BGS client.
-    # We should find a better way to do this.
-    ip_address = current_user.ip_address || RequestStore[:ip_address]
-
     forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
 
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
-      client_ip: ip_address,
+      client_ip: Rails.application.secrets.user_ip_address,
       client_station_id: current_user.station_id,
       client_username: current_user.css_id,
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],

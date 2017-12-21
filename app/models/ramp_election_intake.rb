@@ -12,8 +12,17 @@ class RampElectionIntake < Intake
     detail
   end
 
-  def find_or_create_initial_detail
+  def find_or_build_initial_detail
     matching_ramp_election
+  end
+
+  def review!(request_params)
+    ramp_election.start_review!
+    ramp_election.update_attributes(request_params.permit(:receipt_date, :option_selected))
+  end
+
+  def review_errors
+    ramp_election.errors.messages
   end
 
   def complete!

@@ -9,10 +9,10 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { selectCurrentPdf, resetJumpToPage, togglePdfSidebar, toggleSearchBar
+import { resetJumpToPage, togglePdfSidebar, toggleSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
-import { rotateDocument } from '../reader/Pdf/PdfActions';
-import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
+import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { docListIsFiltered } from '../reader/selectors';
 import { DownloadIcon, FilterIcon, PageArrowLeft, PageArrowRight, LeftChevron,
   ExternalLink, FitToScreen, Rotate, SearchIcon } from '../components/RenderFunctions';
@@ -285,10 +285,11 @@ const mapStateToProps = (state, props) => {
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
 
   return {
-    ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
-    docListIsFiltered: docListIsFiltered(state.readerReducer),
+    ..._.pick(state.documentList, 'filteredDocIds'),
+    docListIsFiltered: docListIsFiltered(state),
     loadError: state.readerReducer.documentErrors[props.doc.content_url],
-    ...state.readerReducer.ui.pdf,
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+    ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
     numPages
   };
 };

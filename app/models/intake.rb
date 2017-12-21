@@ -39,7 +39,7 @@ class Intake < ActiveRecord::Base
     if validate_start
       update_attributes(
         started_at: Time.zone.now,
-        detail: find_or_create_initial_detail
+        detail: find_or_build_initial_detail
       )
     else
       update_attributes(
@@ -50,6 +50,18 @@ class Intake < ActiveRecord::Base
 
       return false
     end
+  end
+
+  def review_errors
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  def review!(_review_params)
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  def cancel!
+    fail Caseflow::Error::MustImplementInSubclass
   end
 
   def complete_with_status!(status)
@@ -110,7 +122,7 @@ class Intake < ActiveRecord::Base
     true
   end
 
-  def find_or_create_initial_detail
+  def find_or_build_initial_detail
     fail Caseflow::Error::MustImplementInSubclass
   end
 end

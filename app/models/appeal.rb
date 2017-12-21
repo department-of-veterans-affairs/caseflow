@@ -50,6 +50,12 @@ class Appeal < ActiveRecord::Base
     self.class.repository.aod(vacols_id)
   end
 
+  cache_attribute :remand_return_date do
+    # Note: Returns nil if the appeal is active, returns false if the appeal is
+    # closed but does not have a remand return date (false is cached, nil is not).
+    (self.class.repository.remand_return_date(vacols_id) || false) unless active?
+  end
+
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
@@ -235,6 +241,10 @@ class Appeal < ActiveRecord::Base
 
   def eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
+  end
+
+  def ramp_election
+    RampElection.find_by(veteran_file_number: sanitized_vbms_id)
   end
 
   def in_location?(location)
@@ -548,7 +558,7 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length < 9
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
 
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.

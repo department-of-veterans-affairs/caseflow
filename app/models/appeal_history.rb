@@ -4,7 +4,7 @@ class AppealHistory
   attr_accessor :vbms_id
 
   def appeals
-    @appeals ||= Appeal.repository.appeals_by_vbms_id(vbms_id)
+    @appeals ||= Appeal.repository.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
   end
 
   def appeal_series
@@ -23,6 +23,7 @@ class AppealHistory
   end
 
   def needs_update?
+    return false if appeals.length == 0
     return true if appeals.any? { |appeal| appeal.appeal_series.nil? }
 
     # If a new appeal has been merged, we need to regenerate the series
@@ -189,11 +190,11 @@ class AppealHistory
 
   class << self
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
 
       new(vbms_id: Appeal.vbms_id_for_ssn(appellant_ssn))
         .appeal_series
-        .sort_by(&:api_sort_date)
+        .sort_by(&:api_sort_key)
     end
   end
 end

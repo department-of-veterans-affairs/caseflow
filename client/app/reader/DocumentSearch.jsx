@@ -9,7 +9,7 @@ import { LeftChevron, RightChevron } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { hideSearchBar, showSearchBar } from './PdfViewer/PdfViewerActions';
 import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlight, setSearchIndex
-} from '../reader/Pdf/PdfActions';
+} from '../reader/PdfSearch/PdfSearchActions';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { READER_COLOR } from './constants';
@@ -36,9 +36,9 @@ export class DocumentSearch extends React.PureComponent {
     this.props.searchText(this.searchTerm);
   }
 
-  updateSearchIndex = (event) => {
+  updateSearchIndex = (iterateForwards) => {
     if (this.props.matchIndexToHighlight === null) {
-      this.props.updateSearchIndex(!event.shiftKey);
+      this.props.updateSearchIndex(iterateForwards);
     } else {
       this.props.setSearchIndex(this.props.matchIndexToHighlight);
       this.props.setSearchIndexToHighlight(null);
@@ -47,7 +47,7 @@ export class DocumentSearch extends React.PureComponent {
 
   onKeyPress = (event) => {
     if (event.key === 'Enter') {
-      this.updateSearchIndex(event);
+      this.updateSearchIndex(!event.shiftKey);
     }
   }
 
@@ -60,7 +60,7 @@ export class DocumentSearch extends React.PureComponent {
 
     if (event[metaKey] && event.code === 'KeyG') {
       event.preventDefault();
-      this.updateSearchIndex(event);
+      this.updateSearchIndex(!event.shiftKey);
     }
 
     if (event.key === 'Escape') {
@@ -95,8 +95,8 @@ export class DocumentSearch extends React.PureComponent {
   componentDidMount = () => window.addEventListener('keydown', this.shortcutHandler)
   componentWillUnmount = () => window.removeEventListener('keydown', this.shortcutHandler)
 
-  nextMatch = () => this.props.updateSearchIndex(true)
-  prevMatch = () => this.props.updateSearchIndex(false)
+  nextMatch = () => this.updateSearchIndex(true)
+  prevMatch = () => this.updateSearchIndex(false)
 
   searchBarRef = (node) => this.searchBar = node
 
@@ -168,9 +168,9 @@ const mapStateToProps = (state, props) => ({
   pdfText: getTextForFile(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),
-  matchIndexToHighlight: state.readerReducer.matchIndexToHighlight,
-  hidden: state.readerReducer.ui.pdf.hideSearchBar,
-  textExtracted: !_.isEmpty(state.readerReducer.extractedText)
+  matchIndexToHighlight: state.searchActionReducer.indexToHighlight,
+  hidden: state.pdfViewer.hideSearchBar,
+  textExtracted: !_.isEmpty(state.searchActionReducer.extractedText)
 });
 
 const mapDispatchToProps = (dispatch) => ({

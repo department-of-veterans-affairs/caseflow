@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "a8d42e6563277144938f0a513ee601233814ff86"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b7102ffb3b81ea6770719f921a1d06ef88c9ba92"
 
 gem "moment_timezone-rails"
 
@@ -29,6 +29,8 @@ gem 'active_model_serializers', '~> 0.10.0'
 
 # soft delete gem
 gem "paranoia", "~> 2.2"
+
+gem "dogstatsd-ruby" 
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -70,7 +72,7 @@ gem 'pg', platforms: :ruby
 
 gem 'connect_vbms', git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5dda05573d424d557be7a09052ab24b0dc6a5c5f"
 
-gem 'redis-rails'
+gem 'redis-rails', '~> 5.0.2'
 
 # remove when upgrading to rails 5
 gem 'where-or'

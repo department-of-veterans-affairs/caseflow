@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { INTERACTION_TYPES } from './analytics';
 import { createAnnotation, stopPlacingAnnotation,
   startPlacingAnnotation, updateNewAnnotationContent
-} from '../reader/PdfViewer/AnnotationActions';
+} from '../reader/AnnotationLayer/AnnotationActions';
 
 class SideBarComments extends PureComponent {
   handleAddClick = (event) => {
@@ -52,8 +52,8 @@ class SideBarComments extends PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    ..._.pick(state.readerReducer.ui, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
-    error: state.readerReducer.ui.pdfSidebar.error
+    ..._.pick(state.annotationLayer, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
+    error: state.pdfViewer.pdfSideBarError
   };
 };
 

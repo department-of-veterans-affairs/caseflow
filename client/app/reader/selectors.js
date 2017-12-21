@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import { getSearchSelectors } from 'redux-search';
 
-const getFilteredDocIds = (state) => state.ui.filteredDocIds;
+const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
 
 export const getFilteredDocuments = createSelector(
@@ -13,10 +13,10 @@ export const getFilteredDocuments = createSelector(
     _.values(allDocs)
 );
 
-const getEditingAnnotations = (state) => state.editingAnnotations;
-const getPendingEditingAnnotations = (state) => state.ui.pendingEditingAnnotations;
-const getAnnotations = (state) => state.annotations;
-const getPendingAnnotations = (state) => state.ui.pendingAnnotations;
+const getEditingAnnotations = (state) => state.annotationLayer.editingAnnotations;
+const getPendingEditingAnnotations = (state) => state.annotationLayer.pendingEditingAnnotations;
+const getAnnotations = (state) => state.annotationLayer.annotations;
+const getPendingAnnotations = (state) => state.annotationLayer.pendingAnnotations;
 
 export const makeGetAnnotationsByDocumentId = createSelector(
   [getEditingAnnotations, getPendingEditingAnnotations, getAnnotations, getPendingAnnotations],
@@ -50,7 +50,7 @@ export const getAnnotationsPerDocument = createSelector(
       value()
 );
 
-const getDocFilterCriteria = (state) => state.ui.docFilterCriteria;
+const getDocFilterCriteria = (state) => state.documentList.docFilterCriteria;
 
 /* eslint-disable newline-per-chained-call */
 
@@ -74,10 +74,10 @@ export const {
   result
 } = getSearchSelectors({
   resourceName: 'extractedText',
-  resourceSelector: (resourceName, state) => state.readerReducer[resourceName]
+  resourceSelector: (resourceName, state) => state.searchActionReducer[resourceName]
 });
 
-const getExtractedText = (state) => state.readerReducer.extractedText;
+const getExtractedText = (state) => state.searchActionReducer.extractedText;
 const getFile = (state, props) => props.file;
 
 export const getTextSearch = createSelector(
@@ -108,7 +108,7 @@ export const getTotalMatchesInFile = createSelector(
     sum()
 );
 
-const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
+const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;
 
 export const getCurrentMatchIndex = createSelector(
   [getTotalMatchesInFile, getSelectedIndex],

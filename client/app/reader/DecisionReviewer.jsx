@@ -13,7 +13,7 @@ import CaseSelect from './CaseSelect';
 import CaseSelectLoadingScreen from './CaseSelectLoadingScreen';
 import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { setCategoryFilter } from '../reader/DocumentList/DocumentListActions';
-import { stopPlacingAnnotation } from '../reader/PdfViewer/AnnotationActions';
+import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
 import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
@@ -46,7 +46,7 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   clearPlacingAnnotationState = () => {
-    if (this.props.pdf.isPlacingAnnotation) {
+    if (this.props.isPlacingAnnotation) {
       this.props.stopPlacingAnnotation('from-click-outside-doc');
     }
   }
@@ -187,9 +187,9 @@ DecisionReviewer.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    documentFilters: state.readerReducer.ui.pdfList.filters,
-    storeDocuments: state.readerReducer.documents,
-    pdf: state.readerReducer.ui.pdf
+    documentFilters: state.documentList.pdfList.filters,
+    storeDocuments: state.documents,
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
   };
 };
 

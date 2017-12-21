@@ -346,7 +346,7 @@ RSpec.feature "Reader" do
         end
       end
 
-      scenario "with mutiple appeals" do
+      scenario "with multiple appeals" do
         visit "/reader/appeal"
         fill_in "searchBar", with: (appeal4.vbms_id + "\n")
 
@@ -492,6 +492,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
+      expect(page.find('#comments-header')).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
@@ -1270,6 +1271,16 @@ RSpec.feature "Reader" do
       )
     end
 
+    scenario "Document viewer when doc list is filtered" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+      fill_in "searchBar", with: documents[0].type
+      click_on documents[0].type
+
+      expect(page).to have_no_selector("#button-next")
+      expect(page).to have_no_selector("#button-previous")
+      expect(page).to have_content("Back to claims")
+    end
+
     scenario "When user search term is not found" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       search_query = "does not exist in annotations"
@@ -1343,6 +1354,29 @@ RSpec.feature "Reader" do
 
         expect(search_bar).to match_css(".hidden")
       end
+    end
+
+    scenario "Navigating Search Results scrolls page" do
+      def scroll_top
+        page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
+      end
+
+      open_search_bar
+      expect(scroll_top).to be(0)
+
+      fill_in "search-ahead", with: "decision"
+
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+
+      first_match_scroll_top = scroll_top
+      expect(first_match_scroll_top).to be > 0
+
+      find(".cf-next-match").click
+      expect(scroll_top).to be > first_match_scroll_top
+
+      # this doc has 2 matches for "decision", search index wraps around
+      find(".cf-next-match").click
+      expect(scroll_top).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do

@@ -1,40 +1,13 @@
 import _ from 'lodash';
 
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
-import { selectAnnotation } from '../../reader/PdfViewer/AnnotationActions';
-import { hideErrorMessage, showErrorMessage } from '../commonActions';
+import { selectAnnotation } from '../../reader/AnnotationLayer/AnnotationActions';
 
 export const collectAllTags = (documents) => ({
   type: Constants.COLLECT_ALL_TAGS_FOR_OPTIONS,
   payload: documents
-});
-
-/** Annotation Modal **/
-
-export const openAnnotationDeleteModal = (annotationId, analyticsLabel) => ({
-  type: Constants.OPEN_ANNOTATION_DELETE_MODAL,
-  payload: {
-    annotationId
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'open-annotation-delete-modal',
-      label: analyticsLabel
-    }
-  }
-});
-
-export const closeAnnotationDeleteModal = () => ({
-  type: Constants.CLOSE_ANNOTATION_DELETE_MODAL,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
-      action: 'close-annotation-delete-modal'
-    }
-  }
 });
 
 /** Jump To Page **/
@@ -71,13 +44,6 @@ export const handleSelectCommentIcon = (comment) => (dispatch) => {
   });
 };
 
-export const handleSetLastRead = (docId) => ({
-  type: Constants.LAST_READ_DOCUMENT,
-  payload: {
-    docId
-  }
-});
-
 /** Scrolling **/
 
 export const setDocScrollPosition = (scrollTop) => ({
@@ -86,101 +52,6 @@ export const setDocScrollPosition = (scrollTop) => ({
     scrollTop
   }
 });
-
-/** Tags **/
-
-export const newTagRequestSuccess = (docId, createdTags) =>
-  (dispatch, getState) => {
-    dispatch({
-      type: Constants.REQUEST_NEW_TAG_CREATION_SUCCESS,
-      payload: {
-        docId,
-        createdTags
-      }
-    });
-    const { documents } = getState().readerReducer;
-
-    dispatch(collectAllTags(documents));
-  }
-;
-
-export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => (dispatch) => {
-  dispatch(showErrorMessage('tag'));
-  dispatch({
-    type: Constants.REQUEST_NEW_TAG_CREATION_FAILURE,
-    payload: {
-      docId,
-      tagsThatWereAttemptedToBeCreated
-    }
-  });
-};
-
-export const removeTagRequestFailure = (docId, tagId) => ({
-  type: Constants.REQUEST_REMOVE_TAG_FAILURE,
-  payload: {
-    docId,
-    tagId
-  }
-});
-
-export const removeTagRequestSuccess = (docId, tagId) =>
-  (dispatch, getState) => {
-    dispatch(hideErrorMessage('tag'));
-    dispatch({
-      type: Constants.REQUEST_REMOVE_TAG_SUCCESS,
-      payload: {
-        docId,
-        tagId
-      }
-    });
-    const { documents } = getState().readerReducer;
-
-    dispatch(collectAllTags(documents));
-  };
-
-export const removeTag = (doc, tagId) =>
-  (dispatch) => {
-    dispatch({
-      type: Constants.REQUEST_REMOVE_TAG,
-      payload: {
-        docId: doc.id,
-        tagId
-      }
-    });
-    ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`, {}, ENDPOINT_NAMES.TAG).
-      then(() => {
-        dispatch(removeTagRequestSuccess(doc.id, tagId));
-      }, () => {
-        dispatch(removeTagRequestFailure(doc.id, tagId));
-      });
-  };
-
-export const addNewTag = (doc, tags) =>
-  (dispatch) => {
-    const currentTags = doc.tags;
-
-    const newTags = _(tags).
-      differenceWith(currentTags, (tag, currentTag) => tag.value === currentTag.text).
-      map((tag) => ({ text: tag.label })).
-      value();
-
-    if (_.size(newTags)) {
-      dispatch(hideErrorMessage('tag'));
-      dispatch({
-        type: Constants.REQUEST_NEW_TAG_CREATION,
-        payload: {
-          newTags,
-          docId: doc.id
-        }
-      });
-      ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }, ENDPOINT_NAMES.TAG).
-        then((data) => {
-          dispatch(newTagRequestSuccess(doc.id, data.body.tags));
-        }, () => {
-          dispatch(newTagRequestFailed(doc.id, newTags));
-        });
-    }
-  };
 
 /** Getting Appeal Details **/
 
@@ -202,6 +73,13 @@ export const fetchAppealDetails = (vacolsId) =>
       dispatch(onReceiveAppealDetails(returnedObject.appeal));
     }, () => dispatch(onAppealDetailsLoadingFail()));
   };
+
+export const setLoadedVacolsId = (vacolsId) => ({
+  type: Constants.SET_LOADED_APPEAL_ID,
+  payload: {
+    vacolsId
+  }
+});
 
 /** Sidebar and Accordion controls **/
 
@@ -231,7 +109,7 @@ export const togglePdfSidebar = () => ({
     analytics: {
       category: CATEGORIES.VIEW_DOCUMENT_PAGE,
       action: 'toggle-pdf-sidebar',
-      label: (nextState) => nextState.readerReducer.ui.pdf.hidePdfSidebar ? 'hide' : 'show'
+      label: (nextState) => nextState.pdfViewer.hidePdfSidebar ? 'hide' : 'show'
     }
   }
 });
@@ -251,26 +129,3 @@ export const hideSearchBar = () => ({
 export const resetSidebarErrors = () => ({
   type: Constants.RESET_PDF_SIDEBAR_ERRORS
 });
-
-/** Set current PDF **/
-export const selectCurrentPdfLocally = (docId) => (dispatch) => {
-  dispatch(handleSetLastRead(docId));
-  dispatch({
-    type: Constants.SELECT_CURRENT_VIEWER_PDF,
-    payload: {
-      docId
-    }
-  });
-};
-
-export const selectCurrentPdf = (docId) => (dispatch) => {
-  ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ).
-    catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log('Error marking as read', docId, err);
-    });
-
-  dispatch(
-    selectCurrentPdfLocally(docId)
-  );
-};

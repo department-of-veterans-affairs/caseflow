@@ -33,6 +33,24 @@ class IntakesController < ApplicationController
     end
   end
 
+  def destroy
+    current_intake.cancel!
+    render json: {}
+  end
+
+  def review
+    if current_intake.review!(params)
+      render json: {}
+    else
+      render json: { error_codes: current_intake.review_errors }, status: 422
+    end
+  end
+
+  def complete
+    current_intake.complete!
+    render json: current_intake.ui_hash
+  end
+
   private
 
   def no_cache
@@ -51,6 +69,10 @@ class IntakesController < ApplicationController
       veteran_file_number: params[:file_number],
       form_type: form_type
     )
+  end
+
+  def current_intake
+    @intake ||= Intake.where(user: current_user).find(params[:id])
   end
 
   def form_type
