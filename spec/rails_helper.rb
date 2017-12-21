@@ -113,7 +113,7 @@ module StubbableUser
       @stub
     end
 
-    def before_set_user
+    def clear_current_user
       clear_stub!
     end
 

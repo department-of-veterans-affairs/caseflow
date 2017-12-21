@@ -44,7 +44,6 @@ export default class TestUsers extends React.PureComponent {
       this.setState({ isLoggingIn: false });
     }).
       catch((err) => {
-        this.setState({ isLoggingIn: false });
         this.setState(
           { isLoggingIn: false,
             userID: '',
@@ -115,7 +114,7 @@ export default class TestUsers extends React.PureComponent {
           loading={this.state.isSwitching}
           loadingText="Switching users" />
         <br /><br />
-        {this.props.currentUser.roles.includes('Global Admin') &&
+        { this.props.isGlobalAdmin &&
         <div>
           <strong>Log in as user:</strong>
           <TextField
@@ -148,6 +147,7 @@ export default class TestUsers extends React.PureComponent {
 
 TestUsers.propTypes = {
   currentUser: PropTypes.object.isRequired,
+  isGlobalAdmin: PropTypes.bool,
   testUsersList: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
   epTypes: PropTypes.array.isRequired

@@ -1,5 +1,6 @@
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :log_in_as_user, :set_end_products]
+  before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
     {
@@ -51,20 +52,25 @@ class Test::UsersController < ApplicationController
 
   # :nocov:
   def index
-    @test_users = User.all.select { |u| User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") }
+    @test_users = User.all.select do |u|
+      User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") ||
+        u.css_id.include?("Global Admin")
+    end
     @ep_types = %w(full partial none all)
     render "index"
   end
 
   # Set current user in DEMO
   def set_user
-    User.before_set_user # for testing only
+    User.clear_current_user # for testing only
 
     session["user"] = User.authentication_service.get_user_session(params[:id])
     head :ok
   end
 
   def log_in_as_user
+    User.clear_current_user # for testing only
+
     user = User.find_by(css_id: params[:id], station_id: params[:station_id])
     return head :not_found if user.nil?
     session["user"] = user.to_hash
@@ -92,6 +98,10 @@ class Test::UsersController < ApplicationController
 
   def require_demo
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  def require_global_admin
+    head :unauthorized unless current_user.global_admin?
   end
   # :nocov:
 end

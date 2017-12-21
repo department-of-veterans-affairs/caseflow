@@ -68,6 +68,10 @@ class User < ActiveRecord::Base
     Functions.granted?("System Admin", css_id)
   end
 
+  def global_admin?
+    Functions.granted?("Global Admin", css_id)
+  end
+
   def granted?(thing)
     Functions.granted?(thing, css_id)
   end
@@ -122,8 +126,8 @@ class User < ActiveRecord::Base
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
-    # Empty method used for testing purposes
-    def before_set_user
+    # Empty method used for testing purposes (required)
+    def clear_current_user
     end
 
     def system_user
