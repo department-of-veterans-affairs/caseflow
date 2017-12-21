@@ -5,7 +5,7 @@ class HearingsController < ApplicationController
 
   def update
     hearing.update(update_params)
-    render json: hearing.to_hash
+    render json: hearing.to_hash(current_user.id)
   end
 
   def logo_name
