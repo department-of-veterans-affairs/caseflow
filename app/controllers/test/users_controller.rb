@@ -91,11 +91,10 @@ class Test::UsersController < ApplicationController
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
   end
 
-
   def require_global_admin
     head :unauthorized unless current_user.global_admin?
   end
-    
+
   private
 
   def new_default_end_products
