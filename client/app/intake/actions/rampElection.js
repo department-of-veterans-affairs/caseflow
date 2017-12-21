@@ -64,8 +64,8 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
 
         throw error;
       }
-    )
-    .catch((error) => {});
+    ).
+    catch((error) => error);
 };
 
 export const completeIntake = (intakeId, rampElection) => (dispatch) => {
@@ -105,8 +105,8 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
         });
         throw error;
       }
-    )
-    .catch((error) => {});
+    ).
+    catch((error) => error);
 };
 
 export const confirmFinishIntake = (isConfirmed) => ({

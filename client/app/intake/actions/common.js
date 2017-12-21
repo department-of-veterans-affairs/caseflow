@@ -58,8 +58,8 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
 
         throw error;
       }
-    )
-    .catch((error) => {});
+    ).
+    catch((error) => error);
 };
 
 export const setFormType = (formType) => ({
@@ -102,6 +102,6 @@ export const submitCancel = (intakeId) => (dispatch) => {
         });
         throw error;
       }
-    )
-    .catch((error) => {});
+    ).
+    catch((error) => error);
 };

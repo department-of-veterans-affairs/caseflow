@@ -64,6 +64,6 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
 
         throw error;
       }
-    )
-    .catch((error) => {});
+    ).
+    catch((error) => error);
 };
