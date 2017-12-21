@@ -106,7 +106,7 @@ class User < ActiveRecord::Base
       appeal.to_hash(
         viewed: opened_appeals[appeal.id],
         issues: appeal.issues,
-        hearings: appeal_hearings.where(appeal: appeal)
+        hearings: appeal_hearings[appeal.id]
       )
     end
   end
@@ -124,7 +124,10 @@ class User < ActiveRecord::Base
   end
 
   def appeal_hearings(appeal_ids)
-    Hearing.where(appeal_id: appeal_ids)
+    Hearing.where(appeal_id: appeal_ids).each_with_object({}) do |hearing, object|
+      hearings_array = object[hearing.appeal_id] || []
+      object[hearing.appeal_id] = hearings_array.push(hearing)
+    end
   end
 
   class << self
