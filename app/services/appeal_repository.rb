@@ -1,5 +1,4 @@
 class AppealRepository
-  CAVC_TYPE = "7".freeze
 
   # :nocov:
   # Used by healthcheck endpoint
@@ -158,8 +157,7 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum,
-      cavc: VACOLS::Case::TYPES[case_record.bfac] == VACOLS::Case::TYPES[CAVC_TYPE]
+      docket_number: folder_record.tinum
     )
 
     appeal

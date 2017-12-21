@@ -18,6 +18,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
     # table to get the veteran's name, and the associated row in the
     # decass table to get the assigned dates, but these are not mandatory,
     # so we left join on both of them.
+    # rubocop:disable Metrics/MethodLength
     def select_assignments
       select("brieff.bfkey as vacols_id",
              "decass.deassign as date_assigned",
@@ -27,7 +28,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "corres.snamef as veteran_first_name",
              "corres.snamemi as veteran_middle_initial",
              "corres.snamel as veteran_last_name",
-             "brieff.bfac as type")
+             "brieff.bfac as type",
+             "brieff.bfregoff as regional_office_key",
+             "folder_record.tinum as docket_number")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
@@ -35,8 +38,11 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfcorkey = corres.stafkey
           JOIN staff
             ON brieff.bfcurloc = staff.slogid
+          JOIN folder
+            ON brieff.bfkey = folder.ticknum
         SQL
     end
+    # rubocop:enable Metrics/MethodLength
 
     def exists_for_appeals(vacols_ids)
       conn = connection

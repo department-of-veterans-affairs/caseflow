@@ -37,7 +37,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -460,20 +459,13 @@ class Appeal < ActiveRecord::Base
     v1_events.last.try(:date)
   end
 
-  # This is a special to_hash function to speed up the welcome gate
-  # it avoids using the associated_vacols_model to make extra calls
-  # to VACOLS. Don't add anything to it without also adding it to
-  # the query in VACOLS::CaseAssignment.
-  def assigned_to_user_to_hash(viewed: nil, issues: nil)
-    serializable_hash(
-      methods: [:veteran_full_name, :cavc, :aod],
-      includes: [:vbms_id, :vacols_id]
-    ).tap do |hash|
-      hash["viewed"] = viewed
-      hash["issues"] = issues
-    end
+  def cavc
+    type == "Court Remand"
   end
 
+  # Adding anything to this to_hash can trigger a lazy load which slows down
+  # welcome gate dramatically. Don't add anything to it without also adding it to
+  # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
