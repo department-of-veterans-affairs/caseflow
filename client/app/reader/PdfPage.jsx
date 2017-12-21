@@ -321,7 +321,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state, props) => {
   return {
-    pageDimensions: _.get(state.readerReducer.pageDimensions, [`${props.file}-${props.pageIndex}`]),
+    pageDimensions: _.get(state.pdf.pageDimensions, [`${props.file}-${props.pageIndex}`]),
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     rotation: _.get(state.documents, [props.documentId, 'rotation'], 0),
     searchText: searchText(state, props),
