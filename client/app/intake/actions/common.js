@@ -38,26 +38,24 @@ export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => 
           },
           meta: { analytics }
         });
-      },
-      (error) => {
-        const responseObject = JSON.parse(error.response.text);
-        const errorCode = responseObject.error_code;
+      }).
+    catch((error) => {
+      const responseObject = JSON.parse(error.response.text);
+      const errorCode = responseObject.error_code;
 
-        dispatch({
-          type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
-          payload: {
-            errorCode,
-            errorData: responseObject.error_data || {}
-          },
-          meta: {
-            analytics: {
-              label: errorCode
-            }
+      dispatch({
+        type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
+        payload: {
+          errorCode,
+          errorData: responseObject.error_data || {}
+        },
+        meta: {
+          analytics: {
+            label: errorCode
           }
-        });
-
-        throw error;
-      }
+        }
+      });
+    }
     );
 };
 
@@ -93,13 +91,13 @@ export const submitCancel = (intakeId) => (dispatch) => {
       () => dispatch({
         type: ACTIONS.CANCEL_INTAKE_SUCCEED,
         meta: { analytics }
-      }),
-      (error) => {
+      })).
+    catch(
+      () => {
         dispatch({
           type: ACTIONS.CANCEL_INTAKE_FAIL,
           meta: { analytics }
         });
-        throw error;
       }
     );
 };

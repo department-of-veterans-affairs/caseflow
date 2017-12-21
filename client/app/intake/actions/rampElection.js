@@ -40,31 +40,28 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
       () => dispatch({
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
         meta: { analytics }
-      }),
-      (error) => {
-        const responseObject = JSON.parse(error.response.text);
-        const responseErrorCodes = responseObject.error_codes;
+      })).
+    catch((error) => {
+      const responseObject = JSON.parse(error.response.text);
+      const responseErrorCodes = responseObject.error_codes;
 
-        dispatch({
-          type: ACTIONS.SUBMIT_REVIEW_FAIL,
-          payload: {
-            responseErrorCodes
-          },
-          meta: {
-            analytics: (triggerEvent, category, actionName) => {
-              triggerEvent(category, actionName, 'any-error');
+      dispatch({
+        type: ACTIONS.SUBMIT_REVIEW_FAIL,
+        payload: {
+          responseErrorCodes
+        },
+        meta: {
+          analytics: (triggerEvent, category, actionName) => {
+            triggerEvent(category, actionName, 'any-error');
 
-              _.forEach(
-                responseErrorCodes,
-                (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
-              );
-            }
+            _.forEach(
+              responseErrorCodes,
+              (errorVal, errorKey) => triggerEvent(category, actionName, `${errorKey}-${errorVal}`)
+            );
           }
-        });
-
-        throw error;
-      }
-    );
+        }
+      });
+    });
 };
 
 export const completeIntake = (intakeId, rampElection) => (dispatch) => {
@@ -96,13 +93,13 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
         });
 
         return true;
-      },
-      (error) => {
+      }).
+    catch(
+      () => {
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
           meta: { analytics }
         });
-        throw error;
       }
     );
 };
