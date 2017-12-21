@@ -16,8 +16,8 @@ import SideBarDocumentInformation from './SideBarDocumentInformation';
 import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
-import * as Constants from '../reader/constants';
-import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { setOpenedAccordionSections, togglePdfSidebar,
+  handleFinishScrollToSidebarComment } from '../reader/PdfViewer/PdfViewerActions';
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
   updateAnnotationContent, updateAnnotationRelevantDate
@@ -274,17 +274,9 @@ const mapDispatchToProps = (dispatch) => ({
     updateAnnotationContent,
     updateAnnotationRelevantDate,
     cancelEditAnnotation,
-    requestEditAnnotation
-  }, dispatch),
-
-  handleFinishScrollToSidebarComment() {
-    dispatch({
-      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: {
-        scrollToSidebarComment: null
-      }
-    });
-  }
+    requestEditAnnotation,
+    handleFinishScrollToSidebarComment
+  }, dispatch)
 });
 
 export default connect(

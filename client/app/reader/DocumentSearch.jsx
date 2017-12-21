@@ -164,7 +164,7 @@ DocumentSearch.propTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
-  pdfDocument: state.readerReducer.pdfDocuments[props.file],
+  pdfDocument: state.pdf.pdfDocuments[props.file],
   pdfText: getTextForFile(state, props),
   totalMatchesInFile: getTotalMatchesInFile(state, props),
   currentMatchIndex: getCurrentMatchIndex(state, props),

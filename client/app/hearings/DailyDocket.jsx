@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import DocketHearingRow from './DocketHearingRow';
+import DocketHearingRow from './components/DocketHearingRow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
