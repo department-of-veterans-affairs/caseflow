@@ -54,8 +54,14 @@ class Finish extends React.PureComponent {
       appeals,
       requestState,
       finishConfirmed,
-      finishConfirmedError
+      finishConfirmedError,
+      rampRefilingStarted
     } = this.props;
+
+    // TEMPORARY
+    if (rampRefilingStarted) {
+      return <h1>Finish Processing refiling</h1>;
+    }
 
     switch (rampElectionStatus) {
     case RAMP_INTAKE_STATES.NONE:
@@ -166,7 +172,8 @@ export default connect(
     finishConfirmedError: state.rampElection.finishConfirmedError,
     rampElectionStatus: getRampElectionStatus(state),
     appeals: state.rampElection.appeals,
-    requestState: state.rampElection.requestStatus.completeIntake
+    requestState: state.rampElection.requestStatus.completeIntake,
+    rampRefilingStarted: state.rampRefiling.isStarted
   }),
   (dispatch) => bindActionCreators({
     confirmFinishIntake
