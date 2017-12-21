@@ -9,7 +9,6 @@ import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
 import StyleGuideDateSelector from './StyleGuideDateSelector';
-import StyleGuidePlaceholder from './StyleGuidePlaceholder';
 import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';

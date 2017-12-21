@@ -3,7 +3,7 @@ import DateSelector from '../../components/DateSelector';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideDateSelector extends React.PureComponent {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -12,7 +12,7 @@ export default class StyleGuideDateSelector extends React.PureComponent {
   }
 
   onChange = (dateValue) => {
-    this.setState({ dateValue })
+    this.setState({ dateValue });
   }
 
   render() {

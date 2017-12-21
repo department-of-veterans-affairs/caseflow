@@ -11,12 +11,13 @@ export default class DateSelector extends React.Component {
     super(props);
 
     this.state = {
-      errorMessage: undefined,
+      errorMessage: '',
       minDate: this.props.minDate || MIN_DATE
     };
 
     if (_.isDate(this.props.minDate)) {
       const minDate = this.props.minDate;
+
       this.state.minDate = `${minDate.getFullYear()}-${minDate.getMonth()}-${minDate.getDay()}`;
     }
   }
@@ -27,7 +28,7 @@ export default class DateSelector extends React.Component {
     if (!value || new Date(value) < new Date(this.props.min || MIN_DATE)) {
       this.setState({ errorMessage: this.props.errorMessage });
     } else {
-      this.setState({ errorMessage: undefined });
+      this.setState({ errorMessage: '' });
     }
 
     this.props.onChange(value);
