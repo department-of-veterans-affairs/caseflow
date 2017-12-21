@@ -1,4 +1,4 @@
-import * as Constants from '../constants';
+import * as Constants from './actionTypes';
 
 export const onScrollToComment = (scrollToComment) => ({
   type: Constants.SCROLL_TO_COMMENT,

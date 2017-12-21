@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchableDropdown from '../components/SearchableDropdown';
-import ViewableItemLink from '../components/ViewableItemLink';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import ViewableItemLink from '../../components/ViewableItemLink';
 import Textarea from 'react-textarea-autosize';
-import Checkbox from '../components/Checkbox';
+import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed
-} from './actions/Dockets';
+} from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
-import { getDate } from './util/DateUtil';
+import { getDate } from '../util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
