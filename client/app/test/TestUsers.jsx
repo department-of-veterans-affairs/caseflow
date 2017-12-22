@@ -27,27 +27,25 @@ export default class TestUsers extends React.PureComponent {
     this.setState({ isSwitching: true });
     ApiUtil.post(`/test/set_user/${this.state.userSelect}`).then(() => {
       window.location.reload();
-      this.setState({ isSwitching: false });
     }).
       catch((err) => {
         console.warn(err);
       });
   };
 
-  userIDOnChange = (value) => this.setState({ userID: value });
-  stationIDOnChange = (value) => this.setState({ stationID: value });
+  userIdOnChange = (value) => this.setState({ userId: value });
+  stationIdOnChange = (value) => this.setState({ stationId: value });
 
   handleLogInAsUser = () => {
     this.setState({ isLoggingIn: true });
-    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userID}&station_id=${this.state.stationID}`).then(() => {
+    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}&station_id=${this.state.stationId}`).then(() => {
       window.location.reload();
-      this.setState({ isLoggingIn: false });
     }).
       catch((err) => {
         this.setState(
           { isLoggingIn: false,
-            userID: '',
-            stationID: '' });
+            userId: '',
+            stationId: '' });
         console.warn(err);
       });
   }
@@ -119,14 +117,14 @@ export default class TestUsers extends React.PureComponent {
           <strong>Log in as user:</strong>
           <TextField
             label="User ID:"
-            name="userID"
-            value={this.state.userID}
-            onChange={this.userIDOnChange} />
+            name="userId"
+            value={this.state.userId}
+            onChange={this.userIdOnChange} />
           <TextField
             label="Station ID:"
-            name="stationID"
-            value={this.state.stationID}
-            onChange={this.stationIDOnChange} />
+            name="stationId"
+            value={this.state.stationId}
+            onChange={this.stationIdOnChange} />
           <Button
             onClick={this.handleLogInAsUser}
             name="Log in as user"
