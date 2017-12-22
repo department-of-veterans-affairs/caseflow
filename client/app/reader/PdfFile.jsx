@@ -28,12 +28,13 @@ export class PdfFile extends React.PureComponent {
 
     this.loadingTask = null;
     this.pdfDocument = null;
-    this.list = null;
+    this.grid = null;
     this.startIndex = 0;
     this.scrollTop = 0;
     this.scrollLocation = {};
     this.clientHeight = 0;
     this.currentPage = 0;
+    this.columnCount = 1;
   }
 
   componentDidMount = () => {
@@ -90,11 +91,11 @@ export class PdfFile extends React.PureComponent {
       this.currentPage = 0;
     }
 
-    if (this.list && nextProps.scale !== this.props.scale) {
+    if (this.grid && nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.list.getOffsetForCell({ rowIndex: this.startIndex, columnIndex: 0 }));
+      const nonZoomedLocation = (this.scrollTop - this.grid.getOffsetForCell({ rowIndex: this.startIndex, columnIndex: 0 }));
 
       this.scrollLocation = {
         page: this.startIndex,
@@ -138,22 +139,30 @@ export class PdfFile extends React.PureComponent {
     return (this.pageWidth(0) + PAGE_MARGIN) * this.props.scale;
   }
 
-  getList = (list) => {
-    this.list = list;
+  getGrid = (list) => {
+    this.grid = list;
 
-    if (this.list) {
+    if (this.grid) {
       // eslint-disable-next-line react/no-find-dom-node
-      const domNode = ReactDOM.findDOMNode(this.list);
+      const domNode = ReactDOM.findDOMNode(this.grid);
 
       domNode.focus();
-      this.list.recomputeGridSize();
+      this.grid.recomputeGridSize();
     }
   }
 
-  scrollToPosition = (pageIndex, locationOnPage = 0) => {
-    const position = this.list.getOffsetForCell({ rowIndex: pageIndex, columnIndex: 0 }) + locationOnPage;
+  pageRowAndColumn = (pageIndex) => ({
+    rowIndex: pageIndex / this.columnCount,
+    columnIndex: pageIndex % this.columnCount
+  })
 
-    this.list.scrollToPosition(Math.max(position, 0));
+  scrollToPosition = (pageIndex, locationOnPage = 0) => {
+    const position = this.grid.getOffsetForCell(this.pageRowAndColumn(pageIndex));
+    debugger;
+    this.grid.scrollToPosition({
+      scrollLeft: position.left,
+      scrollTop: Math.max(position.top, 0) + locationOnPage
+    });
   }
 
   jumpToPage = () => {
@@ -161,7 +170,7 @@ export class PdfFile extends React.PureComponent {
     if (this.props.jumpToPageNumber && this.clientHeight > 0) {
       const scrollToIndex = this.props.jumpToPageNumber ? pageIndexOfPageNumber(this.props.jumpToPageNumber) : -1;
 
-      this.list.scrollToRow(scrollToIndex);
+      this.grid.scrollToRow(scrollToIndex);
       this.props.resetJumpToPage();
     }
   }
@@ -214,19 +223,19 @@ export class PdfFile extends React.PureComponent {
             this.props.setDocScrollPosition(null);
           } else if (this.props.currentMatchIndex !== prevProps.currentMatchIndex) {
             // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
-            this.list.scrollToRow(pageIndex);
+            this.grid.scrollToRow(pageIndex);
           }
         } else {
           // scroll to mark page before highlighting--may not be in DOM
-          this.list.scrollToRow(pageIndex);
+          this.grid.scrollToRow(pageIndex);
         }
       }
     }
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.list && this.props.isVisible) {
-      this.list.recomputeGridSize();
+    if (this.grid && this.props.isVisible) {
+      this.grid.recomputeGridSize();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
       this.jumpToComment();
@@ -247,11 +256,11 @@ export class PdfFile extends React.PureComponent {
   onScroll = ({ clientHeight, scrollTop }) => {
     this.scrollTop = scrollTop;
 
-    if (this.list) {
+    if (this.grid) {
       let lastIndex = 0;
 
       _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
-        const offset = this.list.getOffsetForCell({ rowIndex: index, columnIndex: 0 });
+        const offset = this.grid.getOffsetForCell({ rowIndex: index, columnIndex: 0 });
 
         if (offset < scrollTop + (clientHeight / 2)) {
           lastIndex = index;
@@ -270,7 +279,7 @@ export class PdfFile extends React.PureComponent {
     this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const { width, height } = this.pageDimensions(this.currentPage);
-    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.list.getOffsetForCell({ rowIndex: this.currentPage, columnIndex: 0 }));
+    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.grid.getOffsetForCell({ rowIndex: this.currentPage, columnIndex: 0 }));
 
     const initialCommentCoordinates = {
       x: ((width - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale,
@@ -335,25 +344,25 @@ export class PdfFile extends React.PureComponent {
             this.clientHeight = height;
           }
 
-          const columnCount = Math.max(Math.floor(width / this.getColumnWidth()), 1);
+          this.columnCount = Math.max(Math.floor(width / this.getColumnWidth()), 1);
 
           return <Grid
-            ref={this.getList}
+            ref={this.getGrid}
             containerStyle={{
               margin: '0 auto',
               marginTop: `${PAGE_MARGIN}`
             }}
-            overscanRowCount={OVERSCAN_ROWS / columnCount}
+            overscanRowCount={OVERSCAN_ROWS / this.columnCount}
             onRowsRendered={this.onRowsRendered}
             onScroll={this.onScroll}
             height={height}
-            rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / columnCount)}
+            rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / this.columnCount)}
             rowHeight={this.getRowHeight}
-            cellRenderer={this.getPage(columnCount)}
+            cellRenderer={this.getPage(this.columnCount)}
             scrollToAlignment="start"
             width={width}
             columnWidth={this.getColumnWidth}
-            columnCount={columnCount}
+            columnCount={this.columnCount}
             scale={this.props.scale}
           />;
         }
