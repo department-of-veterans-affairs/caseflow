@@ -87,7 +87,8 @@ class Hearing < ActiveRecord::Base
       veteran_last_name: veteran_last_name,
       appellant_first_name: appellant_first_name,
       appellant_middle_initial: appellant_middle_initial,
-      appellant_last_name: appellant_last_name
+      appellant_last_name: appellant_last_name,
+      appeal_vacols_id: appeal_vacols_id
     }
   end
 
