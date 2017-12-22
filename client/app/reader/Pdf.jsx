@@ -8,7 +8,6 @@ import PdfFile from '../reader/PdfFile';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
-import { onScrollToComment } from '../reader/Pdf/PdfActions';
 import { placeAnnotation, startPlacingAnnotation,
   stopPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
@@ -98,10 +97,9 @@ export class Pdf extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
-    ...state.readerReducer.ui.pdf,
     ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords'),
     rotation: _.get(state.documents, [props.documentId, 'rotation']),
-    sidebarHidden: state.readerReducer.ui.pdf.hidePdfSidebar,
+    sidebarHidden: state.pdfViewer.hidePdfSidebar,
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
   };
 };
@@ -112,7 +110,6 @@ const mapDispatchToProps = (dispatch) => ({
     startPlacingAnnotation,
     stopPlacingAnnotation,
     showPlaceAnnotationIcon,
-    onScrollToComment,
     togglePdfSidebar
   }, dispatch)
 });
@@ -134,11 +131,6 @@ Pdf.propTypes = {
   pdfWorker: PropTypes.string.isRequired,
   scale: PropTypes.number,
   onPageChange: PropTypes.func,
-  scrollToComment: PropTypes.shape({
-    id: PropTypes.number,
-    page: PropTypes.number,
-    y: PropTypes.number
-  }),
   onIconMoved: PropTypes.func,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
   rotation: PropTypes.number,

@@ -6,6 +6,7 @@ import perfLogger from 'redux-perf-middleware';
 import IntakeFrame from './IntakeFrame';
 import { intakeReducer, mapDataToInitialIntake } from './reducers/intake';
 import { rampElectionReducer, mapDataToInitialRampElection } from './reducers/rampElection';
+import { rampRefilingReducer, mapDataToInitialRampRefiling } from './reducers/rampRefiling';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 
 const Intake = (props) => {
@@ -14,23 +15,29 @@ const Intake = (props) => {
 
   const reducer = combineReducers({
     intake: intakeReducer,
-    rampElection: rampElectionReducer
+    rampElection: rampElectionReducer,
+    rampRefiling: rampRefilingReducer
   });
 
   const store = createStore(
     reducer,
     {
       intake: mapDataToInitialIntake(props),
-      rampElection: mapDataToInitialRampElection(props)
+      rampElection: mapDataToInitialRampElection(props),
+      rampRefiling: mapDataToInitialRampRefiling(props)
     },
     composeEnhancers(applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware('intake')))
   );
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
-    module.hot.accept('./redux/reducer', () => {
-      store.replaceReducer(reducer);
-    });
+    module.hot.accept([
+      './reducers/intake',
+      './reducers/rampElection',
+      './reducers/rampRefiling'
+    ],
+    () => store.replaceReducer(reducer)
+    );
   }
 
   return <Provider store={store}>

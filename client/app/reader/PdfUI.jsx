@@ -281,15 +281,15 @@ export class PdfUI extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const pdfDocument = _.get(state.readerReducer.pdfDocuments, [props.doc.content_url]);
+  const pdfDocument = _.get(state.pdf.pdfDocuments, [props.doc.content_url]);
   const numPages = pdfDocument ? pdfDocument.pdfInfo.numPages : null;
 
   return {
-    ..._.pick(state.readerReducer.ui, 'filteredDocIds'),
+    ..._.pick(state.documentList, 'filteredDocIds'),
     docListIsFiltered: docListIsFiltered(state),
-    loadError: state.readerReducer.documentErrors[props.doc.content_url],
+    loadError: state.pdf.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
-    ...state.readerReducer.ui.pdf,
+    ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
     numPages
   };
 };

@@ -5,7 +5,8 @@ import Mark from 'mark.js';
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setPageDimensions, setSearchIndexToHighlight } from '../reader/Pdf/PdfActions';
+import { setPageDimensions } from '../reader/Pdf/PdfActions';
+import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { text as searchText, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -53,43 +54,25 @@ export class PdfPage extends React.PureComponent {
   };
 
   highlightMarkAtIndex = (scrollToMark) => {
-    _.each(this.marks, (mark) => mark.classList.remove('highlighted'));
-
-    const [pageIndexWithMatch, indexInPage] = this.getIndexInPage();
-    const selectedMark = this.marks[indexInPage];
-
-    if (pageIndexWithMatch === this.props.pageIndex) {
-      if (selectedMark) {
-        selectedMark.classList.add('highlighted');
-
-        if (scrollToMark) {
-          // mark parent elements are absolutely-positioned divs. account for search bar height
-          this.props.setDocScrollPosition(
-            parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
-          );
-        }
-      } else {
-        console.error('selectedMark not found in DOM');
-      }
-    }
-  }
-
-  getIndexInPage = (matchIndex = this.props.currentMatchIndex) => {
-    // get page, relative index of match at absolute index
-    let cumulativeMatches = 0;
-
-    for (let matchesPerPageIndex = 0; matchesPerPageIndex < this.props.matchesPerPage.length; matchesPerPageIndex++) {
-      if (matchIndex < cumulativeMatches + this.props.matchesPerPage[matchesPerPageIndex].matches) {
-        return [
-          this.props.matchesPerPage[matchesPerPageIndex].pageIndex,
-          this.props.currentMatchIndex - cumulativeMatches
-        ];
-      }
-
-      cumulativeMatches += this.props.matchesPerPage[matchesPerPageIndex].matches;
+    if (this.props.pageIndexWithMatch !== this.props.pageIndex) {
+      return;
     }
 
-    return [-1, -1];
+    const selectedMark = this.marks[this.props.relativeIndex];
+
+    if (selectedMark) {
+      selectedMark.classList.add('highlighted');
+
+      if (scrollToMark) {
+        // mark parent elements are absolutely-positioned divs. account for search bar height
+        this.props.setDocScrollPosition(
+          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
+        );
+      }
+    } else {
+      console.error('selectedMark not found in DOM: ' +
+        `${this.props.relativeIndex} on pg ${this.props.pageIndex} (${this.props.currentMatchIndex})`);
+    }
   }
 
   getMatchIndexOffsetFromPage = (pageIndex = this.props.pageIndex) => {
@@ -162,21 +145,16 @@ export class PdfPage extends React.PureComponent {
     }
 
     if (this.markInstance) {
-      if (this.props.searchText && !this.props.searchBarHidden) {
-        if (!_.isNaN(this.props.currentMatchIndex) && this.props.matchesPerPage && this.marks.length &&
-           (this.props.searchText === prevProps.searchText) &&
-           (this.props.currentMatchIndex !== prevProps.currentMatchIndex)) {
-          // eslint-disable-next-line no-unused-vars
-          const [matchedPageIndex, indexInPage] = this.getIndexInPage();
-
-          if (this.marks[indexInPage]) {
-            this.highlightMarkAtIndex(true);
-          }
-        } else {
-          this.markText(this.props.currentMatchIndex !== prevProps.currentMatchIndex);
-        }
-      } else {
+      if (this.props.searchBarHidden || !this.props.searchText) {
         this.unmarkText();
+      } else {
+        const searchTextChanged = this.props.searchText !== prevProps.searchText;
+        const currentMatchIdxChanged = !_.isNaN(this.props.currentMatchIndex) &&
+          this.props.currentMatchIndex !== prevProps.currentMatchIndex;
+
+        if (this.props.matchesPerPage.length || searchTextChanged) {
+          this.markText(currentMatchIdxChanged || searchTextChanged);
+        }
       }
     }
   }
@@ -343,13 +321,14 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state, props) => {
   return {
-    pageDimensions: _.get(state.readerReducer.pageDimensions, [`${props.file}-${props.pageIndex}`]),
+    pageDimensions: _.get(state.pdf.pageDimensions, [`${props.file}-${props.pageIndex}`]),
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     rotation: _.get(state.documents, [props.documentId, 'rotation'], 0),
     searchText: searchText(state, props),
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
-    searchBarHidden: state.readerReducer.ui.pdf.hideSearchBar
+    searchBarHidden: state.pdfViewer.hideSearchBar,
+    ...state.searchActionReducer
   };
 };
 

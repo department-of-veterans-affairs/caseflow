@@ -8,25 +8,22 @@ import { MemoryRouter } from 'react-router-dom';
 import DecisionReviewer from '../../../app/reader/DecisionReviewer';
 import { documents } from '../../data/documents';
 import { annotations } from '../../data/annotations';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { reducer as searchReducer, reduxSearch } from 'redux-search';
+import { reduxSearch } from 'redux-search';
 import { asyncTest, pause } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
-import readerReducer from '../../../app/reader/reducer';
-import caseSelectReducer from '../../../app/reader/CaseSelect/CaseSelectReducer';
-import { annotationLayerReducer } from '../../../app/reader/AnnotationLayer/AnnotationLayerReducer';
-import documentsReducer from '../../../app/reader/Documents/DocumentsReducer';
 import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
 import { onReceiveDocs } from '../../../app/reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from '../../../app/reader/AnnotationLayer/AnnotationActions';
-
 import sinon from 'sinon';
 import { AutoSizer } from 'react-virtualized';
+import rootReducer from '../../../app/reader/reducers';
+
 const vacolsId = 'reader_id1';
 
 // This is the route history preset in react router
@@ -37,13 +34,7 @@ const INITIAL_ENTRIES = [
 ];
 
 const getStore = () => createStore(
-  combineReducers({
-    caseSelect: caseSelectReducer,
-    readerReducer,
-    search: searchReducer,
-    documents: documentsReducer,
-    annotationLayer: annotationLayerReducer
-  }),
+  rootReducer,
   compose(
     applyMiddleware(thunk),
     reduxSearch({
@@ -56,7 +47,7 @@ const getStore = () => createStore(
       resourceSelector: (resourceName, state) => {
         // In our example, all resources are stored in the state under a :resources Map
         // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
+        return state.searchActionReducer[resourceName];
       }
     })
   )

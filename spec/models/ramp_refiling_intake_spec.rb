@@ -4,8 +4,8 @@ describe RampRefilingIntake do
   end
 
   let(:user) { Generators::User.build }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:veteran_file_number) { "64205555" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:detail) { nil }
 
   let(:intake) do
@@ -18,9 +18,12 @@ describe RampRefilingIntake do
 
   let(:completed_ramp_election) do
     RampElection.create!(
-      veteran_file_number: "64205555",
+      veteran_file_number: veteran_file_number,
       notice_date: 3.days.ago,
-      end_product_reference_id: "123"
+      end_product_reference_id: Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: { status_type_code: "CLR" }
+      ).claim_id
     )
   end
 
@@ -28,13 +31,7 @@ describe RampRefilingIntake do
     subject { intake.start! }
 
     context "valid to start" do
-      let!(:completed_ramp_election) do
-        RampElection.create!(
-          veteran_file_number: "64205555",
-          notice_date: 3.days.ago,
-          end_product_reference_id: "123"
-        )
-      end
+      let!(:ramp_election) { completed_ramp_election }
 
       it "saves intake and sets detail to ramp election" do
         expect(subject).to be_truthy
@@ -50,6 +47,17 @@ describe RampRefilingIntake do
 
   context "#validate_start" do
     subject { intake.validate_start }
+
+    let!(:end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: "64205555",
+        bgs_attrs: {
+          status_type_code: end_product_status
+        }
+      )
+    end
+
+    let(:end_product_status) { "CLR" }
 
     context "there is not a completed ramp election for veteran" do
       let!(:not_complete_ramp_election) do
@@ -67,10 +75,25 @@ describe RampRefilingIntake do
 
     context "there is a completed ramp election for veteran" do
       let!(:ramp_election) do
-        completed_ramp_election
+        RampElection.create!(
+          veteran_file_number: "64205555",
+          notice_date: 3.days.ago,
+          end_product_reference_id: end_product.claim_id
+        )
       end
 
-      it { is_expected.to eq(true) }
+      context "the EP associated with original RampElection is still pending" do
+        let(:end_product_status) { "PEND" }
+
+        it "adds ramp_election_is_active and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("ramp_election_is_active")
+        end
+      end
+
+      context "the EP associated with original RampElection is closed" do
+        it { is_expected.to eq(true) }
+      end
     end
   end
 

@@ -28,7 +28,7 @@ Highlight.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  searchQuery: state.readerReducer.ui.docFilterCriteria.searchQuery
+  searchQuery: state.documentList.docFilterCriteria.searchQuery
 });
 
 export default connect(

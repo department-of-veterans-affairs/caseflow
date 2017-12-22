@@ -139,6 +139,14 @@ describe Appeal do
     it { is_expected.to be_truthy }
   end
 
+  context "#remand_return_date" do
+    subject { appeal.remand_return_date }
+
+    context "when the appeal is active" do
+      it { is_expected.to eq(nil) }
+    end
+  end
+
   context "#ssocs" do
     subject { appeal.ssocs }
 
@@ -1135,32 +1143,52 @@ describe Appeal do
     let(:appeal) { Generators::Appeal.build(decision_date: 1.day.ago) }
     let(:result) { appeal.non_canceled_end_products_within_30_days }
 
-    before do
-      BGSService.end_product_data = [
-        {
+    let!(:twenty_day_old_pending_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: appeal.sanitized_vbms_id,
+        bgs_attrs: {
           claim_receive_date: twenty_days_ago,
           claim_type_code: "172GRANT",
           status_type_code: "PEND"
-        },
-        {
+        }
+      )
+    end
+
+    let!(:recent_cleared_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: appeal.sanitized_vbms_id,
+        bgs_attrs: {
           claim_receive_date: yesterday,
           claim_type_code: "170RMD",
           status_type_code: "CLR"
-        },
-        {
+        }
+      )
+    end
+
+    let!(:recent_cancelled_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: appeal.sanitized_vbms_id,
+        bgs_attrs: {
           claim_receive_date: yesterday,
           claim_type_code: "172BVAG",
           status_type_code: "CAN"
-        },
-        {
+        }
+      )
+    end
+
+    let!(:year_old_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: appeal.sanitized_vbms_id,
+        bgs_attrs: {
           claim_receive_date: last_year,
           claim_type_code: "172BVAG",
           status_type_code: "CLR"
         }
-      ]
+      )
     end
 
     it "returns correct eps" do
+      puts BGSService.end_product_records
       expect(result.length).to eq(2)
 
       expect(result.first.claim_type_code).to eq("172GRANT")
@@ -1185,33 +1213,50 @@ describe Appeal do
   context "#pending_eps" do
     let(:appeal) { Generators::Appeal.build(decision_date: 1.day.ago) }
 
-    before do
-      BGSService.end_product_data = [
-        {
-          claim_receive_date: twenty_days_ago,
-          claim_type_code: "070BVAGR",
-          end_product_type_code: "071",
-          status_type_code: "PEND"
-        },
-        {
-          claim_receive_date: last_year,
-          claim_type_code: "070BVAGRARC",
-          end_product_type_code: "070",
-          status_type_code: "PEND"
-        },
-        {
+    let!(:pending_eps) do
+      [
+        Generators::EndProduct.build(
+          veteran_file_number: appeal.sanitized_vbms_id,
+          bgs_attrs: {
+            claim_receive_date: twenty_days_ago,
+            claim_type_code: "070BVAGR",
+            end_product_type_code: "071",
+            status_type_code: "PEND"
+          }
+        ),
+        Generators::EndProduct.build(
+          veteran_file_number: appeal.sanitized_vbms_id,
+          bgs_attrs: {
+            claim_receive_date: last_year,
+            claim_type_code: "070BVAGRARC",
+            end_product_type_code: "070",
+            status_type_code: "PEND"
+          }
+        )
+      ]
+    end
+
+    let!(:cancelled_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: appeal.sanitized_vbms_id,
+        bgs_attrs: {
           claim_receive_date: yesterday,
           claim_type_code: "070RMND",
           end_product_type_code: "072",
           status_type_code: "CAN"
-        },
-        {
+        }
+      )
+    end
+
+    let!(:cleared_ep) do
+      Generators::EndProduct.build(
+        veteran_file_number: appeal.sanitized_vbms_id,
+        bgs_attrs: {
           claim_receive_date: last_year,
-          claim_type_code: "070RMNDARC",
-          end_product_type_code: "072",
+          claim_type_code: "172BVAG",
           status_type_code: "CLR"
         }
-      ]
+      )
     end
 
     let(:result) { appeal.pending_eps }
@@ -1444,7 +1489,6 @@ describe Appeal do
           docket_number: "13 11-265",
           regional_office_key: "RO13",
           type: "Court Remand",
-          cavc: true,
           vacols_record: {
             soc_date: 4.days.ago
           }

@@ -2,7 +2,8 @@ class RampRefilingIntake < Intake
   class TooManyCompletedRampElections < StandardError; end
 
   enum error_code: {
-    no_complete_ramp_election: "no_complete_ramp_election"
+    no_complete_ramp_election: "no_complete_ramp_election",
+    ramp_election_is_active: "ramp_election_is_active"
   }.merge(Intake::ERROR_CODES)
 
   def cancel!
@@ -12,12 +13,31 @@ class RampRefilingIntake < Intake
     end
   end
 
+  def review!(request_params)
+    detail.start_review!
+    detail.update_attributes(request_params.permit(:receipt_date, :option_selected))
+  end
+
+  def review_errors
+    detail.errors.messages
+  end
+
+  def ui_hash
+    super.merge(
+      option_selected: detail.option_selected,
+      receipt_date: detail.receipt_date,
+      election_receipt_date: detail.election_receipt_date
+    )
+  end
+
   private
 
   def validate_detail_on_start
-    return true if initial_ramp_refiling.ramp_election
-
-    self.error_code = :no_complete_ramp_election
+    if !initial_ramp_refiling.ramp_election
+      self.error_code = :no_complete_ramp_election
+    elsif initial_ramp_refiling.ramp_election.established_end_product.active?
+      self.error_code = :ramp_election_is_active
+    end
   end
 
   def find_or_build_initial_detail

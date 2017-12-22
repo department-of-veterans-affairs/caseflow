@@ -16,11 +16,11 @@ import SideBarDocumentInformation from './SideBarDocumentInformation';
 import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
-import * as Constants from '../reader/constants';
-import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { setOpenedAccordionSections, togglePdfSidebar,
+  handleFinishScrollToSidebarComment } from '../reader/PdfViewer/PdfViewerActions';
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
-  updateAnnotationContent
+  updateAnnotationContent, updateAnnotationRelevantDate
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
@@ -29,6 +29,7 @@ import { commentColumns, commentInstructions, documentsColumns,
 import classNames from 'classnames';
 import { makeGetAnnotationsByDocumentId } from './selectors';
 import { CATEGORIES } from './analytics';
+import { COMMENT_ACCORDION_KEY } from '../reader/PdfViewer/actionTypes';
 
 const COMMENT_SCROLL_FROM_THE_TOP = 50;
 
@@ -112,6 +113,7 @@ export class PdfSidebar extends React.Component {
           comment={comment}
           onCancelCommentEdit={this.props.cancelEditAnnotation}
           onChange={this.props.updateAnnotationContent}
+          onChangeDate={this.props.updateAnnotationRelevantDate}
           value={comment.comment}
           onSaveCommentEdit={this.props.requestEditAnnotation}
           key={keyOfAnnotation(comment)}
@@ -133,7 +135,8 @@ export class PdfSidebar extends React.Component {
           uuid={comment.uuid}
           selected={comment.id === this.props.selectedAnnotationId}
           onClick={handleClick}
-          page={comment.page}>
+          page={comment.page}
+          date={comment.relevant_date}>
           {comment.comment}
         </Comment>
       </div>;
@@ -171,7 +174,7 @@ export class PdfSidebar extends React.Component {
             <SideBarIssueTags
               doc={this.props.doc} />
           </AccordionSection>
-          <AccordionSection title={Constants.COMMENT_ACCORDION_KEY} id="comments-header">
+          <AccordionSection title={COMMENT_ACCORDION_KEY} id="comments-header">
             <SideBarComments
               comments={comments}
             />
@@ -255,11 +258,11 @@ const mapStateToProps = (state, ownProps) => {
   return {
     ..._.pick(state.annotationLayer, 'placedButUnsavedAnnotation', 'selectedAnnotationId'),
     comments: makeGetAnnotationsByDocumentId(state)(ownProps.doc.id),
-    scrollToSidebarComment: state.readerReducer.ui.pdf.scrollToSidebarComment,
-    hidePdfSidebar: state.readerReducer.ui.pdf.hidePdfSidebar,
-    error: state.readerReducer.ui.pdfSidebar.error,
-    appeal: state.readerReducer.loadedAppeal,
-    ..._.pick(state.readerReducer, 'documents', 'openedAccordionSections')
+    scrollToSidebarComment: state.pdfViewer.scrollToSidebarComment,
+    error: state.pdfViewer.pdfSideBarError,
+    appeal: state.pdfViewer.loadedAppeal,
+    openedAccordionSections: state.pdfViewer.openedAccordionSections,
+    hidePdfSidebar: state.pdfViewer.hidePdfSidebar
   };
 };
 const mapDispatchToProps = (dispatch) => ({
@@ -269,18 +272,11 @@ const mapDispatchToProps = (dispatch) => ({
     selectAnnotation,
     startEditAnnotation,
     updateAnnotationContent,
+    updateAnnotationRelevantDate,
     cancelEditAnnotation,
-    requestEditAnnotation
-  }, dispatch),
-
-  handleFinishScrollToSidebarComment() {
-    dispatch({
-      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: {
-        scrollToSidebarComment: null
-      }
-    });
-  }
+    requestEditAnnotation,
+    handleFinishScrollToSidebarComment
+  }, dispatch)
 });
 
 export default connect(

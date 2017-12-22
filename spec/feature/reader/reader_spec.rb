@@ -300,8 +300,25 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(vbms_id: "1234C", vacols_record: vacols_record, documents: documents)
       end
 
+      let!(:hearing) do
+        Generators::Hearing.create(appeal: appeal)
+      end
+
       before do
         Fakes::AppealRepository.appeal_records = [appeal, appeal2, appeal3, appeal4, appeal5]
+      end
+
+      scenario "View Hearing Worksheet" do
+        visit "/reader/appeal"
+        new_window = window_opened_by { click_on "Hearing Worksheet" }
+        within_window new_window do
+          expect(page).to have_content("Hearing Worksheet")
+          expect(page).to have_content("Periods and circumstances of service")
+          expect(page).to have_content("Contentions")
+          expect(page).to have_content("Evidence")
+          expect(page).to have_content("Comments and special instructions to attorneys")
+          page.driver.browser.close
+        end
       end
 
       scenario "Enter a case" do
@@ -1354,6 +1371,29 @@ RSpec.feature "Reader" do
 
         expect(search_bar).to match_css(".hidden")
       end
+    end
+
+    scenario "Navigating Search Results scrolls page" do
+      def scroll_top
+        page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
+      end
+
+      open_search_bar
+      expect(scroll_top).to be(0)
+
+      fill_in "search-ahead", with: "decision"
+
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+
+      first_match_scroll_top = scroll_top
+      expect(first_match_scroll_top).to be > 0
+
+      find(".cf-next-match").click
+      expect(scroll_top).to be > first_match_scroll_top
+
+      # this doc has 2 matches for "decision", search index wraps around
+      find(".cf-next-match").click
+      expect(scroll_top).to eq(first_match_scroll_top)
     end
 
     scenario "Download PDF file" do

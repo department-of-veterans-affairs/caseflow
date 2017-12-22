@@ -16,6 +16,15 @@ class RampElectionIntake < Intake
     matching_ramp_election
   end
 
+  def review!(request_params)
+    ramp_election.start_review!
+    ramp_election.update_attributes(request_params.permit(:receipt_date, :option_selected))
+  end
+
+  def review_errors
+    ramp_election.errors.messages
+  end
+
   def complete!
     transaction do
       complete_with_status!(:success)

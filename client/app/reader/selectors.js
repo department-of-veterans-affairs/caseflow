@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import { getSearchSelectors } from 'redux-search';
 
-const getFilteredDocIds = (state) => state.readerReducer.ui.filteredDocIds;
+const getFilteredDocIds = (state) => state.documentList.filteredDocIds;
 const getAllDocs = (state) => state.documents;
 
 export const getFilteredDocuments = createSelector(
@@ -50,7 +50,7 @@ export const getAnnotationsPerDocument = createSelector(
       value()
 );
 
-const getDocFilterCriteria = (state) => state.readerReducer.ui.docFilterCriteria;
+const getDocFilterCriteria = (state) => state.documentList.docFilterCriteria;
 
 /* eslint-disable newline-per-chained-call */
 
@@ -74,10 +74,10 @@ export const {
   result
 } = getSearchSelectors({
   resourceName: 'extractedText',
-  resourceSelector: (resourceName, state) => state.readerReducer[resourceName]
+  resourceSelector: (resourceName, state) => state.searchActionReducer[resourceName]
 });
 
-const getExtractedText = (state) => state.readerReducer.extractedText;
+const getExtractedText = (state) => state.searchActionReducer.extractedText;
 const getFile = (state, props) => props.file;
 
 export const getTextSearch = createSelector(
@@ -108,7 +108,7 @@ export const getTotalMatchesInFile = createSelector(
     sum()
 );
 
-const getSelectedIndex = (state) => state.readerReducer.documentSearchIndex;
+const getSelectedIndex = (state) => state.searchActionReducer.matchIndex;
 
 export const getCurrentMatchIndex = createSelector(
   [getTotalMatchesInFile, getSelectedIndex],

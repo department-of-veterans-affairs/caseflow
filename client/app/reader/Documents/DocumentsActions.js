@@ -3,9 +3,9 @@ import * as Constants from './actionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
 import { categoryFieldNameOfCategoryName } from '../utils';
-import { collectAllTags, handleSetLastRead } from '../PdfViewer/PdfViewerActions';
+import { collectAllTags, setLoadedVacolsId } from '../PdfViewer/PdfViewerActions';
+import { handleSetLastRead } from '../DocumentList/DocumentListActions';
 import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
-import { setLoadedVacolsId } from '../LoadingScreen/LoadingScreenActions';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 
 /** Tags **/

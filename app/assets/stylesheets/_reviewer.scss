@@ -33,6 +33,14 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
+.claim-detail-container {
+
+  .claim-detail-type-info {
+    color: $color-secondary;
+    display: inherit;
+  }
+}
+
 .cf-claims-folder-details {
   p {
     margin-top: 15px;
@@ -440,6 +448,7 @@ svg[aria-hidden=true],
 .cf-add-comment-button {
   margin-top: -15px;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .cf-pdf-meta-title {
@@ -665,18 +674,6 @@ input[type="search"].cf-search-input-with-close {
   height: 580px;
   overflow: auto;
   display: block;
-
-  // Candidate for commons
-  table {
-    margin: 0 0 2em;
-  }
-
-  // Candidate for commons - all modals should have dark gray x
-  .cf-icon-close {
-    path {
-      fill: $color-gray-dark;
-    }
-  }
 }
 
 // This is override some bad styling in PDFJS. Note selection is not

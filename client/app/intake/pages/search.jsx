@@ -69,6 +69,17 @@ class Search extends React.PureComponent {
         title: 'Ineligible to participate in RAMP: appeal is at the Board',
         body: rampIneligibleInstructions
       },
+      no_complete_ramp_election: {
+        title: 'No RAMP Opt-In Election',
+        body: 'A RAMP Opt-In Election Form was not yet processed in Caseflow, so this Veteran' +
+          ' is not eligible to request a RAMP re-filing. Notify the Veteran using the' +
+          ' “RAMP Ineligible Letter”.'
+      },
+      ramp_election_is_active: {
+        title: 'This Veteran has a pending RAMP EP in VBMS',
+        body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
+          ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
+      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'

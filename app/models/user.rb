@@ -2,10 +2,10 @@ class User < ActiveRecord::Base
   has_many :tasks
   has_many :document_views
   has_many :appeal_views
+  has_many :hearing_views
   has_many :annotations
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
-  attr_accessor :ip_address
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
@@ -100,9 +100,14 @@ class User < ActiveRecord::Base
   def current_case_assignments_with_views
     appeals = current_case_assignments
     opened_appeals = viewed_appeals(appeals.map(&:id))
+    appeal_hearings = appeal_hearings(appeals.map(&:id))
 
     appeals.map do |appeal|
-      appeal.to_hash(viewed: opened_appeals[appeal.id], issues: appeal.issues)
+      appeal.to_hash(
+        viewed: opened_appeals[appeal.id],
+        issues: appeal.issues,
+        hearings: appeal_hearings[appeal.id]
+      )
     end
   end
 
@@ -118,6 +123,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def appeal_hearings(appeal_ids)
+    Hearing.where(appeal_id: appeal_ids).each_with_object({}) do |hearing, object|
+      hearings_array = object[hearing.appeal_id] || []
+      object[hearing.appeal_id] = hearings_array.push(hearing)
+    end
+  end
+
   class << self
     attr_writer :appeal_repository
     attr_writer :authentication_service
@@ -127,15 +139,14 @@ class User < ActiveRecord::Base
     def before_set_user
     end
 
-    def system_user(ip_address)
+    def system_user
       new(
         station_id: "283",
-        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1",
-        ip_address: ip_address
+        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
     end
 
-    def from_session(session, request)
+    def from_session(session)
       user = session["user"] ||= authentication_service.default_user_session
 
       return nil if user.nil?
@@ -144,7 +155,6 @@ class User < ActiveRecord::Base
         u.full_name = user["name"]
         u.email = user["email"]
         u.roles = user["roles"]
-        u.ip_address = request.remote_ip
         u.regional_office = session[:regional_office]
         u.save
       end

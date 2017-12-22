@@ -37,7 +37,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -48,6 +47,12 @@ class Appeal < ActiveRecord::Base
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  cache_attribute :remand_return_date do
+    # Note: Returns nil if the appeal is active, returns false if the appeal is
+    # closed but does not have a remand return date (false is cached, nil is not).
+    (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
@@ -454,7 +459,14 @@ class Appeal < ActiveRecord::Base
     v1_events.last.try(:date)
   end
 
-  def to_hash(viewed: nil, issues: nil)
+  def cavc
+    type == "Court Remand"
+  end
+
+  # Adding anything to this to_hash can trigger a lazy load which slows down
+  # welcome gate dramatically. Don't add anything to it without also adding it to
+  # the query in VACOLS::CaseAssignment.
+  def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
@@ -462,6 +474,7 @@ class Appeal < ActiveRecord::Base
       hash["viewed"] = viewed
       hash["issues"] = issues
       hash["regional_office"] = regional_office_hash
+      hash["hearings"] = hearings
     end
   end
 

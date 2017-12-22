@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveManifests } from './LoadingScreen/LoadingScreenActions';
+import { onReceiveManifests } from './DocumentList/DocumentListActions';
 import { onReceiveDocs } from '../reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from './AnnotationLayer/AnnotationActions';
 import { connect } from 'react-redux';
@@ -55,7 +55,7 @@ export class ReaderLoadingScreen extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  loadedAppealId: state.readerReducer.loadedAppealId
+  loadedAppealId: state.pdfViewer.loadedAppealId
 });
 
 const mapDispatchToProps = (dispatch) => (

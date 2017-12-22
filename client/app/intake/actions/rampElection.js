@@ -35,7 +35,7 @@ export const submitReview = (intakeId, rampElection) => (dispatch) => {
     receipt_date: formatDateStringForApi(rampElection.receiptDate)
   };
 
-  return ApiUtil.patch(`/intake/ramp/${intakeId}`, { data }, ENDPOINT_NAMES.INTAKE_RAMP).
+  return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
     then(
       () => dispatch({
         type: ACTIONS.SUBMIT_REVIEW_SUCCEED,
@@ -82,7 +82,7 @@ export const completeIntake = (intakeId, rampElection) => (dispatch) => {
     meta: { analytics }
   });
 
-  return ApiUtil.patch(`/intake/ramp/${intakeId}/complete`, {}, ENDPOINT_NAMES.INTAKE_RAMP_COMPLETE).
+  return ApiUtil.patch(`/intake/${intakeId}/complete`, {}, ENDPOINT_NAMES.COMPLETE_INTAKE).
     then(
       (response) => {
         const responseObject = JSON.parse(response.text);

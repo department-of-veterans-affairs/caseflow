@@ -1,6 +1,4 @@
 class AppealRepository
-  CAVC_TYPE = "7".freeze
-
   # :nocov:
   # Used by healthcheck endpoint
   # Calling .active? triggers a query to VACOLS
@@ -41,14 +39,14 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record) }
   end
 
-  def self.appeals_by_vbms_id_with_preloaded_aod_and_issues(vbms_id)
-    MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_aod_and_issues",
+  def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
+    MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_status_api_attrs",
                           service: :vacols,
-                          name: "appeals_by_vbms_id_with_preloaded_aod_and_issues") do
+                          name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
                           .includes(:folder, :correspondent, folder: :outcoder)
                           .references(:folder, :correspondent, folder: :outcoder)
-                          .joins(VACOLS::Case::JOIN_AOD)
+                          .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
@@ -57,6 +55,7 @@ class AppealRepository
         appeal = build_appeal(case_record)
         appeal.aod = case_record["aod"] == 1
         appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
+        appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
         appeal.save
         appeal
       end
@@ -157,8 +156,7 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum,
-      cavc: VACOLS::Case::TYPES[case_record.bfac] == VACOLS::Case::TYPES[CAVC_TYPE]
+      docket_number: folder_record.tinum
     )
 
     appeal
@@ -337,6 +335,10 @@ class AppealRepository
     VACOLS::Case.aod([vacols_id])[vacols_id]
   end
 
+  def self.remand_return_date(vacols_id)
+    VACOLS::Case.remand_return_date([vacols_id])[vacols_id]
+  end
+
   def self.load_user_case_assignments_from_vacols(css_id)
     MetricsService.record("VACOLS: active_cases_for_user #{css_id}",
                           service: :vacols,
@@ -351,7 +353,9 @@ class AppealRepository
         # if that appeal is not found, it intializes a new appeal with the
         # assignments vacols_id
         appeal = Appeal.find_or_initialize_by(vacols_id: assignment.vacols_id)
-        appeal.attributes = assignment.attributes
+        attribute_copy = assignment.attributes
+        attribute_copy["type"] = VACOLS::Case::TYPES[attribute_copy.delete("bfac")]
+        appeal.attributes = attribute_copy
         appeal.aod = active_cases_aod_results[assignment.vacols_id]
 
         # fetching Issue objects using the issue hash

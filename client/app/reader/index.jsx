@@ -1,26 +1,19 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import perfLogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
 import DecisionReviewer from './DecisionReviewer';
-import readerReducer from './reducer';
-import caseSelectReducer from './CaseSelect/CaseSelectReducer';
+
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
-import { reducer as searchReducer, reduxSearch } from 'redux-search';
-import { annotationLayerReducer } from './AnnotationLayer/AnnotationLayerReducer';
-import documentsReducer from './Documents/DocumentsReducer';
+import { reduxSearch } from 'redux-search';
+import rootReducer from './reducers';
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
-  combineReducers({
-    caseSelect: caseSelectReducer,
-    readerReducer,
-    search: searchReducer,
-    documents: documentsReducer,
-    annotationLayer: annotationLayerReducer
-  }),
+  rootReducer,
   composeEnhancers(
     applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware()),
     reduxSearch({
@@ -33,7 +26,7 @@ const store = createStore(
       resourceSelector: (resourceName, state) => {
         // In our example, all resources are stored in the state under a :resources Map
         // For example "books" are stored under state.resources.books
-        return state.readerReducer[resourceName];
+        return state.searchActionReducer[resourceName];
       }
     })
   )
@@ -41,8 +34,8 @@ const store = createStore(
 
 if (module.hot) {
   // Enable Webpack hot module replacement for reducers
-  module.hot.accept('./reducer', () => {
-    store.replaceReducer(readerReducer);
+  module.hot.accept('./reducers', () => {
+    store.replaceReducer(rootReducer);
   });
 }
 
