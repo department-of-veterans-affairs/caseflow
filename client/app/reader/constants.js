@@ -1,20 +1,6 @@
 import { CategoryIcon } from '../components/RenderFunctions';
 import React from 'react';
 
-// actions
-export const RECEIVE_ANNOTATIONS = 'RECEIVE_ANNOTATIONS';
-export const SHOW_NEXT_PDF = 'SHOW_NEXT_PDF';
-export const SHOW_PREV_PDF = 'SHOW_PREV_PDF';
-export const SCROLL_TO_COMMENT = 'SCROLL_TO_COMMENT';
-export const SCROLL_TO_SIDEBAR_COMMENT = 'SCROLL_TO_SIDEBAR_COMMENT';
-
-export const SET_PAGE_COORD_BOUNDS = 'SET_PAGE_COORD_BOUNDS';
-export const SET_UP_PAGE_DIMENSIONS = 'SET_UP_PAGE_DIMENSIONS';
-export const SET_PDF_DOCUMENT = 'SET_PDF_DOCUMENT';
-export const CLEAR_PDF_DOCUMENT = 'CLEAR_PDF_DOCUMENT';
-export const SET_DOCUMENT_LOAD_ERROR = 'SET_DOCUMENT_LOAD_ERROR';
-export const CLEAR_DOCUMENT_LOAD_ERROR = 'CLEAR_DOCUMENT_LOAD_ERROR';
-
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
 

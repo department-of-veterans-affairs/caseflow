@@ -88,8 +88,8 @@ class RampElection < RampReview
 
     if notice_date > receipt_date
       errors.add(:receipt_date, "before_notice_date")
-    elsif Time.zone.today < receipt_date
-      errors.add(:receipt_date, "in_future")
+    else
+      validate_receipt_date_not_in_future
     end
   end
 end

@@ -19,7 +19,11 @@ class Fakes::AppealRepository
     end
 
     def load_user_case_assignments_from_vacols(_css_id)
-      appeal_records || Fakes::Data::AppealData.default_records
+      user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
+      appeal = user_case_assignments.first
+      # Create fake hearings for the first appeal if one doesn't already exist
+      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).length == 0
+      user_case_assignments
     end
   end
 
@@ -378,7 +382,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Court Remand",
-        cavc: true,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -403,7 +406,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Remand",
-        cavc: false,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -430,7 +432,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Remand",
-        cavc: false,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -448,7 +449,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Court Remand",
-        cavc: true,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -475,6 +475,14 @@ class Fakes::AppealRepository
         vbms_id: "#{i + 1}5555555C",
         issues: (1..2).map { Generators::Issue.build }
       )
+
+      Generators::EndProduct.build(
+        veteran_file_number: "#{i + 1}5555555",
+        bgs_attrs: {
+          benefit_claim_id: "FAKEEP123",
+          status_type_code: (i == 0 ? "PEND" : "CLR")
+        }
+      )
     end
 
     Generators::Appeal.build(
@@ -491,6 +499,8 @@ class Fakes::AppealRepository
       vbms_id: "25555555C",
       issues: (1..3).map { Generators::Issue.build }
     )
+
+    Fakes::VBMSService.end_product_claim_id = "FAKEEP123"
   end
 
   def self.aod(_vacols_id)

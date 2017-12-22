@@ -2,7 +2,7 @@
 #
 # The purpose of generators is to easily setup data for testing.
 # They are used in a similar way to FactoryGirl, but are also used
-# for instrementing faked dependecies.
+# for instrumenting faked dependecies.
 #
 # They are useful for:
 # - Setting up default boilerplate data like ids

@@ -82,7 +82,7 @@ describe Hearing do
   end
 
   context "#to_hash_for_worksheet" do
-    subject { hearing.to_hash_for_worksheet }
+    subject { hearing.to_hash_for_worksheet(nil) }
 
     let(:appeal) do
       Generators::Appeal.create(vacols_record: { template: :pending_hearing },
@@ -148,6 +148,16 @@ describe Hearing do
         hearing.update(appeal: appeal)
         expect(subject).to eq "Test"
       end
+    end
+  end
+
+  context ".issue_count" do
+    subject { hearing.issue_count }
+    let(:appeal1) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let!(:appeal2) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
+    it "should return the hearing count from all active appeals" do
+      expect(subject).to eq 2
     end
   end
 
