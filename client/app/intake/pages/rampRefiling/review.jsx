@@ -90,7 +90,7 @@ class ReviewNextButton extends React.PureComponent {
       () => {
         this.props.history.push('/finish');
       }
-    );
+    ).catch((error) => error);
   }
 
   render = () =>
