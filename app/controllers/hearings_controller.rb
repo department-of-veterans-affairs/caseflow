@@ -1,5 +1,7 @@
 class HearingsController < ApplicationController
-  before_action :verify_access, :check_hearing_prep_out_of_service
+  before_action :verify_access, except: [:show_print, :show]
+  before_action :check_hearing_prep_out_of_service
+  before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
 
   def update
     hearing.update(update_params)
@@ -30,6 +32,10 @@ class HearingsController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Hearing Prep")
+  end
+
+  def verify_access_to_reader_or_hearings
+    verify_authorized_roles("Reader") || verify_authorized_roles("Hearing Prep")
   end
 
   def set_application
