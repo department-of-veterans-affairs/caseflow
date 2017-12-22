@@ -18,7 +18,7 @@ class HearingRepository
       issues = VACOLS::CaseIssue.descriptions(hearings.map(&:appeal_vacols_id).compact)
       hearings.map do |hearing|
         appeal_issues_hash_array = issues[hearing.appeal_vacols_id] || []
-        appeal = Appeal.find_or_initialize_by(vacols_id: hearing.appeal_vacols_id)
+        appeal = Appeal.includes(:worksheet_issues).find_or_create_by(vacols_id: hearing.appeal_vacols_id)
         if appeal.worksheet_issues.empty?
           appeal_issues_hash_array.map { |i| WorksheetIssue.create_from_issue(appeal, i) }
         end

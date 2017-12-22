@@ -220,7 +220,7 @@ RSpec.feature "Hearings" do
       new_window = windows.last
       page.within_window new_window do
         visit link_href
-        expect(page).to have_content("You've viewed 0 out of 5 documents")
+        expect(page).to have_content("You've viewed 0 out of 4 documents")
       end
     end
   end
