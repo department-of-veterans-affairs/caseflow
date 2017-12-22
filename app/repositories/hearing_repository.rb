@@ -16,12 +16,12 @@ class HearingRepository
 
     def load_issues(hearings)
       issues = VACOLS::CaseIssue.descriptions(hearings.map(&:appeal_vacols_id).compact)
-      hearings.select { |h| h.master_record == false }.map do |hearing|
-        appeal_issues_hash_array = issues[hearing.appeal_vacols_id] || []
-        appeal = Appeal.includes(:worksheet_issues).find_or_create_by(vacols_id: hearing.appeal_vacols_id)
-        if appeal.worksheet_issues.empty?
-          appeal_issues_hash_array.map { |i| WorksheetIssue.create_from_issue(appeal, Issue.load_from_vacols(i)) }
-        end
+      hearings.map do |hearing|
+        next if hearing.master_record
+        issues_hash_array = issues[hearing.appeal_vacols_id] || []
+        hearing_worksheet_issues = WorksheetIssue.where(appeal: hearing.appeal)
+        next unless hearing_worksheet_issues.empty?
+        issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
       end
     end
 
