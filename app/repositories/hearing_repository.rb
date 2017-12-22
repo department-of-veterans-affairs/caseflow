@@ -9,14 +9,13 @@ class HearingRepository
           VACOLS::TravelBoardSchedule.upcoming_for_judge(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
-      non_master_record_hearings = hearings.select { |h| h.master_record == false }
       # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
-      Hearing.repository.load_issues(non_master_record_hearings)
+      load_issues(hearings)
       hearings
     end
 
     def load_issues(hearings)
-      issues = VACOLS::CaseIssue.descriptions(hearings.map(&:appeal_vacols_id))
+      issues = VACOLS::CaseIssue.descriptions(hearings.map(&:appeal_vacols_id).compact)
       hearings.map do |hearing|
         appeal_issues_hash_array = issues[hearing.appeal_vacols_id] || []
         appeal = Appeal.find_or_initialize_by(vacols_id: hearing.appeal_vacols_id)
@@ -112,7 +111,7 @@ class HearingRepository
                                                   type: type)
       {
         vacols_record: vacols_record,
-        appeal_vacols_id: vacols_record.bfkey,
+        appeal_vacols_id: vacols_record.folder_nr,
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
         representative_name: vacols_record.repname,
