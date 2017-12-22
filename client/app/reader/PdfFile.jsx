@@ -30,10 +30,12 @@ export class PdfFile extends React.PureComponent {
     this.loadingTask = null;
     this.pdfDocument = null;
     this.grid = null;
-    this.startIndex = 0;
+    this.rowStartIndex = 0;
     this.scrollTop = 0;
+    this.scrollLeft = 0;
     this.scrollLocation = {};
     this.clientHeight = 0;
+    this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
   }
@@ -96,11 +98,11 @@ export class PdfFile extends React.PureComponent {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.startIndex).scrollTop);
+      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.rowStartIndex).scrollTop);
 
       this.scrollLocation = {
-        page: this.startIndex,
-        locationOnPage: nonZoomedLocation.scrollTop * zoomFactor
+        page: this.rowStartIndex,
+        locationOnPage: nonZoomedLocation * zoomFactor
       };
     }
   }
@@ -133,11 +135,18 @@ export class PdfFile extends React.PureComponent {
     _.get(this.pageDimensions(index), ['width'], this.props.baseWidth)
 
   getRowHeight = ({ index }) => {
-    return (this.pageHeight(index) + PAGE_MARGIN) * this.props.scale;
+    const pageIndexStart = index * this.columnCount;
+    const pageHeights = _.range(pageIndexStart, pageIndexStart + this.columnCount)
+      .map((pageIndex) => this.pageHeight(pageIndex));
+
+    return (Math.max(...pageHeights) + PAGE_MARGIN) * this.props.scale;
   }
 
   getColumnWidth = () => {
-    return (this.pageWidth(0) + PAGE_MARGIN) * this.props.scale;
+    const maxPageWidth = _.range(0, this.props.pdfDocument.pdfInfo.numPages)
+      .reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
+
+    return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
   }
 
   getGrid = (list) => {
@@ -260,8 +269,9 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  onRowsRendered = ({ startIndex }) => {
-    this.startIndex = startIndex;
+  onSectionRendered = ({ rowStartIndex, columnStartIndex }) => {
+    this.rowStartIndex = rowStartIndex;
+    this.columnStartIndex = columnStartIndex;
   }
 
   onPageChange = (index, clientHeight) => {
@@ -269,8 +279,9 @@ export class PdfFile extends React.PureComponent {
     this.props.onPageChange(pageNumberOfPageIndex(index), clientHeight / this.pageHeight(index));
   }
 
-  onScroll = ({ clientHeight, scrollTop }) => {
+  onScroll = ({ clientHeight, scrollTop, scrollLeft }) => {
     this.scrollTop = scrollTop;
+    this.scrollLeft = scrollLeft;
 
     if (this.grid) {
       let lastIndex = 0;
@@ -295,11 +306,13 @@ export class PdfFile extends React.PureComponent {
     this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const { width, height } = this.pageDimensions(this.currentPage);
-    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
+    const pagePosition = this.getOffsetForPageIndex(this.currentPage);
+    const yScrolledLocationOnPage = (this.scrollTop - pagePosition.scrollTop) / this.props.scale;
+    const xScrolledLocationOnPage = (this.scrollLeft - pagePosition.scrollLeft) / this.props.scale;
 
     const initialCommentCoordinates = {
-      x: ((width - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale,
-      y: ((scrolledLocationOnPage + height - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale
+      x: ((xScrolledLocationOnPage + width) / 2),
+      y: ((yScrolledLocationOnPage + height) / 2)
     };
 
     this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
@@ -359,8 +372,11 @@ export class PdfFile extends React.PureComponent {
             _.defer(this.onPageChange, this.currentPage, height);
             this.clientHeight = height;
           }
+          if (this.clientWidth !== width) {
+            this.clientWidth = width;
+          }
 
-          this.columnCount = Math.max(Math.floor(width / this.getColumnWidth()), 1);
+          this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1), this.props.pdfDocument.pdfInfo.numPages);
 
           return <Grid
             ref={this.getGrid}
@@ -369,7 +385,7 @@ export class PdfFile extends React.PureComponent {
               marginTop: `${PAGE_MARGIN}`
             }}
             overscanRowCount={OVERSCAN_ROWS / this.columnCount}
-            onRowsRendered={this.onRowsRendered}
+            onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
             height={height}
             rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / this.columnCount)}
