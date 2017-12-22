@@ -100,9 +100,14 @@ class User < ActiveRecord::Base
   def current_case_assignments_with_views
     appeals = current_case_assignments
     opened_appeals = viewed_appeals(appeals.map(&:id))
+    appeal_hearings = appeal_hearings(appeals.map(&:id))
 
     appeals.map do |appeal|
-      appeal.to_hash(viewed: opened_appeals[appeal.id], issues: appeal.issues)
+      appeal.to_hash(
+        viewed: opened_appeals[appeal.id],
+        issues: appeal.issues,
+        hearings: appeal_hearings[appeal.id]
+      )
     end
   end
 
@@ -115,6 +120,13 @@ class User < ActiveRecord::Base
   def viewed_appeals(appeal_ids)
     appeal_views.where(appeal_id: appeal_ids).each_with_object({}) do |appeal_view, object|
       object[appeal_view.appeal_id] = true
+    end
+  end
+
+  def appeal_hearings(appeal_ids)
+    Hearing.where(appeal_id: appeal_ids).each_with_object({}) do |hearing, object|
+      hearings_array = object[hearing.appeal_id] || []
+      object[hearing.appeal_id] = hearings_array.push(hearing)
     end
   end
 
