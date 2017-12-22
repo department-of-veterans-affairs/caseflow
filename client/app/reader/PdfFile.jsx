@@ -96,11 +96,11 @@ export class PdfFile extends React.PureComponent {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.grid.getOffsetForCell({ rowIndex: this.startIndex, columnIndex: 0 }));
+      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.startIndex).scrollTop);
 
       this.scrollLocation = {
         page: this.startIndex,
-        locationOnPage: nonZoomedLocation * zoomFactor
+        locationOnPage: nonZoomedLocation.scrollTop * zoomFactor
       };
     }
   }
@@ -153,16 +153,18 @@ export class PdfFile extends React.PureComponent {
   }
 
   pageRowAndColumn = (pageIndex) => ({
-    rowIndex: pageIndex / this.columnCount,
+    rowIndex: Math.floor(pageIndex / this.columnCount),
     columnIndex: pageIndex % this.columnCount
   })
 
+  getOffsetForPageIndex = (pageIndex) => this.grid.getOffsetForCell(this.pageRowAndColumn(pageIndex))
+
   scrollToPosition = (pageIndex, locationOnPage = 0) => {
-    const position = this.grid.getOffsetForCell(this.pageRowAndColumn(pageIndex));
-    debugger;
+    const position = this.getOffsetForPageIndex(pageIndex);
+
     this.grid.scrollToPosition({
-      scrollLeft: position.left,
-      scrollTop: Math.max(position.top, 0) + locationOnPage
+      scrollLeft: position.scrollLeft,
+      scrollTop: Math.max(position.scrollTop + locationOnPage, 0)
     });
   }
 
@@ -171,7 +173,7 @@ export class PdfFile extends React.PureComponent {
     if (this.props.jumpToPageNumber && this.clientHeight > 0) {
       const scrollToIndex = this.props.jumpToPageNumber ? pageIndexOfPageNumber(this.props.jumpToPageNumber) : -1;
 
-      this.grid.scrollToRow(scrollToIndex);
+      this.grid.scrollToCell(this.pageRowAndColumn(scrollToIndex));
       this.props.resetJumpToPage();
     }
   }
@@ -274,9 +276,9 @@ export class PdfFile extends React.PureComponent {
       let lastIndex = 0;
 
       _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
-        const offset = this.grid.getOffsetForCell({ rowIndex: index, columnIndex: 0 });
+        const offset = this.getOffsetForPageIndex(index);
 
-        if (offset < scrollTop + (clientHeight / 2)) {
+        if (offset.scrollTop < scrollTop + (clientHeight / 2)) {
           lastIndex = index;
         }
       });
@@ -293,7 +295,7 @@ export class PdfFile extends React.PureComponent {
     this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const { width, height } = this.pageDimensions(this.currentPage);
-    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.grid.getOffsetForCell({ rowIndex: this.currentPage, columnIndex: 0 }));
+    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
 
     const initialCommentCoordinates = {
       x: ((width - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale,
