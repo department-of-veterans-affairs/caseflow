@@ -53,7 +53,7 @@ export class Comment extends React.Component {
       jumpToSectionButton = <Button
         name="jumpToComment"
         id={`jumpToComment${this.props.uuid}`}
-        classNames={['cf-btn-link comment-control-button']}
+        classNames={['cf-btn-link comment-control-button horizontal']}
         onClick={this.props.onJumpToComment}>
           Jump to section
       </Button>;

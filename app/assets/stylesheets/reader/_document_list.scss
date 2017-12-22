@@ -116,13 +116,13 @@ $tag-backgrond-color: #d6d7d9;
       border: 1px solid $color-gray-lighter;
 
       .comment-relevant-date {
-        width: 13rem;
+        width: 16rem;
         padding-left: 2rem;
         padding-top: 25px;
       }
 
       .comment-page-number {
-        padding: 25px;
+        padding: 25px 0 25px 25px;
         width: 20rem;
         line-height: 25px;
 
