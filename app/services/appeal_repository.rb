@@ -50,11 +50,15 @@ class AppealRepository
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
+      hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
+      cavc_decisions = CAVCDecision.repository.cavc_decisions_by_appeals(vacols_ids)
 
       cases.map do |case_record|
         appeal = build_appeal(case_record)
         appeal.aod = case_record["aod"] == 1
         appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
+        appeal.hearings = hearings[appeal.vacols_id] || []
+        appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
         appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
         appeal.save
         appeal

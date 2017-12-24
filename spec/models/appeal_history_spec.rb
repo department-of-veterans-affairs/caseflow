@@ -208,8 +208,8 @@ describe AppealHistory do
           vbms_id: vbms_id,
           type: "Original",
           issues: [
-            Generators::Issue.build(description: description_1),
-            Generators::Issue.build(description: description_2)
+            Generators::Issue.build(note: description_1),
+            Generators::Issue.build(note: description_2)
           ]
         )
       end

@@ -19,7 +19,11 @@ class AppealHistory
       generate_appeal_series
     end
 
-    appeals.map { |appeal| appeal.appeal_series(reload: true) }.uniq
+    appeals.group_by(&:appeal_series).map do |series, appeals_for_series|
+      # We replace the associated appeals with the appeals we've preloaded
+      series.appeals.replace(appeals_for_series)
+      series
+    end
   end
 
   def needs_update?
@@ -64,9 +68,10 @@ class AppealHistory
 
     appeal_tree_nodes.each do |node|
       # Set the series, joining through the merge table to the series table.
-      node[:appeal].update(appeal_series: series_table[merge_table[node[:series_id]]])
+      appeal_series = series_table[merge_table[node[:series_id]]]
+      appeal_series.appeals << node[:appeal]
       # If any node is marked as incomplete, the series is marked as incomplete.
-      node[:appeal].appeal_series.update(incomplete: true) if node[:incomplete]
+      appeal_series.update(incomplete: true) if node[:incomplete]
     end
 
     burn_appeal_trees
@@ -181,7 +186,7 @@ class AppealHistory
   def find_merge_target(merge_str)
     matches = appeal_tree_nodes.select do |candidate|
       candidate[:appeal].issues.any? do |issue|
-        issue.description.include?(merge_str)
+        issue.note.try(:include?, merge_str)
       end
     end
 
