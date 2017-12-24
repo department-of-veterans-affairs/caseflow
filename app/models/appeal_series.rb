@@ -38,7 +38,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def alerts
-    @alerts ||= AppealAlerts.new(appeal_series: self).all
+    @alerts ||= AppealSeriesAlerts.new(appeal_series: self).all
   end
 
   private
