@@ -57,8 +57,6 @@ RSpec.feature "RAMP Intake" do
 
     scenario "User visits help page" do
       visit "/intake/help"
-      find_link('#menu-trigger').click
-      find_link("Help").click
       expect(page).to have_content("Welcome to the Intake Help Page!")
     end
 
