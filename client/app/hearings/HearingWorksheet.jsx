@@ -142,7 +142,9 @@ export class HearingWorksheet extends React.PureComponent {
       </div>
       {!this.props.print &&
       <div className="cf-push-right">
-        <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
+        <Link href={`${window.location.pathname}/print`}
+           onClick={this.save(worksheet)}
+        button="secondary" target="_blank">
           Save as PDF
         </Link>
         <Link
