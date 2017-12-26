@@ -53,13 +53,19 @@ class WorksheetFormEntry extends React.PureComponent {
 }
 export class HearingWorksheet extends React.PureComponent {
 
-    save = (worksheet, worksheetIssues) => () => {
-      this.props.toggleWorksheetSaving();
-      this.props.setWorksheetSaveFailedStatus(false);
-      this.props.saveWorksheet(worksheet);
-      this.props.saveIssues(worksheetIssues);
-      this.props.toggleWorksheetSaving();
-    };
+
+  save = (worksheet, worksheetIssues) => () => {
+    this.props.toggleWorksheetSaving();
+    this.props.setWorksheetSaveFailedStatus(false);
+    this.props.saveWorksheet(worksheet);
+    this.props.saveIssues(worksheetIssues);
+    this.props.toggleWorksheetSaving();
+  };
+
+  savePDF = () =>{
+    this.save();
+    window.location.href = `${window.location.pathname}/print`;
+  }
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
@@ -141,8 +147,8 @@ export class HearingWorksheet extends React.PureComponent {
       </div>
       {!this.props.print &&
       <div className="cf-push-right">
-        <Link href={`${window.location.pathname}/print`}
-          onClick={this.save(worksheet)}
+        <Link
+          onClick={this.savePDF}
           button="secondary" target="_blank">
           Save as PDF
         </Link>
