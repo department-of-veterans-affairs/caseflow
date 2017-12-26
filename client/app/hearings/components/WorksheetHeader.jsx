@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Textarea from 'react-textarea-autosize';
 
-
 import {
   toggleWorksheetSaving,
   setWorksheetSaveFailedStatus,
@@ -17,13 +16,10 @@ import {
 class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
 
-
-
   render() {
     const {
       appellant,
       worksheet,
-      worksheetIssues,
       veteranLawJudge
     } = this.props;
 
@@ -113,7 +109,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRepNameChange,
   onWitnessChange,
   saveWorksheet,
-  setWorksheetSaveFailedStatus,
+  setWorksheetSaveFailedStatus
 }, dispatch);
 
 export default connect(

@@ -26,7 +26,6 @@ import {
 
 import { saveIssues } from './actions/Issue';
 
-
 class WorksheetFormEntry extends React.PureComponent {
   render() {
     const textAreaProps = {
@@ -55,12 +54,12 @@ class WorksheetFormEntry extends React.PureComponent {
 export class HearingWorksheet extends React.PureComponent {
 
     save = (worksheet, worksheetIssues) => () => {
-    this.props.toggleWorksheetSaving();
-    this.props.setWorksheetSaveFailedStatus(false);
-    this.props.saveWorksheet(worksheet);
-    this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
-  };
+      this.props.toggleWorksheetSaving();
+      this.props.setWorksheetSaveFailedStatus(false);
+      this.props.saveWorksheet(worksheet);
+      this.props.saveIssues(worksheetIssues);
+      this.props.toggleWorksheetSaving();
+    };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
@@ -134,7 +133,7 @@ export class HearingWorksheet extends React.PureComponent {
               isSaving={this.props.worksheetIsSaving}
               saveFailed={this.props.saveWorksheetFailed}
             />
-        }
+      }
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
@@ -143,8 +142,8 @@ export class HearingWorksheet extends React.PureComponent {
       {!this.props.print &&
       <div className="cf-push-right">
         <Link href={`${window.location.pathname}/print`}
-           onClick={this.save(worksheet)}
-        button="secondary" target="_blank">
+          onClick={this.save(worksheet)}
+          button="secondary" target="_blank">
           Save as PDF
         </Link>
         <Link
@@ -169,7 +168,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onMilitaryServiceChange,
   onEvidenceChange,
   onCommentsForAttorneyChange,
-    toggleWorksheetSaving,
+  toggleWorksheetSaving,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
   saveIssues
