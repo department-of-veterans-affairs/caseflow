@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219182526) do
+ActiveRecord::Schema.define(version: 20171226172852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,6 +178,7 @@ ActiveRecord::Schema.define(version: 20171219182526) do
     t.date    "received_at"
     t.string  "type"
     t.string  "file_number"
+    t.string  "description"
   end
 
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree

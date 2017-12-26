@@ -1,9 +1,12 @@
 import React, { PureComponent } from 'react';
 import { formatDateStr } from '../util/DateUtil';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IssueList from './IssueList';
+import TextField from '../components/TextField';
+import { setDocumentDescription } from './Documents/DocumentsActions';
 
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
@@ -55,12 +58,28 @@ class SideBarDocumentInformation extends PureComponent {
           {this.props.doc.type}
         </span>
       </p>
+      <span className="cf-pdf-meta-title">
+        <TextField
+          name="Document Description:"
+          strongLabel
+          className={[".cf-inline-field"]}
+          value={this.props.doc.description}
+          onChange={this.changeDocDescription}
+        />
+      </span>
       <p className="cf-pdf-meta-title">
         <strong>Receipt Date:</strong> {formatDateStr(this.props.doc.receivedAt)}
       </p>
       <hr />
       {renderComponent}
     </div>;
+  }
+
+  changeDocDescription = (description) => {
+    if (description.length > 50) {
+      description = description.substr(0, 50);
+    }
+    this.props.setDocumentDescription(this.props.doc.id, description);
   }
 }
 
@@ -72,7 +91,14 @@ const mapStateToProps = (state) => ({
   didLoadAppealFail: state.pdfViewer.didLoadAppealFail
 });
 
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    setDocumentDescription
+  }, dispatch)
+});
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(SideBarDocumentInformation);
 

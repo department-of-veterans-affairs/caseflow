@@ -106,6 +106,22 @@ export const addNewTag = (doc, tags) =>
     }
   };
 
+/** Document Description **/
+export const setDocumentDescription = (docId, description) => (dispatch) => {
+  const dispatchResult = (result) => dispatch({
+    type: result,
+    payload: {
+      docId,
+      description
+    }
+  });
+
+  ApiUtil.patch(`/document/${docId}`, { data: { description } }).then(
+    () => dispatchResult(Constants.SET_DOCUMENT_DESCRIPTION_SUCCESS),
+    () => dispatchResult(Constants.SET_DOCUMENT_DESCRIPTION_FAILURE)
+  );
+}
+
 /** Rotate Pages **/
 
 export const rotateDocument = (docId) => ({
