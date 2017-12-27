@@ -96,9 +96,8 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
-      fill_in "3.disposition", with: "No Show\n"
-      fill_in "3.hold_open", with: "30 days\n"
-      fill_in "3.aod", with: "Filed\n"
+      expect(page).to have_select("disposition", :with_options => ["No Show\n", "Postponed\n"])
+   
       find("label", text: "Transcript Requested").click
 
       visit "/hearings/dockets/2017-01-01"

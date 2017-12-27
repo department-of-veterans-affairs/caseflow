@@ -100,6 +100,7 @@ export class DocketHearingRow extends React.PureComponent {
             name={`${hearing.id}.disposition`}
             options={dispositionOptions}
             onChange={this.setDisposition}
+            id="disposition"
             value={hearing.disposition}
             searchable={false}
           />
