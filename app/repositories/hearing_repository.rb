@@ -15,7 +15,8 @@ class HearingRepository
     end
 
     def load_issues(hearings)
-      issues = VACOLS::CaseIssue.descriptions(hearings.map(&:appeal_vacols_id).compact)
+      children_hearings = hearings.select { |h| h.master_record == false }
+      issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
       hearings.map do |hearing|
         next if hearing.master_record
         issues_hash_array = issues[hearing.appeal_vacols_id] || []
