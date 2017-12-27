@@ -100,8 +100,7 @@ class WorksheetHeader extends React.PureComponent {
   }
 }
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet,
-  worksheetIssues: state.worksheetIssues
+  worksheet: state.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
