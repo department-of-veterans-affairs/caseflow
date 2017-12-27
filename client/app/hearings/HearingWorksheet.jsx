@@ -53,7 +53,6 @@ class WorksheetFormEntry extends React.PureComponent {
 }
 export class HearingWorksheet extends React.PureComponent {
 
-
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
@@ -62,9 +61,9 @@ export class HearingWorksheet extends React.PureComponent {
     this.props.toggleWorksheetSaving();
   };
 
-  savePDF = () =>{
+  savePDF = () => {
     this.save();
-    window.location.href = `${window.location.pathname}/print`;
+    window.open(`${window.location.pathname}/print`, '_blank');
   }
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
