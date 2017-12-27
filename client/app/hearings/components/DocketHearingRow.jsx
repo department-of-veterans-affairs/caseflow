@@ -101,7 +101,7 @@ export class DocketHearingRow extends React.PureComponent {
             options={dispositionOptions}
             onChange={this.setDisposition}
             value={hearing.disposition}
-            searchable
+            searchable={false}
           />
           <SearchableDropdown
             label="Hold Open"
@@ -109,7 +109,7 @@ export class DocketHearingRow extends React.PureComponent {
             options={holdOptions}
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
-            searchable
+            searchable={false}
           />
           <SearchableDropdown
             label="AOD"
@@ -117,7 +117,7 @@ export class DocketHearingRow extends React.PureComponent {
             options={aodOptions}
             onChange={this.setAod}
             value={hearing.aod}
-            searchable
+            searchable={false}
           />
           <div className="transcriptRequested">
             <Checkbox
