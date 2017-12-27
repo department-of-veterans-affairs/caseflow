@@ -48,7 +48,7 @@ class WorksheetHeader extends React.PureComponent {
       }
 
       return gender;
-    }
+    };
 
     return <div>
       <div className="cf-title-meta-right">
