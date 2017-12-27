@@ -105,11 +105,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleWorksheetSaving,
   onRepNameChange,
   onWitnessChange,
-  saveWorksheet,
-  setWorksheetSaveFailedStatus
 }, dispatch);
 
 export default connect(
