@@ -4,14 +4,7 @@ import TextField from '../../components/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Textarea from 'react-textarea-autosize';
-
-import {
-  toggleWorksheetSaving,
-  setWorksheetSaveFailedStatus,
-  onRepNameChange,
-  onWitnessChange,
-  saveWorksheet
-} from '../actions/Dockets';
+import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
 
 class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
@@ -105,7 +98,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRepNameChange,
-  onWitnessChange,
+  onWitnessChange
 }, dispatch);
 
 export default connect(
