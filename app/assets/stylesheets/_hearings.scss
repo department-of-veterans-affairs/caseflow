@@ -443,6 +443,12 @@ $color-hearings-saving: #777;
 }
 
 @media print {
+  h1,
+  h2,
+  h3 {
+    font-family: sans-serif;
+  }
+
   h1 {
     font-size: 25px;
   }
