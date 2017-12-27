@@ -38,6 +38,18 @@ class WorksheetHeader extends React.PureComponent {
 
     let olderVeteran = worksheet.veteran_age > 74;
 
+    const getVeteranGender = (genderSymbol) => {
+      let gender = '';
+
+      if (genderSymbol === 'M') {
+        gender = 'Male';
+      } else if (genderSymbol === 'F') {
+        gender = 'Female';
+      }
+
+      return gender;
+    }
+
     return <div>
       <div className="cf-title-meta-right">
         <div className="title cf-hearings-title-and-judge">
@@ -99,6 +111,10 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
           <div className={olderVeteran && 'cf-red-text'}>{worksheet.veteran_age}</div>
+        </div>
+        <div className="cf-hearings-worksheet-data-cell column-3">
+          <div>Gender:</div>
+          <div>{getVeteranGender(worksheet.veteran_sex)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-4">
         </div>
