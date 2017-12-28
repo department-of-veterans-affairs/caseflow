@@ -60,9 +60,10 @@ class SideBarDocumentInformation extends PureComponent {
       </p>
       <span className="cf-pdf-meta-title">
         <TextField
-          name="Document Description:"
+          label="Document Description:"
           strongLabel
-          className={[".cf-inline-field"]}
+          name="document_description"
+          className={["cf-inline-field"]}
           value={this.props.doc.description}
           onChange={this.changeDocDescription}
         />
