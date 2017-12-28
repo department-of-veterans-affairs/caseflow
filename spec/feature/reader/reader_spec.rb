@@ -1068,11 +1068,10 @@ RSpec.feature "Reader" do
       find("h3", text: "Document information").click
 
       fill_in "document_description", with: "New Description"
+      # document description gets saved onBlur
+      find("body").click
 
-      # the description input field saves onChange. fill_in types faster than the
-      # text can be saved, resulting in a garbled version of New Description
-      # expect(documents[0].reload.description.length).to eq("New Description")
-      expect(documents[0].reload.description.length > 1).not_to be_falsey
+      expect(documents[0].reload.description).to eq("New Description")
     end
 
     scenario "Open and close keyboard shortcuts modal" do

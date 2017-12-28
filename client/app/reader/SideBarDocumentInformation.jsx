@@ -13,6 +13,14 @@ import { getClaimTypeDetailInfo } from '../reader/utils';
 import Alert from '../components/Alert';
 
 class SideBarDocumentInformation extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      doc_description: ''
+    };
+  }
+
   render() {
     const { appeal } = this.props;
     let renderComponent;
@@ -64,8 +72,9 @@ class SideBarDocumentInformation extends PureComponent {
           strongLabel
           name="document_description"
           className={["cf-inline-field"]}
-          value={this.props.doc.description}
-          onChange={this.changeDocDescription}
+          value={this.state.doc_description || this.props.doc.description}
+          onBlur={this.changeDocDescription}
+          onChange={(doc_description) => this.setState({ doc_description })}
         />
       </span>
       <p className="cf-pdf-meta-title">

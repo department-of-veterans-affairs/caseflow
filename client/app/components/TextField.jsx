@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 
 export default class TextField extends React.Component {
 
-  onChange = (event) => {
-    this.props.onChange(event.target.value);
-  }
+  onChange = (event) => this.props.onChange(event.target.value);
+  onBlur = (event) => this.props.onBlur(event.target.value);
 
   render() {
 
@@ -62,6 +61,7 @@ export default class TextField extends React.Component {
           name={name}
           id={name}
           onChange={this.onChange}
+          onBlur={this.onBlur}
           onKeyPress={onKeyPress}
           type={type}
           value={value}
@@ -96,6 +96,7 @@ TextField.propTypes = {
     PropTypes.bool
   ]),
   name: PropTypes.string.isRequired,
+  onBlur: PropTypes.func,
   onChange(props) {
     if (!props.readOnly) {
       if (typeof props.onChange !== 'function') {
