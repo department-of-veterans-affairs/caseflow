@@ -99,9 +99,6 @@ RSpec.feature "Hearings" do
       find("label", text: "Transcript Requested").click
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
-      expect(page).to have_content("Held")
-      expect(page).to have_content("30 days")
-      expect(page).to have_content("Filed")
       expect(page).to have_content("Postponed")
       expect(page).to have_content("90 days")
       expect(page).to have_content("None")
