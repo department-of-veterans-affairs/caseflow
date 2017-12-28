@@ -41,6 +41,10 @@ class AppealSeries < ActiveRecord::Base
     @alerts ||= AppealSeriesAlerts.new(appeal_series: self).all
   end
 
+  def issues
+    @issues ||= AppealSeriesIssues.new(appeal_series: self).all
+  end
+
   private
 
   def fetch_latest_appeal

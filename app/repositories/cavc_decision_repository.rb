@@ -1,6 +1,12 @@
 class CAVCDecisionRepository
-  def self.cavc_decisions_by_appeal(appeal_vacols_id)
-    VACOLS::CAVCCaseDecision.where(cvfolder: appeal_vacols_id).all.map do |cavc_decision|
+  def self.cavc_decisions_by_issue(vacols_id, vacols_sequence_id)
+    VACOLS::CAVCCaseDecision.where(cvfolder: vacols_id, cvissseq: vacols_sequence_id).all.map do |cavc_decision|
+      CAVCDecision.load_from_vacols(cavc_decision)
+    end
+  end
+
+  def self.cavc_decisions_by_appeal(vacols_id)
+    VACOLS::CAVCCaseDecision.where(cvfolder: vacols_id).all.map do |cavc_decision|
       CAVCDecision.load_from_vacols(cavc_decision)
     end
   end
@@ -11,7 +17,7 @@ class CAVCDecisionRepository
     end
 
     cavc.reduce({}) do |memo, result|
-      folder = result["cvfolder"].to_s
+      folder = result.appeal_vacols_id
       memo[folder] = (memo[folder] || []) << result
       memo
     end

@@ -104,19 +104,7 @@ RSpec.feature "Reader" do
 
   let(:documents) { [] }
 
-  let!(:issue_levels) do
-    ["Other", "Left knee", "Right knee"]
-  end
-
-  let!(:issues) do
-    [Generators::Issue.build(disposition: :allowed,
-                             program: :compensation,
-                             type: { name: :elbow, label: "Elbow" },
-                             category: :service_connection,
-                             levels: issue_levels
-                            )
-    ]
-  end
+  let!(:issues) { [Generators::Issue.build] }
 
   let(:appeal) do
     Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
@@ -327,7 +315,7 @@ RSpec.feature "Reader" do
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
 
-        expect(page).to have_content(appeal.issues[0].type[:label])
+        expect(page).to have_content(appeal.issues[0].type)
         expect(page).to have_content(appeal.issues[0].levels[0])
         expect(page).to have_content(appeal.issues[0].levels[1])
         expect(page).to have_content(appeal.issues[0].levels[2])
@@ -1052,7 +1040,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
       appeal.issues do |issue|
-        expect(page).to have_content(issue.type[:label])
+        expect(page).to have_content(issue.type)
         issue.levels do |level|
           expect(page).to have_content(level)
         end
@@ -1149,11 +1137,11 @@ RSpec.feature "Reader" do
       issue_list = all(".claims-folder-issues li")
       expect(issue_list.count).to eq(appeal_info["issues"].length)
       issue_list.each_with_index do |issue, index|
-        expect(issue.text.include?(appeal_info["issues"][index].type[:label])).to be true
+        expect(issue.text.include?(appeal_info["issues"][index][:type])).to be true
 
         # verifying the level information is being shown as part of the issue information
-        appeal_info["issues"][index].levels.each_with_index do |level, level_index|
-          expect(level.include?(appeal_info["issues"][index].levels[level_index])).to be true
+        appeal_info["issues"][index][:levels].each_with_index do |level, level_index|
+          expect(level.include?(appeal_info["issues"][index][:levels][level_index])).to be true
         end
       end
     end

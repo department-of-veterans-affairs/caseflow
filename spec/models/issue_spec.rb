@@ -1,14 +1,12 @@
 describe Issue do
   let(:disposition) { :allowed }
-  let(:program) { :compensation }
-  let(:category) { :elbow }
-  let(:type) { { name: :service_connection, label: "Service Connection" } }
+  let(:codes) { ["02", "15", "03", "5252"] }
+  let(:labels) { ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
 
   let(:issue) do
     Generators::Issue.build(disposition: disposition,
-                            program: program,
-                            type: type,
-                            category: category)
+                            codes: codes,
+                            labels: labels)
   end
 
   context ".load_from_vacols" do
@@ -20,29 +18,23 @@ describe Issue do
         "issseq" => 1,
         "issdc" => "3",
         "issdcls" => 3.days.ago,
-        "issdesc" => "CERVICAL CONDITION AS CLAIMED",
+        "issdesc" => "low back condition",
         "issprog" => "02",
         "isscode" => "15",
-        "isslev1" => "02",
-        "isslev2" => "03",
-        "isslev3" => "04",
+        "isslev1" => "03",
+        "isslev2" => "5252",
+        "isslev3" => nil,
         "issprog_label" => "Compensation",
-        "isscode_label" => "1151 Eligibility",
-        "isslev1_label" => "Other",
-        "isslev2_label" => "Left knee",
-        "isslev3_label" => "Right knee" }
+        "isscode_label" => "Service connection",
+        "isslev1_label" => "All Others",
+        "isslev2_label" => "Thigh, limitation of flexion of",
+        "isslev3_label" => nil }
     end
 
     it "assigns values properly" do
-      expect(subject.levels).to eq(["Other", "Left knee", "Right knee"])
-      expect(subject.program).to eq(:compensation)
-      expect(subject.program_description).to eq("02 - Compensation")
-      expect(subject.type).to eq(
-        name: :service_connection,
-        label: "1151 Eligibility"
-      )
-      expect(subject.note).to eq("CERVICAL CONDITION AS CLAIMED")
-      expect(subject.description).to eq(["15 - 1151 Eligibility", "02 - Other", "03 - Left knee", "04 - Right knee"])
+      expect(subject.codes).to eq(codes)
+      expect(subject.labels).to eq(labels)
+      expect(subject.note).to eq("low back condition")
       expect(subject.disposition).to eq(:remanded)
       expect(subject.close_date).to eq(AppealRepository.normalize_vacols_date(3.days.ago))
     end
@@ -55,7 +47,7 @@ describe Issue do
           "issseq" => 1,
           "issdc" => "3",
           "issdcls" => 3.days.ago,
-          "issdesc" => "CERVICAL CONDITION AS CLAIMED",
+          "issdesc" => "low back condition",
           "issprog" => "02",
           "isscode" => "15",
           "isslev1" => "02",
@@ -65,42 +57,60 @@ describe Issue do
       end
 
       it "raise exceptions for unloaded attributes" do
-        expect(subject.note).to eq("CERVICAL CONDITION AS CLAIMED")
-        expect { subject.type }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
+        expect(subject.note).to eq("low back condition")
+        expect { subject.labels }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
         expect { subject.description }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
-        expect { subject.program_description }.to raise_exception(Caseflow::Error::AttributeNotLoaded)
       end
     end
   end
 
-  context ".parse_levels_from_vacols" do
-    subject { Issue.parse_levels_from_vacols(levels_hash) }
+  context "#program" do
+    subject { issue.program }
 
-    context "when all three levels are present in VACOLS" do
-      let(:levels_hash) do
-        { "isslev1" => "02",
-          "isslev2" => "0304",
-          "isslev3" => "0404",
-          "isslev1_label" => "Other",
-          "isslev2_label" => "Right elbow",
-          "isslev3_label" => "Right shoulder" }
-      end
-
-      it "returns level descriptions in order" do
-        expect(subject).to eq(["Other", "Right elbow", "Right shoulder"])
-      end
+    context "when the program is known" do
+      it { is_expected.to eq(:compensation) }
     end
 
-    context "when there are less than three levels returned from VACOLS" do
-      let(:levels_hash) do
-        { "isslev1" => "02",
-          "isslev1_label" => "Other" }
-      end
-
-      it "returns the amount of issue levels present" do
-        expect(subject).to eq(["Other"])
-      end
+    context "when the program is not known" do
+      let(:codes) { ["99", "99"] }
+      it { is_expected.to be_nil }
     end
+  end
+
+  context "#type" do
+    subject { issue.type }
+    it { is_expected.to eq("Service connection") }
+  end
+
+  context "#program_description" do
+    subject { issue.program_description }
+    it { is_expected.to eq("02 - Compensation") }
+  end
+
+  context "#description" do
+    subject { issue.description }
+    it "returns an array for each description line" do
+      is_expected.to eq([
+        "15 - Service connection",
+        "03 - All Others",
+        "5252 - Thigh, limitation of flexion of"
+      ])
+    end
+  end
+
+  context "#levels" do
+    subject { issue.levels }
+    it { is_expected.to eq(["All Others", "Thigh, limitation of flexion of"]) }
+
+    context "when there are no levels" do
+      let(:labels) { ["Building maintenance", "Door won't open"] }
+      it { is_expected.to eq([]) }
+    end
+  end
+
+  context "#category" do
+    subject { issue.category }
+    it { is_expected.to eq("02-15") }
   end
 
   context "#allowed?" do
@@ -119,29 +129,47 @@ describe Issue do
     end
   end
 
+  context "#remanded?" do
+    subject { issue.remanded? }
+
+    context "when disposition is remanded" do
+      let(:disposition) { :remanded }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when disposition is not remanded" do
+      let(:disposition) { :allowed }
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#merged?" do
+    subject { issue.merged? }
+
+    context "when disposition is merged" do
+      let(:disposition) { :merged }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when disposition is not merged" do
+      let(:disposition) { :allowed }
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context "#new_material?" do
     subject { issue.new_material? }
 
-    context "when program is not compensation" do
-      let(:program) { :some_other_prog }
-
+    context "when not new and material" do
       it { is_expected.to be_falsey }
     end
 
-    context "when category is not new_material" do
-      let(:category) { :elbow }
-
-      it { is_expected.to be_falsey }
-    end
-
-    context "when type is not service_connection" do
-      let(:type) { { name: :increase_rating, label: "Increase Rating" } }
-
-      it { is_expected.to be_falsey }
-    end
-
-    context "when category is new_material, type is service_connection, program is compensation" do
-      let(:category) { :new_material }
+    context "when new and material" do
+      let(:codes) { ["02", "15", "04", "5252"] }
 
       it { is_expected.to be_truthy }
     end
@@ -173,7 +201,7 @@ describe Issue do
     end
 
     context "when new material" do
-      let(:category) { :new_material }
+      let(:codes) { ["02", "15", "04", "5252"] }
 
       context "when allowed disposition" do
         let(:disposition) { :remanded }

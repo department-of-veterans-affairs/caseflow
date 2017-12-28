@@ -83,19 +83,7 @@ RSpec.feature "Out of Service" do
 
     let(:documents) { [] }
 
-    let!(:issue_levels) do
-      ["Other", "Left knee", "Right knee"]
-    end
-
-    let!(:issues) do
-      [Generators::Issue.build(disposition: :allowed,
-                               program: :compensation,
-                               type: { name: :elbow, label: "Elbow" },
-                               category: :service_connection,
-                               levels: issue_levels
-                              )
-      ]
-    end
+    let!(:issues) { [Generators::Issue.build] }
 
     let(:appeal) do
       Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)

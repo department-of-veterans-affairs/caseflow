@@ -146,9 +146,9 @@ class AppealHistory
 
     return candidates_by_date.first if candidates_by_date.length == 1
 
-    # If there are multiple parent candidates, search for matching issue_codes.
+    # If there are multiple parent candidates, search for matching issue_categories.
     candidates_by_issue = candidates_by_date.select do |candidate|
-      !(appeal.issue_codes & candidate.issue_codes).empty?
+      !(appeal.issue_categories & candidate.issue_categories).empty?
     end
 
     return candidates_by_issue.first if candidates_by_issue.length == 1

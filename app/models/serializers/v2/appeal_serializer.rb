@@ -10,6 +10,7 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :location
   attribute :status_hash, key: :status
   attribute :alerts
+  attribute :issues
 
   attribute :events do
     object.events.map(&:to_hash)
@@ -30,10 +31,6 @@ class V2::AppealSerializer < ActiveModel::Serializer
 
   attribute :docket do
     nil
-  end
-
-  attribute :issues do
-    []
   end
 
   attribute :evidence do
