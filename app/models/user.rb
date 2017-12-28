@@ -97,6 +97,10 @@ class User < ActiveRecord::Base
     serializable_hash
   end
 
+  def to_session_hash
+    serializable_hash.merge({"id"=> css_id, "name"=> full_name})
+  end
+
   def station_offices
     RegionalOffice::STATIONS[station_id]
   end
