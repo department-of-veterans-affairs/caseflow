@@ -32,6 +32,37 @@ describe ExternalApi::EfolderService do
     end
   end
 
+  context "#fetch_documents_for" do
+    let(:user) { Generators::User.build }
+    let(:appeal) { Generators::Appeal.build }
+
+    context "when efolder v2 is not enabled" do
+      subject { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
+
+      it "it uses efolder v1 api" do
+        expect(ExternalApi::EfolderService).to receive(:efolder_v1_api)
+        subject
+      end
+    end
+
+    context "when efolder v2 is enabled" do
+      before do
+        FeatureToggle.enable!(:efolder_api_v2, users: [user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:efolder_api_v2, users: [user.css_id])
+      end
+
+      subject { ExternalApi::EfolderService.fetch_documents_for(appeal, user) }
+
+      it "it uses efolder v2 api" do
+        expect(ExternalApi::EfolderService).to receive(:efolder_v2_api)
+        subject
+      end
+    end
+  end
+
   context "#efolder_v2_api" do
     let(:user) { Generators::User.build }
     let(:appeal) { Generators::Appeal.build }

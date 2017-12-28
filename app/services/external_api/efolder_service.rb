@@ -1,7 +1,6 @@
 require "json"
 
 class ExternalApi::EfolderService
-
   TRIES = 20
 
   def self.fetch_documents_for(appeal, user)
@@ -62,7 +61,7 @@ class ExternalApi::EfolderService
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
       if response_attrs["sources"].blank?
-        err_msg = "eFolder sources are blank for VBMS ID: #{sanitized_vbms_id}."
+        err_msg = "eFolder sources are not available for VBMS ID: #{sanitized_vbms_id}."
         Rails.logger.error err_msg
         fail Caseflow::Error::DocumentRetrievalError, err_msg
       end
@@ -71,6 +70,10 @@ class ExternalApi::EfolderService
       sleep 1
     end
 
+    generate_response(response_attrs, sanitized_vbms_id)
+  end
+
+  def self.generate_response(response_attrs, sanitized_vbms_id)
     documents = response_attrs["records"] || []
     Rails.logger.info("# of Records retrieved from efolder v2: #{documents.length}")
 
