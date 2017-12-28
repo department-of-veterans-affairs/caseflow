@@ -152,7 +152,7 @@ RSpec.feature "Reader" do
             Generators::Tag.create(text: "New Tag1"),
             Generators::Tag.create(text: "New Tag2")
           ],
-          description: Generators::Random.word_characters(len = 50)
+          description: Generators::Random.word_characters(50)
         ),
         Generators::Document.create(
           filename: "My Form 9",

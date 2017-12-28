@@ -17,7 +17,7 @@ class SideBarDocumentInformation extends PureComponent {
     super(props);
 
     this.state = {
-      doc_description: ''
+      docDescription: ''
     };
   }
 
@@ -71,10 +71,10 @@ class SideBarDocumentInformation extends PureComponent {
           label="Document Description:"
           strongLabel
           name="document_description"
-          className={["cf-inline-field"]}
-          value={this.state.doc_description || this.props.doc.description}
+          className={['cf-inline-field']}
+          value={this.state.docDescription || this.props.doc.description}
           onBlur={this.changeDocDescription}
-          onChange={(doc_description) => this.setState({ doc_description })}
+          onChange={(docDescription) => this.setState({ docDescription })}
         />
       </span>
       <p className="cf-pdf-meta-title">
@@ -86,10 +86,7 @@ class SideBarDocumentInformation extends PureComponent {
   }
 
   changeDocDescription = (description) => {
-    if (description.length > 50) {
-      description = description.substr(0, 50);
-    }
-    this.props.setDocumentDescription(this.props.doc.id, description);
+    this.props.setDocumentDescription(this.props.doc.id, description.substr(0, 50));
   }
 }
 

@@ -120,7 +120,7 @@ export const setDocumentDescription = (docId, description) => (dispatch) => {
     () => dispatchResult(Constants.SET_DOCUMENT_DESCRIPTION_SUCCESS),
     () => dispatchResult(Constants.SET_DOCUMENT_DESCRIPTION_FAILURE)
   );
-}
+};
 
 /** Rotate Pages **/
 
