@@ -81,6 +81,14 @@ describe AppealSeriesAlerts do
       end
     end
 
+    context "when a remand has not yet returned" do
+      let(:appeals) { [original] }
+
+      it "is marked as active" do
+        expect(subject.first[:active]).to be_truthy
+      end
+    end
+
     context "when there are no issues on one appeal" do
       let(:original_issues) { [] }
 

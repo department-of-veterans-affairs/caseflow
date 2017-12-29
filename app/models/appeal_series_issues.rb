@@ -39,11 +39,12 @@ class AppealSeriesIssues
       .group_by(&:type_hash)
       .map do |_type_hash, issues|
         last_action = last_action_for_issues(issues)
+        active = issues.any?(&:active?) || last_action[:type] == :remand || last_action[:type] == :cavc_remand
 
         {
           description: issues.first.friendly_description,
           diagnostic_code: issues.first.diagnostic_code,
-          active: issues.any?(&:active?),
+          active: active,
           last_action: last_action[:type],
           date: last_action[:date].try(:to_date)
         }
