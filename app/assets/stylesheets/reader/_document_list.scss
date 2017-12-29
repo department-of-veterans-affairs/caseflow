@@ -47,6 +47,10 @@ $tag-backgrond-color: #d6d7d9;
   .documents-table {
     min-width: 810px;
     margin-top: 0;
+
+    tbody > tr > td {
+      vertical-align: top;
+    }
   }
 
   $last-read-column-width: 41px;
