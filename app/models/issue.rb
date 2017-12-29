@@ -15,6 +15,7 @@ class Issue
 
   attr_writer :cavc_decisions
   def cavc_decisions
+    # This should probably always be preloaded to avoid each issue triggering an additional VACOLS query.
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_issue(id, vacols_sequence_id)
   end
 

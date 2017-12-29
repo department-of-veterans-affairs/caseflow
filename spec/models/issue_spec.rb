@@ -1,10 +1,12 @@
 describe Issue do
+  let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }
   let(:codes) { ["02", "15", "03", "5252"] }
   let(:labels) { ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
 
   let(:issue) do
-    Generators::Issue.build(disposition: disposition,
+    Generators::Issue.build(id: vacols_id,
+                            disposition: disposition,
                             codes: codes,
                             labels: labels)
   end
@@ -64,6 +66,25 @@ describe Issue do
     end
   end
 
+  context "#cavc_decisions" do
+    subject { issue.cavc_decisions }
+
+    let(:cavc_decision) do
+      CAVCDecision.new(
+        appeal_vacols_id: vacols_id,
+        issue_vacols_sequence_id: 1,
+        decision_date: 1.day.ago,
+        disposition: "CAVC Vacated and Remanded"
+      )
+    end
+
+    before do
+      CAVCDecision.repository.cavc_decision_records = [cavc_decision]
+    end
+
+    it { is_expected.to eq([cavc_decision]) }
+  end
+
   context "#program" do
     subject { issue.program }
 
@@ -108,9 +129,54 @@ describe Issue do
     end
   end
 
+  context "#friendly_description" do
+    subject { issue.friendly_description }
+
+    it { is_expected.to eq("Service connection, limitation of thigh motion") }
+
+    context "when there is an unknown issue code" do
+      let(:codes) { ["99", "99", "99"] }
+      it { is_expected.to be_nil }
+    end
+
+    context "when there is an unknown diagnostic code" do
+      let(:codes) { ["02", "15", "03", "1234"] }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#diagnostic_code" do
+    subject { issue.diagnostic_code }
+
+    context "when the issue codes include a diagnostic code" do
+      it { is_expected.to eq("5252") }
+    end
+
+    context "when there is not an issue code" do
+      let(:codes) { ["02", "18", "01", "05"] }
+      it { is_expected.to be_nil }
+    end
+  end
+
   context "#category" do
     subject { issue.category }
     it { is_expected.to eq("02-15") }
+  end
+
+  context "#active?" do
+    subject { issue.active? }
+
+    context "when it has a disposition" do
+      let(:disposition) { :allowed }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when it does not have a disposition" do
+      let(:disposition) { nil }
+
+      it { is_expected.to be_truthy }
+    end
   end
 
   context "#allowed?" do
