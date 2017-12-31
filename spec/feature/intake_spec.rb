@@ -681,14 +681,20 @@ RSpec.feature "RAMP Intake" do
             ).claim_id
           )
 
-          intake = RampRefilingIntake.create!(
+          Generators::Contention.build(
+            claim_id: ramp_election.end_product_reference_id,
+            text: "Left knee"
+          )
+
+          intake = RampRefilingIntake.new(
             veteran_file_number: "12341234",
             user: current_user,
-            detail: RampRefiling.create!(
+            detail: RampRefiling.new(
               veteran_file_number: "12341234",
               ramp_election: ramp_election
             )
           )
+
           intake.start!
 
           visit "/intake"
@@ -714,6 +720,11 @@ RSpec.feature "RAMP Intake" do
             ).claim_id
           )
 
+          Generators::Contention.build(
+            claim_id: ramp_election.end_product_reference_id,
+            text: "Left knee"
+          )
+
           # Validate that you can't go directly to search
           visit "/intake/search"
 
@@ -730,6 +741,9 @@ RSpec.feature "RAMP Intake" do
           click_on "Search"
 
           expect(page).to have_current_path("/intake/review-request")
+
+          # Validate issues have been created based on contentions
+          expect(ramp_election.issues.count).to eq(1)
 
           # Validate validation
           fill_in "What is the Receipt Date of this form?", with: "08/02/2017"

@@ -5,6 +5,7 @@ class RampElection < RampReview
   attr_reader :saving_receipt
 
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
+  has_many :ramp_refilings
 
   RESPOND_BY_TIME = 60.days.freeze
 
@@ -41,6 +42,23 @@ class RampElection < RampReview
 
   def established_end_product
     @established_end_product ||= fetch_established_end_product
+  end
+
+  def recreate_issues_from_contentions!
+    # If there is a saved refiling for this election, then the issues
+    # are locked and cannot be recreated
+    return false if ramp_refilings.count > 0
+
+    # Load contentions outside of the Postgres transaction
+    end_product.contentions
+
+    transaction do
+      issues.destroy_all
+
+      end_product.contentions.each do |contention|
+        issues.create!(contention: contention)
+      end
+    end
   end
 
   private

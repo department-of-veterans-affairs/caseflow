@@ -10,6 +10,8 @@ class RampReview < ActiveRecord::Base
     appeal: "appeal"
   }
 
+  has_many :issues, as: :review, class_name: "RampIssue"
+
   HIGHER_LEVEL_REVIEW_OPTIONS = %w(higher_level_review higher_level_review_with_hearing).freeze
 
   END_PRODUCT_DATA_BY_OPTION = {

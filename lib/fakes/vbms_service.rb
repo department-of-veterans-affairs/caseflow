@@ -23,6 +23,8 @@ class Fakes::VBMSService
     attr_accessor :end_product_claim_id
     attr_accessor :uploaded_form8, :uploaded_form8_appeal
     attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
+    attr_accessor :contention_records
+    attr_accessor :end_product_claim_ids_by_file_number
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -72,7 +74,21 @@ class Fakes::VBMSService
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")
 
+    self.end_product_claim_ids_by_file_number ||= {}
+
+    # The id will either be:
+    # A claim id set specificly for claims created on a specific file_number
+    # A default claim id used for all created claims
+    # A randomly generated id
+    claim_id = end_product_claim_ids_by_file_number[veteran_hash[:file_number]] ||
+               @end_product_claim_id ||
+               Generators::Appeal.generate_external_id
+
     # return fake end product
-    OpenStruct.new(claim_id: @end_product_claim_id || Generators::Appeal.generate_external_id)
+    OpenStruct.new(claim_id: claim_id)
+  end
+
+  def self.fetch_contentions(claim_id:)
+    (contention_records || {})[claim_id] || []
   end
 end
