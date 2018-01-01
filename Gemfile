@@ -97,7 +97,7 @@ group :production, :staging do
   gem 'ruby-oci8'
 end
 
-group :development, :production, :staging do
+group :production, :staging do
   gem 'rails_stdout_logging'
 end
 
