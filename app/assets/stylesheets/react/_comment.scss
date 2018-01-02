@@ -40,6 +40,10 @@
     margin-bottom: 15px;
     border-radius: 3px;
     border: 1px solid $color-gray-lighter;
+
+    &:not(.comment-textarea) {
+      padding-left: 25px;
+    }
   }
 
   &:not(.comment-textarea) {
