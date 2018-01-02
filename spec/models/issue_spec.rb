@@ -98,6 +98,19 @@ describe Issue do
     end
   end
 
+  context "#aoj" do
+    subject { issue.aoj }
+
+    context "when the aoj is vba, vha, or nca" do
+      it { is_expected.to eq(:vba) }
+    end
+
+    context "when the issue is not originated from vba, vha, or nca" do
+      let(:codes) { ["10", "01", "02"] }
+      it { is_expected.to be_nil }
+    end
+  end
+
   context "#type" do
     subject { issue.type }
     it { is_expected.to eq("Service connection") }

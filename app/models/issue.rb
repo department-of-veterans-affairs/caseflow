@@ -34,8 +34,32 @@ class Issue
     "12" => :fiduciary
   }.freeze
 
+  AOJ_FOR_PROGRAMS = {
+    vba: [
+      :vba_burial,
+      :compensation,
+      :education,
+      :loan_guaranty,
+      :pension,
+      :vre,
+      :fiduciary
+    ],
+    vha: [
+      :medical
+    ],
+    nca: [
+      :nca_burial
+    ]
+  }.freeze
+
   def program
     PROGRAMS[codes[0]]
+  end
+
+  def aoj
+    AOJ_FOR_PROGRAMS.keys.find do |type|
+      AOJ_FOR_PROGRAMS[type].include?(program)
+    end
   end
 
   def type
