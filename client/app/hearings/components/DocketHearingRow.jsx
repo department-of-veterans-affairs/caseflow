@@ -67,7 +67,8 @@ export class DocketHearingRow extends React.PureComponent {
         format('h:mm a z');
     };
 
-    const appellantDisplay = hearing.veteran_mi_formatted;
+    const appellantDisplay = hearing.appellant_mi_formatted ? hearing.appellant_mi_formatted :
+      hearing.veteran_mi_formatted;
 
     return <tbody>
       <tr>
