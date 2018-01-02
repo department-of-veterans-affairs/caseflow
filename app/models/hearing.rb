@@ -120,8 +120,13 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :regional_office_name,
         :regional_office_timezone,
-        :venue, :appellant_last_first_mi,
-        :veteran_name, :vbms_id, :issue_count
+        :venue,
+        :veteran_name,
+        :veteran_mi_formatted,
+        :appellant_last_first_mi,
+        :appellant_mi_formatted,
+        :vbms_id,
+        :issue_count
       ],
       except: :military_service
     ).merge(
