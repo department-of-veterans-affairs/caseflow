@@ -2,6 +2,7 @@
 
 <%= react_component("TestUsers", props: {
 	currentUser: current_user.to_hash,
+	isGlobalAdmin: current_user.global_admin?,
 	testUsersList: @test_users,
 	appSelectList: Test::UsersController::APPS,
 	epTypes: @ep_types
