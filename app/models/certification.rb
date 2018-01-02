@@ -13,7 +13,8 @@ class Certification < ActiveRecord::Base
     update_attributes!(
       v2: true,
       loading_data: true,
-      loading_data_failed: false
+      loading_data_failed: false,
+      certification_date: Time.zone.now.to_date
     )
 
     # Most developers don't run shoryuken in development mode.
