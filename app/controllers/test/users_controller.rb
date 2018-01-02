@@ -1,5 +1,6 @@
 class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
     {
@@ -58,10 +59,20 @@ class Test::UsersController < ApplicationController
 
   # Set current user in DEMO
   def set_user
-    User.before_set_user # for testing only
+    User.clear_current_user # for testing only
 
     session["user"] = User.authentication_service.get_user_session(params[:id])
-    render nothing: true, status: 200
+    head :ok
+  end
+
+  def log_in_as_user
+    User.clear_current_user # for testing only
+
+    user = User.find_by(css_id: params[:id], station_id: params[:station_id])
+    return head :not_found if user.nil?
+    session["user"] = user.to_session_hash
+    session[:regional_office] = user.selected_regional_office ? user.selected_regional_office : user.regional_office
+    head :ok
   end
 
   # Set end products in DEMO
@@ -73,6 +84,10 @@ class Test::UsersController < ApplicationController
 
   def require_demo
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
+  end
+
+  def require_global_admin
+    head :unauthorized unless current_user.global_admin?
   end
 
   private
