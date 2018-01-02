@@ -1,6 +1,7 @@
 class Hearings::WorksheetsController < HearingsController
   def show
-    @hearing_page_title = "Daily Docket | Hearing Worksheet"
+    appellant_name = hearing_worksheet["appellant_mi_formatted"]
+    @new_window_title = "#{appellant_name}'s Worksheet"
 
     HearingView.find_or_create_by(hearing_id: params[:hearing_id], user_id: current_user.id).touch
 

@@ -14,7 +14,6 @@ import ApiUtil from '../../util/ApiUtil';
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
-    document.title = `Daily Docket ${this.props.date}`;
     this.props.getDailyDocket();
   }
 
