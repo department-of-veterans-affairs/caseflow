@@ -122,7 +122,7 @@ class Hearing < ActiveRecord::Base
         :venue, :appellant_last_first_mi,
         :veteran_name,
         :veteran_mi_formatted,
-        :vbms_id
+        :vbms_id,
         :issue_count
       ],
       except: :military_service
