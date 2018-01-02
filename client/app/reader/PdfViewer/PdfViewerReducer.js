@@ -9,6 +9,8 @@ const initialPdfSidebarErrorState = {
   category: { visible: false,
     message: null },
   annotation: { visible: false,
+    message: null },
+  description: { visible: false,
     message: null }
 };
 

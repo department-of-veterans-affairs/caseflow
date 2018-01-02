@@ -68,6 +68,7 @@ class SideBarDocumentInformation extends PureComponent {
           onBlur={this.saveDocDescription}
           onChange={this.changePendingDocDescription}
           maxLength={50}
+          errorMessage={this.props.error.visible ? this.props.error.message : undefined}
         />
       </span>
       <p className="cf-pdf-meta-title">
@@ -87,7 +88,8 @@ SideBarDocumentInformation.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  didLoadAppealFail: state.pdfViewer.didLoadAppealFail
+  didLoadAppealFail: state.pdfViewer.didLoadAppealFail,
+  error: state.pdfViewer.pdfSideBarError.description
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -180,14 +180,6 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SAVE_DOCUMENT_DESCRIPTION_FAILURE:
-    return update(state, {
-      [action.payload.docId]: {
-        description: {
-          $set: action.payload.description
-        }
-      }
-    });
   default:
     return state;
   }
