@@ -171,6 +171,16 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case Constants.UPDATE_ANNOTATION_RELEVANT_DATE:
+    return update(state, {
+      editingAnnotations: {
+        [action.payload.annotationId]: {
+          relevant_date: {
+            $set: action.payload.relevantDate
+          }
+        }
+      }
+    });
   case Constants.REQUEST_EDIT_ANNOTATION:
     return moveModel(state,
       ['editingAnnotations'],
@@ -236,6 +246,14 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
       placedButUnsavedAnnotation: {
         comment: {
           $set: action.payload.content
+        }
+      }
+    });
+  case Constants.UPDATE_NEW_ANNOTATION_RELEVANT_DATE:
+    return update(state, {
+      placedButUnsavedAnnotation: {
+        relevant_date: {
+          $set: action.payload.relevantDate
         }
       }
     });

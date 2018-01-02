@@ -126,8 +126,21 @@ export const isUserEditingText = () => _.some(
   (elem) => document.activeElement === elem
 );
 
+export const getHearingWorksheetLink = (hearings) => {
+  return (
+    <span>
+      {hearings.map((hearing, key) => {
+        return <div>
+          <a target="_blank"href={`/hearings/${hearing.id}/worksheet/print`} key={key}>Hearing Worksheet</a>
+        </div>;
+      })}
+    </span>
+  );
+};
+
 export const getClaimTypeDetailInfo = (claim) => {
   let appealTypeInfo = '';
+  let appealHasHearing = (claim.hearings && claim.hearings.length > 0);
 
   if (claim.cavc && claim.aod) {
     appealTypeInfo = 'AOD, CAVC';
@@ -137,7 +150,10 @@ export const getClaimTypeDetailInfo = (claim) => {
     appealTypeInfo = 'AOD';
   }
 
-  return <span className="cf-red-text">{appealTypeInfo}</span>;
+  return <div className="claim-detail-container">
+    <span className="claim-detail-type-info">{appealTypeInfo}</span>
+    { appealHasHearing && getHearingWorksheetLink(claim.hearings) }
+  </div>;
 };
 
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
