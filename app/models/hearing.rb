@@ -121,6 +121,7 @@ class Hearing < ActiveRecord::Base
         :regional_office_timezone,
         :venue,
         :veteran_mi_formatted,
+        :appellant_last_first_mi,
         :appellant_mi_formatted,
         :vbms_id,
         :issue_count
