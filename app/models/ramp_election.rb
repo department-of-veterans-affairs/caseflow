@@ -49,7 +49,8 @@ class RampElection < RampReview
     # are locked and cannot be recreated
     return false if ramp_refilings.count > 0
 
-    # Load contentions outside of the Postgres transaction
+    # Load contentions outside of the Postgres transaction so we don't keep a connection
+    # open needlessly for the entirety of what could be a slow VBMS request.
     end_product.contentions
 
     transaction do
