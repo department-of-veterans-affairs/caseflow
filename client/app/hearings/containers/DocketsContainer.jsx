@@ -21,8 +21,6 @@ export class DocketsContainer extends React.Component {
 
   componentDidMount() {
 
-    document.title = 'Your Hearing Days';
-
     if (!this.props.upcomingHearings) {
       this.getUpcomingHearings();
     }
