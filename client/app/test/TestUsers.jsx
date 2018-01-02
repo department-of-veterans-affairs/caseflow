@@ -38,9 +38,10 @@ export default class TestUsers extends React.PureComponent {
 
   handleLogInAsUser = () => {
     this.setState({ isLoggingIn: true });
-    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}&station_id=${this.state.stationId}`).then(() => {
-      window.location.reload();
-    }).
+    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}&station_id=${this.state.stationId}`).
+      then(() => {
+        window.location.reload();
+      }).
       catch((err) => {
         this.setState(
           { isLoggingIn: false,
