@@ -35,18 +35,15 @@
   word-wrap: break-word;
   word-break: break-word;
   background-color: $color-white;
+  padding: 15px;
 
   &:not(.comment-horizontal-container) {
     margin-bottom: 15px;
     border-radius: 3px;
     border: 1px solid $color-gray-lighter;
-
-    &:not(.comment-textarea) {
-      padding-left: 25px;
-    }
   }
 
-  &:not(.comment-textarea) {
+  &.comment-horizontal-container {
     padding: 25px 25px 25px 40px;
   }
 }
