@@ -77,7 +77,7 @@ class Fakes::VBMSService
     self.end_product_claim_ids_by_file_number ||= {}
 
     # The id will either be:
-    # A claim id set specificly for claims created on a specific file_number
+    # A claim id set specifically for claims created on a specific file_number
     # A default claim id used for all created claims
     # A randomly generated id
     claim_id = end_product_claim_ids_by_file_number[veteran_hash[:file_number]] ||
