@@ -36,8 +36,7 @@ class StartCertificationJob < ActiveJob::Base
       vacols_hearing_preference: @certification.appeal.hearing_request_type,
       certifying_office: @certification.appeal.regional_office_name,
       certifying_username: @certification.appeal.regional_office_key,
-      certifying_official_name: user ? user.full_name : nil,
-      certification_date: Time.zone.now.to_date
+      certifying_official_name: user ? user.full_name : nil
     )
   end
 
