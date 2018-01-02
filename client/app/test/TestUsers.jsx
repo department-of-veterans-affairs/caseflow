@@ -13,7 +13,8 @@ export default class TestUsers extends React.PureComponent {
     this.state = {
       currentUser: props.currentUser,
       userSelect: props.currentUser.id,
-      isSwitching: false
+      isSwitching: false,
+      isLoggingIn: false
     };
   }
 
@@ -26,9 +27,26 @@ export default class TestUsers extends React.PureComponent {
     this.setState({ isSwitching: true });
     ApiUtil.post(`/test/set_user/${this.state.userSelect}`).then(() => {
       window.location.reload();
-      this.setState({ isSwitching: false });
     }).
       catch((err) => {
+        console.warn(err);
+      });
+  };
+
+  userIdOnChange = (value) => this.setState({ userId: value });
+  stationIdOnChange = (value) => this.setState({ stationId: value });
+
+  handleLogInAsUser = () => {
+    this.setState({ isLoggingIn: true });
+    ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}&station_id=${this.state.stationId}`).
+      then(() => {
+        window.location.reload();
+      }).
+      catch((err) => {
+        this.setState(
+          { isLoggingIn: false,
+            userId: '',
+            stationId: '' });
         console.warn(err);
       });
   }
@@ -95,19 +113,23 @@ export default class TestUsers extends React.PureComponent {
           loading={this.state.isSwitching}
           loadingText="Switching users" />
         <br /><br />
-        {this.props.currentUser.roles.includes('Global Admin') &&
+        { this.props.isGlobalAdmin &&
         <div>
-          <strong>Reproduce user state:</strong>
+          <strong>Log in as user:</strong>
           <TextField
             label="User ID:"
-            name="userID" />
+            name="userId"
+            value={this.state.userId}
+            onChange={this.userIdOnChange} />
           <TextField
             label="Station ID:"
-            name="stationID" />
+            name="stationId"
+            value={this.state.stationId}
+            onChange={this.stationIdOnChange} />
           <Button
             onClick={this.handleLogInAsUser}
             name="Log in as user"
-            loading={this.state.isLoggingInAsUser}
+            loading={this.state.isLoggingIn}
             loadingText="Logging in" />
         </div>}
       </div>
@@ -124,6 +146,7 @@ export default class TestUsers extends React.PureComponent {
 
 TestUsers.propTypes = {
   currentUser: PropTypes.object.isRequired,
+  isGlobalAdmin: PropTypes.bool,
   testUsersList: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
   epTypes: PropTypes.array.isRequired
