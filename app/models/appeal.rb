@@ -166,6 +166,7 @@ class Appeal < ActiveRecord::Base
   end
 
   delegate :age, to: :veteran, prefix: true
+  delegate :sex, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
