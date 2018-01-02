@@ -98,6 +98,7 @@ class Hearing < ActiveRecord::Base
 
   delegate \
     :veteran_age, \
+    :veteran_sex, \
     :appellant_city, \
     :appellant_state, \
     :vbms_id, \
@@ -142,6 +143,7 @@ class Hearing < ActiveRecord::Base
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
                 :veteran_age,
+                :veteran_sex,
                 :appellant_city,
                 :appellant_state,
                 :military_service,
