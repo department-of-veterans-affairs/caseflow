@@ -17,6 +17,10 @@
 
 .comment-control-button {
   padding: 0;
+
+  &.horizontal {
+    text-align: left;
+  }
 }
 
 .comment-control-button-divider {
@@ -31,10 +35,17 @@
   word-wrap: break-word;
   word-break: break-word;
   background-color: $color-white;
-  border-radius: 3px;
   padding: 15px;
-  margin-bottom: 15px;
-  border: 1px solid $color-gray-lighter;
+
+  &:not(.comment-horizontal-container) {
+    margin-bottom: 15px;
+    border-radius: 3px;
+    border: 1px solid $color-gray-lighter;
+  }
+
+  &.comment-horizontal-container {
+    padding: 25px 25px 25px 40px;
+  }
 }
 
 .comment-horizontal-container {
