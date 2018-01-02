@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 export default class TextField extends React.Component {
 
@@ -84,7 +85,8 @@ export default class TextField extends React.Component {
 TextField.defaultProps = {
   required: false,
   type: 'text',
-  className: ['cf-form-textinput']
+  className: ['cf-form-textinput'],
+  onBlur: _.noop
 };
 
 TextField.propTypes = {

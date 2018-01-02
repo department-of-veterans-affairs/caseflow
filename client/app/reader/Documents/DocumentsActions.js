@@ -107,7 +107,7 @@ export const addNewTag = (doc, tags) =>
   };
 
 /** Document Description **/
-export const setDocumentDescription = (docId, description) => (dispatch) => {
+export const saveDocumentDescription = (docId, description) => (dispatch) => {
   const dispatchResult = (result) => dispatch({
     type: result,
     payload: {
@@ -117,10 +117,18 @@ export const setDocumentDescription = (docId, description) => (dispatch) => {
   });
 
   ApiUtil.patch(`/document/${docId}`, { data: { description } }).then(
-    () => dispatchResult(Constants.SET_DOCUMENT_DESCRIPTION_SUCCESS),
-    () => dispatchResult(Constants.SET_DOCUMENT_DESCRIPTION_FAILURE)
+    () => dispatchResult(Constants.SAVE_DOCUMENT_DESCRIPTION_SUCCESS),
+    () => dispatchResult(Constants.SAVE_DOCUMENT_DESCRIPTION_FAILURE)
   );
 };
+
+export const changeDocumentDescription = (docId, description) => ({
+  type: Constants.CHANGE_DOCUMENT_DESCRIPTION,
+  payload: {
+    docId,
+    description
+  }
+});
 
 /** Rotate Pages **/
 

@@ -6,21 +6,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IssueList from './IssueList';
 import TextField from '../components/TextField';
-import { setDocumentDescription } from './Documents/DocumentsActions';
+import { saveDocumentDescription, changeDocumentDescription } from './Documents/DocumentsActions';
 
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
 import Alert from '../components/Alert';
 
 class SideBarDocumentInformation extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      docDescription: ''
-    };
-  }
-
   render() {
     const { appeal } = this.props;
     let renderComponent;
@@ -72,9 +64,10 @@ class SideBarDocumentInformation extends PureComponent {
           strongLabel
           name="document_description"
           className={['cf-inline-field']}
-          value={this.state.docDescription || this.props.doc.description}
-          onBlur={this.changeDocDescription}
-          onChange={(docDescription) => this.setState({ docDescription })}
+          value={this.props.doc.description}
+          onBlur={this.saveDocDescription}
+          onChange={this.changePendingDocDescription}
+          maxLength={50}
         />
       </span>
       <p className="cf-pdf-meta-title">
@@ -85,9 +78,8 @@ class SideBarDocumentInformation extends PureComponent {
     </div>;
   }
 
-  changeDocDescription = (description) => {
-    this.props.setDocumentDescription(this.props.doc.id, description.substr(0, 50));
-  }
+  changePendingDocDescription = (description) => this.props.changeDocumentDescription(this.props.doc.id, description);
+  saveDocDescription = (description) => this.props.saveDocumentDescription(this.props.doc.id, description);
 }
 
 SideBarDocumentInformation.propTypes = {
@@ -100,7 +92,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setDocumentDescription
+    changeDocumentDescription,
+    saveDocumentDescription
   }, dispatch)
 });
 
