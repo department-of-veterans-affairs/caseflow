@@ -20,7 +20,6 @@ export class DocketsContainer extends React.Component {
   };
 
   componentDidMount() {
-
     if (!this.props.upcomingHearings) {
       this.getUpcomingHearings();
     }
