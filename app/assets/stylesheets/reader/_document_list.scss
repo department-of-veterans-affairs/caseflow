@@ -111,18 +111,24 @@ $tag-backgrond-color: #d6d7d9;
     .horizontal-comment {
       display: flex;
       margin-left: $last-read-column-width;
+      margin-bottom: 1rem;
+      border-radius: 3px;
+      border: 1px solid $color-gray-lighter;
 
-      .comment-page-number {
-        width: 10rem;
-
-        h4 {
-          line-height: 50px;
-        }
+      .comment-relevant-date {
+        width: 16rem;
+        padding-left: 2rem;
+        padding-top: 25px;
       }
 
-      .comment-jump-to-section {
+      .comment-page-number {
+        padding: 25px 0 25px 25px;
         width: 20rem;
-        line-height: 50px;
+        line-height: 25px;
+
+        h4 {
+          margin-bottom: 5px;
+        }
       }
     }
   }
