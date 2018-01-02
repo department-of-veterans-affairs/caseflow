@@ -39,6 +39,7 @@ class Issue
       :vba_burial,
       :compensation,
       :education,
+      :insurance,
       :loan_guaranty,
       :pension,
       :vre,
