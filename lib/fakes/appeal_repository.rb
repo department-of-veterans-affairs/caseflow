@@ -19,7 +19,11 @@ class Fakes::AppealRepository
     end
 
     def load_user_case_assignments_from_vacols(_css_id)
-      appeal_records || Fakes::Data::AppealData.default_records
+      user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
+      appeal = user_case_assignments.first
+      # Create fake hearings for the first appeal if one doesn't already exist
+      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).length == 0
+      user_case_assignments
     end
   end
 
@@ -378,7 +382,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Court Remand",
-        cavc: true,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -403,7 +406,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Remand",
-        cavc: false,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -430,7 +432,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Remand",
-        cavc: false,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
@@ -448,7 +449,6 @@ class Fakes::AppealRepository
         veteran_first_name: "Joe",
         veteran_last_name: "Smith",
         type: "Court Remand",
-        cavc: true,
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         signed_date: nil,
