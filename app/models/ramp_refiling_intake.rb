@@ -3,8 +3,13 @@ class RampRefilingIntake < Intake
 
   enum error_code: {
     no_complete_ramp_election: "no_complete_ramp_election",
-    ramp_election_is_active: "ramp_election_is_active"
+    ramp_election_is_active: "ramp_election_is_active",
+    ramp_election_no_issues: "ramp_election_no_issues"
   }.merge(Intake::ERROR_CODES)
+
+  def preload_intake_data!
+    ramp_election && ramp_election.recreate_issues_from_contentions!
+  end
 
   def cancel!
     transaction do
@@ -33,10 +38,12 @@ class RampRefilingIntake < Intake
   private
 
   def validate_detail_on_start
-    if !initial_ramp_refiling.ramp_election
+    if !ramp_election
       self.error_code = :no_complete_ramp_election
-    elsif initial_ramp_refiling.ramp_election.established_end_product.active?
+    elsif ramp_election.established_end_product.active?
       self.error_code = :ramp_election_is_active
+    elsif ramp_election.issues.empty?
+      self.error_code = :ramp_election_no_issues
     end
   end
 
@@ -49,6 +56,10 @@ class RampRefilingIntake < Intake
       veteran_file_number: veteran_file_number,
       ramp_election: fetch_ramp_election
     )
+  end
+
+  def ramp_election
+    initial_ramp_refiling.ramp_election
   end
 
   def fetch_ramp_election

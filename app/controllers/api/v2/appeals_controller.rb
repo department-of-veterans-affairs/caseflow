@@ -14,7 +14,7 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def json_appeals
-    Rails.cache.fetch("appeals/v2/#{ssn}", expires_in: 24.hours, force: reload?) do
+    Rails.cache.fetch("appeals/v2/#{ssn}", expires_in: 20.hours, force: reload?) do
       ActiveModelSerializers::SerializableResource.new(
         appeals,
         each_serializer: ::V2::AppealSerializer,
