@@ -9,9 +9,10 @@ class Hearings::DocketsController < HearingsController
   end
 
   def show
+    @hearing_page_title = "Daily Docket"
     date = date_from_string(params[:docket_date])
     return not_found unless date && judge.docket?(date)
-    @new_window_title = "Daily Docket #{date}"
+
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
