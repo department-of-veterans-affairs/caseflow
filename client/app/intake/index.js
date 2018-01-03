@@ -13,7 +13,8 @@ class Intake extends React.PureComponent {
       rampElection: rampElectionReducer,
       rampRefiling: rampRefilingReducer
     });
-    this.setState({reducer})
+
+    this.setState({ reducer });
   }
 
   render() {
@@ -21,24 +22,24 @@ class Intake extends React.PureComponent {
       intake: mapDataToInitialIntake(this.props),
       rampElection: mapDataToInitialRampElection(this.props),
       rampRefiling: mapDataToInitialRampRefiling(this.props)
-    }
+    };
 
     return <ReduxBase initialState={initialState} reducer={this.state.reducer} analyticsMiddlewareArgs={['intake']}>
       <IntakeFrame {...this.props} />
-    </ReduxBase>
+    </ReduxBase>;
   }
 }
 
 export default Intake;
 
-  // if (module.hot) {
-  //   // Enable Webpack hot module replacement for reducers
-  //   module.hot.accept([
-  //     './reducers/intake',
-  //     './reducers/rampElection',
-  //     './reducers/rampRefiling'
-  //   ],
-  //   () => store.replaceReducer(reducer)
-  //   );
-  // }
+// if (module.hot) {
+//   // Enable Webpack hot module replacement for reducers
+//   module.hot.accept([
+//     './reducers/intake',
+//     './reducers/rampElection',
+//     './reducers/rampRefiling'
+//   ],
+//   () => store.replaceReducer(reducer)
+//   );
+// }
 

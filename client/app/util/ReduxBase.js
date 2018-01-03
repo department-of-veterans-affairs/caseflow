@@ -40,4 +40,4 @@ export default class ReduxBase extends React.PureComponent {
 ReduxBase.defaultProps = {
   analyticsMiddlewareArgs: [],
   enhancers: []
-}
+};
