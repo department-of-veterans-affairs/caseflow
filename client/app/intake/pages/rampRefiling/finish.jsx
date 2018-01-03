@@ -119,11 +119,11 @@ class Finish extends React.PureComponent {
         </li>
       </ol>
       
-      <!-- 
+      {/*
           TODO: These components probably shouldn't be made with Tables, but this was
           a quick solution based on what was possible with the styleguide. We're going
           to put some more thought into the final component and add that to the styleguide
-       -->
+      */}
       <Table
         className="cf-table-selections"
         columns={issueColumns}
