@@ -13,15 +13,16 @@ export default class ReduxBase extends React.PureComponent {
 
     const store = createStore(
       this.props.reducer,
+      this.props.initialState,
       composeEnhancers(
-        applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware()),
+        applyMiddleware(thunk, perfLogger, getReduxAnalyticsMiddleware(...this.props.analyticsMiddlewareArgs)),
         ...this.props.enhancers
       )
     );
 
+    // TODO this path does not seem right. What do we actually want here?
     if (module.hot) {
       // Enable Webpack hot module replacement for reducers
-      // TODO this path does not seem right. What do we actually want here?
       // module.hot.accept('./reducers', () => {
       //   store.replaceReducer(this.props.reducer);
       // });
@@ -34,4 +35,9 @@ export default class ReduxBase extends React.PureComponent {
     <Provider store={this.state.store}>
       {this.props.children}
     </Provider>;
+}
+
+ReduxBase.defaultProps = {
+  analyticsMiddlewareArgs: [],
+  enhancers: []
 }
