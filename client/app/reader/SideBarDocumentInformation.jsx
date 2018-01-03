@@ -60,20 +60,6 @@ class SideBarDocumentInformation extends PureComponent {
           {this.props.doc.type}
         </span>
       </p>
-      {/*<span className="cf-pdf-meta-title">*/}
-        {/*<TextField*/}
-          {/*label="Document Description:"*/}
-          {/*strongLabel*/}
-          {/*name="document_description"*/}
-          {/*className={['cf-inline-field']}*/}
-          {/*value={this.props.doc.description}*/}
-          {/*onBlur={this.saveDocDescription}*/}
-          {/*onChange={this.changePendingDocDescription}*/}
-          {/*maxLength={50}*/}
-          {/*errorMessage={this.props.error.visible ? this.props.error.message : undefined}*/}
-        {/*/>*/}
-      {/*</span>*/}
-      {/*<br/>*/}
       <EditableDocumentField
         className={'cf-pdf-meta-title'}
         value={this.props.doc.pendingDescription || this.props.doc.description}

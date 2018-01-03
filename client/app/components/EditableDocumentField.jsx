@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import classNames from 'classnames';
 import Button from './Button';
 
 export default class EditableDocumentField extends React.Component {
@@ -26,6 +26,12 @@ export default class EditableDocumentField extends React.Component {
     this.stopEditing();
   }
   onChange = (event) => this.props.onChange(event.target.value);
+
+  componentDidUpdate = () => {
+    if (this.props.errorMessage && !this.state.editing) {
+      this.setState({ editing: true });
+    }
+  }
 
   render() {
     const {
@@ -72,12 +78,12 @@ export default class EditableDocumentField extends React.Component {
       textDisplay = <span>{value}</span>
     }
 
-    return <span className={className}>
+    return <div className={classNames(className, { 'usa-input-error': errorMessage })}>
       <strong>{label}</strong>
       {actionLinks}<br/>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       {textDisplay}
-    </span>;
+    </div>;
   }
 };
 
