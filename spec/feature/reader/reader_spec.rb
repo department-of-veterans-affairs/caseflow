@@ -1042,7 +1042,7 @@ RSpec.feature "Reader" do
 
       expect(page).to have_content("Document Type")
       expect(page).to have_content("Document Description")
-      expect(find("#document_description").value).to eq(documents[0].description)
+      expect(find("#document_description").text).to eq(documents[0].description)
       expect(page).to have_content("BVA Decision")
       expect(page).to have_content("AOD")
       expect(page).to have_content("Veteran ID")
@@ -1066,11 +1066,13 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
       find("h3", text: "Document information").click
+      find("#document_description-edit").click
 
       fill_in "document_description", with: "New Description"
-      # document description gets saved onBlur
-      find("body").click
 
+      find("#document_description-save").click
+
+      sleep(1)
       expect(documents[0].reload.description).to eq("New Description")
     end
 

@@ -50,10 +50,10 @@ export default class EditableDocumentField extends React.Component {
 
     if (this.state.editing) {
       actionLinks = <span>
-        <Button onClick={this.onCancel} classNames={buttonClasses}>
+        <Button onClick={this.onCancel} id={`${name}-cancel`} classNames={buttonClasses}>
           Cancel
         </Button>&nbsp;|&nbsp;
-        <Button onClick={this.onSave} classNames={buttonClasses}>
+        <Button onClick={this.onSave} id={`${name}-save`} classNames={buttonClasses}>
           Save
         </Button>
       </span>;
@@ -71,11 +71,11 @@ export default class EditableDocumentField extends React.Component {
       />;
     } else {
       actionLinks = <span>
-        <Button onClick={this.startEditing} classNames={buttonClasses}>
+        <Button onClick={this.startEditing} id={`${name}-edit`} classNames={buttonClasses}>
           Edit
         </Button>
       </span>
-      textDisplay = <span>{value}</span>
+      textDisplay = <span id={name}>{value}</span>
     }
 
     return <div className={classNames(className, { 'usa-input-error': errorMessage })}>
@@ -87,13 +87,16 @@ export default class EditableDocumentField extends React.Component {
   }
 };
 
-EditableDocumentField.defaultProps = {
-  required: true,
-};
-
 EditableDocumentField.propTypes = {
   name: PropTypes.string,
-  required: PropTypes.bool,
   onSave: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  className: PropTypes.string,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  value: PropTypes.string,
+  placeholder: PropTypes.string,
+  title: PropTypes.string,
+  maxLength: PropTypes.number
 };
