@@ -3,12 +3,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import ReduxBase from '../../util/ReduxBase';
+
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
 import specialIssueFilters from '../../constants/SpecialIssueFilters';
 import { FULL_GRANT, INCREMENT_MODIFIER_ON_DUPLICATE_EP_ERROR } from '../../establishClaim/constants';
 
-import { createEstablishClaimStore } from '../../establishClaim/reducers/store';
+import bootstrapRedux from '../../establishClaim/reducers/bootstrap';
 import {
   validModifiers,
   getSpecialIssuesEmail,
@@ -26,7 +28,6 @@ import AssociatePage from './EstablishClaimAssociateEP';
 import CancelModal from '../../establishClaim/components/CancelModal';
 
 import { createHashHistory } from 'history';
-import { Provider } from 'react-redux';
 
 export const DECISION_PAGE = 'decision';
 export const ASSOCIATE_PAGE = 'associate';
@@ -109,7 +110,6 @@ const BACK_TO_DECISION_REVIEW_TEXT = '< Back to Review Decision';
 export default class EstablishClaim extends React.Component {
   constructor(props) {
     super(props);
-    this.store = createEstablishClaimStore(props);
     this.history = createHashHistory();
 
     this.state = {
@@ -118,7 +118,6 @@ export default class EstablishClaim extends React.Component {
       endProductCreated: false,
       page: DECISION_PAGE,
       showNotePageAlert: false,
-      specialIssues: {},
       specialIssuesEmail: '',
       specialIssuesRegionalOffice: ''
     };
@@ -464,10 +463,10 @@ export default class EstablishClaim extends React.Component {
     } = this.props;
     let decisionType = this.props.task.appeal.decision_type;
 
-    let specialIssues = this.store.getState().specialIssues;
+    const { initialState, reducer } = bootstrapRedux();
 
     return (
-      <Provider store={this.store}>
+      <ReduxBase store={this.store} initialState={initialState} reducer={reducer}>
         <div>
           <EstablishClaimProgressBar
             isReviewDecision={this.isDecisionPage()}
@@ -523,7 +522,6 @@ export default class EstablishClaim extends React.Component {
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             showNotePageAlert={this.state.showNotePageAlert}
-            specialIssues={specialIssues}
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
           />
@@ -548,7 +546,6 @@ export default class EstablishClaim extends React.Component {
             }
             handleBackToDecisionReview={this.handleBackToDecisionReview}
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
-            specialIssues={specialIssues}
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
           />
@@ -559,7 +556,7 @@ export default class EstablishClaim extends React.Component {
             taskId={this.props.task.id}
           />
         </div>
-      </Provider>
+      </ReduxBase>
     );
   }
 }
