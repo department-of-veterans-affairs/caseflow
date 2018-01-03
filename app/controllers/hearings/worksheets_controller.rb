@@ -1,5 +1,6 @@
 class Hearings::WorksheetsController < HearingsController
   def show
+    appellant_name = hearing_worksheet["appellant_last_first_mi"]
     @new_window_title = "#{appellant_name}'s Hearing Worksheet"
 
     HearingView.find_or_create_by(hearing_id: params[:hearing_id], user_id: current_user.id).touch

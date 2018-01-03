@@ -78,7 +78,7 @@ const Hearings = ({ hearings }) => {
                   )}
                 />
 
-                <PageRoute exact path="/hearings/:hearingId/worksheet"
+                <Route exact path="/hearings/:hearingId/worksheet"
                   breadcrumb="Daily Docket > Hearing Worksheet"
                   component={(props) => (
                     <HearingWorksheetContainer
