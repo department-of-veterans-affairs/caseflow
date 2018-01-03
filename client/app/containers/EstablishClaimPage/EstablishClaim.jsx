@@ -568,5 +568,3 @@ EstablishClaim.propTypes = {
   regionalOfficeCities: PropTypes.object.isRequired,
   task: PropTypes.object.isRequired
 };
-
-/* eslint-enable max-lines */
