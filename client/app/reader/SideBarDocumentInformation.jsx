@@ -62,7 +62,7 @@ class SideBarDocumentInformation extends PureComponent {
       </p>
       <EditableDocumentField
         className={'cf-pdf-meta-title'}
-        value={this.props.doc.pendingDescription || this.props.doc.description}
+        value={this.props.doc.pendingDescription !== undefined ? this.props.doc.pendingDescription : this.props.doc.description}
         onSave={this.saveDocDescription}
         onChange={this.changePendingDocDescription}
         onCancel={this.resetPendingDocumentDescription}
