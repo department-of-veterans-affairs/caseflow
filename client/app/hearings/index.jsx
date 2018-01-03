@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import perflogger from 'redux-perf-middleware';
 import thunk from 'redux-thunk';
-
+import PageRoute from '../components/PageRoute';
 import { getReduxAnalyticsMiddleware } from '../util/getReduxAnalyticsMiddleware';
 import DocketsContainer from './containers/DocketsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
@@ -64,11 +64,13 @@ const Hearings = ({ hearings }) => {
               dropdownUrls={hearings.dropdownUrls}>
               <AppFrame>
                 <ScrollToTop />
-                <Route exact path="/hearings/dockets"
+                <PageRoute exact path="/hearings/dockets"
+                  title="Your Hearing Days"
                   component={() => <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />} />
 
-                <Route exact path="/hearings/dockets/:date"
+                <PageRoute exact path="/hearings/dockets/:date"
                   breadcrumb="Daily Docket"
+                  title="Daily Docket"
                   component={(props) => (
                     <DailyDocketContainer
                       veteran_law_judge={hearings.veteran_law_judge}
@@ -76,7 +78,8 @@ const Hearings = ({ hearings }) => {
                   )}
                 />
 
-                <Route exact path="/hearings/:hearingId/worksheet"
+                <PageRoute exact path="/hearings/:hearingId/worksheet"
+                  title="Hearing Worksheet"
                   breadcrumb="Daily Docket > Hearing Worksheet"
                   component={(props) => (
                     <HearingWorksheetContainer
