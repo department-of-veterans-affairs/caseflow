@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
 export default class TextField extends React.Component {
 
   onChange = (event) => this.props.onChange(event.target.value);
-  onBlur = (event) => this.props.onBlur(event.target.value);
 
   render() {
 
@@ -62,7 +60,6 @@ export default class TextField extends React.Component {
           name={name}
           id={name}
           onChange={this.onChange}
-          onBlur={this.onBlur}
           onKeyPress={onKeyPress}
           type={type}
           value={value}
@@ -85,8 +82,7 @@ export default class TextField extends React.Component {
 TextField.defaultProps = {
   required: false,
   type: 'text',
-  className: ['cf-form-textinput'],
-  onBlur: _.noop
+  className: ['cf-form-textinput']
 };
 
 TextField.propTypes = {
@@ -98,7 +94,6 @@ TextField.propTypes = {
     PropTypes.bool
   ]),
   name: PropTypes.string.isRequired,
-  onBlur: PropTypes.func,
   onChange(props) {
     if (!props.readOnly) {
       if (typeof props.onChange !== 'function') {
