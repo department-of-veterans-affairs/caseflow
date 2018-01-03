@@ -75,7 +75,7 @@ export const setIssueSelected = (issueId, isSelected) => ({
   },
   meta: {
     analytics: {
-      label: isConfirmed ? 'selected' : 'de-selected'
+      label: isSelected ? 'selected' : 'de-selected'
     }
   }
 });
