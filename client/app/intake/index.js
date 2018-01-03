@@ -6,17 +6,13 @@ import { rampElectionReducer, mapDataToInitialRampElection } from './reducers/ra
 import { rampRefilingReducer, mapDataToInitialRampRefiling } from './reducers/rampRefiling';
 import ReduxBase from '../util/ReduxBase';
 
+const reducer = combineReducers({
+  intake: intakeReducer,
+  rampElection: rampElectionReducer,
+  rampRefiling: rampRefilingReducer
+});
+
 class Intake extends React.PureComponent {
-  componentWillMount() {
-    const reducer = combineReducers({
-      intake: intakeReducer,
-      rampElection: rampElectionReducer,
-      rampRefiling: rampRefilingReducer
-    });
-
-    this.setState({ reducer });
-  }
-
   render() {
     const initialState = {
       intake: mapDataToInitialIntake(this.props),
@@ -24,7 +20,7 @@ class Intake extends React.PureComponent {
       rampRefiling: mapDataToInitialRampRefiling(this.props)
     };
 
-    return <ReduxBase initialState={initialState} reducer={this.state.reducer} analyticsMiddlewareArgs={['intake']}>
+    return <ReduxBase initialState={initialState} reducer={reducer} analyticsMiddlewareArgs={['intake']}>
       <IntakeFrame {...this.props} />
     </ReduxBase>;
   }

@@ -37,6 +37,7 @@ export default class ReduxBase extends React.PureComponent {
 
 ReduxBase.defaultProps = {
   analyticsMiddlewareArgs: [],
+  // eslint-disable-next-line no-empty-function
   getStoreRef: () => {},
   enhancers: []
 };
