@@ -67,39 +67,29 @@ describe ExternalApi::EfolderService do
     let(:user) { Generators::User.build }
     let(:appeal) { Generators::Appeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
-
-    let(:expected_response) do
-      HTTPI::Response.new(200, [], expected_response_map.to_json)
-    end
-
     let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
     let(:manifest_vva_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
-
-    let(:expected_response_map) do
-      { data:
-        { attributes: attrs_in } }
-    end
+    let(:expected_response) { construct_response(records, sources) }
 
     subject { ExternalApi::EfolderService.efolder_v2_api(vbms_id, user) }
 
     context "metrics" do
-      let(:attrs_in) do
-        {
-          records: [],
-          sources: [
-            {
-              source: "VVA",
-              status: "failed",
-              fetched_at: nil
-            },
-            {
-              source: "VBMS",
-              status: "failed",
-              fetched_at: nil
-            }
-          ]
-        }
+      let(:sources) do
+        [
+          {
+            source: "VVA",
+            status: "failed",
+            fetched_at: nil
+          },
+          {
+            source: "VBMS",
+            status: "failed",
+            fetched_at: nil
+          }
+        ]
       end
+
+      let(:records) { [] }
 
       it "are recorded using MetricsService" do
         # We trigger a load of vacols data, before writing our expect statement for MetricsService to receive :record
@@ -122,41 +112,42 @@ describe ExternalApi::EfolderService do
 
     context "returns HTTP response" do
       before do
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-        expect(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key).once
-        expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response).once
+        allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url)
+        allow(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key)
+        allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response)
       end
 
       context "when both sources come back as successful" do
-        let(:attrs_in) do
-          {
-            records: [
-              {
-                id: "1",
-                type_id: "97",
-                external_document_id: expected_document1.vbms_document_id,
-                received_at: expected_received_at1
-              },
-              {
-                id: "2",
-                type_id: "73",
-                external_document_id: expected_document2.vbms_document_id,
-                received_at: expected_received_at2
-              }
-            ],
-            sources: [
-              {
-                source: "VVA",
-                status: "success",
-                fetched_at: manifest_vva_fetched_at
-              },
-              {
-                source: "VBMS",
-                status: "success",
-                fetched_at: manifest_vbms_fetched_at
-              }
-            ]
-          }
+        let(:records) do
+          [
+            {
+              id: "1",
+              type_id: "97",
+              external_document_id: expected_document1.vbms_document_id,
+              received_at: expected_received_at1
+            },
+            {
+              id: "2",
+              type_id: "73",
+              external_document_id: expected_document2.vbms_document_id,
+              received_at: expected_received_at2
+            }
+          ]
+        end
+
+        let(:sources) do
+          [
+            {
+              source: "VVA",
+              status: "success",
+              fetched_at: manifest_vva_fetched_at
+            },
+            {
+              source: "VBMS",
+              status: "success",
+              fetched_at: manifest_vbms_fetched_at
+            }
+          ]
         end
 
         let(:expected_result) do
@@ -184,6 +175,73 @@ describe ExternalApi::EfolderService do
         end
       end
 
+      context "when both sources come back as pending and then success" do
+        let(:records1) { [] }
+        let(:sources1) do
+          [
+            {
+              source: "VVA",
+              status: "pending",
+              fetched_at: nil
+            },
+            {
+              source: "VBMS",
+              status: "pending",
+              fetched_at: manifest_vbms_fetched_at
+            }
+          ]
+        end
+
+        let(:records2) do
+          [
+            {
+              id: "1",
+              type_id: "97",
+              external_document_id: expected_document1.vbms_document_id,
+              received_at: expected_received_at1
+            }
+          ]
+        end
+        let(:sources2) do
+          [
+            {
+              source: "VVA",
+              status: "success",
+              fetched_at: manifest_vva_fetched_at
+            },
+            {
+              source: "VBMS",
+              status: "success",
+              fetched_at: manifest_vbms_fetched_at
+            }
+          ]
+        end
+
+        let(:expected_response) { construct_response(records1, sources1) }
+        let(:expected_response2) { construct_response(records2, sources2) }
+
+        let(:expected_result) do
+          {
+            documents: [expected_document1.to_hash],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
+        end
+
+        let(:expected_received_at1) { Faker::Date.backward }
+
+        let(:expected_document1) do
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
+        end
+
+        it "should make another request if pending status" do
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response, expected_response2)
+          expected_document1.received_at = expected_received_at1.to_s
+          subject[:documents] = subject[:documents].map(&:to_hash)
+          expect(subject).to eq(expected_result)
+        end
+      end
+
       context "when HTTP error" do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
@@ -196,12 +254,8 @@ describe ExternalApi::EfolderService do
       end
 
       context "when sources are not available" do
-        let(:attrs_in) do
-          {
-            records: [],
-            sources: []
-          }
-        end
+        let(:records) { [] }
+        let(:sources) { [] }
 
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { subject }.to raise_error(Caseflow::Error::DocumentRetrievalError)
@@ -209,6 +263,22 @@ describe ExternalApi::EfolderService do
       end
 
       context "when all sources come back as failed" do
+        let(:sources) do
+          [
+            {
+              source: "VVA",
+              status: "failed",
+              fetched_at: nil
+            },
+            {
+              source: "VBMS",
+              status: "failed",
+              fetched_at: nil
+            }
+          ]
+        end
+        let(:records) { [] }
+
         let(:expected_result) do
           {
             documents: [],
@@ -216,50 +286,32 @@ describe ExternalApi::EfolderService do
             manifest_vva_fetched_at: nil
           }
         end
-        let(:attrs_in) do
-          {
-            records: [],
-            sources: [
-              {
-                source: "VVA",
-                status: "failed",
-                fetched_at: nil
-              },
-              {
-                source: "VBMS",
-                status: "failed",
-                fetched_at: nil
-              }
-            ]
-          }
-        end
 
         it { is_expected.to eq expected_result }
       end
 
       context "when one source comes back as failed" do
+        let(:sources) do
+          [
+            {
+              source: "VVA",
+              status: "success",
+              fetched_at: manifest_vva_fetched_at
+            },
+            {
+              source: "VBMS",
+              status: "failed",
+              fetched_at: nil
+            }
+          ]
+        end
+        let(:records) { [] }
+
         let(:expected_result) do
           {
             documents: [],
             manifest_vbms_fetched_at: nil,
             manifest_vva_fetched_at: manifest_vva_fetched_at
-          }
-        end
-        let(:attrs_in) do
-          {
-            records: [],
-            sources: [
-              {
-                source: "VVA",
-                status: "success",
-                fetched_at: manifest_vva_fetched_at
-              },
-              {
-                source: "VBMS",
-                status: "failed",
-                fetched_at: nil
-              }
-            ]
           }
         end
 
@@ -425,5 +477,10 @@ describe ExternalApi::EfolderService do
         end
       end
     end
+  end
+
+  def construct_response(records, sources)
+    response = { data: { attributes: { records: records, sources: sources } } }
+    HTTPI::Response.new(200, [], response.to_json)
   end
 end
