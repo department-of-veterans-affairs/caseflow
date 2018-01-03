@@ -27,13 +27,20 @@ describe RampRefilingIntake do
     )
   end
 
+  let(:claim_id) { completed_ramp_election.end_product_reference_id }
+
+  let(:ramp_election_contentions) do
+    [Generators::Contention.build(claim_id: claim_id, text: "Left knee")]
+  end
+
   context "#start!" do
     subject { intake.start! }
 
     context "valid to start" do
       let!(:ramp_election) { completed_ramp_election }
+      let!(:contentions) { ramp_election_contentions }
 
-      it "saves intake and sets detail to ramp election" do
+      it "saves intake and sets detail to ramp election and loads issues" do
         expect(subject).to be_truthy
 
         expect(intake.started_at).to eq(Time.zone.now)
@@ -41,6 +48,9 @@ describe RampRefilingIntake do
           veteran_file_number: "64205555",
           ramp_election_id: completed_ramp_election.id
         )
+
+        expect(completed_ramp_election.issues.count).to eq(1)
+        expect(completed_ramp_election.issues.first.description).to eq("Left knee")
       end
     end
   end
@@ -82,6 +92,8 @@ describe RampRefilingIntake do
         )
       end
 
+      let(:claim_id) { ramp_election.end_product_reference_id }
+
       context "the EP associated with original RampElection is still pending" do
         let(:end_product_status) { "PEND" }
 
@@ -92,7 +104,19 @@ describe RampRefilingIntake do
       end
 
       context "the EP associated with original RampElection is closed" do
-        it { is_expected.to eq(true) }
+        context "there are no contentions on the EP" do
+          it "adds ramp_election_no_issues and returns false" do
+            expect(subject).to eq(false)
+            expect(intake.error_code).to eq("ramp_election_no_issues")
+          end
+        end
+
+        context "there are contentions on the EP" do
+          let!(:contentions) { ramp_election_contentions }
+          before { ramp_election.recreate_issues_from_contentions! }
+
+          it { is_expected.to eq(true) }
+        end
       end
     end
   end

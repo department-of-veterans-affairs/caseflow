@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
-import { getRampElectionStatus } from '../selectors';
+import { getIntakeStatus } from '../selectors';
 
 const rampIneligibleInstructions = <div>
   <p>
@@ -80,6 +80,10 @@ class Search extends React.PureComponent {
         body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
           ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
       },
+      ramp_election_no_issues: {
+        title: 'This Veteran has a pending RAMP EP with no contentions',
+        body: 'Please ensure contentions were added to the original RAMP Election EP'
+      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'
@@ -97,7 +101,7 @@ class Search extends React.PureComponent {
     const {
       searchErrorCode,
       searchErrorData,
-      rampElectionStatus,
+      intakeStatus,
       formType
     } = this.props;
 
@@ -105,7 +109,7 @@ class Search extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    switch (rampElectionStatus) {
+    switch (intakeStatus) {
     case RAMP_INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     case RAMP_INTAKE_STATES.REVIEWED:
@@ -139,8 +143,7 @@ class Search extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    rampElection: state.rampElection,
-    rampElectionStatus: getRampElectionStatus(state),
+    intakeStatus: getIntakeStatus(state),
     fileNumberSearchInput: state.intake.fileNumberSearch,
     fileNumberSearchRequestStatus: state.intake.requestStatus.fileNumberSearch,
     searchErrorCode: state.intake.searchErrorCode,

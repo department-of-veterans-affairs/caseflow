@@ -36,6 +36,8 @@ class Intake < ActiveRecord::Base
   end
 
   def start!
+    preload_intake_data!
+
     if validate_start
       update_attributes(
         started_at: Time.zone.now,
@@ -62,6 +64,11 @@ class Intake < ActiveRecord::Base
 
   def cancel!
     fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  # Optional step to load data into the Caseflow DB that will be used for the intake
+  def preload_intake_data!
+    nil
   end
 
   def complete_with_status!(status)
