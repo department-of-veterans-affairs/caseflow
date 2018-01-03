@@ -80,6 +80,10 @@ class Search extends React.PureComponent {
         body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
           ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
       },
+      ramp_election_no_issues: {
+        title: 'This Veteran has a pending RAMP EP with no contentions',
+        body: 'Please ensure contentions were added to the original RAMP Election EP'
+      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'
