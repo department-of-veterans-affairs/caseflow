@@ -1,11 +1,10 @@
 import React from 'react';
+import ReduxBase from '../util/ReduxBase';
+
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { Provider, connect } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import logger from 'redux-logger';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import ConfigUtil from '../util/ConfigUtil';
 import Success from './Success';
 import DocumentsCheck from './DocumentsCheck';
 import ConfirmHearing from './ConfirmHearing';
@@ -36,37 +35,6 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps
 )(EntryPointRedirect);
-
-const configureStore = (certification, form9PdfPath) => {
-
-  const middleware = [];
-
-  if (!ConfigUtil.test()) {
-    middleware.push(logger);
-  }
-
-  // This is to be used with the Redux Devtools Chrome extension
-  // https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd
-  // eslint-disable-next-line no-underscore-dangle
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-  const initialData = mapDataToInitialState(certification, form9PdfPath);
-
-  const store = createStore(
-    certificationReducers,
-    initialData,
-    composeEnhancers(applyMiddleware(...middleware))
-  );
-
-  if (module.hot) {
-    // Enable Webpack hot module replacement for reducers
-    module.hot.accept('./reducers/index', () => {
-      store.replaceReducer(certificationReducers);
-    });
-  }
-
-  return store;
-};
 
 export class Certification extends React.Component {
 
@@ -113,6 +81,12 @@ export class Certification extends React.Component {
       We apologize for any inconvenience. Please try again later.
     </div>;
 
+    let initialData;
+
+    if (this.state.certification) {
+      initialData = mapDataToInitialState(this.state.certification, this.state.form9PdfPath);
+    }
+
     return <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       slowLoadThresholdMs={AppConstants.LONGER_THAN_USUAL_TIMEOUT}
@@ -127,7 +101,7 @@ export class Certification extends React.Component {
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       { this.state.certification &&
-        <Provider store={configureStore(this.state.certification, this.state.form9PdfPath)}>
+        <ReduxBase reducer={certificationReducers} initialState={initialData}>
           <BrowserRouter>
             <div>
               <Route path="/certifications/new/:vacols_id"
@@ -168,7 +142,7 @@ export class Certification extends React.Component {
               />
             </div>
           </BrowserRouter>
-        </Provider> }
+        </ReduxBase> }
     </LoadingDataDisplay>;
   }
 }
