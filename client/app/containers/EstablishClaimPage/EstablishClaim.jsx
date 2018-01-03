@@ -467,7 +467,7 @@ export default class EstablishClaim extends React.Component {
     } = this.props;
     let decisionType = this.props.task.appeal.decision_type;
 
-    const { initialState, reducer } = bootstrapRedux();
+    const { initialState, reducer } = bootstrapRedux(this.props);
 
     return (
       <ReduxBase store={this.store} initialState={initialState} reducer={reducer} getStoreRef={this.onReceiveStore}>
