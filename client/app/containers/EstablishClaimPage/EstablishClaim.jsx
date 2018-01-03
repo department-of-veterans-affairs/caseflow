@@ -456,6 +456,10 @@ export default class EstablishClaim extends React.Component {
     return willCreateEndProduct;
   }
 
+  // TODO: This is a workaround. We should just be using connect() instead of accessing
+  // the store directly, like we do everywhere else.
+  onReceiveStore = (store) => this.store = store;
+
   render() {
     let {
       pdfLink,
@@ -466,7 +470,7 @@ export default class EstablishClaim extends React.Component {
     const { initialState, reducer } = bootstrapRedux();
 
     return (
-      <ReduxBase store={this.store} initialState={initialState} reducer={reducer}>
+      <ReduxBase store={this.store} initialState={initialState} reducer={reducer} getStoreRef={this.onReceiveStore}>
         <div>
           <EstablishClaimProgressBar
             isReviewDecision={this.isDecisionPage()}

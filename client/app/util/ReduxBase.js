@@ -23,6 +23,12 @@ export default class ReduxBase extends React.PureComponent {
     this.setState({ store });
   }
 
+  componentDidMount() {
+    // Dispatch relies on direct access to the store. It would be better to use connect(),
+    // but for now, we will expose this to grant that access.
+    this.props.getStoreRef(this.state.store);
+  }
+
   render = () =>
     <Provider store={this.state.store}>
       {this.props.children}
@@ -31,5 +37,6 @@ export default class ReduxBase extends React.PureComponent {
 
 ReduxBase.defaultProps = {
   analyticsMiddlewareArgs: [],
+  getStoreRef: () => {},
   enhancers: []
 };
