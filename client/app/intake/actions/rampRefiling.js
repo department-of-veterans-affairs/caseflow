@@ -66,3 +66,30 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
       }
     );
 };
+
+export const setIssueSelected = (issueId, isSelected) => ({
+  type: ACTIONS.SET_ISSUE_SELECTED,
+  payload: {
+    issueId,
+    isSelected
+  },
+  meta: { analytics }
+});
+
+export const setHasIneligibleIssue = (hasIneligibleIssue) => ({
+  type: ACTIONS.SET_HAS_INELIGIBLE_ISSUE,
+  payload: {
+    hasIneligibleIssue
+  },
+  meta: { analytics }
+});
+
+export const setOutsideCaseflowStepsConfirmed = (isConfirmed) => ({
+  type: ACTIONS.CONFIRM_OUTSIDE_CASEFLOW_STEPS,
+  payload: { isConfirmed },
+  meta: {
+    analytics: {
+      label: isConfirmed ? 'confirmed' : 'not-confirmed'
+    }
+  }
+});
