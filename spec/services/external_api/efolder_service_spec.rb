@@ -235,7 +235,8 @@ describe ExternalApi::EfolderService do
         end
 
         it "should make another request if pending status" do
-          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response, expected_response2)
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request))
+            .and_return(expected_response, expected_response2)
           expected_document1.received_at = expected_received_at1.to_s
           subject[:documents] = subject[:documents].map(&:to_hash)
           expect(subject).to eq(expected_result)
