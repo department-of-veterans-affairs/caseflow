@@ -101,7 +101,7 @@ export class Certification extends React.Component {
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       { this.state.certification &&
-        <ReduxBase reducer={certificationReducers} initialState={initialData} reducerRequirePaths="./reducers/index">
+        <ReduxBase reducer={certificationReducers} initialState={initialData}>
           <BrowserRouter>
             <div>
               <Route path="/certifications/new/:vacols_id"

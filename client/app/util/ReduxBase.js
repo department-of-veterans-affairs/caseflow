@@ -20,13 +20,6 @@ export default class ReduxBase extends React.PureComponent {
       )
     );
 
-    if (module.hot) {
-      // Enable Webpack hot module replacement for reducers
-      module.hot.accept(this.props.reducerRequirePaths, () => {
-        store.replaceReducer(this.props.reducer);
-      });
-    }
-
     this.setState({ store });
   }
 
@@ -38,6 +31,5 @@ export default class ReduxBase extends React.PureComponent {
 
 ReduxBase.defaultProps = {
   analyticsMiddlewareArgs: [],
-  reducerRequirePaths: [],
   enhancers: []
 };
