@@ -26,9 +26,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
     },
     issues: {
-      $set: serverIntake.issues.reduce((issuesHash, issue) => (
-        _.assign(issuesHash, { [issue.id]: _.assign(issue, { isSelected: false }) })
-      ), {})
+      $set: _.keyBy(serverIntake.issues, 'id')
     }
   });
 

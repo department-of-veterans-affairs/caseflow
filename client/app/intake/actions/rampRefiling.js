@@ -73,7 +73,11 @@ export const setIssueSelected = (issueId, isSelected) => ({
     issueId,
     isSelected
   },
-  meta: { analytics }
+  meta: {
+    analytics: {
+      label: isConfirmed ? 'selected' : 'de-selected'
+    }
+  }
 });
 
 export const setHasIneligibleIssue = (hasIneligibleIssue) => ({
