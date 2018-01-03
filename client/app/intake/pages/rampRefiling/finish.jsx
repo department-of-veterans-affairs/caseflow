@@ -118,7 +118,7 @@ class Finish extends React.PureComponent {
           </div>
         </li>
       </ol>
-      
+
       {/*
           TODO: These components probably shouldn't be made with Tables, but this was
           a quick solution based on what was possible with the styleguide. We're going
