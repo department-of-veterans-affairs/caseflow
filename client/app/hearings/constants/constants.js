@@ -19,8 +19,10 @@ export const SET_HEARING_VIEWED = 'SET_HEARING_VIEWED';
 export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
 
 // issues
+export const SET_PROGRAM = 'SET_PROGRAM';
+export const SET_NAME = 'SET_NAME';
+export const SET_LEVELS = 'SET_LEVELS';
 export const SET_ISSUE_NOTES = 'SET_ISSUE_NOTES';
-export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 export const SET_REOPEN = 'SET_REOPEN';
 export const SET_ALLOW = 'SET_ALLOW';
 export const SET_DENY = 'SET_DENY';

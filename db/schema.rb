@@ -404,10 +404,12 @@ ActiveRecord::Schema.define(version: 20180103213229) do
     t.boolean  "deny",               default: false
     t.boolean  "remand",             default: false
     t.boolean  "dismiss",            default: false
+    t.string   "program"
+    t.string   "name"
+    t.string   "levels"
     t.string   "notes"
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
-    t.string   "description"
   end
 
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
