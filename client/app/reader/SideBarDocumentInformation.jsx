@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IssueList from './IssueList';
-import TextField from '../components/TextField';
 import EditableDocumentField from '../components/EditableDocumentField';
-import { saveDocumentDescription, changePendingDocumentDescription, resetPendingDocumentDescription
+import { saveDocumentDescription, changePendingDocDescription, resetPendingDocDescription
 } from './Documents/DocumentsActions';
 
 import LoadingMessage from '../components/LoadingMessage';
@@ -53,6 +52,9 @@ class SideBarDocumentInformation extends PureComponent {
       </div>;
     }
 
+    const docDescriptionFieldText = _.isUndefined(this.props.doc.pendingDescription) ?
+      this.props.doc.description : this.props.doc.pendingDescription;
+
     return <div className="cf-sidebar-document-information">
       <p className="cf-pdf-meta-title cf-pdf-cutoff">
         <strong>Document Type: </strong>
@@ -61,16 +63,16 @@ class SideBarDocumentInformation extends PureComponent {
         </span>
       </p>
       <EditableDocumentField
-        className={'cf-pdf-meta-title'}
-        value={this.props.doc.pendingDescription !== undefined ? this.props.doc.pendingDescription : this.props.doc.description}
+        className="cf-pdf-meta-title"
+        value={docDescriptionFieldText}
         onSave={this.saveDocDescription}
-        onChange={this.changePendingDocDescription}
-        onCancel={this.resetPendingDocumentDescription}
+        onChange={this.changePendingDescription}
+        onCancel={this.resetPendingDescription}
         maxLength={50}
         label="Document Description:"
         strongLabel
         name="document_description"
-        errorMessage={this.props.error.visible ? this.props.error.message : undefined}
+        errorMessage={this.props.error.visible ? this.props.error.message : null}
       />
       <p className="cf-pdf-meta-title">
         <strong>Receipt Date:</strong> {formatDateStr(this.props.doc.receivedAt)}
@@ -80,8 +82,8 @@ class SideBarDocumentInformation extends PureComponent {
     </div>;
   }
 
-  changePendingDocDescription = (description) => this.props.changePendingDocumentDescription(this.props.doc.id, description);
-  resetPendingDocumentDescription = () => this.props.resetPendingDocumentDescription(this.props.doc.id);
+  changePendingDescription = (description) => this.props.changePendingDocDescription(this.props.doc.id, description);
+  resetPendingDescription = () => this.props.resetPendingDocDescription(this.props.doc.id);
   saveDocDescription = (description) => this.props.saveDocumentDescription(this.props.doc.id, description);
 }
 
@@ -96,8 +98,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    changePendingDocumentDescription,
-    resetPendingDocumentDescription,
+    changePendingDocDescription,
+    resetPendingDocDescription,
     saveDocumentDescription
   }, dispatch)
 });

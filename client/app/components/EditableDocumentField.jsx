@@ -43,7 +43,7 @@ export default class EditableDocumentField extends React.Component {
       value,
       placeholder,
       title,
-      maxLength,
+      maxLength
     } = this.props;
     const buttonClasses = ['cf-btn-link', 'editable-field-btn-link'];
     let actionLinks, textDisplay;
@@ -74,18 +74,18 @@ export default class EditableDocumentField extends React.Component {
         <Button onClick={this.startEditing} id={`${name}-edit`} classNames={buttonClasses}>
           Edit
         </Button>
-      </span>
-      textDisplay = <span id={name}>{value}</span>
+      </span>;
+      textDisplay = <span id={name}>{value}</span>;
     }
 
     return <div className={classNames(className, { 'usa-input-error': errorMessage })}>
       <strong>{label}</strong>
-      {actionLinks}<br/>
+      {actionLinks}<br />
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       {textDisplay}
     </div>;
   }
-};
+}
 
 EditableDocumentField.propTypes = {
   name: PropTypes.string,

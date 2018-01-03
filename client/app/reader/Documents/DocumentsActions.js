@@ -119,10 +119,10 @@ export const saveDocumentDescription = (docId, description) => (dispatch) => {
     (resp) => {
       dispatch(showErrorMessage('description', resp.message));
     }
-  )
+  );
 };
 
-export const changePendingDocumentDescription = (docId, description) => (dispatch) => {
+export const changePendingDocDescription = (docId, description) => (dispatch) => {
   dispatch(hideErrorMessage('description'));
   dispatch({
     type: Constants.CHANGE_PENDING_DOCUMENT_DESCRIPTION,
@@ -133,7 +133,7 @@ export const changePendingDocumentDescription = (docId, description) => (dispatc
   });
 };
 
-export const resetPendingDocumentDescription = (docId) => (dispatch) => {
+export const resetPendingDocDescription = (docId) => (dispatch) => {
   dispatch(hideErrorMessage('description'));
   dispatch({
     type: Constants.RESET_PENDING_DOCUMENT_DESCRIPTION,
