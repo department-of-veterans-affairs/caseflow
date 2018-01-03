@@ -12,15 +12,10 @@ class Reader extends React.PureComponent {
       reduxSearch({
       // Configure redux-search by telling it which resources to index for searching
         resourceIndexes: {
-        // In this example Books will be searchable by :title and :author
           extractedText: ['text']
         },
         // This selector is responsible for returning each collection of searchable resources
-        resourceSelector: (resourceName, state) => {
-        // In our example, all resources are stored in the state under a :resources Map
-        // For example "books" are stored under state.resources.books
-          return state.searchActionReducer[resourceName];
-        }
+        resourceSelector: (resourceName, state) => state.searchActionReducer[resourceName]
       })
     ];
 
