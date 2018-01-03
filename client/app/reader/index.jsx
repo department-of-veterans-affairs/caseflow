@@ -23,7 +23,7 @@ class Reader extends React.PureComponent {
 
   }
   render = () =>
-    <ReduxBase reducer={rootReducer} enhancers={this.state.enhancers}>
+    <ReduxBase reducer={rootReducer} enhancers={this.state.enhancers} reducerRequirePaths="./reducers">
       <DecisionReviewer {...this.props} />
     </ReduxBase>;
 }

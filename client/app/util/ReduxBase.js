@@ -20,12 +20,11 @@ export default class ReduxBase extends React.PureComponent {
       )
     );
 
-    // TODO this path does not seem right. What do we actually want here?
     if (module.hot) {
       // Enable Webpack hot module replacement for reducers
-      // module.hot.accept('./reducers', () => {
-      //   store.replaceReducer(this.props.reducer);
-      // });
+      module.hot.accept(this.props.reducerRequirePaths, () => {
+        store.replaceReducer(this.props.reducer);
+      });
     }
 
     this.setState({ store });
@@ -39,5 +38,6 @@ export default class ReduxBase extends React.PureComponent {
 
 ReduxBase.defaultProps = {
   analyticsMiddlewareArgs: [],
+  reducerRequirePaths: [],
   enhancers: []
 };
