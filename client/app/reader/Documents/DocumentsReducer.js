@@ -171,7 +171,20 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.CHANGE_DOCUMENT_DESCRIPTION:
+  case Constants.CHANGE_PENDING_DOCUMENT_DESCRIPTION:
+    return update(state, {
+      [action.payload.docId]: {
+        pendingDescription: {
+          $set: action.payload.description
+        }
+      }
+    });
+  case Constants.RESET_PENDING_DOCUMENT_DESCRIPTION:
+    return update(state, {
+      [action.payload.docId]: {
+        $unset: 'pendingDescription'
+      }
+    });
   case Constants.SAVE_DOCUMENT_DESCRIPTION_SUCCESS:
     return update(state, {
       [action.payload.docId]: {

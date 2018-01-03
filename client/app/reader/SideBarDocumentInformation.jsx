@@ -6,7 +6,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IssueList from './IssueList';
 import TextField from '../components/TextField';
-import { saveDocumentDescription, changeDocumentDescription } from './Documents/DocumentsActions';
+import EditableDocumentField from '../components/EditableDocumentField';
+import { saveDocumentDescription, changePendingDocumentDescription, resetPendingDocumentDescription
+} from './Documents/DocumentsActions';
 
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
@@ -58,19 +60,32 @@ class SideBarDocumentInformation extends PureComponent {
           {this.props.doc.type}
         </span>
       </p>
-      <span className="cf-pdf-meta-title">
-        <TextField
-          label="Document Description:"
-          strongLabel
-          name="document_description"
-          className={['cf-inline-field']}
-          value={this.props.doc.description}
-          onBlur={this.saveDocDescription}
-          onChange={this.changePendingDocDescription}
-          maxLength={50}
-          errorMessage={this.props.error.visible ? this.props.error.message : undefined}
-        />
-      </span>
+      {/*<span className="cf-pdf-meta-title">*/}
+        {/*<TextField*/}
+          {/*label="Document Description:"*/}
+          {/*strongLabel*/}
+          {/*name="document_description"*/}
+          {/*className={['cf-inline-field']}*/}
+          {/*value={this.props.doc.description}*/}
+          {/*onBlur={this.saveDocDescription}*/}
+          {/*onChange={this.changePendingDocDescription}*/}
+          {/*maxLength={50}*/}
+          {/*errorMessage={this.props.error.visible ? this.props.error.message : undefined}*/}
+        {/*/>*/}
+      {/*</span>*/}
+      {/*<br/>*/}
+      <EditableDocumentField
+        className={'cf-pdf-meta-title'}
+        value={this.props.doc.pendingDescription || this.props.doc.description}
+        onSave={this.saveDocDescription}
+        onChange={this.changePendingDocDescription}
+        onCancel={this.resetPendingDocumentDescription}
+        maxLength={50}
+        label="Document Description:"
+        strongLabel
+        name="document_description"
+        errorMessage={this.props.error.visible ? this.props.error.message : undefined}
+      />
       <p className="cf-pdf-meta-title">
         <strong>Receipt Date:</strong> {formatDateStr(this.props.doc.receivedAt)}
       </p>
@@ -79,7 +94,8 @@ class SideBarDocumentInformation extends PureComponent {
     </div>;
   }
 
-  changePendingDocDescription = (description) => this.props.changeDocumentDescription(this.props.doc.id, description);
+  changePendingDocDescription = (description) => this.props.changePendingDocumentDescription(this.props.doc.id, description);
+  resetPendingDocumentDescription = () => this.props.resetPendingDocumentDescription(this.props.doc.id);
   saveDocDescription = (description) => this.props.saveDocumentDescription(this.props.doc.id, description);
 }
 
@@ -94,7 +110,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    changeDocumentDescription,
+    changePendingDocumentDescription,
+    resetPendingDocumentDescription,
     saveDocumentDescription
   }, dispatch)
 });
