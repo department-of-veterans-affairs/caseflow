@@ -25,24 +25,14 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'counter'
       },
       {
-        header: 'Program',
+        header: 'Description',
         align: 'left',
-        valueName: 'program'
-      },
-      {
-        header: 'Issue',
-        align: 'left',
-        valueName: 'issue'
-      },
-      {
-        header: 'Levels 1-3',
-        align: 'left',
-        valueName: 'levels'
+        valueName: 'description'
       },
       {
         header: 'Notes',
         align: 'left',
-        valueName: 'description'
+        valueName: 'notes'
       },
       {
         header: 'Preliminary Impressions',
@@ -67,28 +57,17 @@ class HearingWorksheetIssues extends PureComponent {
 
       return {
         counter: <b>{key + countOfIssuesInPreviousAppeals + 1}.</b>,
-        program: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="program"
-          maxLength={30}
-        />,
-        issue: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="name"
-          maxLength={100}
-        />,
-        levels: <HearingWorksheetIssueFields
-          appeal={worksheetStreamsAppeal}
-          issue={issueRow}
-          field="levels"
-          maxLength={100}
-        />,
         description: <HearingWorksheetIssueFields
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="description"
+          readOnly={this.props.print}
+          maxLength={100}
+        />,
+        notes: <HearingWorksheetIssueFields
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="notes"
           readOnly={this.props.print}
           maxLength={100}
         />,
