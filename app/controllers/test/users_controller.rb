@@ -67,12 +67,22 @@ class Test::UsersController < ApplicationController
 
   def log_in_as_user
     User.clear_current_user # for testing only
+    save_admin_login_attempt
 
     user = User.find_by(css_id: params[:id], station_id: params[:station_id])
     return head :not_found if user.nil?
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office ? user.selected_regional_office : user.regional_office
     head :ok
+  end
+
+  def save_admin_login_attempt
+    Rails.logger.info("#{current_user.css_id} logging in as #{params[:id]} at #{params[:station_id]}")
+    GlobalAdminLogin.create!(
+      admin_css_id: current_user.css_id,
+      target_css_id: params[:id],
+      target_station_id: params[:station_id]
+    )
   end
 
   # Set end products in DEMO
