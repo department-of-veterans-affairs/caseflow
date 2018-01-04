@@ -30,6 +30,7 @@ const COMPONENTS = {
 
 // This removes HMR's stupid red error page, which "eats" the errors and
 // you lose valuable information about the line it occurred on from the source map.
+// TODO This may need to be removed now.
 delete AppContainer.prototype.unstable_handleError;
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
