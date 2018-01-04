@@ -13,6 +13,7 @@ import * as SignAndCertifyReducers from './SignAndCertify';
 
 // TODO: is this meant to be something like a schema?
 // it's too similar to the object in "mapDataToInitialState".
+// TODO I suspect this is not used at all.
 const initialState = {
   documentsMatch: null,
   form9Match: null,
@@ -190,6 +191,9 @@ export const mapDataToInitialState = (certification, form9PdfPath) => ({
   hearingPreference: certification.hearing_preference,
   form9Type: certification.form9_type,
   form9PdfPath,
+  updateSuccesses: {
+    confirmHearing: false
+  },
   certifyingOffice: certification.certifying_office,
   certifyingUsername: certification.certifying_username,
   certificationDate: certification.certification_date,
