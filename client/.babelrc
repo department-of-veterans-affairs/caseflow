@@ -1,24 +1,23 @@
 {
+  "presets": [
+    ["es2015", { "modules": false }],
+    "stage-0",
+    "react"
+  ],
   "env": {
-    // only enabled for development-hot
     "development-hot": {
       "plugins": [
         "react-hot-loader/babel"
-      ],
+      ]
+    },
+    // In test mode, we don't care about bundle size, so we don't need to set `"modules": false`.
+    // And the legacy tests require that we do not turn off the module compilation.
+    "test": {
       "presets": [
-        ["es2015", { "modules": false }],
+        "es2015",
         "stage-0",
         "react"
       ]
-    },
-    "test": {
-      "presets": ["es2015", "stage-0", "react"]
-    },
-    "development": {
-      "presets": ["es2015", "stage-0", "react"]
-    },
-    "production": {
-      "presets": ["es2015", "stage-0", "react"]
     }
   }
 }

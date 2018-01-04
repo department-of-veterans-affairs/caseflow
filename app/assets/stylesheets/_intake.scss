@@ -1,7 +1,24 @@
-.cf-steps-outside-of-caseflow-list {
-  padding-left: 0;
+@import 'uswds/lib/addons/font-stacks';
+@import 'uswds/core/variables';
+
+// variables here should eventually find their way into commons
+@import 'variables';
+
+.cf-intake-step .cf-required {
+  float: none;
+  padding-left: 0.5em;
+}
+
+.cf-intake-substeps {
+  padding-left: 1em;
 }
 
 .cf-workflow-button-wrapper {
   text-align: right;
+}
+
+.cf-table-selections {
+  border: 1px solid $color-gray-lighter;
+  max-width: 500px;
+  min-width: 500px;
 }
