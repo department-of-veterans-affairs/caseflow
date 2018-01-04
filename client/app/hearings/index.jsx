@@ -10,14 +10,16 @@ import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import AppFrame from '../components/AppFrame';
+import PageRoute from '../components/PageRoute';
 
 const Hearings = ({ hearings }) => {
 
   return <ReduxBase reducer={hearingsReducers} initialState={mapDataToInitialState(hearings)}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/hearings/:hearingId/worksheet/print"
+        <PageRoute exact path="/hearings/:hearingId/worksheet/print"
           breadcrumb="Daily Docket > Hearing Worksheet"
+          title="Hearing Worksheet"
           component={(props) => (
             <HearingWorksheetContainer
               print
@@ -34,11 +36,13 @@ const Hearings = ({ hearings }) => {
               dropdownUrls={hearings.dropdownUrls}>
               <AppFrame>
                 <ScrollToTop />
-                <Route exact path="/hearings/dockets"
+                <PageRoute exact path="/hearings/dockets"
+                  title="Your Hearing Days"
                   component={() => <DocketsContainer veteranLawJudge={hearings.veteran_law_judge} />} />
 
-                <Route exact path="/hearings/dockets/:date"
+                <PageRoute exact path="/hearings/dockets/:date"
                   breadcrumb="Daily Docket"
+                  title="Daily Docket"
                   component={(props) => (
                     <DailyDocketContainer
                       veteran_law_judge={hearings.veteran_law_judge}
@@ -46,8 +50,9 @@ const Hearings = ({ hearings }) => {
                   )}
                 />
 
-                <Route exact path="/hearings/:hearingId/worksheet"
+                <PageRoute exact path="/hearings/:hearingId/worksheet"
                   breadcrumb="Daily Docket > Hearing Worksheet"
+                  title="Hearing Worksheet"
                   component={(props) => (
                     <HearingWorksheetContainer
                       veteran_law_judge={hearings.veteran_law_judge}
