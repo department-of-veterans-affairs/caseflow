@@ -145,34 +145,6 @@ describe('DecisionReviewer', () => {
           expect(wrapper.find('PdfListView')).to.have.length(1);
         }));
       });
-
-      context('rotate', () => {
-        it('turns pages', asyncTest(async() => {
-        // Stub ApiUtil.get() calls so request to content_url return some fake response.
-          ApiUtilStub.apiGet.withArgs(documents[0].content_url).resolves({ body: 'hello world' });
-
-          // Click on first document link
-          wrapper.find('a').filterWhere(
-            (link) => link.text() === documents[0].type).
-            simulate('click', { button: 0 });
-          await pause();
-
-          expect(wrapper.find('#rotationDiv1').
-            props().style.transform).to.equal('rotate(0deg)');
-
-          findElementById(wrapper, 'button-rotation').simulate('click', { button: 0 });
-
-          expect(wrapper.find('#rotationDiv1').
-            props().style.transform).to.equal('rotate(90deg)');
-
-          const pageContainerStyle = wrapper.find('#pageContainer1').props().style;
-
-          await pause();
-
-          expect(pageContainerStyle.width).to.equal(`${PAGE_HEIGHT}px`);
-          expect(pageContainerStyle.height).to.equal(`${PAGE_WIDTH}px`);
-        }));
-      });
     });
 
     context('PDF list view', () => {
