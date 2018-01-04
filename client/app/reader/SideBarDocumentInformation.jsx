@@ -69,7 +69,7 @@ class SideBarDocumentInformation extends PureComponent {
         onChange={this.changePendingDescription}
         onCancel={this.resetPendingDescription}
         maxLength={50}
-        label="Document Description:"
+        label="Document Description"
         strongLabel
         name="document_description"
         errorMessage={this.props.error.visible ? this.props.error.message : null}
