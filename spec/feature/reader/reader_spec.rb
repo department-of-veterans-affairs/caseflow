@@ -543,12 +543,12 @@ RSpec.feature "Reader" do
       # button causes the viewer to scroll.
       # add_comment_without_clicking_save "unsaved comment text"
 
-      # scroll_to_bottom(class_name: "ReactVirtualized__List")
+      # scroll_to_bottom(class_name: "ReactVirtualized__Grid")
       # find(".cf-pdf-scroll-view").click
       # find("body").send_keys(:arrow_left)
       # expect(page).to_not have_css(".comment-textarea")
       # add_comment_without_clicking_save "unsaved comment text"
-      # scroll_to_bottom(class_name: "ReactVirtualized__List")
+      # scroll_to_bottom(class_name: "ReactVirtualized__Grid")
       # find(".cf-pdf-scroll-view").click
       # find("body").send_keys(:arrow_right)
       # expect(page).to_not have_css(".comment-textarea")
@@ -860,7 +860,7 @@ RSpec.feature "Reader" do
         find("g[filter=\"url(##{id})\"]")
       end
 
-      scenario "Scroll to comment icon", focus: true do
+      scenario "Scroll to comment icon" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
@@ -872,7 +872,7 @@ RSpec.feature "Reader" do
 
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
-        element_class = "ReactVirtualized__List"
+        element_class = "ReactVirtualized__Grid"
         original_scroll = scroll_position(class_name: element_class)
 
         # Click on the off screen comment (0 through 3 are on screen)
@@ -897,7 +897,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_css(".page")
         expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(class_name: "ReactVirtualized__List", value: 2000)
+        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000)
         expect(find_field("page-progress-indicator-input").value).to_not eq "1"
       end
 
@@ -954,7 +954,7 @@ RSpec.feature "Reader" do
       old_height_1 = get_size("pageContainer1")[:height]
       old_height_10 = get_size("pageContainer10")[:height]
 
-      scroll_to(class_name: "ReactVirtualized__List", value: scroll_amount)
+      scroll_to(class_name: "ReactVirtualized__Grid", value: scroll_amount)
 
       find("#button-zoomIn").click
 
@@ -1373,7 +1373,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Navigating Search Results scrolls page", focus: true do
+    scenario "Navigating Search Results scrolls page" do
       def scroll_top
         page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
       end

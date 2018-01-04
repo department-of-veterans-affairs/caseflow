@@ -52,11 +52,13 @@ class Fakes::Initializer
         "id" => "Fake User",
         "css_id" => "FAKEUSER",
         "roles" =>
-          ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment", "Global Admin"],
+          ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment"],
         "station_id" => "283",
         "email" => "america@example.com",
         "name" => "Cave Johnson"
       }
+
+      Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"

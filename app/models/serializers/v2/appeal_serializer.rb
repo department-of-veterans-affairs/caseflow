@@ -3,6 +3,10 @@ class V2::AppealSerializer < ActiveModel::Serializer
     object.vacols_id
   end
 
+  attribute :updated do
+    Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
+  end
+
   attribute :incomplete, key: :incomplete_history
   attribute :type_code, key: :type
   attribute :active?, key: :active

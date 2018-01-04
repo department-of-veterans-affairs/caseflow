@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES } from '../constants';
-import { getRampElectionStatus } from '../selectors';
+import { getIntakeStatus } from '../selectors';
 
 const rampIneligibleInstructions = <div>
   <p>
@@ -120,7 +120,7 @@ class Begin extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    rampElectionStatus: getRampElectionStatus(state),
+    rampElectionStatus: getIntakeStatus(state),
     fileNumberSearchInput: state.intake.fileNumberSearch,
     fileNumberSearchRequestStatus: state.intake.requestStatus.fileNumberSearch,
     searchErrorCode: state.intake.searchErrorCode,

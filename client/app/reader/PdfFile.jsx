@@ -384,7 +384,7 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginTop: `${PAGE_MARGIN}px`
             }}
-            overscanRowCount={OVERSCAN_ROWS / this.columnCount}
+            overscanRowCount={this.props.windowingOverscan / this.columnCount}
             onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
             height={height}
@@ -444,7 +444,8 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
     loadError: state.pdf.documentErrors[props.file],
-    pdfDocument: state.pdf.pdfDocuments[props.file]
+    pdfDocument: state.pdf.pdfDocuments[props.file],
+    windowingOverscan: state.pdfViewer.windowingOverscan
   };
 };
 

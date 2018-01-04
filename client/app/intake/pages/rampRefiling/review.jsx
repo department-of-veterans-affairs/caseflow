@@ -10,7 +10,7 @@ import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampRefiling';
-import { getRampElectionStatus } from '../../selectors';
+import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
   render() {
@@ -71,7 +71,7 @@ class Review extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    rampRefilingStatus: getRampElectionStatus(state),
+    rampRefilingStatus: getIntakeStatus(state),
     optionSelected: state.rampRefiling.optionSelected,
     optionSelectedError: state.rampRefiling.optionSelectedError,
     hasInvalidOption: state.rampRefiling.hasInvalidOption,
@@ -90,7 +90,8 @@ class ReviewNextButton extends React.PureComponent {
       () => {
         this.props.history.push('/finish');
       }
-    );
+    ).
+      catch((error) => error);
   }
 
   render = () =>
