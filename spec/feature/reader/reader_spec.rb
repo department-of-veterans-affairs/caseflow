@@ -1426,6 +1426,18 @@ RSpec.feature "Reader" do
       end
     end
 
+    scenario "Last read indicator" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      expect(page).to_not have_css("#read-indicator")
+
+      click_on documents.last.type
+      safe_click "#button-previous"
+      click_on "Back to claims folder"
+
+      expect(find("#documents-table-body tr:nth-child(#{documents.count - 1})")).to have_css("#read-indicator")
+    end
+
     scenario "Open a document and return to list", skip: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 

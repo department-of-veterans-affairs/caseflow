@@ -267,46 +267,6 @@ describe('DecisionReviewer', () => {
     context('PDF list view', () => {
       beforeEach(() => setUpDocuments());
 
-      context('last read indicator', () => {
-        it('appears on latest read document', asyncTest(async() => {
-        // Click on first document link
-          wrapper.find('a').filterWhere(
-            (link) => link.text() === documents[0].type).
-            simulate('click', { button: 0 });
-          await pause();
-
-          // Previous button moves us to the previous page
-          findElementById(wrapper, 'button-previous').simulate('click');
-          await pause();
-
-          wrapper.find('a').filterWhere(
-            (link) => link.text().includes('Back to claims')).
-            simulate('click', { button: 0 });
-          await pause();
-          // Make sure that the 2nd row has the last
-          // read indicator in the first column.
-          expect(wrapper.find('#table-row-2').childAt(1).
-            children()).to.have.length(1);
-        }));
-
-        it('appears on document opened in new tab', asyncTest(async() => {
-          const event = {
-            ctrlKey: true,
-            button: 0
-          };
-
-          wrapper.find('a').filterWhere(
-            (link) => link.text() === documents[0].type).
-            simulate('click', event);
-          await pause();
-
-          // Make sure that the 0th row has the last
-          // read indicator in the first column.
-          expect(wrapper.find('#table-row-1').childAt(0).
-            children()).to.have.length(1);
-        }));
-      });
-
       context('when expanded comments', () => {
         it('can view comments', () => {
           expect(wrapper.text()).to.not.include('Test Comment');
