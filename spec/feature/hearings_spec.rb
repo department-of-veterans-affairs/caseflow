@@ -100,7 +100,7 @@ RSpec.feature "Hearings" do
 
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
-      expect(page).to have_select("No Show")
+      expect(page).to have_content("No Show")
       expect(page).to have_content("30 days")
       expect(page).to have_content("Filed")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
