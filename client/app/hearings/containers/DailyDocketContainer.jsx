@@ -15,6 +15,7 @@ export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
     this.props.getDailyDocket();
+    document.title += ` ${this.props.date}`;
   }
 
   render() {
