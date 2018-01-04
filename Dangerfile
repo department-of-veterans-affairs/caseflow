@@ -15,7 +15,7 @@ if !git.modified_files.grep(/app\/models\/vacols/).empty?
   warn("This PR changes VACOLS models.  Please ensure this is tested against a UAT VACOLS instance")
 end
 
-# Warn for more testing wehn touching appeals repository
+# Warn for more testing when touching appeals repository
 if !git.modified_files.grep(/appeal_repository.rb/).empty?
   warn("This PR changes the Appeals Repository.  Please ensure this is tested against UAT VACOLS")
 end
