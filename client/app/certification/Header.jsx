@@ -24,7 +24,7 @@ export class Header extends React.Component {
             className="cf-apppeal-id"
             data-clipboard-text={vbmsId}>
             {vbmsId}
-            <ClipboardIcon className="cf-icon-appeal-id"/>
+            <ClipboardIcon className="cf-icon-appeal-id" />
           </button>
         </div>
       </div>}
