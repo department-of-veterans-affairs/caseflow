@@ -102,7 +102,7 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = ({ index, key, style }) => {
+  getPage = ({ index, key, style, isVisible }) => {
     return <div key={key} style={style}>
       <PdfPage
         scrollTop={this.props.scrollTop}
@@ -110,6 +110,7 @@ export class PdfFile extends React.PureComponent {
         documentId={this.props.documentId}
         file={this.props.file}
         pageIndex={index}
+        isPageDrawn={isVisible}
         isVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}

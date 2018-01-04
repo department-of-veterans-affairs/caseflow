@@ -30,6 +30,7 @@ export class PdfPage extends React.PureComponent {
 
     this.isDrawing = false;
     this.marks = [];
+    this.measureTime = null;
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -140,6 +141,10 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
+    if (this.props.isPageDrawn && this.props.isPageDrawn !== prevProps.isPageDrawn) {
+      this.measureTime = performance.now();
+    }
+
     if (prevProps.scale !== this.props.scale) {
       this.drawPage(this.page);
     }
@@ -194,7 +199,9 @@ export class PdfPage extends React.PureComponent {
           this.drawText(page, text);
         });
 
-        this.drawPage(page);
+        this.drawPage(page).then(() => {
+          console.log("time till render: ", this.measureTime ? performance.now() - this.measureTime : 0);
+        });
         this.getDimensions(page);
       }).
         catch(() => {
