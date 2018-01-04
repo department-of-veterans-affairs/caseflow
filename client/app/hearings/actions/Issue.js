@@ -3,26 +3,10 @@ import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 import { CATEGORIES, ACTIONS } from '../analytics';
 
-export const onProgramChange = (program, issueId) => ({
-  type: Constants.SET_PROGRAM,
+export const onIssueNotesChange = (notes, issueId) => ({
+  type: Constants.SET_ISSUE_NOTES,
   payload: {
-    program,
-    issueId
-  }
-});
-
-export const onNameChange = (name, issueId) => ({
-  type: Constants.SET_NAME,
-  payload: {
-    name,
-    issueId
-  }
-});
-
-export const onLevelsChange = (levels, issueId) => ({
-  type: Constants.SET_LEVELS,
-  payload: {
-    levels,
+    notes,
     issueId
   }
 });
