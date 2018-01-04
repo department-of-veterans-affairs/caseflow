@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH, OVERSCAN_ROWS } from './constants';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
 } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
@@ -118,7 +118,7 @@ export class PdfFile extends React.PureComponent {
         scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
-        pageIndex={rowIndex * columnCount + columnIndex}
+        pageIndex={(rowIndex * columnCount) + columnIndex}
         isVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
@@ -136,15 +136,15 @@ export class PdfFile extends React.PureComponent {
 
   getRowHeight = ({ index }) => {
     const pageIndexStart = index * this.columnCount;
-    const pageHeights = _.range(pageIndexStart, pageIndexStart + this.columnCount)
-      .map((pageIndex) => this.pageHeight(pageIndex));
+    const pageHeights = _.range(pageIndexStart, pageIndexStart + this.columnCount).
+      map((pageIndex) => this.pageHeight(pageIndex));
 
     return (Math.max(...pageHeights) + PAGE_MARGIN) * this.props.scale;
   }
 
   getColumnWidth = () => {
-    const maxPageWidth = _.range(0, this.props.pdfDocument.pdfInfo.numPages)
-      .reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
+    const maxPageWidth = _.range(0, this.props.pdfDocument.pdfInfo.numPages).
+      reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
 
     return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
   }
@@ -376,7 +376,8 @@ export class PdfFile extends React.PureComponent {
             this.clientWidth = width;
           }
 
-          this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1), this.props.pdfDocument.pdfInfo.numPages);
+          this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
+            this.props.pdfDocument.pdfInfo.numPages);
 
           return <Grid
             ref={this.getGrid}
@@ -384,8 +385,8 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginTop: `${PAGE_MARGIN}px`
             }}
-            estimatedRowSize={this.props.baseHeight}
-            overscanRowCount={this.props.windowingOverscan / this.columnCount}
+            estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
+            overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
             height={height}
