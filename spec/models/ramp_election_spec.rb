@@ -91,6 +91,50 @@ describe RampElection do
     end
   end
 
+  context "#recreate_issues_from_contentions!" do
+    before do
+      ramp_election.save!
+      ramp_election.issues.create!(contention_reference_id: "123", description: "old")
+    end
+
+    let(:end_product_reference_id) { "8765445" }
+
+    subject { ramp_election.recreate_issues_from_contentions! }
+
+    context "when election has a saved refiling associated to it" do
+      let!(:ramp_refiling) do
+        ramp_election.ramp_refilings.create!(
+          veteran_file_number: ramp_election.veteran_file_number
+        )
+      end
+
+      it "returns false and deletes/creates no issues" do
+        expect(subject).to be_falsey
+
+        expect(ramp_election.issues.length).to eq(1)
+        expect(ramp_election.issues.first.description).to eq("old")
+      end
+    end
+
+    context "when election has no refiling" do
+      let!(:contentions) do
+        [
+          Generators::Contention.build(claim_id: end_product_reference_id, text: "Migraines"),
+          Generators::Contention.build(claim_id: end_product_reference_id, text: "Tinnitus"),
+          Generators::Contention.build(claim_id: "123", text: "Not related")
+        ]
+      end
+
+      it "destroys previous issues and creates issues from contentions" do
+        expect(subject).to be_truthy
+
+        expect(ramp_election.issues.length).to eq(2)
+        expect(ramp_election.issues.first.description).to eq("Migraines")
+        expect(ramp_election.issues.last.description).to eq("Tinnitus")
+      end
+    end
+  end
+
   context "#successfully_received?" do
     subject { ramp_election.successfully_received? }
 

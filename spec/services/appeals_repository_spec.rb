@@ -132,8 +132,7 @@ describe AppealRepository do
         regional_office_key: "DSUSER",
         disposition: "Withdrawn",
         decision_date: AppealRepository.normalize_vacols_date(1.day.ago),
-        docket_number: "13 11-265",
-        cavc: false
+        docket_number: "13 11-265"
       )
     end
 

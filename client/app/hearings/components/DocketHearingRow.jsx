@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchableDropdown from '../components/SearchableDropdown';
-import ViewableItemLink from '../components/ViewableItemLink';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import ViewableItemLink from '../../components/ViewableItemLink';
 import Textarea from 'react-textarea-autosize';
-import Checkbox from '../components/Checkbox';
+import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed
-} from './actions/Dockets';
+} from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
-import { getDate } from './util/DateUtil';
+import { getDate } from '../util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -67,7 +67,8 @@ export class DocketHearingRow extends React.PureComponent {
         format('h:mm a z');
     };
 
-    const appellantDisplay = hearing.appellant_last_first_mi ? hearing.appellant_last_first_mi : hearing.veteran_name;
+    const appellantDisplay = hearing.appellant_mi_formatted ? hearing.appellant_mi_formatted :
+      hearing.veteran_mi_formatted;
 
     return <tbody>
       <tr>
@@ -94,7 +95,7 @@ export class DocketHearingRow extends React.PureComponent {
           </ViewableItemLink>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
-        <td className="cf-hearings-docket-actions" rowSpan="2">
+        <td className="cf-hearings-docket-actions" rowSpan="3">
           <SearchableDropdown
             label="Disposition"
             name={`${hearing.id}.disposition`}
@@ -127,6 +128,12 @@ export class DocketHearingRow extends React.PureComponent {
               onChange={this.setTranscriptRequested}
             />
           </div>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td colSpan="2">
+          {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
         </td>
       </tr>
       <tr>

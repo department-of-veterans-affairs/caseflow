@@ -14,6 +14,9 @@ class Fakes::Initializer
     def app_init!(rails_env)
       if rails_env.ssh_forwarding?
         User.authentication_service = Fakes::AuthenticationService
+        # This sets up the Fake::VBMSService with documents for the VBMS ID DEMO123. We normally
+        # set this up in Fakes::AppealRepository.seed! which we don't call for this environment.
+        Fakes::VBMSService.document_records = { "DEMO123" => Fakes::AppealRepository.static_reader_documents }
       end
 
       if rails_env.development? || rails_env.demo?
@@ -49,11 +52,13 @@ class Fakes::Initializer
         "id" => "Fake User",
         "css_id" => "FAKEUSER",
         "roles" =>
-          ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment", "Global Admin"],
+          ["Certify Appeal", "Establish Claim", "Download eFolder", "Manage Claim Establishment"],
         "station_id" => "283",
         "email" => "america@example.com",
         "name" => "Cave Johnson"
       }
+
+      Functions.grant!("Global Admin", users: ["System Admin"])
 
       Fakes::AppealRepository.seed!(app_name: app_name)
       Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings"
