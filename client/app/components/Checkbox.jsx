@@ -14,13 +14,17 @@ export default class Checkbox extends React.Component {
       value,
       disabled,
       id,
-      errorMessage
+      errorMessage,
+      unpadded
     } = this.props;
 
     let classNames = [
-      'cf-form-checkboxes',
       `checkbox-wrapper-${name}`
     ];
+
+    if (!unpadded) {
+      classNames.push('cf-form-checkboxes');
+    }
 
     if (errorMessage) {
       classNames.push('usa-input-error');
