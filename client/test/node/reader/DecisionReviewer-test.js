@@ -17,14 +17,14 @@ import ApiUtilStub from '../../helpers/ApiUtilStub';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
 
-import PdfJsStub, { PAGE_WIDTH, PAGE_HEIGHT } from '../../helpers/PdfJsStub';
+import PdfJsStub from '../../helpers/PdfJsStub';
 import { onReceiveDocs } from '../../../app/reader/Documents/DocumentsActions';
 import { onReceiveAnnotations } from '../../../app/reader/AnnotationLayer/AnnotationActions';
 import sinon from 'sinon';
 import { AutoSizer } from 'react-virtualized';
 import rootReducer from '../../../app/reader/reducers';
 
-import {findElementById} from '../../helpers'
+import { findElementById } from '../../helpers';
 
 const vacolsId = 'reader_id1';
 
@@ -346,7 +346,7 @@ describe('DecisionReviewer', () => {
           expect(textArray).to.have.length(3);
         });
 
-        it('tag displays properly', () => { 
+        it('tag displays properly', () => {
           // This test doesn't work because the app is still on the loading screen.
           // The setup process isn't working. Maybe the render isn't complete?
           // Or maybe the dispatch isn't working any more?

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import EstablishClaim, { ASSOCIATE_PAGE } from
   '../../../app/containers/EstablishClaimPage/EstablishClaim';
-import {findElementById} from '../../helpers'
+import { findElementById } from '../../helpers';
 
 let func = function() {
   // empty function
