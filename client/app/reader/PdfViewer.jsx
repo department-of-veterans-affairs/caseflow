@@ -209,6 +209,7 @@ export class PdfViewer extends React.Component {
           <PdfSidebar
             doc={doc}
             onJumpToComment={this.props.onJumpToComment}
+            featureToggles={this.props.featureToggles}
           />
         </div>
         {this.props.deleteAnnotationModalIsOpenFor && <Modal

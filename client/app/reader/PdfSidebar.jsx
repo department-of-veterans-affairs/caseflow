@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import Comment from './Comment';
 import EditComment from './EditComment';
+import WindowSlider from './WindowSlider';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
@@ -161,6 +162,7 @@ export class PdfSidebar extends React.Component {
       <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
         this.commentListElement = commentListElement;
       }}>
+        { this.props.featureToggles.windowSlider && <WindowSlider /> }
         <Accordion style="outline"
           onChange={this.onAccordionOpenOrClose}
           activeKey={this.props.openedAccordionSections}>
