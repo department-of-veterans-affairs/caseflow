@@ -187,16 +187,20 @@ class Document < ActiveRecord::Base
   end
 
   def content_url
-    if EFolderService == ExternalApi::EfolderService &&
-       RequestStore.store[:application] == "reader" &&
-       FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
-      URI(ExternalApi::EfolderService.efolder_base_url + "/api/v1/documents/#{efolder_id}").to_s
+    if reader_with_efolder_api?
+      ExternalApi::EfolderService.efolder_content_url(efolder_id)
     else
       "/document/#{id}/pdf"
     end
   end
 
   private
+
+  def reader_with_efolder_api?
+    EFolderService == ExternalApi::EfolderService &&
+      RequestStore.store[:application] == "reader" &&
+      FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+  end
 
   def match_vbms_document_using(vbms_documents, &date_match_test)
     match = vbms_documents.detect do |doc|
