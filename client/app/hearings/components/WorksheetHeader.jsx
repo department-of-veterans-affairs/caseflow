@@ -6,6 +6,7 @@ import * as AppConstants from '../../constants/AppConstants';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Textarea from 'react-textarea-autosize';
+import { ClipboardIcon } from '../../components/RenderFunctions';
 
 import { saveIssues } from '../actions/Issue';
 
@@ -106,7 +107,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>Veteran ID:</div>
-          <div><b>{worksheet.sanitized_vbms_id}</b></div>
+          <div><b>{worksheet.sanitized_vbms_id}</b>   <ClipboardIcon /></div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
