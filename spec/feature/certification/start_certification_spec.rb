@@ -105,7 +105,7 @@ RSpec.feature "Start Certification" do
   context "As an authorized user" do
     let!(:current_user) { User.authenticate!(roles: ["Certify Appeal"]) }
 
-    scenario "Starting a certification with matching documents", focus: true do
+    scenario "Starting a certification with matching documents" do
       visit "certifications/new/#{appeal_ready.vacols_id}"
       expect(page).to have_current_path("/certifications/#{appeal_ready.vacols_id}/check_documents")
       expect(page).to have_title("Check Documents | Caseflow Certification")
