@@ -860,7 +860,7 @@ RSpec.feature "Reader" do
         find("g[filter=\"url(##{id})\"]")
       end
 
-      scenario "Scroll to comment icon" do
+      scenario "Scroll to comment icon", focus: true do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         click_on documents[0].type
@@ -1386,7 +1386,7 @@ RSpec.feature "Reader" do
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
 
       first_match_scroll_top = scroll_top
-      binding.pry
+
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click
