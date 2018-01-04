@@ -1,14 +1,14 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { createManageEstablishClaimStore } from './reducers/store';
+import ReduxBase from '../util/ReduxBase';
 import ManageEstablishClaim from './ManageEstablishClaim';
+import manageEstablishClaimReducer, { getManageEstablishClaimInitialState } from './reducers';
 
 const ManageEstablishClaimWrapper = (props) => {
-  const store = createManageEstablishClaimStore(props);
+  const initialState = getManageEstablishClaimInitialState(props);
 
-  return <Provider store={store}>
+  return <ReduxBase reducer={manageEstablishClaimReducer} initialState={initialState}>
     <ManageEstablishClaim {...props} />
-  </Provider>;
+  </ReduxBase>;
 };
 
 export default ManageEstablishClaimWrapper;

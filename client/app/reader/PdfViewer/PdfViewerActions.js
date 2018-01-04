@@ -136,3 +136,12 @@ export const handleFinishScrollToSidebarComment = () => ({
     scrollToSidebarComment: null
   }
 });
+
+/** Windowing parameters **/
+
+export const handleSetOverscanValue = (overscanValue) => ({
+  type: Constants.SET_WINDOWING_OVERSCAN,
+  payload: {
+    overscanValue
+  }
+});

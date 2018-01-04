@@ -9,7 +9,7 @@ import Button from '../../../components/Button';
 import _ from 'lodash';
 import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampElection';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
-import { getRampElectionStatus } from '../../selectors';
+import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
   render() {
@@ -102,7 +102,7 @@ export class ReviewButtons extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    rampElectionStatus: getRampElectionStatus(state),
+    rampElectionStatus: getIntakeStatus(state),
     optionSelected: state.rampElection.optionSelected,
     optionSelectedError: state.rampElection.optionSelectedError,
     receiptDate: state.rampElection.receiptDate,

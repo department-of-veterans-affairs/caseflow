@@ -166,6 +166,7 @@ class Appeal < ActiveRecord::Base
   end
 
   delegate :age, to: :veteran, prefix: true
+  delegate :sex, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -417,6 +418,8 @@ class Appeal < ActiveRecord::Base
     issues.each { |i| WorksheetIssue.create_from_issue(self, i) } if super.empty?
     super
   end
+
+  delegate :count, to: :worksheet_issues, prefix: true
 
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the

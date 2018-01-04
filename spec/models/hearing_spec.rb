@@ -112,6 +112,7 @@ describe Hearing do
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
+        expect(subject["veteran_sex"]).to eq(appeal.veteran_sex)
         expect(subject["veteran_name"]).to eq(hearing.veteran_name)
         expect(subject["appellant_last_first_mi"]).to eq(hearing.appellant_last_first_mi)
         expect(subject["cached_number_of_documents"]).to eq 2
@@ -148,6 +149,16 @@ describe Hearing do
         hearing.update(appeal: appeal)
         expect(subject).to eq "Test"
       end
+    end
+  end
+
+  context ".issue_count" do
+    subject { hearing.issue_count }
+    let(:appeal1) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let!(:appeal2) { Generators::Appeal.create(vacols_record: { template: :pending_hearing }, vbms_id: "123C") }
+    let(:hearing) { Generators::Hearing.create(appeal_id: appeal1.id) }
+    it "should return the hearing count from all active appeals" do
+      expect(subject).to eq 2
     end
   end
 
