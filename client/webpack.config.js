@@ -18,6 +18,7 @@ const config = {
   },
 
   plugins: [
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
   ],
   resolve: {
