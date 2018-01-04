@@ -9,10 +9,7 @@ warn("PR is classed as Work in Progress") if github.pr_title.include? "[WIP]"
 warn("This is a Big PR. Try to break this down if possible.") if git.lines_of_code > 500
 
 # Don't let testing shortcuts get into master by accident
-fail("fdescribe left in tests") if `grep -r fdescribe specs/ `.length > 1
-fail("fit left in tests") if `grep -r fit specs/ `.length > 1
-fail("focus: true left in test") if `grep -r 'focus: true' spec/ `.length > 1
-
+fail("focus: true is left in test") if `git diff #{github.base_commit} spec/ | grep ':focus => true'`.length > 1
 
 if !git.modified_files.grep(/app\/models\/vacols/).empty?
   warn("This PR changes VACOLS models.  Please ensure this is tested against a UAT VACOLS instance")
