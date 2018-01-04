@@ -17,8 +17,9 @@ const Hearings = ({ hearings }) => {
   return <ReduxBase reducer={hearingsReducers} initialState={mapDataToInitialState(hearings)}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/hearings/:hearingId/worksheet/print"
+        <PageRoute exact path="/hearings/:hearingId/worksheet/print"
           breadcrumb="Daily Docket > Hearing Worksheet"
+          title="Hearing Worksheet"
           component={(props) => (
             <HearingWorksheetContainer
               print
@@ -49,8 +50,9 @@ const Hearings = ({ hearings }) => {
                   )}
                 />
 
-                <Route exact path="/hearings/:hearingId/worksheet"
+                <PageRoute exact path="/hearings/:hearingId/worksheet"
                   breadcrumb="Daily Docket > Hearing Worksheet"
+                  title="Hearing Worksheet"
                   component={(props) => (
                     <HearingWorksheetContainer
                       veteran_law_judge={hearings.veteran_law_judge}
