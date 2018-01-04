@@ -8,7 +8,8 @@ import { PdfUIPageNumInput } from '../../../app/reader/PdfUIPageNumInput';
 describe('PdfUIPageNumInput', () => {
   let wrapper;
 
-  const getInput = () => wrapper.find(TextField).dive().find('input') 
+  const getInput = () => wrapper.find(TextField).dive().
+    find('input');
 
   context('input value', () => {
     wrapper = shallow(
@@ -30,7 +31,7 @@ describe('PdfUIPageNumInput', () => {
         key: 'Enter',
         target: { value: inputValue }
       });
-      wrapper.update()
+      wrapper.update();
 
       expect(getInput().props().value).to.eq(inputValue);
     });
@@ -45,8 +46,8 @@ describe('PdfUIPageNumInput', () => {
       key: 'Enter',
       target: { value: 100 }
     });
-    wrapper.update()
-    
+    wrapper.update();
+
     expect(getInput().props().value).to.eq(3);
   });
 });
