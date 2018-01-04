@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "babel-core": "^6.18.2",
-    "babel-loader": "^6.4.1",
+    "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.24.1",
@@ -59,8 +59,8 @@
     "react-router-dom": "^4.1.1",
     "react-select": "^1.0.0-rc.4",
     "react-test-renderer": "^15.5.4",
-    "react-virtualized": "^9.10.1",
     "react-textarea-autosize": "^5.1.0",
+    "react-virtualized": "^9.10.1",
     "redux": "^3.6.0",
     "redux-logger": "^3.0.0",
     "redux-perf-middleware": "^1.2.2",
@@ -70,7 +70,7 @@
     "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0",
     "uuid": "^3.0.1",
-    "webpack": "^2.3.3"
+    "webpack": "^3.10.0"
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.1",
