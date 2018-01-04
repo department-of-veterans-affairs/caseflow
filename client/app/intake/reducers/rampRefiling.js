@@ -24,6 +24,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+    },
+    issues: {
+      $set: _.keyBy(serverIntake.issues, 'id')
     }
   });
 
@@ -37,8 +40,10 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     hasInvalidOption: false,
     receiptDate: null,
     receiptDateError: null,
+    hasIneligibleIssue: false,
     isStarted: false,
     isReviewed: false,
+    outsideCaseflowStepsConfirmed: false,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -100,6 +105,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       isReviewed: {
         $set: true
       },
+      outsideCaseflowStepsConfirmed: {
+        $set: false
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -121,6 +129,28 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         submitReview: {
           $set: REQUEST_STATE.FAILED
         }
+      }
+    });
+  case ACTIONS.SET_HAS_INELIGIBLE_ISSUE:
+    return update(state, {
+      hasIneligibleIssue: {
+        $set: action.payload.hasIneligibleIssue
+      }
+    });
+  case ACTIONS.SET_ISSUE_SELECTED:
+    return update(state, {
+      issues: {
+        [action.payload.issueId]: {
+          isSelected: {
+            $set: action.payload.isSelected
+          }
+        }
+      }
+    });
+  case ACTIONS.CONFIRM_OUTSIDE_CASEFLOW_STEPS:
+    return update(state, {
+      outsideCaseflowStepsConfirmed: {
+        $set: action.payload.isConfirmed
       }
     });
   default:
