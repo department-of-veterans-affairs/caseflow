@@ -410,6 +410,10 @@ svg[aria-hidden=true],
 
       .cf-form-checkbox {
 
+        .question-label {
+          display: block;
+        }
+
         label:last-child {
           margin-bottom: 0;
 

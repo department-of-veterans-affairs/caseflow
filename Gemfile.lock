@@ -16,11 +16,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: b7102ffb3b81ea6770719f921a1d06ef88c9ba92
-  ref: b7102ffb3b81ea6770719f921a1d06ef88c9ba92
+  revision: c03e122b4f0edfb7e26262289d480669d21df68e
+  ref: c03e122b4f0edfb7e26262289d480669d21df68e
   specs:
-    caseflow (0.2.3)
-      aws-sdk (~> 2)
+    caseflow (0.2.5)
+      aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
       d3-rails
       jquery-rails
@@ -542,4 +542,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
