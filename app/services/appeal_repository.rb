@@ -1,14 +1,6 @@
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
 
-  # :nocov:
-  # Used by healthcheck endpoint
-  # Calling .active? triggers a query to VACOLS
-  # `select 1 from dual`
-  def self.vacols_db_connection_active?
-    VACOLS::Record.connection.active?
-  end
-
   def self.transaction
     VACOLS::Case.transaction do
       yield
