@@ -317,10 +317,6 @@ describe('DecisionReviewer', () => {
         });
 
         it('tag displays properly', () => {
-          // This test doesn't work because the app is still on the loading screen.
-          // The setup process isn't working. Maybe the render isn't complete?
-          // Or maybe the dispatch isn't working any more?
-
           wrapper.find('input').simulate('change',
             { target: { value: 'mytag' } });
 
