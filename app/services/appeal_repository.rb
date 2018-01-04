@@ -290,7 +290,7 @@ class AppealRepository
       )
 
       # Close any issues associated to the appeal
-      case_record.case_issues.update_all(
+      case_record.case_issues.where(issdc: nil).update_all(
         issdc: disposition_code,
         issdcls: VacolsHelper.local_time_with_utc_timezone
       )
