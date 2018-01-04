@@ -30,7 +30,7 @@ gem 'active_model_serializers', '~> 0.10.0'
 # soft delete gem
 gem "paranoia", "~> 2.2"
 
-gem "dogstatsd-ruby" 
+gem "dogstatsd-ruby"
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -47,7 +47,7 @@ gem 'wannabe_bool'
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: 'faad830fe463e88f21bdb4a1af7422c2e529aab8'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '9266698668bf361bf5df06990d06da59abb7c608'
 
 # PDF Tools
 gem 'pdf-forms'
