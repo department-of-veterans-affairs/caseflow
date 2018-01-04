@@ -500,7 +500,7 @@ RSpec.feature "Reader" do
       expect(find(".cf-document-type")).to have_text("NOD")
     end
 
-    scenario "Rotating documents", focus: true do
+    scenario "Rotating documents" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect do
