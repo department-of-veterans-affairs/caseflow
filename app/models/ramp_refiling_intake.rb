@@ -5,6 +5,7 @@ class RampRefilingIntake < Intake
     no_complete_ramp_election: "no_complete_ramp_election",
     ramp_election_is_active: "ramp_election_is_active",
     ramp_election_no_issues: "ramp_election_no_issues"
+    # ineligible_for_higher_level_review: "ineligible_for_higher_level_review"
   }.merge(Intake::ERROR_CODES)
 
   def preload_intake_data!

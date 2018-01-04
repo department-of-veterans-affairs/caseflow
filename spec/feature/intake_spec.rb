@@ -706,6 +706,8 @@ RSpec.feature "RAMP Intake" do
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Ineligible for Higher-Level Review")
+          # go back to start page
+          # check there was an error
         end
 
         scenario "Start a RAMP refiling" do

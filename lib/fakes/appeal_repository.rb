@@ -474,6 +474,7 @@ class Fakes::AppealRepository
   # 11555555 has an appeal ineligible for ramp
   # 12555555 has no active appeals
   # 13555555 has no ramp election
+  # 15555555 will not have a cleared EP for ramp refiling
   def self.seed_intake_data!
     Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
 
