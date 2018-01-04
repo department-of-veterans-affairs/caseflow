@@ -53,7 +53,7 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimForm', () => {
       beforeEach(() => {
-        wrapper.node.store.dispatch({
+        wrapper.instance().store.dispatch({
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
             field: 'stationOfJurisdiction',
@@ -97,7 +97,7 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimNote', () => {
       beforeEach(() => {
-        wrapper.node.store.dispatch({
+        wrapper.instance().store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
             specialIssue: 'mustardGas',
@@ -137,7 +137,7 @@ describe('EstablishClaim', () => {
         task={task} />);
 
       if (stationOfJurisdiction !== '397') {
-        wrapper.node.store.dispatch({
+        wrapper.instance().store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
             specialIssue: 'mustardGas',
@@ -146,7 +146,7 @@ describe('EstablishClaim', () => {
         });
       }
 
-      wrapper.node.store.dispatch({
+      wrapper.instance().store.dispatch({
         type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
         payload: {
           field: 'stationOfJurisdiction',
