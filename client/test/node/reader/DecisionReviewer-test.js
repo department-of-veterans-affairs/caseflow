@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -12,7 +10,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { reduxSearch } from 'redux-search';
-import { asyncTest, pause } from '../../helpers/AsyncTests';
+import { asyncTest } from '../../helpers/AsyncTests';
 import ApiUtilStub from '../../helpers/ApiUtilStub';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { formatDateStr } from '../../../app/util/DateUtil';
@@ -117,34 +115,6 @@ describe('DecisionReviewer', () => {
       ApiUtilStub.afterEach();
       PdfJsStub.afterEach();
       AutoSizer.prototype.render.restore();
-    });
-
-    context('PDF View', () => {
-      beforeEach(() => setUpDocuments());
-
-      context('renders', () => {
-        it('the PDF list view', () => {
-          expect(wrapper.find('PdfListView')).to.have.length(1);
-        });
-
-        it('the PDF view when a PDF is clicked', asyncTest(async () => {
-        // Click on first document link
-          wrapper.find('a').filterWhere(
-            (link) => link.text() === documents[0].type).
-            simulate('click', { button: 0 });
-          await pause();
-
-          expect(wrapper.find('PdfViewer')).to.have.length(1);
-
-          // Return to document list view
-          wrapper.find('a').filterWhere(
-            (link) => link.text().includes('Back to claims')).
-            simulate('click', { button: 0 });
-          await pause();
-
-          expect(wrapper.find('PdfListView')).to.have.length(1);
-        }));
-      });
     });
 
     context('PDF list view', () => {
