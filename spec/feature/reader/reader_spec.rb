@@ -1373,7 +1373,7 @@ RSpec.feature "Reader" do
       end
     end
 
-    scenario "Navigating Search Results scrolls page" do
+    scenario "Navigating Search Results scrolls page", focus: true do
       def scroll_top
         page.execute_script("return document.getElementsByClassName('ReactVirtualized__Grid')[0].scrollTop")
       end
@@ -1386,6 +1386,7 @@ RSpec.feature "Reader" do
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
 
       first_match_scroll_top = scroll_top
+      binding.pry
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click

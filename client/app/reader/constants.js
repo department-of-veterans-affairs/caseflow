@@ -60,4 +60,4 @@ export const PDF_PAGE_HEIGHT = 1056;
 // search bar, used as offset when scrolling to search results
 export const SEARCH_BAR_HEIGHT = 50;
 
-export const OVERSCAN_ROWS = 5;
+export const OVERSCAN_ROWS = 10;

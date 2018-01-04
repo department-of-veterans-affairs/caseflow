@@ -149,11 +149,13 @@ export class PdfPage extends React.PureComponent {
         this.unmarkText();
       } else {
         const searchTextChanged = this.props.searchText !== prevProps.searchText;
-        const currentMatchIdxChanged = !_.isNaN(this.props.currentMatchIndex) &&
-          this.props.currentMatchIndex !== prevProps.currentMatchIndex;
+        const currentMatchIdxChanged = !_.isNaN(this.props.relativeIndex) &&
+          this.props.relativeIndex !== prevProps.relativeIndex;
+        const pageIndexChanged = !_.isNaN(this.props.pageIndexWithMatch) &&
+          this.props.pageIndexWithMatch !== prevProps.pageIndexWithMatch;
 
         if (this.props.matchesPerPage.length || searchTextChanged) {
-          this.markText(currentMatchIdxChanged || searchTextChanged);
+          this.markText(currentMatchIdxChanged || searchTextChanged || pageIndexChanged);
         }
       }
     }

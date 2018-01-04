@@ -149,8 +149,8 @@ export class PdfFile extends React.PureComponent {
     return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
   }
 
-  getGrid = (list) => {
-    this.grid = list;
+  getGrid = (grid) => {
+    this.grid = grid;
 
     if (this.grid) {
       // eslint-disable-next-line react/no-find-dom-node
@@ -252,7 +252,7 @@ export class PdfFile extends React.PureComponent {
       this.props.updateSearchIndexPage(pageIndex);
 
       // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
-      this.list.scrollToRow(pageIndex);
+      this.grid.scrollToCell(this.pageRowAndColumn(pageIndex));
     }
   }
 
@@ -382,7 +382,7 @@ export class PdfFile extends React.PureComponent {
             ref={this.getGrid}
             containerStyle={{
               margin: '0 auto',
-              marginTop: `${PAGE_MARGIN}`
+              marginTop: `${PAGE_MARGIN}px`
             }}
             overscanRowCount={OVERSCAN_ROWS / this.columnCount}
             onSectionRendered={this.onSectionRendered}
