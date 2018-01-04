@@ -239,6 +239,11 @@ def get_computed_styles(selector, style_key)
   page.evaluate_script <<-EOS
     function() {
       var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
+      if (!elem) {
+        // It would be nice to throw an actual error but I am not sure Capybara will
+        // process that well.
+        return 'query selector did not match any elements';
+      }
       return window.getComputedStyle(elem)['#{style_key}'];
     }();
   EOS
