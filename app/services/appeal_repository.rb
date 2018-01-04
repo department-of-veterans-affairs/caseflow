@@ -295,7 +295,14 @@ class AppealRepository
         timduser: user.regional_office
       )
 
-      close_associated_appeal_records(case_record, user, disposition_code)
+      # Close any issues associated to the appeal
+      case_record.case_issues.where(issdc: nil).update_all(
+        issdc: disposition_code,
+        issdcls: VacolsHelper.local_time_with_utc_timezone
+      )
+
+      close_associated_diary_notes(case_record, user)
+      close_associated_hearings(case_record)
     end
   end
 
@@ -326,14 +333,15 @@ class AppealRepository
         timduser: user.regional_office
       )
 
-      close_associated_appeal_records(case_record, user, disposition_code)
+      close_associated_diary_notes(case_record, user)
+      close_associated_hearings(case_record)
 
       # The follow up appeal will have the same ID as the remand, with a "P" tacked on
       # (It's a VACOLS thing)
       follow_up_appeal_key = "#{case_record.bfkey}P"
 
       follow_up_case = VACOLS::Case.create!(
-        case_record.attributes.merge(
+        case_record.remand_clone_attributes.merge(
           bfkey: follow_up_appeal_key,
           bfmpro: "HIS",
           bfddec: dateshift_to_utc(closed_on),
@@ -349,7 +357,7 @@ class AppealRepository
       follow_up_case.update_vacols_location!("99")
 
       VACOLS::Folder.create!(
-        folder_record.attributes.merge(
+        folder_record.remand_clone_attributes.merge(
           ticknum: follow_up_appeal_key,
           ticukey: "HISTORY",
           tikeywrd: "HISTORY",
@@ -362,7 +370,7 @@ class AppealRepository
       # proper disposition
       case_record.case_issues.where(issdc: "3").each_with_index do |case_issue, i|
         VACOLS::CaseIssue.create!(
-          case_issue.attributes.merge(
+          case_issue.remand_clone_attributes.merge(
             isskey: follow_up_appeal_key,
             issseq: i + 1,
             issdc: disposition_code,
@@ -436,27 +444,22 @@ class AppealRepository
   class << self
     private
 
-    # NOTE: this should be called within a transaction where you are already
-    # closing an appeal
-    def close_associated_appeal_records(case_record, user, disposition_code)
-      # Close any issues associated to the appeal
-      case_record.case_issues.where(issdc: nil).update_all(
-        issdc: disposition_code,
-        issdcls: VacolsHelper.local_time_with_utc_timezone
+    # NOTE: this should be called within a transaction where you are closing an appeal
+    def close_associated_hearings(case_record)
+      # Only scheduled hearings need to be closed
+      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
+        clsdate: VacolsHelper.local_time_with_utc_timezone,
+        hearing_disp: "C"
       )
+    end
 
-      # Cancel any open diary notes for the appeal
+    # NOTE: this should be called within a transaction where you are closing an appeal
+    def close_associated_diary_notes(case_record, user)
       case_record.notes.where(tskdcls: nil).update_all(
         tskdcls: VacolsHelper.local_time_with_utc_timezone,
         tskmdtm: VacolsHelper.local_time_with_utc_timezone,
         tskmdusr: user.regional_office,
         tskstat: "C"
-      )
-
-      # Cancel any scheduled hearings
-      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
-        clsdate: VacolsHelper.local_time_with_utc_timezone,
-        hearing_disp: "C"
       )
     end
   end
