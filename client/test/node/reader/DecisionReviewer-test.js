@@ -24,6 +24,8 @@ import sinon from 'sinon';
 import { AutoSizer } from 'react-virtualized';
 import rootReducer from '../../../app/reader/reducers';
 
+import {findElementById} from '../../helpers'
+
 const vacolsId = 'reader_id1';
 
 // This is the route history preset in react router
@@ -158,7 +160,7 @@ describe('DecisionReviewer', () => {
           expect(wrapper.find('#rotationDiv1').
             props().style.transform).to.equal('rotate(0deg)');
 
-          wrapper.find('#button-rotation').simulate('click', { button: 0 });
+          findElementById(wrapper, 'button-rotation').simulate('click', { button: 0 });
 
           expect(wrapper.find('#rotationDiv1').
             props().style.transform).to.equal('rotate(90deg)');
@@ -213,45 +215,45 @@ describe('DecisionReviewer', () => {
           await pause();
 
           // Click on the add a comment button
-          wrapper.find('#button-AddComment').simulate('click');
+          findElementById(wrapper, 'button-AddComment').simulate('click');
 
           // Click on the pdf at the location specified by event
           wrapper.find('#comment-layer-0-/document/1/pdf').simulate('click', event);
 
           // Add text to the comment text box.
-          wrapper.find('#addComment').simulate('change',
+          findElementById(wrapper, 'addComment').simulate('change',
             { target: { value: firstComment.comment } });
 
           // Click on save
-          wrapper.find('#button-save').simulate('click');
+          findElementById(wrapper, 'button-save').simulate('click');
           await pause();
 
           // Click on the edit button
-          wrapper.find('#button-edit-comment-1').simulate('click');
+          findElementById(wrapper, 'button-edit-comment-1').simulate('click');
 
           // Verify that the text in the textbox is the existing comment
           expect(wrapper.find('textarea').props().value).
             to.be.equal(firstComment.comment);
 
           // Add new text to the edit textbox
-          wrapper.find('#editCommentBox-1').simulate('change',
+          findElementById(wrapper, 'editCommentBox-1').simulate('change',
             { target: { value: secondComment.comment } });
 
           // Save the edit
-          wrapper.find('#button-save').simulate('click');
+          findElementById(wrapper, 'button-save').simulate('click');
           await pause();
 
           // Click on the delete button
-          wrapper.find('#button-delete-comment-1').simulate('click');
+          findElementById(wrapper, 'button-delete-comment-1').simulate('click');
 
           // Click on the cancel delete in the modal
-          wrapper.find('#Delete-Comment-button-id-0').simulate('click');
+          findElementById(wrapper, 'Delete-Comment-button-id-0').simulate('click');
 
           // Re-open delete modal
-          wrapper.find('#button-delete-comment-1').simulate('click');
+          findElementById(wrapper, 'button-delete-comment-1').simulate('click');
 
           // Click on the confirm delete in the modal
-          wrapper.find('#Delete-Comment-button-id-1').simulate('click');
+          findElementById(wrapper, 'Delete-Comment-button-id-1').simulate('click');
           await pause();
 
           // Verify the api is called to delete a comment
@@ -274,7 +276,7 @@ describe('DecisionReviewer', () => {
           await pause();
 
           // Previous button moves us to the previous page
-          wrapper.find('#button-previous').simulate('click');
+          findElementById(wrapper, 'button-previous').simulate('click');
           await pause();
 
           wrapper.find('a').filterWhere(
@@ -308,12 +310,12 @@ describe('DecisionReviewer', () => {
       context('when expanded comments', () => {
         it('can view comments', () => {
           expect(wrapper.text()).to.not.include('Test Comment');
-          wrapper.find('#expand-2-comments-button').simulate('click');
+          findElementById(wrapper, 'expand-2-comments-button').simulate('click');
           expect(wrapper.text()).to.include('Test Comment');
         });
 
         it('page number is displayed', asyncTest(async() => {
-          wrapper.find('#expand-2-comments-button').simulate('click');
+          findElementById(wrapper, 'expand-2-comments-button').simulate('click');
           expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
         }));
       });
@@ -327,7 +329,7 @@ describe('DecisionReviewer', () => {
           expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
           expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
 
-          wrapper.find('#receipt-date-header').simulate('click');
+          findElementById(wrapper, 'receipt-date-header').simulate('click');
           expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).to.have.length(1);
 
           textArray = wrapper.find('tr').map((node) => node.text());
@@ -336,7 +338,7 @@ describe('DecisionReviewer', () => {
         });
 
         it('type ordered correctly', () => {
-          wrapper.find('#type-header').simulate('click');
+          findElementById(wrapper, 'type-header').simulate('click');
           expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
 
           let textArray = wrapper.find('tr').map((node) => node.text());
@@ -344,7 +346,7 @@ describe('DecisionReviewer', () => {
           expect(textArray[1]).to.include(documents[0].type);
           expect(textArray[2]).to.include(documents[1].type);
 
-          wrapper.find('#type-header').simulate('click');
+          findElementById(wrapper, 'type-header').simulate('click');
           expect(wrapper.find('#type-header .cf-sort-arrowup')).to.have.length(1);
 
           textArray = wrapper.find('tr').map((node) => node.text());
