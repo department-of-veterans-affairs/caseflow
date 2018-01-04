@@ -122,7 +122,7 @@ RSpec.feature "Save Certification" do
         end
       end
 
-      scenario "Complete certification" do
+      scenario "Complete certification", focus: true do
         visit "certifications/new/#{appeal.vacols_id}"
         click_button("Continue")
         expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/confirm_case_details")

@@ -93,6 +93,8 @@ export const certificationReducers = function(state = initialState, action = {})
     return CertificationReducers.handleServerError(state);
   case Constants.CERTIFICATION_UPDATE_SUCCESS:
     return CertificationReducers.certificationUpdateSuccess(state);
+  case Constants.CONFIRM_HEARING_UPDATE_SUCCESS:
+    return CertificationReducers.confirmHearingUpdateSuccess(state);
   case Constants.TOGGLE_CANCELLATION_MODAL:
     return CertificationReducers.
       toggleCancellationModal(state, action);
