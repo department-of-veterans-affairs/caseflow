@@ -384,6 +384,7 @@ export class PdfFile extends React.PureComponent {
               margin: '0 auto',
               marginTop: `${PAGE_MARGIN}px`
             }}
+            estimatedRowSize={this.props.baseHeight}
             overscanRowCount={this.props.windowingOverscan / this.columnCount}
             onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
