@@ -9,7 +9,7 @@ RSpec.describe Api::V1::JobsController, type: :controller do
   end
 
   describe "POST job create" do
-    it "should not be successful due to unauthorized request", :focus => true do
+    it "should not be successful due to unauthorized request" do
       # set up the wrong token
       request.headers["Authorization"] = "BADTOKEN"
       post :create, "job_type": "UndefinedJob"
