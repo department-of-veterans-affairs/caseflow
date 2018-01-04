@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171230164910) do
+ActiveRecord::Schema.define(version: 20180103205014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -315,8 +315,9 @@ ActiveRecord::Schema.define(version: 20171230164910) do
   create_table "ramp_issues", force: :cascade do |t|
     t.integer "review_id",               null: false
     t.string  "review_type",             null: false
-    t.string  "contention_reference_id", null: false
+    t.string  "contention_reference_id"
     t.string  "description",             null: false
+    t.integer "source_issue_id"
   end
 
   add_index "ramp_issues", ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id", using: :btree
@@ -327,6 +328,7 @@ ActiveRecord::Schema.define(version: 20171230164910) do
     t.string  "option_selected"
     t.date    "receipt_date"
     t.string  "end_product_reference_id"
+    t.boolean "has_ineligible_issue"
   end
 
   add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree

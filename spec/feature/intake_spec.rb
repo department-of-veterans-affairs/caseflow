@@ -708,7 +708,7 @@ RSpec.feature "RAMP Intake" do
           expect(page).to have_content("Ineligible for Higher-Level Review")
         end
 
-        scenario "Start a RAMP refiling" do
+        scenario "Complete a RAMP refiling" do
           # Create an RAMP election with a cleared EP
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",
@@ -774,14 +774,26 @@ RSpec.feature "RAMP Intake" do
           expect(ramp_refiling.option_selected).to eq("appeal")
           expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 8, 3))
 
-          # TODO: Check that clicking next without confirmation throws an error
-          click_label("confirm-outside-caseflow-steps")
+          safe_click "#finish-intake"
+
+          # Check that clicking next without selecting a contention raises an error
+          expect(page).to have_content("You must select at least one contention")
 
           find("label", text: "Left knee rating increase").click
           find("label", text: "Left shoulder service connection").click
           find("label", text: "The veteran's form lists at least one ineligible contention").click
 
-          # TODO: Test that the refiling is processed correctly when checking/not checking these fields
+          safe_click "#finish-intake"
+
+          # Check that clicking next without confirmation throws an error
+          expect(page).to have_content("Finish processing RAMP Selection form")
+          expect(page).to have_content("You must confirm you've completed the steps")
+
+          click_label("confirm-outside-caseflow-steps")
+
+          safe_click "#finish-intake"
+
+          expect(page).to have_content("Intake completed")
         end
       end
     end
