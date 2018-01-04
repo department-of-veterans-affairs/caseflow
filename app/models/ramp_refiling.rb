@@ -11,7 +11,7 @@ class RampRefiling < RampReview
 
   # We have no solution to make the combination of these operations atomic, or guarantee
   # eventual consistency. So for now, if the create contentions request fails, we will be in an
-  # inconsistent state and must recover manually ¯\_(ツ)_/¯
+  # inconsistent state and must recover manually
   def create_end_product_and_contentions!
     create_end_product!
     create_contentions!
