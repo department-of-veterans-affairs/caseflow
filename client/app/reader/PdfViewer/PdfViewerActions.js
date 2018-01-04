@@ -129,3 +129,19 @@ export const hideSearchBar = () => ({
 export const resetSidebarErrors = () => ({
   type: Constants.RESET_PDF_SIDEBAR_ERRORS
 });
+
+export const handleFinishScrollToSidebarComment = () => ({
+  type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
+  payload: {
+    scrollToSidebarComment: null
+  }
+});
+
+/** Windowing parameters **/
+
+export const handleSetOverscanValue = (overscanValue) => ({
+  type: Constants.SET_WINDOWING_OVERSCAN,
+  payload: {
+    overscanValue
+  }
+});

@@ -338,6 +338,7 @@ export class PdfFile extends React.PureComponent {
 
           return <List
             ref={this.getList}
+            overscanRowCount={this.props.windowingOverscan}
             onRowsRendered={this.onRowsRendered}
             onScroll={this.onScroll}
             height={height}
@@ -359,7 +360,10 @@ export class PdfFile extends React.PureComponent {
 
 PdfFile.propTypes = {
   pdfDocument: PropTypes.object,
-  setDocScrollPosition: PropTypes.func
+  setDocScrollPosition: PropTypes.func,
+  scrollToComment: PropTypes.shape({
+    id: PropTypes.number
+  })
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -379,19 +383,19 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, props) => {
-  const dimensionValues = _.filter(state.readerReducer.pageDimensions, (dimension) => dimension.file === props.file);
+  const dimensionValues = _.filter(state.pdf.pageDimensions, (dimension) => dimension.file === props.file);
   const baseHeight = _.get(dimensionValues, [0, 'height'], PDF_PAGE_HEIGHT);
 
   return {
-    pdfDocument: state.readerReducer.pdfDocuments[props.file],
-    pageDimensions: state.readerReducer.pageDimensions,
     baseHeight,
-    scrollToComment: state.readerReducer.ui.pdf.scrollToComment,
-    loadError: state.readerReducer.documentErrors[props.file],
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
-    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop')
+    ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
+    ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
+    loadError: state.pdf.documentErrors[props.file],
+    pdfDocument: state.pdf.pdfDocuments[props.file],
+    windowingOverscan: state.pdfViewer.windowingOverscan
   };
 };
 

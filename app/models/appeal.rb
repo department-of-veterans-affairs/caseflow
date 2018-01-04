@@ -37,7 +37,6 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number
-  vacols_attr_accessor :cavc
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -167,6 +166,7 @@ class Appeal < ActiveRecord::Base
   end
 
   delegate :age, to: :veteran, prefix: true
+  delegate :sex, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -419,6 +419,8 @@ class Appeal < ActiveRecord::Base
     super
   end
 
+  delegate :count, to: :worksheet_issues, prefix: true
+
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
   # VACOLS formatted veteran identifier, sanitized_vbms_id
@@ -460,7 +462,14 @@ class Appeal < ActiveRecord::Base
     v1_events.last.try(:date)
   end
 
-  def to_hash(viewed: nil, issues: nil)
+  def cavc
+    type == "Court Remand"
+  end
+
+  # Adding anything to this to_hash can trigger a lazy load which slows down
+  # welcome gate dramatically. Don't add anything to it without also adding it to
+  # the query in VACOLS::CaseAssignment.
+  def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
       methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
@@ -468,6 +477,7 @@ class Appeal < ActiveRecord::Base
       hash["viewed"] = viewed
       hash["issues"] = issues
       hash["regional_office"] = regional_office_hash
+      hash["hearings"] = hearings
     end
   end
 

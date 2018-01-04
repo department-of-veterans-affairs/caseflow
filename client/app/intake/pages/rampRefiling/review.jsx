@@ -5,11 +5,12 @@ import CancelButton from '../../components/CancelButton';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import Button from '../../../components/Button';
+import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampRefiling';
-import { getRampElectionStatus } from '../../selectors';
+import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
   render() {
@@ -18,6 +19,7 @@ class Review extends React.PureComponent {
       veteranName,
       optionSelected,
       optionSelectedError,
+      hasInvalidOption,
       receiptDate,
       receiptDateError
     } = this.props;
@@ -36,6 +38,12 @@ class Review extends React.PureComponent {
     }));
 
     return <div>
+      { hasInvalidOption && <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+          Contact the Veteran to verify their lane selection. If you are unable to reach
+          the Veteran, send a letter indicating that their selected lane is not available,
+          and that they may clarify their lane selection within 30 days.
+      </Alert>
+      }
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
       <DateSelector
@@ -63,9 +71,10 @@ class Review extends React.PureComponent {
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
-    rampRefilingStatus: getRampElectionStatus(state),
+    rampRefilingStatus: getIntakeStatus(state),
     optionSelected: state.rampRefiling.optionSelected,
     optionSelectedError: state.rampRefiling.optionSelectedError,
+    hasInvalidOption: state.rampRefiling.hasInvalidOption,
     receiptDate: state.rampRefiling.receiptDate,
     receiptDateError: state.rampRefiling.receiptDateError
   }),
@@ -81,7 +90,8 @@ class ReviewNextButton extends React.PureComponent {
       () => {
         this.props.history.push('/finish');
       }
-    );
+    ).
+      catch((error) => error);
   }
 
   render = () =>

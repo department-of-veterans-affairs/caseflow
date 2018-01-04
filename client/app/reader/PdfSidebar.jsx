@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import Comment from './Comment';
 import EditComment from './EditComment';
+import WindowSlider from './WindowSlider';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Table from '../components/Table';
@@ -16,11 +17,11 @@ import SideBarDocumentInformation from './SideBarDocumentInformation';
 import SideBarCategories from './SideBarCategories';
 import SideBarIssueTags from './SideBarIssueTags';
 import SideBarComments from './SideBarComments';
-import * as Constants from '../reader/constants';
-import { setOpenedAccordionSections, togglePdfSidebar } from '../reader/PdfViewer/PdfViewerActions';
+import { setOpenedAccordionSections, togglePdfSidebar,
+  handleFinishScrollToSidebarComment } from '../reader/PdfViewer/PdfViewerActions';
 import {
   selectAnnotation, startEditAnnotation, requestEditAnnotation, cancelEditAnnotation,
-  updateAnnotationContent
+  updateAnnotationContent, updateAnnotationRelevantDate
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { keyOfAnnotation, sortAnnotations }
   from './utils';
@@ -113,6 +114,7 @@ export class PdfSidebar extends React.Component {
           comment={comment}
           onCancelCommentEdit={this.props.cancelEditAnnotation}
           onChange={this.props.updateAnnotationContent}
+          onChangeDate={this.props.updateAnnotationRelevantDate}
           value={comment.comment}
           onSaveCommentEdit={this.props.requestEditAnnotation}
           key={keyOfAnnotation(comment)}
@@ -134,7 +136,8 @@ export class PdfSidebar extends React.Component {
           uuid={comment.uuid}
           selected={comment.id === this.props.selectedAnnotationId}
           onClick={handleClick}
-          page={comment.page}>
+          page={comment.page}
+          date={comment.relevant_date}>
           {comment.comment}
         </Comment>
       </div>;
@@ -159,6 +162,7 @@ export class PdfSidebar extends React.Component {
       <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={(commentListElement) => {
         this.commentListElement = commentListElement;
       }}>
+        { this.props.featureToggles.windowSlider && <WindowSlider /> }
         <Accordion style="outline"
           onChange={this.onAccordionOpenOrClose}
           activeKey={this.props.openedAccordionSections}>
@@ -270,18 +274,11 @@ const mapDispatchToProps = (dispatch) => ({
     selectAnnotation,
     startEditAnnotation,
     updateAnnotationContent,
+    updateAnnotationRelevantDate,
     cancelEditAnnotation,
-    requestEditAnnotation
-  }, dispatch),
-
-  handleFinishScrollToSidebarComment() {
-    dispatch({
-      type: Constants.SCROLL_TO_SIDEBAR_COMMENT,
-      payload: {
-        scrollToSidebarComment: null
-      }
-    });
-  }
+    requestEditAnnotation,
+    handleFinishScrollToSidebarComment
+  }, dispatch)
 });
 
 export default connect(

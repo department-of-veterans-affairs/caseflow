@@ -33,6 +33,14 @@ $caseflow-text-select: transparentize($caseflow-text-select-without-transparency
   }
 }
 
+.claim-detail-container {
+
+  .claim-detail-type-info {
+    color: $color-secondary;
+    display: inherit;
+  }
+}
+
 .cf-claims-folder-details {
   p {
     margin-top: 15px;
@@ -440,6 +448,7 @@ svg[aria-hidden=true],
 .cf-add-comment-button {
   margin-top: -15px;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .cf-pdf-meta-title {

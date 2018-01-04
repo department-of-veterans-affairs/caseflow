@@ -127,14 +127,7 @@ export class PdfViewer extends React.Component {
     document.title = `${this.selectedDoc().type} | Document Viewer | Caseflow Reader`;
   }
 
-  componentDidUpdate = () => {
-    if (this.props.placedButUnsavedAnnotation) {
-      let commentBox = document.getElementById('addComment');
-
-      commentBox.focus();
-    }
-    this.updateWindowTitle();
-  }
+  componentDidUpdate = () => this.updateWindowTitle();
 
   componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
@@ -216,6 +209,7 @@ export class PdfViewer extends React.Component {
           <PdfSidebar
             doc={doc}
             onJumpToComment={this.props.onJumpToComment}
+            featureToggles={this.props.featureToggles}
           />
         </div>
         {this.props.deleteAnnotationModalIsOpenFor && <Modal
@@ -243,12 +237,11 @@ export class PdfViewer extends React.Component {
 
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
-  appeal: state.readerReducer.appeal,
-  pageDimensions: state.readerReducer.pageDimensions,
+  appeal: state.pdfViewer.loadedAppeal,
   ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
     'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
-  ..._.pick(state.readerReducer.ui.pdf, 'scrollToComment')
+  ..._.pick(state.pdf, 'scrollToComment', 'pageDimensions')
 });
 
 const mapDispatchToProps = (dispatch) => ({

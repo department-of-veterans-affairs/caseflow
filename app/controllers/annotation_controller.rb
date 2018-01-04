@@ -25,7 +25,7 @@ class AnnotationController < ApplicationController
   end
 
   def annotation_params
-    params.require(:annotation).permit(:page, :x, :y, :comment).merge(
+    params.require(:annotation).permit(:page, :x, :y, :comment, :relevant_date).merge(
       document_id: params[:document_id]
     )
   end

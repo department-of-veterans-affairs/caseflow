@@ -8,12 +8,13 @@ class Hearing < ActiveRecord::Base
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
-  vacols_attr_accessor :transcript_sent_date
+  vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
 
   belongs_to :appeal
   belongs_to :user # the judge
+  has_many :hearing_views
 
   def venue
     self.class.venues[venue_key]
@@ -86,7 +87,8 @@ class Hearing < ActiveRecord::Base
       veteran_last_name: veteran_last_name,
       appellant_first_name: appellant_first_name,
       appellant_middle_initial: appellant_middle_initial,
-      appellant_last_name: appellant_last_name
+      appellant_last_name: appellant_last_name,
+      appeal_vacols_id: appeal_vacols_id
     }
   end
 
@@ -96,6 +98,7 @@ class Hearing < ActiveRecord::Base
 
   delegate \
     :veteran_age, \
+    :veteran_sex, \
     :appellant_city, \
     :appellant_state, \
     :vbms_id, \
@@ -105,7 +108,7 @@ class Hearing < ActiveRecord::Base
     :sanitized_vbms_id, \
     to: :appeal, allow_nil: true
 
-  def to_hash
+  def to_hash(current_user_id)
     serializable_hash(
       methods: [
         :date, :request_type,
@@ -117,31 +120,45 @@ class Hearing < ActiveRecord::Base
         :representative_name,
         :regional_office_name,
         :regional_office_timezone,
-        :venue, :appellant_last_first_mi,
-        :veteran_name, :vbms_id
+        :venue,
+        :veteran_name,
+        :veteran_mi_formatted,
+        :appellant_last_first_mi,
+        :appellant_mi_formatted,
+        :vbms_id,
+        :issue_count
       ],
       except: :military_service
+    ).merge(
+      viewed_by_current_user: hearing_views.all.any? do |hearing_view|
+        hearing_view.user_id == current_user_id
+      end
     )
   end
 
-  def to_hash_for_worksheet
+  def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
                 :veteran_age,
+                :veteran_sex,
                 :appellant_city,
                 :appellant_state,
                 :military_service,
                 :appellant_mi_formatted,
                 :veteran_mi_formatted,
                 :sanitized_vbms_id]
-    ).merge(to_hash)
+    ).merge(to_hash(current_user_id))
   end
 
   def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
+  end
+
+  def issue_count
+    active_appeal_streams.map(&:worksheet_issues_count).reduce(0, :+)
   end
 
   # If we do not yet have the military_service saved in Caseflow's DB, then
@@ -151,10 +168,6 @@ class Hearing < ActiveRecord::Base
       update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
-  end
-
-  def appeal_vacols_id
-    appeal.try(:vacols_id)
   end
 
   class << self

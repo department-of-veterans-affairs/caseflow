@@ -19,6 +19,8 @@ end
 
 class ExternalApi::VBMSService
   def self.fetch_document_file(document)
+    DBService.release_db_connections
+
     @vbms_client ||= init_vbms_client
 
     vbms_id = document.vbms_document_id
@@ -32,6 +34,8 @@ class ExternalApi::VBMSService
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
+    DBService.release_db_connections
+
     @vbms_client ||= init_vbms_client
 
     sanitized_id = appeal.sanitized_vbms_id
@@ -112,6 +116,14 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::EstablishClaim.new(veteran_hash, claim_hash)
 
     send_and_log_request(veteran_hash[:file_number], request)
+  end
+
+  def self.fetch_contentions(claim_id:)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::ListContentions.new(claim_id)
+
+    send_and_log_request(claim_id, request)
   end
 
   def self.init_vbms_client
