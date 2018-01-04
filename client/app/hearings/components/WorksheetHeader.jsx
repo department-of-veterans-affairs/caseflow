@@ -107,7 +107,15 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>Veteran ID:</div>
-          <div><b>{worksheet.sanitized_vbms_id}</b>   <ClipboardIcon /></div>
+          <div>
+          <button type="submit"
+          data-clipboard-text={worksheet.sanitized_vbms_id}
+          className="cf-hearings-worksheet-vet-id"
+          >
+          {worksheet.sanitized_vbms_id}
+            <ClipboardIcon />
+          </button>
+          </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
