@@ -16,19 +16,8 @@ $color-hearings-saving: #777;
 .cf-hearings-daily-docket-container {
   position: relative;
 
-  > .saving {
-    width: 12em;
-    text-align: right;
-    position: absolute;
-    top: 8.9em;
-    right: 1.8em;
-
-    .loadingSymbol {
-      height: 1em;
-      width: 1em;
-      display: inline-block;
-      vertical-align: middle;
-    }
+  .cf-hearings {
+    margin-top: 0;
   }
 }
 
