@@ -8,7 +8,7 @@ import StyleGuideButton from './StyleGuideButton';
 import StyleGuideRadioField from './StyleGuideRadioField';
 import StyleGuideCheckboxes from './StyleGuideCheckboxes';
 import StyleGuideTables from './StyleGuideTables';
-import StyleGuidePlaceholder from './StyleGuidePlaceholder';
+import StyleGuideDateSelector from './StyleGuideDateSelector';
 import StyleGuideMessages from './StyleGuideMessages';
 import StickyNav from '../../components/StickyNav';
 import NavLink from '../../components/NavLink';
@@ -81,9 +81,7 @@ export default class StyleGuideIndex extends React.PureComponent {
         <div className="cf-help-divider"></div>
         <StyleGuideRadioField />
         <div className="cf-help-divider"></div>
-        <StyleGuidePlaceholder
-          title="Date Input"
-          id="date-input" />
+        <StyleGuideDateSelector />
         <div className="cf-help-divider"></div>
         <StyleGuideTables />
         <div className="cf-help-divider"></div>
