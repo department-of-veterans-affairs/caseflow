@@ -155,12 +155,12 @@ describe('DecisionReviewer', () => {
           await pause();
 
           expect(wrapper.find('#rotationDiv1').
-            props().style.transform).to.equal('rotate(0deg)');
+            props().style.transform).to.equal('rotate(0deg) translateX(0px)');
 
           wrapper.find('#button-rotation').simulate('click', { button: 0 });
 
           expect(wrapper.find('#rotationDiv1').
-            props().style.transform).to.equal('rotate(90deg)');
+            props().style.transform).to.equal(`rotate(90deg) translateX(${(PAGE_WIDTH - PAGE_HEIGHT) / 2}px)`);
 
           const pageContainerStyle = wrapper.find('#pageContainer1').props().style;
 
