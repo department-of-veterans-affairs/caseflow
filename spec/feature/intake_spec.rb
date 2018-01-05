@@ -669,7 +669,7 @@ RSpec.feature "RAMP Intake" do
         end
 
         scenario "Start a RAMP refiling with an invalid option" do
-          # Create an complete Higher level review RAMP election
+          # Create an complete higher level review RAMP election
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",
             notice_date: 5.days.ago,

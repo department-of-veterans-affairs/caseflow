@@ -31,7 +31,7 @@ describe RampIssue do
     context "description was set" do
       let(:description) { "Fresh" }
 
-      it "sets description from source issue" do
+      it "doesn't set description from source issue" do
         subject
         expect(ramp_issue.description).to eq("Fresh")
       end

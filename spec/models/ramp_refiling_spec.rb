@@ -1,4 +1,4 @@
-describe RampRefilingIntake do
+describe RampRefiling do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -34,14 +34,14 @@ describe RampRefilingIntake do
     before { ramp_refiling.save! }
     subject { ramp_refiling.create_issues!(source_issue_ids: source_issues.map(&:id)) }
 
-    let(:source_issues) do
+    let!(:source_issues) do
       [
         completed_ramp_election.issues.create!(description: "Firsties"),
         completed_ramp_election.issues.create!(description: "Secondsies")
       ]
     end
 
-    let(:outdated_issue) do
+    let!(:outdated_issue) do
       ramp_refiling.issues.create!(description: "i will be destroyed")
     end
 
