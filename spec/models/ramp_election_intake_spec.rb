@@ -49,7 +49,7 @@ describe RampElectionIntake do
   end
 
   context "#complete!" do
-    subject { intake.complete! }
+    subject { intake.complete!({}) }
 
     let(:detail) do
       RampElection.create!(

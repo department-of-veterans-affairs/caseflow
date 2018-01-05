@@ -19,7 +19,8 @@ describe RampRefilingIntake do
   let(:completed_ramp_election) do
     RampElection.create!(
       veteran_file_number: veteran_file_number,
-      notice_date: 3.days.ago,
+      notice_date: 4.days.ago,
+      receipt_date: 3.days.ago,
       end_product_reference_id: Generators::EndProduct.build(
         veteran_file_number: veteran_file_number,
         bgs_attrs: { status_type_code: "CLR" }
@@ -117,6 +118,61 @@ describe RampRefilingIntake do
 
           it { is_expected.to eq(true) }
         end
+      end
+    end
+  end
+
+  context "#complete!" do
+    subject { intake.complete!(params) }
+
+    let(:params) do
+      {
+        issue_ids: source_issues.map(&:id),
+        has_ineligible_issue: true
+      }
+    end
+
+    let(:detail) do
+      RampRefiling.create!(
+        ramp_election: completed_ramp_election,
+        veteran_file_number: veteran_file_number,
+        receipt_date: 2.days.ago,
+        option_selected: option_selected
+      )
+    end
+
+    let(:source_issues) do
+      [
+        completed_ramp_election.issues.create!(description: "Firsties"),
+        completed_ramp_election.issues.create!(description: "Secondsies")
+      ]
+    end
+
+    context "when end product is needed" do
+      let(:option_selected) { "supplemental_claim" }
+
+      it "saves issues and creates an end product" do
+        expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.detail.issues.count).to eq(2)
+        expect(intake.detail.has_ineligible_issue).to eq(true)
+      end
+    end
+
+    context "when no end product is needed" do
+      let(:option_selected) { "appeal" }
+
+      it "saves issues and does NOT create an end product" do
+        expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+
+        subject
+
+        expect(intake.reload).to be_success
+        expect(intake.detail.issues.count).to eq(2)
+        expect(intake.detail.has_ineligible_issue).to eq(true)
       end
     end
   end
