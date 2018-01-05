@@ -65,7 +65,7 @@ export class HearingWorksheet extends React.PureComponent {
     this.props.toggleWorksheetSaving();
   };
 
-  savePDF = (worksheet, worksheetIssues) => {
+  openPdf = (worksheet, worksheetIssues) => {
     this.save(worksheet, worksheetIssues)();
     window.open(`${window.location.pathname}/print`, '_blank');
   }
@@ -151,8 +151,8 @@ export class HearingWorksheet extends React.PureComponent {
       {!this.props.print &&
       <div className="cf-push-right">
         <Link
-          onClick={this.savePDF}
-          button="secondary" target="_blank">
+          onClick={this.openPdf}
+          button="secondary">
           Save as PDF
         </Link>
         <Link
