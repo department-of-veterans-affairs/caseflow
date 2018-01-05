@@ -72,8 +72,8 @@ export default class TestUsers extends React.PureComponent {
         </ul>
         { app.name === 'Dispatch' && <div>
           <p>
-                For Dispatch we are processing different types of grants,
-                here you can select which type you want to preload.</p>
+                For Dispatch, we process different types of grants.
+                You can select which type you want to preload.</p>
           <ul>
             { this.props.epTypes.map((type) => {
               const label = `Seed ${type} grants`;

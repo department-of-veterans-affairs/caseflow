@@ -500,6 +500,24 @@ RSpec.feature "Reader" do
       expect(find(".cf-document-type")).to have_text("NOD")
     end
 
+    scenario "Rotating documents" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+
+      expect do
+        get_computed_styles("#rotationDiv1", "transform") == "matrix(1, 0, 0, 1, 0, 0)"
+      end.to become_truthy(wait: 10)
+
+      safe_click "#button-rotation"
+
+      expect do
+        # It's annoying that the float math produces an infinitesimal-but-not-0 value.
+        # However, I think that trying to parse the string out and round it would be
+        # more trouble than it's worth. Let's just try it like this and see if the tests
+        # pass consistently. If not, we can find a more sophisticated approach.
+        get_computed_styles("#rotationDiv1", "transform") == "matrix(6.12323e-17, 1, -1, 6.12323e-17, 0, 0)"
+      end.to become_truthy(wait: 10)
+    end
+
     scenario "Arrow keys to navigate through documents" do
       def expect_doc_type_to_be(doc_type)
         expect(find(".cf-document-type")).to have_text(doc_type)
@@ -537,21 +555,6 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "Form 9"
       find("#addComment").send_keys(:arrow_right)
       expect_doc_type_to_be "Form 9"
-
-      # Check if annotation mode disappears when moving to another document
-      # Removing this for now. For some reason clicking on the add a comment
-      # button causes the viewer to scroll.
-      # add_comment_without_clicking_save "unsaved comment text"
-
-      # scroll_to_bottom(class_name: "ReactVirtualized__List")
-      # find(".cf-pdf-scroll-view").click
-      # find("body").send_keys(:arrow_left)
-      # expect(page).to_not have_css(".comment-textarea")
-      # add_comment_without_clicking_save "unsaved comment text"
-      # scroll_to_bottom(class_name: "ReactVirtualized__List")
-      # find(".cf-pdf-scroll-view").click
-      # find("body").send_keys(:arrow_right)
-      # expect(page).to_not have_css(".comment-textarea")
 
       fill_in "tags", with: "tag content"
       find("#tags").send_keys(:arrow_left)
@@ -598,7 +601,7 @@ RSpec.feature "Reader" do
       expect(find("#procedural", visible: false).checked?).to be false
     end
 
-    scenario "Add comment" do
+    scenario "Add, edit, and delete comments" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Caseflow Reader")
 
@@ -1424,6 +1427,18 @@ RSpec.feature "Reader" do
           category_procedural: true
         )
       end
+    end
+
+    scenario "Last read indicator" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents"
+
+      expect(page).to_not have_css("#read-indicator")
+
+      click_on documents.last.type
+      safe_click "#button-previous"
+      click_on "Back to claims folder"
+
+      expect(find("#documents-table-body tr:nth-child(#{documents.count - 1})")).to have_css("#read-indicator")
     end
 
     scenario "Open a document and return to list", skip: true do
