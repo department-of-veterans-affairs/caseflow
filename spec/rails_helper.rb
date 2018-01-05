@@ -235,6 +235,10 @@ def scroll_element_in_to_view(selector)
   end.to become_truthy, "Could not find element #{selector}"
 end
 
+def scroll_element_to_view(element)
+  page.execute_script("document.getElementById('#{element}').scrollIntoView()")
+end
+
 def scroll_to_element_in_view_with_script(selector)
   page.evaluate_script <<-EOS
     function() {
