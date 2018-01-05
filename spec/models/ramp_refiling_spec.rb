@@ -54,7 +54,7 @@ describe RampRefiling do
 
   # The create_end_product! side is more thoroughly tested in ramp_election_spec.rb
   # This spec is more concerned with create_contentions!
-  context "#create_end_product_and_contentions!", focus: true do
+  context "#create_end_product_and_contentions!" do
     subject { ramp_refiling.create_end_product_and_contentions! }
 
     before do
