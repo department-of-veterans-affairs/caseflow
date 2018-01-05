@@ -5,6 +5,10 @@ class HealthChecksController < ActionController::Base
   newrelic_ignore_apdex
 
   def show
-    render json: Rails.application.config.build_version || {}, status: :ok
+    body = {
+      healthy: true
+    }.merge(Rails.application.config.build_version || {})
+
+    render json: body, status: :ok
   end
 end
