@@ -128,11 +128,26 @@ export class PdfFile extends React.PureComponent {
 
   pageDimensions = (index) => this.props.pageDimensions[`${this.props.file}-${index}`]
 
-  pageHeight = (index) =>
-    _.get(this.pageDimensions(index), ['height'], this.props.baseHeight)
+  isHorizontal = () => this.props.rotation === 90 || this.props.rotation === 270;
 
-  pageWidth = (index) =>
-    _.get(this.pageDimensions(index), ['width'], this.props.baseWidth)
+  pageHeight = (index) => {
+    if (this.isHorizontal()) {
+      return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+    }
+
+    return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+  }
+
+  pageWidth = (index) => {
+    if (this.isHorizontal()) {
+      return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+    }
+
+    return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+  }
+
+  // pageWidth = (index) =>
+  //   _.get(this.pageDimensions(index), ['width'], this.props.baseWidth)
 
   getRowHeight = ({ index }) => {
     const pageIndexStart = index * this.columnCount;
