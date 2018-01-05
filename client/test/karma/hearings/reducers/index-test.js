@@ -228,12 +228,12 @@ describe('hearingsReducer', () => {
   });
 
   // Issues
-  context(Constants.SET_DESCRIPTION, () => {
+  context(Constants.SET_ISSUE_NOTES, () => {
     let state;
 
     beforeEach(() => {
       state = Hearings.hearingsReducers(initialState, {
-        type: Constants.SET_DESCRIPTION,
+        type: Constants.SET_ISSUE_NOTES,
         payload: {
           description: 'Elbow Arthritis',
           issueId: 6
