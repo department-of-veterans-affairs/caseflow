@@ -111,7 +111,10 @@ class Fakes::AppealRepository
     Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
   end
 
-  def self.close!(*)
+  def self.close_undecided_appeal!(*)
+  end
+
+  def self.close_remand!(*)
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)

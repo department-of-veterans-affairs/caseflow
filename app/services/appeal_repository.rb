@@ -1,4 +1,6 @@
 class AppealRepository
+  class AppealNotValidToClose < StandardError; end
+
   # :nocov:
   # Used by healthcheck endpoint
   # Calling .active? triggers a query to VACOLS
@@ -262,12 +264,16 @@ class AppealRepository
     "98"
   end
 
-  # Close an appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
+  # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
-  def self.close!(appeal:, user:, closed_on:, disposition_code:)
+  def self.close_undecided_appeal!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
+
+    # App logic should prevent this, but because this is a destructive operation
+    # add an additional failsafe
+    fail AppealNotValidToClose if case_record.bfdc
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(
@@ -290,24 +296,89 @@ class AppealRepository
       )
 
       # Close any issues associated to the appeal
-      case_record.case_issues.update_all(
+      case_record.case_issues.where(issdc: nil).update_all(
         issdc: disposition_code,
         issdcls: VacolsHelper.local_time_with_utc_timezone
       )
 
-      # Cancel any open diary notes for the appeal
-      case_record.notes.where(tskdcls: nil).update_all(
-        tskdcls: VacolsHelper.local_time_with_utc_timezone,
-        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
-        tskmdusr: user.regional_office,
-        tskstat: "C"
+      close_associated_diary_notes(case_record, user)
+      close_associated_hearings(case_record)
+    end
+  end
+
+  # Close a remand (prematurely, such as for a withdrawal or a VAIMA opt in)
+  # Remands need to be closed without overwriting the disposition data. A new
+  # Appeal record is opened and subsequently closed to record the disposition
+  # of the remand.
+  #
+  # WARNING: some parts of this action are not automatically reversable, and must
+  # be reversed by hand
+  def self.close_remand!(appeal:, user:, closed_on:, disposition_code:)
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    # App logic should prevent this, but because this is a destructive operation
+    # add an additional failsafe
+    fail AppealNotValidToClose unless case_record.bfmpro == "REM"
+
+    VACOLS::Case.transaction do
+      case_record.update_attributes!(bfmpro: "HIS")
+
+      case_record.update_vacols_location!("99")
+
+      folder_record.update_attributes!(
+        ticukey: "HISTORY",
+        tikeywrd: "HISTORY",
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
       )
 
-      # Cancel any scheduled hearings
-      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
-        clsdate: VacolsHelper.local_time_with_utc_timezone,
-        hearing_disp: "C"
-      )
+      close_associated_diary_notes(case_record, user)
+      close_associated_hearings(case_record)
+
+      # The follow up appeal will have the same ID as the remand, with a "P" tacked on
+      # (It's a VACOLS thing)
+      follow_up_appeal_key = "#{case_record.bfkey}P"
+
+      follow_up_case = VACOLS::Case.create!(
+        case_record.remand_clone_attributes.merge(
+          bfkey: follow_up_appeal_key,
+          bfmpro: "HIS",
+          bfddec: dateshift_to_utc(closed_on),
+          bfdc: disposition_code,
+          bfboard: "88",
+          bfattid: "888",
+          bfac: "3",
+          bfdcfld1: nil,
+          bfdcfld2: nil,
+          bfdcfld3: nil
+        ))
+
+      follow_up_case.update_vacols_location!("99")
+
+      VACOLS::Folder.create!(
+        folder_record.remand_clone_attributes.merge(
+          ticknum: follow_up_appeal_key,
+          ticukey: "HISTORY",
+          tikeywrd: "HISTORY",
+          tidcls: dateshift_to_utc(closed_on),
+          timdtime: VacolsHelper.local_time_with_utc_timezone,
+          timduser: user.regional_office
+        ))
+
+      # Create follow up issues that will be listed as closed with the
+      # proper disposition
+      case_record.case_issues.where(issdc: "3").each_with_index do |case_issue, i|
+        VACOLS::CaseIssue.create!(
+          case_issue.remand_clone_attributes.merge(
+            isskey: follow_up_appeal_key,
+            issseq: i + 1,
+            issdc: disposition_code,
+            issdcls: VacolsHelper.local_time_with_utc_timezone,
+            issadtime: VacolsHelper.local_time_with_utc_timezone,
+            issaduser: user.regional_office
+          ))
+      end
     end
   end
 
@@ -368,6 +439,29 @@ class AppealRepository
 
   def self.case_assignment_exists?(vacols_id)
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
+  end
+
+  class << self
+    private
+
+    # NOTE: this should be called within a transaction where you are closing an appeal
+    def close_associated_hearings(case_record)
+      # Only scheduled hearings need to be closed
+      case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
+        clsdate: VacolsHelper.local_time_with_utc_timezone,
+        hearing_disp: "C"
+      )
+    end
+
+    # NOTE: this should be called within a transaction where you are closing an appeal
+    def close_associated_diary_notes(case_record, user)
+      case_record.notes.where(tskdcls: nil).update_all(
+        tskdcls: VacolsHelper.local_time_with_utc_timezone,
+        tskmdtm: VacolsHelper.local_time_with_utc_timezone,
+        tskmdusr: user.regional_office,
+        tskstat: "C"
+      )
+    end
   end
   # :nocov:
 end
