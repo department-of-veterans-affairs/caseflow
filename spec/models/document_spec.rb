@@ -3,14 +3,14 @@ require "faker"
 
 describe Document do
   let(:document_type) { "NOD" }
-  let(:document) {
+  let(:document) do
     Document.new(
       type: document_type,
       vbms_document_id: "123",
       received_at: received_at,
       description: "Document description"
     )
-  }
+  end
   let(:file) { document.default_path }
   let(:received_at) { nil }
   let(:case_file_number) { Random.rand(999_999_999).to_s }
