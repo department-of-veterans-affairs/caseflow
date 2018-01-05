@@ -3,6 +3,7 @@ class Document < ActiveRecord::Base
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
+  has_paper_trail only: [:description]
 
   self.inheritance_column = nil
 

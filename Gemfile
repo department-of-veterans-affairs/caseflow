@@ -30,7 +30,7 @@ gem 'active_model_serializers', '~> 0.10.0'
 # soft delete gem
 gem "paranoia", "~> 2.2"
 
-gem "dogstatsd-ruby" 
+gem "dogstatsd-ruby"
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -148,3 +148,5 @@ group :development do
 end
 
 gem 'shoryuken', '3.1.11'
+
+gem "paper_trail", "8.1.2"

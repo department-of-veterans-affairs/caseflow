@@ -45,6 +45,9 @@ Rails.application.configure do
   # Setup S3
   config.s3_enabled = false
 
+  # Disable Paper Trail auditing
+  config.paper_trail.enabled = false
+
   if ENV['TEST_SUBCATEGORY']
     assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")
     config.assets.configure do |env|
