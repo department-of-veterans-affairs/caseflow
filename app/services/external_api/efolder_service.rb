@@ -24,9 +24,7 @@ class ExternalApi::EfolderService
     response = get_efolder_response("/api/v1/files?download=true", user, headers)
 
     if response.error?
-      err_msg = "eFolder HTTP status code: #{response.code} for VBMS ID: #{vbms_id}."
-      Rails.logger.error err_msg
-      fail Caseflow::Error::DocumentRetrievalError, err_msg
+      fail Caseflow::Error::DocumentRetrievalError
     end
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
@@ -50,9 +48,7 @@ class ExternalApi::EfolderService
       response = get_efolder_response("/api/v2/manifests", user, headers)
 
       if response.error?
-        err_msg = "eFolder HTTP status code: #{response.code} for VBMS ID: #{vbms_id}."
-        Rails.logger.error err_msg
-        fail Caseflow::Error::DocumentRetrievalError, err_msg
+        fail Caseflow::Error::DocumentRetrievalError
       end
 
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
