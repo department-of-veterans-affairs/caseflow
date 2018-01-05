@@ -470,7 +470,8 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
     loadError: state.pdf.documentErrors[props.file],
     pdfDocument: state.pdf.pdfDocuments[props.file],
-    windowingOverscan: state.pdfViewer.windowingOverscan
+    windowingOverscan: state.pdfViewer.windowingOverscan,
+    rotation: _.get(state.documents, [props.documentId, 'rotation'])
   };
 };
 
