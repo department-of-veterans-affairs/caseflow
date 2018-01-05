@@ -53,6 +53,10 @@ class WorksheetFormEntry extends React.PureComponent {
 }
 export class HearingWorksheet extends React.PureComponent {
 
+  componentDidMount() {
+    document.title = `${this.props.worksheet.appellant_mi_formatted}'s ${document.title}`;
+  }
+
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
@@ -61,8 +65,12 @@ export class HearingWorksheet extends React.PureComponent {
     this.props.toggleWorksheetSaving();
   };
 
-  savePDF = () => {
-    this.save();
+  savePDF = (worksheet, worksheetIssues) => {
+    this.props.toggleWorksheetSaving();
+    this.props.setWorksheetSaveFailedStatus(false);
+    this.props.saveWorksheet(worksheet);
+    this.props.saveIssues(worksheetIssues);
+    this.props.toggleWorksheetSaving();
     window.open(`${window.location.pathname}/print`, '_blank');
   }
 
