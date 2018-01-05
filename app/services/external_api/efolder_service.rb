@@ -23,11 +23,7 @@ class ExternalApi::EfolderService
 
     response = get_efolder_response("/api/v1/files?download=true", user, headers)
 
-    if response.error?
-      err_msg = "eFolder HTTP status code: #{response.code} for VBMS ID: #{vbms_id}."
-      Rails.logger.error err_msg
-      fail Caseflow::Error::DocumentRetrievalError, err_msg
-    end
+    fail Caseflow::Error::DocumentRetrievalError if response.error?
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
@@ -49,19 +45,11 @@ class ExternalApi::EfolderService
     TRIES.times do
       response = get_efolder_response("/api/v2/manifests", user, headers)
 
-      if response.error?
-        err_msg = "eFolder HTTP status code: #{response.code} for VBMS ID: #{vbms_id}."
-        Rails.logger.error err_msg
-        fail Caseflow::Error::DocumentRetrievalError, err_msg
-      end
+      fail Caseflow::Error::DocumentRetrievalError if response.error?
 
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
-      if response_attrs["sources"].blank?
-        err_msg = "eFolder sources are not available for VBMS ID: #{vbms_id}."
-        Rails.logger.error err_msg
-        fail Caseflow::Error::DocumentRetrievalError, err_msg
-      end
+      fail Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
 
       break if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
       sleep 1

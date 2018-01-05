@@ -246,11 +246,9 @@ describe ExternalApi::EfolderService do
       context "when HTTP error" do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
-        let(:err_msg) { "eFolder HTTP status code: 404 for VBMS ID: #{appeal.sanitized_vbms_id}." }
-
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError, err_msg)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError)
         end
       end
 
@@ -471,10 +469,9 @@ describe ExternalApi::EfolderService do
       context "with error code" do
         let(:expected_response) { HTTPI::Response.new(404, [], {}) }
 
-        let(:err_msg) { "eFolder HTTP status code: 404 for VBMS ID: #{appeal.sanitized_vbms_id}." }
         it "throws Caseflow::Error::DocumentRetrievalError" do
           expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }
-            .to raise_error(Caseflow::Error::DocumentRetrievalError, err_msg)
+            .to raise_error(Caseflow::Error::DocumentRetrievalError)
         end
       end
     end

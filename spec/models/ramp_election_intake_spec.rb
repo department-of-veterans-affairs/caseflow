@@ -69,14 +69,14 @@ describe RampElectionIntake do
     it "closes out the appeals correctly and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
-      expect(Fakes::AppealRepository).to receive(:close!).with(
+      expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
         appeal: appeals_to_close.first,
         user: intake.user,
         closed_on: Time.zone.today,
         disposition_code: "P"
       )
 
-      expect(Fakes::AppealRepository).to receive(:close!).with(
+      expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
         appeal: appeals_to_close.last,
         user: intake.user,
         closed_on: Time.zone.today,
@@ -91,7 +91,7 @@ describe RampElectionIntake do
     context "if VACOLS closure fails" do
       it "does not complete" do
         intake.save!
-        expect(Fakes::AppealRepository).to receive(:close!).and_raise("VACOLS failz")
+        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).and_raise("VACOLS failz")
 
         expect { subject }.to raise_error("VACOLS failz")
 
