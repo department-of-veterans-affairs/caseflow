@@ -222,6 +222,15 @@ class VACOLS::Case < VACOLS::Record
                 .order("BFDDEC ASC")
   end
 
+  # The attributes that are copied over when the case is cloned because of a remand
+  def remand_clone_attributes
+    attributes.slice(
+      :bfcorkey, :bfcorlid, :bfdnod, :bfdsoc, :bfd19, :bf41stat, :bfregoff,
+      :bfissnr, :bfdorg, :bfdc, :bfic, :bfio, :bfoc, :bfms, :bfsh, :bfso,
+      :bfst, :bfdrodec, :bfcasev, :bfdpdcn, :bfddro, :bfdroid, :bfdrortr, :bfro1
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
     return unless location
