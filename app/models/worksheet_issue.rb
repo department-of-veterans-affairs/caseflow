@@ -8,6 +8,10 @@ class WorksheetIssue < ActiveRecord::Base
 
   validates :appeal, :vacols_sequence_id, presence: true
 
+  def notes
+    super || attributes["description"]
+  end
+
   class << self
     def create_from_issue(appeal, issue)
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
@@ -15,6 +19,7 @@ class WorksheetIssue < ActiveRecord::Base
                       name: issue.type[:label],
                       levels: issue.description.join("; "),
                       notes: issue.note,
+                      description: issue.note,
                       from_vacols: true)
       end
     end

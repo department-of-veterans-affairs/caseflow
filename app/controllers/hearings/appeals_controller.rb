@@ -1,5 +1,6 @@
 class Hearings::AppealsController < HearingsController
   def update
+    binding.pry
     appeal.update!(appeal_params)
     render json: { appeal: appeal.attributes_for_hearing }
   end
