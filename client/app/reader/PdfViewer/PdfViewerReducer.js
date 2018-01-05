@@ -27,7 +27,8 @@ export const initialState = {
   hideSearchBar: true,
   pdfSideBarError: initialPdfSidebarErrorState,
   didLoadAppealFail: false,
-  scrollToSidebarComment: null
+  scrollToSidebarComment: null,
+  windowingOverscan: 10
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
@@ -146,6 +147,10 @@ export const pdfViewerReducer = (state = initialState, action = {}) => {
     return hideErrorMessage(state, action.payload.messageType);
   case Constants.SHOW_ERROR_MESSAGE:
     return showErrorMessage(state, action.payload.messageType, action.payload.errorMessage);
+  case Constants.SET_WINDOWING_OVERSCAN:
+    return update(state, {
+      windowingOverscan: { $set: action.payload.overscanValue }
+    });
   default:
     return state;
   }

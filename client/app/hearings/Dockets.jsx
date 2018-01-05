@@ -80,14 +80,14 @@ export class Dockets extends React.Component {
     return <div>
       <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
         <div className="cf-hearings-title-and-judge">
-          <h1>Upcoming Hearing Days</h1>
+          <h1>Your Hearing Days</h1>
           <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
         </div>
         <Table
           className="dockets"
           columns={columns}
           rowObjects={rowObjects}
-          summary="Upcoming Hearing Days?"
+          summary="Your Hearing Days?"
           getKeyForRow={this.getKeyForRow}
         />
       </div>

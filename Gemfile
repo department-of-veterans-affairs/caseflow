@@ -47,7 +47,7 @@ gem 'wannabe_bool'
 gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
 
 # BGS
-gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: 'faad830fe463e88f21bdb4a1af7422c2e529aab8'
+gem 'bgs', git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: '9266698668bf361bf5df06990d06da59abb7c608'
 
 # PDF Tools
 gem 'pdf-forms'
@@ -131,6 +131,8 @@ group :development, :test do
   gem 'database_cleaner'
   # to save and open specific page in capybara tests
   gem 'launchy'
+
+  gem 'danger', '5.5.5'
 end
 
 group :development do

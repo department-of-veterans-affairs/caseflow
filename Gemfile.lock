@@ -44,8 +44,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: faad830fe463e88f21bdb4a1af7422c2e529aab8
-  ref: faad830fe463e88f21bdb4a1af7422c2e529aab8
+  revision: 9266698668bf361bf5df06990d06da59abb7c608
+  ref: 9266698668bf361bf5df06990d06da59abb7c608
   specs:
     bgs (0.1)
       nokogiri (~> 1.8.1)
@@ -151,14 +151,34 @@ GEM
       activesupport
     childprocess (0.7.0)
       ffi (~> 1.0, >= 1.0.11)
+    claide (1.0.2)
+    claide-plugins (0.9.2)
+      cork
+      nap
+      open4 (~> 1.3)
     cliver (0.3.2)
     coderay (1.1.1)
+    colored2 (3.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
+    cork (0.3.0)
+      colored2 (~> 3.1)
     crass (1.0.2)
     d3-rails (4.10.2)
       railties (>= 3.1)
+    danger (5.5.5)
+      claide (~> 1.0)
+      claide-plugins (>= 0.9.2)
+      colored2 (~> 3.1)
+      cork (~> 0.1)
+      faraday (~> 0.9)
+      faraday-http-cache (~> 1.0)
+      git (~> 1)
+      kramdown (~> 1.5)
+      no_proxy_fix
+      octokit (~> 4.7)
+      terminal-table (~> 1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
     diff-lcs (1.3)
@@ -174,12 +194,15 @@ GEM
       i18n (~> 0.5)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
+    faraday-http-cache (1.3.1)
+      faraday (~> 0.8)
     ffi (1.9.18)
     ffi (1.9.18-x64-mingw32)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.84.0)
       thor (~> 0.19.1)
+    git (1.3.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     gyoku (1.3.1)
@@ -211,6 +234,7 @@ GEM
       sprockets (>= 2, < 4)
       sprockets-rails (>= 2, < 4)
       tilt
+    kramdown (1.16.2)
     launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (3.16.14.19)
@@ -231,10 +255,12 @@ GEM
       railties (>= 3.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
+    nap (1.1.0)
     neat (2.1.0)
       sass (~> 3.4)
       thor (~> 0.19)
     newrelic_rpm (4.5.0.337)
+    no_proxy_fix (0.1.2)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     nokogiri (1.8.1-x64-mingw32)
@@ -243,6 +269,9 @@ GEM
     paper_trail (8.1.2)
       activerecord (>= 4.2, < 5.2)
       request_store (~> 1.1)
+    octokit (4.7.0)
+      sawyer (~> 0.8.0, >= 0.5.3)
+    open4 (1.3.4)
     parallel (1.11.1)
     paranoia (2.3.1)
       activerecord (>= 4.0, < 5.2)
@@ -371,6 +400,9 @@ GEM
       nokogiri (>= 1.4.0)
       nori (~> 2.4)
       wasabi (~> 3.4)
+    sawyer (0.8.1)
+      addressable (>= 2.3.5, < 2.6)
+      faraday (~> 0.8, < 1.0)
     scss_lint (0.52.0)
       rake (>= 0.9, < 13)
       sass (~> 3.4.20)
@@ -399,6 +431,8 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (1.3.13)
     sqlite3 (1.3.13-x64-mingw32)
+    terminal-table (1.8.0)
+      unicode-display_width (~> 1.1, >= 1.1.1)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -412,6 +446,7 @@ GEM
       tzinfo (>= 1.0.0)
     uglifier (3.1.9)
       execjs (>= 0.3.0, < 3)
+    unicode-display_width (1.3.0)
     wannabe_bool (0.6.0)
     wasabi (3.5.0)
       httpi (~> 2.0)
@@ -456,6 +491,7 @@ DEPENDENCIES
   capybara
   caseflow!
   connect_vbms!
+  danger (= 5.5.5)
   database_cleaner
   dogstatsd-ruby
   dotenv-rails
@@ -510,4 +546,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
