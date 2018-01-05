@@ -4,6 +4,10 @@ class VACOLS::CaseIssue < VACOLS::Record
   self.primary_key = "isskey"
 
   # :nocov:
+  def remand_clone_attributes
+    attributes.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
+  end
+
   # rubocop:disable MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,

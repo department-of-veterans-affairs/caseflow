@@ -255,7 +255,7 @@ RSpec.feature "RAMP Intake" do
       visit "/intake"
       expect(page).to have_content("Finish processing Higher-Level Review election")
 
-      expect(Fakes::AppealRepository).to receive(:close!).with(
+      expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
         appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
         user: current_user,
         closed_on: Time.zone.today,
@@ -553,7 +553,7 @@ RSpec.feature "RAMP Intake" do
           safe_click "#button-submit-review"
           expect(page).to have_content("Finish processing Higher-Level Review election")
 
-          expect(Fakes::AppealRepository).to receive(:close!).with(
+          expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
             appeal: Appeal.find_or_create_by_vacols_id(appeal.vacols_id),
             user: current_user,
             closed_on: Time.zone.today,
