@@ -227,6 +227,22 @@ $color-hearings-saving: #777;
     border: 1px solid $color-gray-medium;
   }
 
+  //TODO: Candidate for caseflow-commons
+  .cf-copy-to-clipboard {
+    border: 1px solid $color-gray-medium;
+    box-shadow: inset 0 0 0 3px $color-gray-lightest;
+    color: $color-gray-medium;
+
+    &:hover {
+      box-shadow: inset 0 0 0 3px $color-gray-lighter;
+      color: $color-gray-dark;
+    }
+
+    svg {
+      margin: 0 0 -2px 7px;
+    }
+  }
+
   .cf-hearings-worksheet-witness-cell {
 
     textarea {
