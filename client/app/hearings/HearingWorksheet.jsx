@@ -66,11 +66,7 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   savePDF = (worksheet, worksheetIssues) => {
-    this.props.toggleWorksheetSaving();
-    this.props.setWorksheetSaveFailedStatus(false);
-    this.props.saveWorksheet(worksheet);
-    this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
+    this.save(worksheet, worksheetIssues)();
     window.open(`${window.location.pathname}/print`, '_blank');
   }
 
