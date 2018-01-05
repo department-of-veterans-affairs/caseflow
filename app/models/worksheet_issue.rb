@@ -14,7 +14,7 @@ class WorksheetIssue < ActiveRecord::Base
         record.update(program: issue.program.try(:capitalize),
                       name: issue.type[:label],
                       levels: issue.description.join("; "),
-                      description: issue.note,
+                      notes: issue.note,
                       from_vacols: true)
       end
     end
