@@ -245,8 +245,8 @@ export class PdfPage extends React.PureComponent {
     });
     const { outerDivWidth, outerDivHeight, innerDivWidth, innerDivHeight } = this.getDivDimensions();
 
-    // When you rotate a page 270 degrees there is a margin on the right equal to the difference
-    // between the current width and current height. We need to undo that margin to get things to align.
+    // When you rotate a page 90 or 270 degrees there is a translation at the top equal to the difference
+    // between the current width and current height. We need to undo that translation to get things to align.
     const translateX = Math.sin((this.props.rotation / 180) * Math.PI) * (outerDivHeight - outerDivWidth) / 2;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,

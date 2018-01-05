@@ -146,9 +146,6 @@ export class PdfFile extends React.PureComponent {
     return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
   }
 
-  // pageWidth = (index) =>
-  //   _.get(this.pageDimensions(index), ['width'], this.props.baseWidth)
-
   getRowHeight = ({ index }) => {
     const pageIndexStart = index * this.columnCount;
     const pageHeights = _.range(pageIndexStart, pageIndexStart + this.columnCount).
