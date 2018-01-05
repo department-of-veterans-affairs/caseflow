@@ -11,6 +11,7 @@ import { bindActionCreators } from 'redux';
 import { setIssueSelected, setHasIneligibleIssue, setOutsideCaseflowStepsConfirmed, completeIntake,
   processFinishError } from '../../actions/rampRefiling';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 class Finish extends React.PureComponent {
   onCheckIssue = (issueId) => (checked) => this.props.setIssueSelected(issueId, checked)
@@ -23,6 +24,8 @@ class Finish extends React.PureComponent {
       this.props.processFinishError();
     }
   }
+
+  setOutsideCaseflowStepsNode = (node) => this.outsideCaseflowStepsNode = node
 
   render() {
     const {
@@ -86,7 +89,7 @@ class Finish extends React.PureComponent {
     return <div>
       <h1>Finish processing RAMP Selection form</h1>
 
-      <ol className="cf-bare-list" ref={(node) => this.outsideCaseflowStepsNode = node}>
+      <ol className="cf-bare-list" ref={this.setOutsideCaseflowStepsNode}>
         <li>
           <div className="cf-intake-step">
             <strong>1. Complete the following tasks outside Caseflow and mark when complete</strong>
@@ -132,7 +135,7 @@ class Finish extends React.PureComponent {
         </li>
       </ol>
 
-      <div className={issuesSelectedError ? 'usa-input-error' : ''}>
+      <div className={classNames({ 'usa-input-error': issuesSelectedError })}>
         { issuesSelectedError &&
             <div className="usa-input-error-message">{issuesSelectedError}</div>
         }

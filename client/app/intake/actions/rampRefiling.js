@@ -100,9 +100,8 @@ export const setOutsideCaseflowStepsConfirmed = (isConfirmed) => ({
 
 export const processFinishError = () => ({ type: ACTIONS.PROCESS_FINISH_ERROR });
 
-const validateSelectedIssues = (rampRefiling) => (
-  rampRefiling.hasIneligibleIssue || _.some(rampRefiling.issues, (issue) => issue.isSelected)
-);
+const validateSelectedIssues = (rampRefiling) =>
+  rampRefiling.hasIneligibleIssue || _.some(rampRefiling.issues, 'isSelected');
 
 export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
   let hasError = false;
@@ -136,13 +135,10 @@ export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
 
   const data = {
     has_ineligible_issue: rampRefiling.hasIneligibleIssue,
-    issue_ids: _.reduce(rampRefiling.issues, (selectedIssues, issue) => {
-      if (issue.isSelected) {
-        selectedIssues.push(issue.id);
-      }
-
-      return selectedIssues;
-    }, [])
+    issue_ids: _(rampRefiling.issues).
+      filter('isSelected').
+      map('id').
+      value()
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
