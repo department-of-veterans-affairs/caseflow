@@ -235,19 +235,21 @@ describe('hearingsReducer', () => {
       state = Hearings.hearingsReducers(initialState, {
         type: Constants.SET_ISSUE_NOTES,
         payload: {
-          description: 'Elbow Arthritis',
+          notes: 'Elbow Arthritis',
           issueId: 6
         }
       });
     });
 
-    it('sets description', () => {
+    it('sets issue notes', () => {
 
       expect(state.worksheetIssues).to.deep.equal({
-        6: { description: 'Elbow Arthritis',
-          edited: true }
-      }
-      );
+        6: {
+          description: 'Elbow Arthritis',
+          edited: true,
+          notes: 'Elbow Arthritis'
+        }
+      });
     });
   });
 
