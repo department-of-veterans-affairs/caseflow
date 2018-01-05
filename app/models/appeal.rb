@@ -667,12 +667,21 @@ class Appeal < ActiveRecord::Base
       disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+      if appeal.remand?
+        repository.close_remand!(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: disposition_code
+        )
+      else
+        repository.close_undecided_appeal!(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: disposition_code
+        )
+      end
     end
   end
 end
