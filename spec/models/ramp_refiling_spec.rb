@@ -52,6 +52,72 @@ describe RampRefiling do
     end
   end
 
+  # The create_end_product! side is more thoroughly tested in ramp_election_spec.rb
+  # This spec is more concerned with create_contentions!
+  context "#create_end_product_and_contentions!", focus: true do
+    subject { ramp_refiling.create_end_product_and_contentions! }
+
+    before do
+      ramp_refiling.save!
+      Fakes::VBMSService.end_product_claim_id = "1337"
+
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    let(:receipt_date) { 1.day.ago }
+    let(:option_selected) { "supplemental_claim" }
+
+    let!(:issue_already_created) do
+      ramp_refiling.issues.create!(description: "Already created", contention_reference_id: "123")
+    end
+
+    context "when no issues that need to be created in VBMS" do
+      it "does not try and create contentions" do
+        expect(subject).to eq([])
+
+        expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+      end
+    end
+
+    context "when issues need to have contentions created in VBMS" do
+      let!(:issues) do
+        [
+          ramp_refiling.issues.create!(description: "Leg"),
+          ramp_refiling.issues.create!(description: "Arm")
+        ]
+      end
+
+      context "when an issue is not created in VBMS" do
+        # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
+        let!(:issue_to_fail) do
+          ramp_refiling.issues.create!(description: "FAIL ME")
+        end
+
+        it "raises ContentionCreationFailed" do
+          expect { subject }.to raise_error(RampRefiling::ContentionCreationFailed)
+
+          # Even though there was a failure, we should still save the contention ids that were created
+          expect(issues.first.reload.contention_reference_id).to_not be_nil
+          expect(issues.second.reload.contention_reference_id).to_not be_nil
+        end
+      end
+
+      it "sends requests to VBMS to create both the end_product and the uncreated issues" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!)
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: "64205555",
+          claim_id: "1337",
+          contention_descriptions: %w(Arm Leg)
+        )
+
+        expect(issues.first.reload.contention_reference_id).to_not be_nil
+      end
+    end
+  end
+
   context "#valid?" do
     subject { ramp_refiling.valid? }
 

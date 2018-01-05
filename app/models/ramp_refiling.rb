@@ -1,4 +1,6 @@
 class RampRefiling < RampReview
+  class ContentionCreationFailed < StandardError; end
+
   belongs_to :ramp_election
 
   validate :validate_receipt_date, :validate_option_selected
@@ -14,7 +16,7 @@ class RampRefiling < RampReview
   # inconsistent state and must recover manually
   def create_end_product_and_contentions!
     create_end_product!
-    create_contentions!
+    create_contentions_on_new_end_product!
   end
 
   def election_receipt_date
@@ -27,8 +29,37 @@ class RampRefiling < RampReview
 
   private
 
-  def create_contentions!
-    # TODO: Create contentions on the end product from the issues
+  def contention_descriptions_to_create
+    @contention_descriptions_to_create ||=
+      issues.where(contention_reference_id: nil).order(:description).pluck(:description)
+  end
+
+  # VBMS will return ALL contentions on a end product when you create contentions,
+  # not just the ones that were just created. This method assumes there are no
+  # pre-existing contentions on the end product. Since it was also just created.
+  def create_contentions_on_new_end_product!
+    return [] if contention_descriptions_to_create.empty?
+
+    # Currently not making any assumptions about the order in which VBMS returns
+    # the created contentions. Instead find the issue by matching text.
+    #
+    # Load all the issues so we can match them in memory
+    issues.all.tap do |issues|
+      create_contentions_in_vbms.each do |contention|
+        matching_issue = issues.find { |issue| issue.description == contention.text }
+        matching_issue && matching_issue.update!(contention_reference_id: contention.id)
+      end
+
+      fail ContentionCreationFailed if issues.any? { |issue| !issue.contention_reference_id }
+    end
+  end
+
+  def create_contentions_in_vbms
+    VBMSService.create_contentions!(
+      veteran_file_number: veteran_file_number,
+      claim_id: end_product_reference_id,
+      contention_descriptions: contention_descriptions_to_create
+    )
   end
 
   def validate_receipt_date
