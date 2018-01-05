@@ -60,15 +60,21 @@ export class HearingWorksheet extends React.PureComponent {
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
-    this.props.saveWorksheet(worksheet);
     this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
-  };
+    this.props.saveWorksheet(worksheet).
+      then(() => this.props.toggleWorksheetSaving());
+  }
 
   openPdf = (worksheet, worksheetIssues) => {
-    this.save(worksheet, worksheetIssues)();
-    window.open(`${window.location.pathname}/print`, '_blank');
+    return this.save(worksheet, worksheetIssues)().then(() => {
+      window.open(`${window.location.pathname}/print`, '_blank');
+    });
   }
+
+  saveWorksheet = (worksheet) => new Promise((resolve, reject) => {
+    // ...do save
+    resolve(result);
+  });
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
@@ -76,6 +82,7 @@ export class HearingWorksheet extends React.PureComponent {
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
+
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
