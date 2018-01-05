@@ -197,7 +197,6 @@ class FinishNextButton extends React.PureComponent {
   render = () =>
     <Button
       id="finish-intake"
-      name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
