@@ -600,7 +600,7 @@ describe Appeal do
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
     let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
-    let(:another_appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
 
@@ -622,13 +622,13 @@ describe Appeal do
 
     context "when multiple appeals" do
       it "closes each appeal" do
-        expect(Fakes::AppealRepository).to receive(:close!).with(
+        expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
           appeal: appeal,
           user: user,
           closed_on: 4.days.ago,
           disposition_code: "P"
         )
-        expect(Fakes::AppealRepository).to receive(:close!).with(
+        expect(Fakes::AppealRepository).to receive(:close_remand!).with(
           appeal: another_appeal,
           user: user,
           closed_on: 4.days.ago,
@@ -666,11 +666,26 @@ describe Appeal do
           end
         end
 
-        context "when appeal is active" do
+        context "when appeal is active and undecided" do
           let(:vacols_record) { :ready_to_certify }
 
           it "closes the appeal in VACOLS" do
-            expect(Fakes::AppealRepository).to receive(:close!).with(
+            expect(Fakes::AppealRepository).to receive(:close_undecided_appeal!).with(
+              appeal: appeal,
+              user: user,
+              closed_on: 4.days.ago,
+              disposition_code: "P"
+            )
+
+            subject
+          end
+        end
+
+        context "when appeal is a remand" do
+          let(:vacols_record) { :remand_decided }
+
+          it "closes the remand in VACOLS" do
+            expect(Fakes::AppealRepository).to receive(:close_remand!).with(
               appeal: appeal,
               user: user,
               closed_on: 4.days.ago,
