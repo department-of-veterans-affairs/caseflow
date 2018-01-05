@@ -24,7 +24,7 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-//export const submitError
+// export const submitError
 
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
   dispatch({

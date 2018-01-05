@@ -41,7 +41,11 @@ class Review extends React.PureComponent {
       { hasInvalidOption && <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
-          and that they may clarify their lane selection within 30 days.
+          and that they may clarify their lane selection within 30 days. <br />
+        <Button
+          name="begin-next-intake">
+            Begin next intake
+        </Button>
       </Alert>
       }
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
@@ -100,6 +104,7 @@ class ReviewNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
+      disabled={Boolean(this.props.hasInvalidOption)}
     >
       Continue to next step
     </Button>;
@@ -109,7 +114,8 @@ const ReviewNextButtonConnected = connect(
   ({ rampRefiling, intake }) => ({
     intakeId: intake.id,
     requestState: rampRefiling.requestStatus.submitReview,
-    rampRefiling
+    rampRefiling,
+    hasInvalidOption: rampRefiling.hasInvalidOption
   }),
   (dispatch) => bindActionCreators({
     submitReview
