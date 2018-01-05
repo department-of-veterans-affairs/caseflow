@@ -1,6 +1,5 @@
 class Hearings::AppealsController < HearingsController
   def update
-    binding.pry
     appeal.update!(appeal_params)
     render json: { appeal: appeal.attributes_for_hearing }
   end
@@ -16,6 +15,6 @@ class Hearings::AppealsController < HearingsController
     params.require(:appeal)
           .permit(worksheet_issues_attributes: [:id, :allow, :deny, :remand, :dismiss,
                                                 :reopen, :vha, :program, :name, :from_vacols,
-                                                :vacols_sequence_id, :_destroy, :notes, :levels])
+                                                :vacols_sequence_id, :_destroy, :description, :notes, :levels])
   end
 end
