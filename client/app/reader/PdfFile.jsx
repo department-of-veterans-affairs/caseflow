@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { resetJumpToPage, setDocScrollPosition } from '../reader/PdfViewer/PdfViewerActions';
 import StatusMessage from '../components/StatusMessage';
-import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT } from './constants';
+import { PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT, ANNOTATION_ICON_SIDE_LENGTH } from './constants';
 import { setPdfDocument, clearPdfDocument, onScrollToComment, setDocumentLoadError, clearDocumentLoadError
 } from '../reader/Pdf/PdfActions';
 import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfSearch/PdfSearchActions';
@@ -107,8 +107,8 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = (columnCount) => ({ rowIndex, columnIndex, key, style }) => {
-    if ((columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
+  getPage = ({ rowIndex, columnIndex, key, style }) => {
+    if ((this.columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
       return null;
     }
 
@@ -118,7 +118,7 @@ export class PdfFile extends React.PureComponent {
         scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
-        pageIndex={(rowIndex * columnCount) + columnIndex}
+        pageIndex={(rowIndex * this.columnCount) + columnIndex}
         isVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
@@ -269,9 +269,8 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  onSectionRendered = ({ rowStartIndex, columnStartIndex }) => {
+  onSectionRendered = ({ rowStartIndex }) => {
     this.rowStartIndex = rowStartIndex;
-    this.columnStartIndex = columnStartIndex;
   }
 
   onPageChange = (index, clientHeight) => {
@@ -298,6 +297,17 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
+  getCenterOfVisiblePage = (scrollWindowBoundary, pageScrollBoundary, pageDimension, clientDimension) => {
+    const scrolledLocationOnPage = (scrollWindowBoundary - pageScrollBoundary) / this.props.scale;
+    const adjustedScrolledLocationOnPage = scrolledLocationOnPage ? scrolledLocationOnPage : scrolledLocationOnPage / 2;
+
+    const positionBasedOnPageDimension = (pageDimension + scrolledLocationOnPage - ANNOTATION_ICON_SIDE_LENGTH) / 2;
+    const positionBasedOnClientDimension = adjustedScrolledLocationOnPage +
+      (((clientDimension / this.props.scale) - ANNOTATION_ICON_SIDE_LENGTH) / 2);
+
+    return Math.min(positionBasedOnPageDimension, positionBasedOnClientDimension);
+  }
+
   handleAltC = () => {
     if (this.props.sidebarHidden) {
       this.props.togglePdfSidebar();
@@ -307,12 +317,10 @@ export class PdfFile extends React.PureComponent {
 
     const { width, height } = this.pageDimensions(this.currentPage);
     const pagePosition = this.getOffsetForPageIndex(this.currentPage);
-    const yScrolledLocationOnPage = (this.scrollTop - pagePosition.scrollTop) / this.props.scale;
-    const xScrolledLocationOnPage = (this.scrollLeft - pagePosition.scrollLeft) / this.props.scale;
 
     const initialCommentCoordinates = {
-      x: ((xScrolledLocationOnPage + width) / 2),
-      y: ((yScrolledLocationOnPage + height) / 2)
+      x: this.getCenterOfVisiblePage(this.scrollLeft, pagePosition.scrollLeft, width, this.clientWidth),
+      y: this.getCenterOfVisiblePage(this.scrollTop, pagePosition.scrollTop, height, this.clientHeight)
     };
 
     this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
@@ -392,7 +400,7 @@ export class PdfFile extends React.PureComponent {
             height={height}
             rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / this.columnCount)}
             rowHeight={this.getRowHeight}
-            cellRenderer={this.getPage(this.columnCount)}
+            cellRenderer={this.getPage}
             scrollToAlignment="start"
             width={width}
             columnWidth={this.getColumnWidth}
