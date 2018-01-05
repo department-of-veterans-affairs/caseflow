@@ -73,9 +73,10 @@ describe RampRefiling do
     end
 
     context "when no issues that need to be created in VBMS" do
-      it "does not try and create contentions" do
-        expect(subject).to eq([])
+      it "does not try and create end product or contentions" do
+        expect(subject).to be_nil
 
+        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
       end
     end

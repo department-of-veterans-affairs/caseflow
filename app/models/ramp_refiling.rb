@@ -15,6 +15,9 @@ class RampRefiling < RampReview
   # eventual consistency. So for now, if the create contentions request fails, we will be in an
   # inconsistent state and must recover manually
   def create_end_product_and_contentions!
+    # If there are no contentions to create, don't create the end product either
+    return nil if contention_descriptions_to_create.empty?
+
     create_end_product!
     create_contentions_on_new_end_product!
   end
@@ -38,13 +41,11 @@ class RampRefiling < RampReview
   # not just the ones that were just created. This method assumes there are no
   # pre-existing contentions on the end product. Since it was also just created.
   def create_contentions_on_new_end_product!
-    return [] if contention_descriptions_to_create.empty?
-
-    # Currently not making any assumptions about the order in which VBMS returns
-    # the created contentions. Instead find the issue by matching text.
-    #
     # Load all the issues so we can match them in memory
     issues.all.tap do |issues|
+
+      # Currently not making any assumptions about the order in which VBMS returns
+      # the created contentions. Instead find the issue by matching text.
       create_contentions_in_vbms.each do |contention|
         matching_issue = issues.find { |issue| issue.description == contention.text }
         matching_issue && matching_issue.update!(contention_reference_id: contention.id)
