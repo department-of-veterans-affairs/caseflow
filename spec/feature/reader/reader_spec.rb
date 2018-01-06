@@ -504,18 +504,24 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect do
-        get_computed_styles("#rotationDiv1", "transform") == "matrix(1, 0, 0, 1, 0, 0)"
-      end.to become_truthy(wait: 10)
-
+        transform = get_computed_styles("#rotationDiv1", "transform")
+        transform_is_expected = transform == "matrix(1, 0, 0, 1, 0, 0)"
+        puts transform unless transform_is_expected
+        transform_is_expected
+      end.to become_truthy(wait: 5)
+      
       safe_click "#button-rotation"
-
+      
       expect do
+        transform = get_computed_styles("#rotationDiv1", "transform")
         # It's annoying that the float math produces an infinitesimal-but-not-0 value.
         # However, I think that trying to parse the string out and round it would be
         # more trouble than it's worth. Let's just try it like this and see if the tests
         # pass consistently. If not, we can find a more sophisticated approach.
-        get_computed_styles("#rotationDiv1", "transform") == "matrix(6.12323e-17, 1, -1, 6.12323e-17, 0, 0)"
-      end.to become_truthy(wait: 10)
+        transform_is_expected = transform == "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
+        puts transform unless transform_is_expected
+        transform_is_expected
+      end.to become_truthy(wait: 5)
     end
 
     scenario "Arrow keys to navigate through documents" do

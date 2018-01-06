@@ -236,13 +236,15 @@ def scroll_element_in_to_view(selector)
 end
 
 def get_computed_styles(selector, style_key)
+  sanitized_selector = selector.gsub("'", "\\\\'")
+
   page.evaluate_script <<-EOS
     function() {
-      var elem = document.querySelector('#{selector.gsub("'", "\\\\'")}');
+      var elem = document.querySelector('#{sanitized_selector}');
       if (!elem) {
         // It would be nice to throw an actual error but I am not sure Capybara will
         // process that well.
-        return 'query selector did not match any elements';
+        return 'query selector `#{sanitized_selector}` did not match any elements';
       }
       return window.getComputedStyle(elem)['#{style_key}'];
     }();
