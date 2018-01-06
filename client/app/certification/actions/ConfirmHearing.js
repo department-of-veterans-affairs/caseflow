@@ -33,10 +33,6 @@ export const handleServerError = () => ({
   type: Constants.HANDLE_SERVER_ERROR
 });
 
-export const certificationUpdateSuccess = () => ({
-  type: Constants.CERTIFICATION_UPDATE_SUCCESS
-});
-
 export const certificationUpdateStart = (params, dispatch) => {
 
   const hearingDocumentIsInVbms =
@@ -56,7 +52,9 @@ export const certificationUpdateStart = (params, dispatch) => {
 
   ApiUtil.put(`/certifications/${params.vacolsId}/update_v2`, { data: { update } }).
     then(() => {
-      dispatch(certificationUpdateSuccess());
+      dispatch({
+        type: Constants.CONFIRM_HEARING_UPDATE_SUCCESS
+      });
     }, (err) => {
       dispatch(handleServerError(err));
     });

@@ -4,6 +4,7 @@ import { mount } from 'enzyme';
 import EstablishClaim, { DECISION_PAGE, FORM_PAGE, NOTE_PAGE } from
   '../../../app/containers/EstablishClaimPage/EstablishClaim';
 import * as Constants from '../../../app/establishClaim/constants';
+import { findElementById } from '../../helpers';
 
 let func = function() {
   // empty function
@@ -53,7 +54,7 @@ describe('EstablishClaim', () => {
 
     context('EstablishClaimForm', () => {
       beforeEach(() => {
-        wrapper.node.store.dispatch({
+        wrapper.instance().store.dispatch({
           type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
           payload: {
             field: 'stationOfJurisdiction',
@@ -72,7 +73,7 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal')).to.have.length(1);
 
         // Click go back and close modal
-        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
+        findElementById(wrapper, 'Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal')).to.have.length(0);
       });
     });
@@ -90,14 +91,14 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(1);
 
         // Click go back and close modal
-        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
+        findElementById(wrapper, 'Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });
 
     context('EstablishClaimNote', () => {
       beforeEach(() => {
-        wrapper.node.store.dispatch({
+        wrapper.instance().store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
             specialIssue: 'mustardGas',
@@ -137,7 +138,7 @@ describe('EstablishClaim', () => {
         task={task} />);
 
       if (stationOfJurisdiction !== '397') {
-        wrapper.node.store.dispatch({
+        wrapper.instance().store.dispatch({
           type: Constants.CHANGE_SPECIAL_ISSUE,
           payload: {
             specialIssue: 'mustardGas',
@@ -146,7 +147,7 @@ describe('EstablishClaim', () => {
         });
       }
 
-      wrapper.node.store.dispatch({
+      wrapper.instance().store.dispatch({
         type: Constants.CHANGE_ESTABLISH_CLAIM_FIELD,
         payload: {
           field: 'stationOfJurisdiction',
