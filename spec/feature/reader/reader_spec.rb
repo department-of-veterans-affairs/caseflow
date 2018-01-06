@@ -509,9 +509,9 @@ RSpec.feature "Reader" do
         puts transform unless transform_is_expected
         transform_is_expected
       end.to become_truthy(wait: 5)
-      
+
       safe_click "#button-rotation"
-      
+
       expect do
         transform = get_computed_styles("#rotationDiv1", "transform")
         # It's annoying that the float math produces an infinitesimal-but-not-0 value.
