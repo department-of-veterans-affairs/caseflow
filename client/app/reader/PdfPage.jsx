@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import ApiUtil from '../util/ApiUtil';
 
 import classNames from 'classnames';
 
@@ -200,6 +201,15 @@ export class PdfPage extends React.PureComponent {
         });
 
         this.drawPage(page).then(() => {
+          const data = ApiUtil.convertToSnakeCase({
+            group: 'test',
+            name: 'render_rate_historgram',
+            value: this.measureTime ? performance.now() - this.measureTime : 0,
+            appName: 'Reader',
+            attrs: { overscan: this.props.windowingOverscan }
+          });
+
+          ApiUtil.post('/metrics/v1/histogram', { data });
           console.log("time till render: ", this.measureTime ? performance.now() - this.measureTime : 0);
         });
         this.getDimensions(page);
@@ -335,6 +345,7 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,
+    windowingOverscan: state.pdfViewer.windowingOverscan,
     ...state.searchActionReducer
   };
 };
