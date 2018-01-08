@@ -75,6 +75,7 @@
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.1",
     "babel-eslint": "^8.0.2",
+    "babel-node-modules": "^0.0.1",
     "chai": "^3.5.0",
     "enzyme": "^3.3.0",
     "eslint": "^4.9.0",
