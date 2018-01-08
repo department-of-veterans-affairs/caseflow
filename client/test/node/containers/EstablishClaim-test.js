@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import EstablishClaim, { ASSOCIATE_PAGE } from
   '../../../app/containers/EstablishClaimPage/EstablishClaim';
+import { findElementById } from '../../helpers';
 
 let func = function() {
   // empty function
@@ -81,11 +82,11 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
 
         // click cancel to open modal
-        wrapper.find('#button-Cancel').simulate('click');
+        findElementById(wrapper, 'button-Cancel').simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(1);
 
         // Click go back and close modal
-        wrapper.find('#Stop-Processing-Claim-button-id-0').simulate('click');
+        findElementById(wrapper, 'Stop-Processing-Claim-button-id-0').simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });
