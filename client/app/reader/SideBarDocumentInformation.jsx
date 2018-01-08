@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IssueList from './IssueList';
-import EditableDocumentField from '../components/EditableDocumentField';
+import EditableField from '../components/EditableField';
 import { saveDocumentDescription, changePendingDocDescription, resetPendingDocDescription
 } from './Documents/DocumentsActions';
 
@@ -62,9 +62,9 @@ class SideBarDocumentInformation extends PureComponent {
           {this.props.doc.type}
         </span>
       </p>
-      <EditableDocumentField
+      <EditableField
         className="cf-pdf-meta-title"
-        value={docDescriptionFieldText}
+        value={docDescriptionFieldText || ''}
         onSave={this.saveDocDescription}
         onChange={this.changePendingDescription}
         onCancel={this.resetPendingDescription}

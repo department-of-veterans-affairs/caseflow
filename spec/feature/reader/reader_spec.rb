@@ -1072,8 +1072,7 @@ RSpec.feature "Reader" do
 
       find("#document_description-save").click
 
-      sleep(1)
-      expect(documents[0].reload.description).to eq("New Description")
+      expect(find("#document_description").text).to eq("New Description")
     end
 
     scenario "Open and close keyboard shortcuts modal" do

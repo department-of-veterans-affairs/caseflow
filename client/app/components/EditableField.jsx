@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Button from './Button';
 
-export default class EditableDocumentField extends React.Component {
+export default class EditableField extends React.Component {
   constructor(props) {
     super(props);
 
@@ -87,7 +87,12 @@ export default class EditableDocumentField extends React.Component {
   }
 }
 
-EditableDocumentField.propTypes = {
+EditableField.defaultProps = {
+  type: 'text',
+  value: ''
+};
+
+EditableField.propTypes = {
   name: PropTypes.string,
   onSave: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
