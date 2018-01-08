@@ -9,25 +9,15 @@ $color-hearings-saving: #777;
 .saving {
   font-style: italic;
   color: $color-hearings-saving;
+  text-align: right;
+  display: block;
 }
 
 .cf-hearings-daily-docket-container {
   position: relative;
 
-  > .saving {
-    display: inline-block;
-    width: 12em;
-    text-align: right;
-    position: absolute;
-    top: 8.9em;
-    right: 1.8em;
-
-    .loadingSymbol {
-      height: 1em;
-      width: 1em;
-      display: inline-block;
-      vertical-align: middle;
-    }
+  .cf-hearings {
+    margin-top: 0;
   }
 }
 
@@ -286,11 +276,6 @@ $color-hearings-saving: #777;
     resize: vertical;
   }
 
-  .saving {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
 
   .cf-hearings-worksheet-header {
     margin-bottom: 1em;
@@ -469,6 +454,12 @@ $color-hearings-saving: #777;
 }
 
 @media print {
+  h1,
+  h2,
+  h3 {
+    font-family: sans-serif;
+  }
+
   h1 {
     font-size: 25px;
   }

@@ -1,6 +1,10 @@
 const _ = require('lodash');
 const webpackConfig = require('./webpack.config.js');
 
+const files = [
+  'test/karma/test-index.js'
+];
+
 module.exports = function(config) {
   config.set({
     browsers: ['Chrome'],
@@ -13,18 +17,16 @@ module.exports = function(config) {
       level: ''
     },
 
-    files: [
-      'test/karma/setup.js',
-      'test/karma/test-index.js'
-    ],
+    files,
 
     mochaReporter: {
       showDiff: true
     },
 
-    preprocessors: {
-      'test/karma/test-index.js': ['webpack']
-    },
+    preprocessors: _(files).
+      map((file) => [file, ['webpack']]).
+      fromPairs().
+      value(),
 
     webpack: _.merge({
       watch: true,

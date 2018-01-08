@@ -1,4 +1,4 @@
-describe RampRefilingIntake do
+describe RampRefiling do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -28,6 +28,28 @@ describe RampRefilingIntake do
       receipt_date: receipt_date,
       option_selected: option_selected
     )
+  end
+
+  context "#create_issues!" do
+    before { ramp_refiling.save! }
+    subject { ramp_refiling.create_issues!(source_issue_ids: source_issues.map(&:id)) }
+
+    let!(:source_issues) do
+      [
+        completed_ramp_election.issues.create!(description: "Firsties"),
+        completed_ramp_election.issues.create!(description: "Secondsies")
+      ]
+    end
+
+    let!(:outdated_issue) do
+      ramp_refiling.issues.create!(description: "i will be destroyed")
+    end
+
+    it "creates issues from the source_issue_ids" do
+      subject
+      expect(ramp_refiling.issues.count).to eq(2)
+      expect(ramp_refiling.issues.first.description).to eq("Firsties")
+    end
   end
 
   context "#valid?" do

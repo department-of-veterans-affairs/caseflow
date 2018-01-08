@@ -6,9 +6,9 @@ describe AppealHistory do
       type: "Original",
       decision_date: 365.days.ago.to_date,
       issues: [
-        Generators::Issue.build(program: :compensation, code: "01"),
-        Generators::Issue.build(program: :compensation, code: "02"),
-        Generators::Issue.build(program: :compensation, code: "03")
+        Generators::Issue.build(codes: %w(02 01)),
+        Generators::Issue.build(codes: %w(02 02)),
+        Generators::Issue.build(codes: %w(02 03))
       ]
     )
   end
@@ -19,7 +19,7 @@ describe AppealHistory do
       type: "Original",
       decision_date: 365.days.ago.to_date,
       issues: [
-        Generators::Issue.build(program: :compensation, code: "03")
+        Generators::Issue.build(codes: %w(02 03))
       ]
     )
   end
@@ -159,8 +159,8 @@ describe AppealHistory do
       context "when there is a single matching parent" do
         let(:issues) do
           [
-            Generators::Issue.build(program: :compensation, code: "01"),
-            Generators::Issue.build(program: :compensation, code: "02")
+            Generators::Issue.build(codes: %w(02 01)),
+            Generators::Issue.build(codes: %w(02 02))
           ]
         end
 
@@ -175,7 +175,7 @@ describe AppealHistory do
 
       context "when there are multiple matching parents" do
         let(:issues) do
-          [Generators::Issue.build(program: :compensation, code: "03")]
+          [Generators::Issue.build(codes: %w(02 03))]
         end
 
         it "marks the appeal series as incomplete" do
@@ -189,7 +189,7 @@ describe AppealHistory do
 
       context "when there is no matching parent" do
         let(:issues) do
-          [Generators::Issue.build(program: :compensation, code: "04")]
+          [Generators::Issue.build(codes: %w(02 04))]
         end
 
         it "marks the appeal series as incomplete" do
@@ -208,8 +208,8 @@ describe AppealHistory do
           vbms_id: vbms_id,
           type: "Original",
           issues: [
-            Generators::Issue.build(description: description_1),
-            Generators::Issue.build(description: description_2)
+            Generators::Issue.build(note: description_1),
+            Generators::Issue.build(note: description_2)
           ]
         )
       end

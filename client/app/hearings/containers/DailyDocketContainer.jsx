@@ -46,18 +46,21 @@ export class DailyDocketContainer extends React.Component {
       return <div>You have no hearings on this date.</div>;
     }
 
-    return <div className="cf-hearings-daily-docket-container">
+    return <div>
+
       <AutoSave
         save={this.props.save(dailyDocket, this.props.date)}
         spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
         isSaving={this.props.docketIsSaving}
         saveFailed={this.props.saveDocketFailed}
       />
-      <DailyDocket
-        veteran_law_judge={this.props.veteran_law_judge}
-        date={this.props.date}
-        docket={dailyDocket}
-      />
+      <div className="cf-hearings-daily-docket-container">
+        <DailyDocket
+          veteran_law_judge={this.props.veteran_law_judge}
+          date={this.props.date}
+          docket={dailyDocket}
+        />
+      </div>
     </div>;
   }
 }
