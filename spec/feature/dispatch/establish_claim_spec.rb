@@ -478,7 +478,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       scenario "Review page lets users choose which document to use" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
-        binding.pry
 
         expect(page).to have_content("Multiple Decision Documents")
 
