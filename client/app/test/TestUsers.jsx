@@ -93,8 +93,8 @@ export default class TestUsers extends React.PureComponent {
     });
 
     return <div className="cf-app-segment--alt">
-        <h1>Welcome to the Caseflow admin page.</h1>
-        { this.props.dependenciesFaked &&
+      <h1>Welcome to the Caseflow admin page.</h1>
+      { this.props.dependenciesFaked &&
         <div>
           <p>
             Here you can test out different user stories by selecting
@@ -114,13 +114,13 @@ export default class TestUsers extends React.PureComponent {
             loading={this.state.isSwitching}
             loadingText="Switching users" />
           <br /><br />
-        <p>
+          <p>
           Not all applications are available to every user. Additionally,
           some users have access to different parts of the same application.</p>
-        <strong>App Selector:</strong>
-        <TabWindow
-          tabs={tabs} />
-      </div> }
+          <strong>App Selector:</strong>
+          <TabWindow
+            tabs={tabs} />
+        </div> }
       { this.props.isGlobalAdmin &&
       <div>
         <strong>Log in as user:</strong>
