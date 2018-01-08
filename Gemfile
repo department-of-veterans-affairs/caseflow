@@ -110,7 +110,7 @@ group :development, :test do
   gem 'rb-readline'
 
   # Linters
-  gem 'rubocop', '~> 0.36.0', require: false
+  gem 'rubocop', '~> 0.52.1', require: false
   gem 'scss_lint', require: false
   gem 'jshint', platforms: :ruby
 
