@@ -7,6 +7,8 @@ import HearingWorksheetStream from './components/HearingWorksheetStream';
 import PrintPageBreak from '../components/PrintPageBreak';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
+import AutoSave from '../components/AutoSave';
+import * as AppConstants from '../constants/AppConstants';
 import _ from 'lodash';
 
 // TODO Move all stream related to streams container
@@ -16,8 +18,13 @@ import {
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  toggleWorksheetSaving,
+  setWorksheetSaveFailedStatus,
+  saveWorksheet
 } from './actions/Dockets';
+
+import { saveIssues } from './actions/Issue';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -47,9 +54,16 @@ class WorksheetFormEntry extends React.PureComponent {
 export class HearingWorksheet extends React.PureComponent {
 
   componentDidMount() {
-
     document.title = `${this.props.worksheet.appellant_mi_formatted}'s ${document.title}`;
   }
+
+  save = (worksheet, worksheetIssues) => () => {
+    this.props.toggleWorksheetSaving();
+    this.props.setWorksheetSaveFailedStatus(false);
+    this.props.saveWorksheet(worksheet);
+    this.props.saveIssues(worksheetIssues);
+    this.props.toggleWorksheetSaving();
+  };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
@@ -57,7 +71,7 @@ export class HearingWorksheet extends React.PureComponent {
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
-    let { worksheet } = this.props;
+    let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
     const appellant = worksheet.appellant_mi_formatted ?
@@ -116,6 +130,14 @@ export class HearingWorksheet extends React.PureComponent {
     });
 
     return <div>
+      {!this.props.print &&
+            <AutoSave
+              save={this.save(worksheet, worksheetIssues)}
+              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
+              isSaving={this.props.worksheetIsSaving}
+              saveFailed={this.props.saveWorksheetFailed}
+            />
+      }
       <div className={wrapperClassNames}>
         {firstWorksheetPage}
         <PrintPageBreak />
@@ -140,14 +162,19 @@ export class HearingWorksheet extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   worksheet: state.worksheet,
-  worksheetAppeals: state.worksheetAppeals
+  worksheetAppeals: state.worksheetAppeals,
+  worksheetIssues: state.worksheetIssues
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onContentionsChange,
   onMilitaryServiceChange,
   onEvidenceChange,
-  onCommentsForAttorneyChange
+  onCommentsForAttorneyChange,
+  toggleWorksheetSaving,
+  saveWorksheet,
+  setWorksheetSaveFailedStatus,
+  saveIssues
 }, dispatch);
 
 export default connect(

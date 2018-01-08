@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 
 import Modal from '../../../app/components/Modal';
+import { findElementById } from '../../helpers';
 
 describe('Modal', () => {
   context('renders', () => {
@@ -23,7 +24,7 @@ describe('Modal', () => {
 
       expect(wrapper.find('.cf-modal')).to.have.length(1);
       expect(wrapper.find('.test-class')).to.have.length(buttonCount);
-      expect(wrapper.find('#Test-Title-button-id-0').
+      expect(findElementById(wrapper, 'Test-Title-button-id-0').
         hasClass('cf-push-right')).to.equal(true);
     });
 
@@ -50,11 +51,11 @@ describe('Modal', () => {
 
       expect(wrapper.find('.cf-modal')).to.have.length(1);
       expect(wrapper.find('.test-class')).to.have.length(buttonCount);
-      expect(wrapper.find('#Test-Title-button-id-0').
+      expect(findElementById(wrapper, 'Test-Title-button-id-0').
         hasClass('cf-push-left')).to.equal(true);
-      expect(wrapper.find('#Test-Title-button-id-1').
+      expect(findElementById(wrapper, 'Test-Title-button-id-1').
         hasClass('cf-push-right')).to.equal(true);
-      expect(wrapper.find('#Test-Title-button-id-2').
+      expect(findElementById(wrapper, 'Test-Title-button-id-2').
         hasClass('cf-push-right')).to.equal(true);
     });
   });
