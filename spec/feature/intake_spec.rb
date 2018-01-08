@@ -883,7 +883,7 @@ RSpec.feature "RAMP Intake" do
           )
         end
 
-        scenario "Complete a RAMP Refiling with only invalid issues", focus: true do
+        scenario "Complete a RAMP Refiling with only invalid issues" do
           # Create an complete Higher level review RAMP election
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",

@@ -127,7 +127,7 @@ describe RampRefilingIntake do
 
     let(:params) do
       {
-        issue_ids: source_issues.map(&:id),
+        issue_ids: source_issues && source_issues.map(&:id),
         has_ineligible_issue: true
       }
     end
@@ -166,6 +166,8 @@ describe RampRefilingIntake do
 
         it "works, but does not create an EP" do
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+
+          subject
 
           expect(intake.reload).to be_success
           expect(intake.detail.issues.count).to eq(0)
