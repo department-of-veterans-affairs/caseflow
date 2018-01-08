@@ -1,1 +1,1 @@
-module.exports = require('appeals-frontend-toolkit/config/webpack.config')(__dirname);
+module.exports = require('appeals-frontend-toolkit/config/getWebpackConfig')(__dirname);

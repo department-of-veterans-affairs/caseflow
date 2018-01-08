@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ReduxBase from '../../util/ReduxBase';
+import ReduxBase from 'appeals-frontend-toolkit/components/ReduxBase';
 
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';

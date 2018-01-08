@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '../util/ReduxBase';
+import ReduxBase from 'appeals-frontend-toolkit/components/ReduxBase';
 
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
