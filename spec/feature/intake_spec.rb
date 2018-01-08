@@ -794,8 +794,7 @@ RSpec.feature "RAMP Intake" do
 
           safe_click "#finish-intake"
 
-          expect(page).to have_content("Intake completed")
-
+          expect(page).to have_content("Appeal record saved in Caseflow")
           expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
           expect(ramp_refiling.issues.count).to eq(2)
           expect(ramp_refiling.issues.first.description).to eq("Left knee rating increase")
@@ -879,6 +878,61 @@ RSpec.feature "RAMP Intake" do
 
           expect(ramp_refiling.issues.count).to eq(1)
           expect(ramp_refiling.issues.first.contention_reference_id).to_not be_nil
+          expect(page).to have_content(
+            "Established EP: 683SCRRRAMP - Supplemental Claim Review Rating for Station 397"
+          )
+        end
+
+        scenario "Complete a RAMP Refiling with only invalid issues", focus: true do
+          # Create an complete Higher level review RAMP election
+          ramp_election = RampElection.create!(
+            veteran_file_number: "12341234",
+            notice_date: 5.days.ago,
+            option_selected: "higher_level_review_with_hearing",
+            receipt_date: 4.days.ago,
+            end_product_reference_id: Generators::EndProduct.build(
+              veteran_file_number: "12341234",
+              bgs_attrs: { status_type_code: "CLR" }
+            ).claim_id
+          )
+
+          Generators::Contention.build(
+            claim_id: ramp_election.end_product_reference_id,
+            text: "Left knee rating increase"
+          )
+
+          intake = RampRefilingIntake.new(
+            veteran_file_number: "12341234",
+            user: current_user,
+            detail: RampRefiling.new(
+              veteran_file_number: "12341234",
+              ramp_election: ramp_election
+            )
+          )
+
+          intake.start!
+
+          visit "/intake"
+
+          fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
+          within_fieldset("Which review lane did the Veteran select?") do
+            find("label", text: "Supplemental Claim", match: :prefer_exact).click
+          end
+          safe_click "#button-submit-review"
+
+          find("label", text: "The veteran's form lists at least one ineligible contention").click
+          click_label("confirm-outside-caseflow-steps")
+
+          safe_click "#finish-intake"
+
+          expect(page).to have_content("Ineligible RAMP request")
+
+          ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
+          expect(ramp_refiling.has_ineligible_issue).to eq(true)
+          expect(ramp_refiling.issues.count).to eq(0)
+
+          expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+          expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
         end
       end
     end

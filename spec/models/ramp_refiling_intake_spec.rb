@@ -160,6 +160,18 @@ describe RampRefilingIntake do
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
       end
+
+      context "when source_issues is nil" do
+        let(:source_issues) { nil }
+
+        it "works, but does not create an EP" do
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+
+          expect(intake.reload).to be_success
+          expect(intake.detail.issues.count).to eq(0)
+          expect(intake.detail.has_ineligible_issue).to eq(true)
+        end
+      end
     end
 
     context "when no end product is needed" do

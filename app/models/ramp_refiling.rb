@@ -43,7 +43,6 @@ class RampRefiling < RampReview
   def create_contentions_on_new_end_product!
     # Load all the issues so we can match them in memory
     issues.all.tap do |issues|
-
       # Currently not making any assumptions about the order in which VBMS returns
       # the created contentions. Instead find the issue by matching text.
       create_contentions_in_vbms.each do |contention|
