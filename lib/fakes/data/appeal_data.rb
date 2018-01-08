@@ -1,4 +1,3 @@
-# rubocop:disable Metrics/ModuleLength
 module Fakes::Data::AppealData
   # rubocop:disable Metrics/MethodLength
   def self.default_records
@@ -94,4 +93,3 @@ module Fakes::Data::AppealData
   end
   # rubocop:enable Metrics/MethodLength
 end
-# rubocop:enable Metrics/ModuleLength
