@@ -475,6 +475,22 @@ describe ExternalApi::EfolderService do
         end
       end
     end
+
+    context "when efolder returns an error403 HTTP response" do
+      let(:http_resp_403) { HTTPI::Response.new(403, [], { status: "forbidden: sensitive record" }) }
+      it "raises EfolderAccessForbidden exception given a 403 HTTP response" do
+        allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        allow(HTTPI).to receive(:get).and_return(http_resp_403).once
+        expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(Caseflow::Error::EfolderAccessForbidden)
+      end
+
+      let(:http_resp_400) { HTTPI::Response.new(400, [], { status: "bad request" }) }
+      it "raises DocumentRetrievalError exception given a 400 HTTP response" do
+        allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        allow(HTTPI).to receive(:get).and_return(http_resp_400).once
+        expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(Caseflow::Error::DocumentRetrievalError)
+      end
+    end
   end
 
   def construct_response(records, sources)

@@ -209,6 +209,26 @@ describe FetchDocumentsForReaderUserJob do
     end
   end
 
+  context "fetch_documents_for_appeals" do
+    context "one appeal of many returns 403 from efolder" do
+      let(:appeals) { [Generators::Appeal.create, Generators::Appeal.create, Generators::Appeal.create] }
+
+      subject { FetchDocumentsForReaderUserJob.new }
+      it "continues fetching docs for other appeals and records failed fetch" do
+        # This is usually set in perform(), but we are bypassing perform() so set it here.
+        subject.instance_variable_set(:@counts, { appeals_total: 0, appeals_successful: 0 })
+
+        allow(Fakes::AppealRepository).to receive(:load_user_case_assignments_from_vacols).and_return(appeals).once
+        allow(ExternalApi::EfolderService).to receive(:efolder_v1_api).and_raise(Caseflow::Error::EfolderAccessForbidden).once
+
+        expect(subject).to receive(:fetch_documents_for_appeals).with(appeals).and_return(true).once
+
+        expect(subject.instance_variable_get(:@counts)[:appeals_total]).to eq(appeals.count)
+        expect(subject.instance_variable_get(:@counts)[:appeals_successful]).to eq(appeals.count - 1)
+      end
+    end
+  end
+
   def dont_expect_calls_for_appeal(appeal, doc)
     expect(EFolderService).not_to receive(:fetch_documents_for).with(appeal, anything)
     expect(EFolderService).not_to receive(:fetch_document_file).with(doc)
