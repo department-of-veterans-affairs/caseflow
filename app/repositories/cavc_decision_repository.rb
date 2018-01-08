@@ -1,4 +1,6 @@
 class CAVCDecisionRepository
+  # Potential optimization: load and store all CAVC decisions for the appeal, but only return those for the issue.
+  # see https://github.com/department-of-veterans-affairs/caseflow/pull/4248/#discussion_r159923007
   def self.cavc_decisions_by_issue(vacols_id, vacols_sequence_id)
     VACOLS::CAVCCaseDecision.where(cvfolder: vacols_id, cvissseq: vacols_sequence_id).all.map do |cavc_decision|
       CAVCDecision.load_from_vacols(cavc_decision)

@@ -80,22 +80,22 @@ class Issue
   end
 
   def friendly_description
-    i = 0
-    str = Constants::Issue::ISSUE_DESCRIPTIONS
-
-    loop do
-      str = str[codes[i]]
-      break if str.is_a?(String)
-      return if str.nil? || (i += 1) >= codes.length
+    issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
+      descriptions = descriptions[code]
+      # If there is no value, we probably haven't added the issue type in our list, so return.
+      return unless descriptions
+      break descriptions if descriptions.is_a?(String)
+      descriptions
     end
 
     if diagnostic_code
       diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
       return if diagnostic_code_description.nil?
-      str = str % diagnostic_code_description
+      # Some description strings are templates. This is a no-op unless the description string contains %s.
+      issue_description = issue_description % diagnostic_code_description
     end
 
-    str
+    issue_description
   end
 
   def diagnostic_code
