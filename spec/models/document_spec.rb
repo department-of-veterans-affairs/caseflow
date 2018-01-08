@@ -305,6 +305,7 @@ describe Document do
     it "saves new version on update description" do
       PaperTrail.enabled = true
       puts "!!PaperTrail is enabled #{PaperTrail.enabled?}"
+      puts "!!Document PaperTrail options #{Document.paper_trail_options}"
       document.save
       # expect(document.versions.length).to eq 1
       # expect(document.description).to eq("Document description")
