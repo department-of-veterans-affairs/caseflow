@@ -1,4 +1,4 @@
-class AppealAlerts
+class AppealSeriesAlerts
   include ActiveModel::Model
 
   attr_accessor :appeal_series
