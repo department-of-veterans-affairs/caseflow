@@ -1,7 +1,5 @@
 class MigrateDescriptionToNotes < ActiveRecord::Migration
   def change
-    WorksheetIssue.find_each do |worksheet_issue|
-      worksheet_issue.update_attributes! :notes => worksheet_issue.description
-    end
+    WorksheetIssue.update_all("notes=description")
   end
 end
