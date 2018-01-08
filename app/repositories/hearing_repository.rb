@@ -30,6 +30,12 @@ class HearingRepository
       hearings_for(VACOLS::CaseHearing.for_appeal(appeal_vacols_id))
     end
 
+    def hearings_for_appeals(vacols_ids)
+      hearings = VACOLS::CaseHearing.for_appeals(vacols_ids)
+
+      hearings.update(hearings) { |_, case_hearings| hearings_for(case_hearings) }
+    end
+
     def update_vacols_hearing!(vacols_record, hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
