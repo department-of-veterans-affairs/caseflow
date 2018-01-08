@@ -16,7 +16,7 @@ const issueLevels = (issue, formatLevelsInNewLine) => (
     csvIssueLevels(issue)
 );
 
-const issueTypeLabel = (issue) => issue.levels ? `${issue.type.label}:` : issue.type.label;
+const issueTypeLabel = (issue) => issue.levels ? `${issue.type}:` : issue.type;
 
 const IssueList = ({ appeal, formatLevelsInNewLine, className }) => (
   <div style={{ display: 'inline' }} >

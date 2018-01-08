@@ -5,16 +5,9 @@ class Generators::Issue
     def default_attrs
       {
         disposition: "Allowed",
-        description: [
-          "15 - Service connection",
-          "03 - All Others",
-          "5252 - Thigh, limitation of flexion of"
-        ],
-        levels: ["All Others", "Thigh, limitation of flexion of"],
-        program_description: "02 - Compensation",
-        program: :compensation,
-        type: { name: :service_connection, label: "Service Connection" },
-        category: :knee,
+        close_date: 7.days.ago,
+        codes: ["02", "15", "03", "5252"],
+        labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"],
         note: "low back condition",
         vacols_sequence_id: 1,
         id: generate_external_id

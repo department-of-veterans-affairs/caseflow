@@ -837,7 +837,7 @@ describe Appeal do
     end
 
     context "when the allowed issues are new material" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed, category: :new_material)] }
+      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: ["02", "15", "04", "5252"])] }
 
       it { is_expected.to be_falsey }
     end
@@ -872,7 +872,7 @@ describe Appeal do
       context "when at least one issues is new-material allowed" do
         let(:issues) do
           [
-            Generators::Issue.build(disposition: :allowed, category: :new_material),
+            Generators::Issue.build(disposition: :allowed, codes: ["02", "15", "04", "5252"]),
             Generators::Issue.build(disposition: :denied)
           ]
         end
@@ -906,7 +906,7 @@ describe Appeal do
     context "is true if new-material allowed issue" do
       let(:issues) do
         [
-          Generators::Issue.build(disposition: :allowed, category: :new_material),
+          Generators::Issue.build(disposition: :allowed, codes: ["02", "15", "04", "5252"]),
           Generators::Issue.build(disposition: :remanded)
         ]
       end
@@ -1339,8 +1339,8 @@ describe Appeal do
     end
   end
 
-  context "#issue_codes" do
-    subject { appeal.issue_codes }
+  context "#issue_categories" do
+    subject { appeal.issue_categories }
 
     let(:appeal) do
       Generators::Appeal.build(issues: issues)
@@ -1348,16 +1348,16 @@ describe Appeal do
 
     let(:issues) do
       [
-        Generators::Issue.build(program: :compensation, code: "01"),
-        Generators::Issue.build(program: :compensation, code: "02"),
-        Generators::Issue.build(program: :compensation, code: "01")
+        Generators::Issue.build(disposition: :allowed, codes: ["02", "01"]),
+        Generators::Issue.build(disposition: :allowed, codes: ["02", "02"]),
+        Generators::Issue.build(disposition: :allowed, codes: ["02", "01"])
       ]
     end
 
-    it { is_expected.to include("compensation-01") }
-    it { is_expected.to include("compensation-02") }
-    it { is_expected.to_not include("compensation-03") }
-    it "returns uniqued issue codes" do
+    it { is_expected.to include("02-01") }
+    it { is_expected.to include("02-02") }
+    it { is_expected.to_not include("02-03") }
+    it "returns uniqued issue categories" do
       expect(subject.length).to eq(2)
     end
   end
@@ -1522,17 +1522,14 @@ describe Appeal do
         )
       end
 
-      let!(:issue_levels) do
-        ["Other", "Left knee", "Right knee"]
+      let!(:labels) do
+        ["Compensation", "Service connection", "Other", "Left knee", "Right knee"]
       end
 
       let!(:issues) do
         [Generators::Issue.build(disposition: :allowed,
-                                 program: :compensation,
-                                 type: :elbow,
-                                 category: :service_connection,
-                                 levels: issue_levels
-                                )
+                                 codes: ["02", "15", "03", "04", "05"],
+                                 labels: labels)
         ]
       end
 
@@ -1541,7 +1538,7 @@ describe Appeal do
       end
 
       it "includes issues in hash" do
-        expect(subject["issues"]).to eq(issues)
+        expect(subject["issues"]).to eq(issues.map(&:attributes))
       end
     end
   end

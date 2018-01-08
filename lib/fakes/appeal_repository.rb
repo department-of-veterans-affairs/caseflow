@@ -389,13 +389,8 @@ class Fakes::AppealRepository
         regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
-               Generators::Issue.build(disposition: "Osteomyelitis",
-                                       levels: ["Osteomyelitis"],
-                                       description: [
-                                         "15 - Compensation",
-                                         "26 - Osteomyelitis"
-                                       ],
-                                       program_description: "06 - Medical")],
+               Generators::Issue.build(codes: ["06", "15", "26"],
+                                       labels: ["Medical", "Compensation", "Osteomyelitis"])],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -414,14 +409,8 @@ class Fakes::AppealRepository
       },
       issues: [Generators::Issue.build(
         disposition: "Remanded",
-        levels: ["Left knee", "Right knee", "Cervical strain"],
-        description: [
-          "15 - Service connection",
-          "13 - Left knee",
-          "14 - Right knee",
-          "22 - Cervical strain"
-        ],
-        program_description: "06 - Medical")],
+        codes: ["06", "15", "13", "14", "22"],
+        labels: ["Medical", "Service connection", "Left knee", "Right knee", "Cervical strain"])],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -456,13 +445,8 @@ class Fakes::AppealRepository
         regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
-               Generators::Issue.build(disposition: "Osteomyelitis",
-                                       levels: ["Osteomyelitis"],
-                                       description: [
-                                         "15 - Compensation",
-                                         "26 - Osteomyelitis"
-                                       ],
-                                       program_description: "06 - Medical")],
+               Generators::Issue.build(codes: ["06", "15", "26"],
+                                       labels: ["Medical", "Compensation", "Osteomyelitis"])],
       documents: static_reader_documents
     )
   end
