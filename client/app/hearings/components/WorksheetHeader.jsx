@@ -7,27 +7,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../components/RenderFunctions';
-
-import { saveIssues } from '../actions/Issue';
-
-import {
-  toggleWorksheetSaving,
-  setWorksheetSaveFailedStatus,
-  onRepNameChange,
-  onWitnessChange,
-  saveWorksheet
-} from '../actions/Dockets';
+import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
 
 class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
-
-  save = (worksheet, worksheetIssues) => () => {
-    this.props.toggleWorksheetSaving();
-    this.props.setWorksheetSaveFailedStatus(false);
-    this.props.saveWorksheet(worksheet);
-    this.props.saveIssues(worksheetIssues);
-    this.props.toggleWorksheetSaving();
-  };
 
   render() {
     const {
@@ -65,14 +48,6 @@ class WorksheetHeader extends React.PureComponent {
 
       <div className="cf-hearings-worksheet-data">
         <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
-        {!this.props.print &&
-            <AutoSave
-              save={this.save(worksheet, worksheetIssues)}
-              spinnerColor={AppConstants.LOADING_INDICATOR_COLOR_HEARINGS}
-              isSaving={this.props.worksheetIsSaving}
-              saveFailed={this.props.saveWorksheetFailed}
-            />
-        }
         <div className="cf-hearings-worksheet-data-cell column-1">
           <div>Appellant Name:</div>
           <div><b>{appellant}</b></div>
@@ -148,12 +123,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleWorksheetSaving,
   onRepNameChange,
-  onWitnessChange,
-  saveWorksheet,
-  setWorksheetSaveFailedStatus,
-  saveIssues
+  onWitnessChange
 }, dispatch);
 
 export default connect(
