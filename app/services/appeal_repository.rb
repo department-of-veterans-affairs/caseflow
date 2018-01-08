@@ -26,7 +26,6 @@ class AppealRepository
     set_vacols_values(appeal: appeal, case_record: case_record)
 
     true
-
   rescue ActiveRecord::RecordNotFound
     return false
   end
@@ -104,7 +103,7 @@ class AppealRepository
     end
 
     return false if case_records.empty?
-    fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
+    raise Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
@@ -211,7 +210,7 @@ class AppealRepository
   end
 
   def self.folder_type_from(folder_record)
-    if %w(Y 1 0).include?(folder_record.tivbms)
+    if %w[Y 1 0].include?(folder_record.tivbms)
       "VBMS"
     elsif folder_record.tisubj == "Y"
       "VVA"
@@ -248,8 +247,7 @@ class AppealRepository
                              assigned_to: appeal.case_record.bfregoff,
                              code: :other,
                              days_to_complete: 30,
-                             days_til_due: 30
-                            )
+                             days_til_due: 30)
       end
     end
   end
@@ -281,7 +279,7 @@ class AppealRepository
 
     # App logic should prevent this, but because this is a destructive operation
     # add an additional failsafe
-    fail AppealNotValidToClose if case_record.bfdc
+    raise AppealNotValidToClose if case_record.bfdc
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(
@@ -327,7 +325,7 @@ class AppealRepository
 
     # App logic should prevent this, but because this is a destructive operation
     # add an additional failsafe
-    fail AppealNotValidToClose unless case_record.bfmpro == "REM"
+    raise AppealNotValidToClose unless case_record.bfmpro == "REM"
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(bfmpro: "HIS")
@@ -360,7 +358,8 @@ class AppealRepository
           bfdcfld1: nil,
           bfdcfld2: nil,
           bfdcfld3: nil
-        ))
+        )
+      )
 
       follow_up_case.update_vacols_location!("99")
 
@@ -372,7 +371,8 @@ class AppealRepository
           tidcls: dateshift_to_utc(closed_on),
           timdtime: VacolsHelper.local_time_with_utc_timezone,
           timduser: user.regional_office
-        ))
+        )
+      )
 
       # Create follow up issues that will be listed as closed with the
       # proper disposition
@@ -385,7 +385,8 @@ class AppealRepository
             issdcls: VacolsHelper.local_time_with_utc_timezone,
             issadtime: VacolsHelper.local_time_with_utc_timezone,
             issaduser: user.regional_office
-          ))
+          )
+        )
       end
     end
   end

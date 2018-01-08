@@ -110,7 +110,7 @@ describe RampElectionIntake do
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(note: "Broken thigh"),
-            Generators::Issue.build(codes: %w(02 16 03 5252),
+            Generators::Issue.build(codes: %w[02 16 03 5252],
                                     labels: [
                                       "Compensation",
                                       "Something else",
@@ -123,7 +123,7 @@ describe RampElectionIntake do
         Generators::Appeal.create(
           vbms_id: "64205555C",
           issues: [
-            Generators::Issue.build(codes: %w(02 15),
+            Generators::Issue.build(codes: %w[02 15],
                                     labels: ["Compensation", "Last Issue"],
                                     note: "")
           ]

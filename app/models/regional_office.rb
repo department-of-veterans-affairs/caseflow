@@ -7,19 +7,19 @@ class RegionalOffice
     "301" => "RO01",
     "402" => "RO02",
     "304" => "RO04",
-    "405" => %w(RO05 RO03),
+    "405" => %w[RO05 RO03],
     "306" => "RO06",
-    "307" => %w(RO07 RO91),
+    "307" => %w[RO07 RO91],
     "308" => "RO08",
     "309" => "RO09",
-    "310" => %w(RO10 RO74 RO80 RO81 RO84),
-    "311" => %w(RO11 RO71),
+    "310" => %w[RO10 RO74 RO80 RO81 RO84],
+    "311" => %w[RO11 RO71],
     "313" => "RO13",
     "314" => "RO14",
     "315" => "RO15",
-    "316" => %w(RO16 RO87 RO92),
+    "316" => %w[RO16 RO87 RO92],
     "317" => "RO17",
-    "318" => %w(RO18 RO88),
+    "318" => %w[RO18 RO88],
     "319" => "RO19",
     "320" => "RO20",
     "321" => "RO21",
@@ -27,14 +27,14 @@ class RegionalOffice
     "323" => "RO23",
     "325" => "RO25",
     "326" => "RO26",
-    "327" => %w(RO27 RO70),
+    "327" => %w[RO27 RO70],
     "328" => "RO28",
     "329" => "RO29",
-    "330" => %w(RO30 RO75 RO82 RO85),
+    "330" => %w[RO30 RO75 RO82 RO85],
     "331" => "RO31",
     "333" => "RO33",
     "334" => "RO34",
-    "335" => %w(RO35 RO76 RO83),
+    "335" => %w[RO35 RO76 RO83],
     "436" => "RO36",
     "437" => "RO37",
     "438" => "RO38",
@@ -50,7 +50,7 @@ class RegionalOffice
     "348" => "RO48",
     "349" => "RO49",
     "350" => "RO50",
-    "351" => %w(RO51 RO93 RO94),
+    "351" => %w[RO51 RO93 RO94],
     "452" => "RO52",
     "354" => "RO54",
     "355" => "RO55",
@@ -220,7 +220,7 @@ class RegionalOffice
     def find!(key)
       result = RegionalOffice.new(key)
 
-      fail NotFoundError unless result.valid?
+      raise NotFoundError unless result.valid?
       result
     end
 

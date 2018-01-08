@@ -1,15 +1,15 @@
 describe Form8 do
-  initial_fields = [:_initial_appellant_name,
-                    :_initial_appellant_relationship,
-                    :_initial_veteran_name,
-                    :_initial_insurance_loan_number,
-                    :_initial_service_connection_notification_date,
-                    :_initial_increased_rating_notification_date,
-                    :_initial_other_notification_date,
-                    :_initial_representative_name,
-                    :_initial_representative_type,
-                    :_initial_hearing_requested,
-                    :_initial_ssoc_required]
+  initial_fields = %i[_initial_appellant_name
+                      _initial_appellant_relationship
+                      _initial_veteran_name
+                      _initial_insurance_loan_number
+                      _initial_service_connection_notification_date
+                      _initial_increased_rating_notification_date
+                      _initial_other_notification_date
+                      _initial_representative_name
+                      _initial_representative_type
+                      _initial_hearing_requested
+                      _initial_ssoc_required]
 
   context "#attributes" do
     let(:form8) do
@@ -63,8 +63,8 @@ describe Form8 do
   context "#update_from_string_params" do
     let(:form8) { Form8.new }
     it "takes string dates passed by the client and turns them into Date objects for persistence" do
-      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                     :other_notification_date, :soc_date]
+      date_fields = %i[certification_date service_connection_notification_date increased_rating_notification_date
+                       other_notification_date soc_date]
 
       params = {}
       date_fields.each do |date_field|

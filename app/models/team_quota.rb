@@ -13,7 +13,7 @@ class TeamQuota < ActiveRecord::Base
   end
 
   def task_count_for(user_quota)
-    fail MismatchedTeamQuota if user_quota.team_quota_id != id
+    raise MismatchedTeamQuota if user_quota.team_quota_id != id
 
     calculate_task_count_for(assigned_quotas.unlocked.index(user_quota))
   end
@@ -73,7 +73,7 @@ class TeamQuota < ActiveRecord::Base
   end
 
   def tasks_to_complete
-    @tasks_to_complete ||= (date == Time.zone.today) ? task_klass.to_complete : []
+    @tasks_to_complete ||= date == Time.zone.today ? task_klass.to_complete : []
   end
 
   def adjust_user_count

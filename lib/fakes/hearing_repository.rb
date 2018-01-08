@@ -22,7 +22,7 @@ class Fakes::HearingRepository
 
   def self.update_vacols_hearing!(vacols_record, hearing_info)
     return if (hearing_info.keys.map(&:to_sym) &
-        [:notes, :aod, :disposition, :add_on, :hold_open, :transcript_requested, :representative_name]).empty?
+        %i[notes aod disposition add_on hold_open transcript_requested representative_name]).empty?
     hearing = find_by_vacols_id(vacols_record[:vacols_id].to_s)
     hearing.assign_from_vacols(hearing_info)
   end
@@ -36,8 +36,7 @@ class Fakes::HearingRepository
     true
   end
 
-  def self.number_of_slots(*)
-  end
+  def self.number_of_slots(*); end
 
   def self.appeals_ready_for_hearing(vbms_id)
     Fakes::AppealRepository.appeals_ready_for_hearing(vbms_id)

@@ -30,7 +30,7 @@ class AppealSeriesAlerts
   end
 
   def scheduled_hearing
-    if appeal_series.active? && latest_appeal.scheduled_hearings.length > 0
+    if appeal_series.active? && !latest_appeal.scheduled_hearings.empty?
       hearing = latest_appeal.scheduled_hearings.sort_by(&:date).first
       {
         type: :scheduled_hearing,

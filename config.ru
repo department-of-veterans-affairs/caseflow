@@ -17,7 +17,7 @@ end
 
 # use gzip for the '/metrics' route, since it can get big.
 use Rack::Deflater,
-    if: -> (env, _status, _headers, _body) { env["PATH_INFO"] == "/metrics" }
+    if: ->(env, _status, _headers, _body) { env["PATH_INFO"] == "/metrics" }
 
 # Collects custom Caseflow metrics
 use MetricsCollector

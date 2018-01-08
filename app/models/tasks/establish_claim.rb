@@ -27,15 +27,15 @@ class EstablishClaim < Task
   def to_hash
     serializable_hash(
       include: [:user],
-      methods: [
-        :progress_status,
-        :days_since_creation,
-        :completion_status_text,
-        :cached_decision_type,
-        :cached_veteran_name,
-        :cached_serialized_decision_date,
-        :cached_outcoded_by,
-        :vbms_id
+      methods: %i[
+        progress_status
+        days_since_creation
+        completion_status_text
+        cached_decision_type
+        cached_veteran_name
+        cached_serialized_decision_date
+        cached_outcoded_by
+        vbms_id
       ]
     )
   end
@@ -50,17 +50,18 @@ class EstablishClaim < Task
           :non_canceled_end_products_within_30_days,
           decisions: { methods: :received_at }
         ],
-        methods: [
-          :serialized_decision_date,
-          :disposition,
-          :veteran_name,
-          :decision_type,
-          :station_key,
-          :regional_office_key,
-          :issues,
-          :sanitized_vbms_id
-        ] }],
-      methods: [:progress_status, :aasm_state]
+        methods: %i[
+          serialized_decision_date
+          disposition
+          veteran_name
+          decision_type
+          station_key
+          regional_office_key
+          issues
+          sanitized_vbms_id
+        ]
+      }],
+      methods: %i[progress_status aasm_state]
     ).tap { |hash| hash["appeal"]["issues"] = (hash["appeal"]["issues"] || []).map(&:attributes) }
   end
 
@@ -69,7 +70,7 @@ class EstablishClaim < Task
   def perform!(end_product_params)
     end_product = EndProduct.from_establish_claim_params(end_product_params)
 
-    fail InvalidEndProductError unless end_product.valid?
+    raise InvalidEndProductError unless end_product.valid?
 
     transaction do
       appeal.update!(dispatched_to_station: end_product.station_of_jurisdiction)
@@ -79,7 +80,6 @@ class EstablishClaim < Task
         review!(outgoing_reference_id: result.claim_id)
       end
     end
-
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end

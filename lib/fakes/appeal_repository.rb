@@ -22,7 +22,7 @@ class Fakes::AppealRepository
       user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
       appeal = user_case_assignments.first
       # Create fake hearings for the first appeal if one doesn't already exist
-      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).length == 0
+      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).empty?
       user_case_assignments
     end
   end
@@ -86,7 +86,7 @@ class Fakes::AppealRepository
   end
 
   def self.raise_vbms_error_if_necessary(record)
-    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    raise VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
   end
 
   def self.load_vacols_data(appeal)
@@ -111,18 +111,16 @@ class Fakes::AppealRepository
     Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
   end
 
-  def self.close_undecided_appeal!(*)
-  end
+  def self.close_undecided_appeal!(*); end
 
-  def self.close_remand!(*)
-  end
+  def self.close_remand!(*); end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
     Rails.logger.info("Load faked VACOLS data for appeal VBMS ID: #{appeal.vbms_id}")
     Rails.logger.info("Decision Type:\n#{decision_type}")
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
-    fail Caseflow::Error::MultipleAppealsByVBMSID if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
+    raise Caseflow::Error::MultipleAppealsByVBMSID if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
@@ -146,7 +144,7 @@ class Fakes::AppealRepository
       records.select { |_, r| r[:vbms_id] == vbms_id }
     end
 
-    fail ActiveRecord::RecordNotFound if return_records.empty?
+    raise ActiveRecord::RecordNotFound if return_records.empty?
 
     return_records.map do |vacols_id, r|
       Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
@@ -217,7 +215,7 @@ class Fakes::AppealRepository
       Generators::Appeal.build(
         vacols_id: "vacols_id#{i}",
         vbms_id: "vbms_id#{i}",
-        vacols_record: [:full_grant_decided, :partial_grant_decided, :remand_decided][i % 3],
+        vacols_record: %i[full_grant_decided partial_grant_decided remand_decided][i % 3],
         documents: i.even? ? establish_claim_documents : establish_claim_multiple_decisions
       )
     end
@@ -348,7 +346,8 @@ class Fakes::AppealRepository
         vbms_document_id: 5,
         type: "This is a very long document type let's see what it does to the UI!",
         received_at: 7.days.ago,
-        category_other: true),
+        category_other: true
+      ),
       Generators::Document.build(vbms_document_id: 6, type: "BVA Decision", received_at: 8.days.ago,
                                  category_medical: true, category_procedural: true, category_other: true)
     ]
@@ -362,7 +361,8 @@ class Fakes::AppealRepository
         type: Caseflow::DocumentTypes::TYPES.values[seeded_random.rand(Caseflow::DocumentTypes::TYPES.length)],
         category_procedural: seeded_random.rand(10) == 1,
         category_medical: seeded_random.rand(10) == 1,
-        category_other: seeded_random.rand(10) == 1)
+        category_other: seeded_random.rand(10) == 1
+      )
     end
   end
 
@@ -392,8 +392,8 @@ class Fakes::AppealRepository
         regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
-               Generators::Issue.build(codes: %w(06 15 26),
-                                       labels: %w(Medical Compensation Osteomyelitis))],
+               Generators::Issue.build(codes: %w[06 15 26],
+                                       labels: %w[Medical Compensation Osteomyelitis])],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -412,8 +412,9 @@ class Fakes::AppealRepository
       },
       issues: [Generators::Issue.build(
         disposition: "Remanded",
-        codes: %w(06 15 13 14 22),
-        labels: ["Medical", "Service connection", "Left knee", "Right knee", "Cervical strain"])],
+        codes: %w[06 15 13 14 22],
+        labels: ["Medical", "Service connection", "Left knee", "Right knee", "Cervical strain"]
+      )],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
     Generators::Appeal.build(
@@ -448,8 +449,8 @@ class Fakes::AppealRepository
         regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
-               Generators::Issue.build(codes: %w(06 15 26),
-                                       labels: %w(Medical Compensation Osteomyelitis))],
+               Generators::Issue.build(codes: %w[06 15 26],
+                                       labels: %w[Medical Compensation Osteomyelitis])],
       documents: static_reader_documents
     )
   end

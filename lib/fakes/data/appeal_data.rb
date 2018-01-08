@@ -40,7 +40,8 @@ module Fakes::Data::AppealData
               "All Others",
               "Thigh, limitation of flexion of"
             ] }
-        ]),
+        ]
+      ),
       Generators::Appeal.build(
         type: "Remand",
         vacols_id: "reader_id2",
@@ -78,7 +79,8 @@ module Fakes::Data::AppealData
               "All Others",
               "Thigh, limitation of flexion of"
             ] }
-        ]),
+        ]
+      ),
       Generators::Appeal.build(
         type: "Remand",
         vacols_id: "reader_id3",
@@ -116,7 +118,8 @@ module Fakes::Data::AppealData
               "All Others",
               "Thigh, limitation of flexion of"
             ] }
-        ])
+        ]
+      )
     ]
   end
   # rubocop:enable Metrics/MethodLength

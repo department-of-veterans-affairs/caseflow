@@ -1,5 +1,5 @@
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_demo, only: %i[set_user set_end_products]
   before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
@@ -53,7 +53,7 @@ class Test::UsersController < ApplicationController
   # :nocov:
   def index
     @test_users = User.all.select { |u| User::FUNCTIONS.include?(u.css_id) || u.css_id.include?("System Admin") }
-    @ep_types = %w(full partial none all)
+    @ep_types = %w[full partial none all]
     render "index"
   end
 

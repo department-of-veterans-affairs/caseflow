@@ -34,7 +34,8 @@ class ApplicationBaseController < ActionController::Base
       end
       format.json do
         render json: {
-          errors: ["Response not found"] }, status: 404
+          errors: ["Response not found"]
+        }, status: 404
       end
     end
   end

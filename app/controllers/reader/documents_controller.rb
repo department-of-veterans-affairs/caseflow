@@ -5,7 +5,8 @@ class Reader::DocumentsController < Reader::ApplicationController
       format.json do
         AppealView.find_or_create_by(
           appeal_id: appeal.id,
-          user_id: current_user.id).tap do |t|
+          user_id: current_user.id
+        ).tap do |t|
           t.update!(last_viewed_at: Time.zone.now)
         end
         MetricsService.record "Get appeal #{appeal_id} document data" do
@@ -54,7 +55,7 @@ class Reader::DocumentsController < Reader::ApplicationController
     document_ids = appeal.saved_documents.map(&:id)
 
     # Create a hash mapping each document_id that has been read to true
-    read_documents_hash = current_user.document_views.where(document_id:  document_ids)
+    read_documents_hash = current_user.document_views.where(document_id: document_ids)
                                       .each_with_object({}) do |document_view, object|
       object[document_view.document_id] = true
     end

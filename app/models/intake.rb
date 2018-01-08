@@ -30,7 +30,7 @@ class Intake < ActiveRecord::Base
   def self.build(form_type:, veteran_file_number:, user:)
     intake_classname = FORM_TYPES[form_type.to_sym]
 
-    fail FormTypeNotSupported unless intake_classname
+    raise FormTypeNotSupported unless intake_classname
 
     intake_classname.constantize.new(veteran_file_number: veteran_file_number, user: user)
   end
@@ -55,15 +55,15 @@ class Intake < ActiveRecord::Base
   end
 
   def review_errors
-    fail Caseflow::Error::MustImplementInSubclass
+    raise Caseflow::Error::MustImplementInSubclass
   end
 
   def review!(_review_params)
-    fail Caseflow::Error::MustImplementInSubclass
+    raise Caseflow::Error::MustImplementInSubclass
   end
 
   def cancel!
-    fail Caseflow::Error::MustImplementInSubclass
+    raise Caseflow::Error::MustImplementInSubclass
   end
 
   # Optional step to load data into the Caseflow DB that will be used for the intake
@@ -130,6 +130,6 @@ class Intake < ActiveRecord::Base
   end
 
   def find_or_build_initial_detail
-    fail Caseflow::Error::MustImplementInSubclass
+    raise Caseflow::Error::MustImplementInSubclass
   end
 end
