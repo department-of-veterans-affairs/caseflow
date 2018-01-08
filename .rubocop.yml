@@ -34,6 +34,9 @@ Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
 
+Rails/DynamicFindBy:
+  Enabled: false
+
 Metrics/MethodLength:
   Max: 20
 
