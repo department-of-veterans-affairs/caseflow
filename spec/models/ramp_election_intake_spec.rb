@@ -110,15 +110,20 @@ describe RampElectionIntake do
           vbms_id: "64205555C",
           issues: [
             Generators::Issue.build(note: "Broken thigh"),
-            Generators::Issue.build(codes: ["02", "16", "03", "5252"],
-                                    labels: ["Compensation", "Something else", "All Others", "Knee, limitation of flexion of"],
+            Generators::Issue.build(codes: %w(02 16 03 5252),
+                                    labels: [
+                                      "Compensation",
+                                      "Something else",
+                                      "All Others",
+                                      "Knee, limitation of flexion of"
+                                    ],
                                     note: "Broken knee")
           ]
         ),
         Generators::Appeal.create(
           vbms_id: "64205555C",
           issues: [
-            Generators::Issue.build(codes: ["02", "15"],
+            Generators::Issue.build(codes: %w(02 15),
                                     labels: ["Compensation", "Last Issue"],
                                     note: "")
           ]

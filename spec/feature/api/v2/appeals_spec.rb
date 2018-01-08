@@ -74,13 +74,13 @@ describe "Appeals API v2", type: :request do
         },
         issues: [
           Generators::Issue.build(
-            codes: ["02", "15", "04", "5301"],
+            codes: %w(02 15 04 5301),
             labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group I"],
             disposition: nil,
             close_date: nil
           ),
           Generators::Issue.build(
-            codes: ["02", "15", "04", "5302"],
+            codes: %w(02 15 04 5302),
             labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group II"],
             disposition: :advance_allowed_in_field,
             close_date: Time.zone.today - 5.days
@@ -230,15 +230,16 @@ describe "Appeals API v2", type: :request do
       expect(status["details"]["test"]).to eq("Hello World")
 
       # check the first appeal's issue
-      expect(json["data"].first["attributes"]["issues"]).to eq([
-        {
-          "description" => "Service connection, limitation of thigh motion",
-          "diagnosticCode" => "5252",
-          "active" => true,
-          "lastAction" => "remand",
-          "date" => (Time.zone.today - 5.months).to_s
-        }
-      ])
+      expect(json["data"].first["attributes"]["issues"])
+        .to eq([
+                 {
+                   "description" => "Service connection, limitation of thigh motion",
+                   "diagnosticCode" => "5252",
+                   "active" => true,
+                   "lastAction" => "remand",
+                   "date" => (Time.zone.today - 5.months).to_s
+                 }
+               ])
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
@@ -252,22 +253,23 @@ describe "Appeals API v2", type: :request do
       expect(status["type"]).to eq("pending_form9")
 
       # check the last appeal's issues
-      expect(json["data"].last["attributes"]["issues"]).to eq([
-        {
-          "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
-          "diagnosticCode" => "5301",
-          "active" => true,
-          "lastAction" => nil,
-          "date" => nil
-        },
-        {
-          "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
-          "diagnosticCode" => "5302",
-          "active" => false,
-          "lastAction" => "field_grant",
-          "date" => (Time.zone.today - 5.days).to_s
-        }
-      ])
+      expect(json["data"].last["attributes"]["issues"])
+        .to eq([
+                 {
+                   "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
+                   "diagnosticCode" => "5301",
+                   "active" => true,
+                   "lastAction" => nil,
+                   "date" => nil
+                 },
+                 {
+                   "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
+                   "diagnosticCode" => "5302",
+                   "active" => false,
+                   "lastAction" => "field_grant",
+                   "date" => (Time.zone.today - 5.days).to_s
+                 }
+               ])
 
       # check that the date for the last event was formatted correctly
       json_notification_date = json["data"].last["attributes"]["events"].first["date"]

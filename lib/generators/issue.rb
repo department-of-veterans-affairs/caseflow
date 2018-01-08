@@ -6,7 +6,7 @@ class Generators::Issue
       {
         disposition: "Allowed",
         close_date: 7.days.ago,
-        codes: ["02", "15", "03", "5252"],
+        codes: %w(02 15 03 5252),
         labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"],
         note: "low back condition",
         vacols_sequence_id: 1,

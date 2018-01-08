@@ -36,7 +36,7 @@ describe AppealSeriesAlerts do
       Generators::Issue.build(
         id: vacols_id,
         vacols_sequence_id: 2,
-        codes: ["02", "15", "04", "5301"],
+        codes: %w(02 15 04 5301),
         labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group I"],
         disposition: :allowed,
         close_date: 6.months.ago
@@ -70,11 +70,15 @@ describe AppealSeriesAlerts do
     context "when an issue spans a remand" do
       it "combines issues together" do
         expect(subject.length).to eq(2)
-        expect(subject.first[:description]).to eq("Service connection, limitation of thigh motion")
+        expect(subject.first[:description]).to eq(
+          "Service connection, limitation of thigh motion"
+        )
         expect(subject.first[:active]).to be_truthy
         expect(subject.first[:last_action]).to eq(:remand)
         expect(subject.first[:date]).to eq(6.months.ago.to_date)
-        expect(subject.last[:description]).to eq("New and material evidence for service connection, shoulder or arm muscle injury")
+        expect(subject.last[:description]).to eq(
+          "New and material evidence for service connection, shoulder or arm muscle injury"
+        )
         expect(subject.last[:active]).to be_falsey
         expect(subject.last[:last_action]).to eq(:allowed)
         expect(subject.last[:date]).to eq(6.months.ago.to_date)

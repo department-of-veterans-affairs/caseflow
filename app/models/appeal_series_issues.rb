@@ -5,7 +5,7 @@ class AppealSeriesIssues
 
   delegate :appeals, to: :appeal_series
 
-  ELIGIBLE_TYPES = ["Original", "Post Remand", "Court Remand"]
+  ELIGIBLE_TYPES = ["Original", "Post Remand", "Court Remand"].freeze
 
   LAST_ACTION_TYPE_FOR_DISPOSITIONS = {
     allowed: [
@@ -65,8 +65,10 @@ class AppealSeriesIssues
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def last_action_for_issues(issues)
-    issues.reduce({ date: nil, type: nil }) do |memo, issue|
+    issues.reduce(date: nil, type: nil) do |memo, issue|
       if issue.close_date && (memo[:date].nil? || issue.close_date > memo[:date])
         type = last_action_type_from_disposition(issue.disposition)
 
@@ -79,13 +81,15 @@ class AppealSeriesIssues
       last_cavc_remand = issue.cavc_decisions.select(&:remanded?).max_by(&:decision_date)
 
       if last_cavc_remand && (memo[:date].nil? || last_cavc_remand.decision_date > memo[:date])
-          memo[:date] = last_cavc_remand.decision_date
-          memo[:type] = :cavc_remand
+        memo[:date] = last_cavc_remand.decision_date
+        memo[:type] = :cavc_remand
       end
 
       memo
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def last_action_type_from_disposition(disposition)
     LAST_ACTION_TYPE_FOR_DISPOSITIONS.keys.find do |type|

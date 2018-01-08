@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module Constants::Issue
   ISSUE_DESCRIPTIONS = {
     "01" => "Burial benefits",
@@ -991,3 +992,4 @@ module Constants::Issue
     "9999" => "dental or oral condition"
   }.freeze
 end
+# rubocop:enable Metrics/ModuleLength

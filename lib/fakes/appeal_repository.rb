@@ -392,8 +392,8 @@ class Fakes::AppealRepository
         regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
-               Generators::Issue.build(codes: ["06", "15", "26"],
-                                       labels: ["Medical", "Compensation", "Osteomyelitis"])],
+               Generators::Issue.build(codes: %w(06 15 26),
+                                       labels: %w(Medical Compensation Osteomyelitis))],
       documents: static_reader_documents
     )
     Generators::Appeal.build(
@@ -412,7 +412,7 @@ class Fakes::AppealRepository
       },
       issues: [Generators::Issue.build(
         disposition: "Remanded",
-        codes: ["06", "15", "13", "14", "22"],
+        codes: %w(06 15 13 14 22),
         labels: ["Medical", "Service connection", "Left knee", "Right knee", "Cervical strain"])],
       documents: random_reader_documents(1000, "reader_id2".hash)
     )
@@ -448,8 +448,8 @@ class Fakes::AppealRepository
         regional_office_key: "RO13"
       },
       issues: [Generators::Issue.build,
-               Generators::Issue.build(codes: ["06", "15", "26"],
-                                       labels: ["Medical", "Compensation", "Osteomyelitis"])],
+               Generators::Issue.build(codes: %w(06 15 26),
+                                       labels: %w(Medical Compensation Osteomyelitis))],
       documents: static_reader_documents
     )
   end

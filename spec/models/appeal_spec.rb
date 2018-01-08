@@ -852,7 +852,7 @@ describe Appeal do
     end
 
     context "when the allowed issues are new material" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: ["02", "15", "04", "5252"])] }
+      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252))] }
 
       it { is_expected.to be_falsey }
     end
@@ -887,7 +887,7 @@ describe Appeal do
       context "when at least one issues is new-material allowed" do
         let(:issues) do
           [
-            Generators::Issue.build(disposition: :allowed, codes: ["02", "15", "04", "5252"]),
+            Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252)),
             Generators::Issue.build(disposition: :denied)
           ]
         end
@@ -921,7 +921,7 @@ describe Appeal do
     context "is true if new-material allowed issue" do
       let(:issues) do
         [
-          Generators::Issue.build(disposition: :allowed, codes: ["02", "15", "04", "5252"]),
+          Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252)),
           Generators::Issue.build(disposition: :remanded)
         ]
       end
@@ -1363,9 +1363,9 @@ describe Appeal do
 
     let(:issues) do
       [
-        Generators::Issue.build(disposition: :allowed, codes: ["02", "01"]),
-        Generators::Issue.build(disposition: :allowed, codes: ["02", "02"]),
-        Generators::Issue.build(disposition: :allowed, codes: ["02", "01"])
+        Generators::Issue.build(disposition: :allowed, codes: %w(02 01)),
+        Generators::Issue.build(disposition: :allowed, codes: %w(02 02)),
+        Generators::Issue.build(disposition: :allowed, codes: %w(02 01))
       ]
     end
 
@@ -1543,7 +1543,7 @@ describe Appeal do
 
       let!(:issues) do
         [Generators::Issue.build(disposition: :allowed,
-                                 codes: ["02", "15", "03", "04", "05"],
+                                 codes: %w(02 15 03 04 05),
                                  labels: labels)
         ]
       end

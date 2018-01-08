@@ -46,9 +46,7 @@ class AppealHistory
 
     # Each appeal tree gets a series ID; assign all of its descendant nodes that ID.
     appeal_tree_roots.each_with_index do |root, sid|
-      traverse_appeal_tree(root) do |node|
-        node[:series_id] = sid
-      end
+      traverse_appeal_tree(root) { |node| node[:series_id] = sid }
 
       merge_table[sid] = sid
     end

@@ -41,6 +41,8 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record) }
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
     MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_status_api_attrs",
                           service: :vacols,
@@ -67,6 +69,8 @@ class AppealRepository
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def self.appeals_ready_for_hearing(vbms_id)
     cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",

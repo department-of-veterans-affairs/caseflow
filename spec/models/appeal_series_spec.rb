@@ -98,7 +98,7 @@ describe AppealSeries do
 
     context "when there are multiple programs on appeal" do
       before do
-        latest_appeal.issues << Generators::Issue.build(codes: ["07", "07", "02"])
+        latest_appeal.issues << Generators::Issue.build(codes: %w(07 07 02))
       end
 
       it { is_expected.to eq(:multiple) }
@@ -110,7 +110,7 @@ describe AppealSeries do
 
     context "when the first issue on appeal has no aoj" do
       before do
-        latest_appeal.issues << Generators::Issue.build(codes: ["10", "01", "02"])
+        latest_appeal.issues << Generators::Issue.build(codes: %w(10 01 02))
         latest_appeal.issues << Generators::Issue.build
       end
 

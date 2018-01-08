@@ -83,7 +83,7 @@ class Issue
     issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
       descriptions = descriptions[code]
       # If there is no value, we probably haven't added the issue type in our list, so return.
-      return unless descriptions
+      return nil unless descriptions
       break descriptions if descriptions.is_a?(String)
       descriptions
     end
@@ -131,7 +131,7 @@ class Issue
   # was allowing/denying new material (such as medical evidence) to be used
   # in the appeal
   def new_material?
-    codes[0..2] == ["02", "15", "04"]
+    codes[0..2] == %w(02 15 04)
   end
 
   def non_new_material?
@@ -180,11 +180,23 @@ class Issue
     private
 
     def parse_codes_from_vacols(hash)
-      [hash["issprog"], hash["isscode"], hash["isslev1"], hash["isslev2"], hash["isslev3"]].compact
+      [
+        hash["issprog"],
+        hash["isscode"],
+        hash["isslev1"],
+        hash["isslev2"],
+        hash["isslev3"]
+      ].compact
     end
 
     def parse_labels_from_vacols(hash)
-      [hash["issprog_label"], hash["isscode_label"], hash["isslev1_label"], hash["isslev2_label"], hash["isslev3_label"]].compact
+      [
+        hash["issprog_label"],
+        hash["isscode_label"],
+        hash["isslev1_label"],
+        hash["isslev2_label"],
+        hash["isslev3_label"]
+      ].compact
     end
   end
 end
