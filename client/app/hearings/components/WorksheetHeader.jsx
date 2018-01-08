@@ -82,7 +82,9 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
-          <div className={olderVeteran && 'cf-red-text'}>{worksheet.veteran_age}</div>
+          {olderVeteran ?
+            <div className="cf-red-text">{worksheet.veteran_age}</div> :
+            <div>{worksheet.veteran_age}</div>}
         </div>
         <div className="cf-hearings-worksheet-data-cell column-4">
           <div>Gender:</div>
