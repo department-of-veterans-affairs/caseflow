@@ -23,6 +23,17 @@ class RampRefilingIntake < Intake
     detail.update_attributes(request_params.permit(:receipt_date, :option_selected))
   end
 
+  def complete!(request_params)
+    transaction do
+      detail.create_issues!(source_issue_ids: request_params[:issue_ids])
+      detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
+
+      complete_with_status!(:success)
+
+      detail.create_end_product_and_contentions! if detail.needs_end_product?
+    end
+  end
+
   def review_errors
     detail.errors.messages
   end

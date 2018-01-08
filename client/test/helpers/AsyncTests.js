@@ -14,11 +14,3 @@ export const asyncTest = (fn) => {
     });
   };
 };
-
-export const pause = (ms = 0) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve();
-    }, ms);
-  });
-};
