@@ -78,7 +78,7 @@ class HearingRepository
       when :video
         staff.stc4
       when :travel
-        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
+        date.monday? || date.friday? ? staff.stc2 : staff.stc3
       end
     end
 

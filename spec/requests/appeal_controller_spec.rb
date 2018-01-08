@@ -13,23 +13,23 @@ RSpec.describe "Reader Appeal Requests", type: :request do
 
     it "returns not found" do
       headers["HTTP_VETERAN_ID"] = "22221C"
-      get "/reader/appeal/veteran-id", nil, headers
+      get "/reader/appeal/veteran-id", params: nil, headers: headers
       expect(response).to have_http_status(:not_found)
 
       headers["HTTP_VETERAN_ID"] = "22112121xs"
-      get "/reader/appeal/veteran-id", nil, headers
+      get "/reader/appeal/veteran-id", params: nil, headers: headers
       expect(response).to have_http_status(:not_found)
     end
 
     it "passes the request " do
       headers["HTTP_VETERAN_ID"] = appeal[:vbms_id]
-      get "/reader/appeal/veteran-id", nil, headers
+      get "/reader/appeal/veteran-id", params: nil, headers: headers
       expect(response).to have_http_status(:success)
     end
 
     it "doesn't return appeals without issues" do
       headers["HTTP_VETERAN_ID"] = appeal_with_no_issues[:vbms_id]
-      get "/reader/appeal/veteran-id", nil, headers
+      get "/reader/appeal/veteran-id", params: nil, headers: headers
       expect(JSON.parse(response.body)["appeals"].size).to be(0)
     end
   end

@@ -109,7 +109,7 @@ describe "Appeals API v2", type: :request do
         "Authorization": "Token token=12312kdasdaskd"
       }
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("401")
     end
@@ -120,7 +120,7 @@ describe "Appeals API v2", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("422")
 
@@ -135,7 +135,7 @@ describe "Appeals API v2", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("404")
 
@@ -150,7 +150,7 @@ describe "Appeals API v2", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(2)
@@ -161,13 +161,13 @@ describe "Appeals API v2", type: :request do
         vacols_record: { template: :remand_decided }
       )
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(2)
 
       # tests that reload=true busts cache
-      get "/api/v2/appeals?reload=true", nil, headers
+      get "/api/v2/appeals?reload=true", params: nil, headers: headers
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(3)
@@ -183,7 +183,7 @@ describe "Appeals API v2", type: :request do
       expect(Raven).to receive(:capture_exception)
       expect(Raven).to receive(:last_event_id).and_return("a1b2c3")
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("500")
 
@@ -199,7 +199,7 @@ describe "Appeals API v2", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v2/appeals", nil, headers
+      get "/api/v2/appeals", params: nil, headers: headers
 
       json = JSON.parse(response.body)
 

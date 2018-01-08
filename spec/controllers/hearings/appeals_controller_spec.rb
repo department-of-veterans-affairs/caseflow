@@ -16,7 +16,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
           vacols_sequence_id: 1
         }
       ] }
-      patch :update, appeal_id: appeal.id, appeal: params
+      patch :update, params: { appeal_id: appeal.id, appeal: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["appeal"]
       expect(response_body["worksheet_issues"].size).to eq 1
@@ -34,7 +34,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
       issue = Generators::WorksheetIssue.create(appeal: appeal)
       expect(WorksheetIssue.all.size).to eq 1
       params = { worksheet_issues_attributes: [{ _destroy: true, id: issue.id }] }
-      patch :update, appeal_id: appeal.id, appeal: params
+      patch :update, params: { appeal_id: appeal.id, appeal: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["appeal"]
       expect(WorksheetIssue.all.size).to eq 0
@@ -42,7 +42,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
     end
 
     it "should return not found" do
-      patch :update, appeal_id: "534553", appeal: {}
+      patch :update, params: { appeal_id: "534553", appeal: {} }
       expect(response.status).to eq 404
     end
   end
