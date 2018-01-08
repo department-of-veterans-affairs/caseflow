@@ -20,9 +20,6 @@ export const formatDate = function(dateString) {
 };
 
 export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
-  if (!arrayOfDateStrings) {
-    return;
-  }
   return arrayOfDateStrings.map((dateString) => {
     return formatDate(dateString);
   }).join(', ');
