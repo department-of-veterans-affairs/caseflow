@@ -2,6 +2,7 @@ require "rails_helper"
 require "faker"
 
 describe Document do
+  PaperTrail.enabled = true
   let(:document_type) { "NOD" }
   let(:document) do
     Document.new(
@@ -303,7 +304,7 @@ describe Document do
 
   context "versioning" do
     it "saves new version on update description" do
-      PaperTrail.enabled = true
+      # PaperTrail.enabled = true
       puts "!!PaperTrail is enabled #{PaperTrail.enabled?}"
       puts "!!Document PaperTrail options #{Document.paper_trail_options}"
       document.save
