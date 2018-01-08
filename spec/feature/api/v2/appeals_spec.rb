@@ -212,6 +212,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["aod"]).to eq(true)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
       expect(json["data"].first["attributes"]["alerts"]).to eq([])
+      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
+      expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
@@ -271,10 +273,10 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"].last["attributes"]["aod"]).to eq(true)
       expect(json["data"].last["attributes"]["location"]).to eq("aoj")
+      expect(json["data"].last["attributes"]["aoj"]).to eq("vba")
+      expect(json["data"].last["attributes"]["programArea"]).to eq("compensation")
 
       # check stubbed attributes
-      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
-      expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["description"]).to eq("")
       expect(json["data"].first["attributes"]["docket"]).to eq(nil)
       expect(json["data"].first["attributes"]["evidence"]).to eq([])

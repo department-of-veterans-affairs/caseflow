@@ -8,6 +8,8 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :active?, key: :active
   attribute :aod
   attribute :location
+  attribute :aoj
+  attribute :program, key: :program_area
   attribute :status_hash, key: :status
   attribute :alerts
   attribute :issues
@@ -17,14 +19,6 @@ class V2::AppealSerializer < ActiveModel::Serializer
   end
 
   # Stubbed attributes
-  attribute :aoj do
-    "vba"
-  end
-
-  attribute :program_area do
-    "compensation"
-  end
-
   attribute :description do
     ""
   end
