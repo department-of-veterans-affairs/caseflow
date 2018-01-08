@@ -17,29 +17,20 @@ module Fakes::Data::AppealData
         regional_office_key: "RO13",
         issues: [
           { disposition: :remanded,
-            program: :compensation,
             vacols_sequence_id: 1,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] },
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          },
           { disposition: :remanded,
-            program: :compensation,
             vacols_sequence_id: 2,
-            type: { name: :increased_rating, label: "Increased Rating" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] },
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          },
           { disposition: :remanded,
-            program: :compensation,
-            vacols_sequence_id: 3,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] }
+            vacols_sequence_id: 3,,
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          }
         ]),
       Generators::Appeal.build(
         type: "Remand",
@@ -55,29 +46,20 @@ module Fakes::Data::AppealData
         regional_office_key: "RO13",
         issues: [
           { disposition: :remanded,
-            program: :compensation,
             vacols_sequence_id: 1,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] },
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          },
           { disposition: :remanded,
-            program: :compensation,
             vacols_sequence_id: 2,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] },
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          },
           { disposition: :remanded,
-            program: :compensation,
             vacols_sequence_id: 3,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] }
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          }
         ]),
       Generators::Appeal.build(
         type: "Remand",
@@ -94,28 +76,19 @@ module Fakes::Data::AppealData
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
-            program: :compensation,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] },
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          },
           { disposition: :remanded,
             vacols_sequence_id: 2,
-            program: :compensation,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] },
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          },
           { disposition: :remanded,
             vacols_sequence_id: 3,
-            program: :compensation,
-            type: { name: :service_connection, label: "Service Connection" }, category: :knee, levels: [
-              "Lumbosacral",
-              "All Others",
-              "Thigh, limitation of flexion of"
-            ] }
+            codes: %w(02 15 03 5252),
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
+          }
         ])
     ]
   end
