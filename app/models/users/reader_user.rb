@@ -1,4 +1,4 @@
-class ReaderUser < ApplicationRecord
+class ReaderUser < ActiveRecord::Base
   belongs_to :user
 
   class << self

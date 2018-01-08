@@ -1,4 +1,4 @@
-class AppealSeries < ApplicationRecord
+class AppealSeries < ActiveRecord::Base
   has_many :appeals, dependent: :nullify
 
   delegate :vacols_id,

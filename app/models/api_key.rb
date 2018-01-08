@@ -2,7 +2,7 @@ require "digest"
 require "securerandom"
 require "base64"
 
-class ApiKey < ApplicationRecord
+class ApiKey < ActiveRecord::Base
   before_create :generate_key_string
 
   # Value of the key string, only available during creation

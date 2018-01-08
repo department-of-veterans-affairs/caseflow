@@ -1,4 +1,4 @@
-class TeamQuota < ApplicationRecord
+class TeamQuota < ActiveRecord::Base
   DEFAULT_USER_COUNT = 1
 
   class MismatchedTeamQuota < StandardError; end

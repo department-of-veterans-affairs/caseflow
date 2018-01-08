@@ -1,4 +1,4 @@
-class Hearing < ApplicationRecord
+class Hearing < ActiveRecord::Base
   include CachedAttributes
   include AssociatedVacolsModel
   include HearingConcern

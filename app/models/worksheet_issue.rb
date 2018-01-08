@@ -1,6 +1,6 @@
 # Worksheet Issue table represents the worksheet data entered
 # by the judge, it is not an official determination on the issue
-class WorksheetIssue < ApplicationRecord
+class WorksheetIssue < ActiveRecord::Base
   acts_as_paranoid
 
   belongs_to :appeal

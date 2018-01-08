@@ -1,4 +1,4 @@
-class Intake < ApplicationRecord
+class Intake < ActiveRecord::Base
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user

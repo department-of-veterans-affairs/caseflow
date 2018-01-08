@@ -1,4 +1,4 @@
-class Task < ApplicationRecord
+class Task < ActiveRecord::Base
   include RetryHelper
   include AASM
 

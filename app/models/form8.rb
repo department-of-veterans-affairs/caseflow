@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Form8 < ApplicationRecord
+class Form8 < ActiveRecord::Base
   include UploadableDocument
 
   FORM_FIELDS = %i[

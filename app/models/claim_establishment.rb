@@ -1,4 +1,4 @@
-class ClaimEstablishment < ApplicationRecord
+class ClaimEstablishment < ActiveRecord::Base
   belongs_to :task
 
   enum decision_type: {

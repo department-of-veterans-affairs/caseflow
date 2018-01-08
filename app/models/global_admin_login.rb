@@ -1,2 +1,2 @@
-class GlobalAdminLogin < ApplicationRecord
+class GlobalAdminLogin < ActiveRecord::Base
 end
