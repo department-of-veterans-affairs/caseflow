@@ -66,3 +66,102 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
       }
     );
 };
+
+export const setIssueSelected = (issueId, isSelected) => ({
+  type: ACTIONS.SET_ISSUE_SELECTED,
+  payload: {
+    issueId,
+    isSelected
+  },
+  meta: {
+    analytics: {
+      label: isSelected ? 'selected' : 'de-selected'
+    }
+  }
+});
+
+export const setHasIneligibleIssue = (hasIneligibleIssue) => ({
+  type: ACTIONS.SET_HAS_INELIGIBLE_ISSUE,
+  payload: {
+    hasIneligibleIssue
+  },
+  meta: { analytics }
+});
+
+export const setOutsideCaseflowStepsConfirmed = (isConfirmed) => ({
+  type: ACTIONS.CONFIRM_OUTSIDE_CASEFLOW_STEPS,
+  payload: { isConfirmed },
+  meta: {
+    analytics: {
+      label: isConfirmed ? 'confirmed' : 'not-confirmed'
+    }
+  }
+});
+
+export const processFinishError = () => ({ type: ACTIONS.PROCESS_FINISH_ERROR });
+
+const validateSelectedIssues = (rampRefiling) =>
+  rampRefiling.hasIneligibleIssue || _.some(rampRefiling.issues, 'isSelected');
+
+export const completeIntake = (intakeId, rampRefiling) => (dispatch) => {
+  let hasError = false;
+
+  if (!rampRefiling.outsideCaseflowStepsConfirmed) {
+    dispatch({
+      type: ACTIONS.COMPLETE_INTAKE_STEPS_NOT_CONFIRMED,
+      meta: { analytics }
+    });
+
+    hasError = true;
+  }
+
+  if (!validateSelectedIssues(rampRefiling)) {
+    dispatch({
+      type: ACTIONS.NO_ISSUES_SELECTED_ERROR,
+      meta: { analytics }
+    });
+
+    hasError = true;
+  }
+
+  if (hasError) {
+    return Promise.resolve(false);
+  }
+
+  dispatch({
+    type: ACTIONS.COMPLETE_INTAKE_START,
+    meta: { analytics }
+  });
+
+  const data = {
+    has_ineligible_issue: rampRefiling.hasIneligibleIssue,
+    issue_ids: _(rampRefiling.issues).
+      filter('isSelected').
+      map('id').
+      value()
+  };
+
+  return ApiUtil.patch(`/intake/${intakeId}/complete`, { data }, ENDPOINT_NAMES.COMPLETE_INTAKE).
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_SUCCEED,
+          payload: {
+            intake: responseObject
+          },
+          meta: { analytics }
+        });
+
+        return true;
+      },
+      (error) => {
+        dispatch({
+          type: ACTIONS.COMPLETE_INTAKE_FAIL,
+          meta: { analytics }
+        });
+        throw error;
+      }
+    );
+};

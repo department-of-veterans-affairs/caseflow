@@ -24,6 +24,12 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+    },
+    issues: {
+      $set: _.keyBy(serverIntake.issues, 'id')
+    },
+    isComplete: {
+      $set: Boolean(serverIntake.completed_at)
     }
   });
 
@@ -37,10 +43,20 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     hasInvalidOption: false,
     receiptDate: null,
     receiptDateError: null,
+    hasIneligibleIssue: false,
     isStarted: false,
     isReviewed: false,
+    isComplete: false,
+    outsideCaseflowStepsConfirmed: false,
+    outsideCaseflowStepsError: null,
+
+    // This allows us to tap into error events on the finish page and
+    // scroll to the right element
+    finishErrorProcessed: true,
+
     requestStatus: {
-      submitReview: REQUEST_STATE.NOT_STARTED
+      submitReview: REQUEST_STATE.NOT_STARTED,
+      completeIntake: REQUEST_STATE.NOT_STARTED
     }
   }, data.serverIntake)
 );
@@ -100,6 +116,15 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       isReviewed: {
         $set: true
       },
+      outsideCaseflowStepsConfirmed: {
+        $set: false
+      },
+      outsideCaseflowStepsError: {
+        $set: null
+      },
+      issuesSelectedError: {
+        $set: null
+      },
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.SUCCEEDED
@@ -123,6 +148,85 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         }
       }
     });
+  case ACTIONS.SET_HAS_INELIGIBLE_ISSUE:
+    return update(state, {
+      hasIneligibleIssue: {
+        $set: action.payload.hasIneligibleIssue
+      },
+      issuesSelectedError: {
+        $set: null
+      }
+    });
+  case ACTIONS.SET_ISSUE_SELECTED:
+    return update(state, {
+      issues: {
+        [action.payload.issueId]: {
+          isSelected: {
+            $set: action.payload.isSelected
+          }
+        }
+      },
+      issuesSelectedError: {
+        $set: null
+      }
+    });
+  case ACTIONS.CONFIRM_OUTSIDE_CASEFLOW_STEPS:
+    return update(state, {
+      outsideCaseflowStepsConfirmed: {
+        $set: action.payload.isConfirmed
+      },
+      outsideCaseflowStepsError: {
+        $set: null
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_STEPS_NOT_CONFIRMED:
+    return update(state, {
+      outsideCaseflowStepsError: {
+        $set: "You must confirm you've completed the steps"
+      },
+      finishErrorProcessed: {
+        $set: false
+      }
+    });
+  case ACTIONS.PROCESS_FINISH_ERROR:
+    return update(state, {
+      finishErrorProcessed: {
+        $set: true
+      }
+    });
+  case ACTIONS.NO_ISSUES_SELECTED_ERROR:
+    return update(state, {
+      issuesSelectedError: {
+        $set: 'You must select at least one contention'
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_START:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.IN_PROGRESS
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_FAIL:
+    return update(state, {
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.FAILED
+        }
+      }
+    });
+  case ACTIONS.COMPLETE_INTAKE_SUCCEED:
+    return updateFromServerIntake(update(state, {
+      isComplete: {
+        $set: true
+      },
+      requestStatus: {
+        completeIntake: {
+          $set: REQUEST_STATE.SUCCEEDED
+        }
+      }
+    }), action.payload.intake);
   default:
     return state;
   }

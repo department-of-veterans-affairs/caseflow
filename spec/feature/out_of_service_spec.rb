@@ -133,7 +133,7 @@ RSpec.feature "Out of Service" do
 
     scenario "When out of service is disabled, it shows Hearings page" do
       visit "/hearings/dockets"
-      expect(page).to have_content("Upcoming Hearing Days")
+      expect(page).to have_content("Your Hearing Days")
       expect(page).to_not have_content("Technical Difficulties")
     end
 

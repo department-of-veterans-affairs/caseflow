@@ -25,7 +25,7 @@ class RampElectionIntake < Intake
     ramp_election.errors.messages
   end
 
-  def complete!
+  def complete!(_request_params)
     transaction do
       complete_with_status!(:success)
 

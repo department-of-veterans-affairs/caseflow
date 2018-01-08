@@ -1,4 +1,8 @@
 describe "Appeals API v2", type: :request do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
   context "Appeal list" do
     before { FeatureToggle.enable!(:appeals_status) }
 
@@ -206,6 +210,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # check the attribtues on the first appeal
+      expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"].first["attributes"]["type"]).to eq("post_remand")
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
@@ -269,6 +274,7 @@ describe "Appeals API v2", type: :request do
       expect(json_notification_date).to eq((Time.zone.today - 12.months).to_formatted_s(:csv_date))
 
       # check the other attribtues on the last appeal
+      expect(json["data"].last["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"].last["attributes"]["active"]).to eq(true)
       expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"].last["attributes"]["aod"]).to eq(true)

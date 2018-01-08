@@ -113,7 +113,7 @@ module StubbableUser
       @stub
     end
 
-    def before_set_user
+    def clear_current_user
       clear_stub!
     end
 
@@ -233,6 +233,22 @@ def scroll_element_in_to_view(selector)
   expect do
     scroll_to_element_in_view_with_script(selector)
   end.to become_truthy, "Could not find element #{selector}"
+end
+
+def get_computed_styles(selector, style_key)
+  sanitized_selector = selector.gsub("'", "\\\\'")
+
+  page.evaluate_script <<-EOS
+    function() {
+      var elem = document.querySelector('#{sanitized_selector}');
+      if (!elem) {
+        // It would be nice to throw an actual error but I am not sure Capybara will
+        // process that well.
+        return 'query selector `#{sanitized_selector}` did not match any elements';
+      }
+      return window.getComputedStyle(elem)['#{style_key}'];
+    }();
+  EOS
 end
 
 def scroll_to_element_in_view_with_script(selector)

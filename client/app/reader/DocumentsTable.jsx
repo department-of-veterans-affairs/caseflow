@@ -163,6 +163,7 @@ class DocumentsTable extends React.Component {
               page={comment.page}
               onJumpToComment={this.props.onJumpToComment(comment)}
               uuid={comment.uuid}
+              date={comment.relevant_date}
               horizontalLayout>
               {comment.comment}
             </Comment>;

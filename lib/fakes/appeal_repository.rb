@@ -111,7 +111,10 @@ class Fakes::AppealRepository
     Appeal.where(vbms_id: vbms_id).select { |a| a.decision_date.nil? && a.form9_date }
   end
 
-  def self.close!(*)
+  def self.close_undecided_appeal!(*)
+  end
+
+  def self.close_remand!(*)
   end
 
   def self.load_vacols_data_by_vbms_id(appeal:, decision_type:)
@@ -451,22 +454,53 @@ class Fakes::AppealRepository
     )
   end
 
+  # Intake demo file number guide:
+  #
+  # 05555555 - 95555555 are valid file numbers for RampElections
+  # 85555555 will not have contentions for ramp refiling
+  # 11555555 has an appeal ineligible for ramp
+  # 12555555 has no active appeals
+  # 13555555 has no ramp election
   def self.seed_intake_data!
+    Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
+
     9.times do |i|
-      Generators::Veteran.build(file_number: "#{i + 1}0555555")
+      file_number = "#{i + 1}5555555"
+      claim_id = "FAKEEP123#{i}"
+
+      Generators::Veteran.build(file_number: file_number)
 
       Generators::Appeal.build(
-        vbms_id: "#{i + 1}5555555C",
+        vbms_id: "#{file_number}C",
         issues: (1..2).map { Generators::Issue.build }
       )
 
       Generators::EndProduct.build(
-        veteran_file_number: "#{i + 1}5555555",
+        veteran_file_number: file_number,
         bgs_attrs: {
-          benefit_claim_id: "FAKEEP123",
+          benefit_claim_id: claim_id,
           status_type_code: (i == 0 ? "PEND" : "CLR")
         }
       )
+
+      if i != 7
+        Generators::Contention.build(
+          claim_id: claim_id,
+          text: "Right knee service connection"
+        )
+
+        Generators::Contention.build(
+          claim_id: claim_id,
+          text: "Right hip service connection"
+        )
+
+        Generators::Contention.build(
+          claim_id: claim_id,
+          text: "PTSD rating increase"
+        )
+      end
+
+      Fakes::VBMSService.end_product_claim_ids_by_file_number[file_number] = claim_id
     end
 
     Generators::Appeal.build(
@@ -480,11 +514,14 @@ class Fakes::AppealRepository
     )
 
     Generators::Appeal.build(
+      vbms_id: "13555555C",
+      vacols_record: :activated
+    )
+
+    Generators::Appeal.build(
       vbms_id: "25555555C",
       issues: (1..3).map { Generators::Issue.build }
     )
-
-    Fakes::VBMSService.end_product_claim_id = "FAKEEP123"
   end
 
   def self.aod(_vacols_id)

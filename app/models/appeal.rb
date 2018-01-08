@@ -166,6 +166,7 @@ class Appeal < ActiveRecord::Base
   end
 
   delegate :age, to: :veteran, prefix: true
+  delegate :sex, to: :veteran, prefix: true
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -668,12 +669,21 @@ class Appeal < ActiveRecord::Base
       disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+      if appeal.remand?
+        repository.close_remand!(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: disposition_code
+        )
+      else
+        repository.close_undecided_appeal!(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: disposition_code
+        )
+      end
     end
   end
 end

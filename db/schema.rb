@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219182526) do
+ActiveRecord::Schema.define(version: 20180104213048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -266,6 +266,14 @@ ActiveRecord::Schema.define(version: 20171219182526) do
 
   add_index "form8s", ["certification_id"], name: "index_form8s_on_certification_id", using: :btree
 
+  create_table "global_admin_logins", force: :cascade do |t|
+    t.string   "admin_css_id"
+    t.string   "target_css_id"
+    t.string   "target_station_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "hearing_views", force: :cascade do |t|
     t.integer  "hearing_id", null: false
     t.integer  "user_id",    null: false
@@ -312,12 +320,23 @@ ActiveRecord::Schema.define(version: 20171219182526) do
 
   add_index "ramp_elections", ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number", using: :btree
 
+  create_table "ramp_issues", force: :cascade do |t|
+    t.integer "review_id",               null: false
+    t.string  "review_type",             null: false
+    t.string  "contention_reference_id"
+    t.string  "description",             null: false
+    t.integer "source_issue_id"
+  end
+
+  add_index "ramp_issues", ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id", using: :btree
+
   create_table "ramp_refilings", force: :cascade do |t|
     t.string  "veteran_file_number",      null: false
     t.integer "ramp_election_id"
     t.string  "option_selected"
     t.date    "receipt_date"
     t.string  "end_product_reference_id"
+    t.boolean "has_ineligible_issue"
   end
 
   add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree
@@ -401,6 +420,7 @@ ActiveRecord::Schema.define(version: 20171219182526) do
     t.string   "description"
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
+    t.string   "notes"
   end
 
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
