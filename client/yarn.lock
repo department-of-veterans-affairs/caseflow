@@ -205,9 +205,9 @@ anymatch@^1.3.0:
     micromatch "^2.1.5"
     normalize-path "^2.0.0"
 
-"appeals-frontend-toolkit@https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/e03ae5c":
+"appeals-frontend-toolkit@https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/eefe4eb":
   version "1.0.0"
-  resolved "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/e03ae5c#a54f66aee5d6d1ea888e2ca0604dbc28f0c68f56"
+  resolved "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/eefe4eb#314ecb1d3c83d8fa0f46506476669516c01b7c63"
   dependencies:
     lodash "^4.17.4"
     react-redux "^5.0.6"
