@@ -104,19 +104,7 @@ RSpec.feature "Reader" do
 
   let(:documents) { [] }
 
-  let!(:issue_levels) do
-    ["Other", "Left knee", "Right knee"]
-  end
-
-  let!(:issues) do
-    [Generators::Issue.build(disposition: :allowed,
-                             program: :compensation,
-                             type: { name: :elbow, label: "Elbow" },
-                             category: :service_connection,
-                             levels: issue_levels
-                            )
-    ]
-  end
+  let!(:issues) { [Generators::Issue.build] }
 
   let(:appeal) do
     Generators::Appeal.create(vacols_record: vacols_record, documents: documents, issues: issues)
@@ -327,7 +315,7 @@ RSpec.feature "Reader" do
         expect(page).to have_content(appeal.veteran_full_name)
         expect(page).to have_content(appeal.vbms_id)
 
-        expect(page).to have_content(appeal.issues[0].type[:label])
+        expect(page).to have_content(appeal.issues[0].type)
         expect(page).to have_content(appeal.issues[0].levels[0])
         expect(page).to have_content(appeal.issues[0].levels[1])
         expect(page).to have_content(appeal.issues[0].levels[2])
@@ -504,18 +492,24 @@ RSpec.feature "Reader" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect do
-        get_computed_styles("#rotationDiv1", "transform") == "matrix(1, 0, 0, 1, 0, 0)"
-      end.to become_truthy(wait: 10)
+        transform = get_computed_styles("#rotationDiv1", "transform")
+        transform_is_expected = transform == "matrix(1, 0, 0, 1, 0, 0)"
+        puts transform unless transform_is_expected
+        transform_is_expected
+      end.to become_truthy(wait: 5)
 
       safe_click "#button-rotation"
 
       expect do
+        transform = get_computed_styles("#rotationDiv1", "transform")
         # It's annoying that the float math produces an infinitesimal-but-not-0 value.
         # However, I think that trying to parse the string out and round it would be
         # more trouble than it's worth. Let's just try it like this and see if the tests
         # pass consistently. If not, we can find a more sophisticated approach.
-        get_computed_styles("#rotationDiv1", "transform") == "matrix(6.12323e-17, 1, -1, 6.12323e-17, 0, 0)"
-      end.to become_truthy(wait: 10)
+        transform_is_expected = transform == "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
+        puts transform unless transform_is_expected
+        transform_is_expected
+      end.to become_truthy(wait: 5)
     end
 
     scenario "Arrow keys to navigate through documents" do
@@ -875,7 +869,7 @@ RSpec.feature "Reader" do
 
         # Click on the comment and ensure the scroll position changes
         # by the y value the comment.
-        element_class = "ReactVirtualized__List"
+        element_class = "ReactVirtualized__Grid"
         original_scroll = scroll_position(class_name: element_class)
 
         # Click on the off screen comment (0 through 3 are on screen)
@@ -900,7 +894,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_css(".page")
         expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(class_name: "ReactVirtualized__List", value: 2000)
+        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000)
         expect(find_field("page-progress-indicator-input").value).to_not eq "1"
       end
 
@@ -957,7 +951,7 @@ RSpec.feature "Reader" do
       old_height_1 = get_size("pageContainer1")[:height]
       old_height_10 = get_size("pageContainer10")[:height]
 
-      scroll_to(class_name: "ReactVirtualized__List", value: scroll_amount)
+      scroll_to(class_name: "ReactVirtualized__Grid", value: scroll_amount)
 
       find("#button-zoomIn").click
 
@@ -1055,7 +1049,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
       appeal.issues do |issue|
-        expect(page).to have_content(issue.type[:label])
+        expect(page).to have_content(issue.type)
         issue.levels do |level|
           expect(page).to have_content(level)
         end
@@ -1152,11 +1146,11 @@ RSpec.feature "Reader" do
       issue_list = all(".claims-folder-issues li")
       expect(issue_list.count).to eq(appeal_info["issues"].length)
       issue_list.each_with_index do |issue, index|
-        expect(issue.text.include?(appeal_info["issues"][index].type[:label])).to be true
+        expect(issue.text.include?(appeal_info["issues"][index][:type])).to be true
 
         # verifying the level information is being shown as part of the issue information
-        appeal_info["issues"][index].levels.each_with_index do |level, level_index|
-          expect(level.include?(appeal_info["issues"][index].levels[level_index])).to be true
+        appeal_info["issues"][index][:levels].each_with_index do |level, level_index|
+          expect(level.include?(appeal_info["issues"][index][:levels][level_index])).to be true
         end
       end
     end
@@ -1389,6 +1383,7 @@ RSpec.feature "Reader" do
       expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
 
       first_match_scroll_top = scroll_top
+
       expect(first_match_scroll_top).to be > 0
 
       find(".cf-next-match").click

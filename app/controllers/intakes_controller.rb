@@ -47,7 +47,7 @@ class IntakesController < ApplicationController
   end
 
   def complete
-    current_intake.complete!
+    current_intake.complete!(params)
     render json: current_intake.ui_hash
   end
 

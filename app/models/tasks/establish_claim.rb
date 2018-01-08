@@ -61,7 +61,7 @@ class EstablishClaim < Task
           :sanitized_vbms_id
         ] }],
       methods: [:progress_status, :aasm_state]
-    )
+    ).tap { |hash| hash["appeal"]["issues"] = (hash["appeal"]["issues"] || []).map(&:attributes) }
   end
 
   # Core method responsible for API call to VBMS to create the end product

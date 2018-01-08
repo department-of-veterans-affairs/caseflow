@@ -12,7 +12,7 @@ class WorksheetIssue < ActiveRecord::Base
     def create_from_issue(appeal, issue)
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
         record.update(program: issue.program.try(:capitalize),
-                      name: issue.type[:label],
+                      name: issue.type,
                       levels: issue.description.join("; "),
                       description: issue.note,
                       from_vacols: true)
