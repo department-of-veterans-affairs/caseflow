@@ -87,9 +87,7 @@ module StubbableUser
     end
 
     def authenticate!(roles: nil)
-      if roles && roles.include?("System Admin")
-        Functions.grant!("System Admin", users: ["DSUSER"])
-      end
+      Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
       self.stub = User.from_session(
         "user" =>
@@ -97,7 +95,8 @@ module StubbableUser
             "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] })
+            "roles" => roles || ["Certify Appeal"] }
+      )
     end
 
     def tester!(roles: nil)
@@ -106,7 +105,8 @@ module StubbableUser
           { "id" => ENV["TEST_USER_ID"],
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] })
+            "roles" => roles || ["Certify Appeal"] }
+      )
     end
 
     def current_user
@@ -161,9 +161,7 @@ RSpec.configure do |config|
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
-  if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
-    ReactOnRails::TestHelper.ensure_assets_compiled
-  end
+  ReactOnRails::TestHelper.ensure_assets_compiled if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
   config.before(:all) do
     User.unauthenticate!
   end

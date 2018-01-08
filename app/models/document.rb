@@ -1,4 +1,4 @@
-class Document < ActiveRecord::Base
+class Document < ApplicationRecord
   has_many :annotations
   has_many :document_views
   has_many :documents_tags
@@ -140,19 +140,19 @@ class Document < ActiveRecord::Base
 
   def serializable_hash(options = {})
     super({
-      methods: [
-        :vbms_document_id,
-        :content_url,
-        :type,
-        :received_at,
-        :filename,
-        :category_procedural,
-        :category_medical,
-        :category_other,
-        :category_case_summary,
-        :serialized_vacols_date,
-        :serialized_receipt_date,
-        :matching?
+      methods: %i[
+        vbms_document_id
+        content_url
+        type
+        received_at
+        filename
+        category_procedural
+        category_medical
+        category_other
+        category_case_summary
+        serialized_vacols_date
+        serialized_receipt_date
+        matching?
       ]
     }.update(options))
   end

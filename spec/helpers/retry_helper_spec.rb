@@ -11,7 +11,7 @@ class TestClass
   def retry_method
     retry_when StandardError, limit: @limit do
       @call_count += 1
-      fail "fun-error" if @fail_on_counts.include?(@call_count)
+      raise "fun-error" if @fail_on_counts.include?(@call_count)
     end
   end
 end

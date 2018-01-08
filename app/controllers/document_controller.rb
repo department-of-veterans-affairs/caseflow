@@ -19,9 +19,7 @@ class DocumentController < ApplicationController
     document = Document.find(params[:id])
 
     document_disposition = "inline"
-    if params[:download]
-      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
-    end
+    document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'" if params[:download]
 
     # The line below enables document caching for a month.
     expires_in 30.days, public: true
@@ -36,7 +34,8 @@ class DocumentController < ApplicationController
     begin
       DocumentView.find_or_create_by(
         document_id: params[:id],
-        user_id: current_user.id) do |t|
+        user_id: current_user.id
+      ) do |t|
         t.update!(first_viewed_at: Time.zone.now)
       end
     # rubocop:disable Lint/HandleExceptions

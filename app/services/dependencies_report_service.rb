@@ -33,7 +33,7 @@ class DependenciesReportService
         return []
       end
       degraded_dependencies
-    rescue => error
+    rescue StandardError => error
       Rails.logger.warn "Exception thrown while checking dependency "\
         "status: #{error}"
       false

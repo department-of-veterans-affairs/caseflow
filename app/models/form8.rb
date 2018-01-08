@@ -1,50 +1,50 @@
 # frozen_string_literal: true
 
-class Form8 < ActiveRecord::Base
+class Form8 < ApplicationRecord
   include UploadableDocument
 
-  FORM_FIELDS = [
-    :vacols_id,
-    :appellant_name,
-    :appellant_relationship,
-    :file_number,
-    :veteran_name,
-    :insurance_loan_number,
-    :service_connection_for,
-    :service_connection_notification_date,
-    :increased_rating_for,
-    :increased_rating_notification_date,
-    :other_for,
-    :other_notification_date,
-    :representative_name,
-    :representative_type,
-    :representative_type_specify_other,
-    :power_of_attorney,
-    :power_of_attorney_file,
-    :agent_accredited,
-    :form_646_of_record,
-    :form_646_not_of_record_explanation,
-    :hearing_requested,
-    :hearing_held,
-    :hearing_transcript_on_file,
-    :hearing_requested_explanation,
-    :contested_claims_procedures_applicable,
-    :contested_claims_requirements_followed,
-    :soc_date,
-    :form9_date,
-    :nod_date,
-    :ssoc_date_1,
-    :ssoc_date_2,
-    :ssoc_date_3,
-    :ssoc_required,
-    :record_other_explanation,
-    :remarks,
-    :certifying_office,
-    :certifying_username,
-    :certifying_official_name,
-    :certifying_official_title,
-    :certifying_official_title_specify_other,
-    :certification_date
+  FORM_FIELDS = %i[
+    vacols_id
+    appellant_name
+    appellant_relationship
+    file_number
+    veteran_name
+    insurance_loan_number
+    service_connection_for
+    service_connection_notification_date
+    increased_rating_for
+    increased_rating_notification_date
+    other_for
+    other_notification_date
+    representative_name
+    representative_type
+    representative_type_specify_other
+    power_of_attorney
+    power_of_attorney_file
+    agent_accredited
+    form_646_of_record
+    form_646_not_of_record_explanation
+    hearing_requested
+    hearing_held
+    hearing_transcript_on_file
+    hearing_requested_explanation
+    contested_claims_procedures_applicable
+    contested_claims_requirements_followed
+    soc_date
+    form9_date
+    nod_date
+    ssoc_date_1
+    ssoc_date_2
+    ssoc_date_3
+    ssoc_required
+    record_other_explanation
+    remarks
+    certifying_office
+    certifying_username
+    certifying_official_name
+    certifying_official_title
+    certifying_official_title_specify_other
+    certification_date
   ].freeze
 
   def save_pdf!
@@ -107,7 +107,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def increased_rating_for_initial
-    increased_rating_for_rolled.initial unless increased_rating_for_rolled.blank?
+    increased_rating_for_rolled.initial if increased_rating_for_rolled.present?
   end
 
   def increased_rating_for_rolled
@@ -116,7 +116,7 @@ class Form8 < ActiveRecord::Base
   private :increased_rating_for_rolled
 
   def other_for_initial
-    other_for_rolled.initial unless other_for_rolled.blank?
+    other_for_rolled.initial if other_for_rolled.present?
   end
 
   def other_for_rolled
@@ -132,7 +132,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def service_connection_for_initial
-    service_connection_for_rolled.initial unless service_connection_for_rolled.blank?
+    service_connection_for_rolled.initial if service_connection_for_rolled.present?
   end
 
   def remarks_rolled
@@ -145,13 +145,13 @@ class Form8 < ActiveRecord::Base
   end
 
   def remarks_initial
-    remarks_rolled.initial unless remarks_rolled.blank?
+    remarks_rolled.initial if remarks_rolled.present?
   end
 
   def remarks_continued
     rolled_over = rolled_over_fields
 
-    rolled_over.map(&:continued).join unless rolled_over.blank?
+    rolled_over.map(&:continued).join if rolled_over.present?
   end
 
   def rolled_over_fields
@@ -210,15 +210,16 @@ class Form8 < ActiveRecord::Base
   end
 
   def update_from_string_params(params)
-    date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                   :other_notification_date, :soc_date]
+    date_fields = %i[certification_date service_connection_notification_date increased_rating_notification_date
+                     other_notification_date soc_date]
     date_fields.each do |f|
       raw_value = params[f]
+      next unless raw_value && raw_value.is_a?(String)
       params[f] = begin
                     Date.strptime(raw_value, "%m/%d/%Y")
-                  rescue
+                  rescue StandardError
                     nil
-                  end if raw_value && raw_value.is_a?(String)
+                  end
     end
     update(params)
   end

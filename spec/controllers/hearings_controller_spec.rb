@@ -10,7 +10,7 @@ RSpec.describe HearingsController, type: :controller do
                  aod: :granted,
                  add_on: true,
                  disposition: :held }
-      patch :update, id: hearing.id, hearing: params
+      patch :update, params: { id: hearing.id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["notes"]).to eq "Test"
@@ -22,7 +22,7 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     it "should return not found" do
-      patch :update, id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false }
+      patch :update, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
       expect(response.status).to eq 404
     end
   end

@@ -6,11 +6,11 @@ class Veteran
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  BGS_ATTRIBUTES = %i(
+  BGS_ATTRIBUTES = %i[
     file_number sex first_name last_name ssn address_line1 address_line2
     address_line3 city state country zip_code military_postal_type_code
     military_post_office_type_code service date_of_birth
-  ).freeze
+  ].freeze
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -25,7 +25,7 @@ class Veteran
 
   attr_accessor(*BGS_ATTRIBUTES)
 
-  COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
+  COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: "country_requires_zip?"
@@ -75,7 +75,7 @@ class Veteran
     dob = Time.strptime(date_of_birth, "%m/%d/%Y")
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
-    now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
+    now.year - dob.year - (now.month > dob.month || (now.month == dob.month && now.day >= dob.day) ? 0 : 1)
   end
 
   def found?
@@ -141,11 +141,11 @@ class Veteran
   end
 
   def vbms_attributes
-    BGS_ATTRIBUTES - [:military_postal_type_code, :military_post_office_type_code] + [:address_type]
+    BGS_ATTRIBUTES - %i[military_postal_type_code military_post_office_type_code] + [:address_type]
   end
 
   def military_address?
-    !military_postal_type_code.blank?
+    military_postal_type_code.present?
   end
 
   def base_vbms_hash

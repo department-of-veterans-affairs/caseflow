@@ -1,4 +1,4 @@
-class DocumentView < ActiveRecord::Base
+class DocumentView < ApplicationRecord
   belongs_to :document
   belongs_to :user
 end

@@ -34,7 +34,6 @@ class CreateEstablishClaim
     return unless validate_decision_type
 
     @error_code = prepare_establish_claim unless prepare_establish_claim == :success
-
   rescue ActiveRecord::RecordNotFound
     @error_code = :appeal_not_found
   rescue Caseflow::Error::MultipleAppealsByVBMSID
@@ -50,9 +49,7 @@ class CreateEstablishClaim
   end
 
   def validate_decision_type
-    unless DECISION_TYPES.include?(decision_type)
-      @error_code = :missing_decision_type
-    end
+    @error_code = :missing_decision_type unless DECISION_TYPES.include?(decision_type)
 
     !@error_code
   end
@@ -64,7 +61,7 @@ class CreateEstablishClaim
   def create_appeal
     appeal = Appeal.find_or_initialize_by(vbms_id: vbms_id)
 
-    fail ActiveRecord::RecordNotFound unless load_vacols_data_for(appeal)
+    raise ActiveRecord::RecordNotFound unless load_vacols_data_for(appeal)
     appeal.save!
 
     appeal

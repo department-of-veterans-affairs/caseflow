@@ -12,17 +12,17 @@ RSpec.describe Api::V1::JobsController, type: :controller do
     it "should not be successful due to unauthorized request" do
       # set up the wrong token
       request.headers["Authorization"] = "BADTOKEN"
-      post :create, "job_type": "UndefinedJob"
+      post :create, params: { "job_type": "UndefinedJob" }
       expect(response.status).to eq 401
     end
 
     it "should not be successful due to unrecognized job" do
-      post :create, "job_type": "UndefinedJob"
+      post :create, params: { "job_type": "UndefinedJob" }
       expect(response.status).to eq 422
     end
 
     it "should successfully start HeartbeatTasksJob asynchronously" do
-      post :create, "job_type": "heartbeat"
+      post :create, params: { "job_type": "heartbeat" }
       expect(response.status).to eq 200
       expect(response_body["job_id"]).not_to be_empty
     end

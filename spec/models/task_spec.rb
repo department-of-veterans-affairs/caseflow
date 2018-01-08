@@ -99,13 +99,15 @@ describe Task do
       FakeTask.create!(
         assigned_at: Time.zone.now,
         prepared_at: Date.yesterday,
-        aasm_state: :assigned)
+        aasm_state: :assigned
+      )
     end
     let!(:completed_task) do
       FakeTask.create!(
         assigned_at: Time.zone.now,
         prepared_at: Date.yesterday,
-        aasm_state: :completed)
+        aasm_state: :completed
+      )
     end
 
     it { is_expected.to eq([assigned_task]) }

@@ -1,4 +1,4 @@
-class DependenciesCheckJob < ActiveJob::Base
+class DependenciesCheckJob < ApplicationJob
   queue_as :low_priority
 
   def perform
@@ -8,7 +8,7 @@ class DependenciesCheckJob < ActiveJob::Base
         request.url = ENV["MONITOR_URL"]
         http = HTTPI.get(request, :httpclient)
         Rails.cache.write(:dependencies_report, http.raw_body)
-      rescue
+      rescue StandardError
         Rails.logger.error "There was a problem with HTTP request to #{ENV['MONITOR_URL']}"
       end
     else

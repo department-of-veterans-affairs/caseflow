@@ -19,8 +19,7 @@ class CertificationsController < ApplicationController
                         "form9_type",
                         "hearing_preference",
                         "certifying_official_name",
-                        "certifying_official_title"
-                       )
+                        "certifying_official_title")
     certification.update!(permitted)
   end
 
@@ -33,7 +32,7 @@ class CertificationsController < ApplicationController
     update_certification_from_v2_form
     validate_data_presence_v2
 
-    if %w(NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED).include?(certification.hearing_preference)
+    if %w[NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED].include?(certification.hearing_preference)
       hearing_requested = "No"
     else
       hearing_requested = "Yes"
@@ -88,7 +87,7 @@ class CertificationsController < ApplicationController
 
   # Make sure all data is there in case user skips steps and goes straight to sign_and_certify
   def validate_data_presence_v2
-    fail Caseflow::Error::CertificationMissingData unless check_confirm_hearing_data
+    raise Caseflow::Error::CertificationMissingData unless check_confirm_hearing_data
   end
 
   def check_confirm_hearing_data

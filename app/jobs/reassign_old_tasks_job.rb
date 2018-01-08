@@ -1,4 +1,4 @@
-class ReassignOldTasksJob < ActiveJob::Base
+class ReassignOldTasksJob < ApplicationJob
   queue_as :low_priority
 
   def perform

@@ -29,7 +29,7 @@ class FullName
     when :form
       [last_name, first_name, middle_initial].select(&:present?).join(", ")
     else
-      fail InvalidFormatError
+      raise InvalidFormatError
     end
   end
 end

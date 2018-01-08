@@ -7,7 +7,7 @@ namespace :data do
 
   desc "Prepare test data needed to run a smoke test"
   task prepare: [:environment] do
-    fail staging_only_error unless Rails.env.staging?
+    raise staging_only_error unless Rails.env.staging?
 
     test_appeal_vacols_id = "2765748"
 

@@ -6,7 +6,7 @@ class Fakes::HearingRepository
   end
 
   def self.upcoming_hearings_for_judge(css_id)
-    user = User.find_by_css_id(css_id)
+    user = User.find_by(css_id: css_id)
     records.select { |h| h.user_id == user.id }
   end
 
@@ -22,22 +22,21 @@ class Fakes::HearingRepository
 
   def self.update_vacols_hearing!(vacols_record, hearing_info)
     return if (hearing_info.keys.map(&:to_sym) &
-        [:notes, :aod, :disposition, :add_on, :hold_open, :transcript_requested, :representative_name]).empty?
-    hearing = find_by_vacols_id(vacols_record[:vacols_id].to_s)
+        %i[notes aod disposition add_on hold_open transcript_requested representative_name]).empty?
+    hearing = find_by(vacols_id: vacols_record[:vacols_id].to_s)
     hearing.assign_from_vacols(hearing_info)
   end
 
   def self.load_vacols_data(hearing)
     return false if hearing_records.blank?
-    record = find_by_vacols_id(hearing.vacols_id)
+    record = find_by(vacols_id: hearing.vacols_id)
 
     return false unless record
     hearing.assign_from_vacols(record.vacols_attributes)
     true
   end
 
-  def self.number_of_slots(*)
-  end
+  def self.number_of_slots(*); end
 
   def self.appeals_ready_for_hearing(vbms_id)
     Fakes::AppealRepository.appeals_ready_for_hearing(vbms_id)
@@ -60,7 +59,7 @@ class Fakes::HearingRepository
   end
 
   def self.seed!
-    user = User.find_by_css_id("Hearing Prep")
+    user = User.find_by(css_id: "Hearing Prep")
     50.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
     2.times.each { |i| Generators::Hearings::MasterRecord.build(user_id: user.id, date: Time.zone.now + (i + 6).days) }
   end

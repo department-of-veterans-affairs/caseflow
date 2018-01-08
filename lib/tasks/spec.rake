@@ -5,7 +5,7 @@ namespace :spec do
     ![".", ".."].include?(file) && File.directory?(File.join("./spec/feature", file))
   end
 
-  spec_names = feature_spec_folders + %w(other unit)
+  spec_names = feature_spec_folders + %w[other unit]
 
   # Tasks for setting up the environment and running the tests without
   # immediately printing output to the screen. This prevents output from overrunning

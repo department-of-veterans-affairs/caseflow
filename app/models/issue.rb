@@ -9,7 +9,7 @@ class Issue
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
   def labels
-    fail Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
+    raise Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
     @labels
   end
 
@@ -35,15 +35,15 @@ class Issue
   }.freeze
 
   AOJ_FOR_PROGRAMS = {
-    vba: [
-      :vba_burial,
-      :compensation,
-      :education,
-      :insurance,
-      :loan_guaranty,
-      :pension,
-      :vre,
-      :fiduciary
+    vba: %i[
+      vba_burial
+      compensation
+      education
+      insurance
+      loan_guaranty
+      pension
+      vre
+      fiduciary
     ],
     vha: [
       :medical
@@ -131,7 +131,7 @@ class Issue
   # was allowing/denying new material (such as medical evidence) to be used
   # in the appeal
   def new_material?
-    codes[0..2] == %w(02 15 04)
+    codes[0..2] == %w[02 15 04]
   end
 
   def non_new_material?

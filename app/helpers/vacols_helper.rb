@@ -27,6 +27,6 @@ module VacolsHelper
   def self.validate_presence(note, required_fields)
     missing_keys = []
     required_fields.each { |k| missing_keys << k unless note[k] }
-    fail(MissingRequiredFieldError, "Required fields: #{missing_keys.join(', ')}") unless missing_keys.empty?
+    raise(MissingRequiredFieldError, "Required fields: #{missing_keys.join(', ')}") unless missing_keys.empty?
   end
 end

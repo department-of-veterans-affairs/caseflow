@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_many :tasks
   has_many :document_views
   has_many :appeal_views
@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
   end
 
   def authenticated?
-    !regional_office.blank?
+    regional_office.present?
   end
 
   def attributes
@@ -144,8 +144,7 @@ class User < ActiveRecord::Base
     delegate :authenticate_vacols, to: :authentication_service
 
     # Empty method used for testing purposes (required)
-    def clear_current_user
-    end
+    def clear_current_user; end
 
     def system_user
       new(

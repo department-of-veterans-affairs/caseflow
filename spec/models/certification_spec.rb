@@ -270,7 +270,7 @@ describe Certification do
     let(:vacols_id) { "1122" }
     let!(:certification) { Certification.create(vacols_id: vacols_id) }
 
-    subject { Certification.find_by_vacols_id(vacols_id) }
+    subject { Certification.find_by(vacols_id: vacols_id) }
 
     context "when certification exists and it has not been cancelled before" do
       it "loads that certification " do

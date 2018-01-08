@@ -66,7 +66,7 @@ describe "Appeals API v1", type: :request do
         "Authorization": "Token token=12312kdasdaskd"
       }
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("401")
     end
@@ -77,7 +77,7 @@ describe "Appeals API v1", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("422")
 
@@ -92,7 +92,7 @@ describe "Appeals API v1", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("404")
 
@@ -107,7 +107,7 @@ describe "Appeals API v1", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(2)
@@ -118,13 +118,13 @@ describe "Appeals API v1", type: :request do
         vacols_record: { template: :remand_decided }
       )
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(2)
 
       # tests that reload=true busts cache
-      get "/api/v1/appeals?reload=true", nil, headers
+      get "/api/v1/appeals?reload=true", params: nil, headers: headers
       json = JSON.parse(response.body)
 
       expect(json["data"].length).to eq(3)
@@ -140,7 +140,7 @@ describe "Appeals API v1", type: :request do
       expect(Raven).to receive(:capture_exception)
       expect(Raven).to receive(:last_event_id).and_return("a1b2c3")
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
 
       expect(response.code).to eq("500")
 
@@ -156,7 +156,7 @@ describe "Appeals API v1", type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      get "/api/v1/appeals", nil, headers
+      get "/api/v1/appeals", params: nil, headers: headers
 
       json = JSON.parse(response.body)
 
@@ -168,7 +168,7 @@ describe "Appeals API v1", type: :request do
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc ssoc form9 ssoc))
+      expect(event_types).to eq(%w[nod soc ssoc form9 ssoc])
 
       # check that the date for the first event was formatted correctly
       json_nod_date = json["data"].first["attributes"]["events"].first["date"]
@@ -198,7 +198,7 @@ describe "Appeals API v1", type: :request do
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9 hearing_held bva_remand))
+      expect(event_types).to eq(%w[nod soc form9 hearing_held bva_remand])
     end
   end
 end

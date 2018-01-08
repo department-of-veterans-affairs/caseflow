@@ -28,7 +28,7 @@ class ExternalApi::BGSService
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
                             service: :bgs,
                             name: "claim.find_by_vbms_file_number") do
-        client.claims.find_by_vbms_file_number(vbms_id.strip)
+        client.claims.find_by(vbms_file_number: vbms_id.strip)
       end
   end
 
@@ -39,7 +39,7 @@ class ExternalApi::BGSService
       MetricsService.record("BGS: fetch veteran info for vbms id: #{vbms_id}",
                             service: :bgs,
                             name: "veteran.find_by_file_number") do
-        client.veteran.find_by_file_number(vbms_id)
+        client.veteran.find_by(file_number: vbms_id)
       end
   end
 
@@ -50,7 +50,7 @@ class ExternalApi::BGSService
       MetricsService.record("BGS: fetch person by ssn: #{ssn}",
                             service: :bgs,
                             name: "people.find_by_ssn") do
-        client.people.find_by_ssn(ssn)
+        client.people.find_by(ssn: ssn)
       end
 
     @people_by_ssn[ssn] && @people_by_ssn[ssn][:file_nbr]
@@ -80,9 +80,7 @@ class ExternalApi::BGSService
                                           name: "address.find_by_participant_id") do
         client.address.find_all_by_participant_id(participant_id)
       end
-      if bgs_address
-        @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
-      end
+      @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address) if bgs_address
     end
 
     @poa_addresses[participant_id]

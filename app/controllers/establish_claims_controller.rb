@@ -1,13 +1,13 @@
 class EstablishClaimsController < TasksController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
-  before_action :verify_not_complete, only: [:perform, :update_appeal, :cancel]
+  before_action :verify_assigned_to_current_user, only: %i[show pdf cancel perform]
+  before_action :verify_not_complete, only: %i[perform update_appeal cancel]
   before_action :verify_bgs_info_valid, only: [:perform]
-  before_action :verify_manager_access, only: [
-    :unprepared_tasks,
-    :update_employee_count,
-    :canceled_tasks,
-    :work_assignments
+  before_action :verify_manager_access, only: %i[
+    unprepared_tasks
+    update_employee_count
+    canceled_tasks
+    work_assignments
   ]
   skip_before_action :verify_admin_access, only: [:index]
 
@@ -28,7 +28,7 @@ class EstablishClaimsController < TasksController
   end
 
   def pdf
-    return redirect_to "/404" if task.appeal.decisions.nil? || task.appeal.decisions.size == 0
+    return redirect_to "/404" if task.appeal.decisions.blank?
     decision_number = params[:decision_number].to_i
     return redirect_to "/404" if decision_number >= task.appeal.decisions.size || decision_number < 0
     decision = task.appeal.decisions[decision_number]
@@ -42,14 +42,12 @@ class EstablishClaimsController < TasksController
     render json: { next_task_id: assigned_task.id }
   end
 
-  def index
-  end
+  def index; end
 
   def perform
     # If we've already created the EP, no-op and send the user to the note page
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
-
   rescue EstablishClaim::InvalidEndProductError
     render json: { error_code: "end_product_invalid" }, status: 422
   rescue Caseflow::Error::EstablishClaimFailedInVBMS => e

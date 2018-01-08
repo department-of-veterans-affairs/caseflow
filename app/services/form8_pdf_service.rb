@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "pdf_forms"
 
 class Form8PdfService
@@ -61,9 +62,7 @@ class Form8PdfService
         value = form8[:certifying_official_title_specify_other]
       end
 
-      if value.is_a?(Date) || value.is_a?(Time)
-        value = value.to_formatted_s(:short_date)
-      end
+      value = value.to_formatted_s(:short_date) if value.is_a?(Date) || value.is_a?(Time)
 
       if location.is_a?(Hash)
         location = location[value]

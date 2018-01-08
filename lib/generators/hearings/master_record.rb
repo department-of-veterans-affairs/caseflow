@@ -17,7 +17,7 @@ class Generators::Hearings::MasterRecord
 
       Fakes::HearingRepository.master_records ||= []
       date = hearing.date.to_date
-      Fakes::HearingRepository.master_records.push(hearing) unless Fakes::HearingRepository.find_by_date(date)
+      Fakes::HearingRepository.master_records.push(hearing) unless Fakes::HearingRepository.find_by(date: date)
 
       hearing
     end

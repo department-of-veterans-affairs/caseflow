@@ -1,4 +1,4 @@
-class StartCertificationJob < ActiveJob::Base
+class StartCertificationJob < ApplicationJob
   queue_as :high_priority
   attr_accessor :certification
 
@@ -14,7 +14,7 @@ class StartCertificationJob < ActiveJob::Base
     end
     fetch_power_of_attorney! if @certification.certification_status == :started
     update_data_complete
-  rescue => e
+  rescue StandardError => e
     Rails.logger.info "StartCertificationJob failed: #{e.message}"
     Rails.logger.info e.backtrace.join("\n")
     update_data_failed
@@ -32,7 +32,7 @@ class StartCertificationJob < ActiveJob::Base
       soc_matching_at:     @certification.calculate_soc_matching_at,
       ssocs_required:      @certification.calculate_ssocs_required,
       ssocs_matching_at:   @certification.calculcate_ssocs_matching_at,
-      form8_started_at:    (@certification.certification_status == :started) ? @certification.now : nil,
+      form8_started_at:    @certification.certification_status == :started ? @certification.now : nil,
       vacols_hearing_preference: @certification.appeal.hearing_request_type,
       certifying_office: @certification.appeal.regional_office_name,
       certifying_username: @certification.appeal.regional_office_key,

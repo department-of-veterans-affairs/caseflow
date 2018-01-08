@@ -146,7 +146,7 @@ describe FetchDocumentsForReaderUserJob do
             .and_return([appeal_with_doc1, appeal_with_doc2]).once
 
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
-            .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
+                                                                 .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
 
           expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError)
@@ -173,7 +173,7 @@ describe FetchDocumentsForReaderUserJob do
           expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
 
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, anything)
-            .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
+                                                                 .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
 
           expect { FetchDocumentsForReaderUserJob.perform_now(reader_user_w_many_roles) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError)
@@ -201,7 +201,7 @@ describe FetchDocumentsForReaderUserJob do
         expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
 
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, anything)
-          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).once
+                                                               .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).once
 
         expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
           .to raise_error(HTTPClient::KeepAliveDisconnected)

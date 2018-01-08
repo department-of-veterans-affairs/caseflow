@@ -27,7 +27,7 @@ class AppealHistory
   end
 
   def needs_update?
-    return false if appeals.length == 0
+    return false if appeals.empty?
     return true if appeals.any? { |appeal| appeal.appeal_series.nil? }
 
     # If a new appeal has been merged, we need to regenerate the series
@@ -123,7 +123,7 @@ class AppealHistory
   end
 
   def find_parent_appeal(appeal)
-    if %w(B W).include? appeal.vacols_id[-1]
+    if %w[B W].include? appeal.vacols_id[-1]
       # Appeals that are created for the sole purpose of recording a post-remand field disposition
       # have the same vacols_id as their parent, just with the disposition code appended.
       parent_id = appeal.vacols_id[0...-1]
@@ -145,8 +145,8 @@ class AppealHistory
     return candidates_by_date.first if candidates_by_date.length == 1
 
     # If there are multiple parent candidates, search for matching issue_categories.
-    candidates_by_issue = candidates_by_date.select do |candidate|
-      !(appeal.issue_categories & candidate.issue_categories).empty?
+    candidates_by_issue = candidates_by_date.reject do |candidate|
+      (appeal.issue_categories & candidate.issue_categories).empty?
     end
 
     return candidates_by_issue.first if candidates_by_issue.length == 1
@@ -193,7 +193,7 @@ class AppealHistory
 
   class << self
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
+      raise Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
 
       new(vbms_id: Appeal.vbms_id_for_ssn(appellant_ssn))
         .appeal_series

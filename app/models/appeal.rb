@@ -1,5 +1,5 @@
 # rubocop:disable Metrics/ClassLength
-class Appeal < ActiveRecord::Base
+class Appeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
@@ -238,7 +238,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def hearing_scheduled?
-    scheduled_hearings.length > 0
+    !scheduled_hearings.empty?
   end
 
   def eligible_for_ramp?
@@ -250,7 +250,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def in_location?(location)
-    fail UnknownLocationError unless LOCATION_CODES[location]
+    raise UnknownLocationError unless LOCATION_CODES[location]
 
     location_code == LOCATION_CODES[location]
   end
@@ -347,7 +347,7 @@ class Appeal < ActiveRecord::Base
           document.save!
           document
         rescue ActiveRecord::RecordNotUnique
-          Document.find_by_vbms_document_id(document.vbms_document_id)
+          Document.find_by(vbms_document_id: document.vbms_document_id)
         end
       end
     end
@@ -453,7 +453,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    %w(original post_remand cavc_remand).include? type_code
+    %w[original post_remand cavc_remand].include? type_code
   end
 
   def type_code
@@ -473,8 +473,8 @@ class Appeal < ActiveRecord::Base
   # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
-      includes: [:vbms_id, :vacols_id]
+      methods: %i[veteran_full_name docket_number type cavc aod],
+      includes: %i[vbms_id vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
       hash["issues"] = issues ? issues.map(&:attributes) : nil
@@ -559,7 +559,7 @@ class Appeal < ActiveRecord::Base
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
-      fail ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
+      raise ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
 
       appeal.save
       appeal
@@ -570,7 +570,7 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
+      raise Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
 
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.
@@ -588,7 +588,6 @@ class Appeal < ActiveRecord::Base
 
     def fetch_appeals_by_file_number(file_number)
       repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
-
     rescue Caseflow::Error::InvalidFileNumber
       raise ActiveRecord::RecordNotFound
     end
@@ -604,8 +603,8 @@ class Appeal < ActiveRecord::Base
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
-    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
-      fail "Only pass either appeal or appeals" if appeal && appeals
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
+      raise "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
@@ -624,10 +623,10 @@ class Appeal < ActiveRecord::Base
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
-      certification = Certification.find_by_vacols_id(appeal.vacols_id)
+      certification = Certification.find_by(vacols_id: appeal.vacols_id)
 
-      fail "No Form 8 found for appeal being certified" unless form8
-      fail "No Certification found for appeal being certified" unless certification
+      raise "No Form 8 found for appeal being certified" unless form8
+      raise "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
@@ -647,7 +646,7 @@ class Appeal < ActiveRecord::Base
       return "#{file_number}S" if file_number.length == 9
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length.between?(3, 9)
 
-      fail Caseflow::Error::InvalidFileNumber
+      raise Caseflow::Error::InvalidFileNumber
     end
 
     # Because SSN is not accurate in VACOLS, we pull the file
@@ -656,7 +655,7 @@ class Appeal < ActiveRecord::Base
     def vbms_id_for_ssn(ssn)
       file_number = bgs.fetch_file_number_by_ssn(ssn)
 
-      fail ActiveRecord::RecordNotFound unless file_number
+      raise ActiveRecord::RecordNotFound unless file_number
 
       convert_file_number_to_vacols(file_number)
     end
@@ -664,10 +663,10 @@ class Appeal < ActiveRecord::Base
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
-      fail "Only active appeals can be closed" unless appeal.active?
+      raise "Only active appeals can be closed" unless appeal.active?
 
       disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-      fail "Disposition #{disposition}, does not exist" unless disposition_code
+      raise "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
         repository.close_remand!(

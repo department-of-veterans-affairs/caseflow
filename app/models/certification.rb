@@ -4,7 +4,7 @@
 # appeal. It also acts as a record of appeals that are certified
 # using Caseflow.
 #
-class Certification < ActiveRecord::Base
+class Certification < ApplicationRecord
   has_one :certification_cancellation, dependent: :destroy
 
   def async_start!
@@ -44,12 +44,12 @@ class Certification < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      methods: [:certification_status, :bgs_rep_address_found?],
+      methods: %i[certification_status bgs_rep_address_found?],
       include: [
         :form8,
         appeal: {
-          include: [:nod, :soc, :form9, :ssocs],
-          methods: [:documents_match?, :veteran_name, :vbms_id]
+          include: %i[nod soc form9 ssocs],
+          methods: %i[documents_match? veteran_name vbms_id]
         }
       ]
     )
@@ -189,7 +189,7 @@ class Certification < ActiveRecord::Base
   end
 
   def calculcate_ssocs_matching_at
-    (calculate_ssocs_required && appeal.ssocs.all?(&:matching?)) ? (ssocs_matching_at || now) : nil
+    calculate_ssocs_required && appeal.ssocs.all?(&:matching?) ? (ssocs_matching_at || now) : nil
   end
 
   def calculate_ssocs_required
@@ -202,7 +202,7 @@ class Certification < ActiveRecord::Base
 
   class << self
     def find_or_create_by_vacols_id(vacols_id)
-      find_by_vacols_id(vacols_id) || create!(vacols_id: vacols_id)
+      find_by(vacols_id: vacols_id) || create!(vacols_id: vacols_id)
     end
 
     # Return existing certification only if it was not cancelled before

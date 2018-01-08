@@ -147,7 +147,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   def create_or_update_aod_diary
     # If the representative is the Paralyzed Veterans of America (BRIEFF.BFSO = 'G'),
     # then a second diary entry should be created
-    codes = brieff.bfso == "G" ? [:B, :B1] : [:B]
+    codes = brieff.bfso == "G" ? %i[B B1] : [:B]
     # If aod is nil or :none, delete the diary
     return delete_diary(codes) if !aod || aod == "N"
 

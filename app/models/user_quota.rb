@@ -1,4 +1,4 @@
-class UserQuota < ActiveRecord::Base
+class UserQuota < ApplicationRecord
   belongs_to :user
   belongs_to :team_quota
 
@@ -8,14 +8,14 @@ class UserQuota < ActiveRecord::Base
   after_create :update_team_quota
 
   def to_hash
-    serializable_hash(methods: [
-                        :id,
-                        :user_name,
-                        :task_count,
-                        :tasks_completed_count,
-                        :tasks_completed_count_by_decision_type,
-                        :tasks_left_count,
-                        :locked?
+    serializable_hash(methods: %i[
+                        id
+                        user_name
+                        task_count
+                        tasks_completed_count
+                        tasks_completed_count_by_decision_type
+                        tasks_left_count
+                        locked?
                       ])
   end
 

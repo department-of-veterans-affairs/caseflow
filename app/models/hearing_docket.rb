@@ -22,7 +22,7 @@ class HearingDocket
 
   def to_hash
     serializable_hash(
-      methods: [:regional_office_name, :slots]
+      methods: %i[regional_office_name slots]
     )
   end
 

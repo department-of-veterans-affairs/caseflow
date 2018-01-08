@@ -42,7 +42,7 @@ class Generators::Hearing
       hearing.update_attributes(attrs)
 
       Fakes::HearingRepository.hearing_records ||= []
-      Fakes::HearingRepository.hearing_records.push(hearing) unless Fakes::HearingRepository.find_by_id(hearing.id)
+      Fakes::HearingRepository.hearing_records.push(hearing) unless Fakes::HearingRepository.find_by(id: hearing.id)
       hearing
     end
 
