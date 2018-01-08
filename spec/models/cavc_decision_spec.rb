@@ -11,14 +11,18 @@ describe CAVCDecision do
     let(:cavc_vacols_model) do
       OpenStruct.new(
         cvddec: decision_date,
-        cvfolder: "1234"
+        cvissseq: 1,
+        cvfolder: "1234",
+        cvdisp: "8"
       )
     end
 
     it "assigns values properly" do
       expect(subject).to have_attributes(
         appeal_vacols_id: "1234",
-        decision_date: decision_date
+        issue_vacols_sequence_id: 1,
+        decision_date: decision_date,
+        disposition: "CAVC Vacated and Remanded"
       )
     end
   end

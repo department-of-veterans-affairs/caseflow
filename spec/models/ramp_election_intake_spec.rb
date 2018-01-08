@@ -49,7 +49,7 @@ describe RampElectionIntake do
   end
 
   context "#complete!" do
-    subject { intake.complete! }
+    subject { intake.complete!({}) }
 
     let(:detail) do
       RampElection.create!(
@@ -109,16 +109,13 @@ describe RampElectionIntake do
         Generators::Appeal.create(
           vbms_id: "64205555C",
           issues: [
-            Generators::Issue.build(description: [
-                                      "15 - Service connection",
-                                      "03 - All Others",
-                                      "5252 - Thigh, limitation of flexion of"
-                                    ],
-                                    note: "Broken thigh"),
-            Generators::Issue.build(description: [
-                                      "16 - Something else",
-                                      "03 - All Others",
-                                      "5252 - Knee, limitation of flexion of"
+            Generators::Issue.build(note: "Broken thigh"),
+            Generators::Issue.build(codes: %w(02 16 03 5252),
+                                    labels: [
+                                      "Compensation",
+                                      "Something else",
+                                      "All Others",
+                                      "Knee, limitation of flexion of"
                                     ],
                                     note: "Broken knee")
           ]
@@ -126,7 +123,9 @@ describe RampElectionIntake do
         Generators::Appeal.create(
           vbms_id: "64205555C",
           issues: [
-            Generators::Issue.build(description: ["15 - Last Issue"], note: "")
+            Generators::Issue.build(codes: %w(02 15),
+                                    labels: ["Compensation", "Last Issue"],
+                                    note: "")
           ]
         )
       ]

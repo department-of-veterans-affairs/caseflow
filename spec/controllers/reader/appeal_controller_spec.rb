@@ -18,11 +18,10 @@ RSpec.describe Reader::AppealController, type: :controller do
       expect(appeal_response[:vacols_id]).to eq hashed_appeal["vacols_id"]
       expect(appeal_response[:vbms_id]).to eq hashed_appeal["vbms_id"]
       appeal_response[:issues].each_with_index do |issue, index|
-        expect(issue[:description]).to eq hashed_issue[index].description
-        expect(issue[:type][:name]).to eq hashed_issue[index].type[:name].to_s
-        expect(issue[:type][:label]).to eq hashed_issue[index].type[:label]
-        expect(issue[:vacols_sequence_id]).to eq hashed_issue[index].vacols_sequence_id
-        expect(issue[:id]).to eq hashed_issue[index].id
+        expect(issue[:description]).to eq hashed_issue[index][:description]
+        expect(issue[:type]).to eq hashed_issue[index][:type]
+        expect(issue[:vacols_sequence_id]).to eq hashed_issue[index][:vacols_sequence_id]
+        expect(issue[:id]).to eq hashed_issue[index][:id]
       end
 
       expect(appeal_response[:docket_number]).to eq hashed_appeal["docket_number"]
