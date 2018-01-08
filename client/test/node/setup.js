@@ -3,7 +3,7 @@ require('babel-polyfill');
 // appeals-frontend-toolkit has ES6 that we need to compile.
 // These tests do not use our normal webpack setup, and instead
 // use Mocha's compilation functionality. Normally, mocha does
-// compile anything in node_modules. To get around that, we
+// not compile anything in node_modules. To get around that, we
 // use this module.
 import babelNodeModules from 'babel-node-modules';
 babelNodeModules(['appeals-frontend-toolkit']);
