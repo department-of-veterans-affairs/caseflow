@@ -75,12 +75,8 @@ class Generators::Appeal
           soc_date: 15.days.ago,
           ssoc_dates: [8.days.ago, 9.days.ago],
           issues: [
-            { disposition: :nil, program: :compensation,
-              vacols_sequence_id: 1,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :knee }
+            { disposition: :nil,
+              vacols_sequence_id: 1 }
           ]
         },
         remand_decided: {
@@ -89,18 +85,10 @@ class Generators::Appeal
           decision_date: 7.days.ago,
           docket_number: "13 12-225",
           issues: [
-            { disposition: :remanded, program: :compensation,
-              vacols_sequence_id: 1,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :knee },
-            { disposition: :denied, program: :compensation,
-              vacols_sequence_id: 2,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :elbow }
+            { disposition: :remanded,
+              vacols_sequence_id: 1 },
+            { disposition: :denied,
+              vacols_sequence_id: 2 }
           ]
         },
         partial_grant_decided: {
@@ -109,24 +97,12 @@ class Generators::Appeal
           decision_date: 7.days.ago,
           docket_number: "13 11-263",
           issues: [
-            { disposition: :remanded, program: :compensation,
-              vacols_sequence_id: 1,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :knee },
-            { disposition: :allowed, program: :compensation,
-              vacols_sequence_id: 2,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :elbow },
-            { disposition: :denied, program: :compensation,
-              vacols_sequence_id: 3,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :shoulder }
+            { disposition: :remanded,
+              vacols_sequence_id: 1 },
+            { disposition: :allowed,
+              vacols_sequence_id: 2 },
+            { disposition: :denied,
+              vacols_sequence_id: 3 }
           ]
         },
         full_grant_decided: {
@@ -137,16 +113,8 @@ class Generators::Appeal
           decision_date: 7.days.ago,
           docket_number: "13 11-265",
           issues: [
-            { disposition: :allowed, program: :compensation,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :elbow },
-            { disposition: :denied, program: :compensation,
-              type: {
-                name: :service_connection,
-                label: "Service Connection"
-              }, category: :shoulder }
+            { disposition: :allowed },
+            { disposition: :denied }
           ]
         }
       }
