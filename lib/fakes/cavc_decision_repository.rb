@@ -23,6 +23,10 @@ class Fakes::CAVCDecisionRepository
     end
   end
 
+  def self.cavc_decisions_by_appeals(appeal_vacols_ids)
+    (cavc_decision_records || []).select { |h| appeal_vacols_ids.include? h.appeal_vacols_id }
+  end
+
   def self.clean!
     self.cavc_decision_records = []
   end
