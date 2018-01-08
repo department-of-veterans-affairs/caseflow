@@ -1,8 +1,6 @@
 import React from 'react';
-import AutoSave from '../../components/AutoSave';
 import moment from 'moment';
 import TextField from '../../components/TextField';
-import * as AppConstants from '../../constants/AppConstants';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Textarea from 'react-textarea-autosize';
@@ -16,7 +14,6 @@ class WorksheetHeader extends React.PureComponent {
     const {
       appellant,
       worksheet,
-      worksheetIssues,
       veteranLawJudge
     } = this.props;
 
