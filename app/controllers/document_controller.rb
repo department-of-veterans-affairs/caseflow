@@ -19,7 +19,9 @@ class DocumentController < ApplicationController
     document = Document.find(params[:id])
 
     document_disposition = "inline"
-    document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'" if params[:download]
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
 
     # The line below enables document caching for a month.
     expires_in 30.days, public: true

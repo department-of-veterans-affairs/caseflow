@@ -49,7 +49,9 @@ class CreateEstablishClaim
   end
 
   def validate_decision_type
-    @error_code = :missing_decision_type unless DECISION_TYPES.include?(decision_type)
+    unless DECISION_TYPES.include?(decision_type)
+      @error_code = :missing_decision_type
+    end
 
     !@error_code
   end

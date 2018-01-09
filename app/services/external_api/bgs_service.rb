@@ -80,7 +80,9 @@ class ExternalApi::BGSService
                                           name: "address.find_by_participant_id") do
         client.address.find_all_by_participant_id(participant_id)
       end
-      @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address) if bgs_address
+      if bgs_address
+        @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
+      end
     end
 
     @poa_addresses[participant_id]
