@@ -1,8 +1,10 @@
 class DraftDecision
   include ActiveModel::Model
+  include ActiveModel::Serialization
 
-  attr_accessor :vbms_id, :type, :docket_number, :issues, :due_date,
-  attr_accessor :appeal_id, :veteran_full_name, :aod, :cavc, :due_at
+  # TODO: move to generic superclass
+  ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date]
+  attr_accessor(*ATTRS)
 
   def type
     "DraftDecision"
@@ -10,5 +12,15 @@ class DraftDecision
 
   def complete!
     # update VACOLS assignments
+  end
+
+  # TODO: move to generic superclass
+  def to_hash
+    serializable_hash
+  end
+
+  # TODO: move to generic superclass
+  def attributes
+    DraftDecision::ATTRS.each_with_object({}) { |attr, obj| obj[attr] = send(attr) }
   end
 end
