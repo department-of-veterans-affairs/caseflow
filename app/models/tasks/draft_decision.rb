@@ -3,7 +3,7 @@ class DraftDecision
   include ActiveModel::Serialization
 
   # TODO: move to generic superclass
-  ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date]
+  ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date].freeze
   attr_accessor(*ATTRS)
 
   # TODO: move to generic superclass
@@ -17,7 +17,7 @@ class DraftDecision
   end
 
   def self.from_vacols(case_assignment, user_id)
-     new(
+    new(
       assigned_on: case_assignment.date_assigned,
       due_on: case_assignment.date_due,
       docket_name: "legacy",
@@ -28,7 +28,7 @@ class DraftDecision
   end
 
   def complete!
-    # TODO implement
+    # TODO: implement
     # save draft decision info
     # update VACOLS DECASS
   end

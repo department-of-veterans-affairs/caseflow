@@ -1,6 +1,6 @@
 describe AttorneyQueue do
   context ".tasks" do
-    let(:user){ User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
+    let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
 
     before do
       Fakes::AppealRepository.appeal_records = [
@@ -15,7 +15,7 @@ describe AttorneyQueue do
           date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
           date_due: "2018-02-13 00:00:00 UTC".to_datetime,
           docket_date: "2014-03-25 00:00:00 UTC".to_datetime
-        ),
+        )
       ]
     end
 

@@ -10,5 +10,3 @@ class AttorneyQueue
     end
   end
 end
-
-
