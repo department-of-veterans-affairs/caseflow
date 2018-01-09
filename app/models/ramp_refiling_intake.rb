@@ -24,14 +24,12 @@ class RampRefilingIntake < Intake
   end
 
   def complete!(request_params)
-    transaction do
-      detail.create_issues!(source_issue_ids: request_params[:issue_ids])
-      detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
+    detail.create_issues!(source_issue_ids: request_params[:issue_ids] || [])
+    detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
 
-      complete_with_status!(:success)
+    detail.create_end_product_and_contentions! if detail.needs_end_product?
 
-      detail.create_end_product_and_contentions! if detail.needs_end_product?
-    end
+    complete_with_status!(:success)
   end
 
   def review_errors
@@ -43,7 +41,8 @@ class RampRefilingIntake < Intake
       option_selected: detail.option_selected,
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
-      issues: ramp_election.issues.map(&:ui_hash)
+      issues: ramp_election.issues.map(&:ui_hash),
+      end_product_description: detail.end_product_description
     )
   end
 
