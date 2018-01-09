@@ -3,6 +3,7 @@ import moment from 'moment';
 import TextField from '../../components/TextField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
 
@@ -17,6 +18,8 @@ class WorksheetHeader extends React.PureComponent {
     } = this.props;
 
     let olderVeteran = worksheet.veteran_age > 74;
+
+    const veteranClassNames = classNames({ 'cf-red-text': olderVeteran });
 
     const getVeteranGender = (genderSymbol) => {
       let gender = '';
@@ -82,7 +85,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
           <div>Veteran's Age:</div>
-          <div className={olderVeteran && 'cf-red-text'}>{worksheet.veteran_age}</div>
+          <div className={veteranClassNames}>{worksheet.veteran_age}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-4">
           <div>Gender:</div>
