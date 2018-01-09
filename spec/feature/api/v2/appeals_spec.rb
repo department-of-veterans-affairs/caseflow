@@ -20,7 +20,13 @@ describe "Appeals API v2", type: :request do
           ssoc_dates: [Time.zone.today - 7.months],
           disposition: "Remanded",
           decision_date: Time.zone.today - 5.months
-        }
+        },
+        issues: [
+          Generators::Issue.build(
+            disposition: :remanded,
+            close_date: Time.zone.today - 5.months
+          )
+        ]
       )
     end
 
@@ -42,7 +48,13 @@ describe "Appeals API v2", type: :request do
           prior_decision_date: Time.zone.today - 5.months,
           disposition: nil,
           decision_date: nil
-        }
+        },
+        issues: [
+          Generators::Issue.build(
+            disposition: nil,
+            close_date: nil
+          )
+        ]
       )
     end
 
@@ -59,7 +71,21 @@ describe "Appeals API v2", type: :request do
           form9_date: nil,
           disposition: nil,
           decision_date: nil
-        }
+        },
+        issues: [
+          Generators::Issue.build(
+            codes: %w(02 15 04 5301),
+            labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group I"],
+            disposition: nil,
+            close_date: nil
+          ),
+          Generators::Issue.build(
+            codes: %w(02 15 04 5302),
+            labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group II"],
+            disposition: :advance_allowed_in_field,
+            close_date: Time.zone.today - 5.days
+          )
+        ]
       )
     end
 
@@ -191,6 +217,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["aod"]).to eq(true)
       expect(json["data"].first["attributes"]["location"]).to eq("bva")
       expect(json["data"].first["attributes"]["alerts"]).to eq([])
+      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
+      expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
@@ -200,6 +228,18 @@ describe "Appeals API v2", type: :request do
       status = json["data"].first["attributes"]["status"]
       expect(status["type"]).to eq("decision_in_progress")
       expect(status["details"]["test"]).to eq("Hello World")
+
+      # check the first appeal's issue
+      expect(json["data"].first["attributes"]["issues"])
+        .to eq([
+                 {
+                   "description" => "Service connection, limitation of thigh motion",
+                   "diagnosticCode" => "5252",
+                   "active" => true,
+                   "lastAction" => "remand",
+                   "date" => (Time.zone.today - 5.months).to_s
+                 }
+               ])
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
@@ -212,6 +252,25 @@ describe "Appeals API v2", type: :request do
       status = json["data"].last["attributes"]["status"]
       expect(status["type"]).to eq("pending_form9")
 
+      # check the last appeal's issues
+      expect(json["data"].last["attributes"]["issues"])
+        .to eq([
+                 {
+                   "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
+                   "diagnosticCode" => "5301",
+                   "active" => true,
+                   "lastAction" => nil,
+                   "date" => nil
+                 },
+                 {
+                   "description" => "New and material evidence for service connection, shoulder or arm muscle injury",
+                   "diagnosticCode" => "5302",
+                   "active" => false,
+                   "lastAction" => "field_grant",
+                   "date" => (Time.zone.today - 5.days).to_s
+                 }
+               ])
+
       # check that the date for the last event was formatted correctly
       json_notification_date = json["data"].last["attributes"]["events"].first["date"]
       expect(json_notification_date).to eq((Time.zone.today - 12.months).to_formatted_s(:csv_date))
@@ -222,13 +281,12 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"].last["attributes"]["aod"]).to eq(true)
       expect(json["data"].last["attributes"]["location"]).to eq("aoj")
+      expect(json["data"].last["attributes"]["aoj"]).to eq("vba")
+      expect(json["data"].last["attributes"]["programArea"]).to eq("compensation")
 
       # check stubbed attributes
-      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
-      expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["description"]).to eq("")
       expect(json["data"].first["attributes"]["docket"]).to eq(nil)
-      expect(json["data"].first["attributes"]["issues"]).to eq([])
       expect(json["data"].first["attributes"]["evidence"]).to eq([])
     end
   end

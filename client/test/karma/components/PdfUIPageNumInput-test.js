@@ -8,45 +8,46 @@ import { PdfUIPageNumInput } from '../../../app/reader/PdfUIPageNumInput';
 describe('PdfUIPageNumInput', () => {
   let wrapper;
 
+  const getInput = () => wrapper.find(TextField).dive().
+    find('input');
+
   context('input value', () => {
     wrapper = shallow(
       <PdfUIPageNumInput
         currentPage={1}
         numPages={4}
         docId={1}
-        jumpToPage={() => {
-          return null;
-        }}
+        jumpToPage={() => null}
       />,
       { lifecycleExperimental: true }
     );
 
     it('sets input value correctly', () => {
-      const INPUT_VALUE = 3;
+      const inputValue = 3;
 
-      const input = wrapper.find(TextField).dive().
-        find('input');
+      const input = getInput();
 
-      input.simulate('change', { target: { value: INPUT_VALUE } });
       input.simulate('keypress', {
         key: 'Enter',
-        target: { value: INPUT_VALUE }
+        target: { value: inputValue }
       });
-      expect(input.props().value).to.eq(INPUT_VALUE);
+      wrapper.update();
+
+      expect(getInput().props().value).to.eq(inputValue);
     });
   });
 
   it('sets input value reset to current page if invalid', () => {
 
     wrapper.setProps({ currentPage: 3 });
-    const input = wrapper.find(TextField).dive().
-      find('input');
+    const input = getInput();
 
-    input.simulate('change', { target: { value: 100 } });
     input.simulate('keypress', {
       key: 'Enter',
       target: { value: 100 }
     });
-    expect(input.props().value).to.eq(3);
+    wrapper.update();
+
+    expect(getInput().props().value).to.eq(3);
   });
 });
