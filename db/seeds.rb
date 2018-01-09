@@ -72,7 +72,7 @@ class SeedDB
     task_number = 2
 
     # assigning and moving the task to complete for 
-    # user 3
+    # user at index 3
     5.times do |index|
       task_number = task_number + 1
       tasks[index + task_number].assign!(@users[3])
@@ -82,7 +82,7 @@ class SeedDB
     end
 
     # assigning and moving the task to complete for 
-    # user 3
+    # user at index 5
     3.times do |index|
       task_number = task_number + 1
       tasks[index + task_number].assign!(@users[5])
