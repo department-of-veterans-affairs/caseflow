@@ -17,14 +17,7 @@ RSpec.feature "RAMP Intake" do
 
   let(:issues) do
     [
-      Generators::Issue.build(
-        description: [
-          "15 - Service connection",
-          "03 - All Others",
-          "5252 - Knee, limitation of flexion of"
-        ],
-        note: "knee movement"
-      )
+      Generators::Issue.build
     ]
   end
 
@@ -220,8 +213,8 @@ RSpec.feature "RAMP Intake" do
 
       # Validate the appeal & issue also shows up
       expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
-      expect(page).to have_content("5252 - Knee, limitation of flexion of")
-      expect(page).to have_content("knee movement")
+      expect(page).to have_content("5252 - Thigh, limitation of flexion of")
+      expect(page).to have_content("low back condition")
     end
 
     scenario "Complete intake for RAMP Election form" do
@@ -517,8 +510,8 @@ RSpec.feature "RAMP Intake" do
 
           # Validate the appeal & issue also shows up
           expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
-          expect(page).to have_content("5252 - Knee, limitation of flexion of")
-          expect(page).to have_content("knee movement")
+          expect(page).to have_content("5252 - Thigh, limitation of flexion of")
+          expect(page).to have_content("low back condition")
         end
 
         scenario "Complete intake for RAMP Election form" do

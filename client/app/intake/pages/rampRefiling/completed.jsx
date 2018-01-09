@@ -41,7 +41,7 @@ class Completed extends React.PureComponent {
         />;
       }
 
-      const message = `${messageOpener} Send the “RAMP Acknowledgement Letter”, listing all ` +
+      const message = `${messageOpener} Send the “RAMP Acknowledgement Letter,” listing all ` +
           'eligible contentions, and ineligible contentions if applicable.';
 
       return <StatusMessage
@@ -62,7 +62,7 @@ class Completed extends React.PureComponent {
       type="status"
       leadMessageList={[
         'The Veteran’s RAMP Selection Form did not include any issues that are eligible for ' +
-          'review under RAMP. Notify the Veteran using the “RAMP Ineligible Letter”.',
+          'review under RAMP. Notify the Veteran using the “RAMP Ineligible Letter.”',
         'You can now begin intake for the next RAMP form.'
       ]}
       wrapInAppSegment={false}

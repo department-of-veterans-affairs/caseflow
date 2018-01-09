@@ -1,9 +1,12 @@
+import { update } from '../../util/ReducerUtil';
+
 export const updateProgressBar = (state, action) => {
   return Object.assign({}, state, {
     currentSection: action.payload.currentSection,
     // reset some parts of state so we don't skip pages or end up in loops
     serverError: null,
     updateSucceeded: null,
+    updateSuccesses: {},
     loading: false,
     erroredFields: null,
     scrollToError: false
@@ -41,6 +44,15 @@ export const certificationUpdateSuccess = (state) => {
     loading: false
   });
 };
+
+export const confirmHearingUpdateSuccess = (state) => update(
+  state,
+  {
+    updateSuccesses: {
+      confirmHearing: { $set: true }
+    }
+  }
+);
 
 export const toggleCancellationModal = (state) => {
   let showModal = Boolean(state.showCancellationModal);
