@@ -56,6 +56,7 @@ class SeedDB
     team_quota = EstablishClaim.todays_quota
     UserQuota.create(team_quota: team_quota, user: @users[3])
     UserQuota.create(team_quota: team_quota, user: @users[4])
+    UserQuota.create(team_quota: team_quota, user: @users[5])
 
     # Give each user a task in a different state
     tasks[0].assign!(@users[0])
@@ -68,13 +69,26 @@ class SeedDB
     tasks[2].review!
     tasks[2].complete!(status: :routed_to_arc)
 
+    task_number = 2
+
     # assigning and moving the task to complete for 
     # user 3
     5.times do |index|
-      tasks[index + 3].assign!(@users[3])
-      tasks[index + 3].start!
-      tasks[index + 3].review!
-      tasks[index + 3].complete!(status: :routed_to_arc)
+      task_number = task_number + 1
+      tasks[index + task_number].assign!(@users[3])
+      tasks[index + task_number].start!
+      tasks[index + task_number].review!
+      tasks[index + task_number].complete!(status: :routed_to_arc)
+    end
+
+    # assigning and moving the task to complete for 
+    # user 3
+    3.times do |index|
+      task_number = task_number + 1
+      tasks[index + task_number].assign!(@users[5])
+      tasks[index + task_number].start!
+      tasks[index + task_number].review!
+      tasks[index + task_number].complete!(status: :routed_to_arc)
     end
 
     # Create one task with no decision documents
