@@ -68,8 +68,8 @@ def add_comment_without_clicking_save(text)
     click_on "button-AddComment"
     expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
 
-    # pageContainer1 is the id pdfJS gives to the div holding the first page.
-    find("#pageContainer1").click
+    # comment-layer-${pageIndex}-${fileName} is the id of the first page's CommentLayer
+    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
     expect(page).to_not have_css(".cf-pdf-placing-comment")
 
