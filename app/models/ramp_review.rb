@@ -46,6 +46,10 @@ class RampReview < ActiveRecord::Base
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
+  def end_product_description
+    end_product_reference_id && end_product.description_with_routing
+  end
+
   private
 
   def end_product
