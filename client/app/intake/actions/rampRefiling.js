@@ -24,7 +24,9 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-// export const submitError
+export const confirmIneligibleForm = () => ({
+  type: ACTIONS.CONFIRM_INELIGIBLE_FORM
+})
 
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
   dispatch({

@@ -9,7 +9,7 @@ import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
-import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampRefiling';
+import { setOptionSelected, setReceiptDate, submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -43,7 +43,8 @@ class Review extends React.PureComponent {
           the Veteran, send a letter indicating that their selected lane is not available,
           and that they may clarify their lane selection within 30 days. <br />
         <Button
-          name="begin-next-intake">
+          name="begin-next-intake"
+          onClick={this.props.confirmIneligibleForm}>
             Begin next intake
         </Button>
       </Alert>
@@ -84,7 +85,8 @@ export default connect(
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
-    setReceiptDate
+    setReceiptDate,
+    confirmIneligibleForm
   }, dispatch)
 )(Review);
 

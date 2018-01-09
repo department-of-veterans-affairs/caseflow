@@ -708,6 +708,7 @@ RSpec.feature "RAMP Intake" do
           expect(page).to have_content("Ineligible for Higher-Level Review")
           # go back to start page
           # check there was an error
+          expect(page).to have_button("Continue to next step", disabled: true)
         end
 
         scenario "Complete a RAMP refiling for an appeal" do

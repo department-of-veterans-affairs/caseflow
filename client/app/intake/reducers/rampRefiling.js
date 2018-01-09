@@ -227,6 +227,14 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         }
       }
     }), action.payload.intake);
+  case ACTIONS.CONFIRM_INELIGIBLE_FORM:
+    return update(state, {
+      requestStatus: {
+        submitReview: {
+          $set: REQUEST_STATE.FAILED
+        }
+      }
+    })
   default:
     return state;
   }
