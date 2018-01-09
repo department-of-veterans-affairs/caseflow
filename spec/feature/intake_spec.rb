@@ -879,6 +879,9 @@ RSpec.feature "RAMP Intake" do
           expect(ramp_refiling.issues.count).to eq(1)
           expect(ramp_refiling.issues.first.contention_reference_id).to_not be_nil
           expect(page).to have_content(
+            "Ed Merica's (ID #12341234) VA Form 21-4138 has been processed."
+          )
+          expect(page).to have_content(
             "Established EP: 683SCRRRAMP - Supplemental Claim Review Rating for Station 397"
           )
         end
