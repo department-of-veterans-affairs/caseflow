@@ -475,33 +475,29 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         ]
       end
 
-      ensure_stable do
-        scenario "Review page lets users choose which document to use" do
-          visit "/dispatch/establish-claim"
+      scenario "Review page lets users choose which document to use" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish next claim"
 
-          #        binding.pry
-          click_on "Establish next claim"
+        expect(page).to have_content("Multiple Decision Documents")
 
-          expect(page).to have_content("Multiple Decision Documents")
+        # Text on the tab
+        expect(page).to have_content("Decision 1 (")
+        safe_click("#main-tab-1")
 
-          # Text on the tab
-          expect(page).to have_content("Decision 1 (")
-          safe_click("#main-tab-1")
+        safe_click("#button-Route-claim-for-Decision-2")
 
-          safe_click("#button-Route-claim-for-Decision-2")
+        expect(page).to have_content("Benefit Type")
+      end
 
-          expect(page).to have_content("Benefit Type")
-        end
+      scenario "the EP creation page has a link back to decision review" do
+        visit "/dispatch/establish-claim"
+        click_on "Establish next claim"
 
-        scenario "the EP creation page has a link back to decision review" do
-          visit "/dispatch/establish-claim"
-          click_on "Establish next claim"
-
-          expect(page).to have_content("Multiple Decision Documents")
-          click_on "Route claim for Decision 1"
-          click_on "< Back to Review Decision"
-          expect(page).to have_content("Multiple Decision Documents")
-        end
+        expect(page).to have_content("Multiple Decision Documents")
+        click_on "Route claim for Decision 1"
+        click_on "< Back to Review Decision"
+        expect(page).to have_content("Multiple Decision Documents")
       end
     end
 
@@ -629,73 +625,71 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
 
-      ensure_stable do
-        scenario "Establish a new claim routed to ARC" do
-          # Mock the claim_id returned by VBMS's create end product
-          Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
+      scenario "Establish a new claim routed to ARC" do
+        # Mock the claim_id returned by VBMS's create end product
+        Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 
-          visit "/dispatch/establish-claim"
-          # Decision Page
-          scroll_element_to_view("button-Establish-next-claim")
-          click_on "Establish next claim"
+        visit "/dispatch/establish-claim"
+        # Decision Page
+        scroll_element_to_view("button-Establish-next-claim")
+        click_on "Establish next claim"
 
-          expect(page).to have_content("Review Decision")
-          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+        expect(page).to have_content("Review Decision")
+        expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
-          scroll_element_to_view("button-Route-claim")
-          click_on "Route claim"
+        scroll_element_to_view("button-Route-claim")
+        click_on "Route claim"
 
-          expect(find(".cf-app-segment > h2")).to have_content("Create End Product")
-          expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
+        expect(find(".cf-app-segment > h2")).to have_content("Create End Product")
+        expect(find_field("Station of Jurisdiction").value).to eq "397 - ARC"
 
-          # Test text, radio button, & checkbox inputs
-          click_label("gulfWarRegistry")
-          click_on "Create End Product"
+        # Test text, radio button, & checkbox inputs
+        click_label("gulfWarRegistry")
+        click_on "Create End Product"
 
-          # Confirmation Page
-          expect(page).to have_content("Success!")
-          expect(page).to have_content("Established EP: 070RMBVAGARC - ARC Remand with BVA Grant for Station 397 - ARC")
-          expect(page).to have_content("VACOLS Updated: Changed Location to 98")
-          expect(page).to_not have_content("Added VBMS Note")
-          expect(page).to_not have_content("Added Diary Note")
+        # Confirmation Page
+        expect(page).to have_content("Success!")
+        expect(page).to have_content("Established EP: 070RMBVAGARC - ARC Remand with BVA Grant for Station 397 - ARC")
+        expect(page).to have_content("VACOLS Updated: Changed Location to 98")
+        expect(page).to_not have_content("Added VBMS Note")
+        expect(page).to_not have_content("Added Diary Note")
 
-          # Validate the correct steps on the progress bar are activated
-          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Decision")
-          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Route Claim")
-          expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
+        # Validate the correct steps on the progress bar are activated
+        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Decision")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Route Claim")
+        expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
 
-          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-            claim_hash: {
-              benefit_type_code: "1",
-              payee_code: "00",
-              predischarge: false,
-              claim_type: "Claim",
-              station_of_jurisdiction: "397",
-              date: task.appeal.decision_date.to_date,
-              end_product_modifier: "070",
-              end_product_label: "ARC Remand with BVA Grant",
-              end_product_code: "070RMBVAGARC",
-              gulf_war_registry: true,
-              suppress_acknowledgement_letter: true
-            },
-            veteran_hash: task.appeal.veteran.to_vbms_hash
-          )
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: task.appeal.decision_date.to_date,
+            end_product_modifier: "070",
+            end_product_label: "ARC Remand with BVA Grant",
+            end_product_code: "070RMBVAGARC",
+            gulf_war_registry: true,
+            suppress_acknowledgement_letter: true
+          },
+          veteran_hash: task.appeal.veteran.to_vbms_hash
+        )
 
-          expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
+        expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
-          expect(task.reload.completed?).to be_truthy
-          expect(task.completion_status).to eq("routed_to_arc")
-          expect(task.outgoing_reference_id).to eq("CLAIM_ID_123")
+        expect(task.reload.completed?).to be_truthy
+        expect(task.completion_status).to eq("routed_to_arc")
+        expect(task.outgoing_reference_id).to eq("CLAIM_ID_123")
 
-          expect(task.appeal.reload.dispatched_to_station).to eq("397")
+        expect(task.appeal.reload.dispatched_to_station).to eq("397")
 
-          click_on "Caseflow Dispatch"
-          expect(page).to have_current_path("/dispatch/establish-claim")
+        click_on "Caseflow Dispatch"
+        expect(page).to have_current_path("/dispatch/establish-claim")
 
-          # No tasks left
-          expect(page).to have_content("Way to go! You have completed all the claims assigned to you.")
-          expect(page).to have_css(".usa-button-disabled")
-        end
+        # No tasks left
+        expect(page).to have_content("Way to go! You have completed all the claims assigned to you.")
+        expect(page).to have_css(".usa-button-disabled")
       end
 
       scenario "Establish a new claim with special issues" do
