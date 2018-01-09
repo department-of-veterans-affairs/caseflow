@@ -8,6 +8,7 @@ RSpec.feature "RAMP Intake" do
     Timecop.freeze(Time.utc(2017, 8, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
   let(:veteran) do
@@ -16,14 +17,7 @@ RSpec.feature "RAMP Intake" do
 
   let(:issues) do
     [
-      Generators::Issue.build(
-        description: [
-          "15 - Service connection",
-          "03 - All Others",
-          "5252 - Knee, limitation of flexion of"
-        ],
-        note: "knee movement"
-      )
+      Generators::Issue.build
     ]
   end
 
@@ -219,8 +213,8 @@ RSpec.feature "RAMP Intake" do
 
       # Validate the appeal & issue also shows up
       expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
-      expect(page).to have_content("5252 - Knee, limitation of flexion of")
-      expect(page).to have_content("knee movement")
+      expect(page).to have_content("5252 - Thigh, limitation of flexion of")
+      expect(page).to have_content("low back condition")
     end
 
     scenario "Complete intake for RAMP Election form" do
@@ -516,8 +510,8 @@ RSpec.feature "RAMP Intake" do
 
           # Validate the appeal & issue also shows up
           expect(page).to have_content("This Veteran has 1 eligible appeal, with the following issues")
-          expect(page).to have_content("5252 - Knee, limitation of flexion of")
-          expect(page).to have_content("knee movement")
+          expect(page).to have_content("5252 - Thigh, limitation of flexion of")
+          expect(page).to have_content("low back condition")
         end
 
         scenario "Complete intake for RAMP Election form" do
@@ -802,6 +796,8 @@ RSpec.feature "RAMP Intake" do
           expect(ramp_refiling.issues.count).to eq(2)
           expect(ramp_refiling.issues.first.description).to eq("Left knee rating increase")
           expect(ramp_refiling.issues.last.description).to eq("Left shoulder service connection")
+          expect(ramp_refiling.issues.first.contention_reference_id).to be_nil
+          expect(ramp_refiling.issues.last.contention_reference_id).to be_nil
         end
 
         scenario "Complete a RAMP Refiling for a supplemental claim" do
@@ -832,6 +828,8 @@ RSpec.feature "RAMP Intake" do
           )
 
           intake.start!
+
+          Fakes::VBMSService.end_product_claim_id = "SHANE9123242"
 
           visit "/intake"
 
@@ -868,6 +866,15 @@ RSpec.feature "RAMP Intake" do
             },
             veteran_hash: intake.veteran.to_vbms_hash
           )
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+            veteran_file_number: "12341234",
+            claim_id: "SHANE9123242",
+            contention_descriptions: ["Left knee rating increase"]
+          )
+
+          expect(ramp_refiling.issues.count).to eq(1)
+          expect(ramp_refiling.issues.first.contention_reference_id).to_not be_nil
         end
       end
     end
