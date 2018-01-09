@@ -22,6 +22,16 @@ class AppealSeries < ActiveRecord::Base
     (%w(Advance Remand).include? latest_appeal.status) ? :aoj : :bva
   end
 
+  def program
+    programs = appeals.flat_map { |appeal| appeal.issues.map(&:program) }.uniq
+
+    programs.length > 1 ? :multiple : programs.first
+  end
+
+  def aoj
+    appeals.lazy.flat_map(&:issues).map(&:aoj).find { |aoj| !aoj.nil? } || :other
+  end
+
   def status
     @status ||= fetch_status
   end
@@ -38,7 +48,11 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def alerts
-    @alerts ||= AppealAlerts.new(appeal_series: self).all
+    @alerts ||= AppealSeriesAlerts.new(appeal_series: self).all
+  end
+
+  def issues
+    @issues ||= AppealSeriesIssues.new(appeal_series: self).all
   end
 
   private

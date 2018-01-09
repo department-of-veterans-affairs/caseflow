@@ -85,6 +85,39 @@ describe AppealSeries do
     end
   end
 
+  context "#program" do
+    subject { series.program }
+
+    before do
+      latest_appeal.issues << Generators::Issue.build
+    end
+
+    context "when there is only one program on appeal" do
+      it { is_expected.to eq(:compensation) }
+    end
+
+    context "when there are multiple programs on appeal" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w(07 07 02))
+      end
+
+      it { is_expected.to eq(:multiple) }
+    end
+  end
+
+  context "#aoj" do
+    subject { series.aoj }
+
+    context "when the first issue on appeal has no aoj" do
+      before do
+        latest_appeal.issues << Generators::Issue.build(codes: %w(10 01 02))
+        latest_appeal.issues << Generators::Issue.build
+      end
+
+      it { is_expected.to eq(:vba) }
+    end
+  end
+
   context "#status" do
     subject { series.status }
 
