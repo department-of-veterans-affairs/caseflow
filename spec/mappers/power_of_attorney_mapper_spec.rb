@@ -61,7 +61,7 @@ describe PowerOfAttorneyMapper do
 
       it "when no poa is found" do
         poa = poa_mapper.new.get_poa_from_bgs_poa(no_poa)
-        expect(poa).to be({})
+        expect(poa).to eq({})
       end
     end
   end
