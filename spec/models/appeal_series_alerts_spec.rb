@@ -1,4 +1,4 @@
-describe AppealAlerts do
+describe AppealSeriesAlerts do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
@@ -23,7 +23,7 @@ describe AppealAlerts do
   let(:decision_date) { nil }
   let(:disposition) { nil }
 
-  let(:alerts) { AppealAlerts.new(appeal_series: series).all }
+  let(:alerts) { AppealSeriesAlerts.new(appeal_series: series).all }
 
   context "#all" do
     context "form9_needed alert" do

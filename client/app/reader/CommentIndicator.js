@@ -8,7 +8,7 @@ import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
 import Button from '../components/Button';
 import { handleToggleCommentOpened } from '../reader/Documents/DocumentsActions';
 
-class CommentIndicator extends React.PureComponent {
+class CommentIndicator extends React.Component {
   shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
 
   toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId, this.props.expanded)
