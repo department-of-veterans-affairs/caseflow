@@ -61,20 +61,20 @@ export class HearingWorksheet extends React.PureComponent {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
     this.props.saveIssues(worksheetIssues);
-    this.props.saveWorksheet(worksheet).
-      then(() => this.props.toggleWorksheetSaving());
+    this.props.saveWorksheet(worksheet);
+    this.props.toggleWorksheetSaving();
   }
 
   openPdf = (worksheet, worksheetIssues) => {
-    return this.save(worksheet, worksheetIssues)().then(() => {
-      window.open(`${window.location.pathname}/print`, '_blank');
-    });
-  }
+    let print = window.open(`${window.location.pathname}/print`, '_blank');
 
-  saveWorksheet = (worksheet) => new Promise((resolve, reject) => {
-    // ...do save
-    resolve(result);
-  });
+    if (this.props.worksheet.edited) {
+      this.save(worksheet, worksheetIssues)();
+      window.location.reload();
+    } else {
+      print();
+    }
+  };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
