@@ -178,6 +178,7 @@ class Appeal < ActiveRecord::Base
     @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
   end
 
+  attr_writer :hearings
   def hearings
     @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
   end
@@ -198,6 +199,7 @@ class Appeal < ActiveRecord::Base
     end
   end
 
+  attr_writer :cavc_decisions
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
   end
@@ -407,9 +409,9 @@ class Appeal < ActiveRecord::Base
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
-  # A uniqued list of issue codes on appeal, that is the combination of ISSPROG and ISSCODE
-  def issue_codes
-    issues.map(&:issue_code).uniq
+  # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE
+  def issue_categories
+    issues.map(&:category).uniq
   end
 
   # If we do not yet have the worksheet issues saved in Caseflow's DB, then
@@ -475,7 +477,7 @@ class Appeal < ActiveRecord::Base
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
-      hash["issues"] = issues
+      hash["issues"] = issues ? issues.map(&:attributes) : nil
       hash["regional_office"] = regional_office_hash
       hash["hearings"] = hearings
     end
@@ -667,12 +669,21 @@ class Appeal < ActiveRecord::Base
       disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
-      repository.close!(
-        appeal: appeal,
-        user: user,
-        closed_on: closed_on,
-        disposition_code: disposition_code
-      )
+      if appeal.remand?
+        repository.close_remand!(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: disposition_code
+        )
+      else
+        repository.close_undecided_appeal!(
+          appeal: appeal,
+          user: user,
+          closed_on: closed_on,
+          disposition_code: disposition_code
+        )
+      end
     end
   end
 end

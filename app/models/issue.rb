@@ -4,25 +4,19 @@
 class Issue
   include ActiveModel::Model
 
-  attr_accessor :id, :program, :code, :category, :disposition,
-                :close_date, :levels, :note, :vacols_sequence_id
+  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :close_date, :note
 
-  # These attributes are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
-  attr_writer :type, :description, :program_description
-
-  def type
-    fail Caseflow::Error::AttributeNotLoaded if @type == :not_loaded
-    @type
+  # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
+  attr_writer :labels
+  def labels
+    fail Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
+    @labels
   end
 
-  def description
-    fail Caseflow::Error::AttributeNotLoaded if @description == :not_loaded
-    @description
-  end
-
-  def program_description
-    fail Caseflow::Error::AttributeNotLoaded if @program_description == :not_loaded
-    @program_description
+  attr_writer :cavc_decisions
+  def cavc_decisions
+    # This should probably always be preloaded to avoid each issue triggering an additional VACOLS query.
+    @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_issue(id, vacols_sequence_id)
   end
 
   PROGRAMS = {
@@ -40,20 +34,84 @@ class Issue
     "12" => :fiduciary
   }.freeze
 
-  TYPES = {
-    "15" => :service_connection
+  AOJ_FOR_PROGRAMS = {
+    vba: [
+      :vba_burial,
+      :compensation,
+      :education,
+      :insurance,
+      :loan_guaranty,
+      :pension,
+      :vre,
+      :fiduciary
+    ],
+    vha: [
+      :medical
+    ],
+    nca: [
+      :nca_burial
+    ]
   }.freeze
 
-  CATEGORIES = {
-    "04" => :new_material
-  }.freeze
-
-  def issue_code
-    "#{program}-#{code}"
+  def program
+    PROGRAMS[codes[0]]
   end
 
-  def non_new_material_allowed?
-    !new_material? && allowed?
+  def aoj
+    AOJ_FOR_PROGRAMS.keys.find do |type|
+      AOJ_FOR_PROGRAMS[type].include?(program)
+    end
+  end
+
+  def type
+    labels[1]
+  end
+
+  def program_description
+    "#{codes[0]} - #{labels[0]}"
+  end
+
+  def description
+    codes[1..-1].zip(labels[1..-1]).map { |code, label| "#{code} - #{label}" }
+  end
+
+  def levels
+    labels[2..-1] || []
+  end
+
+  def friendly_description
+    issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
+      descriptions = descriptions[code]
+      # If there is no value, we probably haven't added the issue type in our list, so return.
+      return nil unless descriptions
+      break descriptions if descriptions.is_a?(String)
+      descriptions
+    end
+
+    if diagnostic_code
+      diagnostic_code_description = Constants::Issue::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      return if diagnostic_code_description.nil?
+      # Some description strings are templates. This is a no-op unless the description string contains %s.
+      issue_description = issue_description % diagnostic_code_description
+    end
+
+    issue_description
+  end
+
+  def diagnostic_code
+    codes.last if codes.last.length == 4
+  end
+
+  def category
+    "#{codes[0]}-#{codes[1]}"
+  end
+
+  def type_hash
+    codes.hash
+  end
+
+  def active?
+    !disposition
   end
 
   def allowed?
@@ -64,18 +122,24 @@ class Issue
     disposition == :remanded
   end
 
+  def merged?
+    disposition == :merged
+  end
+
   # "New Material" (and "Non new material") are the exact
   # terms used internally by attorneys/judges. These mean the issue
   # was allowing/denying new material (such as medical evidence) to be used
   # in the appeal
   def new_material?
-    program == :compensation &&
-      type[:name] == :service_connection &&
-      category == :new_material
+    codes[0..2] == %w(02 15 04)
   end
 
   def non_new_material?
     !new_material?
+  end
+
+  def non_new_material_allowed?
+    non_new_material? && allowed?
   end
 
   def attributes
@@ -84,7 +148,6 @@ class Issue
       levels: levels,
       program: program,
       type: type,
-      category: category,
       description: description,
       disposition: disposition,
       close_date: close_date,
@@ -102,50 +165,38 @@ class Issue
   end
 
   class << self
-    attr_writer :repository
-
-    def description(hash)
-      description = ["#{hash['isscode']} - #{hash['isscode_label']}"]
-      description.push("#{hash['isslev1']} - #{hash['isslev1_label']}") if hash["isslev1"]
-      description.push("#{hash['isslev2']} - #{hash['isslev2_label']}") if hash["isslev2"]
-      description.push("#{hash['isslev3']} - #{hash['isslev3_label']}") if hash["isslev3"]
-      description
-    end
-
-    def parse_levels_from_vacols(hash)
-      levels = []
-      levels.push((hash["isslev1_label"]).to_s) if hash["isslev1_label"]
-      levels.push((hash["isslev2_label"]).to_s) if hash["isslev2_label"]
-      levels.push((hash["isslev3_label"]).to_s) if hash["isslev3_label"]
-      levels
-    end
-
     def load_from_vacols(hash)
-      attributes = {
+      new(
         id: hash["isskey"],
-        levels: parse_levels_from_vacols(hash),
         vacols_sequence_id: hash["issseq"],
-        program: PROGRAMS[hash["issprog"]],
-        code: hash["isscode"],
+        codes: parse_codes_from_vacols(hash),
+        labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
-        category: CATEGORIES[(hash["isslev1"] || hash["isslev2"] || hash["isslev3"])],
         disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other").parameterize.underscore.to_sym,
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
-      }
-
-      if hash.key? "issprog_label"
-        attributes[:type] = { name: TYPES[hash["isscode"]], label: hash["isscode_label"] }
-        attributes[:description] = description(hash)
-        attributes[:program_description] = "#{hash['issprog']} - #{hash['issprog_label']}"
-      else
-        attributes[:type] = attributes[:description] = attributes[:program_description] = :not_loaded
-      end
-
-      new(**attributes)
+      )
     end
 
-    def repository
-      @repository ||= IssueRepository
+    private
+
+    def parse_codes_from_vacols(hash)
+      [
+        hash["issprog"],
+        hash["isscode"],
+        hash["isslev1"],
+        hash["isslev2"],
+        hash["isslev3"]
+      ].compact
+    end
+
+    def parse_labels_from_vacols(hash)
+      [
+        hash["issprog_label"],
+        hash["isscode_label"],
+        hash["isslev1_label"],
+        hash["isslev2_label"],
+        hash["isslev3_label"]
+      ].compact
     end
   end
 end

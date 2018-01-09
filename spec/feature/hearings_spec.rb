@@ -41,7 +41,7 @@ RSpec.feature "Hearings" do
     scenario "Shows dockets for each day" do
       visit "/hearings/dockets"
 
-      expect(page).to have_content("Upcoming Hearing Days")
+      expect(page).to have_content("Your Hearing Days")
 
       # Verify user
       expect(page).to have_content("VLJ: Lauren Roth")
@@ -90,7 +90,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_selector("tbody", 2)
 
       find_link("Back to Upcoming Hearing Days").click
-      expect(page).to have_content("Upcoming Hearing Days")
+      expect(page).to have_content("Your Hearing Days")
     end
 
     scenario "Daily docket saves to the backend" do
@@ -167,7 +167,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
-      expect(page.title).to eq "Hearing Worksheet for AppellantLastName, AppellantFirstName A."
+      expect(page.title).to eq "Appellant First Name A. Appellant Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
@@ -175,13 +175,13 @@ RSpec.feature "Hearings" do
       expect(page).to_not have_field("1-issue-program")
       expect(page).to_not have_field("1-issue-name")
       expect(page).to_not have_field("1-issue-levels")
-      expect(page).to have_field("1-issue-description")
+      expect(page).to have_field("1-issue-notes")
 
       click_on "button-addIssue-2"
       fill_in "2-issue-program", with: "This is the program"
       fill_in "2-issue-name", with: "This is the name"
       fill_in "2-issue-levels", with: "This is the level"
-      fill_in "2-issue-description", with: "This is the description"
+      fill_in "2-issue-notes", with: "This is a note"
 
       find("#cf-issue-delete-21").click
       click_on "Confirm delete"
@@ -191,7 +191,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is the program")
       expect(page).to have_content("This is the name")
       expect(page).to have_content("This is the level")
-      expect(page).to have_content("This is the description")
+      expect(page).to have_content("This is a note")
       expect(page).to_not have_content("Service Connection")
     end
 

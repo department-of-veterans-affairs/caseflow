@@ -14,12 +14,14 @@ import { updateSearchIndexPage, updateSearchRelativeIndex } from '../reader/PdfS
 import ApiUtil from '../util/ApiUtil';
 import PdfPage from './PdfPage';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
-import { List, AutoSizer } from 'react-virtualized';
+import { Grid, AutoSizer } from 'react-virtualized';
 import { isUserEditingText, pageIndexOfPageNumber, pageNumberOfPageIndex, rotateCoordinates } from './utils';
 import { startPlacingAnnotation, showPlaceAnnotationIcon
 } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, text as searchText } from './selectors';
+
+const PAGE_MARGIN = 25;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -27,12 +29,15 @@ export class PdfFile extends React.PureComponent {
 
     this.loadingTask = null;
     this.pdfDocument = null;
-    this.list = null;
-    this.startIndex = 0;
+    this.grid = null;
+    this.rowStartIndex = 0;
     this.scrollTop = 0;
+    this.scrollLeft = 0;
     this.scrollLocation = {};
     this.clientHeight = 0;
+    this.clientWidth = 0;
     this.currentPage = 0;
+    this.columnCount = 1;
   }
 
   componentDidMount = () => {
@@ -89,28 +94,32 @@ export class PdfFile extends React.PureComponent {
       this.currentPage = 0;
     }
 
-    if (this.list && nextProps.scale !== this.props.scale) {
+    if (this.grid && nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.list.getOffsetForRow({ index: this.startIndex }));
+      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.rowStartIndex).scrollTop);
 
       this.scrollLocation = {
-        page: this.startIndex,
+        page: this.rowStartIndex,
         locationOnPage: nonZoomedLocation * zoomFactor
       };
     }
   }
 
-  getPage = ({ index, key, style, isVisible }) => {
+  getPage = ({ rowIndex, columnIndex, key, style, isVisible }) => {
+    if ((this.columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
+      return null;
+    }
+
     return <div key={key} style={style}>
       <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
-        pageIndex={index}
         isPageDrawn={isVisible}
+        pageIndex={(rowIndex * this.columnCount) + columnIndex}
         isVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
@@ -120,29 +129,65 @@ export class PdfFile extends React.PureComponent {
 
   pageDimensions = (index) => this.props.pageDimensions[`${this.props.file}-${index}`]
 
-  pageHeight = (index) =>
-    _.get(this.pageDimensions(index), ['height'], this.props.baseHeight)
+  isHorizontal = () => this.props.rotation === 90 || this.props.rotation === 270;
 
-  getRowHeight = ({ index }) => {
-    return (this.pageHeight(index) + 25) * this.props.scale;
+  pageHeight = (index) => {
+    if (this.isHorizontal()) {
+      return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+    }
+
+    return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
   }
 
-  getList = (list) => {
-    this.list = list;
+  pageWidth = (index) => {
+    if (this.isHorizontal()) {
+      return _.get(this.pageDimensions(index), ['height'], this.props.baseHeight);
+    }
 
-    if (this.list) {
+    return _.get(this.pageDimensions(index), ['width'], this.props.baseWidth);
+  }
+
+  getRowHeight = ({ index }) => {
+    const pageIndexStart = index * this.columnCount;
+    const pageHeights = _.range(pageIndexStart, pageIndexStart + this.columnCount).
+      map((pageIndex) => this.pageHeight(pageIndex));
+
+    return (Math.max(...pageHeights) + PAGE_MARGIN) * this.props.scale;
+  }
+
+  getColumnWidth = () => {
+    const maxPageWidth = _.range(0, this.props.pdfDocument.pdfInfo.numPages).
+      reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
+
+    return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
+  }
+
+  getGrid = (grid) => {
+    this.grid = grid;
+
+    if (this.grid) {
       // eslint-disable-next-line react/no-find-dom-node
-      const domNode = ReactDOM.findDOMNode(this.list);
+      const domNode = ReactDOM.findDOMNode(this.grid);
 
       domNode.focus();
-      this.list.recomputeRowHeights();
+      this.grid.recomputeGridSize();
     }
   }
 
-  scrollToPosition = (pageIndex, locationOnPage = 0) => {
-    const position = this.list.getOffsetForRow({ index: pageIndex }) + locationOnPage;
+  pageRowAndColumn = (pageIndex) => ({
+    rowIndex: Math.floor(pageIndex / this.columnCount),
+    columnIndex: pageIndex % this.columnCount
+  })
 
-    this.list.scrollToPosition(Math.max(position, 0));
+  getOffsetForPageIndex = (pageIndex) => this.grid.getOffsetForCell(this.pageRowAndColumn(pageIndex))
+
+  scrollToPosition = (pageIndex, locationOnPage = 0) => {
+    const position = this.getOffsetForPageIndex(pageIndex);
+
+    this.grid.scrollToPosition({
+      scrollLeft: position.scrollLeft,
+      scrollTop: Math.max(position.scrollTop + locationOnPage, 0)
+    });
   }
 
   jumpToPage = () => {
@@ -150,7 +195,7 @@ export class PdfFile extends React.PureComponent {
     if (this.props.jumpToPageNumber && this.clientHeight > 0) {
       const scrollToIndex = this.props.jumpToPageNumber ? pageIndexOfPageNumber(this.props.jumpToPageNumber) : -1;
 
-      this.list.scrollToRow(scrollToIndex);
+      this.grid.scrollToCell(this.pageRowAndColumn(scrollToIndex));
       this.props.resetJumpToPage();
     }
   }
@@ -220,13 +265,13 @@ export class PdfFile extends React.PureComponent {
       this.props.updateSearchIndexPage(pageIndex);
 
       // if the page has been scrolled out of DOM, scroll back to it, setting scrollTop
-      this.list.scrollToRow(pageIndex);
+      this.grid.scrollToCell(this.pageRowAndColumn(pageIndex));
     }
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.list && this.props.isVisible) {
-      this.list.recomputeRowHeights();
+    if (this.grid && this.props.isVisible) {
+      this.grid.recomputeGridSize();
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
       this.jumpToComment();
@@ -237,8 +282,8 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  onRowsRendered = ({ startIndex }) => {
-    this.startIndex = startIndex;
+  onSectionRendered = ({ rowStartIndex }) => {
+    this.rowStartIndex = rowStartIndex;
   }
 
   onPageChange = (index, clientHeight) => {
@@ -246,22 +291,34 @@ export class PdfFile extends React.PureComponent {
     this.props.onPageChange(pageNumberOfPageIndex(index), clientHeight / this.pageHeight(index));
   }
 
-  onScroll = ({ clientHeight, scrollTop }) => {
+  onScroll = ({ clientHeight, scrollTop, scrollLeft }) => {
     this.scrollTop = scrollTop;
+    this.scrollLeft = scrollLeft;
 
-    if (this.list) {
+    if (this.grid) {
       let lastIndex = 0;
 
       _.range(0, this.props.pdfDocument.pdfInfo.numPages).forEach((index) => {
-        const offset = this.list.getOffsetForRow({ index });
+        const offset = this.getOffsetForPageIndex(index);
 
-        if (offset < scrollTop + (clientHeight / 2)) {
+        if (offset.scrollTop < scrollTop + (clientHeight / 2)) {
           lastIndex = index;
         }
       });
 
       this.onPageChange(lastIndex, clientHeight);
     }
+  }
+
+  getCenterOfVisiblePage = (scrollWindowBoundary, pageScrollBoundary, pageDimension, clientDimension) => {
+    const scrolledLocationOnPage = (scrollWindowBoundary - pageScrollBoundary) / this.props.scale;
+    const adjustedScrolledLocationOnPage = scrolledLocationOnPage ? scrolledLocationOnPage : scrolledLocationOnPage / 2;
+
+    const positionBasedOnPageDimension = (pageDimension + scrolledLocationOnPage - ANNOTATION_ICON_SIDE_LENGTH) / 2;
+    const positionBasedOnClientDimension = adjustedScrolledLocationOnPage +
+      (((clientDimension / this.props.scale) - ANNOTATION_ICON_SIDE_LENGTH) / 2);
+
+    return Math.min(positionBasedOnPageDimension, positionBasedOnClientDimension);
   }
 
   handleAltC = () => {
@@ -272,11 +329,11 @@ export class PdfFile extends React.PureComponent {
     this.props.startPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
 
     const { width, height } = this.pageDimensions(this.currentPage);
-    const scrolledLocationOnPage = Math.max(0, this.scrollTop - this.list.getOffsetForRow({ index: this.currentPage }));
+    const pagePosition = this.getOffsetForPageIndex(this.currentPage);
 
     const initialCommentCoordinates = {
-      x: ((width - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale,
-      y: ((scrolledLocationOnPage + height - ANNOTATION_ICON_SIDE_LENGTH) / 2) / this.props.scale
+      x: this.getCenterOfVisiblePage(this.scrollLeft, pagePosition.scrollLeft, width, this.clientWidth),
+      y: this.getCenterOfVisiblePage(this.scrollTop, pagePosition.scrollTop, height, this.clientHeight)
     };
 
     this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
@@ -336,18 +393,31 @@ export class PdfFile extends React.PureComponent {
             _.defer(this.onPageChange, this.currentPage, height);
             this.clientHeight = height;
           }
+          if (this.clientWidth !== width) {
+            this.clientWidth = width;
+          }
 
-          return <List
-            ref={this.getList}
-            overscanRowCount={this.props.windowingOverscan}
-            onRowsRendered={this.onRowsRendered}
+          this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
+            this.props.pdfDocument.pdfInfo.numPages);
+
+          return <Grid
+            ref={this.getGrid}
+            containerStyle={{
+              margin: '0 auto',
+              marginTop: `${PAGE_MARGIN}px`
+            }}
+            estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
+            overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
+            onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
             height={height}
-            rowCount={this.props.pdfDocument.pdfInfo.numPages}
+            rowCount={Math.ceil(this.props.pdfDocument.pdfInfo.numPages / this.columnCount)}
             rowHeight={this.getRowHeight}
-            rowRenderer={this.getPage}
+            cellRenderer={this.getPage}
             scrollToAlignment="start"
             width={width}
+            columnWidth={this.getColumnWidth}
+            columnCount={this.columnCount}
             scale={this.props.scale}
           />;
         }
@@ -386,9 +456,11 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state, props) => {
   const dimensionValues = _.filter(state.pdf.pageDimensions, (dimension) => dimension.file === props.file);
   const baseHeight = _.get(dimensionValues, [0, 'height'], PDF_PAGE_HEIGHT);
+  const baseWidth = _.get(dimensionValues, [0, 'width'], PDF_PAGE_WIDTH);
 
   return {
     baseHeight,
+    baseWidth,
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchText: searchText(state, props),
@@ -396,7 +468,8 @@ const mapStateToProps = (state, props) => {
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
     loadError: state.pdf.documentErrors[props.file],
     pdfDocument: state.pdf.pdfDocuments[props.file],
-    windowingOverscan: state.pdfViewer.windowingOverscan
+    windowingOverscan: state.pdfViewer.windowingOverscan,
+    rotation: _.get(state.documents, [props.documentId, 'rotation'])
   };
 };
 

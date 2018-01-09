@@ -42,6 +42,8 @@ before_install:
   - cd ./client && $YARN --frozen-lockfile
   - cd ..
 
+before_script:
+  - bundle exec danger
 
 jobs:
   include:
@@ -115,7 +117,7 @@ jobs:
       env: TEST_CATEGORY=linters_and_security
       script:
         - bundle exec rake lint
-        - bundle exec rake security
+        - bundle exec rake security_caseflow
         - cd ./client
         - mv node_modules node_modules_bak && $YARN --frozen-lockfile --production && $YARN run build:production
         # Move the non-production node_modules back so that it's cached for next travis test run

@@ -155,11 +155,13 @@ export class PdfPage extends React.PureComponent {
         this.unmarkText();
       } else {
         const searchTextChanged = this.props.searchText !== prevProps.searchText;
-        const currentMatchIdxChanged = !_.isNaN(this.props.currentMatchIndex) &&
-          this.props.currentMatchIndex !== prevProps.currentMatchIndex;
+        const currentMatchIdxChanged = !_.isNaN(this.props.relativeIndex) &&
+          this.props.relativeIndex !== prevProps.relativeIndex;
+        const pageIndexChanged = !_.isNaN(this.props.pageIndexWithMatch) &&
+          this.props.pageIndexWithMatch !== prevProps.pageIndexWithMatch;
 
         if (this.props.matchesPerPage.length || searchTextChanged) {
-          this.markText(currentMatchIdxChanged || searchTextChanged);
+          this.markText(currentMatchIdxChanged || searchTextChanged || pageIndexChanged);
         }
       }
     }
@@ -260,9 +262,9 @@ export class PdfPage extends React.PureComponent {
     });
     const { outerDivWidth, outerDivHeight, innerDivWidth, innerDivHeight } = this.getDivDimensions();
 
-    // When you rotate a page 270 degrees there is a margin on the right equal to the difference
-    // between the current width and current height. We need to undo that margin to get things to align.
-    const marginTop = this.props.rotation === 270 ? outerDivHeight - outerDivWidth : 0;
+    // When you rotate a page 90 or 270 degrees there is a translation at the top equal to the difference
+    // between the current width and current height. We need to undo that translation to get things to align.
+    const translateX = Math.sin((this.props.rotation / 180) * Math.PI) * (outerDivHeight - outerDivWidth) / 2;
     const divPageStyle = {
       marginBottom: `${PAGE_MARGIN_BOTTOM * this.props.scale}px`,
       width: `${outerDivWidth}px`,
@@ -278,8 +280,7 @@ export class PdfPage extends React.PureComponent {
     // This div is the one responsible for rotating the page. It is within the outer div which changes
     // its width and height based on whether this page has been rotated to be in a portrait or landscape view.
     const innerDivStyle = {
-      transform: `rotate(${this.props.rotation}deg)`,
-      marginTop
+      transform: `rotate(${this.props.rotation}deg) translateX(${translateX}px)`
     };
 
     return <div

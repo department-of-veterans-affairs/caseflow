@@ -57,6 +57,16 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
 
+    def for_appeals(vacols_ids)
+      hearings = select_hearings.where(folder_nr: vacols_ids)
+
+      hearings.reduce({}) do |memo, result|
+        hearing_key = result["folder_nr"].to_s
+        memo[hearing_key] = (memo[hearing_key] || []) << result
+        memo
+      end
+    end
+
     def load_hearing(pkseq)
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
