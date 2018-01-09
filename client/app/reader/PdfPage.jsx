@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
-import { collectHistogram } from '../util/FrontEndMetrics';
+import { collectHistogram } from '../util/Metrics';
 
 import classNames from 'classnames';
 
@@ -31,7 +31,7 @@ export class PdfPage extends React.PureComponent {
 
     this.isDrawing = false;
     this.marks = [];
-    this.measureTime = null;
+    this.measureTimeStartMs = null;
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -142,8 +142,8 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.isPageDrawn && this.props.isPageDrawn !== prevProps.isPageDrawn) {
-      this.measureTime = performance.now();
+    if (this.props.isPageDrawn && !prevProps.isPageDrawn) {
+      this.measureTimeStartMs = performance.now();
     }
 
     if (prevProps.scale !== this.props.scale) {
@@ -204,13 +204,13 @@ export class PdfPage extends React.PureComponent {
 
         this.drawPage(page).then(() => {
           collectHistogram({
-            group: 'test',
-            name: 'render_rate_historgram',
-            value: this.measureTime ? performance.now() - this.measureTime : 0,
+            group: 'front_end',
+            name: 'pdf_page_render_time_in_ms',
+            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
             appName: 'Reader',
             attrs: {
               overscan: this.props.windowingOverscan,
-              doucmentType: this.props.doucmentType,
+              documentType: this.props.documentType,
               pageCount: this.props.pdfDocument.pdfInfo.numPages
             }
           });
@@ -348,7 +348,7 @@ const mapStateToProps = (state, props) => {
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,
     windowingOverscan: state.pdfViewer.windowingOverscan,
-    doucmentType: _.get(state.documents, [props.documentId, 'type'], 'unknown'),
+    documentType: _.get(state.documents, [props.documentId, 'type'], 'unknown'),
     ...state.searchActionReducer
   };
 };
