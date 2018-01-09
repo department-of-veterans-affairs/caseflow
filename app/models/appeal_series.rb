@@ -19,7 +19,7 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def location
-    %w[Advance Remand].include? latest_appeal.status ? :aoj : :bva
+    %w[Advance Remand].include?(latest_appeal.status) ? :aoj : :bva
   end
 
   def program
