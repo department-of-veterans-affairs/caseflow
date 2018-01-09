@@ -11,7 +11,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
           program: "Wheel",
           name: "Spoon",
           levels: "Cabbage Pickle",
-          description: "Donkey Cow",
+          notes: "Donkey Cow",
           from_vacols: false,
           vacols_sequence_id: 1
         }]
@@ -25,7 +25,7 @@ RSpec.describe Hearings::AppealsController, type: :controller do
       expect(response_body["worksheet_issues"][0]["program"]).to eq "Wheel"
       expect(response_body["worksheet_issues"][0]["name"]).to eq "Spoon"
       expect(response_body["worksheet_issues"][0]["levels"]).to eq "Cabbage Pickle"
-      expect(response_body["worksheet_issues"][0]["description"]).to eq "Donkey Cow"
+      expect(response_body["worksheet_issues"][0]["notes"]).to eq "Donkey Cow"
       expect(response_body["worksheet_issues"][0]["from_vacols"]).to eq false
       expect(response_body["worksheet_issues"][0]["vacols_sequence_id"]).to eq "1"
     end
