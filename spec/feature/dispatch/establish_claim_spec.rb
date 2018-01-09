@@ -475,11 +475,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         ]
       end
 
-      ensure_stable do 
+      ensure_stable do
         scenario "Review page lets users choose which document to use" do
           visit "/dispatch/establish-claim"
-          
-  #        binding.pry
+
+          #        binding.pry
           click_on "Establish next claim"
 
           expect(page).to have_content("Multiple Decision Documents")
@@ -629,7 +629,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     context "For a partial grant" do
       let(:vacols_record) { :partial_grant_decided }
 
-      ensure_stable do 
+      ensure_stable do
         scenario "Establish a new claim routed to ARC" do
           # Mock the claim_id returned by VBMS's create end product
           Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
