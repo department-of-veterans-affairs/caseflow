@@ -1,6 +1,6 @@
 source ENV['GEM_SERVER_URL'] || 'https://rubygems.org'
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "c03e122b4f0edfb7e26262289d480669d21df68e"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "7cacaa8f607666ba0f4b971640cf3a4c21db1b83"
 
 gem "moment_timezone-rails"
 
@@ -97,13 +97,15 @@ group :production, :staging do
   gem 'ruby-oci8'
 end
 
-group :development, :production, :staging do
+# Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)
+group :production, :staging do
   gem 'rails_stdout_logging'
 end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: :ruby
+  gem 'pry-byebug'
   gem 'pry'
   gem 'rb-readline'
 

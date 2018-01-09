@@ -133,7 +133,6 @@ export class ConfirmHearing extends React.Component {
     this.props.resetState();
   }
 
-  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
   componentDidMount() {
     window.scrollTo(0, 0);
   }
@@ -213,7 +212,7 @@ export class ConfirmHearing extends React.Component {
       onHearingPreferenceChange,
       loading,
       serverError,
-      updateSucceeded,
+      updateConfirmHearingSucceeded,
       match,
       certificationStatus
     } = this.props;
@@ -223,7 +222,7 @@ export class ConfirmHearing extends React.Component {
         to={`/certifications/${match.params.vacols_id}/check_documents`} />;
     }
 
-    if (updateSucceeded) {
+    if (updateConfirmHearingSucceeded) {
       return <Redirect
         to={`/certifications/${match.params.vacols_id}/sign_and_certify`} />;
     }
@@ -404,7 +403,7 @@ const mapStateToProps = (state) => ({
   form9PdfPath: state.form9PdfPath,
   erroredFields: state.erroredFields,
   scrollToError: state.scrollToError,
-  updateSucceeded: state.updateSucceeded,
+  updateConfirmHearingSucceeded: state.updateSuccesses.confirmHearing,
   serverError: state.serverError,
   certificationStatus: state.certificationStatus
 });
