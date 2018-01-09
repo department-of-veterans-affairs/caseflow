@@ -6,14 +6,6 @@ class DraftDecision
   ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date]
   attr_accessor(*ATTRS)
 
-  def type
-    "DraftDecision"
-  end
-
-  def complete!
-    # update VACOLS assignments
-  end
-
   # TODO: move to generic superclass
   def to_hash
     serializable_hash
@@ -22,5 +14,22 @@ class DraftDecision
   # TODO: move to generic superclass
   def attributes
     DraftDecision::ATTRS.each_with_object({}) { |attr, obj| obj[attr] = send(attr) }
+  end
+
+  def self.from_vacols(case_assignment, user_id)
+     new(
+      assigned_on: case_assignment.date_assigned,
+      due_on: case_assignment.date_due,
+      docket_name: "legacy",
+      docket_date: case_assignment.docket_date,
+      appeal_id: case_assignment.id,
+      user_id: user_id
+    )
+  end
+
+  def complete!
+    # TODO implement
+    # save draft decision info
+    # update VACOLS DECASS
   end
 end
