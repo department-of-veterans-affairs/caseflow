@@ -27,10 +27,10 @@ export const onLevelsChange = (levels, issueId) => ({
   }
 });
 
-export const onDescriptionChange = (description, issueId) => ({
-  type: Constants.SET_DESCRIPTION,
+export const onIssueNotesChange = (notes, issueId) => ({
+  type: Constants.SET_ISSUE_NOTES,
   payload: {
-    description,
+    notes,
     issueId
   }
 });
