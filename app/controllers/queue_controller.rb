@@ -6,7 +6,7 @@ class QueueController < ApplicationController
   end
 
   def verify_access
-    true
+    verify_system_admin
   end
 
   def index
@@ -18,7 +18,7 @@ class QueueController < ApplicationController
     MetricsService.record("VACOLS: Get case assignments for for #{current_user.id}",
                           name: "QueueController.tasks") do
       render json: {
-        tasks: AttorneyQueue.tasks(current_user.css_id, current_user.id).map(&:to_hash)
+        tasks: AttorneyQueue.tasks(params[:user_id]).map(&:to_hash)
       }
     end
   end
