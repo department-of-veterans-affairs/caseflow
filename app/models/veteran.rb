@@ -6,10 +6,11 @@ class Veteran
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  BGS_ATTRIBUTES = %i[
-    file_number sex first_name last_name ssn address_line1 address_line2
-    address_line3 city state country zip_code military_postal_type_code
-    military_post_office_type_code service date_of_birth
+  BGS_ATTRIBUTES = [
+    :file_number, :sex, :first_name, :last_name, :ssn,
+    :address_line1, :address_line2, :address_line3, :city,
+    :state, :country, :zip_code, :military_postal_type_code,
+    :military_post_office_type_code, :service, :date_of_birth
   ].freeze
 
   CHARACTER_OF_SERVICE_CODES = {
@@ -141,7 +142,7 @@ class Veteran
   end
 
   def vbms_attributes
-    BGS_ATTRIBUTES - %i[military_postal_type_code military_post_office_type_code] + [:address_type]
+    BGS_ATTRIBUTES - [:military_postal_type_code, :military_post_office_type_code] + [:address_type]
   end
 
   def military_address?

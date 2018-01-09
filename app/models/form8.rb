@@ -3,48 +3,48 @@
 class Form8 < ActiveRecord::Base
   include UploadableDocument
 
-  FORM_FIELDS = %i[
-    vacols_id
-    appellant_name
-    appellant_relationship
-    file_number
-    veteran_name
-    insurance_loan_number
-    service_connection_for
-    service_connection_notification_date
-    increased_rating_for
-    increased_rating_notification_date
-    other_for
-    other_notification_date
-    representative_name
-    representative_type
-    representative_type_specify_other
-    power_of_attorney
-    power_of_attorney_file
-    agent_accredited
-    form_646_of_record
-    form_646_not_of_record_explanation
-    hearing_requested
-    hearing_held
-    hearing_transcript_on_file
-    hearing_requested_explanation
-    contested_claims_procedures_applicable
-    contested_claims_requirements_followed
-    soc_date
-    form9_date
-    nod_date
-    ssoc_date_1
-    ssoc_date_2
-    ssoc_date_3
-    ssoc_required
-    record_other_explanation
-    remarks
-    certifying_office
-    certifying_username
-    certifying_official_name
-    certifying_official_title
-    certifying_official_title_specify_other
-    certification_date
+  FORM_FIELDS = [
+    :vacols_id,
+    :appellant_name,
+    :appellant_relationship,
+    :file_number,
+    :veteran_name,
+    :insurance_loan_number,
+    :service_connection_for,
+    :service_connection_notification_date,
+    :increased_rating_for,
+    :increased_rating_notification_date,
+    :other_for,
+    :other_notification_date,
+    :representative_name,
+    :representative_type,
+    :representative_type_specify_other,
+    :power_of_attorney,
+    :power_of_attorney_file,
+    :agent_accredited,
+    :form_646_of_record,
+    :form_646_not_of_record_explanation,
+    :hearing_requested,
+    :hearing_held,
+    :hearing_transcript_on_file,
+    :hearing_requested_explanation,
+    :contested_claims_procedures_applicable,
+    :contested_claims_requirements_followed,
+    :soc_date,
+    :form9_date,
+    :nod_date,
+    :ssoc_date_1,
+    :ssoc_date_2,
+    :ssoc_date_3,
+    :ssoc_required,
+    :record_other_explanation,
+    :remarks,
+    :certifying_office,
+    :certifying_username,
+    :certifying_official_name,
+    :certifying_official_title,
+    :certifying_official_title_specify_other,
+    :certification_date
   ].freeze
 
   def save_pdf!
@@ -210,8 +210,13 @@ class Form8 < ActiveRecord::Base
   end
 
   def update_from_string_params(params)
-    date_fields = %i[certification_date service_connection_notification_date increased_rating_notification_date
-                     other_notification_date soc_date]
+    date_fields = [
+      :certification_date,
+      :service_connection_notification_date,
+      :increased_rating_notification_date,
+      :other_notification_date,
+      :soc_date
+    ]
     date_fields.each do |f|
       raw_value = params[f]
       next unless raw_value && raw_value.is_a?(String)

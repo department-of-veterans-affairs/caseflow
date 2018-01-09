@@ -1,13 +1,13 @@
 class EstablishClaimsController < TasksController
   before_action :verify_access
-  before_action :verify_assigned_to_current_user, only: %i[show pdf cancel perform]
-  before_action :verify_not_complete, only: %i[perform update_appeal cancel]
+  before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]
+  before_action :verify_not_complete, only: [:perform, :update_appeal, :cancel]
   before_action :verify_bgs_info_valid, only: [:perform]
-  before_action :verify_manager_access, only: %i[
-    unprepared_tasks
-    update_employee_count
-    canceled_tasks
-    work_assignments
+  before_action :verify_manager_access, only: [
+    :unprepared_tasks,
+    :update_employee_count,
+    :canceled_tasks,
+    :work_assignments
   ]
   skip_before_action :verify_admin_access, only: [:index]
 

@@ -1,5 +1,5 @@
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: %i[set_user set_end_products]
+  before_action :require_demo, only: [:set_user, :set_end_products]
   before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [

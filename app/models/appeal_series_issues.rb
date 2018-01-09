@@ -14,23 +14,23 @@ class AppealSeriesIssues
     denied: [
       :denied
     ],
-    remand: %i[
-      remanded
-      manlincon_remand
+    remand: [
+      :remanded,
+      :manlincon_remand
     ],
-    field_grant: %i[
-      benefits_granted_by_aoj
-      advance_allowed_in_field
+    field_grant: [
+      :benefits_granted_by_aoj,
+      :advance_allowed_in_field
     ],
-    withdrawn: %i[
-      withdrawn
-      motion_to_vacate_withdrawn
-      withdrawn_from_remand
-      recon_motion_withdrawn
-      advance_withdrawn_by_appellant_rep
-      advance_failure_to_respond
-      remand_failure_to_respond
-      ramp_opt_in
+    withdrawn: [
+      :withdrawn,
+      :motion_to_vacate_withdrawn,
+      :withdrawn_from_remand,
+      :recon_motion_withdrawn,
+      :advance_withdrawn_by_appellant_rep,
+      :advance_failure_to_respond,
+      :remand_failure_to_respond,
+      :ramp_opt_in
     ]
   }.freeze
 

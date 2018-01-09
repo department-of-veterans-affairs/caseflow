@@ -96,7 +96,7 @@ class VACOLS::Note < VACOLS::Record
       record = find_active_by_user_and_type(note)
       return create!(note) unless record
 
-      VacolsHelper.validate_presence(note, %i[days_to_complete days_til_due])
+      VacolsHelper.validate_presence(note, [:days_to_complete, :days_til_due])
 
       record.update!(tskmdtm: VacolsHelper.local_time_with_utc_timezone,
                      tskdtc: note[:days_to_complete],
@@ -113,7 +113,7 @@ class VACOLS::Note < VACOLS::Record
     end
 
     def validate!(note)
-      required_fields = %i[days_to_complete days_til_due code user_id assigned_to case_id text]
+      required_fields = [:days_to_complete, :days_til_due, :code, :user_id, :assigned_to, :case_id, :text]
       VacolsHelper.validate_presence(note, required_fields)
       raise(InvalidNotelengthError) if note[:text].length > 280
       raise(InvalidNoteCodeError) unless CODE_ACTKEY_MAPPING[note[:code]]

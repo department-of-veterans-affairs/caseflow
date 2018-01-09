@@ -95,6 +95,9 @@ Style/NumericPredicate:
 Style/MultipleComparison:
   Enabled: false
 
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
 Naming/FileName:
   Enabled: false
 

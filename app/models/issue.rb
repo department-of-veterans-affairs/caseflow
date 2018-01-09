@@ -35,15 +35,15 @@ class Issue
   }.freeze
 
   AOJ_FOR_PROGRAMS = {
-    vba: %i[
-      vba_burial
-      compensation
-      education
-      insurance
-      loan_guaranty
-      pension
-      vre
-      fiduciary
+    vba: [
+      :vba_burial,
+      :compensation,
+      :education,
+      :insurance,
+      :loan_guaranty,
+      :pension,
+      :vre,
+      :fiduciary
     ],
     vha: [
       :medical

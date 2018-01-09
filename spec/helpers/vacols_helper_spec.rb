@@ -21,7 +21,7 @@ describe VacolsHelper do
       let(:hash) do
         { foo: "bar", grip: "foo" }
       end
-      let(:required_keys) { %i[foo grip dre] }
+      let(:required_keys) { [:foo, :grip, :dre] }
 
       it "raises an error" do
         expect { subject }.to raise_error(VacolsHelper::MissingRequiredFieldError)
@@ -32,7 +32,7 @@ describe VacolsHelper do
       let(:hash) do
         { foo: "bar", grip: "foo" }
       end
-      let(:required_keys) { %i[foo grip] }
+      let(:required_keys) { [:foo, :grip] }
 
       it "raises an error" do
         expect { subject }.to_not raise_error(VacolsHelper::MissingRequiredFieldError)

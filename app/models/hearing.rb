@@ -110,23 +110,27 @@ class Hearing < ActiveRecord::Base
 
   def to_hash(current_user_id)
     serializable_hash(
-      methods: %i[
-        date request_type
-        disposition aod
-        transcript_requested
-        hold_open notes
-        add_on master_record
-        representative
-        representative_name
-        regional_office_name
-        regional_office_timezone
-        venue
-        veteran_name
-        veteran_mi_formatted
-        appellant_last_first_mi
-        appellant_mi_formatted
-        vbms_id
-        issue_count
+      methods: [
+        :date,
+        :request_type,
+        :disposition,
+        :aod,
+        :transcript_requested,
+        :hold_open,
+        :notes,
+        :add_on,
+        :master_record,
+        :representative,
+        :representative_name,
+        :regional_office_name,
+        :regional_office_timezone,
+        :venue,
+        :veteran_name,
+        :veteran_mi_formatted,
+        :appellant_last_first_mi,
+        :appellant_mi_formatted,
+        :vbms_id,
+        :issue_count
       ],
       except: :military_service
     ).merge(
@@ -138,18 +142,18 @@ class Hearing < ActiveRecord::Base
 
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
-      methods: %i[appeal_id
-                  appeal_vacols_id
-                  appeals_ready_for_hearing
-                  cached_number_of_documents
-                  veteran_age
-                  veteran_sex
-                  appellant_city
-                  appellant_state
-                  military_service
-                  appellant_mi_formatted
-                  veteran_mi_formatted
-                  sanitized_vbms_id]
+      methods: [:appeal_id,
+                :appeal_vacols_id,
+                :appeals_ready_for_hearing,
+                :cached_number_of_documents,
+                :veteran_age,
+                :veteran_sex,
+                :appellant_city,
+                :appellant_state,
+                :military_service,
+                :appellant_mi_formatted,
+                :veteran_mi_formatted,
+                :sanitized_vbms_id]
     ).merge(to_hash(current_user_id))
   end
 

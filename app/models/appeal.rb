@@ -473,8 +473,8 @@ class Appeal < ActiveRecord::Base
   # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
-      methods: %i[veteran_full_name docket_number type cavc aod],
-      includes: %i[vbms_id vacols_id]
+      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
+      includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
       hash["issues"] = issues ? issues.map(&:attributes) : nil

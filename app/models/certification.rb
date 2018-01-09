@@ -44,12 +44,12 @@ class Certification < ActiveRecord::Base
 
   def to_hash
     serializable_hash(
-      methods: %i[certification_status bgs_rep_address_found?],
+      methods: [:certification_status, :bgs_rep_address_found?],
       include: [
         :form8,
         appeal: {
-          include: %i[nod soc form9 ssocs],
-          methods: %i[documents_match? veteran_name vbms_id]
+          include: [:nod, :soc, :form9, :ssocs],
+          methods: [:documents_match?, :veteran_name, :vbms_id]
         }
       ]
     )

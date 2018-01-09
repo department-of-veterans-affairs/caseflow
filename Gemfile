@@ -9,7 +9,7 @@ gem "moment_timezone-rails"
 gem "rails", "4.2.7.1"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
-gem "sqlite3", platforms: %i[ruby mswin mingw mswin x64_mingw]
+gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Use Uglifier as compressor for JavaScript assets
@@ -149,7 +149,7 @@ group :development do
 
   # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.
   # POSIX systems should have this already, so we're not going to bring it in on other platforms
-  gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
+  gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 end
 
 gem "shoryuken", "3.1.11"

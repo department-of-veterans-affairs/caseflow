@@ -202,7 +202,7 @@ class Generators::Appeal
 
     # Make sure Datetime fields are all casted correctly
     def cast_datetime_fields(attrs)
-      %i[nod_date soc_date form9_date].each do |date_field|
+      [:nod_date, :soc_date, :form9_date].each do |date_field|
         attrs[date_field] = attrs[date_field].to_datetime if attrs[date_field]
       end
     end

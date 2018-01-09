@@ -670,7 +670,7 @@ RSpec.feature "Reader" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
           add_comment_without_clicking_save(random_whitespace_no_tab)
 
-          find("body").send_keys %i[alt enter]
+          find("body").send_keys [:alt, :enter]
           expect(find("#button-save")["disabled"]).to eq("true")
           expect(documents[0].annotations.empty?).to eq(true)
         end
@@ -804,7 +804,7 @@ RSpec.feature "Reader" do
 
           expect(after_left_position).to eq(orig_position)
 
-          find("body").send_keys %i[alt enter]
+          find("body").send_keys [:alt, :enter]
           expect(page).to_not have_css(".cf-pdf-placing-comment")
         end
       end
