@@ -126,6 +126,18 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::CreateContentions.new(
+      veteran_file_number: veteran_file_number,
+      claim_id: claim_id,
+      contentions: contention_descriptions
+    )
+
+    send_and_log_request(claim_id, request)
+  end
+
   def self.init_vbms_client
     VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
