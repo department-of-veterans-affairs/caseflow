@@ -1,13 +1,19 @@
 class Metrics::V1::HistogramController < ApplicationController
   def create
-    DataDogService.histogram(
-      metric_group: params[:group],
-      metric_name: params[:name],
-      metric_value: params[:value],
-      attrs: params[:attrs],
-      app_name: params[:app_name]
-    )
+    histograms.each do |_, metric|
+      DataDogService.histogram(
+        metric_group: metric[:group],
+        metric_name: metric[:name],
+        metric_value: metric[:value],
+        attrs: metric[:attrs],
+        app_name: metric[:app_name]
+      )
+    end
 
     head :ok
+  end
+
+  def histograms
+    params.require(:histograms)
   end
 end

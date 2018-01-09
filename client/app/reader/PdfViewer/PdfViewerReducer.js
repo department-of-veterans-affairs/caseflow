@@ -26,7 +26,7 @@ export const initialState = {
   pdfSideBarError: initialPdfSidebarErrorState,
   didLoadAppealFail: false,
   scrollToSidebarComment: null,
-  windowingOverscan: 10
+  windowingOverscan: Math.floor(Math.random() * 5) + 5
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>
