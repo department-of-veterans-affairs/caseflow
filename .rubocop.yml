@@ -11,6 +11,7 @@ AllCops:
     - 'script/**/*'
     - 'vendor/**/*'
     - './.simplecov'
+    - 'client/node_modules/**/*'
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
