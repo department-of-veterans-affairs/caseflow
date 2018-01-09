@@ -3,7 +3,7 @@ import EnzymeAdapterReact16 from 'enzyme-adapter-react-16';
 
 enzyme.configure({ adapter: new EnzymeAdapterReact16() });
 
-import 'appeals-frontend-toolkit/test/bootstrap';
+import '@department-of-veterans-affairs/appeals-frontend-toolkit/test/bootstrap';
 
 // require all modules ending in "-test" from the
 // current directory and all subdirectories

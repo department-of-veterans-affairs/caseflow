@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from 'appeals-frontend-toolkit/components/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import DocketsContainer from './containers/DocketsContainer';
