@@ -77,7 +77,7 @@ class RampRefilingIntake < Intake
 
     # There should only be one RAMP election sent to each veteran
     # if there was more than one, raise an error so we know about it
-    raise TooManyCompletedRampElections if ramp_elections.length > 1
+    fail TooManyCompletedRampElections if ramp_elections.length > 1
 
     ramp_elections.first
   end

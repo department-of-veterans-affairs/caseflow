@@ -47,9 +47,9 @@ class AppealRepository
                           service: :vacols,
                           name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
-                          .includes(:folder, :correspondent, folder: :outcoder)
-                          .references(:folder, :correspondent, folder: :outcoder)
-                          .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+        .includes(:folder, :correspondent, folder: :outcoder)
+        .references(:folder, :correspondent, folder: :outcoder)
+        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
@@ -78,9 +78,9 @@ class AppealRepository
       # An appeal is ready for hearing if form 9 has been submitted,
       # with no decision date OR with dispositions: "3" Remanded and "L" Manlincon remands
       VACOLS::Case.where(bfcorlid: vbms_id)
-                  .where.not(bfd19: nil)
-                  .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
-                  .includes(:folder, :correspondent)
+        .where.not(bfd19: nil)
+        .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
+        .includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -103,7 +103,7 @@ class AppealRepository
     end
 
     return false if case_records.empty?
-    raise Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
+    fail Caseflow::Error::MultipleAppealsByVBMSID if case_records.length > 1
 
     appeal.vacols_id = case_records.first.bfkey
     set_vacols_values(appeal: appeal, case_record: case_records.first)
@@ -281,7 +281,7 @@ class AppealRepository
 
     # App logic should prevent this, but because this is a destructive operation
     # add an additional failsafe
-    raise AppealNotValidToClose if case_record.bfdc
+    fail AppealNotValidToClose if case_record.bfdc
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(
@@ -329,7 +329,7 @@ class AppealRepository
 
     # App logic should prevent this, but because this is a destructive operation
     # add an additional failsafe
-    raise AppealNotValidToClose unless case_record.bfmpro == "REM"
+    fail AppealNotValidToClose unless case_record.bfmpro == "REM"
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(bfmpro: "HIS")

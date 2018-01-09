@@ -220,7 +220,7 @@ class RegionalOffice
     def find!(key)
       result = RegionalOffice.new(key)
 
-      raise NotFoundError unless result.valid?
+      fail NotFoundError unless result.valid?
       result
     end
 

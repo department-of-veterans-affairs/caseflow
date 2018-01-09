@@ -70,7 +70,7 @@ class EstablishClaim < Task
   def perform!(end_product_params)
     end_product = EndProduct.from_establish_claim_params(end_product_params)
 
-    raise InvalidEndProductError unless end_product.valid?
+    fail InvalidEndProductError unless end_product.valid?
 
     transaction do
       appeal.update!(dispatched_to_station: end_product.station_of_jurisdiction)

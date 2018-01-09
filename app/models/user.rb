@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
   end
 
   def authenticated?
-    regional_office.present?
+    !regional_office.blank?
   end
 
   def attributes

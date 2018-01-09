@@ -119,15 +119,15 @@ class Certification < ActiveRecord::Base
   # (i.e. bgs_representative_type not nil)
   def self.v2
     where(v2: true).or(where.not(bgs_representative_type: nil))
-                   .or(where.not(bgs_representative_name: nil))
-                   .or(where.not(vacols_representative_type: nil))
-                   .or(where.not(vacols_representative_name: nil))
+      .or(where.not(bgs_representative_name: nil))
+      .or(where.not(vacols_representative_type: nil))
+      .or(where.not(vacols_representative_name: nil))
   end
 
   def self.was_missing_doc
     was_missing_nod.or(was_missing_soc)
-                   .or(was_missing_ssoc)
-                   .or(was_missing_form9)
+      .or(was_missing_ssoc)
+      .or(was_missing_form9)
   end
 
   def self.was_missing_nod
@@ -189,7 +189,7 @@ class Certification < ActiveRecord::Base
   end
 
   def calculcate_ssocs_matching_at
-    calculate_ssocs_required && appeal.ssocs.all?(&:matching?) ? (ssocs_matching_at || now) : nil
+    (calculate_ssocs_required && appeal.ssocs.all?(&:matching?)) ? (ssocs_matching_at || now) : nil
   end
 
   def calculate_ssocs_required
@@ -208,8 +208,8 @@ class Certification < ActiveRecord::Base
     # Return existing certification only if it was not cancelled before
     def find_by_vacols_id(vacols_id)
       Certification.join_cancellations
-                   .where(certification_cancellations: { certification_id: nil })
-                   .find_by(vacols_id: vacols_id)
+        .where(certification_cancellations: { certification_id: nil })
+        .find_by(vacols_id: vacols_id)
     end
 
     def join_cancellations

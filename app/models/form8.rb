@@ -107,7 +107,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def increased_rating_for_initial
-    increased_rating_for_rolled.initial if increased_rating_for_rolled.present?
+    increased_rating_for_rolled.initial unless increased_rating_for_rolled.blank?
   end
 
   def increased_rating_for_rolled
@@ -116,7 +116,7 @@ class Form8 < ActiveRecord::Base
   private :increased_rating_for_rolled
 
   def other_for_initial
-    other_for_rolled.initial if other_for_rolled.present?
+    other_for_rolled.initial unless other_for_rolled.blank?
   end
 
   def other_for_rolled
@@ -132,7 +132,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def service_connection_for_initial
-    service_connection_for_rolled.initial if service_connection_for_rolled.present?
+    service_connection_for_rolled.initial unless service_connection_for_rolled.blank?
   end
 
   def remarks_rolled
@@ -145,13 +145,13 @@ class Form8 < ActiveRecord::Base
   end
 
   def remarks_initial
-    remarks_rolled.initial if remarks_rolled.present?
+    remarks_rolled.initial unless remarks_rolled.blank?
   end
 
   def remarks_continued
     rolled_over = rolled_over_fields
 
-    rolled_over.map(&:continued).join if rolled_over.present?
+    rolled_over.map(&:continued).join unless rolled_over.blank?
   end
 
   def rolled_over_fields
@@ -187,7 +187,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def representative
-    type = representative_type == "Other" ? representative_type_specify_other : representative_type
+    type = (representative_type == "Other") ? representative_type_specify_other : representative_type
     "#{representative_name} - #{type}"
   end
 

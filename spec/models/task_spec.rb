@@ -472,7 +472,7 @@ describe Task do
           before do
             allow_any_instance_of(FakeTask).to receive(:before_should_assign) do
               Task.find(next_assignable_task.id)
-                  .update!(comment: "force lock_version to increment")
+                .update!(comment: "force lock_version to increment")
             end
           end
 

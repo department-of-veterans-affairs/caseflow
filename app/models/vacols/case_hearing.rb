@@ -49,8 +49,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       id = connection.quote(css_id)
 
       select_hearings.where("staff.sdomainid = #{id}")
-                     .where("hearing_date > ?", 60.days.ago.beginning_of_day)
-                     .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
+        .where("hearing_date > ?", 60.days.ago.beginning_of_day)
+        .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -147,7 +147,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   def create_or_update_aod_diary
     # If the representative is the Paralyzed Veterans of America (BRIEFF.BFSO = 'G'),
     # then a second diary entry should be created
-    codes = brieff.bfso == "G" ? [:B, :B1] : [:B]
+    codes = (brieff.bfso == "G") ? [:B, :B1] : [:B]
     # If aod is nil or :none, delete the diary
     return delete_diary(codes) if !aod || aod == "N"
 

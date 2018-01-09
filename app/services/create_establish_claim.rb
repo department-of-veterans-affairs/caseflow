@@ -61,7 +61,7 @@ class CreateEstablishClaim
   def create_appeal
     appeal = Appeal.find_or_initialize_by(vbms_id: vbms_id)
 
-    raise ActiveRecord::RecordNotFound unless load_vacols_data_for(appeal)
+    fail ActiveRecord::RecordNotFound unless load_vacols_data_for(appeal)
     appeal.save!
 
     appeal

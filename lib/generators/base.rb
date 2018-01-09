@@ -26,7 +26,7 @@ module Generators::Base
   end
 
   def build(*)
-    raise "#{self.class.name} must implement .build(attrs)"
+    fail "#{self.class.name} must implement .build(attrs)"
   end
 
   def create(attrs = {})

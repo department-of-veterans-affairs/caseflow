@@ -27,7 +27,7 @@ describe JobPrometheusMetricMiddleware do
     it "increments error counter on error" do
       expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(nil)
       expect do
-        @middleware.call(nil, :low_priority, @msg, @body) { raise("test") }
+        @middleware.call(nil, :low_priority, @msg, @body) { fail("test") }
       end.to raise_error
 
       expect(PrometheusService.background_jobs_error_counter.values[@labels]).to eq(1)

@@ -8,7 +8,7 @@ warn("PR is classed as Work in Progress") if github.pr_title.include? "WIP"
 warn("This is a Big PR. Try to break this down if possible.") if git.lines_of_code > 500
 
 # Don't let testing shortcuts get into master by accident
-raise("focus: true is left in test") if `git diff #{github.base_commit} spec/ | grep ':focus => true'`.length > 1
+fail("focus: true is left in test") if `git diff #{github.base_commit} spec/ | grep ':focus => true'`.length > 1
 
 # We must take care of our VACOLS models.  Remind developers to test this thoroughly
 if !git.modified_files.grep(/app\/models\/vacols/).empty?

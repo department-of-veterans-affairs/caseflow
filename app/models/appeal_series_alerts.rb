@@ -51,9 +51,9 @@ class AppealSeriesAlerts
       return unless recent_missed_hearing
 
       due_date = latest_appeal.hearings
-                              .select(&:no_show?)
-                              .map(&:no_show_excuse_letter_due_date)
-                              .max
+        .select(&:no_show?)
+        .map(&:no_show_excuse_letter_due_date)
+        .max
 
       {
         type: :hearing_no_show,
@@ -73,9 +73,9 @@ class AppealSeriesAlerts
       return unless hearing_with_pending_hold
 
       due_date = latest_appeal.hearings
-                              .select(&:held_open?)
-                              .map(&:hold_release_date)
-                              .max
+        .select(&:held_open?)
+        .map(&:hold_release_date)
+        .max
 
       {
         type: :held_for_evidence,

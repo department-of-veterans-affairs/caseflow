@@ -55,7 +55,7 @@ class RampElection < RampReview
       end_product.claim_id == end_product_reference_id
     end
 
-    raise EstablishedEndProductNotFound unless result
+    fail EstablishedEndProductNotFound unless result
     result
   end
 

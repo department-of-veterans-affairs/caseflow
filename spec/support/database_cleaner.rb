@@ -5,7 +5,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     if config.use_transactional_fixtures?
-      raise(<<-MSG)
+      fail(<<-MSG)
         Delete line `config.use_transactional_fixtures = true` from rails_helper.rb
         (or set it to false) to prevent uncommitted transactions being used in
         JavaScript-dependent specs.

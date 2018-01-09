@@ -25,7 +25,7 @@ class AppealSeries < ActiveRecord::Base
   def program
     programs = appeals.flat_map { |appeal| appeal.issues.map(&:program) }.uniq
 
-    programs.length > 1 ? :multiple : programs.first
+    (programs.length > 1) ? :multiple : programs.first
   end
 
   def aoj
@@ -63,7 +63,7 @@ class AppealSeries < ActiveRecord::Base
 
   def active_appeals
     appeals.select(&:active?)
-           .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
+      .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
   end
 
   def appeals_by_decision_date

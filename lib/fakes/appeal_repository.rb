@@ -86,7 +86,7 @@ class Fakes::AppealRepository
   end
 
   def self.raise_vbms_error_if_necessary(record)
-    raise VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
+    fail VBMS::ClientError if !record.nil? && RAISE_VBMS_ERROR_ID == record[:vbms_id]
   end
 
   def self.load_vacols_data(appeal)
@@ -120,7 +120,7 @@ class Fakes::AppealRepository
     Rails.logger.info("Decision Type:\n#{decision_type}")
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
-    raise Caseflow::Error::MultipleAppealsByVBMSID if RAISE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
+    fail Caseflow::Error::MultipleAppealsByVBMSID if RAISE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
@@ -144,7 +144,7 @@ class Fakes::AppealRepository
       records.select { |_, r| r[:vbms_id] == vbms_id }
     end
 
-    raise ActiveRecord::RecordNotFound if return_records.empty?
+    fail ActiveRecord::RecordNotFound if return_records.empty?
 
     return_records.map do |vacols_id, r|
       Appeal.find_or_create_by(vacols_id: vacols_id).tap do |appeal|
@@ -480,7 +480,7 @@ class Fakes::AppealRepository
         veteran_file_number: file_number,
         bgs_attrs: {
           benefit_claim_id: claim_id,
-          status_type_code: (i == 0 ? "PEND" : "CLR")
+          status_type_code: ((i == 0) ? "PEND" : "CLR")
         }
       )
 

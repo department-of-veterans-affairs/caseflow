@@ -23,7 +23,7 @@ class ExternalApi::EfolderService
 
     response = get_efolder_response("/api/v1/files?download=true", user, headers)
 
-    raise Caseflow::Error::DocumentRetrievalError if response.error?
+    fail Caseflow::Error::DocumentRetrievalError if response.error?
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
@@ -45,11 +45,11 @@ class ExternalApi::EfolderService
     TRIES.times do
       response = get_efolder_response("/api/v2/manifests", user, headers)
 
-      raise Caseflow::Error::DocumentRetrievalError if response.error?
+      fail Caseflow::Error::DocumentRetrievalError if response.error?
 
       response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
-      raise Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
+      fail Caseflow::Error::DocumentRetrievalError if response_attrs["sources"].blank?
 
       break if response_attrs["sources"].select { |s| s["status"] == "pending" }.blank?
       sleep 1

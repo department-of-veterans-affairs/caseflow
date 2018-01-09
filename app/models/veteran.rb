@@ -76,7 +76,7 @@ class Veteran
     dob = Time.strptime(date_of_birth, "%m/%d/%Y")
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
-    now.year - dob.year - (now.month > dob.month || (now.month == dob.month && now.day >= dob.day) ? 0 : 1)
+    now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
   def found?
@@ -146,7 +146,7 @@ class Veteran
   end
 
   def military_address?
-    military_postal_type_code.present?
+    !military_postal_type_code.blank?
   end
 
   def base_vbms_hash

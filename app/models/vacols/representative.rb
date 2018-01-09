@@ -5,7 +5,7 @@ class VACOLS::Representative < VACOLS::Record
   class InvalidRepTypeError < StandardError; end
 
   def self.update_vacols_rep_type!(bfkey:, rep_type:)
-    raise(InvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(rep_type)
+    fail(InvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(rep_type)
 
     conn = connection
 

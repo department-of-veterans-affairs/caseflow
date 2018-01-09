@@ -60,43 +60,43 @@ module HearingMapper
 
     def representative_name_to_vacols_format(value)
       return if value.nil?
-      raise(InvalidRepresentativeNameError) if !value.is_a?(String)
+      fail(InvalidRepresentativeNameError) if !value.is_a?(String)
       value[0, 25]
     end
 
     def notes_to_vacols_format(value)
       return if value.nil?
-      raise(InvalidNotesError) if !value.is_a?(String)
+      fail(InvalidNotesError) if !value.is_a?(String)
       value[0, 100]
     end
 
     def disposition_to_vacols_format(value, keys)
       vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value.try(:to_sym))
       # disposition cannot be nil
-      raise(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
+      fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
       vacols_code
     end
 
     def hold_open_to_vacols_format(value)
-      raise(InvalidHoldOpenError) if !value.nil? && (!value.is_a?(Integer) || value < 0 || value > 90)
+      fail(InvalidHoldOpenError) if !value.nil? && (!value.is_a?(Integer) || value < 0 || value > 90)
       value
     end
 
     def aod_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value.try(:to_sym))
-      raise(InvalidAodError) if !value.nil? && vacols_code.blank?
+      fail(InvalidAodError) if !value.nil? && vacols_code.blank?
       vacols_code
     end
 
     def add_on_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::BOOLEAN_MAP.key(value)
-      raise(InvalidAddOnError) if value && vacols_code.blank?
+      fail(InvalidAddOnError) if value && vacols_code.blank?
       vacols_code
     end
 
     def transcript_requested_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::BOOLEAN_MAP.key(value)
-      raise(InvalidTranscriptRequestedError) if value && vacols_code.blank?
+      fail(InvalidTranscriptRequestedError) if value && vacols_code.blank?
       vacols_code
     end
   end

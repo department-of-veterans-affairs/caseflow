@@ -171,7 +171,7 @@ class Appeal < ActiveRecord::Base
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
   def disposition_remand_priority
-    disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
+    (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
   def power_of_attorney
@@ -250,7 +250,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def in_location?(location)
-    raise UnknownLocationError unless LOCATION_CODES[location]
+    fail UnknownLocationError unless LOCATION_CODES[location]
 
     location_code == LOCATION_CODES[location]
   end
@@ -335,7 +335,7 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents!
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
-                                 .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
       accumulator[document.vbms_document_id] = document
     end
 
@@ -559,7 +559,7 @@ class Appeal < ActiveRecord::Base
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
-      raise ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
+      fail ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
 
       appeal.save
       appeal
@@ -570,16 +570,16 @@ class Appeal < ActiveRecord::Base
     end
 
     def for_api(appellant_ssn:)
-      raise Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
+      fail Caseflow::Error::InvalidSSN if !appellant_ssn || appellant_ssn.length != 9 || appellant_ssn.scan(/\D/).any?
 
       # Some appeals that are early on in the process
       # have no events recorded. We are not showing these.
       # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
-                .select(&:api_supported?)
-                .reject { |a| a.latest_event_date.nil? }
-                .sort_by(&:latest_event_date)
-                .reverse
+        .select(&:api_supported?)
+        .reject { |a| a.latest_event_date.nil? }
+        .sort_by(&:latest_event_date)
+        .reverse
     end
 
     def bgs
@@ -604,7 +604,7 @@ class Appeal < ActiveRecord::Base
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
     def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
-      raise "Only pass either appeal or appeals" if appeal && appeals
+      fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
         (appeals || [appeal]).each do |close_appeal|
@@ -625,8 +625,8 @@ class Appeal < ActiveRecord::Base
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       certification = Certification.find_by(vacols_id: appeal.vacols_id)
 
-      raise "No Form 8 found for appeal being certified" unless form8
-      raise "No Certification found for appeal being certified" unless certification
+      fail "No Form 8 found for appeal being certified" unless form8
+      fail "No Certification found for appeal being certified" unless certification
 
       repository.certify(appeal: appeal, certification: certification)
       vbms.upload_document_to_vbms(appeal, form8)
@@ -646,7 +646,7 @@ class Appeal < ActiveRecord::Base
       return "#{file_number}S" if file_number.length == 9
       return "#{file_number.gsub(/^0*/, '')}C" if file_number.length.between?(3, 9)
 
-      raise Caseflow::Error::InvalidFileNumber
+      fail Caseflow::Error::InvalidFileNumber
     end
 
     # Because SSN is not accurate in VACOLS, we pull the file
@@ -655,7 +655,7 @@ class Appeal < ActiveRecord::Base
     def vbms_id_for_ssn(ssn)
       file_number = bgs.fetch_file_number_by_ssn(ssn)
 
-      raise ActiveRecord::RecordNotFound unless file_number
+      fail ActiveRecord::RecordNotFound unless file_number
 
       convert_file_number_to_vacols(file_number)
     end
@@ -663,10 +663,10 @@ class Appeal < ActiveRecord::Base
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
-      raise "Only active appeals can be closed" unless appeal.active?
+      fail "Only active appeals can be closed" unless appeal.active?
 
       disposition_code = VACOLS::Case::DISPOSITIONS.key(disposition)
-      raise "Disposition #{disposition}, does not exist" unless disposition_code
+      fail "Disposition #{disposition}, does not exist" unless disposition_code
 
       if appeal.remand?
         repository.close_remand!(

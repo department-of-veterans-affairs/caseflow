@@ -82,7 +82,7 @@ class Task < ActiveRecord::Base
     # Generic relation method for joining the result of the task
     # ie: EstablishClaim.joins(:claim_establishment)
     def joins_task_result
-      raise Caseflow::Error::MustImplementInSubclass
+      fail Caseflow::Error::MustImplementInSubclass
     end
 
     def todays_quota
@@ -224,7 +224,7 @@ class Task < ActiveRecord::Base
   end
 
   def assign_user(user)
-    raise(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
+    fail(UserAlreadyHasTaskError) if user.tasks.to_complete.where(type: type).count > 0
 
     assign_attributes(
       user: user,

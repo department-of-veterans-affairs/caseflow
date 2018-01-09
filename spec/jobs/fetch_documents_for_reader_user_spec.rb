@@ -145,10 +145,8 @@ describe FetchDocumentsForReaderUserJob do
             .with(reader_user.user.css_id)
             .and_return([appeal_with_doc1, appeal_with_doc2]).once
 
-          # rubocop:disable Metrics/LineLength
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc1, anything)
-                                                                 .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
-          # rubocop:enable Metrics/LineLength
+            .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
 
           expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError)
@@ -174,10 +172,8 @@ describe FetchDocumentsForReaderUserJob do
           # the first appeal should go through no problem
           expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
 
-          # rubocop:disable Metrics/LineLength
           expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, anything)
-                                                                 .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
-          # rubocop:enable Metrics/LineLength
+            .and_raise(Caseflow::Error::DocumentRetrievalError.new("<faultstring>Womp Womp.</faultstring>")).once
 
           expect { FetchDocumentsForReaderUserJob.perform_now(reader_user_w_many_roles) }
             .to raise_error(Caseflow::Error::DocumentRetrievalError)
@@ -204,10 +200,8 @@ describe FetchDocumentsForReaderUserJob do
         # the first appeal should go through no problem
         expect_calls_for_appeal(appeal_with_doc1, expected_doc1, doc1_expected_content)
 
-        # rubocop:disable Metrics/LineLength
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal_with_doc2, anything)
-                                                               .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).once
-        # rubocop:enable Metrics/LineLength
+          .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose.")).once
 
         expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
           .to raise_error(HTTPClient::KeepAliveDisconnected)

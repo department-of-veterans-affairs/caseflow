@@ -10,7 +10,7 @@ describe JobRavenReporterMiddleware do
     let(:call) do
       @middleware.call(nil, nil, {}, {}) do
         @yield_called = true
-        raise "tsk tsk tsk, you messed up!"
+        fail "tsk tsk tsk, you messed up!"
       end
     end
 

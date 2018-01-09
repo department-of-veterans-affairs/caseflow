@@ -18,7 +18,7 @@ class Fakes::PowerOfAttorneyRepository < PowerOfAttorneyRepository
   end
 
   def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
-    raise(FakeInvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(vacols_rep_type)
+    fail(FakeInvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(vacols_rep_type)
     return nil if case_record
   end
 

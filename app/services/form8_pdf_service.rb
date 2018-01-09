@@ -62,7 +62,9 @@ class Form8PdfService
         value = form8[:certifying_official_title_specify_other]
       end
 
-      value = value.to_formatted_s(:short_date) if value.is_a?(Date) || value.is_a?(Time)
+      if value.is_a?(Date) || value.is_a?(Time)
+        value = value.to_formatted_s(:short_date)
+      end
 
       if location.is_a?(Hash)
         location = location[value]

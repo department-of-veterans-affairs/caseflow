@@ -36,7 +36,7 @@ namespace :spec do
     task setup: "setup:all"
 
     spec_names.map(&:to_sym).each do |spec_name|
-      desc "Run all #{spec_name} #{spec_name == :unit ? '' : 'feature '}tests. \
+      desc "Run all #{spec_name} #{(spec_name == :unit) ? '' : 'feature '}tests. \
             Configured to run in parallel with other parallel spec tasks."
 
       task spec_name do

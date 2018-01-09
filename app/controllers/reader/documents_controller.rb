@@ -58,7 +58,7 @@ class Reader::DocumentsController < Reader::ApplicationController
 
     # Create a hash mapping each document_id that has been read to true
     read_documents_hash = current_user.document_views.where(document_id: document_ids)
-                                      .each_with_object({}) do |document_view, object|
+      .each_with_object({}) do |document_view, object|
       object[document_view.document_id] = true
     end
 

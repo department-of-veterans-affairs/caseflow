@@ -13,7 +13,7 @@ class TeamQuota < ActiveRecord::Base
   end
 
   def task_count_for(user_quota)
-    raise MismatchedTeamQuota if user_quota.team_quota_id != id
+    fail MismatchedTeamQuota if user_quota.team_quota_id != id
 
     calculate_task_count_for(assigned_quotas.unlocked.index(user_quota))
   end
@@ -33,7 +33,7 @@ class TeamQuota < ActiveRecord::Base
   private
 
   def calculate_task_count_for(quota_index)
-    task_count_per_user + (remainder_task_count > quota_index ? 1 : 0)
+    task_count_per_user + ((remainder_task_count > quota_index) ? 1 : 0)
   end
 
   # To save excessive DB saves & reads, auto generate all unassigned quotas
@@ -73,7 +73,7 @@ class TeamQuota < ActiveRecord::Base
   end
 
   def tasks_to_complete
-    @tasks_to_complete ||= date == Time.zone.today ? task_klass.to_complete : []
+    @tasks_to_complete ||= (date == Time.zone.today) ? task_klass.to_complete : []
   end
 
   def adjust_user_count

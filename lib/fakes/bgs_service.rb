@@ -230,7 +230,7 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
-    raise Savon::Error if participant_id == ID_TO_RAISE_ERROR
+    fail Savon::Error if participant_id == ID_TO_RAISE_ERROR
 
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address

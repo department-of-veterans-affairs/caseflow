@@ -9,7 +9,7 @@ class Issue
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
   def labels
-    raise Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
+    fail Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
     @labels
   end
 

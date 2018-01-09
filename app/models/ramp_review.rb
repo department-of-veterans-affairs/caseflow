@@ -37,7 +37,7 @@ class RampReview < ActiveRecord::Base
   end
 
   def create_end_product!
-    raise InvalidEndProductError unless end_product.valid?
+    fail InvalidEndProductError unless end_product.valid?
 
     establish_claim_in_vbms(end_product).tap do |result|
       update!(end_product_reference_id: result.claim_id)

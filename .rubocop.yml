@@ -62,6 +62,10 @@ Rails/HasManyOrHasOneDependent:
 Rails/InverseOf:
   Enabled: false
 
+Rails/Present:
+  NotBlank: false
+  UnlessBlank: false
+
 Metrics/MethodLength:
   Max: 20
 
@@ -98,6 +102,15 @@ Style/MultipleComparison:
 Style/SymbolArray:
   EnforcedStyle: brackets
 
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/TernaryParentheses:
+  EnforcedStyle: require_parentheses_when_complex
+
+Style/IfUnlessModifier:
+  Enabled: false
+
 Naming/FileName:
   Enabled: false
 
@@ -109,3 +122,6 @@ Naming/VariableNumber:
 
 Lint/UriEscapeUnescape:
   Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented

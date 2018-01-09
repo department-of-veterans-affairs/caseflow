@@ -61,11 +61,11 @@ class TasksController < ApplicationController
 
   def task_state
     state = params[:state].try(:to_sym)
-    task_states.include?(state) ? state : raise(InvalidTaskStateError)
+    task_states.include?(state) ? state : fail(InvalidTaskStateError)
   end
 
   def task_class
-    TASK_CLASSES[params[:type].try(:to_sym)] || raise(InvalidTaskClassError)
+    TASK_CLASSES[params[:type].try(:to_sym)] || fail(InvalidTaskClassError)
   end
 
   def task_states

@@ -212,14 +212,14 @@ class VACOLS::Case < VACOLS::Record
   # :nocov:
   def self.remands_ready_for_claims_establishment
     VACOLS::Case.joins(:folder, :correspondent)
-                .where(WHERE_PAPERLESS_REMAND_LOC97)
-                .order("BFDDEC ASC")
+      .where(WHERE_PAPERLESS_REMAND_LOC97)
+      .order("BFDDEC ASC")
   end
 
   def self.amc_full_grants(outcoded_after:)
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-                .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-                .order("BFDDEC ASC")
+      .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+      .order("BFDDEC ASC")
   end
 
   # The attributes that are copied over when the case is cloned because of a remand
@@ -235,7 +235,7 @@ class VACOLS::Case < VACOLS::Record
   def update_vacols_location!(location)
     return unless location
 
-    raise(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
+    fail(InvalidLocationError) unless VALID_UPDATE_LOCATIONS.include?(location)
 
     conn = self.class.connection
 

@@ -69,7 +69,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         Generators::EstablishClaim.create(
           user: Generators::User.create(full_name: "#{name} Smith"),
           aasm_state: :assigned,
-          appeal_id: (name == "June" ? appeal_full_grant.id : appeal_partial_grant.id)
+          appeal_id: ((name == "June") ? appeal_full_grant.id : appeal_partial_grant.id)
         ).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
