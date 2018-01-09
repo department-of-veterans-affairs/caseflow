@@ -191,6 +191,8 @@ class ApplicationController < ApplicationBaseController
                 "Caseflow Reader"
               elsif request.original_fullpath.include? "hearings"
                 "Caseflow Hearing Prep"
+              elsif request.original_fullpath.include? "queue"
+                "Caseflow Queue"
               else
                 # default to just plain Caseflow.
                 "Caseflow"
