@@ -49,7 +49,7 @@ class Fakes::AppealRepository
   ].freeze
 
   RAISE_VBMS_ERROR_ID = "raise_vbms_error_id".freeze
-  RASIE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
+  RAISE_MULTIPLE_APPEALS_ERROR_ID = "raise_multiple_appeals_error".freeze
 
   def self.new(vacols_id, default_attrs_method_name, overrides = {})
     # Dynamically call the specified class method name to obtain
@@ -120,7 +120,7 @@ class Fakes::AppealRepository
     Rails.logger.info("Decision Type:\n#{decision_type}")
 
     # simulate VACOLS returning 2 appeals for a given vbms_id
-    raise Caseflow::Error::MultipleAppealsByVBMSID if RASIE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
+    raise Caseflow::Error::MultipleAppealsByVBMSID if RAISE_MULTIPLE_APPEALS_ERROR_ID == appeal[:vbms_id]
 
     # timing a hash access is unnecessary but this adds coverage to MetricsService in dev mode
     record = MetricsService.record "load appeal #{appeal.vacols_id}" do
@@ -172,8 +172,7 @@ class Fakes::AppealRepository
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def self.seed!(app_name: nil)
     return if Rails.env.test?
 
@@ -186,6 +185,7 @@ class Fakes::AppealRepository
     seed_reader_data! if app_name.nil? || app_name == "reader"
     seed_intake_data! if app_name.nil? || app_name == "intake"
   end
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
   def self.certification_documents
     [
@@ -524,6 +524,7 @@ class Fakes::AppealRepository
       issues: (1..3).map { Generators::Issue.build }
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.aod(_vacols_id)
     true

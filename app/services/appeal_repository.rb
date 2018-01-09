@@ -170,6 +170,7 @@ class AppealRepository
 
     appeal
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # :nocov:
   def self.issues(vacols_id)
@@ -273,6 +274,7 @@ class AppealRepository
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
+  # rubocop:disable Metrics/MethodLength
   def self.close_undecided_appeal!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -311,6 +313,7 @@ class AppealRepository
       close_associated_hearings(case_record)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Close a remand (prematurely, such as for a withdrawal or a VAIMA opt in)
   # Remands need to be closed without overwriting the disposition data. A new
@@ -319,6 +322,7 @@ class AppealRepository
   #
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.close_remand!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -390,6 +394,7 @@ class AppealRepository
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now

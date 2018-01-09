@@ -195,3 +195,4 @@ class Hearing < ActiveRecord::Base
     end
   end
 end
+# rubocop:enable Metrics/MethodLength

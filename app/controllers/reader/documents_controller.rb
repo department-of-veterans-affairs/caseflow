@@ -1,4 +1,5 @@
 class Reader::DocumentsController < Reader::ApplicationController
+  # rubocop:disable Metrics/MethodLength
   def index
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
@@ -22,6 +23,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   rescue Caseflow::Error::DocumentRetrievalError => e
     respond_to_doc_retrieval_error(e)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def show
     render "reader/appeal/index"

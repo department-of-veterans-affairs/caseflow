@@ -27,6 +27,9 @@ Style/ClassAndModuleChildren:
 Metrics/LineLength:
   Max: 120
 
+Metrics/BlockLength:
+  Enabled: false
+
 Rails:
   Enabled: true
 
@@ -35,6 +38,27 @@ Rails/Output:
     - 'lib/**/*.rb'
 
 Rails/DynamicFindBy:
+  Enabled: false
+
+Rails/OutputSafety:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Enabled: false
+
+Rails/LexicallyScopedActionFilter:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/FilePath:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/InverseOf:
   Enabled: false
 
 Metrics/MethodLength:
@@ -56,4 +80,28 @@ Style/NegatedIf:
   Enabled: false
 
 Style/EachWithObject:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/MultipleComparison:
+  Enabled: false
+
+Naming/FileName:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Lint/UriEscapeUnescape:
   Enabled: false

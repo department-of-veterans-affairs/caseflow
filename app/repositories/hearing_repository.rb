@@ -141,5 +141,6 @@ class HearingRepository
         master_record: false
       }
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end

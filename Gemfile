@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b7102ffb3b81ea6770719f921a1d06ef88c9ba92"
@@ -152,3 +153,5 @@ group :development do
 end
 
 gem "shoryuken", "3.1.11"
+
+# rubocop:enable Metrics/LineLength

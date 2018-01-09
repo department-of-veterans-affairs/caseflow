@@ -274,6 +274,7 @@ class VACOLS::Case < VACOLS::Record
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
   # This method takes an array of vacols ids and fetches their aod status.

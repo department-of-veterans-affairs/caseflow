@@ -274,6 +274,7 @@ RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
       Timeout.timeout(wait) do
         # rubocop:disable AssignmentInCondition
         sleep(0.1) until value = block.call
+        # rubocop:enable AssignmentInCondition
         value
       end
     rescue TimeoutError
