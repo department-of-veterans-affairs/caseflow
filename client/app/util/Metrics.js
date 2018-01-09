@@ -11,7 +11,7 @@ const sendHistogram = () => {
     return;
   }
 
-  ApiUtil.post('/metrics/v1/histogram', { data: { histograms: ApiUtil.convertToSnakeCase(histograms) } });
+  ApiUtil.post('/metrics/v1/histogram', { data: { histograms } });
   histograms = [];
 };
 
@@ -26,5 +26,5 @@ const initialize = _.once(() => {
 export const collectHistogram = (data) => {
   initialize();
 
-  histograms.push(data);
+  histograms.push(ApiUtil.convertToSnakeCase(data));
 };
