@@ -71,6 +71,7 @@ export class HearingWorksheet extends React.PureComponent {
     if (this.props.worksheet.edited) {
       this.save(worksheet, worksheetIssues)();
       window.location.reload();
+      print();
     } else {
       print();
     }
