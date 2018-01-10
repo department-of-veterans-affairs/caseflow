@@ -95,6 +95,16 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
+  get 'help' => 'help#index'
+  get 'dispatch/help' => 'help#dispatch'
+  get 'certification/help' => 'help#certification'
+  get 'reader/help' => 'help#reader'
+  get 'hearings/help' => 'help#hearings'
+  get 'intake/help' => 'help#intake'
+
+
+  # alias root to help; make sure to keep this below the canonical route so url_for works
+  root 'help#index'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
 
@@ -116,15 +126,6 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
-  get 'help' => 'help#index'
-  get 'dispatch/help' => 'help#dispatch'
-  get 'certification/help' => 'help#certification'
-  get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
-
-
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
@@ -139,9 +140,10 @@ Rails.application.routes.draw do
     if ApplicationController.dependencies_faked?
       resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"
-      post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
     end
+
+    post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
   end
 
   # :nocov:
