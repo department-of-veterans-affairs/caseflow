@@ -106,6 +106,43 @@ export const addNewTag = (doc, tags) =>
     }
   };
 
+/** Document Description **/
+export const saveDocumentDescription = (docId, description) => (dispatch) => {
+  ApiUtil.patch(`/document/${docId}`, { data: { description } }).then(
+    () => dispatch({
+      type: Constants.SAVE_DOCUMENT_DESCRIPTION_SUCCESS,
+      payload: {
+        docId,
+        description
+      }
+    }),
+    (resp) => {
+      dispatch(showErrorMessage('description', resp.message));
+    }
+  );
+};
+
+export const changePendingDocDescription = (docId, description) => (dispatch) => {
+  dispatch(hideErrorMessage('description'));
+  dispatch({
+    type: Constants.CHANGE_PENDING_DOCUMENT_DESCRIPTION,
+    payload: {
+      docId,
+      description
+    }
+  });
+};
+
+export const resetPendingDocDescription = (docId) => (dispatch) => {
+  dispatch(hideErrorMessage('description'));
+  dispatch({
+    type: Constants.RESET_PENDING_DOCUMENT_DESCRIPTION,
+    payload: {
+      docId
+    }
+  });
+};
+
 /** Rotate Pages **/
 
 export const rotateDocument = (docId) => ({
