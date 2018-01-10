@@ -449,6 +449,42 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
+  def self.regular_non_aod_docket_count
+    MetricsService.record("VACOLS: regular_non_aod_docket_count",
+                          name: "regular_non_aod_docket_count",
+                          service: :vacols) do
+      VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
+        .where("BFMPRO <> 'HIS' and BFAC in ('1', '3') and BFD19 is not null and AOD = 0")
+        .count
+    end
+  end
+
+  def self.latest_docket_month
+    conn = VACOLS::Case.connection
+
+    query = <<-SQL
+      select BFD19 from (
+        select row_number() over (order by BFD19 asc) as ROWNUMBER,
+          BFD19
+        from BRIEFF
+        where BFCURLOC = '81'
+          and BFAC <> '9'
+      )
+      where ROWNUMBER = 3500
+    SQL
+
+    result = MetricsService.record("VACOLS: latest_docket_month",
+                                   name: "latest_docket_month",
+                                   service: :vacols) do
+      conn.exec_query(query)
+    end
+
+    result.first["bfd19"].to_date.beginning_of_month
+  end
+
+  def self.docket_counts_by_month
+  end
+
   class << self
     private
 
