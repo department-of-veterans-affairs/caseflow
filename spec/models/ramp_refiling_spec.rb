@@ -209,6 +209,7 @@ describe RampRefiling do
 
         context "when another option" do
           let(:option_selected) { "appeal" }
+          let(:appeal_docket) { "hearing" }
           it { is_expected.to be true }
         end
       end
