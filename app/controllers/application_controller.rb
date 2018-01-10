@@ -46,7 +46,8 @@ class ApplicationController < ApplicationBaseController
       "certification" => certification_help_path,
       "dispatch-arc" => dispatch_help_path,
       "reader" => reader_help_path,
-      "hearings" => hearings_help_path
+      "hearings" => hearings_help_path,
+      "intake" => intake_help_path
     }[application] || help_path
   end
   helper_method :help_url
@@ -70,8 +71,10 @@ class ApplicationController < ApplicationBaseController
       }
     ]
 
-    urls.append(title: "Switch User",
-                link: url_for(controller: "/test/users", action: "index")) if ApplicationController.dependencies_faked?
+    if ApplicationController.dependencies_faked?
+      urls.append(title: "Switch User",
+                  link: url_for(controller: "/test/users", action: "index"))
+    end
     urls.append(title: "Sign Out",
                 link: url_for(controller: "/sessions", action: "destroy"))
 

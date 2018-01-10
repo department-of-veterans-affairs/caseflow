@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "pdf_forms"
 
 class Form8PdfService

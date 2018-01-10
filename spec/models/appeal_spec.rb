@@ -94,7 +94,7 @@ describe Appeal do
     end
 
     context "when 2 types are passed" do
-      let(:type) { %w(NOD SSOC) }
+      let(:type) { %w[NOD SSOC] }
       it "returns right number of documents and type" do
         expect(subject.count).to eq(2)
         expect(subject.first.type).to eq(type.first)
@@ -219,7 +219,7 @@ describe Appeal do
     subject { appeal.events }
 
     it "returns list of events" do
-      expect(subject.length > 0).to be_truthy
+      expect(!subject.empty?).to be_truthy
       expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
       expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
       expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
@@ -852,7 +852,7 @@ describe Appeal do
     end
 
     context "when the allowed issues are new material" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252))] }
+      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252])] }
 
       it { is_expected.to be_falsey }
     end
@@ -887,7 +887,7 @@ describe Appeal do
       context "when at least one issues is new-material allowed" do
         let(:issues) do
           [
-            Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252)),
+            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
             Generators::Issue.build(disposition: :denied)
           ]
         end
@@ -921,7 +921,7 @@ describe Appeal do
     context "is true if new-material allowed issue" do
       let(:issues) do
         [
-          Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252)),
+          Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
           Generators::Issue.build(disposition: :remanded)
         ]
       end
@@ -1349,7 +1349,8 @@ describe Appeal do
         is_expected.to include(
           address_line_1: "9999 MISSION ST",
           city: "SAN FRANCISCO",
-          zip: "94103")
+          zip: "94103"
+        )
       end
     end
   end
@@ -1363,9 +1364,9 @@ describe Appeal do
 
     let(:issues) do
       [
-        Generators::Issue.build(disposition: :allowed, codes: %w(02 01)),
-        Generators::Issue.build(disposition: :allowed, codes: %w(02 02)),
-        Generators::Issue.build(disposition: :allowed, codes: %w(02 01))
+        Generators::Issue.build(disposition: :allowed, codes: %w[02 01]),
+        Generators::Issue.build(disposition: :allowed, codes: %w[02 02]),
+        Generators::Issue.build(disposition: :allowed, codes: %w[02 01])
       ]
     end
 
@@ -1403,11 +1404,10 @@ describe Appeal do
           program: "Wheel",
           name: "Spoon",
           levels: "Cabbage\nPickle",
-          description: "Donkey\nCow",
+          notes: "Donkey\nCow",
           from_vacols: true,
           vacols_sequence_id: 1
-        }]
-         }
+        }] }
       end
 
       it "updates worksheet issues" do
@@ -1424,12 +1424,12 @@ describe Appeal do
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
         expect(issue.levels).to eq "Cabbage\nPickle"
-        expect(issue.description).to eq "Donkey\nCow"
+        expect(issue.notes).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
         id = appeal.worksheet_issues.first.id
         appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:description] = "Tomato"
+        appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
         appeals_hash[:worksheet_issues_attributes][0][:id] = id
 
         appeal.update(appeals_hash)
@@ -1444,7 +1444,7 @@ describe Appeal do
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
         expect(issue.levels).to eq "Cabbage\nPickle"
-        expect(issue.description).to eq "Tomato"
+        expect(issue.notes).to eq "Tomato"
 
         # soft delete an issue
         appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
@@ -1543,9 +1543,8 @@ describe Appeal do
 
       let!(:issues) do
         [Generators::Issue.build(disposition: :allowed,
-                                 codes: %w(02 15 03 04 05),
-                                 labels: labels)
-        ]
+                                 codes: %w[02 15 03 04 05],
+                                 labels: labels)]
       end
 
       it "includes viewed boolean in hash" do
