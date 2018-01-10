@@ -137,6 +137,7 @@ class Fakes::BGSService
       }
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.existing_full_grants
     [
@@ -150,6 +151,7 @@ class Fakes::BGSService
     ]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.existing_partial_grants
     [
       {
@@ -175,6 +177,7 @@ class Fakes::BGSService
       }
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.no_grants
     []
@@ -255,6 +258,7 @@ class Fakes::BGSService
     }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def default_address
     {
       addrs_one_txt: "9999 MISSION ST",
@@ -281,4 +285,5 @@ class Fakes::BGSService
       zip_prefix_nbr: "94103"
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end

@@ -37,6 +37,5 @@ class RemandsReport < Report
     true
   end
 
-  def cleanup_record(_appeal)
-  end
+  def cleanup_record(_appeal); end
 end

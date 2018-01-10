@@ -20,7 +20,6 @@ class AppealRepository
     set_vacols_values(appeal: appeal, case_record: case_record)
 
     true
-
   rescue ActiveRecord::RecordNotFound
     return false
   end
@@ -42,9 +41,9 @@ class AppealRepository
                           service: :vacols,
                           name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
-                          .includes(:folder, :correspondent, folder: :outcoder)
-                          .references(:folder, :correspondent, folder: :outcoder)
-                          .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+        .includes(:folder, :correspondent, folder: :outcoder)
+        .references(:folder, :correspondent, folder: :outcoder)
+        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
@@ -73,9 +72,9 @@ class AppealRepository
       # An appeal is ready for hearing if form 9 has been submitted,
       # with no decision date OR with dispositions: "3" Remanded and "L" Manlincon remands
       VACOLS::Case.where(bfcorlid: vbms_id)
-                  .where.not(bfd19: nil)
-                  .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
-                  .includes(:folder, :correspondent)
+        .where.not(bfd19: nil)
+        .where("bfddec is NULL or (bfddec is NOT NULL and bfdc IN ('3','L'))")
+        .includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -165,6 +164,7 @@ class AppealRepository
 
     appeal
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # :nocov:
   def self.issues(vacols_id)
@@ -205,7 +205,7 @@ class AppealRepository
   end
 
   def self.folder_type_from(folder_record)
-    if %w(Y 1 0).include?(folder_record.tivbms)
+    if %w[Y 1 0].include?(folder_record.tivbms)
       "VBMS"
     elsif folder_record.tisubj == "Y"
       "VVA"
@@ -242,8 +242,7 @@ class AppealRepository
                              assigned_to: appeal.case_record.bfregoff,
                              code: :other,
                              days_to_complete: 30,
-                             days_til_due: 30
-                            )
+                             days_til_due: 30)
       end
     end
   end
@@ -269,6 +268,7 @@ class AppealRepository
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
+  # rubocop:disable Metrics/MethodLength
   def self.close_undecided_appeal!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -307,6 +307,7 @@ class AppealRepository
       close_associated_hearings(case_record)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Close a remand (prematurely, such as for a withdrawal or a VAIMA opt in)
   # Remands need to be closed without overwriting the disposition data. A new
@@ -315,6 +316,7 @@ class AppealRepository
   #
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.close_remand!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -354,7 +356,8 @@ class AppealRepository
           bfdcfld1: nil,
           bfdcfld2: nil,
           bfdcfld3: nil
-        ))
+        )
+      )
 
       follow_up_case.update_vacols_location!("99")
 
@@ -366,7 +369,8 @@ class AppealRepository
           tidcls: dateshift_to_utc(closed_on),
           timdtime: VacolsHelper.local_time_with_utc_timezone,
           timduser: user.regional_office
-        ))
+        )
+      )
 
       # Create follow up issues that will be listed as closed with the
       # proper disposition
@@ -379,10 +383,12 @@ class AppealRepository
             issdcls: VacolsHelper.local_time_with_utc_timezone,
             issadtime: VacolsHelper.local_time_with_utc_timezone,
             issaduser: user.regional_office
-          ))
+          )
+        )
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
