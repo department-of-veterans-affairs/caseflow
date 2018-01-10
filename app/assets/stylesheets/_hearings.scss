@@ -234,6 +234,10 @@ $color-hearings-saving: #777;
       }
     }
 
+    &:focus {
+      box-shadow: none;
+    }
+
     svg {
       margin: 0 0 -2px 7px;
     }
