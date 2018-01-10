@@ -113,7 +113,7 @@ describe RampRefiling do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
-          contention_descriptions: %w(Arm Leg)
+          contention_descriptions: %w[Arm Leg]
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil

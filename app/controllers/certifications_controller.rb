@@ -9,18 +9,17 @@ class CertificationsController < ApplicationController
 
   def update_certification_from_v2_form
     permitted = params
-                .require("update")
-                .permit("representative_name",
-                        "representative_type",
-                        "poa_matches",
-                        "poa_correct_in_vacols",
-                        "poa_correct_in_bgs",
-                        "hearing_change_doc_found_in_vbms",
-                        "form9_type",
-                        "hearing_preference",
-                        "certifying_official_name",
-                        "certifying_official_title"
-                       )
+      .require("update")
+      .permit("representative_name",
+              "representative_type",
+              "poa_matches",
+              "poa_correct_in_vacols",
+              "poa_correct_in_bgs",
+              "hearing_change_doc_found_in_vbms",
+              "form9_type",
+              "hearing_preference",
+              "certifying_official_name",
+              "certifying_official_title")
     certification.update!(permitted)
   end
 
@@ -33,7 +32,7 @@ class CertificationsController < ApplicationController
     update_certification_from_v2_form
     validate_data_presence_v2
 
-    if %w(NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED).include?(certification.hearing_preference)
+    if %w[NO_HEARING_DESIRED NO_BOX_SELECTED HEARING_CANCELLED].include?(certification.hearing_preference)
       hearing_requested = "No"
     else
       hearing_requested = "Yes"

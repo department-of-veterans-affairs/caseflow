@@ -99,13 +99,15 @@ describe Task do
       FakeTask.create!(
         assigned_at: Time.zone.now,
         prepared_at: Date.yesterday,
-        aasm_state: :assigned)
+        aasm_state: :assigned
+      )
     end
     let!(:completed_task) do
       FakeTask.create!(
         assigned_at: Time.zone.now,
         prepared_at: Date.yesterday,
-        aasm_state: :completed)
+        aasm_state: :completed
+      )
     end
 
     it { is_expected.to eq([assigned_task]) }
@@ -470,7 +472,7 @@ describe Task do
           before do
             allow_any_instance_of(FakeTask).to receive(:before_should_assign) do
               Task.find(next_assignable_task.id)
-                  .update!(comment: "force lock_version to increment")
+                .update!(comment: "force lock_version to increment")
             end
           end
 

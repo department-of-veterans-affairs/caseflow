@@ -4,10 +4,10 @@
 class MonitorBusinessCriticalJobsJob < CaseflowJob
   queue_as :low_priority
 
-  BUSINESS_CRITICAL_JOBS = %w(
+  BUSINESS_CRITICAL_JOBS = %w[
     CreateEstablishClaimTasksJob
     PrepareEstablishClaimTasksJob
-  ).freeze
+  ].freeze
 
   DEFAULT_ALERT_THRESHOLD_IN_HOURS = 5 # in hours
 

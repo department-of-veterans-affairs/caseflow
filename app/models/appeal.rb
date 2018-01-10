@@ -171,7 +171,7 @@ class Appeal < ActiveRecord::Base
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
   def disposition_remand_priority
-    disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
+    (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
   def power_of_attorney
@@ -238,7 +238,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def hearing_scheduled?
-    scheduled_hearings.length > 0
+    !scheduled_hearings.empty?
   end
 
   def eligible_for_ramp?
@@ -335,7 +335,7 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents!
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
-                                 .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
       accumulator[document.vbms_document_id] = document
     end
 
@@ -453,7 +453,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    %w(original post_remand cavc_remand).include? type_code
+    %w[original post_remand cavc_remand].include? type_code
   end
 
   def type_code
@@ -576,10 +576,10 @@ class Appeal < ActiveRecord::Base
       # have no events recorded. We are not showing these.
       # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
-                .select(&:api_supported?)
-                .reject { |a| a.latest_event_date.nil? }
-                .sort_by(&:latest_event_date)
-                .reverse
+        .select(&:api_supported?)
+        .reject { |a| a.latest_event_date.nil? }
+        .sort_by(&:latest_event_date)
+        .reverse
     end
 
     def bgs
@@ -588,7 +588,6 @@ class Appeal < ActiveRecord::Base
 
     def fetch_appeals_by_file_number(file_number)
       repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
-
     rescue Caseflow::Error::InvalidFileNumber
       raise ActiveRecord::RecordNotFound
     end
@@ -604,7 +603,7 @@ class Appeal < ActiveRecord::Base
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
-    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
@@ -624,7 +623,7 @@ class Appeal < ActiveRecord::Base
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
-      certification = Certification.find_by_vacols_id(appeal.vacols_id)
+      certification = Certification.find_by(vacols_id: appeal.vacols_id)
 
       fail "No Form 8 found for appeal being certified" unless form8
       fail "No Certification found for appeal being certified" unless certification
