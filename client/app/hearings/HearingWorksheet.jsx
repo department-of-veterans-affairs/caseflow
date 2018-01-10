@@ -68,7 +68,7 @@ export class HearingWorksheet extends React.PureComponent {
   openPdf = (worksheet, worksheetIssues) => {
     let print = window.open(`${window.location.pathname}/print`, '_blank');
 
-    if (this.props.worksheet.edited) {
+    if (this.props.worksheet.edited || _.find(this.props.worksheetIssues, 'edited')) {
       this.save(worksheet, worksheetIssues)();
       window.location.reload();
       print();
