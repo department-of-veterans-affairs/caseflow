@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180108202645) do
+ActiveRecord::Schema.define(version: 20180110165318) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -338,6 +338,7 @@ ActiveRecord::Schema.define(version: 20180108202645) do
     t.date    "receipt_date"
     t.string  "end_product_reference_id"
     t.boolean "has_ineligible_issue"
+    t.string  "appeal_docket"
   end
 
   add_index "ramp_refilings", ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number", using: :btree

@@ -1,5 +1,9 @@
 import _ from 'lodash';
 
+export const getAppealDocketError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
+);
+
 export const getOptionSelectedError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
 );
