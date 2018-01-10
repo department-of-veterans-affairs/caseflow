@@ -17,8 +17,10 @@ class SeedDB
     appeals = number.times.map do |i|
       Generators::Appeal.create(
         vacols_id: "vacols_id#{i}",
-        vbms_id: "vbms_id#{i}"
-        )
+        vbms_id: "vbms_id#{i}",
+        vacols_record: {
+          status: "Remand"
+        })
     end
 
     @appeals.push(*appeals)
@@ -42,7 +44,6 @@ class SeedDB
 
   def create_tasks(number)
     num_appeals = @appeals.length
-
     tasks = number.times.map do |i|
       establish_claim = EstablishClaim.create(
         appeal: @appeals[i % num_appeals],
@@ -69,27 +70,27 @@ class SeedDB
     tasks[2].review!
     tasks[2].complete!(status: :routed_to_arc)
 
-    task_number = 2
-
     # assigning and moving the task to complete for 
     # user at index 3
     5.times do |index|
-      task_number = task_number + 1
-      tasks[index + task_number].assign!(@users[3])
-      tasks[index + task_number].start!
-      tasks[index + task_number].review!
-      tasks[index + task_number].complete!(status: :routed_to_arc)
+      task = EstablishClaim.assign_next_to!(@users[3])
+      task.start!
+      task.review!
+      task.complete!(status: :routed_to_arc)
     end
+
+    task = EstablishClaim.assign_next_to!(@users[4])
 
     # assigning and moving the task to complete for 
     # user at index 5
     3.times do |index|
-      task_number = task_number + 1
-      tasks[index + task_number].assign!(@users[5])
-      tasks[index + task_number].start!
-      tasks[index + task_number].review!
-      tasks[index + task_number].complete!(status: :routed_to_arc)
+      task = EstablishClaim.assign_next_to!(@users[5])
+      task.start!
+      task.review!
+      task.complete!(status: :routed_to_arc)
     end
+
+    task = EstablishClaim.assign_next_to!(@users[6])
 
     # Create one task with no decision documents
     EstablishClaim.create(
