@@ -20,7 +20,7 @@ class RampRefilingIntake < Intake
 
   def review!(request_params)
     detail.start_review!
-    detail.update_attributes(request_params.permit(:receipt_date, :option_selected))
+    detail.update_attributes(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
   end
 
   def complete!(request_params)
@@ -41,6 +41,7 @@ class RampRefilingIntake < Intake
       option_selected: detail.option_selected,
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
+      appeal_docket: detail.appeal_docket,
       issues: ramp_election.issues.map(&:ui_hash),
       end_product_description: detail.end_product_description
     )

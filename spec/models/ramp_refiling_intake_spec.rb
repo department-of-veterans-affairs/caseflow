@@ -137,7 +137,8 @@ describe RampRefilingIntake do
         ramp_election: completed_ramp_election,
         veteran_file_number: veteran_file_number,
         receipt_date: 2.days.ago,
-        option_selected: option_selected
+        option_selected: option_selected,
+        appeal_docket: appeal_docket
       )
     end
 
@@ -147,6 +148,8 @@ describe RampRefilingIntake do
         completed_ramp_election.issues.create!(description: "Secondsies")
       ]
     end
+
+    let(:appeal_docket) { nil }
 
     context "when end product is needed" do
       let(:option_selected) { "supplemental_claim" }
@@ -178,6 +181,7 @@ describe RampRefilingIntake do
 
     context "when no end product is needed" do
       let(:option_selected) { "appeal" }
+      let(:appeal_docket) { "direct_review" }
 
       it "saves issues and does NOT create an end product" do
         expect(Fakes::VBMSService).to_not receive(:establish_claim!)
