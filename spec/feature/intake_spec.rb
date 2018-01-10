@@ -712,11 +712,10 @@ RSpec.feature "RAMP Intake" do
           expect(page).to have_content("Welcome to Caseflow Intake!")
 
           # check there was an error
-          error_intake = Intake.last
-          ramp_refiling = RampRefiling.last
-          expect(error_intake.completion_status).to eq("error")
-          expect(error_intake.error_code).to eq("ineligible_for_higher_level_review")
-          expect(ramp_refiling).to be_nil
+          intake.reload
+          expect(intake.completion_status).to eq("error")
+          expect(intake.error_code).to eq("ineligible_for_higher_level_review")
+          expect(intake.detail).to be_nil
         end
 
         scenario "Complete a RAMP refiling for an appeal", focus:true do
