@@ -15,7 +15,7 @@ class RampReview < ActiveRecord::Base
 
   has_many :issues, as: :review, class_name: "RampIssue"
 
-  HIGHER_LEVEL_REVIEW_OPTIONS = %w(higher_level_review higher_level_review_with_hearing).freeze
+  HIGHER_LEVEL_REVIEW_OPTIONS = %w[higher_level_review higher_level_review_with_hearing].freeze
 
   END_PRODUCT_DATA_BY_OPTION = {
     "supplemental_claim" => { code: "683SCRRRAMP", modifier: "683" },
@@ -42,7 +42,6 @@ class RampReview < ActiveRecord::Base
     establish_claim_in_vbms(end_product).tap do |result|
       update!(end_product_reference_id: result.claim_id)
     end
-
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end

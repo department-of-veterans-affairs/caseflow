@@ -50,7 +50,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("ARC Work Assignments")
 
       # Validate help link
-      find('#menu-trigger').click
+      find("#menu-trigger").click
       find_link("Help").click
       expect(page).to have_content("Welcome to the Dispatch Help page!")
       page.driver.go_back
@@ -65,11 +65,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("Employee Total 0 0 1 1 5")
 
       # Two more users starting tasks should force the number of people to bump up to 3
-      %w(June Jeffers).each do |name|
+      %w[June Jeffers].each do |name|
         Generators::EstablishClaim.create(
           user: Generators::User.create(full_name: "#{name} Smith"),
           aasm_state: :assigned,
-          appeal_id: (name == "June" ? appeal_full_grant.id : appeal_partial_grant.id)
+          appeal_id: ((name == "June") ? appeal_full_grant.id : appeal_partial_grant.id)
         ).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
@@ -96,7 +96,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "Jeffers" => appeal_partial_grant.id
       }
 
-      %w(Janet June Jeffers).each do |name|
+      %w[Janet June Jeffers].each do |name|
         Generators::EstablishClaim.create(
           user: Generators::User.create(full_name: "#{name} Smith"),
           aasm_state: :assigned,
@@ -141,7 +141,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         "Janet" => appeal.id
       }
 
-      %w(Janet).each do |name|
+      %w[Janet].each do |name|
         Generators::EstablishClaim.create(
           user: Generators::User.create(full_name: "#{name} Smith"),
           aasm_state: :assigned,
@@ -315,7 +315,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(page).to have_content("There are claims ready to get picked up for today")
 
       # Validate completed task is in view history (along with the header, totaling 2 tr's)
-      expect(page).to have_selector('#work-history-table tr', count: 2)
+      expect(page).to have_selector("#work-history-table tr", count: 2)
       expect(page).to have_content("(#{completed_task.appeal.sanitized_vbms_id})")
       expect(page).to have_content("Routed in VACOLS")
 
@@ -624,7 +624,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       let(:vacols_record) { :partial_grant_decided }
 
       scenario "Establish a new claim routed to ARC",
-               skip: "This test is failing because of a stale element reference"do
+               skip: "This test is failing because of a stale element reference" do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 

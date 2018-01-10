@@ -14,8 +14,8 @@ RSpec.describe Hearings::AppealsController, type: :controller do
           notes: "Donkey Cow",
           from_vacols: false,
           vacols_sequence_id: 1
-        }]
-                }
+        }
+      ] }
       patch :update, appeal_id: appeal.id, appeal: params
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)["appeal"]
