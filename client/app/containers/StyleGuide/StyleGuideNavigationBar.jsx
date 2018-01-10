@@ -47,6 +47,7 @@ export default class StyleGuideNavigationBar extends React.PureComponent {
         <Router>
           <NavigationBar
             appName="Hearing Prep"
+            logoName="hearing-prep"
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}
             defaultUrl="/"

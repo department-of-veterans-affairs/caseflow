@@ -58,6 +58,7 @@ class IntakeFrame extends React.PureComponent {
         }
         <NavigationBar
           appName={appName}
+          logoName="intake"
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}

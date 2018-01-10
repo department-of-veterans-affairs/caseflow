@@ -137,6 +137,7 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <NavigationBar
           appName="Reader"
+          logoName="reader"
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">

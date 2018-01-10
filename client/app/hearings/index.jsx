@@ -31,6 +31,7 @@ const Hearings = ({ hearings }) => {
           <div>
             <NavigationBar
               appName="Hearing Prep"
+              logoName="hearing-prep"
               defaultUrl="/hearings/dockets"
               userDisplayName={hearings.userDisplayName}
               dropdownUrls={hearings.dropdownUrls}>

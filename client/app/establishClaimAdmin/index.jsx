@@ -23,6 +23,7 @@ const EstablishClaimAdmin = ({
         <div>
           <NavigationBar
             appName="Establish Claim Admin"
+            logoName="dispatch"
             defaultUrl="/dispatch/admin"
             userDisplayName={userDisplayName}
             dropdownUrls={dropdownUrls}>

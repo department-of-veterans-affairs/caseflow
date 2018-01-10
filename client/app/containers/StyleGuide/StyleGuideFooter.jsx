@@ -44,6 +44,7 @@ export default class StyleGuideFooter extends React.PureComponent {
         <div className="sg-nav-wrap">
           <NavigationBar
             appName="Hearing Prep"
+            logoName="hearing-prep"
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}
             defaultUrl="/"
