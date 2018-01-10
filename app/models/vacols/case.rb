@@ -119,7 +119,7 @@ class VACOLS::Case < VACOLS::Record
   # NOTE(jd): This is a list of the valid locations that Caseflow
   # supports updating an appeal to. This is a subset of the overall locations
   # supported in VACOLS
-  VALID_UPDATE_LOCATIONS = %w(50 51 53 54 77 98 99).freeze
+  VALID_UPDATE_LOCATIONS = %w[50 51 53 54 77 98 99].freeze
 
   JOIN_ISSUE_COUNT = "
     inner join
@@ -212,14 +212,14 @@ class VACOLS::Case < VACOLS::Record
   # :nocov:
   def self.remands_ready_for_claims_establishment
     VACOLS::Case.joins(:folder, :correspondent)
-                .where(WHERE_PAPERLESS_REMAND_LOC97)
-                .order("BFDDEC ASC")
+      .where(WHERE_PAPERLESS_REMAND_LOC97)
+      .order("BFDDEC ASC")
   end
 
   def self.amc_full_grants(outcoded_after:)
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT)
-                .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
-                .order("BFDDEC ASC")
+      .where(WHERE_PAPERLESS_FULLGRANT_AFTER_DATE, outcoded_after.to_formatted_s(:oracle_date))
+      .order("BFDDEC ASC")
   end
 
   # The attributes that are copied over when the case is cloned because of a remand
@@ -274,6 +274,7 @@ class VACOLS::Case < VACOLS::Record
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
   # This method takes an array of vacols ids and fetches their aod status.

@@ -187,7 +187,7 @@ class Form8 < ActiveRecord::Base
   end
 
   def representative
-    type = representative_type == "Other" ? representative_type_specify_other : representative_type
+    type = (representative_type == "Other") ? representative_type_specify_other : representative_type
     "#{representative_name} - #{type}"
   end
 
@@ -210,15 +210,21 @@ class Form8 < ActiveRecord::Base
   end
 
   def update_from_string_params(params)
-    date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                   :other_notification_date, :soc_date]
+    date_fields = [
+      :certification_date,
+      :service_connection_notification_date,
+      :increased_rating_notification_date,
+      :other_notification_date,
+      :soc_date
+    ]
     date_fields.each do |f|
       raw_value = params[f]
+      next unless raw_value && raw_value.is_a?(String)
       params[f] = begin
                     Date.strptime(raw_value, "%m/%d/%Y")
-                  rescue
+                  rescue StandardError
                     nil
-                  end if raw_value && raw_value.is_a?(String)
+                  end
     end
     update(params)
   end

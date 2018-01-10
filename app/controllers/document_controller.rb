@@ -39,7 +39,8 @@ class DocumentController < ApplicationController
     begin
       DocumentView.find_or_create_by(
         document_id: params[:id],
-        user_id: current_user.id) do |t|
+        user_id: current_user.id
+      ) do |t|
         t.update!(first_viewed_at: Time.zone.now)
       end
     # rubocop:disable Lint/HandleExceptions

@@ -29,7 +29,7 @@ describe Document do
     end
 
     context "when an alt type matches" do
-      let(:document) { Document.new(type: "Form 9", alt_types: %w(SOC NOD)) }
+      let(:document) { Document.new(type: "Form 9", alt_types: %w[SOC NOD]) }
       it { is_expected.to be_truthy }
     end
 
@@ -205,7 +205,7 @@ describe Document do
         )
       end
 
-      it { is_expected.to have_attributes(type: "Form 9", alt_types: %w(NOD SOC)) }
+      it { is_expected.to have_attributes(type: "Form 9", alt_types: %w[NOD SOC]) }
       it "persists in database" do
         document.save
         expect(Document.find_by(vbms_document_id: document.vbms_document_id).file_number).to eq(case_file_number)
@@ -265,7 +265,8 @@ describe Document do
         alt_types: "Alt Form 9",
         received_at: Time.now.utc,
         filename: "test",
-        efolder_id: 1234)
+        efolder_id: 1234
+      )
     end
     let(:persisted_document) { from_vbms_document.merge_into(Generators::Document.build) }
 
