@@ -1072,6 +1072,21 @@ RSpec.feature "Reader" do
       expect(find("#document_description").text).to eq("New Description")
     end
 
+    scenario "Update Document Description with Enter" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+        click_on documents[0].type
+        find("h3", text: "Document information").click
+        find("#document_description-edit").click
+
+        fill_in "document_description", with: "Another New Description"
+
+        find("#document_description").send_keys [:enter]
+
+        expect(find("#document_description").text).to eq("Another New Description")
+      end
+    end
+
     scenario "Open and close keyboard shortcuts modal" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type

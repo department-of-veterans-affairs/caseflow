@@ -36,9 +36,9 @@ class SideBarDocumentInformation extends PureComponent {
         <p className="cf-pdf-meta-title">
           <strong>Veteran ID:</strong> {appeal.vbms_id}
         </p>
-        <p className="cf-pdf-meta-title">
+        <div className="cf-pdf-meta-title">
           <strong>Type:</strong> {appeal.type} {getClaimTypeDetailInfo(appeal)}
-        </p>
+        </div>
         <p className="cf-pdf-meta-title">
           <strong>Docket Number:</strong> {appeal.docket_number}
         </p>

@@ -14,8 +14,22 @@ export default class EditableField extends React.Component {
 
   inputRef = (node) => this.input = node;
 
-  startEditing = () => this.setState({ editing: true });
-  stopEditing = () => this.setState({ editing: false });
+  startEditing = () => {
+    this.setState({ editing: true });
+    this.manageListener('add');
+  }
+  stopEditing = () => {
+    this.setState({ editing: false });
+    this.manageListener('remove');
+  }
+
+  manageListener = (action) => window[`${action}EventListener`]('keydown', this.saveOnEnter);
+
+  saveOnEnter = (event) => {
+    if (event.key === 'Enter' && document.activeElement === this.input) {
+      this.onSave();
+    }
+  }
 
   onSave = () => {
     this.props.onSave(this.input.value);
