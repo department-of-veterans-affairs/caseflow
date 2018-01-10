@@ -49,6 +49,11 @@ RSpec.feature "RAMP Intake" do
       User.authenticate!(roles: ["Mail Intake"])
     end
 
+    scenario "User visits help page" do
+      visit "/intake/help"
+      expect(page).to have_content("Welcome to the Intake Help Page!")
+    end
+
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
       fill_in "Search small", with: "5678"
