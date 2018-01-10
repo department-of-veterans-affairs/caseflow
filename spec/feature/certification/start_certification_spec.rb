@@ -1,4 +1,4 @@
-# coding: utf-8
+
 require "rails_helper"
 
 RSpec.feature "Start Certification" do

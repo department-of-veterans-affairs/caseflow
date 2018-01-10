@@ -6,11 +6,12 @@ class Veteran
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  BGS_ATTRIBUTES = %i(
-    file_number sex first_name last_name ssn address_line1 address_line2
-    address_line3 city state country zip_code military_postal_type_code
-    military_post_office_type_code service date_of_birth
-  ).freeze
+  BGS_ATTRIBUTES = [
+    :file_number, :sex, :first_name, :last_name, :ssn,
+    :address_line1, :address_line2, :address_line3, :city,
+    :state, :country, :zip_code, :military_postal_type_code,
+    :military_post_office_type_code, :service, :date_of_birth
+  ].freeze
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -25,7 +26,7 @@ class Veteran
 
   attr_accessor(*BGS_ATTRIBUTES)
 
-  COUNTRIES_REQUIRING_ZIP = %w(USA CANADA).freeze
+  COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   validates :ssn, :sex, :first_name, :last_name, :city, :address_line1, :country, presence: true
   validates :zip_code, presence: true, if: "country_requires_zip?"

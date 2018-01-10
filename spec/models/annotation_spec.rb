@@ -3,7 +3,7 @@ describe Annotation do
     Annotation.new(document_id: document.id, comment: comment)
   end
 
-  let(:document) { Document.create!(vbms_document_id: Random.rand(256) + 1) }
+  let(:document) { Document.create!(vbms_document_id: Random.rand(1..256)) }
   let(:comment) { Generators::Random.word_characters }
 
   context "#save" do

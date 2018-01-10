@@ -22,7 +22,7 @@ class Report
         begin
           record = load_record row
           csv << self.class.table_row(record) if include_record? record
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error <<-EOS.strip_heredoc
             event=report.case.exception
             bfkey=#{row.bfkey}

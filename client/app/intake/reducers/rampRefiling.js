@@ -26,10 +26,13 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
     },
     issues: {
-      $set: _.keyBy(serverIntake.issues, 'id')
+      $set: state.issues || _.keyBy(serverIntake.issues, 'id')
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
+    },
+    endProductDescription: {
+      $set: serverIntake.end_product_description
     }
   });
 
@@ -49,6 +52,7 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     isComplete: false,
     outsideCaseflowStepsConfirmed: false,
     outsideCaseflowStepsError: null,
+    endProductDescription: null,
 
     // This allows us to tap into error events on the finish page and
     // scroll to the right element

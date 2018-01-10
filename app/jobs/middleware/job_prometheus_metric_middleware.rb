@@ -3,8 +3,7 @@ class JobPrometheusMetricMiddleware
     job_class = body["job_class"]
 
     yield
-
-  rescue
+  rescue StandardError
     PrometheusService.background_jobs_error_counter.increment(name: job_class)
 
     # reraise the same error. This lets Shoryuken's retry logic kick off
