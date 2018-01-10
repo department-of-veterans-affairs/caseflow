@@ -118,7 +118,7 @@ export class PdfFile extends React.PureComponent {
         scrollWindowCenter={this.props.scrollWindowCenter}
         documentId={this.props.documentId}
         file={this.props.file}
-        isPageDrawn={isVisible}
+        isPageVisible={isVisible}
         pageIndex={(rowIndex * this.columnCount) + columnIndex}
         isVisible={this.props.isVisible}
         scale={this.props.scale}

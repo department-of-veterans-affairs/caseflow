@@ -2,7 +2,7 @@ import ApiUtil from './ApiUtil';
 import _ from 'lodash';
 import moment from 'moment';
 
-const INTERVAL_TO_SEND_METRICS_MS = moment.duration(60, 'second');
+const INTERVAL_TO_SEND_METRICS_MS = moment.duration(60, 'seconds');
 
 let histograms = [];
 
@@ -17,9 +17,9 @@ const sendHistogram = () => {
 
 const initialize = _.once(() => {
   // Only record values for a sample of our users.
-  if (_.random(0, 2) === 0) {
+  if (_.random(2) === 0) {
     // Add jitter to requests
-    setInterval(sendHistogram, INTERVAL_TO_SEND_METRICS_MS + _.random(0, moment.duration(5, 'seconds')));
+    setInterval(sendHistogram, INTERVAL_TO_SEND_METRICS_MS + _.random(moment.duration(5, 'seconds')));
   }
 });
 

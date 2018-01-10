@@ -142,7 +142,7 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.isPageDrawn && !prevProps.isPageDrawn) {
+    if (this.props.isPageVisible && !prevProps.isPageVisible) {
       this.measureTimeStartMs = performance.now();
     }
 
