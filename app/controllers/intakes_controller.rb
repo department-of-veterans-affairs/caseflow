@@ -51,6 +51,13 @@ class IntakesController < ApplicationController
     render json: current_intake.ui_hash
   end
 
+  def error
+    # custom error code ineligible_for_higher_level_review: "ineligible_for_higher_level_review" for
+    #  RampRefilingIntake
+    # error completion_status for RampRefilingIntake in intakes table
+    # delete associated ramp_refiling record for RampRefilingIntake
+  end
+
   private
 
   def no_cache

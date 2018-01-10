@@ -700,12 +700,21 @@ RSpec.feature "RAMP Intake" do
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Ineligible for Higher-Level Review")
-          # go back to start page
-          # check there was an error
           expect(page).to have_button("Continue to next step", disabled: true)
+          click_on "Begin next intake"
+
+          # go back to start page
+          expect(page).to have_content("Welcome to Caseflow Intake!")
+
+          # check there was an error
+          error_intake = Intake.last
+          ramp_refiling = RampRefiling.last
+          expect(error_intake.completion_status).to eq("error")
+          expect(error_intake.error_code).to eq("ineligible_for_higher_level_review")
+          expect(ramp_refiling).to be_nil
         end
 
-        scenario "Complete a RAMP refiling for an appeal" do
+        scenario "Complete a RAMP refiling for an appeal", focus:true do
           # Create an RAMP election with a cleared EP
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",
