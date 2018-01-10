@@ -63,10 +63,6 @@ class Fakes::AppealRepository
     appeal
   end
 
-  def self.vacols_db_connection_active?
-    true
-  end
-
   def self.transaction
     yield
   end
