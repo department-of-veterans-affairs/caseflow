@@ -84,7 +84,6 @@ class WorksheetHeader extends React.PureComponent {
           <div>Veteran ID:</div>
           <div>
             <button type="submit"
-              data-clipboard-text={worksheet.sanitized_vbms_id}
               className="usa-button-outline cf-copy-to-clipboard" >
               {worksheet.sanitized_vbms_id}
               <ClipboardIcon />
