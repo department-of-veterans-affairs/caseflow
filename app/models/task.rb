@@ -18,7 +18,6 @@ class Task < ActiveRecord::Base
     special_issue_emailed: 5,
     special_issue_vacols_routed: 7,
     invalidated: 8,
-
     # These statuses are not in use anymore
     special_issue_not_emailed: 6
   }
@@ -205,8 +204,7 @@ class Task < ActiveRecord::Base
   private
 
   # No-op method used for testing purposes
-  def before_should_assign
-  end
+  def before_should_assign; end
 
   def recreate!
     self.class.create!(appeal_id: appeal_id, type: type)

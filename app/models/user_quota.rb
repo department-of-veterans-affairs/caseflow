@@ -80,7 +80,7 @@ class UserQuota < ActiveRecord::Base
 
   def min_locked_task_count
     # If there's only one or fewer users left to be calculated, the min is the same as the max
-    team_quota.unlocked_user_count <= 1 ? max_locked_task_count : nil
+    (team_quota.unlocked_user_count <= 1) ? max_locked_task_count : nil
   end
 
   # Allow team quota to adjust values based on the new user quota

@@ -19,13 +19,13 @@ class AppealSeries < ActiveRecord::Base
   end
 
   def location
-    (%w(Advance Remand).include? latest_appeal.status) ? :aoj : :bva
+    %w[Advance Remand].include?(latest_appeal.status) ? :aoj : :bva
   end
 
   def program
     programs = appeals.flat_map { |appeal| appeal.issues.map(&:program) }.uniq
 
-    programs.length > 1 ? :multiple : programs.first
+    (programs.length > 1) ? :multiple : programs.first
   end
 
   def aoj
@@ -63,7 +63,7 @@ class AppealSeries < ActiveRecord::Base
 
   def active_appeals
     appeals.select(&:active?)
-           .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
+      .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
   end
 
   def appeals_by_decision_date
@@ -96,7 +96,7 @@ class AppealSeries < ActiveRecord::Base
     end
 
     if latest_appeal.form9_date
-      return :pending_certification_ssoc if latest_appeal.ssoc_dates.length > 0
+      return :pending_certification_ssoc if !latest_appeal.ssoc_dates.empty?
       return :pending_certification
     end
 
@@ -146,7 +146,7 @@ class AppealSeries < ActiveRecord::Base
 
   def disambiguate_status_remand
     post_decision_ssocs = latest_appeal.ssoc_dates.select { |ssoc| ssoc > latest_appeal.decision_date }
-    return :remand_ssoc if post_decision_ssocs.length > 0
+    return :remand_ssoc if !post_decision_ssocs.empty?
     :remand
   end
 
