@@ -137,12 +137,11 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
+    resources :users, only: [:index]
     if ApplicationController.dependencies_faked?
-      resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
     end
-
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
   end
 
