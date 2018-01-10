@@ -144,8 +144,7 @@ class User < ActiveRecord::Base
     delegate :authenticate_vacols, to: :authentication_service
 
     # Empty method used for testing purposes (required)
-    def clear_current_user
-    end
+    def clear_current_user; end
 
     def system_user
       new(

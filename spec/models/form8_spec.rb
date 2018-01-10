@@ -63,8 +63,13 @@ describe Form8 do
   context "#update_from_string_params" do
     let(:form8) { Form8.new }
     it "takes string dates passed by the client and turns them into Date objects for persistence" do
-      date_fields = [:certification_date, :service_connection_notification_date, :increased_rating_notification_date,
-                     :other_notification_date, :soc_date]
+      date_fields = [
+        :certification_date,
+        :service_connection_notification_date,
+        :increased_rating_notification_date,
+        :other_notification_date,
+        :soc_date
+      ]
 
       params = {}
       date_fields.each do |date_field|
