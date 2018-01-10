@@ -10,6 +10,7 @@ describe RampRefiling do
   let(:original_election_option) { "higher_level_review" }
   let(:option_selected) { nil }
   let(:receipt_date) { nil }
+  let(:appeal_docket) { nil }
 
   let(:completed_ramp_election) do
     RampElection.create!(
@@ -26,7 +27,8 @@ describe RampRefiling do
       ramp_election: completed_ramp_election,
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      option_selected: option_selected
+      option_selected: option_selected,
+      appeal_docket: appeal_docket
     )
   end
 
@@ -216,6 +218,37 @@ describe RampRefiling do
 
         context "when higher level review" do
           let(:option_selected) { "higher_level_review" }
+          it { is_expected.to be true }
+        end
+      end
+    end
+
+    context "appeal docket" do
+      context "if option selected isn't appeal" do
+        let(:option_selected) { "supplemental_claim" }
+        let(:appeal_docket) { "hearing" }
+
+        it "sets appeal_docket to nil" do
+          is_expected.to be true
+          expect(ramp_refiling.appeal_docket).to be_nil
+        end
+      end
+
+      context "if option selected is appeal" do
+        let(:option_selected) { "appeal" }
+
+        context "when not valid" do
+          let(:appeal_docket) { nil }
+
+          it "adds an error to appeal_docket" do
+            is_expected.to be false
+            expect(ramp_refiling.errors[:appeal_docket]).to include("blank")
+          end
+        end
+
+        context "when set to valid value" do
+          let(:appeal_docket) { "hearing" }
+
           it { is_expected.to be true }
         end
       end
