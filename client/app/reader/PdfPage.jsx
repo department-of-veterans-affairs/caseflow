@@ -271,7 +271,7 @@ export class PdfPage extends React.PureComponent {
       width: `${outerDivWidth}px`,
       height: `${outerDivHeight}px`,
       verticalAlign: 'top',
-      display: this.props.isVisible ? '' : 'none'
+      display: this.props.isFileVisible ? '' : 'none'
     };
     // Pages that are currently drawing should not be visible since they may be currently rendered
     // at the wrong scale.
@@ -285,13 +285,13 @@ export class PdfPage extends React.PureComponent {
     };
 
     return <div
-      id={this.props.isVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+      id={this.props.isFileVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
       className={pageClassNames}
       style={divPageStyle}
       onClick={this.onClick}
       ref={this.getPageContainerRef}>
       <div
-        id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+        id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
         className={pageContentsVisibleClass}
         style={innerDivStyle}>
         <canvas
@@ -308,7 +308,7 @@ export class PdfPage extends React.PureComponent {
               width: innerDivWidth,
               height: innerDivHeight
             }}
-            isVisible={this.props.isVisible}
+            isVisible={this.props.isFileVisible}
           />
         </div>
       </div>
@@ -324,7 +324,7 @@ PdfPage.propTypes = {
   documentId: PropTypes.number,
   file: PropTypes.string,
   pageIndex: PropTypes.number,
-  isVisible: PropTypes.bool,
+  isFileVisible: PropTypes.bool,
   scale: PropTypes.number,
   rotate: PropTypes.number,
   pdfDocument: PropTypes.object

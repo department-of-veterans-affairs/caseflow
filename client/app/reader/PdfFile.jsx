@@ -120,7 +120,7 @@ export class PdfFile extends React.PureComponent {
         file={this.props.file}
         isPageVisible={isVisible}
         pageIndex={(rowIndex * this.columnCount) + columnIndex}
-        isVisible={this.props.isVisible}
+        isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
       />
