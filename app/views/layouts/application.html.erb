@@ -19,7 +19,7 @@
     // particularly well.
     //
     // We wrap this in a conditional because newrelic will not be defined when browser
-    // monitoring is not enabled. This will occur in local development when the 
+    // monitoring is not enabled. This will occur in local development when the
     // NEW_RELIC_AGENT_ENABLED env var is not set, for instance.
     if (window.newrelic) {
       window.newrelic.setErrorHandler(function() {
@@ -146,7 +146,7 @@
                       <li><a href="<%= feedback_url %>" target="_blank" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">Send Feedback</a></li>
                       <li><a id="whats-new-item"<%if @show_whats_new_indicator%> class="cf-nav-whatsnew"<%end%> href="<%= url_for controller: '/whats_new', action: 'show'%>">What's New?</a></li>
 
-                      <% if ApplicationController.dependencies_faked? %>
+                      <% if ApplicationController.dependencies_faked? || current_user.global_admin? %>
                         <li>
                           <a href="<%= url_for controller: '/test/users', action: 'index'%>">Switch User</a>
                         </li>
