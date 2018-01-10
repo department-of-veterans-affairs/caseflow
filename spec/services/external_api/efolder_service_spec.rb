@@ -477,20 +477,24 @@ describe ExternalApi::EfolderService do
     end
 
     context "when efolder returns an error403 HTTP response" do
-      let(:http_resp_403) { HTTPI::Response.new(403, [], status: "forbidden: sensitive record") }
-      let(:err) { Caseflow::Error::EfolderAccessForbidden }
-      it "raises EfolderAccessForbidden exception given a 403 HTTP response" do
-        allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-        allow(HTTPI).to receive(:get).and_return(http_resp_403).once
-        expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err)
+      context "receives 403 HTTP response" do
+        let(:http_resp_403) { HTTPI::Response.new(403, [], status: "forbidden: sensitive record") }
+        let(:err) { Caseflow::Error::EfolderAccessForbidden }
+        it "raises EfolderAccessForbidden" do
+          allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+          allow(HTTPI).to receive(:get).and_return(http_resp_403).once
+          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err)
+        end
       end
 
-      let(:http_resp_400) { HTTPI::Response.new(400, [], status: "bad request") }
-      let(:err) { Caseflow::Error::DocumentRetrievalError }
-      it "raises DocumentRetrievalError exception given a 400 HTTP response" do
-        allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
-        allow(HTTPI).to receive(:get).and_return(http_resp_400).once
-        expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err)
+      context "receives 400 HTTP response" do
+        let(:http_resp_400) { HTTPI::Response.new(400, [], status: "bad request") }
+        let(:err) { Caseflow::Error::DocumentRetrievalError }
+        it "raises DocumentRetrievalError" do
+          allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+          allow(HTTPI).to receive(:get).and_return(http_resp_400).once
+          expect { ExternalApi::EfolderService.efolder_v1_api(vbms_id, user) }.to raise_error(err)
+        end
       end
     end
   end
