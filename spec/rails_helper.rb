@@ -87,9 +87,7 @@ module StubbableUser
     end
 
     def authenticate!(roles: nil)
-      if roles && roles.include?("System Admin")
-        Functions.grant!("System Admin", users: ["DSUSER"])
-      end
+      Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
       self.stub = User.from_session(
         "user" =>
@@ -97,7 +95,8 @@ module StubbableUser
             "name" => "Lauren Roth",
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] })
+            "roles" => roles || ["Certify Appeal"] }
+      )
     end
 
     def tester!(roles: nil)
@@ -106,7 +105,8 @@ module StubbableUser
           { "id" => ENV["TEST_USER_ID"],
             "station_id" => "283",
             "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] })
+            "roles" => roles || ["Certify Appeal"] }
+      )
     end
 
     def current_user
@@ -276,6 +276,7 @@ RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
       Timeout.timeout(wait) do
         # rubocop:disable AssignmentInCondition
         sleep(0.1) until value = block.call
+        # rubocop:enable AssignmentInCondition
         value
       end
     rescue TimeoutError

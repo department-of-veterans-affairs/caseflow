@@ -68,8 +68,8 @@ def add_comment_without_clicking_save(text)
     click_on "button-AddComment"
     expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
 
-    # pageContainer1 is the id pdfJS gives to the div holding the first page.
-    find("#pageContainer1").click
+    # comment-layer-${pageIndex}-${fileName} is the id of the first page's CommentLayer
+    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
     expect(page).to_not have_css(".cf-pdf-placing-comment")
 
@@ -77,7 +77,7 @@ def add_comment_without_clicking_save(text)
       find("#addComment")
       break
     rescue Capybara::ElementNotFound
-      Rails.logger.info('#addComment not found, trying again')
+      Rails.logger.info("#addComment not found, trying again")
     end
   end
   fill_in "addComment", with: text, wait: 10
@@ -178,7 +178,7 @@ RSpec.feature "Reader" do
 
       scenario "filtering tags and comments" do
         find("#tags-header .table-icon").click
-        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
+        tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
         tags_checkboxes[0].click
         tags_checkboxes[1].click
         expect(page).to have_content("Issue tags (2)")
@@ -277,7 +277,8 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(
           vbms_id: "123456789S",
           vacols_record: vacols_record,
-          documents: documents)
+          documents: documents
+        )
       end
 
       let(:appeal4) do
@@ -521,7 +522,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
-      expect(page.find('#comments-header')).to have_content("Page 1")
+      expect(page.find("#comments-header")).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
@@ -1111,7 +1112,8 @@ RSpec.feature "Reader" do
       click_on documents[1].type
 
       expect((get_aria_labels all(".cf-document-category-icons li", count: 3))).to eq(
-        ["Medical", "Other Evidence", "Case Summary"])
+        ["Medical", "Other Evidence", "Case Summary"]
+      )
       expect(find("#case_summary", visible: false).disabled?).to be true
 
       find("#button-next").click
@@ -1468,7 +1470,7 @@ RSpec.feature "Reader" do
     # test to avoid the issue of a request to /document/1/pdf returning a cached response
     # instead of an error that would trigger the state we desire.
     # Created issue #3883 to address this browser cache retention issue.
-    let(:documents) { [Generators::Document.create(id: rand(999) + 999_999)] }
+    let(:documents) { [Generators::Document.create(id: rand(999_999..1_000_997))] }
 
     scenario "causes individual file view will display error message" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)

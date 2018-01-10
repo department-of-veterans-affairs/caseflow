@@ -5,7 +5,7 @@ namespace :spec do
     ![".", ".."].include?(file) && File.directory?(File.join("./spec/feature", file))
   end
 
-  spec_names = feature_spec_folders + %w(other unit)
+  spec_names = feature_spec_folders + %w[other unit]
 
   # Tasks for setting up the environment and running the tests without
   # immediately printing output to the screen. This prevents output from overrunning
@@ -36,7 +36,7 @@ namespace :spec do
     task setup: "setup:all"
 
     spec_names.map(&:to_sym).each do |spec_name|
-      desc "Run all #{spec_name} #{spec_name == :unit ? '' : 'feature '}tests. \
+      desc "Run all #{spec_name} #{(spec_name == :unit) ? '' : 'feature '}tests. \
             Configured to run in parallel with other parallel spec tasks."
 
       task spec_name do

@@ -31,6 +31,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :metrics do
+    namespace :v1 do
+      resources :histogram, only: :create
+    end
+  end
+
   scope path: "/dispatch" do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
@@ -89,6 +95,16 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
+  get 'help' => 'help#index'
+  get 'dispatch/help' => 'help#dispatch'
+  get 'certification/help' => 'help#certification'
+  get 'reader/help' => 'help#reader'
+  get 'hearings/help' => 'help#hearings'
+  get 'intake/help' => 'help#intake'
+
+
+  # alias root to help; make sure to keep this below the canonical route so url_for works
+  root 'help#index'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
 
@@ -110,15 +126,6 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
-  get 'help' => 'help#index'
-  get 'dispatch/help' => 'help#dispatch'
-  get 'certification/help' => 'help#certification'
-  get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
-
-
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 

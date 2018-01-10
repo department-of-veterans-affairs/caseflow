@@ -14,7 +14,7 @@ class StartCertificationJob < ActiveJob::Base
     end
     fetch_power_of_attorney! if @certification.certification_status == :started
     update_data_complete
-  rescue => e
+  rescue StandardError => e
     Rails.logger.info "StartCertificationJob failed: #{e.message}"
     Rails.logger.info e.backtrace.join("\n")
     update_data_failed

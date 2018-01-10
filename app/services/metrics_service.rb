@@ -31,7 +31,7 @@ class MetricsService
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
     return_value
-  rescue
+  rescue StandardError
     if service
       metric = PrometheusService.send("#{service}_request_error_counter".to_sym)
       metric.increment(app: app, name: name)
@@ -48,6 +48,7 @@ class MetricsService
       increment_datadog_counter("request_attempt", service, name, app)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
     DataDogService.increment_counter(

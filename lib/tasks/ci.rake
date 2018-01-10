@@ -18,7 +18,7 @@ namespace :ci do
   task default: :all
 
   desc "Run all non-spec CI scripts"
-  task other: %w(ci:verify_code_coverage lint security konacha:run mocha)
+  task other: %w[ci:verify_code_coverage lint security konacha:run mocha]
 
   desc "Verify code coverge (via simplecov) after tests have been run in parallel"
   task :verify_code_coverage do
@@ -49,7 +49,7 @@ namespace :ci do
     puts "\nVerifying code coverage"
     require "simplecov"
 
-    test_categories = %w(unit api certification dispatch reader other)
+    test_categories = %w[unit api certification dispatch reader other]
 
     merged_results = test_categories.inject({}) do |merged, category|
       path = File.join("coverage/", ".#{category}.resultset.json")
