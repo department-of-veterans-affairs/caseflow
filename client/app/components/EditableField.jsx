@@ -12,27 +12,16 @@ export default class EditableField extends React.Component {
     };
   }
 
-  inputRef = (node) => this.input = node;
-
-  startEditing = () => {
-    this.setState({ editing: true });
-    this.manageListener('add');
-  }
-  stopEditing = () => {
-    this.setState({ editing: false });
-    this.manageListener('remove');
-  }
-
-  manageListener = (action) => window[`${action}EventListener`]('keydown', this.saveOnEnter);
+  startEditing = () => this.setState({ editing: true });
+  stopEditing = () => this.setState({ editing: false });
 
   saveOnEnter = (event) => {
-    if (event.key === 'Enter' && document.activeElement === this.input) {
+    if (event.key === 'Enter') {
       this.onSave();
     }
   }
-
   onSave = () => {
-    this.props.onSave(this.input.value);
+    this.props.onSave(this.props.value);
     this.stopEditing();
   }
   onCancel = () => {
@@ -76,12 +65,12 @@ export default class EditableField extends React.Component {
         name={name}
         id={name}
         onChange={this.onChange}
+        onKeyDown={this.saveOnEnter}
         type={type}
         value={value}
         placeholder={placeholder}
         title={title}
         maxLength={maxLength}
-        ref={this.inputRef}
       />;
     } else {
       actionLinks = <span>
