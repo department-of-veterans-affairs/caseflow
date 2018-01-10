@@ -46,7 +46,8 @@ class ApplicationController < ApplicationBaseController
       "certification" => certification_help_path,
       "dispatch-arc" => dispatch_help_path,
       "reader" => reader_help_path,
-      "hearings" => hearings_help_path
+      "hearings" => hearings_help_path,
+      "intake" => intake_help_path
     }[application] || help_path
   end
   helper_method :help_url
