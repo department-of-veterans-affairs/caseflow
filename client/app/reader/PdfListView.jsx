@@ -35,24 +35,22 @@ export class PdfListView extends React.Component {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
     return <div className="usa-grid">
-      <div className="cf-app">
-        <div className="cf-app-segment cf-app-segment--alt">
-          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          <DocumentListHeader
+      <div className="cf-app-segment cf-app-segment--alt">
+        <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
+        <DocumentListHeader
+          documents={this.props.documents}
+          noDocuments={noDocuments}
+        />
+        { noDocuments ?
+          <NoSearchResults /> :
+          <DocumentsTable
             documents={this.props.documents}
-            noDocuments={noDocuments}
-          />
-          { noDocuments ?
-            <NoSearchResults /> :
-            <DocumentsTable
-              documents={this.props.documents}
-              documentPathBase={this.props.documentPathBase}
-              onJumpToComment={this.props.onJumpToComment}
-              sortBy={this.props.sortBy}
-              docFilterCriteria={this.props.docFilterCriteria}
-              showPdf={this.props.showPdf}
-            />}
-        </div>
+            documentPathBase={this.props.documentPathBase}
+            onJumpToComment={this.props.onJumpToComment}
+            sortBy={this.props.sortBy}
+            docFilterCriteria={this.props.docFilterCriteria}
+            showPdf={this.props.showPdf}
+          />}
       </div>
       <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
       { this.props.manifestVvaFetchedAt ?
