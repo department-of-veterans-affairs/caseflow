@@ -1,6 +1,8 @@
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
 
+  # :nocov:
+
   def self.transaction
     VACOLS::Case.transaction do
       yield
