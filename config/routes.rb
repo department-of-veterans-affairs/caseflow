@@ -31,6 +31,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :metrics do
+    namespace :v1 do
+      resources :histogram, only: :create
+    end
+  end
+
   scope path: "/dispatch" do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
