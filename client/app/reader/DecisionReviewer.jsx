@@ -137,7 +137,11 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <NavigationBar
           appName="Reader"
-          logoName="reader"
+          logoProps={{
+            backgroundColor: '#D6D7D9',
+            accentColor: '#417505',
+            overlapColor: '#2D5104'
+          }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">

@@ -12,10 +12,10 @@ export default class NavigationBar extends React.Component {
   render() {
     const {
       appName,
-      logoName,
       defaultUrl,
       dropdownUrls,
       topMessage,
+      logoProps,
       userDisplayName
     } = this.props;
 
@@ -39,7 +39,7 @@ export default class NavigationBar extends React.Component {
       <div>
         <div className="cf-app-width">
           <span className="cf-push-left" {...pushLeftStyling}>
-            <CaseflowLogo />
+            <CaseflowLogo {...logoProps} />
             <h1 {...h1Styling}>
               <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
