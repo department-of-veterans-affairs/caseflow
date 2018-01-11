@@ -3,7 +3,6 @@ import React from 'react';
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import CaseflowLogo from '../../components/CaseflowLogo';
-// import { css } from 'glamor';
 
 export default class StyleLogos extends React.PureComponent {
   render = () => {
@@ -31,11 +30,6 @@ export default class StyleLogos extends React.PureComponent {
       }
     ];
 
-    // const logoWrapperStyles = css({
-    //   display: 'flex',
-    //   alignItems: 'center'
-    // });    
-
     return <div>
       <StyleGuideComponentTitle
         title="Logos"
@@ -54,7 +48,7 @@ export default class StyleLogos extends React.PureComponent {
         non-colored Caseflow logo.
       </p>
       {
-        logos.map(({ appName, ...logoProps }) => <p key={appName}>
+        logos.map(({ appName, ...logoProps }) => <p key={appName} className="cf-styleguide-logo-row">
           <CaseflowLogo {...logoProps} /><strong>{appName}</strong>
         </p>)
       }
