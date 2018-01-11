@@ -3,7 +3,14 @@ require "faker"
 
 describe Document do
   let(:document_type) { "NOD" }
-  let(:document) { Document.new(type: document_type, vbms_document_id: "123", received_at: received_at) }
+  let(:document) do
+    Document.new(
+      type: document_type,
+      vbms_document_id: "123",
+      received_at: received_at,
+      description: "Document description"
+    )
+  end
   let(:file) { document.default_path }
   let(:received_at) { nil }
   let(:case_file_number) { Random.rand(999_999_999).to_s }
@@ -292,6 +299,20 @@ describe Document do
   context "#default_path" do
     it "returns correct path" do
       expect(document.default_path).to match(%r{.*\/tmp\/pdfs\/.*123})
+    end
+  end
+
+  context "versioning" do
+    it "saves new version on update description" do
+      document.save
+      expect(document.versions.length).to eq 1
+      expect(document.description).to eq("Document description")
+
+      document.description = "Updated description"
+      document.save
+
+      expect(document.versions.length).to eq 2
+      expect(document.reload.description).to eq("Updated description")
     end
   end
 end
