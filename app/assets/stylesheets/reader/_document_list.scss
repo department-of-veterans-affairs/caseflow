@@ -47,6 +47,10 @@ $tag-backgrond-color: #d6d7d9;
   .documents-table {
     min-width: 810px;
     margin-top: 0;
+
+    tbody > tr > td {
+      vertical-align: top;
+    }
   }
 
   $last-read-column-width: 41px;
@@ -135,6 +139,12 @@ $tag-backgrond-color: #d6d7d9;
 
   .document-list-receipt-date {
     color: $gray-font-color;
+  }
+
+  .document-list-doc-description {
+    color: $color-gray;
+    font-size: 1.5rem;
+    margin: 0;
   }
 
   .document-list-comments-indicator-icon {

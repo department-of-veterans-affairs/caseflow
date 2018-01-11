@@ -1,5 +1,6 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.2
+  TargetRailsVersion: 4.2
   Include:
     - '**/config.ru'
     - '**/Rakefile'
@@ -10,6 +11,7 @@ AllCops:
     - 'script/**/*'
     - 'vendor/**/*'
     - './.simplecov'
+    - 'client/node_modules/**/*'
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -26,12 +28,43 @@ Style/ClassAndModuleChildren:
 Metrics/LineLength:
   Max: 120
 
+Metrics/BlockLength:
+  Enabled: false
+
 Rails:
   Enabled: true
 
 Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
+
+Rails/DynamicFindBy:
+  Enabled: false
+
+Rails/OutputSafety:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Enabled: false
+
+Rails/LexicallyScopedActionFilter:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/FilePath:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/InverseOf:
+  Enabled: false
+
+Rails/Present:
+  NotBlank: false
+  UnlessBlank: false
 
 Metrics/MethodLength:
   Max: 20
@@ -53,3 +86,42 @@ Style/NegatedIf:
 
 Style/EachWithObject:
   Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/MultipleComparison:
+  Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/TernaryParentheses:
+  EnforcedStyle: require_parentheses_when_complex
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Naming/FileName:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Lint/UriEscapeUnescape:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented

@@ -18,7 +18,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
     # table to get the veteran's name, and the associated row in the
     # decass table to get the assigned dates, but these are not mandatory,
     # so we left join on both of them.
-    # rubocop:disable Metrics/MethodLength
     def select_assignments
       select("brieff.bfkey as vacols_id",
              "decass.deassign as date_assigned",

@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import { PDFJS } from 'pdfjs-dist/web/pdf_viewer';
+import { collectHistogram } from '../util/Metrics';
 
 import classNames from 'classnames';
 
@@ -30,6 +31,7 @@ export class PdfPage extends React.PureComponent {
 
     this.isDrawing = false;
     this.marks = [];
+    this.measureTimeStartMs = null;
   }
 
   getPageContainerRef = (pageContainer) => this.pageContainer = pageContainer
@@ -140,6 +142,10 @@ export class PdfPage extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
+    if (this.props.isPageVisible && !prevProps.isPageVisible) {
+      this.measureTimeStartMs = performance.now();
+    }
+
     if (prevProps.scale !== this.props.scale) {
       this.drawPage(this.page);
     }
@@ -196,7 +202,19 @@ export class PdfPage extends React.PureComponent {
           this.drawText(page, text);
         });
 
-        this.drawPage(page);
+        this.drawPage(page).then(() => {
+          collectHistogram({
+            group: 'front_end',
+            name: 'pdf_page_render_time_in_ms',
+            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
+            appName: 'Reader',
+            attrs: {
+              overscan: this.props.windowingOverscan,
+              documentType: this.props.documentType,
+              pageCount: this.props.pdfDocument.pdfInfo.numPages
+            }
+          });
+        });
         this.getDimensions(page);
       }).
         catch(() => {
@@ -253,7 +271,7 @@ export class PdfPage extends React.PureComponent {
       width: `${outerDivWidth}px`,
       height: `${outerDivHeight}px`,
       verticalAlign: 'top',
-      display: this.props.isVisible ? '' : 'none'
+      display: this.props.isFileVisible ? '' : 'none'
     };
     // Pages that are currently drawing should not be visible since they may be currently rendered
     // at the wrong scale.
@@ -267,13 +285,13 @@ export class PdfPage extends React.PureComponent {
     };
 
     return <div
-      id={this.props.isVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+      id={this.props.isFileVisible ? `pageContainer${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
       className={pageClassNames}
       style={divPageStyle}
       onClick={this.onClick}
       ref={this.getPageContainerRef}>
       <div
-        id={this.props.isVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
+        id={this.props.isFileVisible ? `rotationDiv${pageNumberOfPageIndex(this.props.pageIndex)}` : null}
         className={pageContentsVisibleClass}
         style={innerDivStyle}>
         <canvas
@@ -290,7 +308,7 @@ export class PdfPage extends React.PureComponent {
               width: innerDivWidth,
               height: innerDivHeight
             }}
-            isVisible={this.props.isVisible}
+            isVisible={this.props.isFileVisible}
           />
         </div>
       </div>
@@ -306,7 +324,7 @@ PdfPage.propTypes = {
   documentId: PropTypes.number,
   file: PropTypes.string,
   pageIndex: PropTypes.number,
-  isVisible: PropTypes.bool,
+  isFileVisible: PropTypes.bool,
   scale: PropTypes.number,
   rotate: PropTypes.number,
   pdfDocument: PropTypes.object
@@ -329,6 +347,8 @@ const mapStateToProps = (state, props) => {
     currentMatchIndex: getCurrentMatchIndex(state, props),
     matchesPerPage: getMatchesPerPageInFile(state, props),
     searchBarHidden: state.pdfViewer.hideSearchBar,
+    windowingOverscan: state.pdfViewer.windowingOverscan,
+    documentType: _.get(state.documents, [props.documentId, 'type'], 'unknown'),
     ...state.searchActionReducer
   };
 };

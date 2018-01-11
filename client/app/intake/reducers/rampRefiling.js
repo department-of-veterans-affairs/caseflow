@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getOptionSelectedError, getReceiptDateError } from '../util/index';
+import { getOptionSelectedError, getReceiptDateError, getAppealDocketError } from '../util/index';
 import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
@@ -18,6 +18,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+    },
+    appealDocket: {
+      $set: serverIntake.appeal_docket
     },
     electionReceiptDate: {
       $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.election_receipt_date)
@@ -43,6 +46,8 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     optionSelected: null,
     optionSelectedError: null,
+    appealDocket: null,
+    appealDocketError: null,
     hasInvalidOption: false,
     receiptDate: null,
     receiptDateError: null,
@@ -98,6 +103,12 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_APPEAL_DOCKET:
+    return update(state, {
+      appealDocket: {
+        $set: action.payload.appealDocket
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -112,6 +123,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         $set: null
       },
       receiptDateError: {
+        $set: null
+      },
+      appealDocketError: {
         $set: null
       },
       hasInvalidOption: {
@@ -145,6 +159,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+      },
+      appealDocketError: {
+        $set: getAppealDocketError(action.payload.responseErrorCodes)
       },
       requestStatus: {
         submitReview: {

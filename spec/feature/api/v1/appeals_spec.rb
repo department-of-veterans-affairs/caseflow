@@ -168,7 +168,7 @@ describe "Appeals API v1", type: :request do
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc ssoc form9 ssoc))
+      expect(event_types).to eq(%w[nod soc ssoc form9 ssoc])
 
       # check that the date for the first event was formatted correctly
       json_nod_date = json["data"].first["attributes"]["events"].first["date"]
@@ -198,7 +198,7 @@ describe "Appeals API v1", type: :request do
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(nod soc form9 hearing_held bva_remand))
+      expect(event_types).to eq(%w[nod soc form9 hearing_held bva_remand])
     end
   end
 end
