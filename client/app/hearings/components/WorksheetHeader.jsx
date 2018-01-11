@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../components/RenderFunctions';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange } from '../actions/Dockets';
 
 class WorksheetHeader extends React.PureComponent {
@@ -83,11 +84,16 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell column-2">
           <div>Veteran ID:</div>
           <div>
-            <button type="submit"
-              className="usa-button-outline cf-copy-to-clipboard" >
-              {worksheet.sanitized_vbms_id}
-              <ClipboardIcon />
-            </button>
+
+            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+              <button
+                name="Copy Veteran ID"
+                className={['usa-button-outline cf-copy-to-clipboard']}>
+                {worksheet.sanitized_vbms_id}
+                <ClipboardIcon />
+              </button>
+            </CopyToClipboard>
+
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell column-3">
