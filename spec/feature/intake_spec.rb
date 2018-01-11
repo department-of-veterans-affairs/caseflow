@@ -708,10 +708,10 @@ RSpec.feature "RAMP Intake" do
           expect(page).to have_button("Continue to next step", disabled: true)
           click_on "Begin next intake"
 
-          # go back to start page
+          # Go back to start page
           expect(page).to have_content("Welcome to Caseflow Intake!")
 
-          # check there was an error
+          # Check there was an error in the DB
           intake.reload
           expect(intake.completion_status).to eq("error")
           expect(intake.error_code).to eq("ineligible_for_higher_level_review")

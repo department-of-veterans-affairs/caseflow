@@ -212,4 +212,22 @@ describe RampRefilingIntake do
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
+
+  context "#save_error!" do
+    subject { intake.save_error!(code: "ineligible_for_higher_level_review") }
+
+    let(:detail) do
+      RampRefiling.create!(
+        ramp_election: completed_ramp_election,
+        veteran_file_number: veteran_file_number
+      )
+    end
+
+    it "saves as an error and deletes the refiling record created" do
+      subject
+
+      intake.reload
+      expect(intake.error_code).to eq("ineligible_for_higher_level_review")
+    end
+  end
 end

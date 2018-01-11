@@ -72,7 +72,7 @@ class Review extends React.PureComponent {
         </Button>
       </Alert>
       }
-      <h1>Review { veteranName }s 21-4138 RAMP Selection Form</h1>
+      <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
       <DateSelector
         name="receipt-date"
@@ -146,7 +146,7 @@ class ReviewNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={Boolean(this.props.hasInvalidOption)}
+      disabled={this.props.hasInvalidOption}
     >
       Continue to next step
     </Button>;
