@@ -84,6 +84,12 @@ class Search extends React.PureComponent {
         title: 'This Veteran has a pending RAMP EP with no contentions',
         body: 'Please ensure contentions were added to the original RAMP Election EP'
       },
+      ramp_refiling_already_processed: {
+        title: 'Selection form already processed in Caseflow',
+        body: 'Caseflow does not currently support the processing of the second, third, etc. ' +
+         'Selection form for a veteran. Please contact Caseflow support for instructions on ' +
+         'what to do.'
+      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'

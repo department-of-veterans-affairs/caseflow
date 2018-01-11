@@ -4,7 +4,8 @@ class RampRefilingIntake < Intake
   enum error_code: {
     no_complete_ramp_election: "no_complete_ramp_election",
     ramp_election_is_active: "ramp_election_is_active",
-    ramp_election_no_issues: "ramp_election_no_issues"
+    ramp_election_no_issues: "ramp_election_no_issues",
+    ramp_refiling_already_processed: "ramp_refiling_already_processed"
   }.merge(Intake::ERROR_CODES)
 
   def preload_intake_data!
@@ -56,7 +57,15 @@ class RampRefilingIntake < Intake
       self.error_code = :ramp_election_is_active
     elsif ramp_election.issues.empty?
       self.error_code = :ramp_election_no_issues
+    elsif ramp_refiling_already_processed?
+      # For now caseflow does not support processing the multiple ramp refilings
+      # for the same veteran
+      self.error_code = :ramp_refiling_already_processed
     end
+  end
+
+  def ramp_refiling_already_processed?
+    !RampRefiling.where(ramp_election_id: ramp_election.id).empty?
   end
 
   def find_or_build_initial_detail
