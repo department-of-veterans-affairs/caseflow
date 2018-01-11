@@ -228,6 +228,7 @@ describe RampRefilingIntake do
 
       intake.reload
       expect(intake.error_code).to eq("ineligible_for_higher_level_review")
+      expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end

@@ -53,7 +53,6 @@ class IntakesController < ApplicationController
 
   def error
     current_intake.save_error!(code: params[:error_code])
-    current_intake.detail.destroy!
     render json: {}
   end
 
