@@ -96,16 +96,18 @@ RSpec.feature "Hearings" do
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
-      fill_in "3.disposition", with: "No Show\n"
-      fill_in "3.hold_open", with: "30 days\n"
-      fill_in "3.aod", with: "Filed\n"
+      find(".dropdown-3-disposition").click
+      find("#react-select-2--option-1").click
+      find(".dropdown-3-hold_open").click
+      find("#react-select-3--option-1").click
+      find(".dropdown-3-aod").click
+      find("#react-select-4--option-3").click
       find("label", text: "Transcript Requested").click
-
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
-      expect(page).to have_content("30 days")
-      expect(page).to have_content("Filed")
+      expect(page).to have_content("60 days")
+      expect(page).to have_content("None")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
