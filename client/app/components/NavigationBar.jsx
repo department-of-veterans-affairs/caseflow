@@ -4,7 +4,7 @@ import DropdownMenu from './DropdownMenu';
 import Link from './Link';
 import Breadcrumbs from './Breadcrumbs';
 import PerformanceDegradationBanner from './PerformanceDegradationBanner';
-import CaseflowIcon from './CaseflowIcon';
+import CaseflowLogo from './CaseflowLogo';
 import { css } from 'glamor';
 import { COLORS } from '../util/StyleConstants';
 
@@ -39,7 +39,7 @@ export default class NavigationBar extends React.Component {
       <div>
         <div className="cf-app-width">
           <span className="cf-push-left" {...pushLeftStyling}>
-            <CaseflowIcon />
+            <CaseflowLogo />
             <h1 {...h1Styling}>
               <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow

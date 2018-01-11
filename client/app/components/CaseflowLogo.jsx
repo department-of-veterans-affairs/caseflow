@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react';
 import { css } from 'glamor';
 
-export default class CaseflowIcon extends PureComponent {
+export default class CaseflowLogo extends PureComponent {
   render() {
     const styling = css({
       width: '32px',
