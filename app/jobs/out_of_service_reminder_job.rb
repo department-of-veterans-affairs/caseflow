@@ -2,7 +2,7 @@ class OutOfServiceReminderJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform
-    apps = %w(certification dispatch hearing_prep reader)
+    apps = %w[certification dispatch hearing_prep reader]
     out_of_service_apps = []
 
     out_of_service_apps.push("Caseflow") if Rails.cache.read("out_of_service")

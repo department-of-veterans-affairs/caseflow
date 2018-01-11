@@ -24,9 +24,9 @@ class ReaderUser < ActiveRecord::Base
 
     def all_without_records(limit = 10)
       User.joins("LEFT JOIN reader_users ON users.id=reader_users.user_id")
-          .where("'Reader' = ANY(roles)")
-          .where(reader_users: { user_id: nil })
-          .limit(limit)
+        .where("'Reader' = ANY(roles)")
+        .where(reader_users: { user_id: nil })
+        .limit(limit)
     end
   end
 end

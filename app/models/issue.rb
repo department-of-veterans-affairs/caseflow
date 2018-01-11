@@ -131,7 +131,7 @@ class Issue
   # was allowing/denying new material (such as medical evidence) to be used
   # in the appeal
   def new_material?
-    codes[0..2] == %w(02 15 04)
+    codes[0..2] == %w[02 15 04]
   end
 
   def non_new_material?

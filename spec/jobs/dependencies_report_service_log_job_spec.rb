@@ -1,19 +1,19 @@
 require "rails_helper"
 
 describe DependenciesReportServiceLogJob do
-  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.freeze
-{
-  "BGS":{"name":"BGS","up_rate_5":100.0},
-  "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
-  "VBMS":{"name":"VBMS","up_rate_5":49.0},
-  "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
-    "up_rate_5":100.0}
-}
+  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.strip_heredoc.freeze
+    {
+      "BGS":{"name":"BGS","up_rate_5":100.0},
+      "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
+      "VBMS":{"name":"VBMS","up_rate_5":49.0},
+      "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
+        "up_rate_5":100.0}
+    }
   EOF
-  DEPENDENCIES_REPORT_WITH_INVALID_DATA = <<-'EOF'.freeze
-{
-  "BGS":{"name":"BGS","bad_field":"a"},
-}
+  DEPENDENCIES_REPORT_WITH_INVALID_DATA = <<-'EOF'.strip_heredoc.freeze
+    {
+      "BGS":{"name":"BGS","bad_field":"a"},
+    }
   EOF
 
   context "when outage is present" do

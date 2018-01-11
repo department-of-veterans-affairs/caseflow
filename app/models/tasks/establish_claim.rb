@@ -59,7 +59,8 @@ class EstablishClaim < Task
           :regional_office_key,
           :issues,
           :sanitized_vbms_id
-        ] }],
+        ]
+      }],
       methods: [:progress_status, :aasm_state]
     ).tap { |hash| hash["appeal"]["issues"] = (hash["appeal"]["issues"] || []).map(&:attributes) }
   end
@@ -79,7 +80,6 @@ class EstablishClaim < Task
         review!(outgoing_reference_id: result.claim_id)
       end
     end
-
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end

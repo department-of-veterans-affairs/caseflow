@@ -3,7 +3,14 @@ require "faker"
 
 describe Document do
   let(:document_type) { "NOD" }
-  let(:document) { Document.new(type: document_type, vbms_document_id: "123", received_at: received_at) }
+  let(:document) do
+    Document.new(
+      type: document_type,
+      vbms_document_id: "123",
+      received_at: received_at,
+      description: "Document description"
+    )
+  end
   let(:file) { document.default_path }
   let(:received_at) { nil }
   let(:case_file_number) { Random.rand(999_999_999).to_s }
@@ -22,7 +29,7 @@ describe Document do
     end
 
     context "when an alt type matches" do
-      let(:document) { Document.new(type: "Form 9", alt_types: %w(SOC NOD)) }
+      let(:document) { Document.new(type: "Form 9", alt_types: %w[SOC NOD]) }
       it { is_expected.to be_truthy }
     end
 
@@ -198,7 +205,7 @@ describe Document do
         )
       end
 
-      it { is_expected.to have_attributes(type: "Form 9", alt_types: %w(NOD SOC)) }
+      it { is_expected.to have_attributes(type: "Form 9", alt_types: %w[NOD SOC]) }
       it "persists in database" do
         document.save
         expect(Document.find_by(vbms_document_id: document.vbms_document_id).file_number).to eq(case_file_number)
@@ -258,7 +265,8 @@ describe Document do
         alt_types: "Alt Form 9",
         received_at: Time.now.utc,
         filename: "test",
-        efolder_id: 1234)
+        efolder_id: 1234
+      )
     end
     let(:persisted_document) { from_vbms_document.merge_into(Generators::Document.build) }
 
@@ -291,6 +299,20 @@ describe Document do
   context "#default_path" do
     it "returns correct path" do
       expect(document.default_path).to match(%r{.*\/tmp\/pdfs\/.*123})
+    end
+  end
+
+  context "versioning" do
+    it "saves new version on update description" do
+      document.save
+      expect(document.versions.length).to eq 1
+      expect(document.description).to eq("Document description")
+
+      document.description = "Updated description"
+      document.save
+
+      expect(document.versions.length).to eq 2
+      expect(document.reload.description).to eq("Updated description")
     end
   end
 end

@@ -34,4 +34,3 @@ class ReviewButtonsUnconnected extends React.PureComponent {
 export const ReviewButtons = connect(
   ({ intake }) => ({ formType: intake.formType })
 )(ReviewButtonsUnconnected);
-
