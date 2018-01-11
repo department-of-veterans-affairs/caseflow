@@ -37,6 +37,7 @@ before_install:
   - sudo dpkg -i $PWD/chromium-chromedriver.deb
   - sudo apt-get install -f
   - sudo apt-get install pdftk
+  - chromium-browser --version
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
   - cd ./client && $YARN --frozen-lockfile
