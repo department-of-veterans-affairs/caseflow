@@ -178,8 +178,6 @@ class ApplicationController < ApplicationBaseController
   end
 
   def feedback_url
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
     subject = if request.original_fullpath.include? "dispatch"
                 "Caseflow Dispatch"
               elsif request.original_fullpath.include? "certifications"
