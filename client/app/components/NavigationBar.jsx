@@ -28,12 +28,12 @@ export default class NavigationBar extends React.Component {
         color: COLORS.GREY_DARK,
         paddingLeft: '.3em'
       }
-    })
+    });
 
     const pushLeftStyling = css({
       display: 'flex',
       alignItems: 'center'
-    })
+    });
 
     return <div><header className="cf-app-header">
       <div>
