@@ -1,40 +1,49 @@
 class QueueRepository
-  def self.tasks_for_attorney(css_id)
-    # DECASS etc
-    cases = VACOLS::CaseAssignment.active_cases_for_user(css_id)
-    vacols_ids = active_cases_for_user.map(&:vacols_id)
+  # :nocov:
+  def self.tasks_query(css_id)
+    VACOLS::CaseAssignment.active_cases_for_user(css_id)
+  end
+  # :nocov:
 
-    aod_statuses = VACOLS::Case.aod(vacols_ids)
-    issues = VACOLS::CaseIssue.descriptions(vacols_ids)
+  # :nocov:
+  def self.appeal_info_query(vacols_ids)
+    VACOLS::Case.includes(:folder, :correspondent, :representative)
+      .joins(VACOLS::Case::JOIN_AOD)
+      .find(vacols_ids)
+  end
+  # :nocov:
 
-
-    MetricsService.record("VACOLS: cases_assigned_to_user",
-                          service: :vacols,
-                          name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
-      cases = VACOLS::Case.where(bfkey: vacols_ids)
-        .includes(:folder, :correspondent, :representative, folder: :outcoder)
-        .references(:folder, :correspondent, folder: :outcoder)
-        .joins(VACOLS::Case::JOIN_AOD)
-      vacols_ids = cases.map(&:bfkey)
-      # Load issues, but note that we do so without including descriptions
-      issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
-      hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
-      cavc_decisions = CAVCDecision.repository.cavc_decisions_by_appeals(vacols_ids)
-
-      cases.map do |case_record|
-        poa = PowerOfAttorney.new
-        PowerOfAttorneyRepository.set_vacols_values(poa, case_record)
-
-        appeal = build_appeal(case_record)
-        appeal.aod = case_record["aod"] == 1
-        appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
-        appeal.hearings = hearings[appeal.vacols_id] || []
-        appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
-        appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
-        appeal.save
-        appeal
-      end
+  def self.tasks_for_user(css_id)
+    tasks = MetricsService.record("VACOLS: fetch user assignments",
+                                  service: :vacols,
+                                  name: "appeals_by_vacols_id") do
+      tasks_query(css_id)
     end
   end
+
+  def self.appeals_from_tasks(tasks)
+    # Run a second query to find all the appeal information.
+    case_records = MetricsService.record("VACOLS: fetch appeals associated with tasks",
+                                         service: :vacols,
+                                         name: "appeals_by_vacols_id") do
+      vacols_ids = tasks.map(&:vacols_id)
+      appeal_info_query(vacols_ids)
+    end
+
+    hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
+
+    case_records.map do |case_record|
+      poa = PowerOfAttorney.new
+      PowerOfAttorneyRepository.set_vacols_values(poa, case_record)
+
+      appeal = build_appeal(case_record)
+      appeal.aod = case_record["aod"] == 1
+      appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
+      appeal.hearings = hearings[appeal.vacols_id] || []
+      appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
+      appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
+      appeal.save
+      appeal
+    end
   end
 end
