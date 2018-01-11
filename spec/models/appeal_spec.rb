@@ -721,6 +721,26 @@ describe Appeal do
       end
     end
 
+    context "when a cancelled certification for an appeal already exists in the DB" do
+      before do
+        @form8 = Form8.create(vacols_id: "765")
+        @cancelled_certification = Certification.create!(
+          vacols_id: "765", hearing_preference: "SOME_INVALID_PREF"
+        )
+        CertificationCancellation.create!(
+          certification_id: @cancelled_certification.id,
+          cancellation_reason: "reason",
+          email: "test@caseflow.gov"
+        )
+        @certification = Certification.create!(vacols_id: "765", hearing_preference: "VIDEO")
+      end
+
+      it "certifies the correct appeal using AppealRepository" do
+        expect { subject }.to_not raise_error
+        expect(Fakes::AppealRepository.certification).to eq(@certification)
+      end
+    end
+
     context "when form8 doesn't exist in the DB for appeal" do
       it "throws an error" do
         expect { subject }.to raise_error("No Form 8 found for appeal being certified")
