@@ -85,10 +85,9 @@ class Search extends React.PureComponent {
         body: 'Please ensure contentions were added to the original RAMP Election EP'
       },
       ramp_refiling_already_processed: {
-        title: 'Selection form already processed in Caseflow',
-        body: 'Caseflow does not currently support the processing of the second, third, etc. ' +
-         'Selection form for a veteran. Please contact Caseflow support for instructions on ' +
-         'what to do.'
+        title: 'Selection Form already processed in Caseflow',
+        body: 'Caseflow does not currently support more than one Selection Form for a Veteran.' +
+         'Please contact Caseflow Support if you need additional assistance.'
       },
       default: {
         title: 'Something went wrong',
