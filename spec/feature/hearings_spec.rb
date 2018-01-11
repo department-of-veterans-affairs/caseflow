@@ -99,9 +99,9 @@ RSpec.feature "Hearings" do
       find(".dropdown-3-disposition").click
       find("#react-select-2--option-1").click
       find(".dropdown-3-hold_open").click
-      find("#react-select-3--option-1").click
+      find("#react-select-3--option-2").click
       find(".dropdown-3-aod").click
-      find("#react-select-4--option-3").click
+      find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
