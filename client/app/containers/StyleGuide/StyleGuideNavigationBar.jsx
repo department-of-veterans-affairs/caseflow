@@ -47,7 +47,10 @@ export default class StyleGuideNavigationBar extends React.PureComponent {
         <Router>
           <NavigationBar
             appName="Hearing Prep"
-            logoName="hearing-prep"
+            logoProps={{
+              accentColor: 'rgb(72, 144, 0)',
+              overlapColor: 'rgb(72, 144, 0)'
+            }}
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}
             defaultUrl="/"

@@ -44,7 +44,10 @@ export default class StyleGuideFooter extends React.PureComponent {
         <div className="sg-nav-wrap">
           <NavigationBar
             appName="Hearing Prep"
-            logoName="hearing-prep"
+            logoProps={{
+              accentColor: 'rgb(72, 144, 0)',
+              overlapColor: 'rgb(72, 144, 0)'
+            }}
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}
             defaultUrl="/"

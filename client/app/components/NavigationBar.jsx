@@ -77,6 +77,5 @@ NavigationBar.propTypes = {
   })),
   defaultUrl: PropTypes.string.isRequired,
   userDisplayName: PropTypes.string.isRequired,
-  logoName: PropTypes.string.isRequired,
   appName: PropTypes.string.isRequired
 };
