@@ -13,6 +13,9 @@ import { setOptionSelected, setReceiptDate, submitReview, confirmIneligibleForm 
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
+  beginNextIntake = () => {
+    this.props.confirmIneligibleForm(this.props.intakeId);
+  }
   render() {
     const {
       rampRefilingStatus,
@@ -44,7 +47,9 @@ class Review extends React.PureComponent {
           and that they may clarify their lane selection within 30 days. <br />
         <Button
           name="begin-next-intake"
-          onClick={this.props.confirmIneligibleForm}>
+          onClick={this.beginNextIntake}
+          loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+          legacyStyling={false}>
             Begin next intake
         </Button>
       </Alert>

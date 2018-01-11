@@ -39,7 +39,15 @@ export const confirmIneligibleForm = (intakeId) => (dispatch) => {
       () => dispatch({
         type: ACTIONS.START_NEW_INTAKE,
         meta: { analytics }
-      })
+      }),
+      (error) => {
+        dispatch({
+          type: ACTIONS.SUBMIT_ERROR_FAIL,
+          meta: { analytics }
+        });
+
+        throw error;
+      }
     );
 };
 
