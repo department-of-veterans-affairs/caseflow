@@ -189,7 +189,6 @@ class ApplicationController < ApplicationBaseController
               elsif request.original_fullpath.include? "queue"
                 "Caseflow Queue"
               else
-                # default to just plain Caseflow.
                 "Caseflow"
               end
 
