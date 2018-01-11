@@ -23,8 +23,6 @@ const dispositionOptions = [{ value: 'held',
   label: 'Postponed' }];
 
 const holdOptions = [
-  { value: 0,
-    label: '0 days' },
   { value: 30,
     label: '30 days' },
   { value: 60,
