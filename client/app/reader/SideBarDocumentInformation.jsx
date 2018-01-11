@@ -1,9 +1,13 @@
 import React, { PureComponent } from 'react';
 import { formatDateStr } from '../util/DateUtil';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import IssueList from './IssueList';
+import EditableField from '../components/EditableField';
+import { saveDocumentDescription, changePendingDocDescription, resetPendingDocDescription
+} from './Documents/DocumentsActions';
 
 import LoadingMessage from '../components/LoadingMessage';
 import { getClaimTypeDetailInfo } from '../reader/utils';
@@ -32,9 +36,9 @@ class SideBarDocumentInformation extends PureComponent {
         <p className="cf-pdf-meta-title">
           <strong>Veteran ID:</strong> {appeal.vbms_id}
         </p>
-        <p className="cf-pdf-meta-title">
+        <div className="cf-pdf-meta-title">
           <strong>Type:</strong> {appeal.type} {getClaimTypeDetailInfo(appeal)}
-        </p>
+        </div>
         <p className="cf-pdf-meta-title">
           <strong>Docket Number:</strong> {appeal.docket_number}
         </p>
@@ -48,6 +52,9 @@ class SideBarDocumentInformation extends PureComponent {
       </div>;
     }
 
+    const docDescriptionFieldText = _.isUndefined(this.props.doc.pendingDescription) ?
+      this.props.doc.description : this.props.doc.pendingDescription;
+
     return <div className="cf-sidebar-document-information">
       <p className="cf-pdf-meta-title cf-pdf-cutoff">
         <strong>Document Type: </strong>
@@ -55,6 +62,18 @@ class SideBarDocumentInformation extends PureComponent {
           {this.props.doc.type}
         </span>
       </p>
+      <EditableField
+        className="cf-pdf-meta-title"
+        value={docDescriptionFieldText || ''}
+        onSave={this.saveDocDescription}
+        onChange={this.changePendingDescription}
+        onCancel={this.resetPendingDescription}
+        maxLength={50}
+        label="Document Description"
+        strongLabel
+        name="document_description"
+        errorMessage={this.props.error.visible ? this.props.error.message : null}
+      />
       <p className="cf-pdf-meta-title">
         <strong>Receipt Date:</strong> {formatDateStr(this.props.doc.receivedAt)}
       </p>
@@ -62,6 +81,10 @@ class SideBarDocumentInformation extends PureComponent {
       {renderComponent}
     </div>;
   }
+
+  changePendingDescription = (description) => this.props.changePendingDocDescription(this.props.doc.id, description);
+  resetPendingDescription = () => this.props.resetPendingDocDescription(this.props.doc.id);
+  saveDocDescription = (description) => this.props.saveDocumentDescription(this.props.doc.id, description);
 }
 
 SideBarDocumentInformation.propTypes = {
@@ -69,10 +92,20 @@ SideBarDocumentInformation.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  didLoadAppealFail: state.pdfViewer.didLoadAppealFail
+  didLoadAppealFail: state.pdfViewer.didLoadAppealFail,
+  error: state.pdfViewer.pdfSideBarError.description
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    changePendingDocDescription,
+    resetPendingDocDescription,
+    saveDocumentDescription
+  }, dispatch)
 });
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(SideBarDocumentInformation);
 

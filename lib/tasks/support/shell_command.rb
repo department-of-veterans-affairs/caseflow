@@ -31,6 +31,8 @@ class ShellCommand
     puts output
 
     exit_status = $CHILD_STATUS.exitstatus
+    # rubocop:disable Rails/Exit
     exit(exit_status) unless exit_status == 0
+    # rubocop:enable Rails/Exit
   end
 end

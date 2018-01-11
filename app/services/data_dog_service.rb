@@ -15,6 +15,14 @@ class DataDogService
     @statsd.gauge(stat_name, metric_value, tags: tags)
   end
 
+  # :nocov:
+  def self.histogram(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
+    tags = get_tags(app_name, attrs)
+    stat_name = get_stat_name(metric_group, metric_name)
+    @statsd.histogram(stat_name, metric_value, tags: tags)
+  end
+  # :nocov:
+
   private_class_method def self.get_stat_name(metric_group, metric_name)
     "dsva-appeals.#{metric_group}.#{metric_name}"
   end

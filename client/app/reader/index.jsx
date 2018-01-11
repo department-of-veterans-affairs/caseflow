@@ -1,5 +1,5 @@
 import React from 'react';
-import ReduxBase from '../util/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
 
 import DecisionReviewer from './DecisionReviewer';
 

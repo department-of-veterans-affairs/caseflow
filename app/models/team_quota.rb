@@ -33,7 +33,7 @@ class TeamQuota < ActiveRecord::Base
   private
 
   def calculate_task_count_for(quota_index)
-    task_count_per_user + (remainder_task_count > quota_index ? 1 : 0)
+    task_count_per_user + ((remainder_task_count > quota_index) ? 1 : 0)
   end
 
   # To save excessive DB saves & reads, auto generate all unassigned quotas

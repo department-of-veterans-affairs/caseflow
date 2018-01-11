@@ -28,7 +28,7 @@ class EstablishClaimsController < TasksController
   end
 
   def pdf
-    return redirect_to "/404" if task.appeal.decisions.nil? || task.appeal.decisions.size == 0
+    return redirect_to "/404" if task.appeal.decisions.blank?
     decision_number = params[:decision_number].to_i
     return redirect_to "/404" if decision_number >= task.appeal.decisions.size || decision_number < 0
     decision = task.appeal.decisions[decision_number]
@@ -42,14 +42,12 @@ class EstablishClaimsController < TasksController
     render json: { next_task_id: assigned_task.id }
   end
 
-  def index
-  end
+  def index; end
 
   def perform
     # If we've already created the EP, no-op and send the user to the note page
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
-
   rescue EstablishClaim::InvalidEndProductError
     render json: { error_code: "end_product_invalid" }, status: 422
   rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
@@ -169,8 +167,8 @@ class EstablishClaimsController < TasksController
 
   def establish_claim_params
     params.require(:claim)
-          .permit(:end_product_code, :end_product_label, :end_product_modifier, :gulf_war_registry,
-                  :suppress_acknowledgement_letter, :station_of_jurisdiction, :date)
+      .permit(:end_product_code, :end_product_label, :end_product_modifier, :gulf_war_registry,
+              :suppress_acknowledgement_letter, :station_of_jurisdiction, :date)
   end
 
   def special_issues_params

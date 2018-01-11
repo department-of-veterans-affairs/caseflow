@@ -127,7 +127,7 @@ describe RampRefilingIntake do
 
     let(:params) do
       {
-        issue_ids: source_issues.map(&:id),
+        issue_ids: source_issues && source_issues.map(&:id),
         has_ineligible_issue: true
       }
     end
@@ -137,7 +137,8 @@ describe RampRefilingIntake do
         ramp_election: completed_ramp_election,
         veteran_file_number: veteran_file_number,
         receipt_date: 2.days.ago,
-        option_selected: option_selected
+        option_selected: option_selected,
+        appeal_docket: appeal_docket
       )
     end
 
@@ -147,6 +148,8 @@ describe RampRefilingIntake do
         completed_ramp_election.issues.create!(description: "Secondsies")
       ]
     end
+
+    let(:appeal_docket) { nil }
 
     context "when end product is needed" do
       let(:option_selected) { "supplemental_claim" }
@@ -160,10 +163,25 @@ describe RampRefilingIntake do
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
       end
+
+      context "when source_issues is nil" do
+        let(:source_issues) { nil }
+
+        it "works, but does not create an EP" do
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+
+          subject
+
+          expect(intake.reload).to be_success
+          expect(intake.detail.issues.count).to eq(0)
+          expect(intake.detail.has_ineligible_issue).to eq(true)
+        end
+      end
     end
 
     context "when no end product is needed" do
       let(:option_selected) { "appeal" }
+      let(:appeal_docket) { "direct_review" }
 
       it "saves issues and does NOT create an end product" do
         expect(Fakes::VBMSService).to_not receive(:establish_claim!)
@@ -191,6 +209,25 @@ describe RampRefilingIntake do
       subject
 
       expect(intake.reload).to be_canceled
+      expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  context "#save_error!" do
+    subject { intake.save_error!(code: "ineligible_for_higher_level_review") }
+
+    let(:detail) do
+      RampRefiling.create!(
+        ramp_election: completed_ramp_election,
+        veteran_file_number: veteran_file_number
+      )
+    end
+
+    it "saves as an error and deletes the refiling record created" do
+      subject
+
+      intake.reload
+      expect(intake.error_code).to eq("ineligible_for_higher_level_review")
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end

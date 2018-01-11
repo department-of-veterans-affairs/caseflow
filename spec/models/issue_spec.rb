@@ -1,7 +1,7 @@
 describe Issue do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }
-  let(:codes) { %w(02 15 03 5252) }
+  let(:codes) { %w[02 15 03 5252] }
   let(:labels) { ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
 
   let(:issue) do
@@ -54,8 +54,7 @@ describe Issue do
           "isscode" => "15",
           "isslev1" => "02",
           "isslev2" => "03",
-          "isslev3" => "04"
-        }
+          "isslev3" => "04" }
       end
 
       it "raise exceptions for unloaded attributes" do
@@ -93,7 +92,7 @@ describe Issue do
     end
 
     context "when the program is not known" do
-      let(:codes) { %w(99 99) }
+      let(:codes) { %w[99 99] }
       it { is_expected.to be_nil }
     end
   end
@@ -106,7 +105,7 @@ describe Issue do
     end
 
     context "when the issue is not originated from vba, vha, or nca" do
-      let(:codes) { %w(10 01 02) }
+      let(:codes) { %w[10 01 02] }
       it { is_expected.to be_nil }
     end
   end
@@ -148,12 +147,12 @@ describe Issue do
     it { is_expected.to eq("Service connection, limitation of thigh motion") }
 
     context "when there is an unknown issue code" do
-      let(:codes) { %w(99 99 99) }
+      let(:codes) { %w[99 99 99] }
       it { is_expected.to be_nil }
     end
 
     context "when there is an unknown diagnostic code" do
-      let(:codes) { %w(02 15 03 1234) }
+      let(:codes) { %w[02 15 03 1234] }
       it { is_expected.to be_nil }
     end
   end
@@ -166,7 +165,7 @@ describe Issue do
     end
 
     context "when there is not an issue code" do
-      let(:codes) { %w(02 18 01 05) }
+      let(:codes) { %w[02 18 01 05] }
       it { is_expected.to be_nil }
     end
   end
@@ -248,7 +247,7 @@ describe Issue do
     end
 
     context "when new and material" do
-      let(:codes) { %w(02 15 04 5252) }
+      let(:codes) { %w[02 15 04 5252] }
 
       it { is_expected.to be_truthy }
     end
@@ -280,7 +279,7 @@ describe Issue do
     end
 
     context "when new material" do
-      let(:codes) { %w(02 15 04 5252) }
+      let(:codes) { %w[02 15 04 5252] }
 
       context "when allowed disposition" do
         let(:disposition) { :remanded }
