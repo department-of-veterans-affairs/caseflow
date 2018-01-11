@@ -43,6 +43,34 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = folder.ticknum
         SQL
     end
+
+
+
+    def select_assignments
+      select("brieff.bfkey as vacols_id",
+             "brieff.bfddec as signed_date",
+             "brieff.bfcorlid as vbms_id",
+             "brieff.bfd19 as docket_date",
+             "brieff.bfac as bfac",
+             "brieff.bfregoff as regional_office_key",
+             "decass.deassign as date_assigned",
+             "decass.dereceive as date_received",
+             "decass.dedeadline as date_due",
+             "corres.*",
+             "folder.tinum as docket_number")
+        .joins(<<-SQL)
+          LEFT JOIN decass
+            ON brieff.bfkey = decass.defolder
+          LEFT JOIN corres
+            ON brieff.bfcorkey = corres.stafkey
+          LEFT JOIN rep
+            ON brieff.bfcorkey = rep.repkey
+          JOIN staff
+            ON brieff.bfcurloc = staff.slogid
+          JOIN folder
+            ON brieff.bfkey = folder.ticknum
+        SQL
+    end
     # rubocop:enable Metrics/MethodLength
 
     def exists_for_appeals(vacols_ids)

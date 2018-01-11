@@ -6,7 +6,7 @@ class QueueController < ApplicationController
   end
 
   def verify_access
-    verify_system_admin
+    current_user.admin?
   end
 
   def index

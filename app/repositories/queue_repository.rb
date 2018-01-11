@@ -1,5 +1,6 @@
 class QueueRepository
   def self.tasks_for_attorney(css_id)
+    # DECASS etc
     cases = VACOLS::CaseAssignment.active_cases_for_user(css_id)
     vacols_ids = active_cases_for_user.map(&:vacols_id)
 
@@ -10,10 +11,10 @@ class QueueRepository
     MetricsService.record("VACOLS: cases_assigned_to_user",
                           service: :vacols,
                           name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
-      cases = VACOLS::Case.where(bfcorlid: vbms_id)
-        .includes(:folder, :correspondent, folder: :outcoder)
+      cases = VACOLS::Case.where(bfkey: vacols_ids)
+        .includes(:folder, :correspondent, :representative, folder: :outcoder)
         .references(:folder, :correspondent, folder: :outcoder)
-        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+        .joins(VACOLS::Case::JOIN_AOD)
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
