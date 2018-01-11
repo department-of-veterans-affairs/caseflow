@@ -245,7 +245,6 @@ describe('hearingsReducer', () => {
 
       expect(state.worksheetIssues).to.deep.equal({
         6: {
-          description: 'Elbow Arthritis',
           edited: true,
           notes: 'Elbow Arthritis'
         }

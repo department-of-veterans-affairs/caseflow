@@ -9,6 +9,8 @@ const initialPdfSidebarErrorState = {
   category: { visible: false,
     message: null },
   annotation: { visible: false,
+    message: null },
+  description: { visible: false,
     message: null }
 };
 
@@ -26,7 +28,7 @@ export const initialState = {
   pdfSideBarError: initialPdfSidebarErrorState,
   didLoadAppealFail: false,
   scrollToSidebarComment: null,
-  windowingOverscan: 10
+  windowingOverscan: _.random(5, 10)
 };
 
 const setErrorMessageState = (state, errorType, isVisible, errorMsg = null) =>

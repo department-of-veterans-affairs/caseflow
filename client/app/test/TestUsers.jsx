@@ -93,52 +93,53 @@ export default class TestUsers extends React.PureComponent {
     });
 
     return <div className="cf-app-segment--alt">
-      <div>
-        <h1>Welcome to Caseflow Demo!</h1>
-        <p>
-          Here you can test out different user stories by selecting
-          a Test User and accessing different parts of the application.</p>
-        <p>
-          Some of our users come from different stations acorss the country,
-          therefore selecting station 405 might lead to an extra Login screen.</p>
-        <strong>User Selector:</strong>
-        <SearchableDropdown
-          name=""
-          options={userOptions} searchable={false}
-          onChange={this.handleUserSelect}
-          value={this.state.userSelect} />
-        <Button
-          onClick={this.handleUserSwitch}
-          name="Switch user"
-          loading={this.state.isSwitching}
-          loadingText="Switching users" />
-        <br /><br />
-        { this.props.isGlobalAdmin &&
+      <h1>Welcome to the Caseflow admin page.</h1>
+      { this.props.dependenciesFaked &&
         <div>
-          <strong>Log in as user:</strong>
-          <TextField
-            label="User ID:"
-            name="userId"
-            value={this.state.userId}
-            onChange={this.userIdOnChange} />
-          <TextField
-            label="Station ID:"
-            name="stationId"
-            value={this.state.stationId}
-            onChange={this.stationIdOnChange} />
+          <p>
+            Here you can test out different user stories by selecting
+            a Test User and accessing different parts of the application.</p>
+          <p>
+            Some of our users come from different stations across the country,
+            therefore selecting station 405 might lead to an extra Login screen.</p>
+          <strong>User Selector:</strong>
+          <SearchableDropdown
+            name=""
+            options={userOptions} searchable={false}
+            onChange={this.handleUserSelect}
+            value={this.state.userSelect} />
           <Button
-            onClick={this.handleLogInAsUser}
-            name="Log in as user"
-            loading={this.state.isLoggingIn}
-            loadingText="Logging in" />
-        </div>}
-      </div>
-      <p>
-        Not all applications are available to every user. Additionally,
-        some users have access to different parts of the same application.</p>
-      <strong>App Selector:</strong>
-      <TabWindow
-        tabs={tabs} />
+            onClick={this.handleUserSwitch}
+            name="Switch user"
+            loading={this.state.isSwitching}
+            loadingText="Switching users" />
+          <br /><br />
+          <p>
+          Not all applications are available to every user. Additionally,
+          some users have access to different parts of the same application.</p>
+          <strong>App Selector:</strong>
+          <TabWindow
+            tabs={tabs} />
+        </div> }
+      { this.props.isGlobalAdmin &&
+      <div>
+        <strong>Log in as user:</strong>
+        <TextField
+          label="User ID:"
+          name="userId"
+          value={this.state.userId}
+          onChange={this.userIdOnChange} />
+        <TextField
+          label="Station ID:"
+          name="stationId"
+          value={this.state.stationId}
+          onChange={this.stationIdOnChange} />
+        <Button
+          onClick={this.handleLogInAsUser}
+          name="Log in as user"
+          loading={this.state.isLoggingIn}
+          loadingText="Logging in" />
+      </div>}
     </div>;
   }
 

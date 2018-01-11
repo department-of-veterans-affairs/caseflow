@@ -213,8 +213,7 @@ describe Hearing do
           disposition: :postponed,
           add_on: true,
           hold_open: 60,
-          representative_name: "DAV - DON REED"
-        }
+          representative_name: "DAV - DON REED" }
       end
 
       it "updates vacols hearing" do

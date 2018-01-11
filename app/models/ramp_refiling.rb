@@ -3,7 +3,16 @@ class RampRefiling < RampReview
 
   belongs_to :ramp_election
 
+  before_validation :clear_appeal_docket_if_not_appeal
+
   validate :validate_receipt_date, :validate_option_selected
+  validates :appeal_docket, presence: { message: "blank" }, if: :appeal?
+
+  enum appeal_docket: {
+    direct_review: "direct_review",
+    evidence_submission: "evidence_submission",
+    hearing: "hearing"
+  }
 
   def create_issues!(source_issue_ids:)
     issues.destroy_all unless issues.empty?
@@ -78,5 +87,10 @@ class RampRefiling < RampReview
     if ramp_election.higher_level_review? && higher_level_review?
       errors.add(:option_selected, "higher_level_review_invalid")
     end
+  end
+
+  # If it's not an appeal, don't bother setting an error, just null it out
+  def clear_appeal_docket_if_not_appeal
+    self.appeal_docket = nil if option_selected != "appeal"
   end
 end
