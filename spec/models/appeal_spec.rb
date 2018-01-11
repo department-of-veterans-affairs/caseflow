@@ -725,11 +725,13 @@ describe Appeal do
       before do
         @form8 = Form8.create(vacols_id: "765")
         @cancelled_certification = Certification.create!(
-          vacols_id: "765", hearing_preference: "SOME_INVALID_PREF")
+          vacols_id: "765", hearing_preference: "SOME_INVALID_PREF"
+        )
         CertificationCancellation.create!(
-            certification_id: @cancelled_certification.id,
-            cancellation_reason: "reason",
-            email: "test@caseflow.gov")
+          certification_id: @cancelled_certification.id,
+          cancellation_reason: "reason",
+          email: "test@caseflow.gov"
+        )
         @certification = Certification.create!(vacols_id: "765", hearing_preference: "VIDEO")
       end
 
