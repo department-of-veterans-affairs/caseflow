@@ -19,3 +19,7 @@ export default class CaseflowLogo extends PureComponent {
     </svg>;
   }
 }
+
+CaseflowLogo.defaultProps = {
+  backgroundColor: '#D6D7D9'
+}

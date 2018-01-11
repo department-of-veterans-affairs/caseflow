@@ -58,7 +58,10 @@ class IntakeFrame extends React.PureComponent {
         }
         <NavigationBar
           appName={appName}
-          logoName="intake"
+          logoProps={{
+            accentColor: '#FFCC4E',
+            overlapColor: '#CA9E00'
+          }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}

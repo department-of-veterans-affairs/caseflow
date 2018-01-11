@@ -138,7 +138,6 @@ export class DecisionReviewer extends React.PureComponent {
         <NavigationBar
           appName="Reader"
           logoProps={{
-            backgroundColor: '#D6D7D9',
             accentColor: '#417505',
             overlapColor: '#2D5104'
           }}
