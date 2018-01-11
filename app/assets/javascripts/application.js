@@ -43,7 +43,7 @@ window.onload = function () {
 };
 
 
-/* Copies content to clipboard */
+/* Copies appeals ID to clipboard */
 $(function () {
   "use strict";
   new Clipboard('[data-clipboard-text]');
