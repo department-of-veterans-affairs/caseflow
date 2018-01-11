@@ -23,7 +23,10 @@ const EstablishClaimAdmin = ({
         <div>
           <NavigationBar
             appName="Establish Claim Admin"
-            logoName="dispatch"
+            logoProps={{
+              accentColor: '#844e9f',
+              overlapColor: '#7a4b91'
+            }}
             defaultUrl="/dispatch/admin"
             userDisplayName={userDisplayName}
             dropdownUrls={dropdownUrls}>
