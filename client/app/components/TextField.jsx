@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 
 export default class TextField extends React.Component {
 
-  onChange = (event) => {
-    this.props.onChange(event.target.value);
-  }
+  onChange = (event) => this.props.onChange(event.target.value);
 
   render() {
 

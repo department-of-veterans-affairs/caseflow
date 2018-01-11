@@ -32,12 +32,12 @@ module MasterRecordHelper
       when :video
         # For a video master record, the hearshed.hearing_pkseq becomes the VDKEY that links all
         # the child records (veterans scheduled for that video) to the parent record
-        return children_vdkeys.map(&:to_i).include?(record.hearing_pkseq)
+        children_vdkeys.map(&:to_i).include?(record.hearing_pkseq)
       when :travel_board
         # For a travel board master record, the tbsched_vdkey becomes the VDKEY that links all
         # the child records (veterans scheduled for that video) to the parent record
         # tbsched_vdkey is composed of tbshed.tbyear, tbshed.tbleg, and tbshed.tbtrip
-        return children_vdkeys.include?(record.tbsched_vdkey)
+        children_vdkeys.include?(record.tbsched_vdkey)
       end
     end
 

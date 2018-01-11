@@ -19,20 +19,18 @@ module Fakes::Data::AppealData
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          },
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] },
           { disposition: :remanded,
             vacols_sequence_id: 2,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          },
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] },
           { disposition: :remanded,
             vacols_sequence_id: 3,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          }
-        ]),
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
+        ]
+      ),
       Generators::Appeal.build(
         type: "Remand",
         vacols_id: "reader_id2",
@@ -50,20 +48,18 @@ module Fakes::Data::AppealData
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          },
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] },
           { disposition: :remanded,
             vacols_sequence_id: 2,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          },
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] },
           { disposition: :remanded,
             vacols_sequence_id: 3,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          }
-        ]),
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
+        ]
+      ),
       Generators::Appeal.build(
         type: "Remand",
         vacols_id: "reader_id3",
@@ -81,20 +77,18 @@ module Fakes::Data::AppealData
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          },
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] },
           { disposition: :remanded,
             vacols_sequence_id: 2,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          },
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] },
           { disposition: :remanded,
             vacols_sequence_id: 3,
-            codes: %w(02 15 03 5252),
-            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"]
-          }
-        ])
+            codes: %w[02 15 03 5252],
+            labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
+        ]
+      )
     ]
   end
   # rubocop:enable Metrics/MethodLength

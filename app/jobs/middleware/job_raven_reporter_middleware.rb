@@ -4,7 +4,7 @@
 class JobRavenReporterMiddleware
   def call(_worker, _queue, _msg, _body)
     yield
-  rescue => ex
+  rescue StandardError => ex
     Raven.capture_exception(ex)
     raise
   end

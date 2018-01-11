@@ -17,8 +17,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     appeals = reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
     log_info
-
-  rescue => e
+  rescue StandardError => e
     log_error
     # raising an exception here triggers a retry through shoryuken
     raise e

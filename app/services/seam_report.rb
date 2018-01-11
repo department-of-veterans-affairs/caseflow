@@ -59,24 +59,19 @@ class SeamReport < Report
 
   def find_records
     VACOLS::Case.joins(:folder, :correspondent).where(%{
-
       bf41stat < ?
       -- We ignore super recent cases, as there may be work in progress.
-
       AND bfmpro = ?
       -- We're only thinking about cases that have not yet been received by
       -- BVA, so we limit our search to cases in ADV (Advance) status.
-
       AND (folder.tivbms IS NULL OR
            folder.tivbms NOT IN (?))
       -- We also want things *absolutely* marked as a paper case, so let's
       -- ignore anything that's marked as being worked in the efolder.
-
       AND bfregoff NOT IN (?)
       -- Finally, we'll ignore any ROs we know to be paper only, even
       -- if the appellant has an eFolder.
-
-    }, 2.weeks.ago, "ADV", %w(Y 1 0), PAPER_ONLY_OFFICES)
+    }, 2.weeks.ago, "ADV", %w[Y 1 0], PAPER_ONLY_OFFICES)
   end
 
   def load_record(case_record)

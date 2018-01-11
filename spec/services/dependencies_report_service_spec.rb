@@ -1,23 +1,23 @@
 require "rails_helper"
 
 describe DependenciesReportService do
-  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.freeze
-{
-  "BGS":{"name":"BGS","up_rate_5":100.0},
-  "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
-  "VBMS":{"name":"VBMS","up_rate_5":49.0},
-  "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
-    "up_rate_5":100.0}
-}
+  DEPENDENCIES_REPORT_WITH_OUTAGES = <<-'EOF'.strip_heredoc.freeze
+    {
+      "BGS":{"name":"BGS","up_rate_5":100.0},
+      "VACOLS":{"name":"VACOLS","up_rate_5":10.0},
+      "VBMS":{"name":"VBMS","up_rate_5":49.0},
+      "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
+        "up_rate_5":100.0}
+    }
   EOF
-  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = <<-'EOF'.freeze
-{
-  "BGS":{"name":"BGS","up_rate_5":100.0},
-  "VACOLS":{"name":"VACOLS","up_rate_5":100.0},
-  "VBMS":{"name":"VBMS","up_rate_5":51.0},
-  "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
-    "up_rate_5":100.0}
-}
+  DEPENDENCIES_REPORT_WITHOUT_OUTAGES = <<-'EOF'.strip_heredoc.freeze
+    {
+      "BGS":{"name":"BGS","up_rate_5":100.0},
+      "VACOLS":{"name":"VACOLS","up_rate_5":100.0},
+      "VBMS":{"name":"VBMS","up_rate_5":51.0},
+      "VBMS.FindDocumentVersionReference":{"name":"VBMS.FindDocumentVersionReference",
+        "up_rate_5":100.0}
+    }
   EOF
   context "when there is an outage" do
     before do
@@ -25,7 +25,7 @@ describe DependenciesReportService do
     end
 
     it "returns degraded services" do
-      expect(DependenciesReportService.degraded_dependencies).to eq %w(VACOLS VBMS)
+      expect(DependenciesReportService.degraded_dependencies).to eq %w[VACOLS VBMS]
       expect(DependenciesReportService.dependencies_report.present?).to be_truthy
     end
   end
@@ -45,7 +45,7 @@ describe DependenciesReportService do
   context "when dependencies report is invalid" do
     before do
       Rails.cache.write(:dependencies_report,
-                        'This isn\'t JSON')
+                        "This isn't JSON")
     end
 
     it "returns no outage" do
@@ -85,7 +85,7 @@ describe DependenciesReportService do
       end
 
       it "returns degraded services" do
-        expect(DependenciesReportService.degraded_dependencies).to eq %w(VACOLS VBMS)
+        expect(DependenciesReportService.degraded_dependencies).to eq %w[VACOLS VBMS]
         expect(DependenciesReportService.dependencies_report.present?).to be_truthy
       end
     end
@@ -93,7 +93,8 @@ describe DependenciesReportService do
     context "when there is no outage" do
       before do
         Rails.cache.write(
-          :dependencies_report, DEPENDENCIES_REPORT_WITHOUT_OUTAGES)
+          :dependencies_report, DEPENDENCIES_REPORT_WITHOUT_OUTAGES
+        )
       end
 
       it "returns no outage" do
