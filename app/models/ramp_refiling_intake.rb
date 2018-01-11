@@ -4,7 +4,8 @@ class RampRefilingIntake < Intake
   enum error_code: {
     no_complete_ramp_election: "no_complete_ramp_election",
     ramp_election_is_active: "ramp_election_is_active",
-    ramp_election_no_issues: "ramp_election_no_issues"
+    ramp_election_no_issues: "ramp_election_no_issues",
+    ineligible_for_higher_level_review: "ineligible_for_higher_level_review"
   }.merge(Intake::ERROR_CODES)
 
   def preload_intake_data!
@@ -21,6 +22,14 @@ class RampRefilingIntake < Intake
   def review!(request_params)
     detail.start_review!
     detail.update_attributes(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
+  end
+
+  def save_error!(code:)
+    self.error_code = code
+    transaction do
+      detail.destroy!
+      complete_with_status!(:error)
+    end
   end
 
   def complete!(request_params)

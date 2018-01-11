@@ -36,6 +36,33 @@ export const setAppealDocket = (appealDocket) => ({
   }
 });
 
+export const confirmIneligibleForm = (intakeId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CONFIRM_INELIGIBLE_FORM,
+    meta: { analytics }
+  });
+
+  const data = {
+    error_code: 'ineligible_for_higher_level_review'
+  };
+
+  return ApiUtil.patch(`/intake/${intakeId}/error`, { data }, ENDPOINT_NAMES.ERROR_INTAKE).
+    then(
+      () => dispatch({
+        type: ACTIONS.START_NEW_INTAKE,
+        meta: { analytics }
+      }),
+      (error) => {
+        dispatch({
+          type: ACTIONS.SUBMIT_ERROR_FAIL,
+          meta: { analytics }
+        });
+
+        throw error;
+      }
+    );
+};
+
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_REVIEW_START,
