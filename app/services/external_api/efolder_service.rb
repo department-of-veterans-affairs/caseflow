@@ -23,7 +23,10 @@ class ExternalApi::EfolderService
 
     response = get_efolder_response("/api/v1/files?download=true", user, headers)
 
-    fail Caseflow::Error::DocumentRetrievalError if response.error?
+    if response.error?
+      fail Caseflow::Error::EfolderAccessForbidden if response.try(:code) == 403
+      fail Caseflow::Error::DocumentRetrievalError
+    end
 
     response_attrs = JSON.parse(response.body)["data"]["attributes"]
 
