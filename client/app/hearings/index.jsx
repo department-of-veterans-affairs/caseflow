@@ -31,7 +31,10 @@ const Hearings = ({ hearings }) => {
           <div>
             <NavigationBar
               appName="Hearing Prep"
-              logoName="hearing-prep"
+              logoProps={{
+                accentColor: 'rgb(72, 144, 0)',
+                overlapColor: 'rgb(72, 144, 0)'
+              }}
               defaultUrl="/hearings/dockets"
               userDisplayName={hearings.userDisplayName}
               dropdownUrls={hearings.dropdownUrls}>
