@@ -24,9 +24,24 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
-export const confirmIneligibleForm = () => ({
-  type: ACTIONS.CONFIRM_INELIGIBLE_FORM
-})
+export const confirmIneligibleForm = (intakeId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CONFIRM_INELIGIBLE_FORM,
+    meta: { analytics }
+  });
+
+  const data = {
+    error_code: 'ineligible_for_higher_level_review'
+  };
+
+  return ApiUtil.patch(`/intake/${intakeId}/error`, { data }, ENDPOINT_NAMES.ERROR_INTAKE).
+    then(
+      () => dispatch({
+        type: ACTIONS.START_NEW_INTAKE,
+        meta: { analytics }
+      })
+    );
+};
 
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
   dispatch({

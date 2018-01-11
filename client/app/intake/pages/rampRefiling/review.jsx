@@ -81,7 +81,9 @@ export default connect(
     optionSelectedError: state.rampRefiling.optionSelectedError,
     hasInvalidOption: state.rampRefiling.hasInvalidOption,
     receiptDate: state.rampRefiling.receiptDate,
-    receiptDateError: state.rampRefiling.receiptDateError
+    receiptDateError: state.rampRefiling.receiptDateError,
+    requestStatus: state.rampRefiling.requestStatus,
+    intakeId: state.intake.id
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,

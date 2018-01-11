@@ -718,7 +718,7 @@ RSpec.feature "RAMP Intake" do
           expect(intake.detail).to be_nil
         end
 
-        scenario "Complete a RAMP refiling for an appeal", focus:true do
+        scenario "Complete a RAMP refiling for an appeal" do
           # Create an RAMP election with a cleared EP
           ramp_election = RampElection.create!(
             veteran_file_number: "12341234",

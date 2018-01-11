@@ -73,7 +73,8 @@ export const ENDPOINT_NAMES = {
   START_INTAKE: 'start-intake',
   REVIEW_INTAKE: 'review-intake',
   CANCEL_INTAKE: 'cancel-intake',
-  COMPLETE_INTAKE: 'complete-intake'
+  COMPLETE_INTAKE: 'complete-intake',
+  ERROR_INTAKE: 'error-intake'
 };
 
 export const FORM_TYPES = {

@@ -52,10 +52,9 @@ class IntakesController < ApplicationController
   end
 
   def error
-    # custom error code ineligible_for_higher_level_review: "ineligible_for_higher_level_review" for
-    #  RampRefilingIntake
-    # error completion_status for RampRefilingIntake in intakes table
-    # delete associated ramp_refiling record for RampRefilingIntake
+    current_intake.save_error!(code: params[:error_code])
+    current_intake.detail.destroy!
+    render json: {}
   end
 
   private

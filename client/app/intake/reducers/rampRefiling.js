@@ -238,7 +238,7 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
           $set: REQUEST_STATE.FAILED
         }
       }
-    })
+    });
   default:
     return state;
   }
