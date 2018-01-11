@@ -615,5 +615,5 @@ export class ClipboardIcon extends React.PureComponent {
   }
 }
 
-/* eslint-enablee max-len */
+/* eslint-enable max-len */
 /* eslint-enable max-lines */
