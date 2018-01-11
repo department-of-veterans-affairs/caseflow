@@ -154,4 +154,5 @@ end
 
 gem "shoryuken", "3.1.11"
 
+gem "paper_trail", "8.1.2"
 # rubocop:enable Metrics/LineLength

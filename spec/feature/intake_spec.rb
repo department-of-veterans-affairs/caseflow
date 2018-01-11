@@ -776,12 +776,20 @@ RSpec.feature "RAMP Intake" do
           fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
           safe_click "#button-submit-review"
 
+          expect(page).to have_content("Please select an option")
+
+          within_fieldset("Which type of appeal did the Veteran request?") do
+            find("label", text: "Evidence Submission").click
+          end
+
+          safe_click "#button-submit-review"
           expect(page).to have_content("Finish processing RAMP Selection form")
 
           ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
           expect(ramp_refiling).to_not be_nil
           expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
           expect(ramp_refiling.option_selected).to eq("appeal")
+          expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
           expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 8, 3))
 
           safe_click "#finish-intake"

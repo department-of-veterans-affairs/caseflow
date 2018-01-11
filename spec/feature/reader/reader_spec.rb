@@ -139,7 +139,8 @@ RSpec.feature "Reader" do
           tags: [
             Generators::Tag.create(text: "New Tag1"),
             Generators::Tag.create(text: "New Tag2")
-          ]
+          ],
+          description: Generators::Random.word_characters(50)
         ),
         Generators::Document.create(
           filename: "My Form 9",
@@ -1038,6 +1039,8 @@ RSpec.feature "Reader" do
       find("h3", text: "Document information").click
 
       expect(page).to have_content("Document Type")
+      expect(page).to have_content("Document Description")
+      expect(find("#document_description").text).to eq(documents[0].description)
       expect(page).to have_content("BVA Decision")
       expect(page).to have_content("AOD")
       expect(page).to have_content("Veteran ID")
@@ -1054,6 +1057,34 @@ RSpec.feature "Reader" do
         issue.levels do |level|
           expect(page).to have_content(level)
         end
+      end
+    end
+
+    scenario "Update Document Description" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+      find("h3", text: "Document information").click
+      find("#document_description-edit").click
+
+      fill_in "document_description", with: "New Description"
+
+      find("#document_description-save").click
+
+      expect(find("#document_description").text).to eq("New Description")
+    end
+
+    scenario "Update Document Description with Enter" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+        click_on documents[0].type
+        find("h3", text: "Document information").click
+        find("#document_description-edit").click
+
+        fill_in "document_description", with: "Another New Description"
+
+        find("#document_description").send_keys [:enter]
+
+        expect(find("#document_description").text).to eq("Another New Description")
       end
     end
 

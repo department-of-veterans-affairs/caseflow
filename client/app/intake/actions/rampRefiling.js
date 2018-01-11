@@ -24,6 +24,18 @@ export const setReceiptDate = (receiptDate) => ({
   }
 });
 
+export const setAppealDocket = (appealDocket) => ({
+  type: ACTIONS.SET_APPEAL_DOCKET,
+  payload: {
+    appealDocket
+  },
+  meta: {
+    analytics: {
+      label: appealDocket
+    }
+  }
+});
+
 export const confirmIneligibleForm = (intakeId) => (dispatch) => {
   dispatch({
     type: ACTIONS.CONFIRM_INELIGIBLE_FORM,
@@ -59,7 +71,8 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
 
   const data = {
     option_selected: rampRefiling.optionSelected,
-    receipt_date: formatDateStringForApi(rampRefiling.receiptDate)
+    receipt_date: formatDateStringForApi(rampRefiling.receiptDate),
+    appeal_docket: rampRefiling.appealDocket
   };
 
   return ApiUtil.patch(`/intake/${intakeId}/review`, { data }, ENDPOINT_NAMES.REVIEW_INTAKE).
