@@ -4,6 +4,9 @@ import DropdownMenu from './DropdownMenu';
 import Link from './Link';
 import Breadcrumbs from './Breadcrumbs';
 import PerformanceDegradationBanner from './PerformanceDegradationBanner';
+import CaseflowIcon from './CaseflowIcon';
+import { css } from 'glamor';
+import { COLORS } from '../util/StyleConstants';
 
 export default class NavigationBar extends React.Component {
   render() {
@@ -16,11 +19,28 @@ export default class NavigationBar extends React.Component {
       userDisplayName
     } = this.props;
 
+    const h1Styling = css({
+      margin: 0,
+      display: 'inline-block',
+      'line-height': '3em',
+      fontSize: '1.7rem',
+      '& > a': {
+        color: COLORS.GREY_DARK,
+        paddingLeft: '.3em'
+      }
+    })
+
+    const pushLeftStyling = css({
+      display: 'flex',
+      alignItems: 'center'
+    })
+
     return <div><header className="cf-app-header">
       <div>
         <div className="cf-app-width">
-          <span className="cf-push-left">
-            <h1 className={`cf-logo cf-logo-image-${logoName}`}>
+          <span className="cf-push-left" {...pushLeftStyling}>
+            <CaseflowIcon />
+            <h1 {...h1Styling}>
               <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
                 <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
