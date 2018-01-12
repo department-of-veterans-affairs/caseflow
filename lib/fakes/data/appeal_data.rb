@@ -1,5 +1,9 @@
 module Fakes::Data::AppealData
   # rubocop:disable Metrics/MethodLength
+  def self.default_vacols_ids
+    default_records.map { |record| record.vacols_id }
+  end
+
   def self.default_records
     [
       Generators::Appeal.build(
