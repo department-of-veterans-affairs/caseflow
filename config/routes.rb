@@ -111,6 +111,7 @@ Rails.application.routes.draw do
   resources :intakes, path: "intake", only: [:index, :create, :destroy] do
     patch 'review', on: :member
     patch 'complete', on: :member
+    patch 'error', on: :member
   end
 
   get "health-check", to: "health_checks#show"
