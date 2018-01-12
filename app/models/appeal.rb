@@ -639,7 +639,9 @@ class Appeal < ActiveRecord::Base
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
-      certification = Certification.find_by(vacols_id: appeal.vacols_id)
+      # `find_by_vacols_id` filters out any cancelled certifications,
+      # if they exist.
+      certification = Certification.find_by_vacols_id(appeal.vacols_id)
 
       fail "No Form 8 found for appeal being certified" unless form8
       fail "No Certification found for appeal being certified" unless certification

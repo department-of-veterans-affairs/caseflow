@@ -98,27 +98,27 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-actions" rowSpan="3">
           <SearchableDropdown
             label="Disposition"
-            name={`${hearing.id}.disposition`}
+            name={`${hearing.id}-disposition`}
             options={dispositionOptions}
             onChange={this.setDisposition}
             value={hearing.disposition}
-            searchable
+            searchable={false}
           />
           <SearchableDropdown
             label="Hold Open"
-            name={`${hearing.id}.hold_open`}
+            name={`${hearing.id}-hold_open`}
             options={holdOptions}
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
-            searchable
+            searchable={false}
           />
           <SearchableDropdown
             label="AOD"
-            name={`${hearing.id}.aod`}
+            name={`${hearing.id}-aod`}
             options={aodOptions}
             onChange={this.setAod}
             value={hearing.aod}
-            searchable
+            searchable={false}
           />
           <div className="transcriptRequested">
             <Checkbox
