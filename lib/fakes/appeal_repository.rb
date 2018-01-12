@@ -8,6 +8,7 @@ class Fakes::AppealRepository
     attr_accessor :vacols_dispatch_update
     attr_accessor :location_updated_for
     attr_accessor :certified_appeal
+    attr_accessor :certification
     cattr_accessor :appeal_records
 
     def records
