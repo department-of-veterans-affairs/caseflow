@@ -72,7 +72,7 @@ export class DocketHearingRow extends React.PureComponent {
       { hearing.appellant_mi_formatted ?
         (
           <div>
-            <b>{ hearing.appellant_mi_formatted } (appellant) </b>
+            <b>{ hearing.appellant_mi_formatted } (Appellant) </b>
             { hearing.veteran_mi_formatted }
           </div>
         ) :
