@@ -19,11 +19,13 @@ export default class NavigationBar extends React.Component {
       userDisplayName
     } = this.props;
 
+    const lineHeight = {lineHeight: '4em'};
+
     const h1Styling = css({
       margin: 0,
       display: 'inline-block',
-      'line-height': '3em',
       fontSize: '1.7rem',
+      ...lineHeight,
       '& > a': {
         color: COLORS.GREY_DARK,
         paddingLeft: '.3em'
@@ -32,7 +34,8 @@ export default class NavigationBar extends React.Component {
 
     const pushLeftStyling = css({
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      ...lineHeight
     });
 
     return <div><header className="cf-app-header">
