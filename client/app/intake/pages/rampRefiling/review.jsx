@@ -17,6 +17,7 @@ class Review extends React.PureComponent {
   beginNextIntake = () => {
     this.props.confirmIneligibleForm(this.props.intakeId);
   }
+
   render() {
     const {
       rampRefilingStatus,
@@ -27,7 +28,8 @@ class Review extends React.PureComponent {
       receiptDate,
       receiptDateError,
       appealDocket,
-      appealDocketError
+      appealDocketError,
+      beginNextIntakeError
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -72,10 +74,11 @@ class Review extends React.PureComponent {
         </Button>
       </Alert>
       }
-      <h1>Review { veteranName }s 21-4138 RAMP Selection Form</h1>
 
-      {<Alert title="Something went wrong">Please try again. 
-        If the problem persists, please contact Caseflow support.</Alert>}
+      { beginNextIntakeError && <Alert title="Something went wrong" type="error">
+        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
+
+      <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
       <DateSelector
         name="receipt-date"
@@ -123,7 +126,8 @@ export default connect(
     requestStatus: state.rampRefiling.requestStatus,
     intakeId: state.intake.id,
     appealDocket: state.rampRefiling.appealDocket,
-    appealDocketError: state.rampRefiling.appealDocketError
+    appealDocketError: state.rampRefiling.appealDocketError,
+    beginNextIntakeError: state.rampRefiling.beginNextIntakeError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
