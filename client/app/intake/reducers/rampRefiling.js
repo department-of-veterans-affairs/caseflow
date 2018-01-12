@@ -262,7 +262,7 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       beginNextIntakeError: {
         $set: true
       }
-    })
+    });
   default:
     return state;
   }
