@@ -48,8 +48,4 @@ HeaderFilterMessage.propTypes = {
   clearAllFilters: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  // viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderFilterMessage);
+export default connect(null, mapDispatchToProps)(HeaderFilterMessage);

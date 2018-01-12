@@ -56,7 +56,7 @@ $tag-backgrond-color: #d6d7d9;
       vertical-align: top;
     }
 
-    thead.comments-table-header > tr > th {
+    .comments-table-header > tr > th {
       font-weight: normal;
       float: right;
     }
@@ -121,7 +121,7 @@ $tag-backgrond-color: #d6d7d9;
     max-height: 65vh;
     overflow: auto;
 
-    > tr.borderless {
+    > .borderless {
       border: none;
 
       > td {
@@ -129,7 +129,7 @@ $tag-backgrond-color: #d6d7d9;
         padding-bottom: 0;
       }
 
-      div.horizontal-comment {
+      .horizontal-comment {
         margin-left: 0;
         width: 100%;
       }

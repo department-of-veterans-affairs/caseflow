@@ -10,7 +10,6 @@ import DocumentCategoryIcons from './DocumentCategoryIcons';
 import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
-import * as Constants from './DocumentList/actionTypes';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from './DropdownFilter';
 import { bindActionCreators } from 'redux';

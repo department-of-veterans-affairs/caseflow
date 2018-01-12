@@ -38,7 +38,7 @@ export class PdfListView extends React.Component {
     let tableView;
 
     if (noDocuments) {
-      tableView = <NoSearchResults/>;
+      tableView = <NoSearchResults />;
     } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
       tableView = <CommentsTable
         documents={this.props.documents}

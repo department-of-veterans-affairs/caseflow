@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
-import { SET_VIEWING_DOCUMENTS_OR_COMMENTS, DOCUMENTS_OR_COMMENTS_ENUM } from '../DocumentList/actionTypes';
 
 export const initialState = {};
 
