@@ -16,14 +16,15 @@ class DraftDecision
     DraftDecision::ATTRS.each_with_object({}) { |attr, obj| obj[attr] = send(attr) }
   end
 
-  def self.from_vacols(case_assignment, user_id)
+  def self.from_vacols(case_assignment, user_id, appeal)
     new(
       assigned_on: case_assignment.date_assigned,
       due_on: case_assignment.date_due,
       docket_name: "legacy",
       docket_date: case_assignment.docket_date,
       appeal_id: case_assignment.vacols_id,
-      user_id: user_id
+      user_id: user_id,
+      appeal: appeal
     )
   end
 end

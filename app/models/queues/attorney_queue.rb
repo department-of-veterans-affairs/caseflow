@@ -1,10 +1,14 @@
 class AttorneyQueue < BaseQueue
   def self.tasks(user_id)
     css_id = User.find(user_id).css_id
-    vacols_tasks = repository.tasks_for_user(css_id)
+    tasks = repository.tasks_for_user(css_id)
+    appeals = repository.appeals_from_tasks(tasks)
 
-    vacols_tasks.map do |task|
-      DraftDecision.from_vacols(task, user_id)
+
+
+    tasks.map do |task|
+      appeal = appeals.find { |appeal| appeal.vacols_id == task.vacols_id }
+      DraftDecision.from_vacols(task, appeal, user_id)
     end
   end
 
