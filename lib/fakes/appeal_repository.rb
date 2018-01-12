@@ -22,8 +22,11 @@ class Fakes::AppealRepository
       user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
       appeal = user_case_assignments.first
       # Create fake hearings for the first appeal if one doesn't already exist
-      2.times { |i| Fakes::HearingRepository.create_hearing_for_appeal(i, appeal) } 
+      2.times do |i|
         if Hearing.where(appeal: appeal).empty?
+          Fakes::HearingRepository.create_hearing_for_appeal(i, appeal) }
+        end
+      end
 
       user_case_assignments
     end
