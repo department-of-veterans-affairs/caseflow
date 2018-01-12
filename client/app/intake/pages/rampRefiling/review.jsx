@@ -72,7 +72,10 @@ class Review extends React.PureComponent {
         </Button>
       </Alert>
       }
-      <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
+      <h1>Review { veteranName }s 21-4138 RAMP Selection Form</h1>
+
+      {<Alert title="Something went wrong">Please try again. 
+        If the problem persists, please contact Caseflow support.</Alert>}
 
       <DateSelector
         name="receipt-date"
