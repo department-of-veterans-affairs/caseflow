@@ -9,7 +9,6 @@ class QueueRepository
   def self.appeal_info_query(vacols_ids)
     VACOLS::Case.includes(:folder, :correspondent, :representative)
       .find(vacols_ids)
-      .joins(VACOLS::Case::JOIN_AOD)
   end
   # :nocov:
 
@@ -23,21 +22,24 @@ class QueueRepository
 
   def self.appeals_from_tasks(tasks)
     # Run a second query to find all the appeal information.
+    vacols_ids = tasks.map(&:vacols_id)
     case_records = MetricsService.record("VACOLS: fetch appeals associated with tasks",
                                          service: :vacols,
                                          name: "appeals_by_vacols_id") do
-      vacols_ids = tasks.map(&:vacols_id)
-      appeal_info_query(vacols_ids)
+      QueueRepository.appeal_info_query(vacols_ids)
     end
 
-    hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
+    aod_by_appeal = VACOLS::Case.aod(vacols_ids)
+    hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
+    issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
 
     case_records.map do |case_record|
-      appeal = build_appeal(case_record)
-      appeal.aod = case_record["aod"] == 1
-      appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
-      appeal.hearings = hearings[appeal.vacols_id] || []
-      appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
+      appeal = AppealRepository.build_appeal(case_record)
+
+      appeal.aod = aod_by_appeal[appeal.vacols_id]
+      appeal.issues = (issues_by_appeal[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue) }
+      appeal.hearings = hearings_by_appeal[appeal.vacols_id] || []
+
       appeal.save
       appeal
     end
