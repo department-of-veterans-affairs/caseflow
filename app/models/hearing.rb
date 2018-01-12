@@ -185,7 +185,7 @@ class Hearing < ActiveRecord::Base
       @repository ||= HearingRepository
     end
 
-    def is_user_nil_or_assigned_to_another_judge(user, vacols_css_id)
+    def user_nil_or_assigned_to_another_judge?(user, vacols_css_id)
       user.nil? || (user.css_id != vacols_css_id)
     end
 
@@ -194,10 +194,12 @@ class Hearing < ActiveRecord::Base
         find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq).tap do |hearing|
           # update hearing if user is nil or if vacols record css is different from
           # who it's assigned to in the db.
-          hearing.update(
-            appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(css_id: vacols_record.css_id)
-          ) if is_user_nil_or_assigned_to_another_judge(hearing.user, vacols_record.css_id)
+          if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
+            hearing.update(
+              appeal: Appeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+              user: User.find_by(css_id: vacols_record.css_id)
+            )
+          end
         end
       end
     end
