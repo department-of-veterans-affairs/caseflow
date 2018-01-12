@@ -14,7 +14,7 @@ class QueueRepository
   # :nocov:
 
   def self.tasks_for_user(css_id)
-    tasks = MetricsService.record("VACOLS: fetch user assignments",
+    MetricsService.record("VACOLS: fetch user assignments",
                                   service: :vacols,
                                   name: "appeals_by_vacols_id") do
       tasks_query(css_id)
