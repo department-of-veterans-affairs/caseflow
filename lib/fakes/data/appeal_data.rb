@@ -66,7 +66,7 @@ module Fakes::Data::AppealData
       ),
       Generators::Appeal.build(
         type: "Remand",
-        vacols_id: "3333333",
+        vacols_id: "333333",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
         date_received: "2013-04-29 00:00:00 UTC".to_datetime,
         date_due: "2018-02-22 00:00:00 UTC".to_datetime,
