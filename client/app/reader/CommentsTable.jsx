@@ -46,7 +46,7 @@ class CommentsTable extends React.PureComponent {
         bodyClassName="cf-document-list-body"
         tbodyRef={this.getTbodyRef}
         getKeyForRow={(index) => index}
-        headerClassName='light'
+        headerClassName='comments-table-header'
         rowClassNames={_.constant('borderless')}
       />
     </div>;
