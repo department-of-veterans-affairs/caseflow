@@ -26,10 +26,4 @@ class DraftDecision
       user_id: user_id
     )
   end
-
-  def complete!
-    # TODO: implement
-    # save draft decision info
-    # update VACOLS DECASS
-  end
 end
