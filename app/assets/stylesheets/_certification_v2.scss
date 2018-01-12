@@ -8,3 +8,12 @@ $alert-red: #cd2026;
   color: $alert-red;
   font-weight: 700;
 }
+
+.cf-apppeal-id {
+
+  svg {
+    display: inline-block;
+    margin-left: .25rem;
+    vertical-align: -1px;
+	}
+}
