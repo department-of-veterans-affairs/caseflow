@@ -64,7 +64,7 @@ export class DocumentsCheck extends React.Component {
         SOC and SSOC dates are considered matching if the VBMS date is the same as the VACOLS date,
         or if the VBMS date is 4 days or fewer before the VACOLS date.
           <a href="/certification/help#cannot-find-documents"> Learn more about document dates.</a> </ul>
-        <p>Once you've made corrections,
+        <p>Once you've made corrections,&nbsp;
           <a href={`/certifications/${match.params.vacols_id}/check_documents`}>refresh this page.</a></p>
         <p>If you can't find the document, <a href="#"
           onClick={toggleCancellationModal}>cancel this certification.</a></p>
