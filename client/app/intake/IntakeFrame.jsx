@@ -20,6 +20,7 @@ import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
+import { LOGO_COLORS } from '../util/StyleConstants';
 
 class IntakeFrame extends React.PureComponent {
   handleSubmitCancel = () => (
@@ -59,8 +60,8 @@ class IntakeFrame extends React.PureComponent {
         <NavigationBar
           appName={appName}
           logoProps={{
-            accentColor: '#FFCC4E',
-            overlapColor: '#CA9E00'
+            accentColor: LOGO_COLORS.INTAKE.ACCENT,
+            overlapColor: LOGO_COLORS.INTAKE.OVERLAP
           }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}

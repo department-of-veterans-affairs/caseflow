@@ -2,6 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { LOGO_COLORS } from '../../util/StyleConstants';
 
 const options = [
   {
@@ -48,8 +49,8 @@ export default class StyleGuideNavigationBar extends React.PureComponent {
           <NavigationBar
             appName="Hearing Prep"
             logoProps={{
-              accentColor: 'rgb(72, 144, 0)',
-              overlapColor: 'rgb(72, 144, 0)'
+              accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+              overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
             }}
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}

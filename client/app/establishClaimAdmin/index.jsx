@@ -7,6 +7,7 @@ import StuckTasksContainer from './StuckTasksContainer';
 import { establishClaimAdminReducers, mapDataToInitialState } from './reducers';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
+import { LOGO_COLORS } from '../util/StyleConstants';
 
 const EstablishClaimAdmin = ({
   userDisplayName,
@@ -24,8 +25,8 @@ const EstablishClaimAdmin = ({
           <NavigationBar
             appName="Establish Claim Admin"
             logoProps={{
-              accentColor: '#844e9f',
-              overlapColor: '#7a4b91'
+              accentColor: LOGO_COLORS.DISPATCH.ACCENT,
+              overlapColor: LOGO_COLORS.DISPATCH.OVERLAP
             }}
             defaultUrl="/dispatch/admin"
             userDisplayName={userDisplayName}

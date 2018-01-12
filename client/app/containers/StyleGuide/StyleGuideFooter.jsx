@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Footer from '../../components/Footer';
+import { LOGO_COLORS } from '../../util/StyleConstants';
 
 const options = [
   {
@@ -45,8 +46,8 @@ export default class StyleGuideFooter extends React.PureComponent {
           <NavigationBar
             appName="Hearing Prep"
             logoProps={{
-              accentColor: 'rgb(72, 144, 0)',
-              overlapColor: 'rgb(72, 144, 0)'
+              accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+              overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
             }}
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}
