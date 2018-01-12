@@ -13,6 +13,8 @@ import { setOptionSelected, setReceiptDate, setAppealDocket,
   submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
 import { getIntakeStatus } from '../../selectors';
 
+export const higherLevelReviewHearingOption = REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key;
+
 class Review extends React.PureComponent {
   beginNextIntake = () => {
     this.props.confirmIneligibleForm(this.props.intakeId);
@@ -61,18 +63,19 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      { hasInvalidOption && <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+      { hasInvalidOption && this.props.optionSelected === higherLevelReviewHearingOption &&
+        <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
           and that they may clarify their lane selection within 30 days. <br />
-        <Button
-          name="begin-next-intake"
-          onClick={this.beginNextIntake}
-          loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-          legacyStyling={false}>
+          <Button
+            name="begin-next-intake"
+            onClick={this.beginNextIntake}
+            loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+            legacyStyling={false}>
             Begin next intake
-        </Button>
-      </Alert>
+          </Button>
+        </Alert>
       }
 
       { beginNextIntakeError && <Alert title="Something went wrong" type="error">
@@ -153,7 +156,8 @@ class ReviewNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={this.props.hasInvalidOption}
+      disabled={this.props.hasInvalidOption &&
+        this.props.optionSelected === higherLevelReviewHearingOption}
     >
       Continue to next step
     </Button>;
@@ -164,7 +168,8 @@ const ReviewNextButtonConnected = connect(
     intakeId: intake.id,
     requestState: rampRefiling.requestStatus.submitReview,
     rampRefiling,
-    hasInvalidOption: rampRefiling.hasInvalidOption
+    hasInvalidOption: rampRefiling.hasInvalidOption,
+    optionSelected: rampRefiling.optionSelected
   }),
   (dispatch) => bindActionCreators({
     submitReview
