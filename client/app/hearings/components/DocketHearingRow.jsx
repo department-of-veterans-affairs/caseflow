@@ -68,18 +68,11 @@ export class DocketHearingRow extends React.PureComponent {
     };
 
     const appellantDisplay = <div>
-
-      { hearing.appellant_mi_formatted ?
-        (
-          <div>
-            <b>{ hearing.appellant_mi_formatted } (Appellant) </b>
-            { hearing.veteran_mi_formatted }
-          </div>
-        ) :
-        (
-          <b>{ hearing.veteran_mi_formatted }</b>
+      {hearing.appellant_mi_formatted ?
+        (<span><b>{hearing.appellant_mi_formatted} (Appellant)</b>
+          {hearing.veteran_mi_formatted}</span>) :
+        (<b>{hearing.veteran_mi_formatted}</b>
         )}
-
     </div>;
 
     return <tbody>
