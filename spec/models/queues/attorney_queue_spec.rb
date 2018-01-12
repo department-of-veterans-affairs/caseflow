@@ -1,9 +1,11 @@
 describe AttorneyQueue do
+  before { BaseQueue.repository = Fakes::QueueRepository }
+
   context ".tasks" do
     let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
 
     before do
-      Fakes::AppealRepository.appeal_records = [
+      Fakes::QueueRepository.appeal_records = [
         Generators::Appeal.build(
           vacols_id: "2222",
           date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,

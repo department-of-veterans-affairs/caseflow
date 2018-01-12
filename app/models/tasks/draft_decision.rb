@@ -22,7 +22,7 @@ class DraftDecision
       due_on: case_assignment.date_due,
       docket_name: "legacy",
       docket_date: case_assignment.docket_date,
-      appeal_id: case_assignment.id,
+      appeal_id: case_assignment.vacols_id,
       user_id: user_id
     )
   end

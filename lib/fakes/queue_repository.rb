@@ -1,10 +1,10 @@
 class Fakes::QueueRepository
   class << self
-    attr_accessor :task_records
+    attr_accessor :appeal_records
   end
 
   def self.tasks_for_user(_css_id)
-    task_records || Fakes::Data::AppealData.default_records.map do |record|
+    appeal_records || Fakes::Data::AppealData.default_records.map do |record|
       # This is a bit awkward. For now, we're using the default appeal records, which
       # also contain all the task information we need. We'll then choose only the relevant
       # task attributes and create a new Appeal model with only those attributes, so our fake
