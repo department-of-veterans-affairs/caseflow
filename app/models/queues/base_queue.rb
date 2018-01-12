@@ -1,4 +1,4 @@
-class Queue
+class BaseQueue
   include ActiveModel::Model
   class << self
     attr_writer :repository

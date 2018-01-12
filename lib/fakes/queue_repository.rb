@@ -5,15 +5,19 @@ class Fakes::QueueRepository
 
   def self.tasks_for_user(css_id)
     tasks = task_records || Fakes::Data::AppealData.default_records.map do |record|
-      task_attrs = record.pluck(
-        :vacols_id,
-        :vbms_id,
-        :docket_date,
-        :date_assigned,
-        :date_received,
-        :date_due,
-        :docket_number
-      )
+      # This is a bit awkward. For now, we're using the default appeal records, which
+      # also contain all the task information we need. We'll then choose only the relevant
+      # task attributes and create a new Appeal model with only those attributes, so our fake
+      # tasks don't contain appeals data.
+      task_attrs = {
+        vacols_id: record.vacols_id,
+        vbms_id: record.vbms_id,
+        docket_date: record.docket_date,
+        date_assigned: record.date_assigned,
+        date_received: record.date_received,
+        date_due: record.date_due,
+        docket_number: record.docket_number
+      }
       Appeal.new(task_attrs)
     end
   end
