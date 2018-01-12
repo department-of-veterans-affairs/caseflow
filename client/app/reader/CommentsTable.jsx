@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
-import { setDocListScrollPosition } from './DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import Comment from './Comment';
 import Table from '../components/Table';
@@ -39,8 +37,6 @@ class CommentsTable extends React.PureComponent {
     </Comment>
   }];
 
-  getKeyForRow = (index, row) => index;
-
   render() {
     return <div>
       <Table
@@ -49,7 +45,7 @@ class CommentsTable extends React.PureComponent {
         className="documents-table full-width"
         bodyClassName="cf-document-list-body"
         tbodyRef={this.getTbodyRef}
-        getKeyForRow={this.getKeyForRow}
+        getKeyForRow={(index) => index}
         headerClassName='light'
         rowClassNames={_.constant('borderless')}
       />
@@ -62,12 +58,8 @@ CommentsTable.propTypes = {
   onJumpToComment: PropTypes.func.isRequired
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setDocListScrollPosition
-}, dispatch);
-
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CommentsTable);
+export default connect(mapStateToProps)(CommentsTable);

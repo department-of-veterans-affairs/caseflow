@@ -86,7 +86,9 @@ export class Comment extends React.Component {
           {this.props.date && <strong>{moment(this.props.date).format('MM/DD/YYYY')}</strong>}
         </div>
         <div className="comment-page-number">
-          {this.props.docType && <span>{this.props.docType}</span>}
+          {this.props.docType && <span>
+            <Highlight>{this.props.docType}</Highlight>
+          </span>}
           <h4>Page {this.props.page}</h4>
           <strong>{jumpToSectionButton}</strong>
         </div>

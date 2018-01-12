@@ -12,6 +12,7 @@ import { getFilteredDocuments } from './selectors';
 import NoSearchResults from './NoSearchResults';
 import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
+import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
@@ -38,7 +39,7 @@ export class PdfListView extends React.Component {
 
     if (noDocuments) {
       tableView = <NoSearchResults/>;
-    } else if (this.props.viewingDocumentsOrComments === 'comments') {
+    } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
       tableView = <CommentsTable
         documents={this.props.documents}
         onJumpToComment={this.props.onJumpToComment}
