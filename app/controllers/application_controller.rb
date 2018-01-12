@@ -178,6 +178,14 @@ class ApplicationController < ApplicationBaseController
   end
 
   def feedback_url
+    # :nocov:
+    unless ENV["CASEFLOW_FEEDBACK_URL"]
+      return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
+    end
+    # :nocov:
+
+    # TODO: when we want to segment feedback subjects further,
+    # add more conditions here.
     subject = if request.original_fullpath.include? "dispatch"
                 "Caseflow Dispatch"
               elsif request.original_fullpath.include? "certifications"
@@ -186,8 +194,6 @@ class ApplicationController < ApplicationBaseController
                 "Caseflow Reader"
               elsif request.original_fullpath.include? "hearings"
                 "Caseflow Hearing Prep"
-              elsif request.original_fullpath.include? "queue"
-                "Caseflow Queue"
               else
                 "Caseflow"
               end
