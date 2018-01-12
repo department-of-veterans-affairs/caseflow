@@ -29,13 +29,10 @@ import DocTypeColumn from './DocTypeColumn';
 
 const NUMBER_OF_COLUMNS = 6;
 
-export const getRowObjects = (documents, annotationsPerDocument, viewingDocumentsOrComments) => {
+export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
+    acc.push(doc);
     const docHasComments = _.size(annotationsPerDocument[doc.id]);
-
-    if (viewingDocumentsOrComments === Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS || docHasComments) {
-      acc.push(doc);
-    }
 
     if (docHasComments && doc.listComments) {
       acc.push({
@@ -283,8 +280,7 @@ class DocumentsTable extends React.Component {
   render() {
     const rowObjects = getRowObjects(
       this.props.documents,
-      this.props.annotationsPerDocument,
-      this.props.viewingDocumentsOrComments
+      this.props.annotationsPerDocument
     );
 
     return <div>
@@ -325,7 +321,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const mapStateToProps = (state) => ({
   annotationsPerDocument: getAnnotationsPerDocument(state),
-  ..._.pick(state.documentList, 'viewingDocumentsOrComments', 'docFilterCriteria', 'pdfList'),
+  ..._.pick(state.documentList, 'docFilterCriteria', 'pdfList'),
   ..._.pick(state.pdfViewer, 'tagOptions')
 });
 

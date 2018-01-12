@@ -48,8 +48,16 @@ $tag-backgrond-color: #d6d7d9;
     min-width: 810px;
     margin-top: 0;
 
+    &.full-width {
+      width: 100%;
+    }
+
     tbody > tr > td {
       vertical-align: top;
+    }
+
+    thead.light > tr > th {
+      font-weight: normal;
     }
   }
 
@@ -111,6 +119,20 @@ $tag-backgrond-color: #d6d7d9;
     display: block;
     max-height: 65vh;
     overflow: auto;
+
+    > tr.borderless {
+      border: none;
+
+      > td {
+        width: 100vw;
+        padding-bottom: 0;
+      }
+
+      div.horizontal-comment {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
 
     .horizontal-comment {
       display: flex;

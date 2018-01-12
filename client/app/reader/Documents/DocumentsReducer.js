@@ -36,11 +36,6 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case SET_VIEWING_DOCUMENTS_OR_COMMENTS:
-    return _.mapValues(state, (doc) => ({
-      ...doc,
-      listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-    }));
   case Constants.TOGGLE_COMMENT_LIST:
     return update(state, {
       [action.payload.docId]: {

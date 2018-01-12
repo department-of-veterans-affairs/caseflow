@@ -23,8 +23,7 @@ class HeaderFilterMessage extends React.PureComponent {
 
     const filteredCategories = _.compact([
       categoryCount && `Categories (${categoryCount})`,
-      tagCount && `Issue tags (${tagCount})`,
-      props.viewingDocumentsOrComments === 'comments' && 'Comments'
+      tagCount && `Issue tags (${tagCount})`
     ]).join(', ');
 
     const className = classNames('document-list-filter-message', {
@@ -50,7 +49,7 @@ HeaderFilterMessage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
+  // viewingDocumentsOrComments: state.documentList.viewingDocumentsOrComments
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderFilterMessage);
