@@ -186,7 +186,7 @@ class Hearing < ActiveRecord::Base
     end
 
     def is_user_nil_or_assigned_to_another_judge(user, vacols_css_id)
-      (user.nil? && user.css_id != vacols_css_id)
+      user.nil? || (user.css_id != vacols_css_id)
     end
 
     def create_from_vacols_record(vacols_record)
