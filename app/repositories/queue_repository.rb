@@ -8,8 +8,8 @@ class QueueRepository
   # :nocov:
   def self.appeal_info_query(vacols_ids)
     VACOLS::Case.includes(:folder, :correspondent, :representative)
-      .joins(VACOLS::Case::JOIN_AOD)
       .find(vacols_ids)
+      .joins(VACOLS::Case::JOIN_AOD)
   end
   # :nocov:
 
@@ -20,6 +20,7 @@ class QueueRepository
       tasks_query(css_id)
     end
   end
+
 
   def self.appeals_from_tasks(tasks)
     # Run a second query to find all the appeal information.
@@ -33,14 +34,19 @@ class QueueRepository
     hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
 
     case_records.map do |case_record|
-      poa = PowerOfAttorney.new
-      PowerOfAttorneyRepository.set_vacols_values(poa, case_record)
-
       appeal = build_appeal(case_record)
+
+      # Despite us setting the poa values manually,
+      # right now it will still trigger a vacols query when we
+      # try to access them. TODO: create option to disable lazy loading.
+      PowerOfAttorneyRepository.set_vacols_values(
+        poa: appeal.power_of_attorney(load_bgs_record: false),
+        case_record: case_record
+      )
+
       appeal.aod = case_record["aod"] == 1
       appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
       appeal.hearings = hearings[appeal.vacols_id] || []
-      appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
       appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
       appeal.save
       appeal
