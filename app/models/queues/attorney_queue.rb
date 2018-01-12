@@ -1,15 +1,13 @@
 class AttorneyQueue < BaseQueue
-  def self.tasks(user_id)
+  def self.tasks_with_appeals(user_id)
     css_id = User.find(user_id).css_id
-    tasks = repository.tasks_for_user(css_id)
-    appeals = repository.appeals_from_tasks(tasks)
+    vacols_tasks = repository.tasks_for_user(css_id)
+    vacols_appeals = repository.appeals_from_tasks(tasks)
 
-
-
-    tasks.map do |task|
-      appeal = appeals.find { |appeal| appeal.vacols_id == task.vacols_id }
-      DraftDecision.from_vacols(task, appeal, user_id)
+    tasks = vacols_tasks.map do |task|
+      DraftDecision.from_vacols(task, user_id)
     end
+    [tasks, appeals]
   end
 
   # We don't redefine the repository as a fake
