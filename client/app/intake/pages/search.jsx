@@ -84,6 +84,12 @@ class Search extends React.PureComponent {
         title: 'This Veteran has a pending RAMP EP with no contentions',
         body: 'Please ensure contentions were added to the original RAMP Election EP'
       },
+      duplicate_intake_in_progress: {
+        title: `${searchErrorData.duplicateProcessedBy} already started processing this form`,
+        body: `We noticed that ${searchErrorData.duplicateProcessedBy} may be in the middle of ` +
+         'processing he same form for this Veteran in Caseflow. Please confirm they will ' +
+         'complete this intake, then move on to the next mail item.'
+      },
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',
         body: 'Caseflow does not currently support more than one Selection Form for a Veteran.' +
