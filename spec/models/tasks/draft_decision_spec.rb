@@ -10,12 +10,4 @@ describe DraftDecision do
       expect(subject.user_id).to eq("USER_ID")
     end
   end
-
-  context "#to_hash" do
-    subject { DraftDecision.from_vacols(case_assignment, "USER_ID").to_hash }
-
-    it "returns a hash" do
-      expect(subject.class).to eq(Hash)
-    end
-  end
 end
