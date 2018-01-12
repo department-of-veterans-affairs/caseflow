@@ -35,15 +35,6 @@ class QueueRepository
 
     case_records.map do |case_record|
       appeal = build_appeal(case_record)
-
-      # Despite us setting the poa values manually,
-      # right now it will still trigger a vacols query when we
-      # try to access them. TODO: create option to disable lazy loading.
-      PowerOfAttorneyRepository.set_vacols_values(
-        poa: appeal.power_of_attorney(load_bgs_record: false),
-        case_record: case_record
-      )
-
       appeal.aod = case_record["aod"] == 1
       appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
       appeal.hearings = hearings[appeal.vacols_id] || []

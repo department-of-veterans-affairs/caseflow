@@ -3,7 +3,7 @@ class DraftDecision
   include ActiveModel::Serialization
 
   # TODO: move to generic superclass
-  ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date].freeze
+  ATTRS = [:appeal, :appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date].freeze
   attr_accessor(*ATTRS)
 
   # TODO: move to generic superclass
