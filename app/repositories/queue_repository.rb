@@ -21,7 +21,6 @@ class QueueRepository
     end
   end
 
-
   def self.appeals_from_tasks(tasks)
     # Run a second query to find all the appeal information.
     case_records = MetricsService.record("VACOLS: fetch appeals associated with tasks",
