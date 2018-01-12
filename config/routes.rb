@@ -114,6 +114,11 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  scope path: '/queue' do
+    get '/', to: 'queue#index'
+    get '/:user_id', to: 'queue#tasks'
+  end
+
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
   get "login" => "sessions#new"
