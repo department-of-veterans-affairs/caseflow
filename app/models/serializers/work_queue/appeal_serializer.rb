@@ -14,7 +14,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :hearings do
-    object.hearings.map do |hearing|
+    object.hearings.map do |_hearing|
       {
         held_by: object.user.full_name,
         held_on: object.date,
