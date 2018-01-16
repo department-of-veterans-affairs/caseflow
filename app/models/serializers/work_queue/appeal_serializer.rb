@@ -14,11 +14,11 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :hearings do
-    object.hearings.map do |_hearing|
+    object.hearings.map do |hearing|
       {
-        held_by: object.user.full_name,
-        held_on: object.date,
-        type: object.type
+        held_by: hearing.user.full_name,
+        held_on: hearing.date,
+        type: hearing.type
       }
     end
   end
