@@ -10,7 +10,6 @@ class Appeal < ActiveRecord::Base
   has_many :worksheet_issues
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
-  class MultipleDecisionError < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -43,7 +42,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :signed_date
+  attr_accessor :date_assigned, :date_received, :signed_date, :docket_date, :date_due
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
