@@ -7,7 +7,7 @@ import { getAnnotationsPerDocument } from './selectors';
 import Comment from './Comment';
 import Table from '../components/Table';
 
-export const getRowObjects = (documents, annotationsPerDocument) => {
+export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '') => {
   const groupedAnnotations = _(annotationsPerDocument).
     map((notes) =>
       notes.map((note) => {
@@ -19,6 +19,14 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
         });
       })).
     flatten().
+    filter((note) => {
+      if (!searchQuery) {
+        return true;
+      }
+
+      const query = new RegExp(searchQuery, 'i');
+      return note.comment.match(query) || note.docType.match(query);
+    }).
     groupBy((note) => note.relevant_date ? 'relevant_date' : 'serialized_receipt_date').
     value();
 
@@ -44,10 +52,16 @@ class CommentsTable extends React.PureComponent {
   }];
 
   render() {
+    const {
+      documents,
+      annotationsPerDocument,
+      searchQuery
+    } = this.props;
+
     return <div>
       <Table
         columns={this.getCommentColumn}
-        rowObjects={getRowObjects(this.props.documents, this.props.annotationsPerDocument)}
+        rowObjects={getRowObjects(documents, annotationsPerDocument, searchQuery)}
         className="documents-table full-width"
         bodyClassName="cf-document-list-body"
         getKeyForRow={(index) => index}
@@ -64,7 +78,8 @@ CommentsTable.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  annotationsPerDocument: getAnnotationsPerDocument(state)
+  annotationsPerDocument: getAnnotationsPerDocument(state),
+  ..._.pick(state.documentList.docFilterCriteria, 'searchQuery')
 });
 
 export default connect(mapStateToProps)(CommentsTable);
