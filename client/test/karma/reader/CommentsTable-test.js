@@ -41,14 +41,14 @@ describe('CommentsTable', () => {
         comment: 'This is an example comment',
         relevant_date: '2018-05-05',
         serialized_receipt_date: '2016-10-23',
-        type: 'NOD'
+        docType: 'NOD'
       },
       {
         comment: 'Hello World!',
         documentId: 12,
         relevant_date: null,
         serialized_receipt_date: '2017-06-05',
-        type: 'SOC'
+        docType: 'SOC'
       }
     ]);
   });
