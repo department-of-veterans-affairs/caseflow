@@ -1,4 +1,4 @@
-class QueueSerializers::HearingSerializer < ActiveModel::Serializer
+class WorkQueue::HearingSerializer < ActiveModel::Serializer
   attribute :held_by do
     object.user.full_name
   end

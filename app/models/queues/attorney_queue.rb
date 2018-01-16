@@ -1,4 +1,4 @@
-class AttorneyQueue < BaseQueue
+class AttorneyQueue < WorkQueue
   def self.tasks_with_appeals(user_id)
     css_id = User.find(user_id).css_id
     vacols_tasks = repository.tasks_for_user(css_id)
@@ -15,6 +15,6 @@ class AttorneyQueue < BaseQueue
   # so if we rely on the autoloaded method we'll never
   # get the fake. Awwwkward.
   def self.repository
-    BaseQueue.repository
+    WorkQueue.repository
   end
 end

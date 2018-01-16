@@ -1,4 +1,6 @@
-class BaseQueue
+# Called "WorkQueue" instead of "Queue" to not conflict with the
+# "Queue" class that ships with Ruby.
+class WorkQueue
   include ActiveModel::Model
   class << self
     attr_writer :repository
