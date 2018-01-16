@@ -58,7 +58,8 @@ $tag-backgrond-color: #d6d7d9;
 
     .comments-table-header > tr > th {
       font-weight: normal;
-      float: right;
+      float: left;
+      padding-left: 0;
     }
   }
 
