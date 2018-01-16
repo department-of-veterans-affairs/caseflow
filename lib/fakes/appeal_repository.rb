@@ -541,11 +541,11 @@ class Fakes::AppealRepository
   end
 
   def self.latest_docket_month
-    6.months.ago.beginning_of_month
+    11.months.ago.to_date.beginning_of_month
   end
 
   def self.docket_counts_by_month
-    1.year.ago..Date.today.map {|d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
+    (1.year.ago.to_date..Date.today).map {|d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
       {
         "year" => d.year,
         "month" => d.month,
