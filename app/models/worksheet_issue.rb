@@ -23,16 +23,7 @@ class WorksheetIssue < ActiveRecord::Base
                       name: issue.type,
                       levels: issue.levels_with_codes.join("; "),
                       notes: issue.note,
-                      description: [
-                        [
-                          issue.program.try(:capitalize),
-                          issue.type
-                        ].compact.join(": ")
-                                     .gsub(/Compensation/i, "Comp")
-                                     .gsub(/Service Connection/i, "SC")
-                                     .gsub(/Increased Rating/i, "IR"),
-                        issue.levels_with_codes.join("; ")
-                      ].compact.join("\n"),
+                      description: issue.formatted_program_type_levels,
                       from_vacols: true)
       end
     end
