@@ -705,6 +705,17 @@ RSpec.feature "RAMP Intake" do
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Ineligible for Higher-Level Review")
+          expect(page).to have_button("Continue to next step", disabled: true)
+          click_on "Begin next intake"
+
+          # Go back to start page
+          expect(page).to have_content("Welcome to Caseflow Intake!")
+
+          # Check there was an error in the DB
+          intake.reload
+          expect(intake.completion_status).to eq("error")
+          expect(intake.error_code).to eq("ineligible_for_higher_level_review")
+          expect(intake.detail).to be_nil
         end
 
         scenario "Complete a RAMP refiling for an appeal" do
@@ -765,12 +776,20 @@ RSpec.feature "RAMP Intake" do
           fill_in "What is the Receipt Date of this form?", with: "08/03/2017"
           safe_click "#button-submit-review"
 
+          expect(page).to have_content("Please select an option")
+
+          within_fieldset("Which type of appeal did the Veteran request?") do
+            find("label", text: "Evidence Submission").click
+          end
+
+          safe_click "#button-submit-review"
           expect(page).to have_content("Finish processing RAMP Selection form")
 
           ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
           expect(ramp_refiling).to_not be_nil
           expect(ramp_refiling.ramp_election_id).to eq(ramp_election.id)
           expect(ramp_refiling.option_selected).to eq("appeal")
+          expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
           expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 8, 3))
 
           safe_click "#finish-intake"

@@ -111,6 +111,12 @@ Rails.application.routes.draw do
   resources :intakes, path: "intake", only: [:index, :create, :destroy] do
     patch 'review', on: :member
     patch 'complete', on: :member
+    patch 'error', on: :member
+  end
+
+  scope path: '/queue' do
+    get '/', to: 'queue#index'
+    get '/:user_id', to: 'queue#tasks'
   end
 
   get "health-check", to: "health_checks#show"
@@ -137,12 +143,11 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
+    resources :users, only: [:index]
     if ApplicationController.dependencies_faked?
-      resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
     end
-
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
   end
 

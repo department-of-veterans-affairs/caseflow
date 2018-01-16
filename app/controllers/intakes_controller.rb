@@ -51,6 +51,11 @@ class IntakesController < ApplicationController
     render json: current_intake.ui_hash
   end
 
+  def error
+    current_intake.save_error!(code: params[:error_code])
+    render json: {}
+  end
+
   private
 
   def no_cache

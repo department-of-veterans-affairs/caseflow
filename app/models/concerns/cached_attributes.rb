@@ -1,4 +1,4 @@
-# Allows models to cache immutable attribtues in order to
+# Allows models to cache immutable attributes in order to
 # save time consuming calls to dependencies like VACOLS and VBMS.
 #
 # See cached_attributes_spec.rb for example usage.
