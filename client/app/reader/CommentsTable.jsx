@@ -13,8 +13,11 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
       notes.map((note) => {
         const { type, serialized_receipt_date } = documents.filter((doc) => doc.id === note.documentId)[0];
 
-        return _.extend({}, note, { type, serialized_receipt_date });
-    })).
+        return _.extend({}, note, {
+          type,
+          serialized_receipt_date
+        });
+      })).
     flatten().
     groupBy((note) => note.relevant_date ? 'relevant_date' : 'serialized_receipt_date').
     value();

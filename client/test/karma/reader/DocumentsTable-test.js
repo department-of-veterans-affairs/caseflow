@@ -27,7 +27,7 @@ describe('DocumentsTable', () => {
       },
       {
         id: 15,
-        listComments: true,
+        listComments: true
       },
       {
         id: 15,

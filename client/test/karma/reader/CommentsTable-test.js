@@ -24,12 +24,12 @@ describe('CommentsTable', () => {
       12: [{
         comment: 'Hello World!',
         documentId: 12,
-        relevant_date: null,
+        relevant_date: null
       }],
       15: [{
         comment: 'This is an example comment',
         documentId: 15,
-        relevant_date: '2018-05-05',
+        relevant_date: '2018-05-05'
       }],
       20: []
     };
@@ -47,8 +47,8 @@ describe('CommentsTable', () => {
         comment: 'Hello World!',
         documentId: 12,
         relevant_date: null,
-        serialized_receipt_date: "2017-06-05",
-        type: "SOC"
+        serialized_receipt_date: '2017-06-05',
+        type: 'SOC'
       }
     ]);
   });
