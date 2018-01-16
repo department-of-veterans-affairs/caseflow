@@ -1,5 +1,5 @@
 describe AttorneyQueue do
-  before { BaseQueue.repository = Fakes::QueueRepository }
+  before { WorkQueue.repository = Fakes::QueueRepository }
 
   context ".tasks" do
     let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
