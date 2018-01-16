@@ -10,7 +10,7 @@ import ApiUtil from '../../util/ApiUtil';
 import querystring from 'querystring';
 
 export const getWorksheet = (id, dispatch) => {
-  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
+  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: false }).
     then((response) => {
       dispatch(Actions.populateWorksheet(response.body));
     }, (err) => {

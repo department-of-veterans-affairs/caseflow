@@ -60,9 +60,21 @@ export class HearingWorksheet extends React.PureComponent {
   save = (worksheet, worksheetIssues) => () => {
     this.props.toggleWorksheetSaving();
     this.props.setWorksheetSaveFailedStatus(false);
-    this.props.saveWorksheet(worksheet);
     this.props.saveIssues(worksheetIssues);
+    this.props.saveWorksheet(worksheet);
     this.props.toggleWorksheetSaving();
+  }
+
+  openPdf = (worksheet, worksheetIssues) => {
+    let print = window.open(`${window.location.pathname}/print`, '_blank');
+
+    if (this.props.worksheet.edited || _.find(this.props.worksheetIssues, 'edited')) {
+      this.save(worksheet, worksheetIssues)();
+      window.location.reload();
+      print();
+    } else {
+      print();
+    }
   };
 
   onContentionsChange = (event) => this.props.onContentionsChange(event.target.value);
@@ -71,6 +83,7 @@ export class HearingWorksheet extends React.PureComponent {
   onCommentsForAttorneyChange = (event) => this.props.onCommentsForAttorneyChange(event.target.value);
 
   render() {
+
     let { worksheet, worksheetIssues } = this.props;
     let readerLink = `/reader/appeal/${worksheet.appeal_vacols_id}/documents`;
 
@@ -145,7 +158,9 @@ export class HearingWorksheet extends React.PureComponent {
       </div>
       {!this.props.print &&
       <div className="cf-push-right">
-        <Link href={`${window.location.pathname}/print`} button="secondary" target="_blank">
+        <Link
+          onClick={this.openPdf}
+          button="secondary">
           Save as PDF
         </Link>
         <Link
