@@ -486,7 +486,7 @@ class AppealRepository
     conn = VACOLS::Record.connection
 
     query = <<-SQL
-      select YEAR, MONTH, N, READY_N,
+      select YEAR, MONTH,
         coalesce(
           sum(N) over (order by YEAR, MONTH rows between unbounded preceding and 1 preceding),
           0
