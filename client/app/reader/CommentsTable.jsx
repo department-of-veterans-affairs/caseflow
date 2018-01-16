@@ -14,7 +14,7 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
         const { type, serialized_receipt_date } = documents.filter((doc) => doc.id === note.documentId)[0];
 
         return _.extend({}, note, {
-          type,
+          docType: type,
           serialized_receipt_date
         });
       })).
