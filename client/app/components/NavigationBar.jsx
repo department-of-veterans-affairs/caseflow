@@ -19,7 +19,7 @@ export default class NavigationBar extends React.Component {
       userDisplayName
     } = this.props;
 
-    const lineHeight = {lineHeight: '4em'};
+    const lineHeight = { lineHeight: '4em' };
 
     const h1Styling = css({
       margin: 0,

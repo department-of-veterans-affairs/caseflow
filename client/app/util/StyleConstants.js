@@ -19,4 +19,4 @@ export const LOGO_COLORS = {
     ACCENT: 'rgb(72, 144, 0)',
     OVERLAP: 'rgb(72, 144, 0)'
   }
-}
+};
