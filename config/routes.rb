@@ -111,6 +111,12 @@ Rails.application.routes.draw do
   resources :intakes, path: "intake", only: [:index, :create, :destroy] do
     patch 'review', on: :member
     patch 'complete', on: :member
+    patch 'error', on: :member
+  end
+
+  scope path: '/queue' do
+    get '/', to: 'queue#index'
+    get '/:user_id', to: 'queue#tasks'
   end
 
   get "health-check", to: "health_checks#show"
