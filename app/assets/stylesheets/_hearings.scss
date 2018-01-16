@@ -337,6 +337,7 @@ $color-hearings-saving: #777;
 
 .cf-hearings-worksheet-issues {
   margin: 0;
+  white-space: pre-line;
 
   .cf-form-textarea {
     min-height: 48px;

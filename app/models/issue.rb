@@ -79,6 +79,10 @@ class Issue
     labels[2..-1] || []
   end
 
+  def levels_with_codes
+    codes[2..-1].zip(labels[2..-1]).map { |code, label| "#{code} - #{label}" }
+  end
+
   def friendly_description
     issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
       descriptions = descriptions[code]
