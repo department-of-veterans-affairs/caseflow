@@ -51,6 +51,8 @@ class CommentsTable extends React.PureComponent {
     </Comment>
   }];
 
+  getKeyForRow = (rowNumber, object) => object.uuid;
+
   render() {
     const {
       documents,
@@ -64,7 +66,7 @@ class CommentsTable extends React.PureComponent {
         rowObjects={getRowObjects(documents, annotationsPerDocument, searchQuery)}
         className="documents-table full-width"
         bodyClassName="cf-document-list-body"
-        getKeyForRow={(index) => index}
+        getKeyForRow={this.getKeyForRow}
         headerClassName="comments-table-header"
         rowClassNames={_.constant('borderless')}
       />
