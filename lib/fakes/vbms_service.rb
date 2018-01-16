@@ -60,6 +60,20 @@ class Fakes::VBMSService
     }
   end
 
+  def self.fetch_document_series_for(appeal)
+    OpenStruct.new(
+      vbms_filename: "happy-thursday-#{SecureRandom.hex}.#{type[:ext]}",
+      type_id: Document::TYPES.keys.sample,
+      document_id: "{#{SecureRandom.hex(4).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(6).upcase}}",
+      version_id: "{#{SecureRandom.hex(4).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(6).upcase}}",
+      series_id: "{#{SecureRandom.hex(4).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(6).upcase}}",
+      version: rand(10).to_s,
+      mime_type: type[:mime_type],
+      received_at: (i * 2).days.ago,
+      downloaded_from: service_type
+    )
+  end
+
   def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal

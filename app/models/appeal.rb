@@ -331,6 +331,27 @@ class Appeal < ActiveRecord::Base
     save ? find_or_create_documents! : fetched_documents
   end
 
+  def find_or_create_documents_v2!
+    ids = fetched_documents.map(&:series_id)
+    existing_documents = Document.where(series_id: ids)
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      accumulator[document.vbms_document_id] = document
+    end
+
+    fetched_documents.map do |document|
+      if existing_documents[document.vbms_document_id]
+        document.merge_into(existing_documents[document.vbms_document_id])
+      else
+        begin
+          document.save!
+          document
+        rescue ActiveRecord::RecordNotUnique
+          Document.find_by_vbms_document_id(document.vbms_document_id)
+        end
+      end
+    end
+  end
+
   def find_or_create_documents!
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)

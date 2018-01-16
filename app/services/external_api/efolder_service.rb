@@ -21,7 +21,7 @@ class ExternalApi::EfolderService
   def self.efolder_v1_api(vbms_id, user)
     headers = { "FILE-NUMBER" => vbms_id }
 
-    response = get_efolder_response("/api/v1/files?download=true", user, headers)
+    response = send_efolder_request("/api/v1/files?download=true", user, headers)
 
     if response.error?
       fail Caseflow::Error::EfolderAccessForbidden if response.try(:code) == 403
@@ -45,8 +45,10 @@ class ExternalApi::EfolderService
 
     response_attrs = {}
 
+    send_efolder_request("/api/v2/manifests", user, headers, method: :post)
+
     TRIES.times do
-      response = get_efolder_response("/api/v2/manifests", user, headers)
+      response = send_efolder_request("/api/v2/manifests", user, headers)
 
       fail Caseflow::Error::DocumentRetrievalError if response.error?
 
@@ -91,7 +93,7 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_key.to_s
   end
 
-  def self.get_efolder_response(endpoint, user, headers = {})
+  def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
     DBService.release_db_connections
 
     url = URI.escape(efolder_base_url + endpoint)
@@ -106,7 +108,12 @@ class ExternalApi::EfolderService
     MetricsService.record("eFolder GET request to #{url}",
                           service: :efolder,
                           name: endpoint) do
-      HTTPI.get(request)
+      case method
+      when :get
+        HTTPI.get(request)
+      when :post
+        HTTPI.post(request)
+      end
     end
   end
 end
