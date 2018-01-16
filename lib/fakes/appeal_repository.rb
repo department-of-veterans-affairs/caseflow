@@ -477,7 +477,7 @@ class Fakes::AppealRepository
         veteran_file_number: file_number,
         bgs_attrs: {
           benefit_claim_id: claim_id,
-          status_type_code: ((i == 0) ? "PEND" : "CLR")
+          status_type_code: ((i == 1) ? "PEND" : "CLR")
         }
       )
 

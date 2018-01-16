@@ -108,7 +108,7 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
 
         throw error;
       }
-    );
+    ).catch((error) => error);
 };
 
 export const setIssueSelected = (issueId, isSelected) => ({
