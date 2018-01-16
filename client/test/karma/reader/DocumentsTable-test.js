@@ -1,11 +1,13 @@
 import { expect } from 'chai';
 import { getRowObjects } from '../../../app/reader/DocumentsTable';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../app/reader/DocumentList/actionTypes';
 
 describe('DocumentsTable', () => {
-  it('in documents mode, only adds comment rows for docs which have comments and listComments set', () => {
+  it('in documents mode, only adds comment rows for docs which have listComments set', () => {
     const documents = [
-      { id: 12 },
+      {
+        id: 12,
+        listComments: true
+      },
       {
         id: 15,
         listComments: true
@@ -16,13 +18,16 @@ describe('DocumentsTable', () => {
       15: 'annotations',
       20: 'annotations'
     };
-    const rowObjects = getRowObjects(documents, annotationsPerDocument, DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS);
+    const rowObjects = getRowObjects(documents, annotationsPerDocument);
 
     expect(rowObjects).to.deep.equal([
-      { id: 12 },
+      {
+        id: 12,
+        listComments: true
+      },
       {
         id: 15,
-        listComments: true
+        listComments: true,
       },
       {
         id: 15,
@@ -30,46 +35,6 @@ describe('DocumentsTable', () => {
         isComment: true
       },
       { id: 20 }
-    ]);
-  });
-
-  it('in comments mode, omits rows for docs with no comments', () => {
-    const documents = [
-      { id: 12 },
-      {
-        id: 15,
-        listComments: true
-      },
-      {
-        id: 20,
-        listComments: true
-      }
-    ];
-    const annotationsPerDocument = {
-      15: 'annotations',
-      20: 'annotations'
-    };
-    const rowObjects = getRowObjects(documents, annotationsPerDocument, DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS);
-
-    expect(rowObjects).to.deep.equal([
-      {
-        id: 15,
-        listComments: true
-      },
-      {
-        id: 15,
-        listComments: true,
-        isComment: true
-      },
-      {
-        id: 20,
-        listComments: true
-      },
-      {
-        id: 20,
-        listComments: true,
-        isComment: true
-      }
     ]);
   });
 });

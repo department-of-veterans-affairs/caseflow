@@ -7,21 +7,24 @@ import { getAnnotationsPerDocument } from './selectors';
 import Comment from './Comment';
 import Table from '../components/Table';
 
+export const getRowObjects = (documents, annotationsPerDocument) => {
+  const groupedAnnotations = _(annotationsPerDocument).
+    map((notes) =>
+      notes.map((note) => {
+        const { type, serialized_receipt_date } = documents.filter((doc) => doc.id === note.documentId)[0];
+
+        return _.extend({}, note, { type, serialized_receipt_date });
+    })).
+    flatten().
+    groupBy((note) => note.relevant_date ? 'relevant_date' : 'serialized_receipt_date').
+    value();
+
+  // groupBy returns { relevant_date: [notes w/relevant_date], serialized_receipt_date: [notes w/out] }
+  return _.sortBy(groupedAnnotations.relevant_date, 'relevant_date').
+    concat(_.sortBy(groupedAnnotations.serialized_receipt_date, 'serialized_receipt_date'));
+};
+
 class CommentsTable extends React.PureComponent {
-  getTbodyRef = (elem) => this.tbodyElem = elem;
-
-  getRowObjects = () => {
-    return _(this.props.annotationsPerDocument).
-      map((notes) => notes.map((note) => {
-        const docType = this.props.documents.filter((doc) => doc.id === note.documentId)[0].type;
-
-        return _.extend({}, note, { docType });
-      })).
-      flatten().
-      sortBy((note) => note.relevant_date || note.receipt_date).
-      value();
-  };
-
   getCommentColumn = () => [{
     header: 'Sorted by relevant date',
     valueFunction: (comment, idx) => <Comment
@@ -41,10 +44,9 @@ class CommentsTable extends React.PureComponent {
     return <div>
       <Table
         columns={this.getCommentColumn}
-        rowObjects={this.getRowObjects()}
+        rowObjects={getRowObjects(this.props.documents, this.props.annotationsPerDocument)}
         className="documents-table full-width"
         bodyClassName="cf-document-list-body"
-        tbodyRef={this.getTbodyRef}
         getKeyForRow={(index) => index}
         headerClassName="comments-table-header"
         rowClassNames={_.constant('borderless')}
