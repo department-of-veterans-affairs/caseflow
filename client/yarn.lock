@@ -54,12 +54,14 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/appeals-frontend-toolkit@^1.0.0":
+"@department-of-veterans-affairs/appeals-frontend-toolkit@https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/nth/extract-components":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-1.0.1.tgz#2f84567037468d5c7c0d1ff9e65726af790c940f"
+  resolved "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/nth/extract-components#1ad2ede3e8441263e22837d32a7c30109bd0d735"
   dependencies:
+    glamor "^2.20.40"
     lodash "^4.17.4"
     react-redux "^5.0.6"
+    react-router-dom "^4.2.2"
     redux "^3.7.2"
     redux-perf-middleware "^1.2.2"
     redux-thunk "^2.2.0"
@@ -4745,7 +4747,7 @@ react-redux@^5.0.5, react-redux@^5.0.6:
     loose-envify "^1.1.0"
     prop-types "^15.5.10"
 
-react-router-dom@^4.1.1:
+react-router-dom@^4.1.1, react-router-dom@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-4.2.2.tgz#c8a81df3adc58bba8a76782e946cbd4eae649b8d"
   dependencies:
