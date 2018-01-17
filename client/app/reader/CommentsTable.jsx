@@ -25,6 +25,7 @@ export const getRowObjects = (documents, annotationsPerDocument, searchQuery = '
       }
 
       const query = new RegExp(searchQuery, 'i');
+
       return note.comment.match(query) || note.docType.match(query);
     }).
     groupBy((note) => note.relevant_date ? 'relevant_date' : 'serialized_receipt_date').
