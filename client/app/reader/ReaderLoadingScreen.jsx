@@ -47,9 +47,7 @@ export class ReaderLoadingScreen extends React.Component {
     </LoadingDataDisplay>;
 
     return <div className="usa-grid">
-      <div className="cf-app">
-        {loadingDataDisplay}
-      </div>
+      {loadingDataDisplay}
     </div>;
   }
 }
