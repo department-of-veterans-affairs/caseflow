@@ -19,7 +19,7 @@ import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
-import { LOGO_COLORS } from '../util/StyleConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
