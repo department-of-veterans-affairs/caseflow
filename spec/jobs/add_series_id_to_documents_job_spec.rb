@@ -37,7 +37,11 @@ describe AddSeriesIdToDocumentsJob do
 
       let!(:documents_without_series) do
         (0..4).map do |index|
-          Generators::Document.create(file_number: appeal.sanitized_vbms_id, series_id: nil, vbms_document_id: version_ids[index].sample)
+          Generators::Document.create(
+            file_number: appeal.sanitized_vbms_id,
+            series_id: nil,
+            vbms_document_id: version_ids[index].sample
+          )
         end
       end
 
@@ -50,7 +54,11 @@ describe AddSeriesIdToDocumentsJob do
       end
 
       let!(:vva_document) do
-        Generators::Document.create(file_number: appeal.sanitized_vbms_id, series_id: nil, vbms_document_id: SecureRandom.uuid)
+        Generators::Document.create(
+          file_number: appeal.sanitized_vbms_id,
+          series_id: nil,
+          vbms_document_id: SecureRandom.uuid
+        )
       end
 
       it "assigns series_ids to documents without them" do

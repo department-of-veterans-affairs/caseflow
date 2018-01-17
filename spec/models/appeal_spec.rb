@@ -373,7 +373,6 @@ describe Appeal do
   end
 
   context "#find_or_create_documents_v2!" do
-
     before do
       FeatureToggle.enable!(:efolder_docs_api)
       FeatureToggle.enable!(:efolder_api_v2)
@@ -477,6 +476,60 @@ describe Appeal do
     end
   end
 
+  context "#find_or_create_documents!" do
+    before do
+      FeatureToggle.enable!(:efolder_docs_api)
+      RequestStore.store[:application] = "reader"
+    end
+
+    after do
+      FeatureToggle.disable!(:efolder_docs_api)
+    end
+    let(:vbms_document_id) { "TEST_VBMS_DOCUMENT_ID" }
+
+    let(:documents) do
+      [
+        Generators::Document.build(
+          type: "NOD",
+          vbms_document_id: vbms_document_id
+        ),
+        Generators::Document.build(type: "SOC")
+      ]
+    end
+
+    context "when there is no existing document" do
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "saves retrieved documents" do
+        appeal.find_or_create_documents!
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+        expect(Document.first.received_at).to eq(documents[0].received_at)
+      end
+    end
+
+    context "when there is a document with same vbms_document_id" do
+      let!(:saved_document) { Generators::Document.create(type: "Form 9", vbms_document_id: vbms_document_id) }
+
+      before do
+        expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+      end
+
+      it "updates retrieved documents" do
+        expect(Document.count).to eq(1)
+        expect(Document.first.type).to eq(saved_document.type)
+
+        appeal.find_or_create_documents!
+
+        expect(Document.count).to eq(documents.count)
+        expect(Document.first.type).to eq(documents[0].type)
+      end
+    end
+  end
+
   context "#fetch_documents!" do
     let(:documents) do
       [Generators::Document.build(type: "NOD"), Generators::Document.build(type: "SOC")]
@@ -530,29 +583,6 @@ describe Appeal do
 
         after do
           FeatureToggle.disable!(:efolder_docs_api)
-        end
-      end
-
-      context "when efolder_docs_api is enabled, efolder_api_v2 is enabled, and application is reader" do
-        before do
-          FeatureToggle.enable!(:efolder_docs_api)
-          FeatureToggle.enable!(:efolder_api_v2)
-          RequestStore.store[:application] = "reader"
-        end
-
-        it "loads document content from the efolder service and sets fetched_at attributes" do
-          expect(Appeal).not_to receive(:vbms)
-          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-          expect(appeal.fetch_documents!(save: save)).to eq(documents)
-
-          expect(EFolderService).not_to receive(:fetch_documents_for)
-          expect(appeal.manifest_vbms_fetched_at).to eq(service_manifest_vbms_fetched_at)
-          expect(appeal.manifest_vva_fetched_at).to eq(service_manifest_vva_fetched_at)
-        end
-
-        after do
-          FeatureToggle.disable!(:efolder_docs_api)
-          FeatureToggle.disable!(:efolder_api_v2)
         end
       end
     end

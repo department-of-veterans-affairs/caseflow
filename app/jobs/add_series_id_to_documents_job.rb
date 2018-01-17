@@ -12,7 +12,6 @@ class AddSeriesIdToDocumentsJob < ActiveJob::Base
 
     documents_to_check = Document.where(file_number: sanitized_vbms_id).where(series_id: nil)
 
-    binding.pry
     if documents_to_check.count > 0
       document_series = VBMSService.fetch_document_series_for(sanitized_vbms_id)
 
@@ -25,6 +24,8 @@ class AddSeriesIdToDocumentsJob < ActiveJob::Base
       end
 
       documents_to_check.each do |document|
+        # We either map the vbms_document_id to a series_id, or we just copy the vbms_document_id if we
+        # cannot find a mapping, since this means the vbms_document_id is really a vva_id.
         document.update!(series_id: version_to_series_hash[document.vbms_document_id] || document.vbms_document_id)
       end
     end
