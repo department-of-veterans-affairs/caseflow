@@ -3,6 +3,14 @@ class DocketSnapshot < ActiveRecord::Base
   before_validation :set_docket_count, :set_latest_docket_month, on: :create
   after_create :create_tracers
 
+  def docket_tracer_for_form9_date(date)
+    docket_tracers.find_by_month(date.beginning_of_month)
+  end
+
+  def self.latest
+    order("created_at").last
+  end
+
   private
 
   def set_docket_count
