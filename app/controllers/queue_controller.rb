@@ -30,14 +30,14 @@ class QueueController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
-      each_serializer: ::QueueSerializers::AppealSerializer,
+      each_serializer: ::WorkQueue::AppealSerializer
     ).as_json
   end
 
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
-      each_serializer: ::QueueSerializers::TaskSerializer,
+      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 

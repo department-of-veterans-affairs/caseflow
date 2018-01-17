@@ -5,6 +5,10 @@ class DraftDecision
   ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date].freeze
   attr_accessor(*ATTRS)
 
+  def id
+    appeal_id
+  end
+
   def self.from_vacols(case_assignment, user_id)
     new(
       assigned_on: case_assignment.date_assigned,

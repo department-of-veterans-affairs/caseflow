@@ -484,18 +484,6 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def to_queue_hash(viewed: nil, issues: nil, hearings: nil)
-    serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod, :power_of_attorney],
-      includes: [:vbms_id, :vacols_id]
-    ).tap do |hash|
-      hash["viewed"] = viewed
-      hash["issues"] = issues ? issues.map(&:attributes) : nil
-      hash["regional_office"] = regional_office_hash
-      hash["hearings"] = hearings
-    end
-  end
-
   def manifest_vbms_fetched_at
     fetch_documents_from_service!
     @manifest_vbms_fetched_at
