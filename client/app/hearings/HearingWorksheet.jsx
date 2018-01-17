@@ -54,7 +54,10 @@ class WorksheetFormEntry extends React.PureComponent {
 export class HearingWorksheet extends React.PureComponent {
 
   componentDidMount() {
-    document.title = `${this.props.worksheet.appellant_mi_formatted}'s ${document.title}`;
+    let appellantDisplay = this.props.worksheet.appellant_mi_formatted ?
+      this.props.worksheet.appellant_mi_formatted : this.props.worksheet.veteran_mi_formatted;
+
+    document.title = `${appellantDisplay}'s ${document.title}`;
   }
 
   save = (worksheet, worksheetIssues) => () => {
