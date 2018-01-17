@@ -11,6 +11,7 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
+import { LOGO_COLORS } from '../util/StyleConstants';
 
 const Hearings = ({ hearings }) => {
 
@@ -31,6 +32,10 @@ const Hearings = ({ hearings }) => {
           <div>
             <NavigationBar
               appName="Hearing Prep"
+              logoProps={{
+                accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+                overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
+              }}
               defaultUrl="/hearings/dockets"
               userDisplayName={hearings.userDisplayName}
               dropdownUrls={hearings.dropdownUrls}>

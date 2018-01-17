@@ -48,8 +48,18 @@ $tag-backgrond-color: #d6d7d9;
     min-width: 810px;
     margin-top: 0;
 
+    &.full-width {
+      width: 100%;
+    }
+
     tbody > tr > td {
       vertical-align: top;
+    }
+
+    .comments-table-header > tr > th {
+      font-weight: normal;
+      float: left;
+      padding-left: 0;
     }
   }
 
@@ -111,6 +121,20 @@ $tag-backgrond-color: #d6d7d9;
     display: block;
     max-height: 65vh;
     overflow: auto;
+
+    > .borderless {
+      border: none;
+
+      > td {
+        width: 100vw;
+        padding-bottom: 0;
+      }
+
+      .horizontal-comment {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
 
     .horizontal-comment {
       display: flex;
