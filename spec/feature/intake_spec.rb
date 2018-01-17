@@ -329,6 +329,28 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("Veteran ID not found")
       end
 
+      scenario "Search for a veteran who's form is already being processed" do
+        RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+
+        RampElectionIntake.new(
+          veteran_file_number: "12341234",
+          user: Generators::User.build(full_name: "David Schwimmer")
+        ).start!
+
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "RAMP Opt-In Election Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("David Schwimmer already started processing this form")
+      end
+
       scenario "Cancel an intake" do
         RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
@@ -705,6 +727,17 @@ RSpec.feature "RAMP Intake" do
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Ineligible for Higher-Level Review")
+          expect(page).to have_button("Continue to next step", disabled: true)
+          click_on "Begin next intake"
+
+          # Go back to start page
+          expect(page).to have_content("Welcome to Caseflow Intake!")
+
+          # Check there was an error in the DB
+          intake.reload
+          expect(intake.completion_status).to eq("error")
+          expect(intake.error_code).to eq("ineligible_for_higher_level_review")
+          expect(intake.detail).to be_nil
         end
 
         scenario "Complete a RAMP refiling for an appeal" do
