@@ -1031,8 +1031,8 @@ describe Appeal do
     end
   end
 
-  context "#decision_type" do
-    subject { appeal.decision_type }
+  context "#dispatch_decision_type" do
+    subject { appeal.dispatch_decision_type }
     context "when it has a mix of allowed and granted issues" do
       let(:issues) do
         [
