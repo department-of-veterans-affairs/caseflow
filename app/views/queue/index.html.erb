@@ -1,0 +1,9 @@
+<% content_for :full_page_content do %>
+  <%= react_component("BaseContainer", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    page: "WorkQueue",
+    feedbackUrl: feedback_url,
+    buildDate: build_date
+  }) %>
+<% end %>
