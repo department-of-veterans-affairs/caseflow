@@ -329,6 +329,28 @@ RSpec.feature "RAMP Intake" do
         expect(page).to have_content("Veteran ID not found")
       end
 
+      scenario "Search for a veteran who's form is already being processed" do
+        RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+
+        RampElectionIntake.new(
+          veteran_file_number: "12341234",
+          user: Generators::User.build(full_name: "David Schwimmer")
+        ).start!
+
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "RAMP Opt-In Election Form").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in "Search small", with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("David Schwimmer already started processing this form")
+      end
+
       scenario "Cancel an intake" do
         RampElection.create!(veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
