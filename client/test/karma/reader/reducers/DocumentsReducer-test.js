@@ -1,69 +1,9 @@
 import { expect } from 'chai';
 import documentsReducer from '../../../../app/reader/Documents/DocumentsReducer';
-import { setViewingDocumentsOrComments } from '../../../../app/reader/DocumentList/DocumentListActions';
 import * as Constants from '../../../../app/reader/Documents/actionTypes';
-import { DOCUMENTS_OR_COMMENTS_ENUM } from '../../../../app/reader/DocumentList/actionTypes';
 
 describe('Documents reducer', () => {
   const reduceActions = (actions, state) => actions.reduce(documentsReducer, documentsReducer(state, {}));
-
-  describe(Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS, () => {
-    it('switching to Comments mode', () => {
-      const state = {
-        0: {
-          id: 0,
-          listComments: false
-        },
-        1: {
-          id: 1,
-          listComments: true
-        }
-      };
-
-      const nextState = reduceActions([
-        setViewingDocumentsOrComments(DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS)
-      ], state);
-
-      expect(nextState).to.deep.equal({
-        0: {
-          id: 0,
-          listComments: true
-        },
-        1: {
-          id: 1,
-          listComments: true
-        }
-      });
-    });
-
-    it('switching to Documents mode', () => {
-      const state = {
-        0: {
-          id: 0,
-          listComments: false
-        },
-        1: {
-          id: 1,
-          listComments: true
-        }
-      };
-
-      const nextState = reduceActions([
-        setViewingDocumentsOrComments(DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS)
-      ], state);
-
-      expect(nextState).to.deep.equal({
-        0: {
-          id: 0,
-          listComments: false
-        },
-        1: {
-          id: 1,
-          listComments: false
-        }
-      });
-    });
-  });
 
   describe(Constants.RECEIVE_DOCUMENTS, () => {
     it('updates documents object when received', () => {
