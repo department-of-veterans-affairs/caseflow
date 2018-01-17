@@ -107,12 +107,12 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = ({ rowIndex, columnIndex, key, style, isVisible }) => {
+  getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
     if ((this.columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
       return null;
     }
 
-    return <div key={key} style={style}>
+    return <div key={(this.columnCount * rowIndex) + columnIndex} style={style}>
       <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
@@ -166,6 +166,14 @@ export class PdfFile extends React.PureComponent {
     this.grid = grid;
 
     if (this.grid) {
+      // eslint-disable-next-line react/no-find-dom-node
+      const domNode = ReactDOM.findDOMNode(this.grid);
+
+      // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
+      // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
+      // might be deprecated at some point in the future, but until then this seems like the best we can do.
+      domNode.focus();
+
       this.grid.recomputeGridSize();
     }
   }
@@ -335,18 +343,6 @@ export class PdfFile extends React.PureComponent {
     this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
   }
 
-  handleArrowScroll = (event) => {
-    if (event.code === 'ArrowDown' || event.code === 'ArrowUp') {
-      // eslint-disable-next-line react/no-find-dom-node
-      const domNode = ReactDOM.findDOMNode(this.grid);
-
-      // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
-      // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
-      // might be deprecated at some point in the future, but until then this seems like the best we can do.
-      domNode.focus();
-    }
-  }
-
   handlePageUpDown = (event) => {
     if (event.code === 'PageDown' || event.code === 'PageUp') {
       const { rowIndex, columnIndex } = this.pageRowAndColumn(this.currentPage);
@@ -365,7 +361,6 @@ export class PdfFile extends React.PureComponent {
       return;
     }
 
-    this.handleArrowScroll(event);
     this.handlePageUpDown(event);
 
     if (event.altKey) {
