@@ -173,7 +173,6 @@ export class PdfFile extends React.PureComponent {
       // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
       // might be deprecated at some point in the future, but until then this seems like the best we can do.
       domNode.focus();
-
       this.grid.recomputeGridSize();
     }
   }
@@ -485,7 +484,6 @@ const mapStateToProps = (state, props) => {
     searchText: searchText(state, props),
     ..._.pick(state.pdfViewer, 'jumpToPageNumber', 'scrollTop'),
     ..._.pick(state.pdf, 'pageDimensions', 'scrollToComment'),
-    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     loadError: state.pdf.documentErrors[props.file],
     pdfDocument: state.pdf.pdfDocuments[props.file],
     windowingOverscan: state.pdfViewer.windowingOverscan,
