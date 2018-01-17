@@ -60,20 +60,21 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
-    let roTimeZone = hearing.regional_office_timezone;
-
-    let getRoTime = (date) => {
-      return moment(date).tz(roTimeZone).
-        format('h:mm a z');
-    };
+    // Appellant exist & doesn't match Veteran
+    let hasAppellant = hearing.appellant_mi_formatted &&
+      hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
 
     const appellantDisplay = <div>
-      {hearing.appellant_mi_formatted && hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted ?
+      { hasAppellant ?
         (<span><b>{hearing.appellant_mi_formatted}</b>
           {hearing.veteran_mi_formatted} (Veteran)</span>) :
         (<b>{hearing.veteran_mi_formatted}</b>
         )}
     </div>;
+
+    let roTimeZone = hearing.regional_office_timezone;
+    let getRoTime = (date) => moment(date).tz(roTimeZone).
+      format('h:mm a z');
 
     return <tbody>
       <tr>
