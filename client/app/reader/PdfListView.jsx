@@ -31,6 +31,12 @@ export class PdfListView extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.props.appeal && this.props.appeal.veteran_full_name) {
+      document.title = ` ${this.props.appeal.veteran_full_name}'s Claims Folder`;
+    }
+  }
+
   render() {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
 
