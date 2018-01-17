@@ -3,28 +3,31 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import NoSearchResults from '../reader/NoSearchResults';
 import QueueTable from './QueueTable';
+import StatusMessage from '../components/StatusMessage';
 
 class QueueListView extends React.Component {
-  shouldFetchQueueList = () => true
-
-  componentDidMount = () => {
-    if (this.shouldFetchQueueList()) {
-      this.props.fetchQueueListDetails();
-    } else {
-      this.props.onReceiveQueueListDetails();
-    }
-  }
+  // shouldFetchQueueList = () => true
+  //
+  // componentDidMount = () => {
+  //   if (this.shouldFetchQueueList()) {
+  //     this.props.fetchQueueListDetails();
+  //   } else {
+  //     this.props.onReceiveQueueListDetails();
+  //   }
+  // }
 
   render = () => {
-    const noTasks = !_.size(this.props.tasks);
+    const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
 
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
           { noTasks ?
-            <NoSearchResults /> :
+            <StatusMessage title="Tasks not found">
+              Sorry! We couldn't find any tasks for you.<br/>
+              Please try again or click <a href="/reader">go back to the document list.</a>
+            </StatusMessage> :
             <QueueTable />
           }
         </div>
@@ -36,11 +39,13 @@ class QueueListView extends React.Component {
 QueueListView.propTypes = {};
 
 const mapStateToProps = (state, props) => {
-  return {};
+  return {
+    ..._.pick(state.loadedQueue, 'tasks', 'appeals')
+  };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  bindActionCreators({});
-};
+// const mapDispatchToProps = (dispatch) => ({
+//   ...bindActionCreators({}, dispatch)
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueListView);
+export default connect(mapStateToProps)(QueueListView);

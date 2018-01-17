@@ -1,24 +1,27 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { onReceiveDocs } from '../reader/Documents/DocumentsActions';
+import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
 
 class QueueLoadingScreen extends React.Component {
+  getUserId = () => 1;
+
   createLoadPromise = () => {
+    // todo: Promise.resolve() if appeals/tasks already loaded
     // if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
     //   return Promise.resolve();
     // }
 
     // return ApiUtil.get(`/queue/${this.props.userId}`, {}).
-    return ApiUtil.get(`/queue/${1}`, {}).
+    return ApiUtil.get(`/queue/${this.getUserId()}`, {}).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
-        const documents = returnedObject.appealDocuments;
+        const { appeals, tasks } = returnedObject;
 
-        this.props.onReceiveDocs(documents, this.props.vacolsId);
+        this.props.onReceiveQueue(appeals, tasks);
       });
   }
 
@@ -55,7 +58,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    onReceiveDocs
+    onReceiveQueue
   }, dispatch)
 );
 
