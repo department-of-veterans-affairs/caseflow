@@ -28,6 +28,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :vacols_id
   attribute :type
   attribute :aod
+  attribute :power_of_attorney do
+    #TODO: change this to use our more sophisticated poa data fetching mechanism
+    object.representative
+  end
 
   attribute :regional_office do
     {
