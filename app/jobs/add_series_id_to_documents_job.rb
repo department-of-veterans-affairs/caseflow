@@ -2,11 +2,10 @@ class AddSeriesIdToDocumentsJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform(appeal)
-    documents_to_check = Document.where(file_number: appeal.sanitized_vbms_id).where(series_id: nil)
+    documents_to_check = Document.where(file_number: appeal.vbms_id).where(series_id: nil)
 
-    # binding.pry
     if documents_to_check.count > 0
-      document_series = VBMSService.fetch_document_series_for(appeal.sanitized_vbms_id)
+      document_series = VBMSService.fetch_document_series_for(appeal)
 
       version_to_series_hash = document_series.reduce({}) do |map, document_versions|
         map.merge(

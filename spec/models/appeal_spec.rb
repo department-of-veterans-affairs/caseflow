@@ -427,6 +427,29 @@ describe Appeal do
           FeatureToggle.disable!(:efolder_docs_api)
         end
       end
+
+      context "when efolder_docs_api is enabled, efolder_api_v2 is enabled, and application is reader" do
+        before do
+          FeatureToggle.enable!(:efolder_docs_api)
+          FeatureToggle.enable!(:efolder_api_v2)
+          RequestStore.store[:application] = "reader"
+        end
+
+        it "loads document content from the efolder service and sets fetched_at attributes" do
+          expect(Appeal).not_to receive(:vbms)
+          expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+          expect(appeal.fetch_documents!(save: save)).to eq(documents)
+
+          expect(EFolderService).not_to receive(:fetch_documents_for)
+          expect(appeal.manifest_vbms_fetched_at).to eq(service_manifest_vbms_fetched_at)
+          expect(appeal.manifest_vva_fetched_at).to eq(service_manifest_vva_fetched_at)
+        end
+
+        after do
+          FeatureToggle.disable!(:efolder_docs_api)
+          FeatureToggle.disable!(:efolder_api_v2)
+        end
+      end
     end
 
     context "when save is true" do

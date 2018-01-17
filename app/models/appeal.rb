@@ -332,6 +332,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def find_or_create_documents_v2!
+    AddSeriesIdToDocumentsJob.perform_now(self)
+
     ids = fetched_documents.map(&:series_id)
     existing_documents = Document.where(series_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
@@ -353,6 +355,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def find_or_create_documents!
+    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2)
+
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
