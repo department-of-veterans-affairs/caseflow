@@ -28,7 +28,10 @@ class QueueListView extends React.Component {
               Sorry! We couldn't find any tasks for you.<br/>
               Please try again or click <a href="/reader">go back to the document list.</a>
             </StatusMessage> :
-            <QueueTable />
+            <QueueTable
+              tasks={this.props.tasks}
+              appeals={this.props.appeals}
+            />
           }
         </div>
       </div>
