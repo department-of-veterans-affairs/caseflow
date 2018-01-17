@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { setOptionSelected, setReceiptDate, setAppealDocket,
   submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
+import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
@@ -28,7 +29,7 @@ class Review extends React.PureComponent {
       receiptDateError,
       appealDocket,
       appealDocketError,
-      beginNextIntakeError
+      submitInvalidOptionError
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -60,8 +61,10 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      { hasInvalidOption &&
-        Boolean(optionSelected.match(/(higher_level_review)\w*/g)) &&
+      { submitInvalidOptionError && <Alert title="Something went wrong" type="error">
+        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
+
+      { toggleIneligibleError(hasInvalidOption, optionSelected) &&
         <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
@@ -75,9 +78,6 @@ class Review extends React.PureComponent {
           </Button>
         </Alert>
       }
-
-      { beginNextIntakeError && <Alert title="Something went wrong" type="error">
-        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
 
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
@@ -128,7 +128,7 @@ export default connect(
     intakeId: state.intake.id,
     appealDocket: state.rampRefiling.appealDocket,
     appealDocketError: state.rampRefiling.appealDocketError,
-    beginNextIntakeError: state.rampRefiling.beginNextIntakeError
+    submitInvalidOptionError: state.rampRefiling.submitInvalidOptionError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
@@ -154,8 +154,7 @@ class ReviewNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={Boolean(this.props.hasInvalidOption &&
-        this.props.optionSelected.match(/(higher_level_review)\w*/g))}
+      disabled={toggleIneligibleError(this.props.hasInvalidOption, this.props.optionSelected)}
     >
       Continue to next step
     </Button>;

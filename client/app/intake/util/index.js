@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { REVIEW_OPTIONS } from '../constants';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -21,3 +22,7 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
   }[_.get(responseErrorCodes.receipt_date, 0)]
 );
 
+export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
+  hasInvalidOption && Boolean(selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key ||
+    selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
+)
