@@ -61,7 +61,11 @@ class QueueTable extends React.Component {
       {
         cellClass: '',
         header: 'Reader Documents',
-        valueFunction: _.noop
+        valueFunction: (appeal) => {
+          return <a href={`/reader/appeal/${appeal.attributes.appeal_id}/documents`}>
+            {_.random(1, 100)}
+          </a>
+        }
       },
     ];
   };
