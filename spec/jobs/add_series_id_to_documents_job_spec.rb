@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe AddSeriesIdToDocumentsJob do
-  context ".perform", focus: true do
+  context ".perform" do
     let(:appeal) do
       Generators::Appeal.build
     end

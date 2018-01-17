@@ -337,18 +337,19 @@ class Appeal < ActiveRecord::Base
     ids = fetched_documents.map(&:series_id)
     existing_documents = Document.where(series_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
-      accumulator[document.vbms_document_id] = document
+      accumulator[document.series_id] = document
     end
 
     fetched_documents.map do |document|
-      if existing_documents[document.vbms_document_id]
-        document.merge_into(existing_documents[document.vbms_document_id])
+      if existing_documents[document.series_id]
+        existing_documents[document.series_id].merge_into(document)
+        existing_documents[document.series_id].save!
       else
         begin
           document.save!
           document
         rescue ActiveRecord::RecordNotUnique
-          Document.find_by_vbms_document_id(document.vbms_document_id)
+          Document.find_by(series_id: document.series_id)
         end
       end
     end
@@ -365,7 +366,8 @@ class Appeal < ActiveRecord::Base
 
     fetched_documents.map do |document|
       if existing_documents[document.vbms_document_id]
-        document.merge_into(existing_documents[document.vbms_document_id])
+        existing_documents[document.vbms_document_id].merge_into(document)
+        existing_documents[document.vbms_document_id].save!
       else
         begin
           document.save!
