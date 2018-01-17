@@ -9,7 +9,7 @@ export const getEstablishClaimFormInitialState = (props) => {
   if (props) {
     initialModifier = validModifiers(
       props.task.appeal.pending_eps,
-      props.task.appeal.decision_type
+      props.task.appeal.dispatch_decision_type
     )[0];
   }
 

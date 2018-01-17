@@ -13,7 +13,8 @@ class Intake < ActiveRecord::Base
   ERROR_CODES = {
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
-    veteran_not_accessible: "veteran_not_accessible"
+    veteran_not_accessible: "veteran_not_accessible",
+    duplicate_intake_in_progress: "duplicate_intake_in_progress"
   }.freeze
 
   FORM_TYPES = {
@@ -92,12 +93,21 @@ class Intake < ActiveRecord::Base
     elsif !veteran.accessible?
       self.error_code = :veteran_not_accessible
 
+    elsif duplicate_intake_in_progress
+      self.error_code = :duplicate_intake_in_progress
+      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
+
     else
       validate_detail_on_start
 
     end
 
     !error_code
+  end
+
+  def duplicate_intake_in_progress
+    @duplicate_intake_in_progress ||=
+      Intake.in_progress.find_by(type: type, veteran_file_number: veteran_file_number)
   end
 
   def veteran
