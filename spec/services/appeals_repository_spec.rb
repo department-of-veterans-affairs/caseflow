@@ -199,8 +199,8 @@ describe AppealRepository do
 
     subject { AppealRepository.location_after_dispatch(appeal: appeal) }
 
-    context "when appeal is a full grant" do
-      let(:vacols_record) { :full_grant_decided }
+    context "when appeal is inactive (in 'history status')" do
+      let(:vacols_record) { { status: "Complete" } }
       it { is_expected.to be_nil }
     end
 
