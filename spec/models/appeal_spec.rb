@@ -599,7 +599,8 @@ describe Appeal do
 
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:issues) { [] }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues) }
     let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
@@ -683,6 +684,11 @@ describe Appeal do
 
         context "when appeal is a remand" do
           let(:vacols_record) { :remand_decided }
+
+          # Add non_new_material_allowed issue to make sure it still works
+          let(:issues) do
+            [Generators::Issue.build(disposition: :allowed)]
+          end
 
           it "closes the remand in VACOLS" do
             expect(Fakes::AppealRepository).to receive(:close_remand!).with(
@@ -861,9 +867,9 @@ describe Appeal do
     end
   end
 
-  context "#partial_grant?" do
+  context "#partial_grant_on_dispatch?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-    subject { appeal.partial_grant? }
+    subject { appeal.partial_grant_on_dispatch? }
 
     context "when no allowed issues" do
       let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
@@ -889,12 +895,12 @@ describe Appeal do
     end
   end
 
-  context "#full_grant?" do
+  context "#full_grant_on_dispatch?" do
     let(:issues) { [] }
     let(:appeal) do
       Generators::Appeal.build(vacols_id: "123", status: status, issues: issues)
     end
-    subject { appeal.full_grant? }
+    subject { appeal.full_grant_on_dispatch? }
 
     context "when status is Remand" do
       let(:status) { "Remand" }
@@ -926,27 +932,38 @@ describe Appeal do
     end
   end
 
-  context "#remand?" do
-    subject { appeal.remand? }
-    context "is false if status is not remand" do
+  context "#remand_on_dispatch?", focus: true do
+    subject { appeal.remand_on_dispatch? }
+
+    context "status is not remand" do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete") }
-      it { is_expected.to be_falsey }
+      it { is_expected.to be false }
     end
 
-    context "is true if status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
-      it { is_expected.to be_truthy }
-    end
-
-    context "is true if new-material allowed issue" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
-          Generators::Issue.build(disposition: :remanded)
-        ]
-      end
+    context "status is remand" do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-      it { is_expected.to be_truthy }
+
+      context "contains at least one new-material allowed issue" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed),
+            Generators::Issue.build(disposition: :remanded)
+          ]
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context "contains no new-material allowed issues" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
+            Generators::Issue.build(disposition: :remanded)
+          ]
+        end
+
+        it { is_expected.to be true }
+      end
     end
   end
 

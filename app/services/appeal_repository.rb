@@ -255,7 +255,7 @@ class AppealRepository
 
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
-    return if appeal.full_grant?
+    return unless appeal.active?
 
     return "54" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
