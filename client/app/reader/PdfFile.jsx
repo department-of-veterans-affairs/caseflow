@@ -336,7 +336,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   handleArrowScroll = (event) => {
-    if ((event.code === 'ArrowDown' || event.code === 'ArrowUp')) {
+    if (event.code === 'ArrowDown' || event.code === 'ArrowUp') {
       // eslint-disable-next-line react/no-find-dom-node
       const domNode = ReactDOM.findDOMNode(this.grid);
 
