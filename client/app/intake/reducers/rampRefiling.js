@@ -58,6 +58,7 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     outsideCaseflowStepsConfirmed: false,
     outsideCaseflowStepsError: null,
     endProductDescription: null,
+    beginNextIntakeError: false,
 
     // This allows us to tap into error events on the finish page and
     // scroll to the right element
@@ -254,6 +255,12 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         submitReview: {
           $set: REQUEST_STATE.FAILED
         }
+      }
+    });
+  case ACTIONS.SUBMIT_ERROR_FAIL:
+    return update(state, {
+      beginNextIntakeError: {
+        $set: true
       }
     });
   default:
