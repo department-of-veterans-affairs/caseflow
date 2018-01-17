@@ -8,6 +8,7 @@ describe DraftDecision do
 
     it "is hydrated from appeal model" do
       expect(subject.user_id).to eq("USER_ID")
+      expect(subject.id).to eq("1111")
     end
   end
 end
