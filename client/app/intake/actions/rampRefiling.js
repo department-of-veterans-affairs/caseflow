@@ -53,14 +53,18 @@ export const confirmIneligibleForm = (intakeId) => (dispatch) => {
         meta: { analytics }
       }),
       (error) => {
+        const responseObject = JSON.parse(error.response.text);
+
         dispatch({
           type: ACTIONS.SUBMIT_ERROR_FAIL,
+          payload: responseObject,
           meta: { analytics }
         });
 
         throw error;
       }
-    );
+    ).
+    catch((error) => error);
 };
 
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
@@ -104,7 +108,7 @@ export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
 
         throw error;
       }
-    );
+    ).catch((error) => error);
 };
 
 export const setIssueSelected = (issueId, isSelected) => ({

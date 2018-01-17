@@ -13,10 +13,16 @@ import { setOptionSelected, setReceiptDate, setAppealDocket,
   submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
 import { getIntakeStatus } from '../../selectors';
 
+export const higherLevelReviewHearingOption = REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key;
+export const higherLevelReviewOnlyOption = REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key;
+
 class Review extends React.PureComponent {
   beginNextIntake = () => {
     this.props.confirmIneligibleForm(this.props.intakeId);
   }
+
+  isHigherLevelReview = () => higherLevelReviewOnlyOption || higherLevelReviewHearingOption;
+
   render() {
     const {
       rampRefilingStatus,
@@ -27,7 +33,8 @@ class Review extends React.PureComponent {
       receiptDate,
       receiptDateError,
       appealDocket,
-      appealDocketError
+      appealDocketError,
+      beginNextIntakeError
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -59,20 +66,25 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      { hasInvalidOption && <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+      { hasInvalidOption && this.props.optionSelected === this.isHigherLevelReview &&
+        <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
           and that they may clarify their lane selection within 30 days. <br />
-        <Button
-          name="begin-next-intake"
-          onClick={this.beginNextIntake}
-          loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-          legacyStyling={false}>
+          <Button
+            name="begin-next-intake"
+            onClick={this.beginNextIntake}
+            loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+            legacyStyling={false}>
             Begin next intake
-        </Button>
-      </Alert>
+          </Button>
+        </Alert>
       }
-      <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
+
+      { beginNextIntakeError && <Alert title="Something went wrong" type="error">
+        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
+
+      <h1>Review { veteranName }s 21-4138 RAMP Selection Form</h1>
 
       <DateSelector
         name="receipt-date"
@@ -120,7 +132,8 @@ export default connect(
     requestStatus: state.rampRefiling.requestStatus,
     intakeId: state.intake.id,
     appealDocket: state.rampRefiling.appealDocket,
-    appealDocketError: state.rampRefiling.appealDocketError
+    appealDocketError: state.rampRefiling.appealDocketError,
+    beginNextIntakeError: state.rampRefiling.beginNextIntakeError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
@@ -140,13 +153,16 @@ class ReviewNextButton extends React.PureComponent {
       catch((error) => error);
   }
 
+  isHigherLevelReview = () => higherLevelReviewOnlyOption || higherLevelReviewHearingOption;
+
   render = () =>
     <Button
       name="submit-review"
-      onClick={this.handleClick}
+      onClick={console.log("cheese please")}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={this.props.hasInvalidOption}
+      disabled={this.props.hasInvalidOption &&
+        this.props.optionSelected === this.isHigherLevelReview}
     >
       Continue to next step
     </Button>;
@@ -157,7 +173,8 @@ const ReviewNextButtonConnected = connect(
     intakeId: intake.id,
     requestState: rampRefiling.requestStatus.submitReview,
     rampRefiling,
-    hasInvalidOption: rampRefiling.hasInvalidOption
+    hasInvalidOption: rampRefiling.hasInvalidOption,
+    optionSelected: rampRefiling.optionSelected
   }),
   (dispatch) => bindActionCreators({
     submitReview
