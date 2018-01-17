@@ -37,7 +37,14 @@ class QueueTable extends React.Component {
       {
         cellClass: '',
         header: 'Type(s)',
-        valueFunction: _.noop
+        valueFunction: (appeal) => {
+          // todo: highlight AOD in red
+          const types = appeal.tasks.map((task) => task.attributes.type);
+
+          return <span>
+            {types.join(',')}
+          </span>;
+        }
       },
       {
         cellClass: '',
