@@ -932,7 +932,7 @@ describe Appeal do
     end
   end
 
-  context "#remand_on_dispatch?", focus: true do
+  context "#remand_on_dispatch?" do
     subject { appeal.remand_on_dispatch? }
 
     context "status is not remand" do
