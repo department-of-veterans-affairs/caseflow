@@ -80,7 +80,7 @@ class Fakes::AppealRepository
   end
 
   def self.update_location_after_dispatch!(appeal:)
-    return if appeal.full_grant?
+    return unless appeal.active?
     self.location_updated_for = appeal
   end
 
