@@ -60,7 +60,8 @@ export const confirmIneligibleForm = (intakeId) => (dispatch) => {
 
         throw error;
       }
-    );
+    ).
+    catch((error) => error);
 };
 
 export const submitReview = (intakeId, rampRefiling) => (dispatch) => {
