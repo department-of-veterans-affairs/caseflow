@@ -6,8 +6,7 @@ import moment from 'moment';
 
 const now = () => {
   return moment().tz('America/New_York').
-    format('h:mm a').
-    replace(/(p|a)m/, '$1.m.');
+    format('h:mm a');
 };
 
 export default class AutoSave extends React.Component {
