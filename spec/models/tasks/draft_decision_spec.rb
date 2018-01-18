@@ -1,6 +1,6 @@
 describe DraftDecision do
   let(:case_assignment) do
-    OpenStruct.new(vacols_id: "1111", due_on: nil, assigned_on: nil, docket_date: Date.today)
+    OpenStruct.new(vacols_id: "1111")
   end
 
   context "#from_vacols" do
