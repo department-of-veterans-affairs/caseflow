@@ -293,6 +293,7 @@ ActiveRecord::Schema.define(version: 20180118194440) do
     t.string  "evidence"
     t.string  "military_service"
     t.string  "comments_for_attorney"
+    t.boolean "prepped"
   end
 
   create_table "intakes", force: :cascade do |t|
