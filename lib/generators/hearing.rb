@@ -42,7 +42,15 @@ class Generators::Hearing
       hearing.update_attributes(attrs)
 
       Fakes::HearingRepository.hearing_records ||= []
-      Fakes::HearingRepository.hearing_records.push(hearing) unless Fakes::HearingRepository.find_by_id(hearing.id)
+
+      if Fakes::HearingRepository.find_by_id(hearing.id)
+        # If the hearing was is already in our in-memory hearing_records store, replace it.
+        i = Fakes::HearingRepository.find_index_by_id(hearing.id)
+        Fakes::HearingRepository.hearing_records[i] = hearing
+      else
+        Fakes::HearingRepository.hearing_records.push(hearing)
+      end
+
       hearing
     end
 
