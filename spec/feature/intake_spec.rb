@@ -881,9 +881,9 @@ RSpec.feature "RAMP Intake" do
           end
           safe_click "#button-submit-review"
 
+          click_label("confirm-outside-caseflow-steps")
           find("label", text: "Left knee rating increase").click
           find("label", text: "The veteran's form lists at least one ineligible contention").click
-          click_label("confirm-outside-caseflow-steps")
 
           safe_click "#finish-intake"
 
@@ -962,8 +962,8 @@ RSpec.feature "RAMP Intake" do
           end
           safe_click "#button-submit-review"
 
-          find("label", text: "The veteran's form lists at least one ineligible contention").click
           click_label("confirm-outside-caseflow-steps")
+          find("label", text: "The veteran's form lists at least one ineligible contention").click
 
           safe_click "#finish-intake"
 
