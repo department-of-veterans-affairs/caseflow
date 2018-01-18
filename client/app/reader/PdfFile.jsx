@@ -107,12 +107,14 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = ({ rowIndex, columnIndex, key, style, isVisible }) => {
-    if ((this.columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
-      return null;
+  getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
+    const pageIndex = (this.columnCount * rowIndex) + columnIndex;
+
+    if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
+      return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
-    return <div key={(this.columnCount * rowIndex) + columnIndex} style={style}>
+    return <div key={pageIndex} style={style}>
       <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
