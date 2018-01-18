@@ -26,7 +26,7 @@ class HearingWorksheetIssueFields extends PureComponent {
         value: issue.notes,
         alwaysEditable: true },
       disposition: { onChange: this.onIssueDispositionChange,
-        value: issue.disposition}
+        value: issue.disposition }
     };
 
     if (!allowedFields[field]) {
