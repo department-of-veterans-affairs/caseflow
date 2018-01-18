@@ -8,13 +8,22 @@ class WorksheetIssue < ActiveRecord::Base
 
   validates :appeal, :vacols_sequence_id, presence: true
 
+  def description
+    super || [[program, name].compact.join(": ")
+      .gsub(/Compensation/i, "Comp")
+      .gsub(/Service Connection/i, "SC")
+      .gsub(/Increased Rating/i, "IR"),
+              levels].compact.join("\n")
+  end
+
   class << self
     def create_from_issue(appeal, issue)
       WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
         record.update(program: issue.program.try(:capitalize),
                       name: issue.type,
-                      levels: issue.description.join("; "),
+                      levels: issue.levels_with_codes.join("; "),
                       notes: issue.note,
+                      description: issue.formatted_program_type_levels,
                       from_vacols: true)
       end
     end
