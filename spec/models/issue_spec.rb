@@ -141,6 +141,18 @@ describe Issue do
     end
   end
 
+  context "#levels_with_codes" do
+    subject { issue.levels_with_codes }
+
+    it { is_expected.to eq(["03 - All Others", "5252 - Thigh, limitation of flexion of"]) }
+  end
+
+  context "#formatted_program_type_levels" do
+    subject { issue.formatted_program_type_levels }
+
+    it { is_expected.to eq("Comp: SC\n03 - All Others; 5252 - Thigh, limitation of flexion of") }
+  end
+
   context "#friendly_description" do
     subject { issue.friendly_description }
 
