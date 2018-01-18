@@ -9,7 +9,8 @@ RSpec.describe HearingsController, type: :controller do
                  transcript_requested: false,
                  aod: :granted,
                  add_on: true,
-                 disposition: :held }
+                 disposition: :held,
+                 prepped: true }
       patch :update, id: hearing.id, hearing: params
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
@@ -19,7 +20,7 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["aod"]).to eq "granted"
       expect(response_body["disposition"]).to eq "held"
       expect(response_body["add_on"]).to eq true
-      expect(response_body["prepped"]).to eq nil
+      expect(response_body["prepped"]).to eq true
     end
 
     it "should return not found" do

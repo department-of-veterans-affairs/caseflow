@@ -41,13 +41,14 @@ class HearingsController < ApplicationController
   def set_application
     RequestStore.store[:application] = "hearings"
   end
-
+  
   def update_params
     params.require("hearing").permit(:notes,
                                      :disposition,
                                      :hold_open,
                                      :aod,
                                      :transcript_requested,
-                                     :add_on)
+                                     :add_on,
+                                     :prepped)
   end
 end
