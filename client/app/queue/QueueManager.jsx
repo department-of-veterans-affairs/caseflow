@@ -12,6 +12,7 @@ import Footer from '../components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import SearchBar from '../components/SearchBar';
+import * as Constants from './constants';
 
 import { setSearch, clearSearch } from './QueueActions';
 
@@ -35,6 +36,11 @@ class QueueManager extends React.PureComponent {
           defaultUrl="/"
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
+          logoProps={{
+            backgroundColor: Constants.QUEUE_LOGO_BACKGROUND_COLOR,
+            overlapColor: Constants.QUEUE_LOGO_OVERLAP_COLOR,
+            accentColor: Constants.QUEUE_COLOR
+          }}
           appName="Queue">
           <div className="cf-wide-app section--queue-list">
             {this.props.showSearchBar && <div className="usa-grid">

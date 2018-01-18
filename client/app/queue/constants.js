@@ -1,1 +1,3 @@
 export const QUEUE_COLOR = '#11598D';
+export const QUEUE_LOGO_OVERLAP_COLOR = '#0E456C';
+export const QUEUE_LOGO_BACKGROUND_COLOR = '#D6D7D9';
