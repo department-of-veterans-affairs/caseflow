@@ -21,6 +21,7 @@ export const POPULATE_WORKSHEET = 'POPULATE_WORKSHEET';
 // issues
 export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 export const SET_ISSUE_NOTES = 'SET_ISSUE_NOTES';
+export const SET_ISSUE_DISPOSITION = 'SET_ISSUE_DISPOSITION';
 export const SET_REOPEN = 'SET_REOPEN';
 export const SET_ALLOW = 'SET_ALLOW';
 export const SET_DENY = 'SET_DENY';

@@ -4,7 +4,7 @@
 class Issue
   include ActiveModel::Model
 
-  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :close_date, :note
+  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :friendly_disposition, :close_date, :note
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
@@ -115,6 +115,10 @@ class Issue
     issue_description
   end
 
+  def formatted_disposition
+    [friendly_disposition, close_date.try(:strftime, "%m/%d/%Y")].join("\n") if friendly_disposition
+  end
+
   def diagnostic_code
     codes.last if codes.last.length == 4
   end
@@ -190,6 +194,7 @@ class Issue
         labels: hash.key?("issprog_label") ? parse_labels_from_vacols(hash) : :not_loaded,
         note: hash["issdesc"],
         disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]] || "other").parameterize.underscore.to_sym,
+        friendly_disposition: (VACOLS::Case::DISPOSITIONS[hash["issdc"]]),
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end

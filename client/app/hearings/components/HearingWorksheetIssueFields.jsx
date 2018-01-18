@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Textarea from 'react-textarea-autosize';
-import { onDescriptionChange, onIssueNotesChange } from '../actions/Issue';
+import { onDescriptionChange, onIssueNotesChange, onIssueDispositionChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
@@ -13,6 +13,9 @@ class HearingWorksheetIssueFields extends PureComponent {
   onIssueNotesChange = (event) =>
     this.props.onIssueNotesChange(event.target.value, this.props.issue.id);
 
+  onIssueDispositionChange = (event) =>
+    this.props.onIssueDispositionChange(event.target.value, this.props.issue.id);
+
   render() {
     let { issue, field, maxLength } = this.props;
 
@@ -21,7 +24,9 @@ class HearingWorksheetIssueFields extends PureComponent {
         value: issue.description },
       notes: { onChange: this.onIssueNotesChange,
         value: issue.notes,
-        alwaysEditable: true }
+        alwaysEditable: true },
+      disposition: { onChange: this.onIssueDispositionChange,
+        value: issue.disposition}
     };
 
     if (!allowedFields[field]) {
@@ -53,7 +58,8 @@ class HearingWorksheetIssueFields extends PureComponent {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDescriptionChange,
-  onIssueNotesChange
+  onIssueNotesChange,
+  onIssueDispositionChange
 }, dispatch);
 
 const mapStateToProps = (state) => ({
