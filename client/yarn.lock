@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/appeals-frontend-toolkit@https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/nth/extract-components":
+"@department-of-veterans-affairs/appeals-frontend-toolkit@https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/7e932b7":
   version "1.0.1"
-  resolved "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/nth/extract-components#1ad2ede3e8441263e22837d32a7c30109bd0d735"
+  resolved "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/7e932b7#49a72f52c800e838e5517a0d843cc78e2d88712c"
   dependencies:
     glamor "^2.20.40"
     lodash "^4.17.4"
