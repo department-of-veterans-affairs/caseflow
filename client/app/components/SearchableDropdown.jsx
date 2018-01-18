@@ -18,7 +18,7 @@ class SearchableDropdown extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value || null });
+    this.setState({ value: nextProps.value || null || 0 });
   };
 
   onChange = (value) => {
