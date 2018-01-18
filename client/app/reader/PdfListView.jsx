@@ -40,8 +40,6 @@ export class PdfListView extends React.Component {
 
     if (this.props.appeal && this.props.appeal.veteran_first_name) {
       document.title = getPageTitle(this.props.appeal);
-    } else if (this.props.caseSelectedAppeal && this.props.caseSelectedAppeal.veteran_first_name) {
-      document.title = getPageTitle(this.props.caseSelectedAppeal);
     }
   }
 
