@@ -71,11 +71,11 @@ export class DocketHearingRow extends React.PureComponent {
     let differsVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
 
     const appellantDisplay = <div>
-       { differsVeteran ?
+      { differsVeteran ?
         (<span><b>{hearing.appellant_mi_formatted}</b>
           {hearing.veteran_mi_formatted} (Veteran)</span>) :
         (<b>{hearing.veteran_mi_formatted}</b>)
-       }
+      }
     </div>;
 
     return <tbody>
