@@ -331,7 +331,7 @@ RSpec.feature "Reader" do
         expect(page).to have_content("Documents")
 
         # Test that the title changed. Functionality in PageRoute.jsx
-        expect(page).to have_content("#{appeal.veteran_full_name}'s Cliams Folder")
+        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
         expect(page).to have_title("#{appeal.veteran_first_name[0]}. #{appeal.veteran_last_name}'s Claim folder")
 
         # Test that the header has breadcrumbs.
