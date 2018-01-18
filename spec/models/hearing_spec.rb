@@ -177,6 +177,7 @@ describe Hearing do
       expect(hearing.present?).to be true
       expect(hearing.appeal.vacols_id).to eq "5678"
       expect(hearing.user).to eq user
+      expect(hearing.prepped).to be_falsey
     end
   end
 
@@ -191,7 +192,8 @@ describe Hearing do
           evidence: "Medical exam done on 10/10/2003",
           witness: "Jane Smith attended",
           contentions: "The veteran believes their neck is hurt",
-          comments_for_attorney: "Look for neck-related records"
+          comments_for_attorney: "Look for neck-related records",
+          prepped: true
         }
       end
 
@@ -202,6 +204,7 @@ describe Hearing do
         expect(hearing.witness).to eq "Jane Smith attended"
         expect(hearing.contentions).to eq "The veteran believes their neck is hurt"
         expect(hearing.comments_for_attorney).to eq "Look for neck-related records"
+        expect(hearing.prepped).to be_truthy
       end
     end
 
