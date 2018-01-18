@@ -1,10 +1,14 @@
 module Fakes::Data::AppealData
   # rubocop:disable Metrics/MethodLength
+  def self.default_vacols_ids
+    default_records.map(&:vacols_id)
+  end
+
   def self.default_records
     [
       Generators::Appeal.build(
         type: "Court Remand",
-        vacols_id: "reader_id1",
+        vacols_id: "111111",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: "2013-05-31 00:00:00 UTC".to_datetime,
         date_due: "2018-02-13 00:00:00 UTC".to_datetime,
@@ -33,7 +37,7 @@ module Fakes::Data::AppealData
       ),
       Generators::Appeal.build(
         type: "Remand",
-        vacols_id: "reader_id2",
+        vacols_id: "222222",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
         date_received: nil,
         date_due: "2018-02-14 00:00:00 UTC".to_datetime,
@@ -62,7 +66,7 @@ module Fakes::Data::AppealData
       ),
       Generators::Appeal.build(
         type: "Remand",
-        vacols_id: "reader_id3",
+        vacols_id: "333333",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
         date_received: "2013-04-29 00:00:00 UTC".to_datetime,
         date_due: "2018-02-22 00:00:00 UTC".to_datetime,
