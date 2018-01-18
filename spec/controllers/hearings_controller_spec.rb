@@ -19,6 +19,7 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["aod"]).to eq "granted"
       expect(response_body["disposition"]).to eq "held"
       expect(response_body["add_on"]).to eq true
+      expect(response_body["prepped"]).to eq nil
     end
 
     it "should return not found" do
