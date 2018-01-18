@@ -3,18 +3,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Textarea from 'react-textarea-autosize';
-import { onProgramChange, onNameChange, onLevelsChange, onIssueNotesChange } from '../actions/Issue';
+import { onDescriptionChange, onIssueNotesChange } from '../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 
-  onProgramChange = (event) =>
-    this.props.onProgramChange(event.target.value, this.props.issue.id);
-
-  onNameChange = (event) =>
-    this.props.onNameChange(event.target.value, this.props.issue.id);
-
-  onLevelsChange = (event) =>
-    this.props.onLevelsChange(event.target.value, this.props.issue.id);
+  onDescriptionChange = (event) =>
+    this.props.onDescriptionChange(event.target.value, this.props.issue.id);
 
   onIssueNotesChange = (event) =>
     this.props.onIssueNotesChange(event.target.value, this.props.issue.id);
@@ -23,12 +17,8 @@ class HearingWorksheetIssueFields extends PureComponent {
     let { issue, field, maxLength } = this.props;
 
     const allowedFields = {
-      program: { onChange: this.onProgramChange,
-        value: issue.program },
-      name: { onChange: this.onNameChange,
-        value: issue.name },
-      levels: { onChange: this.onLevelsChange,
-        value: issue.levels },
+      description: { onChange: this.onDescriptionChange,
+        value: issue.description },
       notes: { onChange: this.onIssueNotesChange,
         value: issue.notes,
         alwaysEditable: true }
@@ -62,9 +52,7 @@ class HearingWorksheetIssueFields extends PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onProgramChange,
-  onNameChange,
-  onLevelsChange,
+  onDescriptionChange,
   onIssueNotesChange
 }, dispatch);
 
