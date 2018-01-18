@@ -107,7 +107,7 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
+  getPage = ({ rowIndex, columnIndex, key, style, isVisible }) => {
     if ((this.columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
       return null;
     }
