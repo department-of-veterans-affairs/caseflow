@@ -80,6 +80,23 @@ class Issue
     labels[2..-1] || []
   end
 
+  def levels_with_codes
+    codes[2..-1].zip(labels[2..-1]).map { |code, label| "#{code} - #{label}" }
+  end
+
+  def formatted_program_type_levels
+    [
+      [
+        program.try(:capitalize),
+        type
+      ].compact.join(": ")
+        .gsub(/Compensation/i, "Comp")
+        .gsub(/Service Connection/i, "SC")
+        .gsub(/Increased Rating/i, "IR"),
+      levels_with_codes.join("; ")
+    ].compact.join("\n")
+  end
+
   def friendly_description
     issue_description = codes.reduce(Constants::Issue::ISSUE_DESCRIPTIONS) do |descriptions, code|
       descriptions = descriptions[code]
