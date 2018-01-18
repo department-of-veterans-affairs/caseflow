@@ -26,10 +26,8 @@ class Fakes::QueueRepository
   def self.appeals_from_tasks(_tasks)
     appeals = appeal_records || Fakes::Data::AppealData.default_records
     appeal = appeals.first
-
     # Create fake hearings for the first appeal if one doesn't already exist
     2.times { |i| Fakes::HearingRepository.create_hearing_for_appeal(i, appeal) } if appeal.hearings.empty?
-
     appeals
   end
 end
