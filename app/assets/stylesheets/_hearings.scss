@@ -4,13 +4,14 @@
 // variables here should eventually find their way into commons
 @import 'variables';
 
-$color-hearings-saving: #777;
+$color-hearings-saving: $color-gray;
 
 .saving {
   font-style: italic;
   color: $color-hearings-saving;
   text-align: right;
   display: block;
+  margin-bottom: 10px;
 }
 
 .cf-hearings-daily-docket-container {
@@ -128,7 +129,6 @@ $color-hearings-saving: #777;
 
       b {
         display: block;
-        text-transform: uppercase;
       }
     }
 
@@ -337,6 +337,7 @@ $color-hearings-saving: #777;
 
 .cf-hearings-worksheet-issues {
   margin: 0;
+  white-space: pre-line;
 
   .cf-form-textarea {
     min-height: 48px;

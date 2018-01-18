@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Footer from '../../components/Footer';
+import { LOGO_COLORS } from '../../util/StyleConstants';
 
 const options = [
   {
@@ -44,6 +45,10 @@ export default class StyleGuideFooter extends React.PureComponent {
         <div className="sg-nav-wrap">
           <NavigationBar
             appName="Hearing Prep"
+            logoProps={{
+              accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+              overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
+            }}
             userDisplayName="Abraham Lincoln"
             dropdownUrls={options}
             defaultUrl="/"
