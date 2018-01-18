@@ -70,7 +70,7 @@ class QueueTable extends React.Component {
         header: 'Reader Documents',
         valueFunction: (appeal) => {
           return <a href={`/reader/appeal/${appeal.attributes.appeal_id}/documents`}>
-            {_.random(1, 100)}
+            {(appeal.tasks.length ? appeal.tasks[0].attributes.document_count : 0).toLocaleString()}
           </a>
         }
       },

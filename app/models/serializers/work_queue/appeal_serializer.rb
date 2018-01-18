@@ -29,6 +29,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :type
   attribute :aod
 
+  attribute :document_count do
+    object.saved_documents.length
+  end
+
   attribute :regional_office do
     {
       key: object.regional_office.key,
