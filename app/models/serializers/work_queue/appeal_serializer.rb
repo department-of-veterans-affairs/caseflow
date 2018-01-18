@@ -33,6 +33,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :document_count do
     object.saved_documents.length
   end
+  attribute :power_of_attorney do
+    # TODO: change this to use our more sophisticated poa data fetching mechanism
+    object.representative
+  end
 
   attribute :regional_office do
     {

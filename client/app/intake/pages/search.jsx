@@ -78,11 +78,17 @@ class Search extends React.PureComponent {
       ramp_election_is_active: {
         title: 'This Veteran has a pending RAMP EP in VBMS',
         body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
-          ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
+          ' Election Form, notify them using tf “RAMP Ineligible Letter” (premature election).'
       },
       ramp_election_no_issues: {
         title: 'This Veteran has a pending RAMP EP with no contentions',
         body: 'Please ensure contentions were added to the original RAMP Election EP'
+      },
+      duplicate_intake_in_progress: {
+        title: `${searchErrorData.duplicateProcessedBy} already started processing this form`,
+        body: `We noticed that ${searchErrorData.duplicateProcessedBy} may be in the middle of ` +
+         'processing the same form for this Veteran in Caseflow. Please confirm they will ' +
+         'complete this intake, then move on to the next mail item.'
       },
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',

@@ -4,47 +4,46 @@ import DropdownMenu from './DropdownMenu';
 import Link from './Link';
 import Breadcrumbs from './Breadcrumbs';
 import PerformanceDegradationBanner from './PerformanceDegradationBanner';
-
-const CLASS_NAME_MAPPING = {
-  default: ' cf-logo cf-logo-image-default',
-  certification: 'cf-logo cf-logo-image-certification',
-  reader: 'cf-logo cf-logo-image-reader',
-  'hearing-prep': 'cf-logo cf-logo-image-hearing-prep',
-  feedback: 'cf-logo cf-logo-image-feedback',
-  efolder: 'cf-logo cf-logo-image-efolder',
-  dispatch: 'cf-logo cf-logo-image-dispatch',
-  intake: 'cf-logo cf-logo-image-intake',
-  queue: 'cf-logo cf-logo-image-queue'
-};
+import CaseflowLogo from './CaseflowLogo';
+import { css } from 'glamor';
+import { COLORS } from '../util/StyleConstants';
 
 export default class NavigationBar extends React.Component {
-
-  getClassName = (appName) => {
-    const app = appName.split(' ').
-      join('-').
-      toLowerCase();
-
-    if (app in CLASS_NAME_MAPPING) {
-      return CLASS_NAME_MAPPING[app];
-    }
-
-    return CLASS_NAME_MAPPING.default;
-  }
-
   render() {
     const {
       appName,
       defaultUrl,
       dropdownUrls,
       topMessage,
+      logoProps,
       userDisplayName
     } = this.props;
+
+    const lineHeight = { lineHeight: '4em' };
+
+    const h1Styling = css({
+      margin: 0,
+      display: 'inline-block',
+      fontSize: '1.7rem',
+      ...lineHeight,
+      '& > a': {
+        color: COLORS.GREY_DARK,
+        paddingLeft: '.3em'
+      }
+    });
+
+    const pushLeftStyling = css({
+      display: 'flex',
+      alignItems: 'center',
+      ...lineHeight
+    });
 
     return <div><header className="cf-app-header">
       <div>
         <div className="cf-app-width">
-          <span className="cf-push-left">
-            <h1 className={this.getClassName(appName)}>
+          <span className="cf-push-left" {...pushLeftStyling}>
+            <CaseflowLogo {...logoProps} />
+            <h1 {...h1Styling}>
               <Link id="cf-logo-link" to={defaultUrl}>
                   Caseflow
                 <h2 id="page-title" className="cf-application-title">&nbsp; {appName}</h2>
@@ -68,7 +67,7 @@ export default class NavigationBar extends React.Component {
       </div>
       <PerformanceDegradationBanner />
     </header>
-    {this.props.children}
+      {this.props.children}
     </div>;
   }
 }

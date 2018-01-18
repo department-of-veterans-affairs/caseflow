@@ -5,6 +5,7 @@ class DraftDecision
   ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date].freeze
   attr_accessor(*ATTRS)
 
+  # The serializer requires a method with the name `id`
   def id
     appeal_id
   end

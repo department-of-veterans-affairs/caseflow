@@ -19,6 +19,7 @@ import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
+import { LOGO_COLORS } from '../util/StyleConstants';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -137,6 +138,10 @@ export class DecisionReviewer extends React.PureComponent {
       <div>
         <NavigationBar
           appName="Reader"
+          logoProps={{
+            accentColor: LOGO_COLORS.READER.ACCENT,
+            overlapColor: LOGO_COLORS.READER.OVERLAP
+          }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">
