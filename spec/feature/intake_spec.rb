@@ -816,20 +816,20 @@ RSpec.feature "RAMP Intake" do
 
           safe_click "#finish-intake"
 
+          # Check that clicking next without confirmation throws an error
+          expect(page).to have_content("Finish processing RAMP Selection form")
+          expect(page).to have_content("You must confirm you've completed the steps")
+
+          click_label("confirm-outside-caseflow-steps")
+
+          safe_click "#finish-intake"
+
           # Check that clicking next without selecting a contention raises an error
           expect(page).to have_content("You must select at least one contention")
 
           find("label", text: "Left knee rating increase").click
           find("label", text: "Left shoulder service connection").click
           find("label", text: "The veteran's form lists at least one ineligible contention").click
-
-          safe_click "#finish-intake"
-
-          # Check that clicking next without confirmation throws an error
-          expect(page).to have_content("Finish processing RAMP Selection form")
-          expect(page).to have_content("You must confirm you've completed the steps")
-
-          click_label("confirm-outside-caseflow-steps")
 
           safe_click "#finish-intake"
 
