@@ -11,8 +11,8 @@ class QueueRepository
     vacols_ids = tasks.map(&:vacols_id)
 
     appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
-                                         service: :vacols,
-                                         name: "appeals_from_tasks") do
+                                    service: :vacols,
+                                    name: "appeals_from_tasks") do
       case_records = QueueRepository.appeal_info_query(vacols_ids)
       aod_by_appeal = aod_query(vacols_ids)
       hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
@@ -44,6 +44,7 @@ class QueueRepository
     VACOLS::Case.includes(:folder, :correspondent, :representative)
       .find(vacols_ids)
   end
+
   # :nocov:
   #
   # :nocov:
@@ -51,5 +52,4 @@ class QueueRepository
     VACOLS::Case.aod(vacols_ids)
   end
   # :nocov:
-
 end
