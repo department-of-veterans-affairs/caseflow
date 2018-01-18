@@ -91,7 +91,7 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{appellantDisplay}</b>
+          {appellantDisplay}
           <ViewableItemLink
             boldCondition={!hearing.viewed_by_current_user}
             onOpen={this.setHearingViewed}
