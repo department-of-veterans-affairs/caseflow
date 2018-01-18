@@ -60,21 +60,23 @@ export class DocketHearingRow extends React.PureComponent {
       hearing
     } = this.props;
 
-    // Appellant exist & doesn't match Veteran
-    let hasAppellant = hearing.appellant_mi_formatted &&
-      hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
+    let roTimeZone = hearing.regional_office_timezone;
+
+    let getRoTime = (date) => {
+      return moment(date).tz(roTimeZone).
+        format('h:mm a z');
+    };
+
+    // Appellant differs Veteran
+    let differsVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
 
     const appellantDisplay = <div>
-      { hasAppellant ?
+       { differsVeteran ?
         (<span><b>{hearing.appellant_mi_formatted}</b>
           {hearing.veteran_mi_formatted} (Veteran)</span>) :
-        (<b>{hearing.veteran_mi_formatted}</b>
-        )}
+        (<b>{hearing.veteran_mi_formatted}</b>)
+       }
     </div>;
-
-    let roTimeZone = hearing.regional_office_timezone;
-    let getRoTime = (date) => moment(date).tz(roTimeZone).
-      format('h:mm a z');
 
     return <tbody>
       <tr>
@@ -89,7 +91,7 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          {appellantDisplay}
+          <b>{appellantDisplay}</b>
           <ViewableItemLink
             boldCondition={!hearing.viewed_by_current_user}
             onOpen={this.setHearingViewed}
