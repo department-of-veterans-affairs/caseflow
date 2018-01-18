@@ -18,7 +18,7 @@ export const getRowObjects = ({ appeals, tasks }) => {
   }, []);
 };
 
-class QueueTable extends React.Component {
+class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getQueueColumns = () => {
@@ -49,7 +49,9 @@ class QueueTable extends React.Component {
       {
         cellClass: '',
         header: 'Docket Number',
-        valueFunction: _.noop
+        valueFunction: (appeal) => <span>
+          {appeal.tasks.length ? appeal.tasks[0].attributes.docket_number : ''}
+        </span>
       },
       {
         cellClass: '',

@@ -6,7 +6,7 @@ import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import * as Constants from './constants';
 
-class QueueLoadingScreen extends React.Component {
+class QueueLoadingScreen extends React.PureComponent {
   getUserId = () => 1;
 
   createLoadPromise = () => {
@@ -15,7 +15,7 @@ class QueueLoadingScreen extends React.Component {
     //   return Promise.resolve();
     // }
 
-    // return ApiUtil.get(`/queue/${this.props.userId}`, {}).
+    // todo: return ApiUtil.get(`/queue/${this.props.userId}`, {}).
     return ApiUtil.get(`/queue/${this.getUserId()}`, {}).
       then((response) => {
         const returnedObject = JSON.parse(response.text);

@@ -28,6 +28,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :vacols_id
   attribute :type
   attribute :aod
+  attribute :docket_number
 
   attribute :document_count do
     object.saved_documents.length

@@ -6,7 +6,7 @@ import _ from 'lodash';
 import QueueTable from './QueueTable';
 import StatusMessage from '../components/StatusMessage';
 
-class QueueListView extends React.Component {
+class QueueListView extends React.PureComponent {
   // shouldFetchQueueList = () => true
   //
   // componentDidMount = () => {
@@ -19,20 +19,27 @@ class QueueListView extends React.Component {
 
   render = () => {
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
+    let tableContent;
+
+    if (noTasks) {
+      tableContent = <StatusMessage title="Tasks not found">
+        Sorry! We couldn't find any tasks for you.<br/>
+        Please try again or click <a href="/reader">go back to the document list.</a>
+      </StatusMessage>
+    } else {
+      tableContent = <div>
+        <h1 className="cf-push-left">Your Queue</h1>
+        <QueueTable
+          tasks={this.props.tasks}
+          appeals={this.props.appeals}
+        />
+      </div>
+    }
 
     return <div className="usa-grid">
       <div className="cf-app">
         <div className="cf-app-segment cf-app-segment--alt">
-          { noTasks ?
-            <StatusMessage title="Tasks not found">
-              Sorry! We couldn't find any tasks for you.<br/>
-              Please try again or click <a href="/reader">go back to the document list.</a>
-            </StatusMessage> :
-            <QueueTable
-              tasks={this.props.tasks}
-              appeals={this.props.appeals}
-            />
-          }
+          {tableContent}
         </div>
       </div>
     </div>;
@@ -41,11 +48,9 @@ class QueueListView extends React.Component {
 
 QueueListView.propTypes = {};
 
-const mapStateToProps = (state, props) => {
-  return {
-    ..._.pick(state.loadedQueue, 'tasks', 'appeals')
-  };
-};
+const mapStateToProps = (state) => ({
+  ..._.pick(state.loadedQueue, 'tasks', 'appeals')
+});
 
 // const mapDispatchToProps = (dispatch) => ({
 //   ...bindActionCreators({}, dispatch)

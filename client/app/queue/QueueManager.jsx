@@ -12,7 +12,7 @@ import Footer from '../components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 
-class QueueManager extends React.Component {
+class QueueManager extends React.PureComponent {
   routedQueueList = (props) => {
     const { vacolsId } = props.match.params;
 
