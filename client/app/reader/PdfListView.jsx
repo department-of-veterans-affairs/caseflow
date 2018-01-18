@@ -16,7 +16,6 @@ import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
-    this.assignPageTitle();
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
       // information.
@@ -32,19 +31,6 @@ export class PdfListView extends React.Component {
     } else if (this.props.appeal.vacols_id === this.props.match.params.vacolsId) {
       this.props.onReceiveAppealDetails(this.props.appeal);
     }
-  }
-
-  assignPageTitle = () => {
-    const getPageTitle = (appeal) =>
-      `${appeal.veteran_first_name.charAt(0)}. ${appeal.veteran_last_name}'s Claims Folder`;
-
-    if (this.props.appeal && this.props.appeal.veteran_first_name) {
-      document.title = getPageTitle(this.props.appeal);
-    }
-  }
-
-  componentDidUpdate() {
-    this.assignPageTitle();
   }
 
   render() {
