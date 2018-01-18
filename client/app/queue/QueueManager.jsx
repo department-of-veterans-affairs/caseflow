@@ -11,6 +11,9 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
+import SearchBar from '../components/SearchBar';
+
+import { setSearch, clearSearch } from './QueueActions';
 
 class QueueManager extends React.PureComponent {
   routedQueueList = (props) => {
@@ -34,6 +37,17 @@ class QueueManager extends React.PureComponent {
           dropdownUrls={this.props.dropdownUrls}
           appName="Queue">
           <div className="cf-wide-app section--queue-list">
+            {this.props.showSearchBar && <div className="usa-grid">
+              <SearchBar
+                id="searchBar"
+                size="big"
+                onSubmit={this.props.setSearch}
+                onChange={this.props.setSearch}
+                onClearSearch={this.props.clearSearch}
+                value={this.props.searchQuery}
+                submitUsingEnterKey
+              />
+            </div>}
             <PageRoute
               exact
               path="/"
@@ -41,7 +55,7 @@ class QueueManager extends React.PureComponent {
               render={this.routedQueueList}/>
             <PageRoute
               exact
-              path="/:user_id"
+              path="/detail/:decision_id"
               title="Draft Decision | Caseflow Queue"
               render={this.routedQueueDetail}/>
           </div>
@@ -62,12 +76,16 @@ QueueManager.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => {
-  return {};
-};
+const mapStateToProps = (state) => ({
+  ..._.pick(state, 'showSearchBar'),
+  searchQuery: state.filterCriteria.searchQuery
+});
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({}, dispatch)
+  ...bindActionCreators({
+    setSearch,
+    clearSearch
+  }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueManager);

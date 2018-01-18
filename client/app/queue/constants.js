@@ -1,1 +1,1 @@
-export const QUEUE_COLOR = '#417505';
+export const QUEUE_COLOR = '#11598D';

@@ -25,10 +25,12 @@ class QueueLoadingScreen extends React.PureComponent {
       });
   }
 
+  reload = () => window.location.reload()
+
   render = () => {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load this case.<br />
-      Please <a href="javascript:void(0)" onClick={() => location.reload()}>refresh the page</a> and try again.
+      Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>
 
     const loadingDataDisplay = <LoadingDataDisplay

@@ -6,6 +6,8 @@ import _ from 'lodash';
 import QueueTable from './QueueTable';
 import StatusMessage from '../components/StatusMessage';
 
+import { showSearchBar, hideSearchBar } from './QueueActions';
+
 class QueueListView extends React.PureComponent {
   // shouldFetchQueueList = () => true
   //
@@ -16,6 +18,14 @@ class QueueListView extends React.PureComponent {
   //     this.props.onReceiveQueueListDetails();
   //   }
   // }
+
+  componentDidMount = () => {
+    this.props.showSearchBar();
+  }
+
+  componentWillUnmount = () => {
+    this.props.hideSearchBar();
+  }
 
   render = () => {
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
@@ -46,14 +56,20 @@ class QueueListView extends React.PureComponent {
   }
 }
 
-QueueListView.propTypes = {};
+QueueListView.propTypes = {
+  tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+  appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.loadedQueue, 'tasks', 'appeals')
 });
 
-// const mapDispatchToProps = (dispatch) => ({
-//   ...bindActionCreators({}, dispatch)
-// });
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    showSearchBar,
+    hideSearchBar
+  }, dispatch)
+});
 
-export default connect(mapStateToProps)(QueueListView);
+export default connect(mapStateToProps, mapDispatchToProps)(QueueListView);
