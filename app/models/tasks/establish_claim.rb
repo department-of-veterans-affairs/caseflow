@@ -9,7 +9,7 @@ class EstablishClaim < Task
   after_create :init_claim_establishment!
 
   cache_attribute :cached_decision_type do
-    appeal.decision_type
+    appeal.dispatch_decision_type
   end
 
   cache_attribute :cached_veteran_name do
@@ -54,7 +54,7 @@ class EstablishClaim < Task
           :serialized_decision_date,
           :disposition,
           :veteran_name,
-          :decision_type,
+          :dispatch_decision_type,
           :station_key,
           :regional_office_key,
           :issues,
@@ -148,7 +148,7 @@ class EstablishClaim < Task
   def should_invalidate?
     !appeal.vacols_record_exists? ||
       !appeal.decision_date ||
-      !appeal.decision_type ||
+      !appeal.dispatch_decision_type ||
       appeal.status == "Active"
   end
 
