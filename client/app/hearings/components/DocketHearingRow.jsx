@@ -67,8 +67,16 @@ export class DocketHearingRow extends React.PureComponent {
         format('h:mm a z');
     };
 
-    const appellantDisplay = hearing.appellant_mi_formatted ? hearing.appellant_mi_formatted :
-      hearing.veteran_mi_formatted;
+    // Appellant differs Veteran
+    let differsVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
+
+    const appellantDisplay = <div>
+      { differsVeteran ?
+        (<span><b>{hearing.appellant_mi_formatted}</b>
+          {hearing.veteran_mi_formatted} (Veteran)</span>) :
+        (<b>{hearing.veteran_mi_formatted}</b>)
+      }
+    </div>;
 
     return <tbody>
       <tr>
@@ -83,7 +91,7 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{appellantDisplay}</b>
+          {appellantDisplay}
           <ViewableItemLink
             boldCondition={!hearing.viewed_by_current_user}
             onOpen={this.setHearingViewed}
