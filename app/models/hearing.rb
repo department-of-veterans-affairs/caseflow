@@ -153,6 +153,7 @@ class Hearing < ActiveRecord::Base
                 :military_service,
                 :appellant_mi_formatted,
                 :veteran_mi_formatted,
+                :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
     ).merge(to_hash(current_user_id))
   end
