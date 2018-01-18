@@ -31,6 +31,7 @@ const Hearings = ({ hearings }) => {
         <Route>
           <div>
             <NavigationBar
+              wideApp
               appName="Hearing Prep"
               logoProps={{
                 accentColor: LOGO_COLORS.HEARINGS.ACCENT,
