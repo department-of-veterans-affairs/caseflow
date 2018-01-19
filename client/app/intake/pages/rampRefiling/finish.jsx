@@ -115,12 +115,12 @@ class Finish extends React.PureComponent {
         </li>
 
         <li>
-          { outsideCaseflowStepsConfirmed && <div className="cf-intake-step">
+          { outsideCaseflowStepsConfirmed && <div><div className="cf-intake-step">
             <strong>2. Review and select contentions</strong>
             <span className="cf-required">Required</span>
-          </div> }
+          </div>
 
-          { outsideCaseflowStepsConfirmed && <div className="cf-intake-substeps">
+          <div className="cf-intake-substeps">
             <ol className="cf-bare-list">
               <li>
                 <strong>2a.</strong> From the list of eligible contentions below,
@@ -131,7 +131,7 @@ class Finish extends React.PureComponent {
                 note via the checkbox at the bottom of the table.
               </li>
             </ol>
-          </div> }
+          </div></div> }
         </li>
       </ol>
 
