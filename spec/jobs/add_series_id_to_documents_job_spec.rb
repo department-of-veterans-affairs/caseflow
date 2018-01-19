@@ -15,15 +15,14 @@ describe AddSeriesIdToDocumentsJob do
     context "appeal has documents without series_ids" do
       before do
         expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
-          version_ids.zip(series_ids).map do |version_id_array, series_id|
+          document_ids.zip(series_ids).map do |document_id_array, series_id|
             index = 0
-            version_id_array.map do |version_id|
+            document_id_array.map do |document_id|
               index += 1
               OpenStruct.new(
                 vbms_filename: "test_file",
                 type_id: Caseflow::DocumentTypes::TYPES.keys.sample,
-                document_id: version_id,
-                version_id: version_id,
+                document_id: document_id,
                 series_id: series_id,
                 version: index,
                 mime_type: "application/pdf",
@@ -40,12 +39,12 @@ describe AddSeriesIdToDocumentsJob do
           Generators::Document.create(
             file_number: appeal.sanitized_vbms_id,
             series_id: nil,
-            vbms_document_id: version_ids[index].sample
+            vbms_document_id: document_ids[index].sample
           )
         end
       end
 
-      let(:version_ids) do
+      let(:document_ids) do
         (0..4).map do |_|
           (0..rand(5)).map do
             SecureRandom.uuid

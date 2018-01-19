@@ -10,7 +10,7 @@ class AddSeriesIdToDocumentsJob < ActiveJob::Base
       version_to_series_hash = document_series.reduce({}) do |map, document_versions|
         map.merge(
           document_versions.reduce({}) do |inner_map, document|
-            inner_map.merge(document["version_id"] => document["series_id"])
+            inner_map.merge(document["document_id"] => document["series_id"])
           end
         )
       end

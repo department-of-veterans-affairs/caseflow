@@ -65,7 +65,6 @@ class Fakes::VBMSService
       (0..document.id % 3).map do |index|
         OpenStruct.new(
           document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",
-          version_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",
           series_id: "TEST_SERIES_#{document.id}",
           version: index + 1,
           received_at: document.received_at

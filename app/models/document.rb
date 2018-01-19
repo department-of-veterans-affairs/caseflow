@@ -88,7 +88,7 @@ class Document < ActiveRecord::Base
         type: type_from_vbms_type(hash["type_id"]),
         received_at: hash["received_at"],
         vbms_document_id: hash["external_document_id"] || hash["version_id"],
-        series_id: hash["series_id"],
+        series_id: hash["series_id"] || hash["version_id"] || hash["external_document_id"],
         file_number: file_number)
   end
 
