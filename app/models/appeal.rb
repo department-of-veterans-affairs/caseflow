@@ -173,8 +173,10 @@ class Appeal < ActiveRecord::Base
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
+  def power_of_attorney(load_bgs_record: true)
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+
+    load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
   attr_writer :hearings

@@ -1,9 +1,11 @@
 describe AttorneyQueue do
-  context ".tasks" do
+  before { WorkQueue.repository = Fakes::QueueRepository }
+
+  context ".tasks_with_appeals" do
     let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
 
     before do
-      Fakes::AppealRepository.appeal_records = [
+      Fakes::QueueRepository.appeal_records = [
         Generators::Appeal.build(
           vacols_id: "2222",
           date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -19,11 +21,16 @@ describe AttorneyQueue do
       ]
     end
 
-    subject { AttorneyQueue.tasks(user.id) }
+    subject { AttorneyQueue.tasks_with_appeals(user.id) }
 
     it "returns tasks" do
-      expect(subject.length).to eq(2)
-      expect(subject[0].class).to eq(DraftDecision)
+      expect(subject[0].length).to eq(2)
+      expect(subject[0][0].class).to eq(DraftDecision)
+    end
+
+    it "returns appeals" do
+      expect(subject[1].length).to eq(2)
+      expect(subject[1][0].class).to eq(Appeal)
     end
   end
 end
