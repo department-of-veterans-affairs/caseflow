@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { getQueryParams } from '../util/QueryParamsUtil';
 import _ from 'lodash';
 
 import PageRoute from '../components/PageRoute';
@@ -25,9 +24,7 @@ class QueueManager extends React.PureComponent {
     </QueueLoadingScreen>;
   };
 
-  routedQueueDetail = (props) => {
-    debugger;
-  };
+  // routedQueueDetail = () => {};
 
   render = () => {
     return <BrowserRouter basename="/queue">
@@ -58,18 +55,18 @@ class QueueManager extends React.PureComponent {
               exact
               path="/"
               title="Your Queue | Caseflow Queue"
-              render={this.routedQueueList}/>
-            <PageRoute
-              exact
-              path="/detail/:decision_id"
-              title="Draft Decision | Caseflow Queue"
-              render={this.routedQueueDetail}/>
+              render={this.routedQueueList} />
+            {/* <PageRoute*/}
+            {/* exact*/}
+            {/* path="/detail/:decision_id"*/}
+            {/* title="Draft Decision | Caseflow Queue"*/}
+            {/* render={this.routedQueueDetail} />*/}
           </div>
         </NavigationBar>
         <Footer
           appName="Queue"
           feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate}/>
+          buildDate={this.props.buildDate} />
       </div>
     </BrowserRouter>;
   };

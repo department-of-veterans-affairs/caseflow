@@ -33,9 +33,9 @@ class QueueListView extends React.PureComponent {
 
     if (noTasks) {
       tableContent = <StatusMessage title="Tasks not found">
-        Sorry! We couldn't find any tasks for you.<br/>
+        Sorry! We couldn't find any tasks for you.<br />
         Please try again or click <a href="/reader">go back to the document list.</a>
-      </StatusMessage>
+      </StatusMessage>;
     } else {
       tableContent = <div>
         <h1 className="cf-push-left">Your Queue</h1>
@@ -43,7 +43,7 @@ class QueueListView extends React.PureComponent {
           tasks={this.props.tasks}
           appeals={this.props.appeals}
         />
-      </div>
+      </div>;
     }
 
     return <div className="usa-grid">
@@ -58,7 +58,7 @@ class QueueListView extends React.PureComponent {
 
 QueueListView.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const mapStateToProps = (state) => ({

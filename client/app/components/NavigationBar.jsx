@@ -67,7 +67,7 @@ export default class NavigationBar extends React.Component {
       </div>
       <PerformanceDegradationBanner />
     </header>
-      {this.props.children}
+    {this.props.children}
     </div>;
   }
 }

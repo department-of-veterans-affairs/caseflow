@@ -21,7 +21,10 @@ class QueueLoadingScreen extends React.PureComponent {
         const returnedObject = JSON.parse(response.text);
         const { appeals, tasks } = returnedObject;
 
-        this.props.onReceiveQueue({ appeals, tasks });
+        this.props.onReceiveQueue({
+          appeals,
+          tasks
+        });
       });
   }
 
@@ -31,7 +34,7 @@ class QueueLoadingScreen extends React.PureComponent {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load this case.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
-    </div>
+    </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
@@ -54,9 +57,9 @@ class QueueLoadingScreen extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => ({
-  // loadedAppealId: state.pdfViewer.loadedAppealId
-});
+// const mapStateToProps = (state) => ({
+// loadedAppealId: state.pdfViewer.loadedAppealId
+// });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
@@ -64,4 +67,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen);
+export default connect(null, mapDispatchToProps)(QueueLoadingScreen);

@@ -12,7 +12,10 @@ describe('QueueTable', () => {
       { attributes: { appeal_id: '1' } },
       { attributes: { appeal_id: '2' } }
     ];
-    const rowObjects = getRowObjects({ appeals, tasks });
+    const rowObjects = getRowObjects({
+      appeals,
+      tasks
+    });
 
     expect(rowObjects).to.deep.equal([
       {

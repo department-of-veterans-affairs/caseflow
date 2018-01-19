@@ -3,7 +3,13 @@
 @import 'uswds/core/variables';
 
 .section--queue-list .usa-search {
-  float: right;
+  > .cf-search-input-with-close {
+    margin-left: 50vw;
+  }
+
+  .cf-submit {
+    width: 10.5rem;
+  }
 }
 
 .usa-search {

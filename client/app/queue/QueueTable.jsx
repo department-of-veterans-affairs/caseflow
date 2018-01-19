@@ -31,7 +31,7 @@ class QueueTable extends React.PureComponent {
         header: 'Decision Task Details',
         valueFunction: (appeal) => <Link>
           {this.highlightWrapper(`${appeal.attributes.veteran_full_name} (${appeal.attributes.vacols_id})`)}
-          </Link>
+        </Link>
       },
       {
         cellClass: '',
@@ -70,7 +70,7 @@ class QueueTable extends React.PureComponent {
             {(_.random(1, 2000)).toLocaleString()}
           </a>;
         }
-      },
+      }
     ];
   };
 
@@ -89,15 +89,15 @@ class QueueTable extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, props) => ({});
+// const mapStateToProps = (state, props) => ({});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({}, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueTable);
+export default connect(null, mapDispatchToProps)(QueueTable);
 
 QueueTable.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
 };
