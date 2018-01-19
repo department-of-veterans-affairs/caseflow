@@ -3,6 +3,7 @@
 # VACOLS' equivalent
 class Issue
   include ActiveModel::Model
+  include ActiveModel::Serialization
 
   attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :friendly_disposition, :close_date, :note
 
