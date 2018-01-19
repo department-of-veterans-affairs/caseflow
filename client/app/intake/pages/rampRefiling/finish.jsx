@@ -115,7 +115,7 @@ class Finish extends React.PureComponent {
         </li>
 
         <li>
-          <div className="cf-intake-step">
+          { outsideCaseflowStepsConfirmed && <div><div className="cf-intake-step">
             <strong>2. Review and select contentions</strong>
             <span className="cf-required">Required</span>
           </div>
@@ -131,11 +131,11 @@ class Finish extends React.PureComponent {
                 note via the checkbox at the bottom of the table.
               </li>
             </ol>
-          </div>
+          </div></div> }
         </li>
       </ol>
 
-      <div className={classNames({ 'usa-input-error': issuesSelectedError })}>
+      { outsideCaseflowStepsConfirmed && <div className={classNames({ 'usa-input-error': issuesSelectedError })}>
         { issuesSelectedError &&
             <div className="usa-input-error-message">{issuesSelectedError}</div>
         }
@@ -160,7 +160,7 @@ class Finish extends React.PureComponent {
           summary={otherQuestionColumns[0].header}
           getKeyForRow={(_index, question) => question.id}
         />
-      </div>
+      </div> }
     </div>;
   }
 }

@@ -131,6 +131,10 @@ export class DecisionReviewer extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
+  getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
+    `${appeal.veteran_first_name.charAt(0)}. \
+      ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
+
   render() {
     const Router = this.props.router || BrowserRouter;
 
@@ -154,7 +158,7 @@ export class DecisionReviewer extends React.PureComponent {
               render={this.routedCaseSelect} />
             <PageRoute
               exact
-              title="Claims Folder | Caseflow Reader"
+              title={this.getClaimsFolderPageTitle(this.props.appeal)}
               breadcrumb="Claims Folder"
               path="/:vacolsId/documents"
               render={this.routedPdfListView} />
@@ -191,11 +195,19 @@ DecisionReviewer.propTypes = {
   routerProps: PropTypes.object
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+
+  const getAssignmentFromCaseSelect = (caseSelect, match) =>
+    match && match.params.vacolsId ?
+      _.find(caseSelect.assignments, { vacols_id: match.params.vacolsId }) :
+      null;
+
   return {
     documentFilters: state.documentList.pdfList.filters,
     storeDocuments: state.documents,
-    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+    appeal: getAssignmentFromCaseSelect(state.caseSelect, props.match) ||
+      state.pdfViewer.loadedAppeal
   };
 };
 
