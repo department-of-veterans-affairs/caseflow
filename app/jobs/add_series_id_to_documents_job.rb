@@ -2,18 +2,10 @@ class AddSeriesIdToDocumentsJob < ActiveJob::Base
   queue_as :low_priority
 
   def perform(appeal)
-    sanitized_vbms_id = if appeal.vbms_id =~ /DEMO/
-                          # If testing against a local eFolder express instance then we want to pass DEMO
-                          # values, so we should not sanitize the vbms_id.
-                          appeal.vbms_id.to_s
-                        else
-                          appeal.sanitized_vbms_id.to_s
-                        end
-
-    documents_to_check = Document.where(file_number: sanitized_vbms_id).where(series_id: nil)
+    documents_to_check = Document.where(file_number: appeal.sanitized_vbms_id).where(series_id: nil)
 
     if documents_to_check.count > 0
-      document_series = VBMSService.fetch_document_series_for(sanitized_vbms_id)
+      document_series = VBMSService.fetch_document_series_for(appeal)
 
       version_to_series_hash = document_series.reduce({}) do |map, document_versions|
         map.merge(

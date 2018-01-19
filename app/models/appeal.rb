@@ -468,6 +468,10 @@ class Appeal < ActiveRecord::Base
   #
   # TODO: clean up the terminology surrounding here.
   def sanitized_vbms_id
+    # If testing against a local eFolder express instance then we want to pass DEMO
+    # values, so we should not sanitize the vbms_id.
+    return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
+
     numeric = vbms_id.gsub(/[^0-9]/, "")
 
     # ensure 8 digits if "C"-type id

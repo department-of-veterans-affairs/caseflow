@@ -61,7 +61,7 @@ class Fakes::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
-    Document.where(file_number: appeal.vbms_id).map do |document|
+    Document.where(file_number: appeal.sanitized_vbms_id).map do |document|
       (0..document.id % 3).map do |index|
         OpenStruct.new(
           document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",

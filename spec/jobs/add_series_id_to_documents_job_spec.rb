@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe AddSeriesIdToDocumentsJob do
+describe AddSeriesIdToDocumentsJob, focus: true do
   context ".perform" do
     let(:appeal) do
       Generators::Appeal.build
@@ -14,7 +14,7 @@ describe AddSeriesIdToDocumentsJob do
 
     context "appeal has documents without series_ids" do
       before do
-        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal.sanitized_vbms_id).and_return(
+        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
           version_ids.zip(series_ids).map do |version_id_array, series_id|
             index = 0
             version_id_array.map do |version_id|
