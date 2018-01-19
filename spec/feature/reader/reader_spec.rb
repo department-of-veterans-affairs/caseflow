@@ -194,15 +194,16 @@ RSpec.feature "Reader" do
 
       scenario "filtering comments" do
         click_on "Comments"
-        expect(page).to have_content("Comments.")
+        expect(page).to have_content("Sorted by relevant date")
       end
 
       scenario "clear all filters" do
-        click_on "Comments"
-        expect(page).to have_content("Comments.")
-
+        # category filter is only visible when DocumentsTable displayed, but affects Comments
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
+
+        click_on "Comments"
+        expect(page).to have_content("Sorted by relevant date")
 
         # When the "clear filters" button is clicked, the filtering message is reset,
         # and focus goes back on the Document toggle.
@@ -747,10 +748,9 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content(documents[2].type)
 
         # Filtering the document list should work in "Comments" mode.
-        find("#categories-header svg").click
-        find(".checkbox-wrapper-procedural").click
-        expect(page).to have_content(documents[0].type)
-        expect(page).not_to have_content(documents[1].type)
+        fill_in "searchBar", with: "form"
+        expect(page).not_to have_content(documents[0].type)
+        expect(page).to have_content(documents[1].type)
 
         click_on "Documents"
         expect(page).not_to have_content("another comment")
@@ -1411,9 +1411,9 @@ RSpec.feature "Reader" do
       open_search_bar
       expect(scroll_top).to be(0)
 
-      fill_in "search-ahead", with: "decision"
+      fill_in "search-ahead", with: "just"
 
-      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
       first_match_scroll_top = scroll_top
 
@@ -1422,7 +1422,8 @@ RSpec.feature "Reader" do
       find(".cf-next-match").click
       expect(scroll_top).to be > first_match_scroll_top
 
-      # this doc has 2 matches for "decision", search index wraps around
+      # this doc has 3 matches for "decision", search index wraps around
+      find(".cf-next-match").click
       find(".cf-next-match").click
       expect(scroll_top).to eq(first_match_scroll_top)
     end

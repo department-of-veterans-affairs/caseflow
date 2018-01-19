@@ -20,6 +20,10 @@ class Fakes::HearingRepository
     (hearing_records || []).select { |h| h.appeal_id == appeal.id }
   end
 
+  def self.hearings_for_appeals(appeal_vacols_ids)
+    appeal_vacols_ids.map { |vacols_id| hearings_for_appeal(vacols_id) }
+  end
+
   def self.update_vacols_hearing!(vacols_record, hearing_info)
     return if (hearing_info.keys.map(&:to_sym) &
         [:notes, :aod, :disposition, :add_on, :hold_open, :transcript_requested, :representative_name]).empty?
@@ -56,6 +60,11 @@ class Fakes::HearingRepository
 
   def self.clean!
     self.hearing_records = []
+  end
+
+  def self.create_hearing_for_appeal(i, appeal)
+    user = User.find_by_css_id("Hearing Prep")
+    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
   end
 
   def self.seed!

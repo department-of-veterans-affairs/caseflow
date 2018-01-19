@@ -173,8 +173,10 @@ class Appeal < ActiveRecord::Base
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
+  def power_of_attorney(load_bgs_record: true)
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+
+    load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
   attr_writer :hearings
@@ -379,30 +381,36 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def partial_grant?
+  # These three methods are used to decide whether the appeal is processed
+  # as a partial grant, remand, or full grant when dispatching it.
+  def partial_grant_on_dispatch?
     status == "Remand" && issues.any?(&:non_new_material_allowed?)
   end
 
-  def full_grant?
+  def full_grant_on_dispatch?
     status == "Complete" && issues.any?(&:non_new_material_allowed?)
   end
 
-  def remand?
-    status == "Remand" && issues.none?(&:non_new_material_allowed?)
+  def remand_on_dispatch?
+    remand? && issues.none?(&:non_new_material_allowed?)
+  end
+
+  def dispatch_decision_type
+    return "Full Grant" if full_grant_on_dispatch?
+    return "Partial Grant" if partial_grant_on_dispatch?
+    return "Remand" if remand_on_dispatch?
   end
 
   def active?
     status != "Complete"
   end
 
-  def merged?
-    disposition == "Merged Appeal"
+  def remand?
+    status == "Remand"
   end
 
-  def decision_type
-    return "Full Grant" if full_grant?
-    return "Partial Grant" if partial_grant?
-    return "Remand" if remand?
+  def merged?
+    disposition == "Merged Appeal"
   end
 
   def special_issues

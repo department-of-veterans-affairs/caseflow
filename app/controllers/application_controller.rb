@@ -195,7 +195,6 @@ class ApplicationController < ApplicationBaseController
               elsif request.original_fullpath.include? "hearings"
                 "Caseflow Hearing Prep"
               else
-                # default to just plain Caseflow.
                 "Caseflow"
               end
 

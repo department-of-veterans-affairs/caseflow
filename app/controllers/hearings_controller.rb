@@ -48,6 +48,7 @@ class HearingsController < ApplicationController
                                      :hold_open,
                                      :aod,
                                      :transcript_requested,
-                                     :add_on)
+                                     :add_on,
+                                     :prepped)
   end
 end

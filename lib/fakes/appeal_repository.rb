@@ -23,7 +23,9 @@ class Fakes::AppealRepository
       user_case_assignments = appeal_records || Fakes::Data::AppealData.default_records
       appeal = user_case_assignments.first
       # Create fake hearings for the first appeal if one doesn't already exist
-      2.times { Generators::Hearing.create(appeal: appeal) } if Hearing.where(appeal: appeal).empty?
+      2.times { |i| Fakes::HearingRepository.create_hearing_for_appeal(i, appeal) } if Hearing
+          .where(appeal: appeal).empty?
+
       user_case_assignments
     end
   end
@@ -78,7 +80,7 @@ class Fakes::AppealRepository
   end
 
   def self.update_location_after_dispatch!(appeal:)
-    return if appeal.full_grant?
+    return unless appeal.active?
     self.location_updated_for = appeal
   end
 
@@ -168,7 +170,6 @@ class Fakes::AppealRepository
 
   ## ALL SEED SCRIPTS BELOW THIS LINE ------------------------------
   # TODO: pull seed scripts into seperate object/module?
-
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def self.seed!(app_name: nil)
     return if Rails.env.test?
