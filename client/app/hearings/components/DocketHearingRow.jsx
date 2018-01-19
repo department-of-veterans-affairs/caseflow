@@ -11,7 +11,7 @@ import {
 } from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
-import { getDate } from '../util/DateUtil';
+import { getDateTime } from '../util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -83,7 +83,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date)} /<br />
+            {getDateTime(hearing.date)} /<br />
             {getRoTime(hearing.date)}
           </span>
           <span>
