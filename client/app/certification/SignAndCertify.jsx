@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
-import Footer from './Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { connect } from 'react-redux';
 import * as Constants from './constants/constants';
 import * as certificationActions from './actions/Certification';
