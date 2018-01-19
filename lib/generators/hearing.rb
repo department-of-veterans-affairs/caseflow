@@ -44,7 +44,7 @@ class Generators::Hearing
       Fakes::HearingRepository.hearing_records ||= []
 
       if Fakes::HearingRepository.find_by_id(hearing.id)
-        # If the hearing was is already in our in-memory hearing_records store, replace it.
+        # If the hearing was already in our in-memory hearing_records store, replace it.
         i = Fakes::HearingRepository.find_index_by_id(hearing.id)
         Fakes::HearingRepository.hearing_records[i] = hearing
       else
