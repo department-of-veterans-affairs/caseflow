@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from './Link';
+import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 
 class BoldOnCondition extends React.PureComponent {
   render = () => this.props.condition ? <strong>{this.props.children}</strong> : this.props.children
