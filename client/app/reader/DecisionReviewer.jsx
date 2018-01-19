@@ -18,7 +18,7 @@ import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
@@ -171,6 +171,7 @@ export class DecisionReviewer extends React.PureComponent {
           </div>
         </NavigationBar>
         <Footer
+          wideApp
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
           buildDate={this.props.buildDate} />
