@@ -11,7 +11,6 @@ import CaseWorkerIndex from './CaseWorker/CaseWorkerIndex';
 import TestPage from './TestPage';
 import Intake from '../intake';
 import Reader from '../reader/index';
-import WorkQueue from '../queue/index';
 import EstablishClaimComplete from './EstablishClaimPage/EstablishClaimComplete';
 import EstablishClaimCancel from './EstablishClaimPage/EstablishClaimCanceled';
 import UnpreparedTasksIndex from './UnpreparedTasksIndex';
@@ -30,7 +29,6 @@ const Pages = {
   TestPage,
   UnpreparedTasksIndex,
   CanceledTasksIndex,
-  WorkQueue
 };
 
 // This is the "base page" that wraps all pages rendered directly
