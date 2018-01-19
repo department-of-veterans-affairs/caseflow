@@ -101,6 +101,7 @@ export class DocketHearingRow extends React.PureComponent {
             }}>
             {hearing.vbms_id}
           </ViewableItemLink>
+          <dt>{hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }</dt>
         </td>
         <td className="cf-hearings-docket-rep">{hearing.representative}</td>
         <td className="cf-hearings-docket-actions" rowSpan="3">
@@ -138,12 +139,7 @@ export class DocketHearingRow extends React.PureComponent {
           </div>
         </td>
       </tr>
-      <tr>
-        <td></td>
-        <td colSpan="2">
-          {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
-        </td>
-      </tr>
+
       <tr>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
