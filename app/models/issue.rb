@@ -117,7 +117,7 @@ class Issue
   end
 
   def formatted_disposition
-    [friendly_disposition, close_date.try(:strftime, "%m/%d/%Y")].join("\n") if friendly_disposition
+    [friendly_disposition, close_date.try(:to_formatted_s, :short_date)].join("\n") if friendly_disposition
   end
 
   def diagnostic_code
