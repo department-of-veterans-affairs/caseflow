@@ -137,6 +137,7 @@ export class DecisionReviewer extends React.PureComponent {
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div>
         <NavigationBar
+          wideApp
           appName="Reader"
           logoProps={{
             accentColor: LOGO_COLORS.READER.ACCENT,

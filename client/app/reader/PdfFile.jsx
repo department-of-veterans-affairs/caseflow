@@ -107,12 +107,14 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  getPage = ({ rowIndex, columnIndex, key, style, isVisible }) => {
-    if ((this.columnCount * rowIndex) + columnIndex >= this.props.pdfDocument.pdfInfo.numPages) {
-      return null;
+  getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
+    const pageIndex = (this.columnCount * rowIndex) + columnIndex;
+
+    if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
+      return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
 
-    return <div key={key} style={style}>
+    return <div key={pageIndex} style={style}>
       <PdfPage
         scrollTop={this.props.scrollTop}
         scrollWindowCenter={this.props.scrollWindowCenter}
@@ -169,6 +171,9 @@ export class PdfFile extends React.PureComponent {
       // eslint-disable-next-line react/no-find-dom-node
       const domNode = ReactDOM.findDOMNode(this.grid);
 
+      // We focus the DOM node whenever a user presses up or down, so that they scroll the pdf viewer.
+      // The ref in this.grid is not an actual DOM node, so we can't call focus on it directly. findDOMNode
+      // might be deprecated at some point in the future, but until then this seems like the best we can do.
       domNode.focus();
       this.grid.recomputeGridSize();
     }
@@ -339,10 +344,25 @@ export class PdfFile extends React.PureComponent {
     this.props.showPlaceAnnotationIcon(this.currentPage, initialCommentCoordinates);
   }
 
+  handlePageUpDown = (event) => {
+    if (event.code === 'PageDown' || event.code === 'PageUp') {
+      const { rowIndex, columnIndex } = this.pageRowAndColumn(this.currentPage);
+
+      this.grid.scrollToCell({
+        rowIndex: Math.max(0, rowIndex + (event.code === 'PageDown' ? 1 : -1)),
+        columnIndex
+      });
+
+      event.preventDefault();
+    }
+  }
+
   keyListener = (event) => {
     if (isUserEditingText() || !this.props.isVisible) {
       return;
     }
+
+    this.handlePageUpDown(event);
 
     if (event.altKey) {
       if (event.code === 'KeyC') {
@@ -404,7 +424,7 @@ export class PdfFile extends React.PureComponent {
             ref={this.getGrid}
             containerStyle={{
               margin: '0 auto',
-              marginTop: `${PAGE_MARGIN}px`
+              marginBottom: `-${PAGE_MARGIN}px`
             }}
             estimatedRowSize={(this.props.baseHeight + PAGE_MARGIN) * this.props.scale}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}

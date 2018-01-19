@@ -130,7 +130,8 @@ class Hearing < ActiveRecord::Base
         :appellant_last_first_mi,
         :appellant_mi_formatted,
         :vbms_id,
-        :issue_count
+        :issue_count,
+        :prepped
       ],
       except: :military_service
     ).merge(
