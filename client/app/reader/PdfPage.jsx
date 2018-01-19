@@ -66,9 +66,9 @@ export class PdfPage extends React.PureComponent {
       selectedMark.classList.add('highlighted');
 
       if (scrollToMark) {
-        // mark parent elements are absolutely-positioned divs. account for search bar height
+        // Mark parent elements are absolutely-positioned divs. Account for search bar and margin height.
         this.props.setDocScrollPosition(
-          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10)
+          parseInt(selectedMark.parentElement.style.top, 10) - (SEARCH_BAR_HEIGHT + 10) - PAGE_MARGIN_BOTTOM
         );
       }
     } else {
