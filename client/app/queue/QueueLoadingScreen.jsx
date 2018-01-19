@@ -21,7 +21,7 @@ class QueueLoadingScreen extends React.PureComponent {
         const returnedObject = JSON.parse(response.text);
         const { appeals, tasks } = returnedObject;
 
-        this.props.onReceiveQueue(appeals, tasks);
+        this.props.onReceiveQueue({ appeals, tasks });
       });
   }
 

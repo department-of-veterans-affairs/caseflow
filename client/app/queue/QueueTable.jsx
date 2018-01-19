@@ -20,7 +20,7 @@ export const getRowObjects = ({ appeals, tasks }) => {
 };
 
 class QueueTable extends React.PureComponent {
-  getKeyForRow = (rowNumber, object) => object.id;
+  getKeyForRow = (rowNumber, object) => object.attributes.vacols_id;
 
   highlightWrapper = (children = '') => <Highlight searchQuery="filterCriteria.searchQuery">{children}</Highlight>
 
@@ -29,48 +29,44 @@ class QueueTable extends React.PureComponent {
       {
         cellClass: '',
         header: 'Decision Task Details',
-        valueFunction: (appeal) => {
-          const vetName = appeal.tasks.length ? appeal.tasks[0].attributes.veteran_full_name : 'N/A';
-
-          return <Link>{this.highlightWrapper(`${vetName} (${appeal.attributes.appeal_id})`)}</Link>
-        }
+        valueFunction: (appeal) => <Link>
+          {this.highlightWrapper(`${appeal.attributes.veteran_full_name} (${appeal.attributes.vacols_id})`)}
+          </Link>
       },
       {
         cellClass: '',
         header: 'Type(s)',
-        valueFunction: (appeal) => {
-          // todo: highlight AOD in red
-          const types = appeal.tasks.map((task) => task.attributes.type);
-
-          return <span>{this.highlightWrapper(types.join(','))}</span>
-        }
+        // todo: highlight AOD in red
+        valueFunction: (appeal) => <span>
+          {this.highlightWrapper(appeal.attributes.type)}
+        </span>
       },
       {
         cellClass: '',
         header: 'Docket Number',
         valueFunction: (appeal) => <span>
-          {this.highlightWrapper(appeal.tasks.length ? appeal.tasks[0].attributes.docket_number : '')}
+          {this.highlightWrapper(appeal.attributes.docket_number)}
         </span>
       },
       {
         cellClass: '',
         header: 'Issues',
         valueFunction: (appeal) => <span>
-          {appeal.tasks.length ? appeal.tasks[0].attributes.issues.length : 0}
+          {appeal.attributes.issues.length}
         </span>
       },
       {
         cellClass: '',
         header: 'Due Date',
         valueFunction: (appeal) => <span>
-          {moment(appeal.attributes.due_on).format('MM/DD/YY')}
+          {appeal.tasks.length ? moment(appeal.tasks[0].attributes.due_on).format('MM/DD/YY') : ''}
         </span>
       },
       {
         cellClass: '',
         header: 'Reader Documents',
         valueFunction: (appeal) => {
-          return <a href={`/reader/appeal/${appeal.attributes.appeal_id}/documents`}>
+          return <a href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
             {(_.random(1, 2000)).toLocaleString()}
           </a>;
         }
