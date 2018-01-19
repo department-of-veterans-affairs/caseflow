@@ -180,6 +180,7 @@ RSpec.feature "Hearings" do
       click_on "button-addIssue-2"
       fill_in "2-issue-description", with: "This is the description"
       fill_in "2-issue-notes", with: "This is a note"
+      fill_in "2-issue-disposition", with: "This is a disposition"
 
       find("#cf-issue-delete-21").click
       click_on "Confirm delete"
@@ -188,6 +189,7 @@ RSpec.feature "Hearings" do
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is the description")
       expect(page).to have_content("This is a note")
+      expect(page).to have_content("This is a disposition")
       expect(page).to_not have_content("Service Connection")
     end
 

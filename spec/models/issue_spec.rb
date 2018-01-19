@@ -38,6 +38,7 @@ describe Issue do
       expect(subject.labels).to eq(labels)
       expect(subject.note).to eq("low back condition")
       expect(subject.disposition).to eq(:remanded)
+      expect(subject.friendly_disposition).to eq("Remanded")
       expect(subject.close_date).to eq(AppealRepository.normalize_vacols_date(3.days.ago))
     end
 
