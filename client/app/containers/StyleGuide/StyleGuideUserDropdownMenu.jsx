@@ -1,5 +1,5 @@
 import React from 'react';
-import DropdownMenu from '../../components/DropdownMenu';
+import DropdownMenu from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/DropdownMenu';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideUserDropdownMenu extends React.PureComponent {

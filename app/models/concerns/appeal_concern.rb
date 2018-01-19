@@ -27,6 +27,10 @@ module AppealConcern
     end
   end
 
+  def veteran_fi_last_formatted
+    veteran_name_object.formatted(:readable_fi_last_formatted)
+  end
+
   def appellant_name
     if appellant_first_name
       [appellant_first_name, appellant_middle_initial, appellant_last_name].select(&:present?).join(", ")

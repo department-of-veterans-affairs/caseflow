@@ -4,7 +4,7 @@ import Button from '../../components/Button';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Footer from '../../components/Footer';
-import { LOGO_COLORS } from '../../util/StyleConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const options = [
   {
