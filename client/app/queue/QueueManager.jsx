@@ -24,8 +24,6 @@ class QueueManager extends React.PureComponent {
     </QueueLoadingScreen>;
   };
 
-  // routedQueueDetail = () => {};
-
   render = () => {
     return <BrowserRouter basename="/queue">
       <div>
@@ -56,11 +54,6 @@ class QueueManager extends React.PureComponent {
               path="/"
               title="Your Queue | Caseflow Queue"
               render={this.routedQueueList} />
-            {/* <PageRoute*/}
-            {/* exact*/}
-            {/* path="/detail/:decision_id"*/}
-            {/* title="Draft Decision | Caseflow Queue"*/}
-            {/* render={this.routedQueueDetail} />*/}
           </div>
         </NavigationBar>
         <Footer

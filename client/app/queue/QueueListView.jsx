@@ -9,23 +9,8 @@ import StatusMessage from '../components/StatusMessage';
 import { showSearchBar, hideSearchBar } from './QueueActions';
 
 class QueueListView extends React.PureComponent {
-  // shouldFetchQueueList = () => true
-  //
-  // componentDidMount = () => {
-  //   if (this.shouldFetchQueueList()) {
-  //     this.props.fetchQueueListDetails();
-  //   } else {
-  //     this.props.onReceiveQueueListDetails();
-  //   }
-  // }
-
-  componentDidMount = () => {
-    this.props.showSearchBar();
-  }
-
-  componentWillUnmount = () => {
-    this.props.hideSearchBar();
-  }
+  componentDidMount = () => this.props.showSearchBar();
+  componentWillUnmount = () => this.props.hideSearchBar();
 
   render = () => {
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);

@@ -28,7 +28,7 @@ Highlight.defaultProps = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const props = _.extend({}, ownProps);
+  const props = _.clone(ownProps);
 
   if (_.isUndefined(props.searchQuery)) {
     props.searchQuery = state.documentList.docFilterCriteria.searchQuery;

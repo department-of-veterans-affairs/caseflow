@@ -89,8 +89,6 @@ class QueueTable extends React.PureComponent {
   }
 }
 
-// const mapStateToProps = (state, props) => ({});
-
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({}, dispatch)
 );
