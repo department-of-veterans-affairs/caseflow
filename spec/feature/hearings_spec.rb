@@ -23,6 +23,8 @@ RSpec.feature "Hearings" do
           user: current_user,
           appellant_first_name: "AppellantFirstName",
           appellant_last_name: "AppellantLastName",
+          veteran_first_name: "VeteranFirstName",
+          veteran_last_name: "VeteranLastName",
           date: 5.days.from_now,
           type: "video",
           master_record: false
@@ -144,6 +146,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      expect(page.title).to eq "V. Veteran Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet saves on refresh" do
@@ -169,7 +172,6 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
-      expect(page.title).to eq "Appellant First Name A. Appellant Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
