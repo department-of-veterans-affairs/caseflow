@@ -10,12 +10,9 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
-import SearchBar from '../components/SearchBar';
 import * as Constants from './constants';
 
-import { setSearch, clearSearch } from './QueueActions';
-
-class QueueManager extends React.PureComponent {
+export default class QueueManager extends React.PureComponent {
   routedQueueList = (props) => {
     const { vacolsId } = props.match.params;
 
@@ -38,17 +35,6 @@ class QueueManager extends React.PureComponent {
           }}
           appName="Queue">
           <div className="cf-wide-app section--queue-list">
-            {this.props.showSearchBar && <div className="usa-grid">
-              <SearchBar
-                id="searchBar"
-                size="big"
-                onSubmit={this.props.setSearch}
-                onChange={this.props.setSearch}
-                onClearSearch={this.props.clearSearch}
-                value={this.props.searchQuery}
-                submitUsingEnterKey
-              />
-            </div>}
             <PageRoute
               exact
               path="/"
@@ -71,17 +57,3 @@ QueueManager.propTypes = {
   feedbackUrl: PropTypes.string,
   buildDate: PropTypes.string
 };
-
-const mapStateToProps = (state) => ({
-  ..._.pick(state, 'showSearchBar'),
-  searchQuery: state.filterCriteria.searchQuery
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setSearch,
-    clearSearch
-  }, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(QueueManager);

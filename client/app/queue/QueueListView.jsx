@@ -1,16 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import StatusMessage from '../components/StatusMessage';
 
-import { showSearchBar, hideSearchBar } from './QueueActions';
-
 class QueueListView extends React.PureComponent {
-  componentDidMount = () => this.props.showSearchBar();
-  componentWillUnmount = () => this.props.hideSearchBar();
-
   render = () => {
     const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
     let tableContent;
@@ -47,11 +41,4 @@ const mapStateToProps = (state) => ({
   ..._.pick(state.loadedQueue, 'tasks', 'appeals')
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    showSearchBar,
-    hideSearchBar
-  }, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(QueueListView);
+export default connect(mapStateToProps)(QueueListView);
