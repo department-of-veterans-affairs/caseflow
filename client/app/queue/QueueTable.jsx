@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Table from '../components/Table';
 import moment from 'moment';
 import Link from '../components/Link';
+import Highlight from '../components/Highlight';
 
 export const getRowObjects = ({ appeals, tasks }) => {
   return appeals.reduce((acc, appeal) => {
@@ -21,6 +22,8 @@ export const getRowObjects = ({ appeals, tasks }) => {
 class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
+  highlightWrapper = (children = '') => <Highlight searchQuery="filterCriteria.searchQuery">{children}</Highlight>
+
   getQueueColumns = () => {
     return [
       {
@@ -29,9 +32,7 @@ class QueueTable extends React.PureComponent {
         valueFunction: (appeal) => {
           const vetName = appeal.tasks.length ? appeal.tasks[0].attributes.veteran_full_name : 'N/A';
 
-          return <Link>
-            {`${vetName} (${appeal.attributes.appeal_id})`}
-          </Link>;
+          return <Link>{this.highlightWrapper(`${vetName} (${appeal.attributes.appeal_id})`)}</Link>
         }
       },
       {
@@ -41,16 +42,14 @@ class QueueTable extends React.PureComponent {
           // todo: highlight AOD in red
           const types = appeal.tasks.map((task) => task.attributes.type);
 
-          return <span>
-            {types.join(',')}
-          </span>;
+          return <span>{this.highlightWrapper(types.join(','))}</span>
         }
       },
       {
         cellClass: '',
         header: 'Docket Number',
         valueFunction: (appeal) => <span>
-          {appeal.tasks.length ? appeal.tasks[0].attributes.docket_number : ''}
+          {this.highlightWrapper(appeal.tasks.length ? appeal.tasks[0].attributes.docket_number : '')}
         </span>
       },
       {
@@ -64,7 +63,7 @@ class QueueTable extends React.PureComponent {
         cellClass: '',
         header: 'Due Date',
         valueFunction: (appeal) => <span>
-          {appeal.tasks.length ? moment(appeal.tasks[0].attributes.due_on).format('MM/DD/YY') : ''}
+          {moment(appeal.attributes.due_on).format('MM/DD/YY')}
         </span>
       },
       {
@@ -72,8 +71,8 @@ class QueueTable extends React.PureComponent {
         header: 'Reader Documents',
         valueFunction: (appeal) => {
           return <a href={`/reader/appeal/${appeal.attributes.appeal_id}/documents`}>
-            {(appeal.tasks.length ? appeal.tasks[0].attributes.document_count : 0).toLocaleString()}
-          </a>
+            {(_.random(1, 2000)).toLocaleString()}
+          </a>;
         }
       },
     ];
