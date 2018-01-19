@@ -1,4 +1,3 @@
-// import { combineReducers } from 'redux';
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
 import * as Constants from './actionTypes';
@@ -66,17 +65,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
   }
 };
 
-// const rootReducer = combineReducers({
-//   workQueueReducer
-// });
-
-/* todo: passing rootReducer gives following error:
-   Unexpected keys "loadedQueueId", "didLoadQueueFail", "loadedQueue"
-   found in previous state received by the reducer. Expected to find one
-   of the known reducer keys instead: "workQueueReducer". Unexpected
-   keys will be ignored */
 export default timeFunction(
-  // rootReducer,
   workQueueReducer,
   (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
 );

@@ -11,10 +11,6 @@ class QueueLoadingScreen extends React.PureComponent {
 
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
-    // if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
-    //   return Promise.resolve();
-    // }
-
     // todo: return ApiUtil.get(`/queue/${this.props.userId}`, {}).
     return ApiUtil.get(`/queue/${this.getUserId()}`, {}).
       then((response) => {
@@ -56,10 +52,6 @@ class QueueLoadingScreen extends React.PureComponent {
     </div>;
   }
 }
-
-// const mapStateToProps = (state) => ({
-// loadedAppealId: state.pdfViewer.loadedAppealId
-// });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
