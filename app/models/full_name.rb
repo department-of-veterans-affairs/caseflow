@@ -18,12 +18,16 @@ class FullName
   # :readable_short => Shane Russell
   # :form => Russell, Shane, A
   # :readable_mi_formatted => Shane A. Russell (middle inital formatted)
+  # :readable_fi_last_formatted => M. Jordan
+  # rubocop:disable Metrics/AbcSize
   def formatted(format)
     case format
     when :readable_full
       [first_name, middle_initial, last_name].select(&:present?).join(" ").titleize
     when :readable_mi_formatted
       [first_name, middle_initial + ".", last_name].select(&:present?).join(" ").titleize
+    when :readable_fi_last_formatted
+      [first_name[0] + ".", last_name].select(&:present?).join(" ").titleize
     when :readable_short
       [first_name, last_name].select(&:present?).join(" ").titleize
     when :form
@@ -32,4 +36,5 @@ class FullName
       fail InvalidFormatError
     end
   end
+  # rubocop:enable Metrics/AbcSize
 end

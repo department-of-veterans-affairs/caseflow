@@ -10,12 +10,13 @@ import { TOGGLE_DOCKET_SAVING, SET_EDITED_FLAG_TO_FALSE, SET_DOCKET_SAVE_FAILED 
 import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
 import ApiUtil from '../../util/ApiUtil';
+import { getDate } from '../util/DateUtil';
 
 export class DailyDocketContainer extends React.Component {
 
   componentDidMount() {
     this.props.getDailyDocket();
-    document.title += ` ${this.props.date}`;
+    document.title += ` ${getDate(this.props.date)}`;
   }
 
   render() {
