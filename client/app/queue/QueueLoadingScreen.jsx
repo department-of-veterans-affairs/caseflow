@@ -36,10 +36,10 @@ class QueueLoadingScreen extends React.PureComponent {
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
         spinnerColor: Constants.QUEUE_COLOR,
-        message: 'Loading claims folder in Reader...'
+        message: 'Loading your appeals...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load documents'
+        title: 'Unable to load appeals'
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
