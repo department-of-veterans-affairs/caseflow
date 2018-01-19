@@ -199,6 +199,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       },
       outsideCaseflowStepsError: {
         $set: null
+      },
+      issuesSelectedError: {
+        $set: null
       }
     });
   case ACTIONS.COMPLETE_INTAKE_STEPS_NOT_CONFIRMED:
