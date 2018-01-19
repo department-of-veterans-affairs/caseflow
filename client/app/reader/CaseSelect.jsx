@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
-import Link from '../components/Link';
+import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 import _ from 'lodash';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
