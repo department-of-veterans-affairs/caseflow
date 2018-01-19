@@ -6,7 +6,7 @@ import DocumentsCheckTable from './DocumentsCheckTable';
 import NotReady from './NotReady';
 import AlreadyCertified from './AlreadyCertified';
 import { connect } from 'react-redux';
-import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import Footer from './Footer';
 import * as Constants from './constants/constants';
 import NotFoundIcon from '../components/NotFoundIcon';
 import * as certificationActions from './actions/Certification';

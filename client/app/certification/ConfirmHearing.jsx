@@ -7,7 +7,7 @@ import * as actions from './actions/ConfirmHearing';
 import { Redirect } from 'react-router-dom';
 
 import ValidatorsUtil from '../util/ValidatorsUtil';
-import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import Footer from './Footer';
 import LoadingContainer from '../components/LoadingContainer';
 import RadioField from '../components/RadioField';
 import * as AppConstants from '../constants/AppConstants';

@@ -11,7 +11,7 @@ import { Redirect } from 'react-router-dom';
 import ValidatorsUtil from '../util/ValidatorsUtil';
 import RadioField from '../components/RadioField';
 import Table from '../components/Table';
-import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import Footer from './Footer';
 import Dropdown from '../components/Dropdown';
 import TextField from '../components/TextField';
 import Header from './Header';
