@@ -28,7 +28,7 @@ const Pages = {
   StyleGuideIndex,
   TestPage,
   UnpreparedTasksIndex,
-  CanceledTasksIndex,
+  CanceledTasksIndex
 };
 
 // This is the "base page" that wraps all pages rendered directly

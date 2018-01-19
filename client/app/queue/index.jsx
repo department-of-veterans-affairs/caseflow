@@ -38,13 +38,13 @@ export default class QueueManager extends React.PureComponent {
               exact
               path="/"
               title="Your Queue | Caseflow Queue"
-              render={this.routedQueueList}/>
+              render={this.routedQueueList} />
           </div>
         </NavigationBar>
         <Footer
           appName="Queue"
           feedbackUrl={this.props.feedbackUrl}
-          buildDate={this.props.buildDate}/>
+          buildDate={this.props.buildDate} />
       </div>
     </BrowserRouter>
   </ReduxBase>;
