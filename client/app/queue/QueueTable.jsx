@@ -11,7 +11,7 @@ import Highlight from '../components/Highlight';
 export const getRowObjects = ({ appeals, tasks }) => {
   return appeals.reduce((acc, appeal) => {
     // todo: Attorneys currently only have one task per appeal, but future users might have multiple
-    appeal.tasks = tasks.filter((task) => task.attributes.vacols_id === appeal.attributes.appeal_id);
+    appeal.tasks = tasks.filter((task) => task.attributes.appeal_id === appeal.attributes.vacols_id);
 
     acc.push(appeal);
 
