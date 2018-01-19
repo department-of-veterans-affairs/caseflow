@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import _ from 'lodash';
 
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
