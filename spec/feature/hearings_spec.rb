@@ -91,7 +91,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
 
-      find_link("Back to Upcoming Hearing Days").click
+      find_link("Back to Your Hearing Days").click
       expect(page).to have_content("Your Hearing Days")
     end
 
