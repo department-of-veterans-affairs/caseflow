@@ -21,13 +21,13 @@ RSpec.feature "Certification Stats Dashboard" do
     expect(page).to have_content("RAMP Elections for January (so far)")
     expect(page).to have_content("Sent 2")
     expect(page).to have_content("Successfully Received 1")
-    expect(page).to have_content("Average Response Time 7.00 days")
+    expect(page).to have_content("Median Response Time 7.00 days")
 
     click_on "Daily"
     expect(page).to have_content("RAMP Elections for January 7")
     expect(page).to have_content("Sent 0")
     expect(page).to have_content("Successfully Received 1")
-    expect(page).to have_content("Average Response Time 7.00 days")
+    expect(page).to have_content("Median Response Time 7.00 days")
   end
 
   scenario "Unauthorized user access" do
