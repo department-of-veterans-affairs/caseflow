@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/appeals-frontend-toolkit": "^2.0.0",
+    "@department-of-veterans-affairs/appeals-frontend-toolkit": "^2.1.0",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
@@ -73,7 +73,7 @@
     "webpack": "^3.10.0"
   },
   "devDependencies": {
-    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.1",
+    "@department-of-veterans-affairs/eslint-config-appeals": "^1.0.2",
     "babel-eslint": "^8.0.2",
     "babel-node-modules": "^0.0.1",
     "chai": "^3.5.0",

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
