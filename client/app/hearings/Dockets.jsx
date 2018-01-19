@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Table from '../components/Table';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { getDate } from './util/DateUtil';
+import { getDateTime } from './util/DateUtil';
 
 export class Dockets extends React.Component {
 
@@ -69,7 +69,7 @@ export class Dockets extends React.Component {
 
       return {
         date: this.linkToDailyDocket(docket),
-        start_time: getDate(docket.date),
+        start_time: getDateTime(docket.date),
         type: this.getType(docket.type),
         regional_office: docket.regional_office_name,
         slots: docket.slots,
