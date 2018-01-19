@@ -125,7 +125,6 @@ body {
 }
 
 .cf-dropdown-menu {
-  position: absoulte;
   top: 3em;
   width: auto;
   min-width: 13em;
@@ -187,12 +186,6 @@ body {
 .cf-app-certification {
   .cf-app-width {
     @include app-width('cert');
-  }
-}
-
-.cf-app-efolder {
-  .cf-app-width {
-    @include app-width('efolder');
   }
 }
 
