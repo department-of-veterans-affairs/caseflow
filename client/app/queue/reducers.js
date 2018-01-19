@@ -3,15 +3,9 @@ import { update } from '../util/ReducerUtil';
 import * as Constants from './actionTypes';
 
 export const initialState = {
-  loadedQueueId: null,
-  didLoadQueueFail: false,
   loadedQueue: {
     appeals: [],
     tasks: []
-  },
-  showSearchBar: false,
-  filterCriteria: {
-    searchQuery: ''
   }
 };
 
@@ -25,38 +19,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
         },
         tasks: {
           $set: action.payload.tasks.data
-        }
-      }
-    });
-  case Constants.RECEIVE_QUEUE_DETAILS_FAILURE:
-    return update(state, {
-      didLoadQueueFail: {
-        $set: action.payload.failedToLoad
-      }
-    });
-  case Constants.SET_LOADED_QUEUE_ID:
-    return update(state, {
-      loadedQueueId: {
-        $set: action.payload.id
-      }
-    });
-  case Constants.SHOW_SEARCH_BAR:
-    return update(state, { showSearchBar: { $set: true } });
-  case Constants.HIDE_SEARCH_BAR:
-    return update(state, { showSearchBar: { $set: false } });
-  case Constants.SET_SEARCH:
-    return update(state, {
-      filterCriteria: {
-        searchQuery: {
-          $set: action.payload.searchQuery
-        }
-      }
-    });
-  case Constants.CLEAR_SEARCH:
-    return update(state, {
-      filterCriteria: {
-        searchQuery: {
-          $set: ''
         }
       }
     });

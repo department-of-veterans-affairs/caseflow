@@ -5,8 +5,8 @@ import QueueManager from './QueueManager';
 
 import rootReducer from './reducers';
 
-export default class WorkQueue extends React.Component {
-  render = () => <ReduxBase reducer={rootReducer}>
-    <QueueManager {...this.props} />
+export default function WorkQueue(props) {
+  return <ReduxBase reducer={rootReducer}>
+    <QueueManager {...props} />
   </ReduxBase>;
 }
