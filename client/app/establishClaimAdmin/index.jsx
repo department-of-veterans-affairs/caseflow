@@ -7,7 +7,7 @@ import StuckTasksContainer from './StuckTasksContainer';
 import { establishClaimAdminReducers, mapDataToInitialState } from './reducers';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '../components/Footer';
-import { LOGO_COLORS } from '../util/StyleConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const EstablishClaimAdmin = ({
   userDisplayName,
