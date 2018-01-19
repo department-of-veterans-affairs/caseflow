@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/appeals-frontend-toolkit@https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/7e932b7":
-  version "1.0.1"
-  resolved "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/7e932b7#49a72f52c800e838e5517a0d843cc78e2d88712c"
+"@department-of-veterans-affairs/appeals-frontend-toolkit@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.0.0.tgz#cc374a953e65aca99557465e33da4761afb3f094"
   dependencies:
     glamor "^2.20.40"
     lodash "^4.17.4"
