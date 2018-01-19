@@ -22,12 +22,8 @@ class QueueListView extends React.PureComponent {
       </div>;
     }
 
-    return <div className="usa-grid">
-      <div className="cf-app">
-        <div className="cf-app-segment cf-app-segment--alt">
-          {tableContent}
-        </div>
-      </div>
+    return <div className="cf-app-segment cf-app-segment--alt">
+      {tableContent}
     </div>;
   }
 }
