@@ -15,7 +15,7 @@ export class ReaderLoadingScreen extends React.Component {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents`, {}, ENDPOINT_NAMES.DOCUMENTS).
+    return ApiUtil.get(`/reader/appeal/${this.props.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
         const documents = returnedObject.appealDocuments;
