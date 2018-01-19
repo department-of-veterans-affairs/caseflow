@@ -146,7 +146,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
-      expect(page.title).to eq "#{appeal.veteran_first_name[0]}. #{appeal.veteran_last_name}'s Hearing Worksheet"
+      expect(page.title).to eq "V. Veteran Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet saves on refresh" do
