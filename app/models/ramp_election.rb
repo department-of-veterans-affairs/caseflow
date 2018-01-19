@@ -17,8 +17,7 @@ class RampElection < RampReview
   end
 
   def response_time
-    notice_date && receipt_date &&
-      (receipt_date.to_time_in_current_zone - notice_date.to_time_in_current_zone)
+    notice_date && receipt_date && (receipt_date.in_time_zone - notice_date.in_time_zone)
   end
 
   def self.completed
