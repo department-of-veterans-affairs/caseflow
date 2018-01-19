@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import QueueTable from './QueueTable';
 import StatusMessage from '../components/StatusMessage';
 
 import { showSearchBar, hideSearchBar } from './QueueActions';
@@ -24,10 +23,8 @@ class QueueListView extends React.PureComponent {
     } else {
       tableContent = <div>
         <h1 className="cf-push-left">Your Queue</h1>
-        <QueueTable
-          tasks={this.props.tasks}
-          appeals={this.props.appeals}
-        />
+        <span>{JSON.stringify(this.props.tasks)}</span><br />
+        <span>{JSON.stringify(this.props.appeals)}</span>
       </div>;
     }
 
