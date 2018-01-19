@@ -34,7 +34,7 @@ export default class QueueManager extends React.PureComponent {
             accentColor: Constants.QUEUE_COLOR
           }}
           appName="Queue">
-          <div className="cf-wide-app section--queue-list">
+          <div className="cf-wide-app">
             <PageRoute
               exact
               path="/"
