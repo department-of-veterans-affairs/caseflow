@@ -1411,9 +1411,9 @@ RSpec.feature "Reader" do
       open_search_bar
       expect(scroll_top).to be(0)
 
-      fill_in "search-ahead", with: "decision"
+      fill_in "search-ahead", with: "just"
 
-      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
       first_match_scroll_top = scroll_top
 
@@ -1422,7 +1422,8 @@ RSpec.feature "Reader" do
       find(".cf-next-match").click
       expect(scroll_top).to be > first_match_scroll_top
 
-      # this doc has 2 matches for "decision", search index wraps around
+      # this doc has 3 matches for "decision", search index wraps around
+      find(".cf-next-match").click
       find(".cf-next-match").click
       expect(scroll_top).to eq(first_match_scroll_top)
     end
