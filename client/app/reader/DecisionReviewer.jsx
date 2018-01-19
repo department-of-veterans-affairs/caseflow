@@ -171,6 +171,7 @@ export class DecisionReviewer extends React.PureComponent {
           </div>
         </NavigationBar>
         <Footer
+          wideApp
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
           buildDate={this.props.buildDate} />

@@ -69,6 +69,7 @@ const Hearings = ({ hearings }) => {
               </AppFrame>
             </NavigationBar>
             <Footer
+              wideApp
               appName="Hearing Prep"
               feedbackUrl={hearings.feedbackUrl}
               buildDate={hearings.buildDate} />
