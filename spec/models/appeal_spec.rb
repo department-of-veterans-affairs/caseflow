@@ -395,7 +395,8 @@ describe Appeal do
       end
 
       it "saves retrieved documents" do
-        appeal.find_or_create_documents_v2!
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq(documents[0].type)
@@ -414,7 +415,8 @@ describe Appeal do
         expect(Document.count).to eq(1)
         expect(Document.first.type).to eq(saved_document.type)
 
-        appeal.find_or_create_documents_v2!
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq(documents[0].type)
@@ -434,7 +436,7 @@ describe Appeal do
 
       before do
         expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
-        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal.sanitized_vbms_id).and_return(
+        expect(VBMSService).to receive(:fetch_document_series_for).with(appeal).and_return(
           [[
             OpenStruct.new(
               vbms_filename: "test_file",
@@ -467,7 +469,8 @@ describe Appeal do
         expect(Document.first.type).to eq(saved_document.type)
         expect(Document.first.series_id).to eq(nil)
 
-        appeal.find_or_create_documents_v2!
+        returned_documents = appeal.find_or_create_documents_v2!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.first.series_id).to eq(series_id)
         expect(Document.count).to eq(documents.count)
@@ -503,7 +506,8 @@ describe Appeal do
       end
 
       it "saves retrieved documents" do
-        appeal.find_or_create_documents!
+        returned_documents = appeal.find_or_create_documents!
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq(documents[0].type)
@@ -522,7 +526,9 @@ describe Appeal do
         expect(Document.count).to eq(1)
         expect(Document.first.type).to eq(saved_document.type)
 
-        appeal.find_or_create_documents!
+        returned_documents = appeal.find_or_create_documents!
+
+        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq(documents[0].type)

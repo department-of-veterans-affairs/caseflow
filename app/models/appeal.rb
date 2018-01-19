@@ -347,6 +347,7 @@ class Appeal < ActiveRecord::Base
         if existing_documents[document.series_id]
           existing_documents[document.series_id].merge_into(document)
           existing_documents[document.series_id].save!
+          existing_documents[document.series_id]
         else
           document.save!
           document
@@ -371,6 +372,7 @@ class Appeal < ActiveRecord::Base
         if existing_documents[document.vbms_document_id]
           existing_documents[document.vbms_document_id].merge_into(document)
           existing_documents[document.vbms_document_id].save!
+          existing_documents[document.vbms_document_id]
         else
           document.save!
           document
