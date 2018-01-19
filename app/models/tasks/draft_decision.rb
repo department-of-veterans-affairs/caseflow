@@ -2,18 +2,12 @@ class DraftDecision
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  # TODO: move to generic superclass
   ATTRS = [:appeal_id, :user_id, :due_on, :assigned_on, :docket_name, :docket_date].freeze
   attr_accessor(*ATTRS)
 
-  # TODO: move to generic superclass
-  def to_hash
-    serializable_hash
-  end
-
-  # TODO: move to generic superclass
-  def attributes
-    DraftDecision::ATTRS.each_with_object({}) { |attr, obj| obj[attr] = send(attr) }
+  # The serializer requires a method with the name `id`
+  def id
+    appeal_id
   end
 
   def self.from_vacols(case_assignment, user_id)
@@ -22,7 +16,7 @@ class DraftDecision
       due_on: case_assignment.date_due,
       docket_name: "legacy",
       docket_date: case_assignment.docket_date,
-      appeal_id: case_assignment.id,
+      appeal_id: case_assignment.vacols_id,
       user_id: user_id
     )
   end
