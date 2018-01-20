@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/appeals-frontend-toolkit@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.0.0.tgz#cc374a953e65aca99557465e33da4761afb3f094"
+"@department-of-veterans-affairs/appeals-frontend-toolkit@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.1.0.tgz#6bfe4ed5fbb19bc86a229c4b152cf98d9bbac8b1"
   dependencies:
     glamor "^2.20.40"
     lodash "^4.17.4"
@@ -66,9 +66,9 @@
     redux-perf-middleware "^1.2.2"
     redux-thunk "^2.2.0"
 
-"@department-of-veterans-affairs/eslint-config-appeals@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/eslint-config-appeals/-/eslint-config-appeals-1.0.1.tgz#f04a05d9c0f9c2d12654d2c68455b24c1e5a5c8c"
+"@department-of-veterans-affairs/eslint-config-appeals@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/eslint-config-appeals/-/eslint-config-appeals-1.0.2.tgz#9996dae98052e5a767d763823ded5561676ffdb9"
   dependencies:
     babel-eslint "^8.0.2"
     eslint-plugin-import "^2.8.0"
