@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Certification Stats Dashboard" do
+RSpec.feature "Intake Stats Dashboard" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 7, 17, 55, 0, rand(1000)))
   end
