@@ -1,1 +1,7 @@
 export const RECEIVE_QUEUE_DETAILS = 'RECEIVE_QUEUE_DETAILS';
+
+export const SHOW_SEARCH_BAR = 'SHOW_SEARCH_BAR';
+export const HIDE_SEARCH_BAR = 'HIDE_SEARCH_BAR';
+
+export const SET_SEARCH = 'SET_SEARCH';
+export const CLEAR_SEARCH = 'CLEAR_SEARCH';
