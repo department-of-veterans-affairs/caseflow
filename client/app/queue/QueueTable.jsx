@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import Table from '../components/Table';
 import moment from 'moment';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
-import Highlight from '../components/Highlight';
 
 export const getRowObjects = ({ appeals, tasks }) => {
   return appeals.reduce((acc, appeal) => {
@@ -19,10 +16,8 @@ export const getRowObjects = ({ appeals, tasks }) => {
   }, []);
 };
 
-class QueueTable extends React.PureComponent {
+export default class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.attributes.vacols_id;
-
-  highlightWrapper = (children = '') => <Highlight searchQuery="filterCriteria.searchQuery">{children}</Highlight>
 
   getQueueColumns = () => {
     return [
@@ -30,7 +25,7 @@ class QueueTable extends React.PureComponent {
         cellClass: '',
         header: 'Decision Task Details',
         valueFunction: (appeal) => <Link>
-          {this.highlightWrapper(`${appeal.attributes.veteran_full_name} (${appeal.attributes.vacols_id})`)}
+          {`${appeal.attributes.veteran_full_name} (${appeal.attributes.vacols_id})`}
         </Link>
       },
       {
@@ -38,14 +33,14 @@ class QueueTable extends React.PureComponent {
         header: 'Type(s)',
         // todo: highlight AOD in red
         valueFunction: (appeal) => <span>
-          {this.highlightWrapper(appeal.attributes.type)}
+          {appeal.attributes.type}
         </span>
       },
       {
         cellClass: '',
         header: 'Docket Number',
         valueFunction: (appeal) => <span>
-          {this.highlightWrapper(appeal.attributes.docket_number)}
+          {appeal.attributes.docket_number}
         </span>
       },
       {
@@ -88,12 +83,6 @@ class QueueTable extends React.PureComponent {
     </div>;
   }
 }
-
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({}, dispatch)
-);
-
-export default connect(null, mapDispatchToProps)(QueueTable);
 
 QueueTable.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.object).isRequired,

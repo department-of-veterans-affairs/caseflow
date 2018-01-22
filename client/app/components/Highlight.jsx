@@ -27,17 +27,9 @@ Highlight.defaultProps = {
   children: ''
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const props = _.extend({}, ownProps);
-
-  if (_.isUndefined(props.searchQuery)) {
-    props.searchQuery = state.documentList.docFilterCriteria.searchQuery;
-  } else {
-    props.searchQuery = _.get(state, props.searchQuery);
-  }
-
-  return props;
-};
+const mapStateToProps = (state) => ({
+  searchQuery: state.documentList.docFilterCriteria.searchQuery
+});
 
 export default connect(
   mapStateToProps
