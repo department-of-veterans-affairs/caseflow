@@ -31,10 +31,10 @@ const fireSingleDocumentModeEvent = _.memoize(() => {
 class LastRetrievalInfo extends React.PureComponent {
   render() {
     return [
-      <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>,
+      <div id="vbms-manifest-retrieved-at" key="vbms">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>,
       this.props.manifestVvaFetchedAt ?
-        <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
-        <div className="cf-red-text">Unable to display VVA documents at this time</div>
+        <div id="vva-manifest-retrieved-at" key="vva">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
+        <div className="cf-red-text" key="vva">Unable to display VVA documents at this time</div>
     ];
   }
 }
@@ -112,8 +112,6 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
-        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
         {...props}
       />
     </ReaderLoadingScreen>;
@@ -148,6 +146,10 @@ export class DecisionReviewer extends React.PureComponent {
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
     `${appeal.veteran_first_name.charAt(0)}. \
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
+
+  getLastRetrievalInfo = () => <LastRetrievalInfo 
+    manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt} 
+    manifestVvaFetchedAt={this.props.manifestVvaFetchedAt} />
 
   render() {
     const Router = this.props.router || BrowserRouter;
@@ -186,7 +188,7 @@ export class DecisionReviewer extends React.PureComponent {
                   render={this.routedPdfViewer} />
               </div>
             </PrimaryAppContent>
-            <Route exact path="/:vacolsId/documents" component={LastRetrievalInfo} />
+            <Route exact path="/:vacolsId/documents" render={this.getLastRetrievalInfo} />
           </AppFrame>
         </NavigationBar>
         <Footer
