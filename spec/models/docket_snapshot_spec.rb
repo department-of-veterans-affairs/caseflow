@@ -10,15 +10,15 @@ describe DocketSnapshot do
     subject { snapshot }
 
     it "creates a new snapshot and tracers" do
-      expect(subject.docket_count).to eq(123456)
+      expect(subject.docket_count).to eq(123_456)
       expect(subject.latest_docket_month).to eq(Date.new(2014, 2, 1))
       expect(subject.docket_tracers.count).to eq(13)
       expect(subject.docket_tracers.first.month).to eq(Date.new(2014, 1, 1))
       expect(subject.docket_tracers.first.ahead_count).to eq(3456)
       expect(subject.docket_tracers.first.ahead_and_ready_count).to eq(3456)
       expect(subject.docket_tracers.last.month).to eq(Date.new(2015, 1, 1))
-      expect(subject.docket_tracers.last.ahead_count).to eq(123456)
-      expect(subject.docket_tracers.last.ahead_and_ready_count).to eq(63456)
+      expect(subject.docket_tracers.last.ahead_count).to eq(123_456)
+      expect(subject.docket_tracers.last.ahead_and_ready_count).to eq(63_456)
     end
 
     context "when it is monday" do

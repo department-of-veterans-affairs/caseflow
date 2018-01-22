@@ -537,7 +537,7 @@ class Fakes::AppealRepository
   end
 
   def self.regular_non_aod_docket_count
-    123456
+    123_456
   end
 
   def self.latest_docket_month
@@ -545,11 +545,11 @@ class Fakes::AppealRepository
   end
 
   def self.docket_counts_by_month
-    (1.year.ago.to_date..Date.today).map {|d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
+    (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
       {
         "year" => d.year,
         "month" => d.month,
-        "cumsum_n" => i * 10000 + 3456,
+        "cumsum_n" => i * 10_000 + 3456,
         "cumsum_ready_n" => i * 5000 + 3456
       }
     end

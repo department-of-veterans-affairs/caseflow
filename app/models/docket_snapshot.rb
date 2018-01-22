@@ -20,7 +20,7 @@ class DocketSnapshot < ActiveRecord::Base
   def set_latest_docket_month
     # The latest docket month is updated every Friday
     self.latest_docket_month =
-      self.class.where("created_at >= ?", friday).first.try(:latest_docket_month) ||
+      self.class.find_by("created_at >= ?", friday).try(:latest_docket_month) ||
       Appeal.repository.latest_docket_month
   end
 
@@ -37,7 +37,7 @@ class DocketSnapshot < ActiveRecord::Base
   end
 
   def friday
-    today = Date.today
+    today = Time.zone.today
     days_since_friday = (today.wday + 2) % 7
     today - days_since_friday
   end
