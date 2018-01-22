@@ -48,9 +48,7 @@ export class ReaderLoadingScreen extends React.Component {
       {this.props.children}
     </LoadingDataDisplay>;
 
-    return <div className="usa-grid">
-      {loadingDataDisplay}
-    </div>;
+    return loadingDataDisplay;
   }
 }
 
