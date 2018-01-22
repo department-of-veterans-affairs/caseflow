@@ -10,48 +10,35 @@ export default class QueueTable extends React.PureComponent {
 
   getQueueColumns = () => [
     {
-      cellClass: '',
       header: 'Decision Task Details',
       valueFunction: (appeal) => <Link>
         {appeal.attributes.veteran_full_name} ({appeal.attributes.vacols_id})
       </Link>
     },
     {
-      cellClass: '',
       header: 'Type(s)',
       // todo: highlight AOD in red
-      valueFunction: (appeal) => <span>
-        {appeal.attributes.type}
-      </span>
+      valueFunction: (appeal) => appeal.attributes.type
     },
     {
-      cellClass: '',
       header: 'Docket Number',
-      valueFunction: (appeal) => <span>
-        {appeal.attributes.docket_number}
-      </span>
+      valueFunction: (appeal) => appeal.attributes.docket_number
     },
     {
-      cellClass: '',
       header: 'Issues',
-      valueFunction: (appeal) => <span>
-        {appeal.attributes.issues.length}
-      </span>
+      valueFunction: (appeal) => appeal.attributes.issues.length
     },
     {
-      cellClass: '',
       header: 'Due Date',
-      valueFunction: (appeal) => <span>
-        {appeal.tasks.length ? moment(appeal.tasks[0].attributes.due_on).format('MM/DD/YY') : ''}
-      </span>
+      valueFunction: (appeal) => appeal.tasks.length ?
+        moment(appeal.tasks[0].attributes.due_on).format('MM/DD/YY') : ''
     },
     {
-      cellClass: '',
       header: 'Reader Documents',
       valueFunction: (appeal) => {
-        return <a href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
+        return <Link href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
           {(_.random(1, 2000)).toLocaleString()}
-        </a>;
+        </Link>
       }
     }
   ];
@@ -60,7 +47,6 @@ export default class QueueTable extends React.PureComponent {
     return <Table
       columns={this.getQueueColumns}
       rowObjects={this.props.appeals}
-      summary="Your Tasks"
       className="queue-tasks-table"
       getKeyForRow={this.getKeyForRow}
     />;

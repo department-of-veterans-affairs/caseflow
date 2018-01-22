@@ -69,10 +69,7 @@ QueueManager.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state, 'showSearchBar'),
-  searchQuery: state.filterCriteria.searchQuery
-});
+const mapStateToProps = (state) => _.pick(state, 'showSearchBar', 'filterCriteria.searchQuery');
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSearch,
