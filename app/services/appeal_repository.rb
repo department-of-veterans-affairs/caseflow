@@ -454,8 +454,8 @@ class AppealRepository
                           name: "regular_non_aod_docket_count",
                           service: :vacols) do
       VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
-                  .where("BFMPRO <> 'HIS' and BFAC in ('1', '3') and BFD19 is not null and AOD = 0")
-                  .count
+        .where("BFMPRO <> 'HIS' and BFAC in ('1', '3') and BFD19 is not null and AOD = 0")
+        .count
     end
   end
 
