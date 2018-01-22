@@ -38,11 +38,12 @@ export class PdfListView extends React.Component {
     let tableView;
 
     if (noDocuments) {
-      tableView = <NoSearchResults />;
+      tableView = <NoSearchResults key="no-search-results" />;
     } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
       tableView = <CommentsTable
         documents={this.props.documents}
         onJumpToComment={this.props.onJumpToComment}
+        key="comment-table"
       />;
     } else {
       tableView = <DocumentsTable
@@ -52,20 +53,19 @@ export class PdfListView extends React.Component {
         sortBy={this.props.sortBy}
         docFilterCriteria={this.props.docFilterCriteria}
         showPdf={this.props.showPdf}
+        key="doc-table"
       />;
     }
 
-    return <div className="usa-grid">
-      <div className="cf-app-segment cf-app-segment--alt">
-        <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-        <DocumentListHeader
-          documents={this.props.documents}
-          noDocuments={noDocuments}
-        />
-        {tableView}
-      </div>
-      
-    </div>;
+    return [
+      <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} key="claims-folder" />,
+      <DocumentListHeader
+        documents={this.props.documents}
+        noDocuments={noDocuments}
+        key="doc-list-header"
+      />,
+      tableView
+    ]
   }
 }
 
