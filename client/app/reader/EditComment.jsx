@@ -69,6 +69,7 @@ export default class EditComment extends React.Component {
       />
       <SaveCommentTextArea
         onKeyDown={this.keyListener}
+        hideLabel
         id={this.props.id}
         onChange={this.onChange}
         value={this.props.comment.comment}

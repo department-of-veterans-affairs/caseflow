@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Button from './Button';
+import classNamesFn from 'classnames';
 
 export default class SaveCommentTextArea extends React.PureComponent {
   render() {
     const {
       disabled,
       id,
+      hideLabel,
       name,
       onChange,
       onCancelClick,
@@ -17,7 +19,9 @@ export default class SaveCommentTextArea extends React.PureComponent {
     } = this.props;
 
     return <div className="comment-size-container">
-      <label className="question-label" htmlFor={id || name}></label>
+      <label className={classNamesFn({'visuallyhidden': hideLabel})} htmlFor={id || name}>
+        {name}
+      </label>
       <textarea
         className="comment-container comment-textarea"
         name={name}

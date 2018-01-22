@@ -32,8 +32,8 @@ export default class StyleGuideSaveLongText extends React.PureComponent {
         isSubsection
       />
       <SaveCommentTextArea
-        id="save-long-text-component"
         name="Edit Comment"
+        hideLabel
         disabled={this.isEmpty(this.state.value)}
         onChange={this.onChange}
         value={this.state.value}
