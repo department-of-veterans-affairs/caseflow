@@ -12,10 +12,10 @@ module VACOLS::Docket
         where BFCURLOC = '81'
           and BFAC <> '9'
       )
-      where ROWNUMBER = #{n}
+      where ROWNUMBER = ?
     SQL
 
-    connection.exec_query(query).first["bfd19"].to_date
+    connection.exec_query(sanitize_sql_array[query, n]).first["bfd19"].to_date
   end
 
   # rubocop:disable Metrics/MethodLength
