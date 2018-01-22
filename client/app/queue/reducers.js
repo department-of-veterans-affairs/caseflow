@@ -21,10 +21,10 @@ const workQueueReducer = (state = initialState, action = {}) => {
     return update(state, {
       loadedQueue: {
         appeals: {
-          $set: action.payload.appeals.data
+          $set: action.payload.appeals
         },
         tasks: {
-          $set: action.payload.tasks.data
+          $set: action.payload.tasks
         }
       }
     });

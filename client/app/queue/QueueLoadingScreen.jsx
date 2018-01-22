@@ -12,23 +12,29 @@ class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
     // todo: return ApiUtil.get(`/queue/${this.props.userId}`, {}).
-    return ApiUtil.get(`/queue/${this.getUserId()}`, {}).
-      then((response) => {
-        const returnedObject = JSON.parse(response.text);
-        const { appeals, tasks } = returnedObject;
+    return ApiUtil.get(`/queue/${this.getUserId()}`, {}).then((response) => {
+      const {
+        appeals: { data: appeals },
+        tasks: { data: tasks }
+      } = JSON.parse(response.text);
 
-        this.props.onReceiveQueue({
-          appeals,
-          tasks
-        });
+      // todo: Attorneys currently only have one task per appeal, but future users might have multiple
+      _.each(appeals, (appeal) => {
+        appeal.tasks = tasks.filter((task) => task.attributes.appeal_id === appeal.attributes.vacols_id);
       });
-  }
 
-  reload = () => window.location.reload()
+      this.props.onReceiveQueue({
+        appeals,
+        tasks
+      });
+    });
+  };
+
+  reload = () => window.location.reload();
 
   render = () => {
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load this case.<br />
+      It looks like Caseflow was unable to load this case.<br/>
       Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>;
 
@@ -48,7 +54,7 @@ class QueueLoadingScreen extends React.PureComponent {
     return <div className="usa-grid">
       {loadingDataDisplay}
     </div>;
-  }
+  };
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -5,15 +5,6 @@ import Table from '../components/Table';
 import moment from 'moment';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 
-export const getRowObjects = ({ appeals, tasks }) => appeals.reduce((acc, appeal) => {
-  // todo: Attorneys currently only have one task per appeal, but future users might have multiple
-  appeal.tasks = tasks.filter((task) => task.attributes.appeal_id === appeal.attributes.vacols_id);
-
-  acc.push(appeal);
-
-  return acc;
-}, []);
-
 export default class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.attributes.vacols_id;
 
@@ -66,11 +57,9 @@ export default class QueueTable extends React.PureComponent {
   ];
 
   render() {
-    const rowObjects = getRowObjects(this.props);
-
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={rowObjects}
+      rowObjects={this.props.appeals}
       summary="Your Tasks"
       className="queue-tasks-table"
       getKeyForRow={this.getKeyForRow}
