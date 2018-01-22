@@ -101,22 +101,13 @@ body {
   }
 }
 
-.cf-app-footer {
+.cf-app-footer.not-react {
   margin-top: 100px;
   min-height: 5em;
-  box-sizing: border-box;
 
   > div {
-    border-top: 1px solid $color-gray-lighter;
     padding: $cf-30px 0;
     height: auto;
-
-    &::after {
-      content: '\00a0';
-      line-height: 0;
-      display: block;
-      clear: both;
-    }
   }
 }
 
@@ -223,6 +214,13 @@ body {
 
 .cf-logo-image-dispatch {
   background-image: url(asset-path('caseflow-dispatch-logo.svg'));
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-intake {
+  background-image: url(asset-path('caseflow-intake-logo.svg'));
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
