@@ -53,6 +53,13 @@ end
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
+  
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+        chromeOptions: {
+            args: %w[ no-sandbox ]
+        }
+    )
+  
   options = {
     port: 51_674,
     browser: :chrome,
@@ -64,7 +71,8 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
       browser: {
         disk_cache_dir: cache_directory
       }
-    }
+    },
+    desired_capabilities: capabilities
   }
 
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
