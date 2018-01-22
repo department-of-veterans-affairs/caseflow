@@ -359,7 +359,8 @@ class Appeal < ActiveRecord::Base
   end
 
   def find_or_create_documents!
-    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2)
+    return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
+                                                                  user: RequestStore.store[:current_user])
 
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
