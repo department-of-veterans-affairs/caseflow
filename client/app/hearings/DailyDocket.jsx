@@ -43,7 +43,7 @@ export class DailyDocket extends React.Component {
           )}
         </table>
       </div>
-      <div className="cf-alt--actions cf-alt--app-width">
+      <div className="cf-alt--actions">
         <div className="cf-push-left">
           <Link to="/hearings/dockets">&lt; Back to Your Hearing Days</Link>
         </div>
