@@ -67,6 +67,7 @@ export default class EditComment extends React.Component {
         type="date"
         strongLabel
       />
+    <div className="comment-size-container">
       <textarea
         className="comment-container comment-textarea"
         name="Edit Comment"
@@ -92,6 +93,7 @@ export default class EditComment extends React.Component {
           </Button>
         </span>
       </div>
+    </div>
     </div>;
   }
 }
