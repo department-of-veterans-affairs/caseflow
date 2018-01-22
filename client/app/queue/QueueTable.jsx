@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import Table from '../components/Table';
 import moment from 'moment';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
@@ -39,7 +38,7 @@ export default class QueueTable extends React.PureComponent {
         // todo: get document count
         return <Link href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
           {'####'}
-        </Link>
+        </Link>;
       }
     }
   ];

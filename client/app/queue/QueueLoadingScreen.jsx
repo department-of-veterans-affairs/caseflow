@@ -5,6 +5,7 @@ import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS } from './constants';
+import _ from 'lodash';
 
 class QueueLoadingScreen extends React.PureComponent {
   getUserId = () => 1;
@@ -34,7 +35,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
   render = () => {
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load this case.<br/>
+      It looks like Caseflow was unable to load this case.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>;
 
