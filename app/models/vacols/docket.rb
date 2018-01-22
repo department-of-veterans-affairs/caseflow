@@ -4,7 +4,7 @@ module VACOLS::Docket
   end
 
   def self.docket_date_of_nth_appeal_in_case_storage(n)
-    query = %{
+    query = <<-SQL
       select BFD19 from (
         select row_number() over (order by BFD19 asc) as ROWNUMBER,
           BFD19
@@ -12,8 +12,8 @@ module VACOLS::Docket
         where BFCURLOC = '81'
           and BFAC <> '9'
       )
-      where ROWNUMBER = ?
-    }, n
+      where ROWNUMBER = #{n}
+    SQL
 
     connection.exec_query(query).first["bfd19"].to_date
   end
