@@ -64,10 +64,7 @@ export class PdfListView extends React.Component {
         />
         {tableView}
       </div>
-      <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>
-      { this.props.manifestVvaFetchedAt ?
-        <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
-        <div className="cf-red-text">Unable to display VVA documents at this time</div> }
+      
     </div>;
   }
 }

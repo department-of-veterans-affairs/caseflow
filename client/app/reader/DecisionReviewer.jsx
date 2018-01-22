@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import { Route } from 'react-router';
 import { getQueryParams } from '../util/QueryParamsUtil';
 import PrimaryAppContent from '../components/PrimaryAppContent';
 import AppFrame from '../components/AppFrame';
@@ -26,6 +27,17 @@ import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-to
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
+
+class LastRetrievalInfo extends React.PureComponent {
+  render() {
+    return [
+      <div id="vbms-manifest-retrieved-at">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>,
+      this.props.manifestVvaFetchedAt ?
+        <div id="vva-manifest-retrieved-at">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
+        <div className="cf-red-text">Unable to display VVA documents at this time</div>
+    ];
+  }
+}
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
@@ -174,6 +186,7 @@ export class DecisionReviewer extends React.PureComponent {
                   render={this.routedPdfViewer} />
               </div>
             </PrimaryAppContent>
+            <Route exact path="/:vacolsId/documents" component={LastRetrievalInfo} />
           </AppFrame>
         </NavigationBar>
         <Footer
