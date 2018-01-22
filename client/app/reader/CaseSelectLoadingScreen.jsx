@@ -29,10 +29,12 @@ export class CaseSelectLoadingScreen extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingScreenProps={{
+        wrapInAppSegment: false,
         spinnerColor: Constants.READER_COLOR,
         message: 'Loading cases in Reader...'
       }}
       failStatusMessageProps={{
+        wrapInAppSegment: false,
         title: 'Unable to load the welcome page'
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
