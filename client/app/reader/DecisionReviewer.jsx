@@ -28,8 +28,12 @@ const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
 
-class LastRetrievalInfo extends React.PureComponent {
+class UnconnectedLastRetrievalInfo extends React.PureComponent {
   render() {
+    if (!this.props.manifestVbmsFetchedAt) {
+      return null;
+    }
+    
     return [
       <div id="vbms-manifest-retrieved-at" key="vbms">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>,
       this.props.manifestVvaFetchedAt ?
@@ -38,6 +42,10 @@ class LastRetrievalInfo extends React.PureComponent {
     ];
   }
 }
+
+const LastRetrievalInfo = connect(
+  (state) => _.pick(state.documentList, ['manifestVvaFetchedAt', 'manifestVbmsFetchedAt'])
+)(UnconnectedLastRetrievalInfo)
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
@@ -147,10 +155,6 @@ export class DecisionReviewer extends React.PureComponent {
     `${appeal.veteran_first_name.charAt(0)}. \
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
 
-  getLastRetrievalInfo = () => <LastRetrievalInfo 
-    manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt} 
-    manifestVvaFetchedAt={this.props.manifestVvaFetchedAt} />
-
   render() {
     const Router = this.props.router || BrowserRouter;
 
@@ -188,7 +192,7 @@ export class DecisionReviewer extends React.PureComponent {
                   render={this.routedPdfViewer} />
               </div>
             </PrimaryAppContent>
-            <Route exact path="/:vacolsId/documents" render={this.getLastRetrievalInfo} />
+            <Route exact path="/:vacolsId/documents" component={LastRetrievalInfo} />
           </AppFrame>
         </NavigationBar>
         <Footer
