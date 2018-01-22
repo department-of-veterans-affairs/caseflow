@@ -12,6 +12,15 @@ import {
 import moment from 'moment';
 import 'moment-timezone';
 import { getDateTime } from '../util/DateUtil';
+import { css } from 'glamor';
+
+const textareaStyling = css({
+  '@media only screen and (max-width : 1024px)': {
+    '& > textarea': {
+      width: '80%'
+    }
+  }
+})
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -149,7 +158,7 @@ export class DocketHearingRow extends React.PureComponent {
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
             <label htmlFor={`${hearing.id}.notes`}>Notes</label>
-            <div>
+            <div {...textareaStyling}>
               <Textarea
                 id={`${hearing.id}.notes`}
                 value={hearing.notes || ''}

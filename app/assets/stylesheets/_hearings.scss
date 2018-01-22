@@ -16,10 +16,6 @@ $color-hearings-saving: $color-gray;
 
 .cf-hearings-daily-docket-container {
   position: relative;
-
-  .cf-hearings {
-    margin-top: 0;
-  }
 }
 
 .cf-hearings,
@@ -438,19 +434,6 @@ $color-hearings-saving: $color-gray;
 .cf-hearings-worksheet-desc-label {
   position: absolute;
   left: -99999px;
-}
-
-@media only screen and (max-width : 1024px){
-
-  .cf-hearings {
-    .cf-hearings-docket {
-      .cf-hearings-docket-notes {
-        textarea {
-          width: 80%;
-        }
-      }
-    }
-  }
 }
 
 @page {
