@@ -4,6 +4,7 @@ import CancelButton from '../../components/CancelButton';
 import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import Table from '../../../components/Table';
+import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, RAMP_INTAKE_STATES, REQUEST_STATE } from '../../constants';
 import { connect } from 'react-redux';
@@ -34,7 +35,8 @@ class Finish extends React.PureComponent {
       hasIneligibleIssue,
       outsideCaseflowStepsConfirmed,
       outsideCaseflowStepsError,
-      issuesSelectedError
+      issuesSelectedError,
+      requestState
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -89,6 +91,12 @@ class Finish extends React.PureComponent {
     return <div>
       <h1>Finish processing RAMP Selection form</h1>
 
+      { requestState === REQUEST_STATE.FAILED &&
+        <Alert title="Something went wrong" type="error" lowerMargin>
+          Please try again. If the problem persists, please contact Caseflow support.
+        </Alert>
+      }
+
       <ol className="cf-bare-list" ref={this.setOutsideCaseflowStepsNode}>
         <li>
           <div className="cf-intake-step">
@@ -115,7 +123,7 @@ class Finish extends React.PureComponent {
         </li>
 
         <li>
-          <div className="cf-intake-step">
+          { outsideCaseflowStepsConfirmed && <div><div className="cf-intake-step">
             <strong>2. Review and select contentions</strong>
             <span className="cf-required">Required</span>
           </div>
@@ -131,11 +139,11 @@ class Finish extends React.PureComponent {
                 note via the checkbox at the bottom of the table.
               </li>
             </ol>
-          </div>
+          </div></div> }
         </li>
       </ol>
 
-      <div className={classNames({ 'usa-input-error': issuesSelectedError })}>
+      { outsideCaseflowStepsConfirmed && <div className={classNames({ 'usa-input-error': issuesSelectedError })}>
         { issuesSelectedError &&
             <div className="usa-input-error-message">{issuesSelectedError}</div>
         }
@@ -160,7 +168,7 @@ class Finish extends React.PureComponent {
           summary={otherQuestionColumns[0].header}
           getKeyForRow={(_index, question) => question.id}
         />
-      </div>
+      </div> }
     </div>;
   }
 }
@@ -173,7 +181,8 @@ export default connect(
     outsideCaseflowStepsConfirmed: state.rampRefiling.outsideCaseflowStepsConfirmed,
     outsideCaseflowStepsError: state.rampRefiling.outsideCaseflowStepsError,
     issuesSelectedError: state.rampRefiling.issuesSelectedError,
-    finishErrorProcessed: state.rampRefiling.finishErrorProcessed
+    finishErrorProcessed: state.rampRefiling.finishErrorProcessed,
+    requestState: state.rampRefiling.requestStatus.completeIntake
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected,

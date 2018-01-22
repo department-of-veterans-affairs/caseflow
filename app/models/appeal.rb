@@ -122,7 +122,7 @@ class Appeal < ActiveRecord::Base
 
   def number_of_documents_after_certification
     return 0 unless certification_date
-    documents.count { |d| d.received_at > certification_date }
+    documents.count { |d| d.received_at && d.received_at > certification_date }
   end
 
   cache_attribute :cached_number_of_documents_after_certification do
@@ -173,8 +173,10 @@ class Appeal < ActiveRecord::Base
     (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
+  def power_of_attorney(load_bgs_record: true)
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+
+    load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
   attr_writer :hearings
@@ -478,7 +480,7 @@ class Appeal < ActiveRecord::Base
   # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
+      methods: [:veteran_full_name, :veteran_first_name, :veteran_last_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed

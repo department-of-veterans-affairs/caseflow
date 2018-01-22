@@ -130,7 +130,8 @@ class Hearing < ActiveRecord::Base
         :appellant_last_first_mi,
         :appellant_mi_formatted,
         :vbms_id,
-        :issue_count
+        :issue_count,
+        :prepped
       ],
       except: :military_service
     ).merge(
@@ -153,6 +154,7 @@ class Hearing < ActiveRecord::Base
                 :military_service,
                 :appellant_mi_formatted,
                 :veteran_mi_formatted,
+                :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
     ).merge(to_hash(current_user_id))
   end

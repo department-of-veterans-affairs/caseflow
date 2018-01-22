@@ -327,7 +327,8 @@ RSpec.feature "Reader" do
         expect(page).to have_content("Documents")
 
         # Test that the title changed. Functionality in PageRoute.jsx
-        expect(page).to have_title("Claims Folder | Caseflow Reader")
+        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+        expect(page).to have_title("#{appeal.veteran_first_name[0]}. #{appeal.veteran_last_name}'s Claims Folder")
 
         # Test that the header has breadcrumbs.
         expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
@@ -1407,9 +1408,9 @@ RSpec.feature "Reader" do
       open_search_bar
       expect(scroll_top).to be(0)
 
-      fill_in "search-ahead", with: "decision"
+      fill_in "search-ahead", with: "just"
 
-      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
       first_match_scroll_top = scroll_top
 
@@ -1418,7 +1419,8 @@ RSpec.feature "Reader" do
       find(".cf-next-match").click
       expect(scroll_top).to be > first_match_scroll_top
 
-      # this doc has 2 matches for "decision", search index wraps around
+      # this doc has 3 matches for "decision", search index wraps around
+      find(".cf-next-match").click
       find(".cf-next-match").click
       expect(scroll_top).to eq(first_match_scroll_top)
     end
