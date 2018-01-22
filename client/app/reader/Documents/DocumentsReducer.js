@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import * as Constants from '../Documents/actionTypes';
 import { update } from '../../util/ReducerUtil';
-import { SET_VIEWING_DOCUMENTS_OR_COMMENTS, DOCUMENTS_OR_COMMENTS_ENUM } from '../DocumentList/actionTypes';
 
 export const initialState = {};
 
@@ -36,11 +35,6 @@ const documentsReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case SET_VIEWING_DOCUMENTS_OR_COMMENTS:
-    return _.mapValues(state, (doc) => ({
-      ...doc,
-      listComments: action.payload.documentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS
-    }));
   case Constants.TOGGLE_COMMENT_LIST:
     return update(state, {
       [action.payload.docId]: {
@@ -168,6 +162,28 @@ const documentsReducer = (state = initialState, action = {}) => {
               }
             });
           }
+        }
+      }
+    });
+  case Constants.CHANGE_PENDING_DOCUMENT_DESCRIPTION:
+    return update(state, {
+      [action.payload.docId]: {
+        pendingDescription: {
+          $set: action.payload.description
+        }
+      }
+    });
+  case Constants.RESET_PENDING_DOCUMENT_DESCRIPTION:
+    return update(state, {
+      [action.payload.docId]: {
+        $unset: 'pendingDescription'
+      }
+    });
+  case Constants.SAVE_DOCUMENT_DESCRIPTION_SUCCESS:
+    return update(state, {
+      [action.payload.docId]: {
+        description: {
+          $set: action.payload.description
         }
       }
     });

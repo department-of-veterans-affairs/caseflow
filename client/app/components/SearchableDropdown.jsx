@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
@@ -17,7 +18,7 @@ class SearchableDropdown extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value || null });
+    this.setState({ value: _.isUndefined(nextProps.value) ? null : nextProps.value });
   };
 
   onChange = (value) => {
@@ -65,6 +66,7 @@ class SearchableDropdown extends Component {
 
     const SelectComponent = creatable ? Select.Creatable : Select;
     let addCreatableOptions = {};
+    const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
 
     /* If the creatable option is passed in, these additional props are added to
      * the select component.
@@ -102,7 +104,7 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
-    return <div className="cf-form-dropdown">
+    return <div className={dropdownClasses} >
       <label className="question-label" htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>

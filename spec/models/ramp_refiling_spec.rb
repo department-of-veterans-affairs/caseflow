@@ -10,6 +10,7 @@ describe RampRefiling do
   let(:original_election_option) { "higher_level_review" }
   let(:option_selected) { nil }
   let(:receipt_date) { nil }
+  let(:appeal_docket) { nil }
 
   let(:completed_ramp_election) do
     RampElection.create!(
@@ -26,7 +27,8 @@ describe RampRefiling do
       ramp_election: completed_ramp_election,
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      option_selected: option_selected
+      option_selected: option_selected,
+      appeal_docket: appeal_docket
     )
   end
 
@@ -49,6 +51,73 @@ describe RampRefiling do
       subject
       expect(ramp_refiling.issues.count).to eq(2)
       expect(ramp_refiling.issues.first.description).to eq("Firsties")
+    end
+  end
+
+  # The create_end_product! side is more thoroughly tested in ramp_election_spec.rb
+  # This spec is more concerned with create_contentions!
+  context "#create_end_product_and_contentions!" do
+    subject { ramp_refiling.create_end_product_and_contentions! }
+
+    before do
+      ramp_refiling.save!
+      Fakes::VBMSService.end_product_claim_id = "1337"
+
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    let(:receipt_date) { 1.day.ago }
+    let(:option_selected) { "supplemental_claim" }
+
+    let!(:issue_already_created) do
+      ramp_refiling.issues.create!(description: "Already created", contention_reference_id: "123")
+    end
+
+    context "when no issues that need to be created in VBMS" do
+      it "does not try and create end product or contentions" do
+        expect(subject).to be_nil
+
+        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+        expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+      end
+    end
+
+    context "when issues need to have contentions created in VBMS" do
+      let!(:issues) do
+        [
+          ramp_refiling.issues.create!(description: "Leg"),
+          ramp_refiling.issues.create!(description: "Arm")
+        ]
+      end
+
+      context "when an issue is not created in VBMS" do
+        # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
+        let!(:issue_to_fail) do
+          ramp_refiling.issues.create!(description: "FAIL ME")
+        end
+
+        it "raises ContentionCreationFailed" do
+          expect { subject }.to raise_error(RampRefiling::ContentionCreationFailed)
+
+          # Even though there was a failure, we should still save the contention ids that were created
+          expect(issues.first.reload.contention_reference_id).to_not be_nil
+          expect(issues.second.reload.contention_reference_id).to_not be_nil
+        end
+      end
+
+      it "sends requests to VBMS to create both the end_product and the uncreated issues" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!)
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          veteran_file_number: "64205555",
+          claim_id: "1337",
+          contention_descriptions: %w[Arm Leg]
+        )
+
+        expect(issues.first.reload.contention_reference_id).to_not be_nil
+      end
     end
   end
 
@@ -140,6 +209,7 @@ describe RampRefiling do
 
         context "when another option" do
           let(:option_selected) { "appeal" }
+          let(:appeal_docket) { "hearing" }
           it { is_expected.to be true }
         end
       end
@@ -149,6 +219,37 @@ describe RampRefiling do
 
         context "when higher level review" do
           let(:option_selected) { "higher_level_review" }
+          it { is_expected.to be true }
+        end
+      end
+    end
+
+    context "appeal docket" do
+      context "if option selected isn't appeal" do
+        let(:option_selected) { "supplemental_claim" }
+        let(:appeal_docket) { "hearing" }
+
+        it "sets appeal_docket to nil" do
+          is_expected.to be true
+          expect(ramp_refiling.appeal_docket).to be_nil
+        end
+      end
+
+      context "if option selected is appeal" do
+        let(:option_selected) { "appeal" }
+
+        context "when not valid" do
+          let(:appeal_docket) { nil }
+
+          it "adds an error to appeal_docket" do
+            is_expected.to be false
+            expect(ramp_refiling.errors[:appeal_docket]).to include("blank")
+          end
+        end
+
+        context "when set to valid value" do
+          let(:appeal_docket) { "hearing" }
+
           it { is_expected.to be true }
         end
       end

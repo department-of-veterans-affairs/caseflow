@@ -10,7 +10,6 @@ class Appeal < ActiveRecord::Base
   has_many :worksheet_issues
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
-  class MultipleDecisionError < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -43,7 +42,7 @@ class Appeal < ActiveRecord::Base
   vacols_attr_accessor :prior_decision_date
 
   # These are only set when you pull in a case from the Case Assignment Repository
-  attr_accessor :date_assigned, :date_received, :signed_date
+  attr_accessor :date_assigned, :date_received, :signed_date, :docket_date, :date_due
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -123,7 +122,7 @@ class Appeal < ActiveRecord::Base
 
   def number_of_documents_after_certification
     return 0 unless certification_date
-    documents.count { |d| d.received_at > certification_date }
+    documents.count { |d| d.received_at && d.received_at > certification_date }
   end
 
   cache_attribute :cached_number_of_documents_after_certification do
@@ -171,11 +170,13 @@ class Appeal < ActiveRecord::Base
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
   def disposition_remand_priority
-    disposition == "Allowed" && issues.select(&:remanded?).any? ? "Remanded" : disposition
+    (disposition == "Allowed" && issues.select(&:remanded?).any?) ? "Remanded" : disposition
   end
 
-  def power_of_attorney
-    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id).load_bgs_record!
+  def power_of_attorney(load_bgs_record: true)
+    @poa ||= PowerOfAttorney.new(file_number: sanitized_vbms_id, vacols_id: vacols_id)
+
+    load_bgs_record ? @poa.load_bgs_record! : @poa
   end
 
   attr_writer :hearings
@@ -238,7 +239,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def hearing_scheduled?
-    scheduled_hearings.length > 0
+    !scheduled_hearings.empty?
   end
 
   def eligible_for_ramp?
@@ -335,7 +336,7 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents!
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
-                                 .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
+      .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
       accumulator[document.vbms_document_id] = document
     end
 
@@ -353,30 +354,36 @@ class Appeal < ActiveRecord::Base
     end
   end
 
-  def partial_grant?
+  # These three methods are used to decide whether the appeal is processed
+  # as a partial grant, remand, or full grant when dispatching it.
+  def partial_grant_on_dispatch?
     status == "Remand" && issues.any?(&:non_new_material_allowed?)
   end
 
-  def full_grant?
+  def full_grant_on_dispatch?
     status == "Complete" && issues.any?(&:non_new_material_allowed?)
   end
 
-  def remand?
-    status == "Remand" && issues.none?(&:non_new_material_allowed?)
+  def remand_on_dispatch?
+    remand? && issues.none?(&:non_new_material_allowed?)
+  end
+
+  def dispatch_decision_type
+    return "Full Grant" if full_grant_on_dispatch?
+    return "Partial Grant" if partial_grant_on_dispatch?
+    return "Remand" if remand_on_dispatch?
   end
 
   def active?
     status != "Complete"
   end
 
-  def merged?
-    disposition == "Merged Appeal"
+  def remand?
+    status == "Remand"
   end
 
-  def decision_type
-    return "Full Grant" if full_grant?
-    return "Partial Grant" if partial_grant?
-    return "Remand" if remand?
+  def merged?
+    disposition == "Merged Appeal"
   end
 
   def special_issues
@@ -453,7 +460,7 @@ class Appeal < ActiveRecord::Base
   end
 
   def api_supported?
-    %w(original post_remand cavc_remand).include? type_code
+    %w[original post_remand cavc_remand].include? type_code
   end
 
   def type_code
@@ -473,7 +480,7 @@ class Appeal < ActiveRecord::Base
   # the query in VACOLS::CaseAssignment.
   def to_hash(viewed: nil, issues: nil, hearings: nil)
     serializable_hash(
-      methods: [:veteran_full_name, :docket_number, :type, :cavc, :aod],
+      methods: [:veteran_full_name, :veteran_first_name, :veteran_last_name, :docket_number, :type, :cavc, :aod],
       includes: [:vbms_id, :vacols_id]
     ).tap do |hash|
       hash["viewed"] = viewed
@@ -576,10 +583,10 @@ class Appeal < ActiveRecord::Base
       # have no events recorded. We are not showing these.
       # TODD: Research and revise strategy around appeals with no events
       repository.appeals_by_vbms_id(vbms_id_for_ssn(appellant_ssn))
-                .select(&:api_supported?)
-                .reject { |a| a.latest_event_date.nil? }
-                .sort_by(&:latest_event_date)
-                .reverse
+        .select(&:api_supported?)
+        .reject { |a| a.latest_event_date.nil? }
+        .sort_by(&:latest_event_date)
+        .reverse
     end
 
     def bgs
@@ -588,7 +595,6 @@ class Appeal < ActiveRecord::Base
 
     def fetch_appeals_by_file_number(file_number)
       repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
-
     rescue Caseflow::Error::InvalidFileNumber
       raise ActiveRecord::RecordNotFound
     end
@@ -604,7 +610,7 @@ class Appeal < ActiveRecord::Base
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
     # rubocop:disable Metrics/ParameterLists
-    def close(appeal:nil, appeals:nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
@@ -624,6 +630,8 @@ class Appeal < ActiveRecord::Base
 
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
+      # `find_by_vacols_id` filters out any cancelled certifications,
+      # if they exist.
       certification = Certification.find_by_vacols_id(appeal.vacols_id)
 
       fail "No Form 8 found for appeal being certified" unless form8

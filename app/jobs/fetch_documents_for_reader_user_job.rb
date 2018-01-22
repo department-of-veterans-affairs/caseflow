@@ -17,8 +17,7 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
     appeals = reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
     log_info
-
-  rescue => e
+  rescue StandardError => e
     log_error
     # raising an exception here triggers a retry through shoryuken
     raise e
@@ -45,12 +44,17 @@ class FetchDocumentsForReaderUserJob < ActiveJob::Base
   def fetch_documents_for_appeals(appeals)
     @counts[:appeals_total] = appeals.count
     appeals.each do |appeal|
-      Raven.extra_context(appeal_id: appeal.id)
-      Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
+      begin
+        Raven.extra_context(appeal_id: appeal.id)
+        Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
 
-      # signal to efolder X to fetch and save all documents
-      appeal.saved_documents
-      @counts[:appeals_successful] += 1
+        # signal to efolder X to fetch and save all documents
+        appeal.saved_documents
+        @counts[:appeals_successful] += 1
+      rescue Caseflow::Error::EfolderAccessForbidden
+        Rails.logger.error "Encountered access forbidden error when fetching documents for appeal #{appeal.id}"
+        next
+      end
     end
   end
 

@@ -9,7 +9,8 @@ describe ReassignOldTasksJob do
     EstablishClaim.create(
       appeal_id: appeal1.id,
       prepared_at: Date.yesterday,
-      aasm_state: :unassigned)
+      aasm_state: :unassigned
+    )
   end
   let!(:status_code) { :expired }
 

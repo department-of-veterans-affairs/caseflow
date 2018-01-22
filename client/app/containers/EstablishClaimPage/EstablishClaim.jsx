@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ReduxBase from '../../util/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
 
 import ApiUtil from '../../util/ApiUtil';
 import WindowUtil from '../../util/WindowUtil';
@@ -242,7 +242,7 @@ export default class EstablishClaim extends React.Component {
   }
 
   getClaimTypeFromDecision = () => {
-    let decisionType = this.props.task.appeal.decision_type;
+    let decisionType = this.props.task.appeal.dispatch_decision_type;
     let values = END_PRODUCT_INFO[this.getRoutingType()][decisionType];
 
     if (!values) {
@@ -286,7 +286,7 @@ export default class EstablishClaim extends React.Component {
   validModifiers = () => {
     return validModifiers(
       this.props.task.appeal.pending_eps,
-      this.props.task.appeal.decision_type
+      this.props.task.appeal.dispatch_decision_type
     );
   }
 
@@ -311,7 +311,7 @@ export default class EstablishClaim extends React.Component {
       });
 
       if (!this.willCreateEndProduct()) {
-        if (this.props.task.appeal.decision_type === FULL_GRANT) {
+        if (this.props.task.appeal.dispatch_decision_type === FULL_GRANT) {
           this.setUnhandledSpecialIssuesEmailAndRegionalOffice();
           this.handlePageChange(EMAIL_PAGE);
         } else {
@@ -465,7 +465,7 @@ export default class EstablishClaim extends React.Component {
       pdfLink,
       pdfjsLink
     } = this.props;
-    let decisionType = this.props.task.appeal.decision_type;
+    let decisionType = this.props.task.appeal.dispatch_decision_type;
 
     const { initialState, reducer } = bootstrapRedux(this.props);
 

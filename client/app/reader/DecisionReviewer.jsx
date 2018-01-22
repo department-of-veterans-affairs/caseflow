@@ -18,7 +18,8 @@ import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -130,13 +131,22 @@ export class DecisionReviewer extends React.PureComponent {
       feedbackUrl={this.props.feedbackUrl} />
   </CaseSelectLoadingScreen>
 
+  getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
+    `${appeal.veteran_first_name.charAt(0)}. \
+      ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
+
   render() {
     const Router = this.props.router || BrowserRouter;
 
     return <Router basename="/reader/appeal" {...this.props.routerTestProps}>
       <div>
         <NavigationBar
+          wideApp
           appName="Reader"
+          logoProps={{
+            accentColor: LOGO_COLORS.READER.ACCENT,
+            overlapColor: LOGO_COLORS.READER.OVERLAP
+          }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">
@@ -148,7 +158,7 @@ export class DecisionReviewer extends React.PureComponent {
               render={this.routedCaseSelect} />
             <PageRoute
               exact
-              title="Claims Folder | Caseflow Reader"
+              title={this.getClaimsFolderPageTitle(this.props.appeal)}
               breadcrumb="Claims Folder"
               path="/:vacolsId/documents"
               render={this.routedPdfListView} />
@@ -161,6 +171,7 @@ export class DecisionReviewer extends React.PureComponent {
           </div>
         </NavigationBar>
         <Footer
+          wideApp
           appName="Reader"
           feedbackUrl={this.props.feedbackUrl}
           buildDate={this.props.buildDate} />
@@ -185,11 +196,19 @@ DecisionReviewer.propTypes = {
   routerProps: PropTypes.object
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
+
+  const getAssignmentFromCaseSelect = (caseSelect, match) =>
+    match && match.params.vacolsId ?
+      _.find(caseSelect.assignments, { vacols_id: match.params.vacolsId }) :
+      null;
+
   return {
     documentFilters: state.documentList.pdfList.filters,
     storeDocuments: state.documents,
-    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation
+    isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
+    appeal: getAssignmentFromCaseSelect(state.caseSelect, props.match) ||
+      state.pdfViewer.loadedAppeal
   };
 };
 

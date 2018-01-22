@@ -9,10 +9,15 @@ import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 import { REQUEST_STATE, PAGE_PATHS, RAMP_INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
-import { setOptionSelected, setReceiptDate, submitReview } from '../../actions/rampRefiling';
+import { setOptionSelected, setReceiptDate, setAppealDocket,
+  submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
+import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 
 class Review extends React.PureComponent {
+  beginNextIntake = () => {
+    this.props.confirmIneligibleForm(this.props.intakeId);
+  }
   render() {
     const {
       rampRefilingStatus,
@@ -21,7 +26,10 @@ class Review extends React.PureComponent {
       optionSelectedError,
       hasInvalidOption,
       receiptDate,
-      receiptDateError
+      receiptDateError,
+      appealDocket,
+      appealDocketError,
+      submitInvalidOptionError
     } = this.props;
 
     switch (rampRefilingStatus) {
@@ -32,18 +40,45 @@ class Review extends React.PureComponent {
     default:
     }
 
-    const radioOptions = _.map(REVIEW_OPTIONS, (option) => ({
+    const reviewRadioOptions = _.map(REVIEW_OPTIONS, (option) => ({
       value: option.key,
       displayText: option.name
     }));
 
+    const docketRadioOptions = [
+      {
+        value: 'direct_review',
+        displayText: 'Direct Review'
+      },
+      {
+        value: 'evidence_submission',
+        displayText: 'Evidence Submission'
+      },
+      {
+        value: 'hearing',
+        displayText: 'Hearing'
+      }
+    ];
+
     return <div>
-      { hasInvalidOption && <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+      { submitInvalidOptionError && <Alert title="Something went wrong" type="error">
+        Please try again. If the problem persists, please contact Caseflow support.</Alert>}
+
+      { toggleIneligibleError(hasInvalidOption, optionSelected) &&
+        <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
-          and that they may clarify their lane selection within 30 days.
-      </Alert>
+          and that they may clarify their lane selection within 30 days. <br />
+          <Button
+            name="begin-next-intake"
+            onClick={this.beginNextIntake}
+            loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+            legacyStyling={false}>
+            Begin next intake
+          </Button>
+        </Alert>
       }
+
       <h1>Review { veteranName }'s 21-4138 RAMP Selection Form</h1>
 
       <DateSelector
@@ -59,11 +94,23 @@ class Review extends React.PureComponent {
         name="opt-in-election"
         label="Which review lane did the Veteran select?"
         strongLabel
-        options={radioOptions}
+        options={reviewRadioOptions}
         onChange={this.props.setOptionSelected}
         errorMessage={optionSelectedError}
         value={optionSelected}
       />
+
+      { optionSelected === REVIEW_OPTIONS.APPEAL.key &&
+        <RadioField
+          name="appeal-docket"
+          label="Which type of appeal did the Veteran request?"
+          strongLabel
+          options={docketRadioOptions}
+          onChange={this.props.setAppealDocket}
+          errorMessage={appealDocketError}
+          value={appealDocket}
+        />
+      }
     </div>;
   }
 }
@@ -76,11 +123,18 @@ export default connect(
     optionSelectedError: state.rampRefiling.optionSelectedError,
     hasInvalidOption: state.rampRefiling.hasInvalidOption,
     receiptDate: state.rampRefiling.receiptDate,
-    receiptDateError: state.rampRefiling.receiptDateError
+    receiptDateError: state.rampRefiling.receiptDateError,
+    requestStatus: state.rampRefiling.requestStatus,
+    intakeId: state.intake.id,
+    appealDocket: state.rampRefiling.appealDocket,
+    appealDocketError: state.rampRefiling.appealDocketError,
+    submitInvalidOptionError: state.rampRefiling.submitInvalidOptionError
   }),
   (dispatch) => bindActionCreators({
     setOptionSelected,
-    setReceiptDate
+    setReceiptDate,
+    setAppealDocket,
+    confirmIneligibleForm
   }, dispatch)
 )(Review);
 
@@ -100,6 +154,7 @@ class ReviewNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
+      disabled={toggleIneligibleError(this.props.hasInvalidOption, this.props.optionSelected)}
     >
       Continue to next step
     </Button>;
@@ -109,7 +164,9 @@ const ReviewNextButtonConnected = connect(
   ({ rampRefiling, intake }) => ({
     intakeId: intake.id,
     requestState: rampRefiling.requestStatus.submitReview,
-    rampRefiling
+    rampRefiling,
+    hasInvalidOption: rampRefiling.hasInvalidOption,
+    optionSelected: rampRefiling.optionSelected
   }),
   (dispatch) => bindActionCreators({
     submitReview

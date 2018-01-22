@@ -68,8 +68,8 @@ def add_comment_without_clicking_save(text)
     click_on "button-AddComment"
     expect(page).to have_css(".cf-pdf-placing-comment", visible: true)
 
-    # pageContainer1 is the id pdfJS gives to the div holding the first page.
-    find("#pageContainer1").click
+    # comment-layer-${pageIndex}-${fileName} is the id of the first page's CommentLayer
+    page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
     expect(page).to_not have_css(".cf-pdf-placing-comment")
 
@@ -77,7 +77,7 @@ def add_comment_without_clicking_save(text)
       find("#addComment")
       break
     rescue Capybara::ElementNotFound
-      Rails.logger.info('#addComment not found, trying again')
+      Rails.logger.info("#addComment not found, trying again")
     end
   end
   fill_in "addComment", with: text, wait: 10
@@ -139,7 +139,8 @@ RSpec.feature "Reader" do
           tags: [
             Generators::Tag.create(text: "New Tag1"),
             Generators::Tag.create(text: "New Tag2")
-          ]
+          ],
+          description: Generators::Random.word_characters(50)
         ),
         Generators::Document.create(
           filename: "My Form 9",
@@ -178,7 +179,7 @@ RSpec.feature "Reader" do
 
       scenario "filtering tags and comments" do
         find("#tags-header .table-icon").click
-        tags_checkboxes = page.find('#tags-header').all(".cf-form-checkbox")
+        tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
         tags_checkboxes[0].click
         tags_checkboxes[1].click
         expect(page).to have_content("Issue tags (2)")
@@ -193,15 +194,16 @@ RSpec.feature "Reader" do
 
       scenario "filtering comments" do
         click_on "Comments"
-        expect(page).to have_content("Comments.")
+        expect(page).to have_content("Sorted by relevant date")
       end
 
       scenario "clear all filters" do
-        click_on "Comments"
-        expect(page).to have_content("Comments.")
-
+        # category filter is only visible when DocumentsTable displayed, but affects Comments
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
+
+        click_on "Comments"
+        expect(page).to have_content("Sorted by relevant date")
 
         # When the "clear filters" button is clicked, the filtering message is reset,
         # and focus goes back on the Document toggle.
@@ -277,7 +279,8 @@ RSpec.feature "Reader" do
         Generators::Appeal.build(
           vbms_id: "123456789S",
           vacols_record: vacols_record,
-          documents: documents)
+          documents: documents
+        )
       end
 
       let(:appeal4) do
@@ -328,7 +331,8 @@ RSpec.feature "Reader" do
         expect(page).to have_content("Documents")
 
         # Test that the title changed. Functionality in PageRoute.jsx
-        expect(page).to have_title("Claims Folder | Caseflow Reader")
+        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
+        expect(page).to have_title("#{appeal.veteran_first_name[0]}. #{appeal.veteran_last_name}'s Claims Folder")
 
         # Test that the header has breadcrumbs.
         expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
@@ -521,7 +525,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Caseflow Reader")
 
       add_comment("comment text")
-      expect(page.find('#comments-header')).to have_content("Page 1")
+      expect(page.find("#comments-header")).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
@@ -745,10 +749,9 @@ RSpec.feature "Reader" do
         expect(page).not_to have_content(documents[2].type)
 
         # Filtering the document list should work in "Comments" mode.
-        find("#categories-header svg").click
-        find(".checkbox-wrapper-procedural").click
-        expect(page).to have_content(documents[0].type)
-        expect(page).not_to have_content(documents[1].type)
+        fill_in "searchBar", with: "form"
+        expect(page).not_to have_content(documents[0].type)
+        expect(page).to have_content(documents[1].type)
 
         click_on "Documents"
         expect(page).not_to have_content("another comment")
@@ -1037,6 +1040,8 @@ RSpec.feature "Reader" do
       find("h3", text: "Document information").click
 
       expect(page).to have_content("Document Type")
+      expect(page).to have_content("Document Description")
+      expect(find("#document_description").text).to eq(documents[0].description)
       expect(page).to have_content("BVA Decision")
       expect(page).to have_content("AOD")
       expect(page).to have_content("Veteran ID")
@@ -1053,6 +1058,34 @@ RSpec.feature "Reader" do
         issue.levels do |level|
           expect(page).to have_content(level)
         end
+      end
+    end
+
+    scenario "Update Document Description" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+      find("h3", text: "Document information").click
+      find("#document_description-edit").click
+
+      fill_in "document_description", with: "New Description"
+
+      find("#document_description-save").click
+
+      expect(find("#document_description").text).to eq("New Description")
+    end
+
+    scenario "Update Document Description with Enter" do
+      skip_because_sending_keys_to_body_does_not_work_on_travis do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+        click_on documents[0].type
+        find("h3", text: "Document information").click
+        find("#document_description-edit").click
+
+        fill_in "document_description", with: "Another New Description"
+
+        find("#document_description").send_keys [:enter]
+
+        expect(find("#document_description").text).to eq("Another New Description")
       end
     end
 
@@ -1111,7 +1144,8 @@ RSpec.feature "Reader" do
       click_on documents[1].type
 
       expect((get_aria_labels all(".cf-document-category-icons li", count: 3))).to eq(
-        ["Medical", "Other Evidence", "Case Summary"])
+        ["Medical", "Other Evidence", "Case Summary"]
+      )
       expect(find("#case_summary", visible: false).disabled?).to be true
 
       find("#button-next").click
@@ -1378,9 +1412,9 @@ RSpec.feature "Reader" do
       open_search_bar
       expect(scroll_top).to be(0)
 
-      fill_in "search-ahead", with: "decision"
+      fill_in "search-ahead", with: "just"
 
-      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 2']")
+      expect(find("#search-internal-text")).to have_xpath("//input[@value='1 of 3']")
 
       first_match_scroll_top = scroll_top
 
@@ -1389,7 +1423,8 @@ RSpec.feature "Reader" do
       find(".cf-next-match").click
       expect(scroll_top).to be > first_match_scroll_top
 
-      # this doc has 2 matches for "decision", search index wraps around
+      # this doc has 3 matches for "decision", search index wraps around
+      find(".cf-next-match").click
       find(".cf-next-match").click
       expect(scroll_top).to eq(first_match_scroll_top)
     end
@@ -1468,7 +1503,7 @@ RSpec.feature "Reader" do
     # test to avoid the issue of a request to /document/1/pdf returning a cached response
     # instead of an error that would trigger the state we desire.
     # Created issue #3883 to address this browser cache retention issue.
-    let(:documents) { [Generators::Document.create(id: rand(999) + 999_999)] }
+    let(:documents) { [Generators::Document.create(id: rand(999_999..1_000_997))] }
 
     scenario "causes individual file view will display error message" do
       allow_any_instance_of(DocumentController).to receive(:pdf).and_raise(StandardError)

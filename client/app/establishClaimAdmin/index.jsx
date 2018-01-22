@@ -1,12 +1,13 @@
 import React from 'react';
-import ReduxBase from '../util/ReduxBase';
+import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
 
 import { BrowserRouter, Route } from 'react-router-dom';
 
 import StuckTasksContainer from './StuckTasksContainer';
 import { establishClaimAdminReducers, mapDataToInitialState } from './reducers';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const EstablishClaimAdmin = ({
   userDisplayName,
@@ -23,6 +24,10 @@ const EstablishClaimAdmin = ({
         <div>
           <NavigationBar
             appName="Establish Claim Admin"
+            logoProps={{
+              accentColor: LOGO_COLORS.DISPATCH.ACCENT,
+              overlapColor: LOGO_COLORS.DISPATCH.OVERLAP
+            }}
             defaultUrl="/dispatch/admin"
             userDisplayName={userDisplayName}
             dropdownUrls={dropdownUrls}>

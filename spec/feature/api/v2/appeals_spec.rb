@@ -74,13 +74,13 @@ describe "Appeals API v2", type: :request do
         },
         issues: [
           Generators::Issue.build(
-            codes: %w(02 15 04 5301),
+            codes: %w[02 15 04 5301],
             labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group I"],
             disposition: nil,
             close_date: nil
           ),
           Generators::Issue.build(
-            codes: %w(02 15 04 5302),
+            codes: %w[02 15 04 5302],
             labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group II"],
             disposition: :advance_allowed_in_field,
             close_date: Time.zone.today - 5.days
@@ -222,7 +222,7 @@ describe "Appeals API v2", type: :request do
 
       # check the events on the first appeal are correct
       event_types = json["data"].first["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc remand_return))
+      expect(event_types).to eq(%w[claim_decision nod soc form9 ssoc hearing_held bva_decision ssoc remand_return])
 
       # check the status on the first appeal
       status = json["data"].first["attributes"]["status"]
@@ -243,7 +243,7 @@ describe "Appeals API v2", type: :request do
 
       # check the events on the last appeal are correct
       event_types = json["data"].last["attributes"]["events"].map { |e| e["type"] }
-      expect(event_types).to eq(%w(claim_decision nod soc))
+      expect(event_types).to eq(%w[claim_decision nod soc])
 
       # check for an alert on the last appeal
       expect(json["data"].last["attributes"]["alerts"].first["type"]).to eq("form9_needed")

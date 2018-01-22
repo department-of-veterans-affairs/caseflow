@@ -11,7 +11,7 @@ import {
 } from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
-import { getDate } from '../util/DateUtil';
+import { getDateTime } from '../util/DateUtil';
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -67,15 +67,23 @@ export class DocketHearingRow extends React.PureComponent {
         format('h:mm a z');
     };
 
-    const appellantDisplay = hearing.appellant_mi_formatted ? hearing.appellant_mi_formatted :
-      hearing.veteran_mi_formatted;
+    // Appellant differs Veteran
+    let differsVeteran = hearing.appellant_mi_formatted !== hearing.veteran_mi_formatted;
+
+    const appellantDisplay = <div>
+      { differsVeteran ?
+        (<span><b>{hearing.appellant_mi_formatted}</b>
+          {hearing.veteran_mi_formatted} (Veteran)</span>) :
+        (<b>{hearing.veteran_mi_formatted}</b>)
+      }
+    </div>;
 
     return <tbody>
       <tr>
         <td className="cf-hearings-docket-date">
           <span>{index + 1}.</span>
           <span>
-            {getDate(hearing.date)} /<br />
+            {getDateTime(hearing.date)} /<br />
             {getRoTime(hearing.date)}
           </span>
           <span>
@@ -83,7 +91,7 @@ export class DocketHearingRow extends React.PureComponent {
           </span>
         </td>
         <td className="cf-hearings-docket-appellant">
-          <b>{appellantDisplay}</b>
+          {appellantDisplay}
           <ViewableItemLink
             boldCondition={!hearing.viewed_by_current_user}
             onOpen={this.setHearingViewed}
@@ -98,27 +106,27 @@ export class DocketHearingRow extends React.PureComponent {
         <td className="cf-hearings-docket-actions" rowSpan="3">
           <SearchableDropdown
             label="Disposition"
-            name={`${hearing.id}.disposition`}
+            name={`${hearing.id}-disposition`}
             options={dispositionOptions}
             onChange={this.setDisposition}
             value={hearing.disposition}
-            searchable
+            searchable={false}
           />
           <SearchableDropdown
             label="Hold Open"
-            name={`${hearing.id}.hold_open`}
+            name={`${hearing.id}-hold_open`}
             options={holdOptions}
             onChange={this.setHoldOpen}
             value={hearing.hold_open}
-            searchable
+            searchable={false}
           />
           <SearchableDropdown
             label="AOD"
-            name={`${hearing.id}.aod`}
+            name={`${hearing.id}-aod`}
             options={aodOptions}
             onChange={this.setAod}
             value={hearing.aod}
-            searchable
+            searchable={false}
           />
           <div className="transcriptRequested">
             <Checkbox

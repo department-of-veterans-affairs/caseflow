@@ -23,6 +23,8 @@ RSpec.feature "Hearings" do
           user: current_user,
           appellant_first_name: "AppellantFirstName",
           appellant_last_name: "AppellantLastName",
+          veteran_first_name: "VeteranFirstName",
+          veteran_last_name: "VeteranLastName",
           date: 5.days.from_now,
           type: "video",
           master_record: false
@@ -71,7 +73,7 @@ RSpec.feature "Hearings" do
       expect(docket2_hearings).to eql("2")
 
       # Validate help link
-      find('#menu-trigger').click
+      find("#menu-trigger").click
       find_link("Help").click
       expect(page).to have_content("Welcome to the Hearings Help page!")
     end
@@ -89,23 +91,25 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
 
-      find_link("Back to Upcoming Hearing Days").click
+      find_link("Back to Your Hearing Days").click
       expect(page).to have_content("Your Hearing Days")
     end
 
     scenario "Daily docket saves to the backend" do
       visit "/hearings/dockets/2017-01-01"
       fill_in "3.notes", with: "This is a note about the hearing!"
-      fill_in "3.disposition", with: "No Show\n"
-      fill_in "3.hold_open", with: "30 days\n"
-      fill_in "3.aod", with: "Filed\n"
+      find(".dropdown-3-disposition").click
+      find("#react-select-2--option-1").click
+      find(".dropdown-3-hold_open").click
+      find("#react-select-3--option-2").click
+      find(".dropdown-3-aod").click
+      find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
-
       visit "/hearings/dockets/2017-01-01"
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
-      expect(page).to have_content("30 days")
-      expect(page).to have_content("Filed")
+      expect(page).to have_content("60 days")
+      expect(page).to have_content("None")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
     end
 
@@ -142,6 +146,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      expect(page.title).to eq "V. Veteran Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet saves on refresh" do
@@ -167,20 +172,15 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
-      expect(page.title).to eq "Appellant First Name A. Appellant Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
       visit "/hearings/1/worksheet"
-      expect(page).to_not have_field("1-issue-program")
-      expect(page).to_not have_field("1-issue-name")
-      expect(page).to_not have_field("1-issue-levels")
+      expect(page).to_not have_field("1-issue-description")
       expect(page).to have_field("1-issue-notes")
 
       click_on "button-addIssue-2"
-      fill_in "2-issue-program", with: "This is the program"
-      fill_in "2-issue-name", with: "This is the name"
-      fill_in "2-issue-levels", with: "This is the level"
+      fill_in "2-issue-description", with: "This is the description"
       fill_in "2-issue-notes", with: "This is a note"
 
       find("#cf-issue-delete-21").click
@@ -188,9 +188,7 @@ RSpec.feature "Hearings" do
       expect(page).to_not have_content("Service Connection")
 
       visit "/hearings/1/worksheet"
-      expect(page).to have_content("This is the program")
-      expect(page).to have_content("This is the name")
-      expect(page).to have_content("This is the level")
+      expect(page).to have_content("This is the description")
       expect(page).to have_content("This is a note")
       expect(page).to_not have_content("Service Connection")
     end

@@ -94,7 +94,7 @@ describe Appeal do
     end
 
     context "when 2 types are passed" do
-      let(:type) { %w(NOD SSOC) }
+      let(:type) { %w[NOD SSOC] }
       it "returns right number of documents and type" do
         expect(subject.count).to eq(2)
         expect(subject.first.type).to eq(type.first)
@@ -219,7 +219,7 @@ describe Appeal do
     subject { appeal.events }
 
     it "returns list of events" do
-      expect(subject.length > 0).to be_truthy
+      expect(!subject.empty?).to be_truthy
       expect(subject.count { |event| event.type == :claim_decision } > 0).to be_truthy
       expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
       expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
@@ -599,7 +599,8 @@ describe Appeal do
 
   context ".close" do
     let(:vacols_record) { :ready_to_certify }
-    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record) }
+    let(:issues) { [] }
+    let(:appeal) { Generators::Appeal.build(vacols_record: vacols_record, issues: issues) }
     let(:another_appeal) { Generators::Appeal.build(vacols_record: :remand_decided) }
     let(:user) { Generators::User.build }
     let(:disposition) { "RAMP Opt-in" }
@@ -684,6 +685,11 @@ describe Appeal do
         context "when appeal is a remand" do
           let(:vacols_record) { :remand_decided }
 
+          # Add non_new_material_allowed issue to make sure it still works
+          let(:issues) do
+            [Generators::Issue.build(disposition: :allowed)]
+          end
+
           it "closes the remand in VACOLS" do
             expect(Fakes::AppealRepository).to receive(:close_remand!).with(
               appeal: appeal,
@@ -718,6 +724,26 @@ describe Appeal do
         expect { subject }.to_not raise_error
         expect(Fakes::VBMSService.uploaded_form8.id).to eq(@form8.id)
         expect(Fakes::VBMSService.uploaded_form8_appeal).to eq(appeal)
+      end
+    end
+
+    context "when a cancelled certification for an appeal already exists in the DB" do
+      before do
+        @form8 = Form8.create(vacols_id: "765")
+        @cancelled_certification = Certification.create!(
+          vacols_id: "765", hearing_preference: "SOME_INVALID_PREF"
+        )
+        CertificationCancellation.create!(
+          certification_id: @cancelled_certification.id,
+          cancellation_reason: "reason",
+          email: "test@caseflow.gov"
+        )
+        @certification = Certification.create!(vacols_id: "765", hearing_preference: "VIDEO")
+      end
+
+      it "certifies the correct appeal using AppealRepository" do
+        expect { subject }.to_not raise_error
+        expect(Fakes::AppealRepository.certification).to eq(@certification)
       end
     end
 
@@ -841,9 +867,9 @@ describe Appeal do
     end
   end
 
-  context "#partial_grant?" do
+  context "#partial_grant_on_dispatch?" do
     let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-    subject { appeal.partial_grant? }
+    subject { appeal.partial_grant_on_dispatch? }
 
     context "when no allowed issues" do
       let(:issues) { [Generators::Issue.build(disposition: :remanded)] }
@@ -852,7 +878,7 @@ describe Appeal do
     end
 
     context "when the allowed issues are new material" do
-      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252))] }
+      let(:issues) { [Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252])] }
 
       it { is_expected.to be_falsey }
     end
@@ -869,12 +895,12 @@ describe Appeal do
     end
   end
 
-  context "#full_grant?" do
+  context "#full_grant_on_dispatch?" do
     let(:issues) { [] }
     let(:appeal) do
       Generators::Appeal.build(vacols_id: "123", status: status, issues: issues)
     end
-    subject { appeal.full_grant? }
+    subject { appeal.full_grant_on_dispatch? }
 
     context "when status is Remand" do
       let(:status) { "Remand" }
@@ -887,7 +913,7 @@ describe Appeal do
       context "when at least one issues is new-material allowed" do
         let(:issues) do
           [
-            Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252)),
+            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
             Generators::Issue.build(disposition: :denied)
           ]
         end
@@ -906,27 +932,38 @@ describe Appeal do
     end
   end
 
-  context "#remand?" do
-    subject { appeal.remand? }
-    context "is false if status is not remand" do
+  context "#remand_on_dispatch?" do
+    subject { appeal.remand_on_dispatch? }
+
+    context "status is not remand" do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Complete") }
-      it { is_expected.to be_falsey }
+      it { is_expected.to be false }
     end
 
-    context "is true if status is remand" do
-      let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand") }
-      it { is_expected.to be_truthy }
-    end
-
-    context "is true if new-material allowed issue" do
-      let(:issues) do
-        [
-          Generators::Issue.build(disposition: :allowed, codes: %w(02 15 04 5252)),
-          Generators::Issue.build(disposition: :remanded)
-        ]
-      end
+    context "status is remand" do
       let(:appeal) { Generators::Appeal.build(vacols_id: "123", status: "Remand", issues: issues) }
-      it { is_expected.to be_truthy }
+
+      context "contains at least one new-material allowed issue" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed),
+            Generators::Issue.build(disposition: :remanded)
+          ]
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context "contains no new-material allowed issues" do
+        let(:issues) do
+          [
+            Generators::Issue.build(disposition: :allowed, codes: %w[02 15 04 5252]),
+            Generators::Issue.build(disposition: :remanded)
+          ]
+        end
+
+        it { is_expected.to be true }
+      end
     end
   end
 
@@ -994,8 +1031,8 @@ describe Appeal do
     end
   end
 
-  context "#decision_type" do
-    subject { appeal.decision_type }
+  context "#dispatch_decision_type" do
+    subject { appeal.dispatch_decision_type }
     context "when it has a mix of allowed and granted issues" do
       let(:issues) do
         [
@@ -1338,8 +1375,16 @@ describe Appeal do
       )
     end
 
-    it "returns poa loaded with BGS values" do
+    it "returns poa loaded with BGS values by default" do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
+    end
+
+    context "#power_of_attorney(load_bgs_record: false)" do
+      subject { appeal.power_of_attorney(load_bgs_record: false) }
+
+      it "returns poa without fetching BGS values if desired" do
+        is_expected.to have_attributes(bgs_representative_type: nil, bgs_representative_name: nil)
+      end
     end
 
     context "#power_of_attorney.bgs_representative_address" do
@@ -1349,7 +1394,8 @@ describe Appeal do
         is_expected.to include(
           address_line_1: "9999 MISSION ST",
           city: "SAN FRANCISCO",
-          zip: "94103")
+          zip: "94103"
+        )
       end
     end
   end
@@ -1363,9 +1409,9 @@ describe Appeal do
 
     let(:issues) do
       [
-        Generators::Issue.build(disposition: :allowed, codes: %w(02 01)),
-        Generators::Issue.build(disposition: :allowed, codes: %w(02 02)),
-        Generators::Issue.build(disposition: :allowed, codes: %w(02 01))
+        Generators::Issue.build(disposition: :allowed, codes: %w[02 01]),
+        Generators::Issue.build(disposition: :allowed, codes: %w[02 02]),
+        Generators::Issue.build(disposition: :allowed, codes: %w[02 01])
       ]
     end
 
@@ -1403,11 +1449,10 @@ describe Appeal do
           program: "Wheel",
           name: "Spoon",
           levels: "Cabbage\nPickle",
-          description: "Donkey\nCow",
+          notes: "Donkey\nCow",
           from_vacols: true,
           vacols_sequence_id: 1
-        }]
-         }
+        }] }
       end
 
       it "updates worksheet issues" do
@@ -1424,12 +1469,12 @@ describe Appeal do
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
         expect(issue.levels).to eq "Cabbage\nPickle"
-        expect(issue.description).to eq "Donkey\nCow"
+        expect(issue.notes).to eq "Donkey\nCow"
 
         # test that a 2nd save updates the same record, rather than create new one
         id = appeal.worksheet_issues.first.id
         appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:description] = "Tomato"
+        appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
         appeals_hash[:worksheet_issues_attributes][0][:id] = id
 
         appeal.update(appeals_hash)
@@ -1444,7 +1489,7 @@ describe Appeal do
         expect(issue.program).to eq "Wheel"
         expect(issue.name).to eq "Spoon"
         expect(issue.levels).to eq "Cabbage\nPickle"
-        expect(issue.description).to eq "Tomato"
+        expect(issue.notes).to eq "Tomato"
 
         # soft delete an issue
         appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
@@ -1543,9 +1588,8 @@ describe Appeal do
 
       let!(:issues) do
         [Generators::Issue.build(disposition: :allowed,
-                                 codes: %w(02 15 03 04 05),
-                                 labels: labels)
-        ]
+                                 codes: %w[02 15 03 04 05],
+                                 labels: labels)]
       end
 
       it "includes viewed boolean in hash" do

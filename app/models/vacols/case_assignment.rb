@@ -18,13 +18,14 @@ class VACOLS::CaseAssignment < VACOLS::Record
     # table to get the veteran's name, and the associated row in the
     # decass table to get the assigned dates, but these are not mandatory,
     # so we left join on both of them.
-    # rubocop:disable Metrics/MethodLength
     def select_assignments
       select("brieff.bfkey as vacols_id",
              "decass.deassign as date_assigned",
              "decass.dereceive as date_received",
+             "decass.dedeadline as date_due",
              "brieff.bfddec as signed_date",
              "brieff.bfcorlid as vbms_id",
+             "brieff.bfd19 as docket_date",
              "corres.snamef as veteran_first_name",
              "corres.snamemi as veteran_middle_initial",
              "corres.snamel as veteran_last_name",
@@ -36,6 +37,30 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = decass.defolder
           LEFT JOIN corres
             ON brieff.bfcorkey = corres.stafkey
+          JOIN staff
+            ON brieff.bfcurloc = staff.slogid
+          JOIN folder
+            ON brieff.bfkey = folder.ticknum
+        SQL
+    end
+
+    def tasks_for_user(css_id)
+      id = connection.quote(css_id.upcase)
+
+      select_tasks.where("staff.sdomainid = #{id}")
+    end
+
+    def select_tasks
+      select("brieff.bfkey as vacols_id",
+             "brieff.bfcorlid as vbms_id",
+             "brieff.bfd19 as docket_date",
+             "decass.deassign as date_assigned",
+             "decass.dereceive as date_received",
+             "decass.dedeadline as date_due",
+             "folder.tinum as docket_number")
+        .joins(<<-SQL)
+          LEFT JOIN decass
+            ON brieff.bfkey = decass.defolder
           JOIN staff
             ON brieff.bfcurloc = staff.slogid
           JOIN folder

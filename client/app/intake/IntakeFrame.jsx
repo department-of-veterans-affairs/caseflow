@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
@@ -20,6 +20,7 @@ import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 class IntakeFrame extends React.PureComponent {
   handleSubmitCancel = () => (
@@ -58,6 +59,10 @@ class IntakeFrame extends React.PureComponent {
         }
         <NavigationBar
           appName={appName}
+          logoProps={{
+            accentColor: LOGO_COLORS.INTAKE.ACCENT,
+            overlapColor: LOGO_COLORS.INTAKE.OVERLAP
+          }}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}

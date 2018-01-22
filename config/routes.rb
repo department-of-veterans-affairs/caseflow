@@ -31,6 +31,12 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :metrics do
+    namespace :v1 do
+      resources :histogram, only: :create
+    end
+  end
+
   scope path: "/dispatch" do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
@@ -89,12 +95,27 @@ Rails.application.routes.draw do
 
   patch "certifications" => "certifications#create"
 
+  get 'help' => 'help#index'
+  get 'dispatch/help' => 'help#dispatch'
+  get 'certification/help' => 'help#certification'
+  get 'reader/help' => 'help#reader'
+  get 'hearings/help' => 'help#hearings'
+  get 'intake/help' => 'help#intake'
 
-  match '/intake/:any' => 'intakes#index', via: [:get]
+
+  # alias root to help; make sure to keep this below the canonical route so url_for works
+  root 'help#index'
+
 
   resources :intakes, path: "intake", only: [:index, :create, :destroy] do
     patch 'review', on: :member
     patch 'complete', on: :member
+    patch 'error', on: :member
+  end
+
+  scope path: '/queue' do
+    get '/', to: 'queue#index'
+    get '/:user_id', to: 'queue#tasks'
   end
 
   get "health-check", to: "health_checks#show"
@@ -106,19 +127,13 @@ Rails.application.routes.draw do
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
+  get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
+
+  match '/intake/:any' => 'intakes#index', via: [:get]
 
   get "styleguide", to: "styleguide#show"
 
-  get 'help' => 'help#index'
-  get 'dispatch/help' => 'help#dispatch'
-  get 'certification/help' => 'help#certification'
-  get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
-
-
-  # alias root to help; make sure to keep this below the canonical route so url_for works
-  root 'help#index'
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
@@ -130,12 +145,12 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
+    resources :users, only: [:index]
     if ApplicationController.dependencies_faked?
-      resources :users, only: [:index]
       post "/set_user/:id", to: "users#set_user", as: "set_user"
-      post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
     end
+    post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
   end
 
   # :nocov:

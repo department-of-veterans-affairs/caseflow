@@ -2,10 +2,34 @@ import React from 'react';
 
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
-import Logo from '../../components/Logo';
+import CaseflowLogo from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/CaseflowLogo';
 
 export default class StyleLogos extends React.PureComponent {
   render = () => {
+
+    const logos = [
+      {
+        accentColor: '#844e9f',
+        overlapColor: '#7a4b91',
+        appName: 'Dispatch'
+      },
+      {
+        accentColor: 'rgb(72, 144, 0)',
+        overlapColor: 'rgb(72, 144, 0)',
+        appName: 'Hearings Prep'
+      },
+      {
+        accentColor: '#FFCC4E',
+        overlapColor: '#CA9E00',
+        appName: 'Intake'
+      },
+      {
+        accentColor: '#417505',
+        overlapColor: '#2D5104',
+        appName: 'Reader'
+      }
+    ];
+
     return <div>
       <StyleGuideComponentTitle
         title="Logos"
@@ -23,27 +47,11 @@ export default class StyleLogos extends React.PureComponent {
         When refering to the whole Caseflow system, you should use the
         non-colored Caseflow logo.
       </p>
-      <p>
-        <Logo app="efolder" /><b>eFolder Express</b>
-      </p>
-      <p>
-        <Logo app="certification" /><b>Certification</b>
-      </p>
-      <p>
-        <Logo app="dispatch" /><b>Dispatch</b>
-      </p>
-      <p>
-        <Logo app="reader" /><b>Reader</b>
-      </p>
-      <p>
-        <Logo app="intake" /><b>Intake</b>
-      </p>
-      <p>
-        <Logo app="feedback" /><b>Feedback</b>
-      </p>
-      <p>
-        <Logo /><b>General Logo</b>
-      </p>
+      {
+        logos.map(({ appName, ...logoProps }) => <p key={appName} className="cf-styleguide-logo-row">
+          <CaseflowLogo {...logoProps} /><strong>{appName}</strong>
+        </p>)
+      }
     </div>;
   }
 }

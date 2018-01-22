@@ -1,4 +1,4 @@
-# coding: utf-8
+
 require "rails_helper"
 
 RSpec.feature "Start Certification" do
@@ -240,7 +240,7 @@ RSpec.feature "Start Certification" do
       allow(StartCertificationJob).to receive(:perform_now).and_return(true)
       visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
       expect(page).to have_content("Loading")
-      certification = Certification.find_by(vacols_id: appeal_ready_exact_match.vacols_id)
+      certification = Certification.find_by_vacols_id(appeal_ready_exact_match.vacols_id)
       certification.update_attributes(loading_data_failed: true)
       expect(page).to have_content("Technical Difficulties", wait: 30)
     end

@@ -32,7 +32,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     fileNumberSearch: '',
     searchErrorCode: null,
     searchErrorData: {
-      duplicateNoticeDate: null
+      duplicateNoticeDate: null,
+      duplicateProcessedBy: null
     },
     cancelModalVisible: false,
     veteran: {
@@ -94,6 +95,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
       searchErrorData: {
         duplicateNoticeDate: {
           $set: formatDateStr(action.payload.errorData.notice_date)
+        },
+        duplicateProcessedBy: {
+          $set: action.payload.errorData.processed_by
         }
       },
       requestStatus: {

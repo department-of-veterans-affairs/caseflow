@@ -47,6 +47,20 @@ $tag-backgrond-color: #d6d7d9;
   .documents-table {
     min-width: 810px;
     margin-top: 0;
+
+    &.full-width {
+      width: 100%;
+    }
+
+    tbody > tr > td {
+      vertical-align: top;
+    }
+
+    .comments-table-header > tr > th {
+      font-weight: normal;
+      float: left;
+      padding-left: 0;
+    }
   }
 
   $last-read-column-width: 41px;
@@ -108,6 +122,20 @@ $tag-backgrond-color: #d6d7d9;
     max-height: 65vh;
     overflow: auto;
 
+    > .borderless {
+      border: none;
+
+      > td {
+        width: 100vw;
+        padding-bottom: 0;
+      }
+
+      .horizontal-comment {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
     .horizontal-comment {
       display: flex;
       margin-left: $last-read-column-width;
@@ -135,6 +163,12 @@ $tag-backgrond-color: #d6d7d9;
 
   .document-list-receipt-date {
     color: $gray-font-color;
+  }
+
+  .document-list-doc-description {
+    color: $color-gray;
+    font-size: 1.5rem;
+    margin: 0;
   }
 
   .document-list-comments-indicator-icon {

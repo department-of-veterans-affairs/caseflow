@@ -34,7 +34,6 @@ class CreateEstablishClaim
     return unless validate_decision_type
 
     @error_code = prepare_establish_claim unless prepare_establish_claim == :success
-
   rescue ActiveRecord::RecordNotFound
     @error_code = :appeal_not_found
   rescue Caseflow::Error::MultipleAppealsByVBMSID

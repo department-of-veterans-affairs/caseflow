@@ -2,6 +2,7 @@ import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const options = [
   {
@@ -43,16 +44,19 @@ export default class StyleGuideNavigationBar extends React.PureComponent {
       grey-lighter.
       </p>
 
-      <div className="sg-nav-wrap">
-        <Router>
-          <NavigationBar
-            appName="Hearing Prep"
-            userDisplayName="Abraham Lincoln"
-            dropdownUrls={options}
-            defaultUrl="/"
-          />
-        </Router>
-      </div>
+      <Router>
+        <NavigationBar
+          wideApp="full"
+          appName="Hearing Prep"
+          logoProps={{
+            accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+            overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
+          }}
+          userDisplayName="Abraham Lincoln"
+          dropdownUrls={options}
+          defaultUrl="/"
+        />
+      </Router>
     </div>;
   }
 }

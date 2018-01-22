@@ -4,13 +4,14 @@
 // variables here should eventually find their way into commons
 @import 'variables';
 
-$color-hearings-saving: #777;
+$color-hearings-saving: $color-gray;
 
 .saving {
   font-style: italic;
   color: $color-hearings-saving;
   text-align: right;
   display: block;
+  margin-bottom: 10px;
 }
 
 .cf-hearings-daily-docket-container {
@@ -128,7 +129,6 @@ $color-hearings-saving: #777;
 
       b {
         display: block;
-        text-transform: uppercase;
       }
     }
 
@@ -215,6 +215,32 @@ $color-hearings-saving: #777;
   [type="text"],
   textarea {
     border: 1px solid $color-gray-medium;
+  }
+
+  //TODO: Candidate for caseflow-commons
+  .cf-copy-to-clipboard {
+    border: 1px solid $color-gray-medium;
+    box-shadow: inset 0 0 0 1px $color-gray-lightest;
+    color: $color-gray;
+
+    &:hover {
+      background: $color-gray-medium;
+      border: 1px solid $color-gray-medium;
+      box-shadow: none;
+      color: $color-white;
+
+      path {
+        fill: $color-white;
+      }
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    svg {
+      margin: 0 0 -2px 7px;
+    }
   }
 
   .cf-hearings-worksheet-witness-cell {
@@ -311,6 +337,7 @@ $color-hearings-saving: #777;
 
 .cf-hearings-worksheet-issues {
   margin: 0;
+  white-space: pre-line;
 
   .cf-form-textarea {
     min-height: 48px;

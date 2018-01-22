@@ -10,14 +10,14 @@ class RampElection < RampReview
     intakes.where(completion_status: "success").any?
   end
 
-  def end_product_description
-    end_product_reference_id && end_product.description_with_routing
-  end
-
   # RAMP letters request that Veterans respond within 60 days; elections will
   # be accepted after this point, however, so this "due date" is soft.
   def due_date
     notice_date + RESPOND_BY_TIME if notice_date
+  end
+
+  def response_time
+    notice_date && receipt_date && (receipt_date.in_time_zone - notice_date.in_time_zone)
   end
 
   def self.completed

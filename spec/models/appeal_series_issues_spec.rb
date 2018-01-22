@@ -36,7 +36,7 @@ describe AppealSeriesAlerts do
       Generators::Issue.build(
         id: vacols_id,
         vacols_sequence_id: 2,
-        codes: %w(02 15 04 5301),
+        codes: %w[02 15 04 5301],
         labels: ["Compensation", "Service connection", "New and material", "Muscle injury, Group I"],
         disposition: :allowed,
         close_date: 6.months.ago

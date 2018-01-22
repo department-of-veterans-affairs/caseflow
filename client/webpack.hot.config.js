@@ -1,4 +1,4 @@
-// This webpack config is usedby webpack dev server for
+// This webpack config is used by webpack dev server for
 // hot module reloading
 
 const webpack = require('webpack');
@@ -6,9 +6,8 @@ const path = require('path');
 
 const config = require('./webpack.config');
 
-/* eslint-disable no-process-env */
+// eslint-disable-next-line no-process-env
 const hotRailsPort = process.env.HOT_RAILS_PORT || 3500;
-/* eslint-enable no-process-env */
 
 // Splice in the react-hot-loader after the shim/shams but
 // before the `/app/index`

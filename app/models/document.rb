@@ -3,6 +3,7 @@ class Document < ActiveRecord::Base
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
+  has_paper_trail only: [:description, :category_case_summary, :category_medical, :category_other, :category_procedural]
 
   self.inheritance_column = nil
 
@@ -42,6 +43,7 @@ class Document < ActiveRecord::Base
     "Supplemental Statement of Case (SSOC)",
     "DD 214 Certified Original - Certificate of Release or Discharge From Active Duty",
     "Rating Decision - Codesheet",
+    "Rating Decision - Narrative",
     "VA 21-526EZ, Fully Developed Claim (Compensation)",
     "VA 21-527EZ, Fully Developed Claim (Pension)"
   ].freeze
