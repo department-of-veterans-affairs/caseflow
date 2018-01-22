@@ -15,7 +15,7 @@ module VACOLS::Docket
       where ROWNUMBER = ?
     SQL
 
-    connection.exec_query(sanitize_sql_array[query, n]).first["bfd19"].to_date
+    connection.exec_query(sanitize_sql_array([query, n])).first["bfd19"].to_date
   end
 
   # rubocop:disable Metrics/MethodLength
