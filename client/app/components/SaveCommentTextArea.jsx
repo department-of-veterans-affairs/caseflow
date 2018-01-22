@@ -6,7 +6,6 @@ import Button from './Button';
 export default class SaveCommentTextArea extends React.PureComponent {
   render() {
     const {
-      classNames,
       disabled,
       id,
       onChange,
@@ -17,6 +16,7 @@ export default class SaveCommentTextArea extends React.PureComponent {
     } = this.props;
 
     return <div className="comment-size-container">
+      <label className="question-label"></label>
       <textarea
         className="comment-container comment-textarea"
         name="Edit Comment"
@@ -42,7 +42,7 @@ export default class SaveCommentTextArea extends React.PureComponent {
           </Button>
         </span>
       </div>
-    </div>
+    </div>;
   }
 }
 

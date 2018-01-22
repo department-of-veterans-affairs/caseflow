@@ -14,13 +14,13 @@ export default class StyleGuideSaveLongText extends React.PureComponent {
   }
 
   isEmpty = (str) => {
-    return (!str || 0 === str.length);
+    return (!str || str.length === 0);
   }
 
   onChange = (event) => {
     this.setState({
       value: event.target.value
-    })
+    });
   }
 
   render() {
@@ -35,7 +35,7 @@ export default class StyleGuideSaveLongText extends React.PureComponent {
         disabled={this.isEmpty(this.state.value)}
         onChange={this.onChange}
         value={this.state.value}
-        />
-    </div>
+      />
+    </div>;
   }
 }

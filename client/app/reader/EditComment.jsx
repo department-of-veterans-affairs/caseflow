@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '../components/Button';
 import DateSelector from '../components/DateSelector';
 import SaveCommentTextArea from '../components/SaveCommentTextArea';
 
@@ -68,14 +67,14 @@ export default class EditComment extends React.Component {
         type="date"
         strongLabel
       />
-    <SaveCommentTextArea
-      onKeyDown={this.keyListener}
-      id={this.props.id}
-      onChange={this.onChange}
-      value={this.props.comment.comment}
-      onCancelClick={this.onCancelCommentEdit}
-      onSaveClick={this.onSaveCommentEdit}
-      disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
+      <SaveCommentTextArea
+        onKeyDown={this.keyListener}
+        id={this.props.id}
+        onChange={this.onChange}
+        value={this.props.comment.comment}
+        onCancelClick={this.onCancelCommentEdit}
+        onSaveClick={this.onSaveCommentEdit}
+        disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
       />
     </div>;
   }
