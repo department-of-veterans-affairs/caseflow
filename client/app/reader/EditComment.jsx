@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Button from '../components/Button';
 import DateSelector from '../components/DateSelector';
+import SaveCommentTextArea from '../components/SaveCommentTextArea';
 
 // A rounded rectangle with a text box for adding
 // or editing an existing comment.
@@ -67,33 +68,15 @@ export default class EditComment extends React.Component {
         type="date"
         strongLabel
       />
-    <div className="comment-size-container">
-      <textarea
-        className="comment-container comment-textarea"
-        name="Edit Comment"
-        aria-label="Edit Comment"
-        onKeyDown={this.keyListener}
-        id={this.props.id}
-        onChange={this.onChange}
-        value={this.props.comment.comment}
+    <SaveCommentTextArea
+      onKeyDown={this.keyListener}
+      id={this.props.id}
+      onChange={this.onChange}
+      value={this.props.comment.comment}
+      onCancelClick={this.onCancelCommentEdit}
+      onSaveClick={this.onSaveCommentEdit}
+      disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
       />
-      <div className="comment-save-button-container">
-        <span className="cf-right-side">
-          <Button
-            name="cancel"
-            classNames={['cf-btn-link']}
-            onClick={this.onCancelCommentEdit}>
-              Cancel
-          </Button>
-          <Button
-            disabled={this.props.disableOnEmpty && this.isStringEmpty(this.props.comment.comment)}
-            name="save"
-            onClick={this.onSaveCommentEdit}>
-              Save
-          </Button>
-        </span>
-      </div>
-    </div>
     </div>;
   }
 }
