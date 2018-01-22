@@ -3,8 +3,8 @@ import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle'
 import Button from '../../components/Button';
 import NavigationBar from '../../components/NavigationBar';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Footer from '../../components/Footer';
-import { LOGO_COLORS } from '../../util/StyleConstants';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const options = [
   {
@@ -42,18 +42,17 @@ export default class StyleGuideFooter extends React.PureComponent {
      is based off of “date” in build_version.yml.</p>
 
       <Router>
-        <div className="sg-nav-wrap">
-          <NavigationBar
-            appName="Hearing Prep"
-            logoProps={{
-              accentColor: LOGO_COLORS.HEARINGS.ACCENT,
-              overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
-            }}
-            userDisplayName="Abraham Lincoln"
-            dropdownUrls={options}
-            defaultUrl="/"
-          />
-        </div>
+        <NavigationBar
+          wideApp="full"
+          appName="Hearing Prep"
+          logoProps={{
+            accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+            overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
+          }}
+          userDisplayName="Abraham Lincoln"
+          dropdownUrls={options}
+          defaultUrl="/"
+        />
       </Router>
 
       <div className="cf-app-segment cf-app-segment--alt"></div>
@@ -75,12 +74,11 @@ export default class StyleGuideFooter extends React.PureComponent {
         </div>
       </div>
 
-      <div className="sg-nav-wrap">
-        <Footer
-          appName="Hearing Prep"
-          buildDate="10/01/2017"
-          feedbackUrl="#footer" />
-      </div>
+      <Footer
+        wideApp="full"
+        appName="Hearing Prep"
+        buildDate="10/01/2017"
+        feedbackUrl="#footer" />
     </div>;
   }
 }

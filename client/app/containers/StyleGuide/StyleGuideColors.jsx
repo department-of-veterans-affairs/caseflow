@@ -1,6 +1,5 @@
 import React from 'react';
-
-// components
+import { COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideColors extends React.PureComponent {
@@ -16,7 +15,7 @@ export default class StyleGuideColors extends React.PureComponent {
     White: '#ffffff',
     Secondary: '#e31c3d',
     Green: '#2e8540',
-    'Primary-alt': '#02bfe7',
+    'Primary-alt': COLORS.PRIMARY_ALT,
     'Secondary-lightest': '#f9dede',
     'Green-lightest': '#e7f4e4',
     'Primary-alt-lightest': '#e1f3f8',

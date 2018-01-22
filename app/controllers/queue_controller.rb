@@ -10,20 +10,36 @@ class QueueController < ApplicationController
   end
 
   def index
-    # TODO: render react basecomponent
-    render json: { "hello": "queue" }
+    render "queue/index"
   end
 
   def tasks
-    MetricsService.record("VACOLS: Get case assignments for for #{current_user.id}",
+    MetricsService.record("VACOLS: Get all tasks with appeals for #{current_user.id}",
                           name: "QueueController.tasks") do
+
+      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
       render json: {
-        tasks: AttorneyQueue.tasks(params[:user_id]).map(&:to_hash)
+        tasks: json_tasks(tasks),
+        appeals: json_appeals(appeals)
       }
     end
   end
 
   private
+
+  def json_appeals(appeals)
+    ActiveModelSerializers::SerializableResource.new(
+      appeals,
+      each_serializer: ::WorkQueue::AppealSerializer
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::TaskSerializer
+    ).as_json
+  end
 
   def check_queue_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")

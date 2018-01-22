@@ -40,8 +40,8 @@ class PageRoute extends React.Component {
   renderWithCallback = (params) => {
     const { title, render, component } = this.props;
 
+    document.title = title;
     if (this.locationChanging) {
-      document.title = title;
       window.analyticsPageView(window.location.pathname);
     }
 
