@@ -10,9 +10,8 @@ export class DailyDocket extends React.Component {
 
   render() {
     const docket = this.props.docket;
-
     return <div>
-      <PrimaryAppContent>
+      <PrimaryAppContent extraClassNames="cf-hearings">
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
             <h1>Daily Docket</h1>
