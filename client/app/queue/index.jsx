@@ -6,7 +6,7 @@ import rootReducer from './reducers';
 
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import * as Constants from './constants';
