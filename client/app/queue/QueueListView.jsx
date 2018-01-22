@@ -42,15 +42,11 @@ QueueListView.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.loadedQueue, 'tasks', 'appeals')
-});
+const mapStateToProps = (state) => _.pick(state.loadedQueue, 'tasks', 'appeals');
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    showSearchBar,
-    hideSearchBar
-  }, dispatch)
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  showSearchBar,
+  hideSearchBar
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueListView);

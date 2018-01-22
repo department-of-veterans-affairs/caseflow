@@ -51,10 +51,8 @@ class QueueLoadingScreen extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    onReceiveQueue
-  }, dispatch)
-);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceiveQueue
+}, dispatch);
 
 export default connect(null, mapDispatchToProps)(QueueLoadingScreen);

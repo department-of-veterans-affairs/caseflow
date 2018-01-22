@@ -74,11 +74,9 @@ const mapStateToProps = (state) => ({
   searchQuery: state.filterCriteria.searchQuery
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    setSearch,
-    clearSearch
-  }, dispatch)
-});
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setSearch,
+  clearSearch
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueManager);
