@@ -36,8 +36,9 @@ export default class QueueTable extends React.PureComponent {
     {
       header: 'Reader Documents',
       valueFunction: (appeal) => {
+        // todo: get document count
         return <Link href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
-          {(_.random(1, 2000)).toLocaleString()}
+          {'####'}
         </Link>
       }
     }
