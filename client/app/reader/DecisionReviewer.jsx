@@ -4,6 +4,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { getQueryParams } from '../util/QueryParamsUtil';
+import PrimaryAppContent from '../components/PrimaryAppContent';
+import AppFrame from '../components/AppFrame';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -150,25 +152,29 @@ export class DecisionReviewer extends React.PureComponent {
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">
-          <div className="cf-wide-app section--document-list">
-            <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-            <PageRoute
-              exact
-              title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb="Claims Folder"
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            <PageRoute
-              exact
-              title="Document Viewer | Caseflow Reader"
-              breadcrumb="Document Viewer"
-              path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer} />
-          </div>
+          <AppFrame wideApp>
+            <PrimaryAppContent>
+              <div className="section--document-list">
+                <PageRoute
+                  exact
+                  path="/"
+                  title="Assignments | Caseflow Reader"
+                  render={this.routedCaseSelect} />
+                <PageRoute
+                  exact
+                  title={this.getClaimsFolderPageTitle(this.props.appeal)}
+                  breadcrumb="Claims Folder"
+                  path="/:vacolsId/documents"
+                  render={this.routedPdfListView} />
+                <PageRoute
+                  exact
+                  title="Document Viewer | Caseflow Reader"
+                  breadcrumb="Document Viewer"
+                  path="/:vacolsId/documents/:docId"
+                  render={this.routedPdfViewer} />
+              </div>
+            </PrimaryAppContent>
+          </AppFrame>
         </NavigationBar>
         <Footer
           wideApp
