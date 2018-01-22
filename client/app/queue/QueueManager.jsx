@@ -9,7 +9,7 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
-import * as Constants from './constants';
+import { COLORS } from './constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setSearch, clearSearch } from './QueueActions';
@@ -30,9 +30,9 @@ class QueueManager extends React.PureComponent {
         userDisplayName={this.props.userDisplayName}
         dropdownUrls={this.props.dropdownUrls}
         logoProps={{
-          backgroundColor: Constants.QUEUE_LOGO_BACKGROUND_COLOR,
-          overlapColor: Constants.QUEUE_LOGO_OVERLAP_COLOR,
-          accentColor: Constants.QUEUE_COLOR
+          backgroundColor: COLORS.QUEUE_LOGO_BACKGROUND,
+          overlapColor: COLORS.QUEUE_LOGO_OVERLAP,
+          accentColor: COLORS.QUEUE_LOGO_PRIMARY
         }}
         appName="Queue">
         <div className="cf-wide-app section--queue-list">

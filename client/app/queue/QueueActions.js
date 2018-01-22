@@ -1,8 +1,8 @@
-import * as Constants from './actionTypes';
+import { ACTIONS } from './constants';
 import { CATEGORIES } from './analytics';
 
 export const onReceiveQueue = ({ tasks, appeals }) => ({
-  type: Constants.RECEIVE_QUEUE_DETAILS,
+  type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
     tasks,
     appeals
@@ -16,15 +16,15 @@ export const onReceiveQueue = ({ tasks, appeals }) => ({
 });
 
 export const showSearchBar = () => ({
-  type: Constants.SHOW_SEARCH_BAR
+  type: ACTIONS.SHOW_SEARCH_BAR
 });
 
 export const hideSearchBar = () => ({
-  type: Constants.HIDE_SEARCH_BAR
+  type: ACTIONS.HIDE_SEARCH_BAR
 });
 
 export const setSearch = (searchQuery) => ({
-  type: Constants.SET_SEARCH,
+  type: ACTIONS.SET_SEARCH,
   payload: {
     searchQuery
   },
@@ -38,7 +38,7 @@ export const setSearch = (searchQuery) => ({
 });
 
 export const clearSearch = () => ({
-  type: Constants.CLEAR_SEARCH,
+  type: ACTIONS.CLEAR_SEARCH,
   meta: {
     analytics: {
       category: CATEGORIES.VIEW_DECISIONS_PATH,

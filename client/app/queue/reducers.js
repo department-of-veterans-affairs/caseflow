@@ -1,6 +1,6 @@
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
-import * as Constants from './actionTypes';
+import { ACTIONS } from './constants';
 
 export const initialState = {
   loadedQueueId: null,
@@ -17,7 +17,7 @@ export const initialState = {
 
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-  case Constants.RECEIVE_QUEUE_DETAILS:
+  case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
       loadedQueue: {
         appeals: {
@@ -28,11 +28,11 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.SHOW_SEARCH_BAR:
+  case ACTIONS.SHOW_SEARCH_BAR:
     return update(state, { showSearchBar: { $set: true } });
-  case Constants.HIDE_SEARCH_BAR:
+  case ACTIONS.HIDE_SEARCH_BAR:
     return update(state, { showSearchBar: { $set: false } });
-  case Constants.SET_SEARCH:
+  case ACTIONS.SET_SEARCH:
     return update(state, {
       filterCriteria: {
         searchQuery: {
@@ -40,7 +40,7 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.CLEAR_SEARCH:
+  case ACTIONS.CLEAR_SEARCH:
     return update(state, {
       filterCriteria: {
         searchQuery: {
