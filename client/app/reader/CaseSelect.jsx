@@ -69,7 +69,7 @@ class CaseSelect extends React.PureComponent {
       return null;
     }
 
-    return <div className="usa-grid section--case-select">
+    return <div className="section--case-select">
       <h1 className="welcome-header">Welcome to Reader!</h1>
       <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
       <p className="cf-lead-paragraph">
