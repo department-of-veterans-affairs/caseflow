@@ -10,8 +10,7 @@ class QueueController < ApplicationController
   end
 
   def index
-    # TODO: render react basecomponent
-    render json: { "hello": "queue" }
+    render "queue/index"
   end
 
   def tasks
