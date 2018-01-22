@@ -5,7 +5,7 @@ import { onReceiveQueue } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS } from './constants';
-import _ from 'lodash';
+import { associateTasksWithAppeals } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
   getUserId = () => 1;
@@ -14,15 +14,7 @@ class QueueLoadingScreen extends React.PureComponent {
     // todo: Promise.resolve() if appeals/tasks already loaded
     // todo: return ApiUtil.get(`/queue/${this.props.userId}`, {}).
     return ApiUtil.get(`/queue/${this.getUserId()}`, {}).then((response) => {
-      const {
-        appeals: { data: appeals },
-        tasks: { data: tasks }
-      } = JSON.parse(response.text);
-
-      // todo: Attorneys currently only have one task per appeal, but future users might have multiple
-      _.each(appeals, (appeal) => {
-        appeal.tasks = tasks.filter((task) => task.attributes.appeal_id === appeal.attributes.vacols_id);
-      });
+      const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       this.props.onReceiveQueue({
         appeals,
