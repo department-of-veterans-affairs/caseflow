@@ -43,4 +43,27 @@ describe DocketSnapshot do
       end
     end
   end
+
+  context ".latest" do
+    before do
+      snapshot
+      Timecop.freeze(Time.utc(2015, 2, 6, 12, 0, 0))
+      another_snapshot
+    end
+
+    subject { DocketSnapshot.latest }
+
+    it "should return the latest snapshot" do
+      expect(subject).to eq(another_snapshot)
+    end
+  end
+
+  context "#docket_tracer_for_form9_date" do
+    let(:date) { Date.new(2014, 2, 15) }
+    subject { snapshot.docket_tracer_for_form9_date(date) }
+
+    it "should return the tracer for the start of the month" do
+      expect(subject.month).to eq(Date.new(2014, 2, 1))
+    end
+  end
 end
