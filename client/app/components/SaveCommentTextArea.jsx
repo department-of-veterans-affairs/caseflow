@@ -8,6 +8,7 @@ export default class SaveCommentTextArea extends React.PureComponent {
     const {
       disabled,
       id,
+      name,
       onChange,
       onCancelClick,
       onKeyDown,
@@ -16,13 +17,13 @@ export default class SaveCommentTextArea extends React.PureComponent {
     } = this.props;
 
     return <div className="comment-size-container">
-      <label className="question-label"></label>
+      <label className="question-label" htmlFor={id || name}></label>
       <textarea
         className="comment-container comment-textarea"
-        name="Edit Comment"
-        aria-label="Edit Comment"
+        name={name}
+        aria-label={name}
         onKeyDown={onKeyDown}
-        id={id}
+        id={id || name}
         onChange={onChange}
         value={value}
       />
