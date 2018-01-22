@@ -34,18 +34,18 @@ class QueueManager extends React.PureComponent {
           accentColor: Constants.QUEUE_COLOR
         }}
         appName="Queue">
-        {this.props.showSearchBar && <div className="usa-grid">
-          <SearchBar
-            id="searchBar"
-            size="big"
-            onSubmit={this.props.setSearch}
-            onChange={this.props.setSearch}
-            onClearSearch={this.props.clearSearch}
-            value={this.props.searchQuery}
-            submitUsingEnterKey
-          />
-        </div>}
-        <div className="cf-wide-app">
+        <div className="cf-wide-app section--queue-list">
+          {this.props.showSearchBar && <div className="usa-grid">
+            <SearchBar
+              id="searchBar"
+              size="big"
+              onSubmit={this.props.setSearch}
+              onChange={this.props.setSearch}
+              onClearSearch={this.props.clearSearch}
+              value={this.props.searchQuery}
+              submitUsingEnterKey
+            />
+          </div>}
           <PageRoute
             exact
             path="/"
