@@ -176,6 +176,9 @@ ActiveRecord::Schema.define(version: 20180112220428) do
     t.integer "ahead_and_ready_count"
   end
 
+  add_index "docket_tracers", ["docket_snapshot_id"], name: "index_docket_tracers_on_docket_snapshot_id", using: :btree
+  add_index "docket_tracers", ["month"], name: "index_docket_tracers_on_month", using: :btree
+
   create_table "document_views", force: :cascade do |t|
     t.integer  "document_id",     null: false
     t.integer  "user_id",         null: false
