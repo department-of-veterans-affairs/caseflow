@@ -1,5 +1,5 @@
 import React from 'react';
-import getAppWidthStyling from 
+import getAppWidthStyling from
   '@department-of-veterans-affairs/appeals-frontend-toolkit/components/util/getAppWidthStyling';
 
 const AppFrame = ({ children, wideApp }) =>

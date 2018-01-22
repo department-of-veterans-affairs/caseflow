@@ -65,7 +65,7 @@ export class PdfListView extends React.Component {
         key="doc-list-header"
       />,
       tableView
-    ]
+    ];
   }
 }
 

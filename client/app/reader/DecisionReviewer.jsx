@@ -33,7 +33,7 @@ class UnconnectedLastRetrievalInfo extends React.PureComponent {
     if (!this.props.manifestVbmsFetchedAt) {
       return null;
     }
-    
+
     return [
       <div id="vbms-manifest-retrieved-at" key="vbms">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>,
       this.props.manifestVvaFetchedAt ?
@@ -45,7 +45,7 @@ class UnconnectedLastRetrievalInfo extends React.PureComponent {
 
 const LastRetrievalInfo = connect(
   (state) => _.pick(state.documentList, ['manifestVvaFetchedAt', 'manifestVbmsFetchedAt'])
-)(UnconnectedLastRetrievalInfo)
+)(UnconnectedLastRetrievalInfo);
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {

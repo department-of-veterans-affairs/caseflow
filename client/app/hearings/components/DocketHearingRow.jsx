@@ -20,7 +20,7 @@ const textareaStyling = css({
       width: '80%'
     }
   }
-})
+});
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
