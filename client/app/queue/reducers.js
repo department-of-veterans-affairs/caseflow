@@ -17,39 +17,39 @@ export const initialState = {
 
 const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case Constants.RECEIVE_QUEUE_DETAILS:
-      return update(state, {
-        loadedQueue: {
-          appeals: {
-            $set: action.payload.appeals.data
-          },
-          tasks: {
-            $set: action.payload.tasks.data
-          }
+  case Constants.RECEIVE_QUEUE_DETAILS:
+    return update(state, {
+      loadedQueue: {
+        appeals: {
+          $set: action.payload.appeals.data
+        },
+        tasks: {
+          $set: action.payload.tasks.data
         }
-      });
-    case Constants.SHOW_SEARCH_BAR:
-      return update(state, { showSearchBar: { $set: true } });
-    case Constants.HIDE_SEARCH_BAR:
-      return update(state, { showSearchBar: { $set: false } });
-    case Constants.SET_SEARCH:
-      return update(state, {
-        filterCriteria: {
-          searchQuery: {
-            $set: action.payload.searchQuery
-          }
+      }
+    });
+  case Constants.SHOW_SEARCH_BAR:
+    return update(state, { showSearchBar: { $set: true } });
+  case Constants.HIDE_SEARCH_BAR:
+    return update(state, { showSearchBar: { $set: false } });
+  case Constants.SET_SEARCH:
+    return update(state, {
+      filterCriteria: {
+        searchQuery: {
+          $set: action.payload.searchQuery
         }
-      });
-    case Constants.CLEAR_SEARCH:
-      return update(state, {
-        filterCriteria: {
-          searchQuery: {
-            $set: ''
-          }
+      }
+    });
+  case Constants.CLEAR_SEARCH:
+    return update(state, {
+      filterCriteria: {
+        searchQuery: {
+          $set: ''
         }
-      });
-    default:
-      return state;
+      }
+    });
+  default:
+    return state;
   }
 };
 

@@ -5,7 +5,7 @@ import queueReducer, { initialState } from './reducers';
 import QueueManager from './QueueManager';
 
 const QueueBase = (props) => <ReduxBase reducer={queueReducer} store={initialState}>
-  <QueueManager {...props}/>
+  <QueueManager {...props} />
 </ReduxBase>;
 
 export default QueueBase;

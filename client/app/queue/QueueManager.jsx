@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
+import _ from 'lodash';
 
 import SearchBar from '../components/SearchBar';
 import PageRoute from '../components/PageRoute';
@@ -18,7 +19,7 @@ class QueueManager extends React.PureComponent {
     const { vacolsId } = props.match.params;
 
     return <QueueLoadingScreen vacolId={vacolsId}>
-      <QueueListView {...this.props}/>
+      <QueueListView {...this.props} />
     </QueueLoadingScreen>;
   };
 
@@ -50,13 +51,13 @@ class QueueManager extends React.PureComponent {
             exact
             path="/"
             title="Your Queue | Caseflow Queue"
-            render={this.routedQueueList}/>
+            render={this.routedQueueList} />
         </div>
       </NavigationBar>
       <Footer
         appName="Queue"
         feedbackUrl={this.props.feedbackUrl}
-        buildDate={this.props.buildDate}/>
+        buildDate={this.props.buildDate} />
     </div>
   </BrowserRouter>;
 }

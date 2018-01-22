@@ -18,7 +18,7 @@ class QueueListView extends React.PureComponent {
 
     if (noTasks) {
       tableContent = <StatusMessage title="Tasks not found">
-        Sorry! We couldn't find any tasks for you.<br/>
+        Sorry! We couldn't find any tasks for you.<br />
         Please try again or click <a href="/reader">go back to the document list.</a>
       </StatusMessage>;
     } else {
