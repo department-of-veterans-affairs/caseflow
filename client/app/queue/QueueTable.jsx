@@ -21,8 +21,9 @@ export default class QueueTable extends React.PureComponent {
       header: 'Type(s)',
       valueFunction: (appeal) => {
         const {
-          attributes: { aod, cavc, type }
+          attributes: { aod, type }
         } = appeal;
+        const cavc = type === 'Court Remand';
         const valueToRender = <div>
           {aod && <span><span {...redText}>AOD</span>, </span>}
           {cavc && <span><span {...redText}>CAVC</span>, </span>}
