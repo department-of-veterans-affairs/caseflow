@@ -5,7 +5,7 @@ import Table from '../components/Table';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
-
+import PrimaryAppContent from '../components/PrimaryAppContent';
 export class Dockets extends React.Component {
 
   getType = (type) => {
@@ -77,21 +77,19 @@ export class Dockets extends React.Component {
       };
     });
 
-    return <div>
-      <div className="cf-app-segment cf-app-segment--alt cf-hearings-schedule">
-        <div className="cf-hearings-title-and-judge">
-          <h1>Your Hearing Days</h1>
-          <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
-        </div>
-        <Table
-          className="dockets"
-          columns={columns}
-          rowObjects={rowObjects}
-          summary="Your Hearing Days?"
-          getKeyForRow={this.getKeyForRow}
-        />
+    return <PrimaryAppContent extraClassNames="cf-hearings-schedule">
+      <div className="cf-hearings-title-and-judge">
+        <h1>Your Hearing Days</h1>
+        <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
       </div>
-    </div>;
+      <Table
+        className="dockets"
+        columns={columns}
+        rowObjects={rowObjects}
+        summary="Your Hearing Days?"
+        getKeyForRow={this.getKeyForRow}
+      />
+    </PrimaryAppContent>;
   }
 }
 
