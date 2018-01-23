@@ -32,14 +32,13 @@ before_install:
   - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
   - ./ci-bin/retry.bash sudo apt-get update
   - sudo apt-get install yarn=1.2.1-1
+  - sudo apt-get install chromium-chromedriver
 
   # Travis has an old version of yarn installed at /usr/local/bin, and that comes first in the PATH,
   # so we need to explicitly point to the version of Yarn we just installed.
   - export YARN=/usr/bin/yarn
   
   - $YARN --version
-  - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-chromedriver.deb
-  - wget http://launchpadlibrarian.net/348603077/chromium-chromedriver_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-chromedriver.deb
   # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - sudo apt-get install pdftk
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
@@ -56,6 +55,7 @@ jobs:
     - stage: test and lint
       env: TEST_CATEGORY=unit
       script:
+        - "export CHROME_ARGS=--no-sandbox"
         - bundle exec rake spec:parallel:setup:unit
         - bundle exec rake spec:parallel:unit
         - aws s3 mv /home/travis/build/department-of-veterans-affairs/caseflow/coverage/.resultset.json s3://dsva-appeals-travis-builds/build-$TRAVIS_BUILD_NUMBER/.$TEST_CATEGORY.resultset.json
