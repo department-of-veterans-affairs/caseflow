@@ -23,6 +23,8 @@ RSpec.feature "Hearings" do
           user: current_user,
           appellant_first_name: "AppellantFirstName",
           appellant_last_name: "AppellantLastName",
+          veteran_first_name: "VeteranFirstName",
+          veteran_last_name: "VeteranLastName",
           date: 5.days.from_now,
           type: "video",
           master_record: false
@@ -89,7 +91,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
 
-      find_link("Back to Upcoming Hearing Days").click
+      find_link("Back to Your Hearing Days").click
       expect(page).to have_content("Your Hearing Days")
     end
 
@@ -144,6 +146,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Docket Number: 4198")
       expect(page).to have_content("Form 9: 12/21/2016")
       expect(page).to have_content("Army 02/13/2002 - 12/21/2003")
+      expect(page.title).to eq "V. Veteran Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet saves on refresh" do
@@ -169,7 +172,6 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("This is military service")
       expect(page).to have_content("This is evidence")
       expect(page).to have_content("These are comments")
-      expect(page.title).to eq "Appellant First Name A. Appellant Last Name's Hearing Worksheet"
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
@@ -180,6 +182,7 @@ RSpec.feature "Hearings" do
       click_on "button-addIssue-2"
       fill_in "2-issue-description", with: "This is the description"
       fill_in "2-issue-notes", with: "This is a note"
+      fill_in "2-issue-disposition", with: "This is a disposition"
 
       find("#cf-issue-delete-21").click
       click_on "Confirm delete"
@@ -188,6 +191,7 @@ RSpec.feature "Hearings" do
       visit "/hearings/1/worksheet"
       expect(page).to have_content("This is the description")
       expect(page).to have_content("This is a note")
+      expect(page).to have_content("This is a disposition")
       expect(page).to_not have_content("Service Connection")
     end
 

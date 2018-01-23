@@ -179,7 +179,7 @@ class Document < ActiveRecord::Base
   end
 
   def category_case_summary
-    CASE_SUMMARY_TYPES.include?(type) || received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF
+    CASE_SUMMARY_TYPES.include?(type) || (received_at && received_at >= CASE_SUMMARY_RECENT_DOCUMENT_CUTOFF)
   end
 
   def serialized_vacols_date

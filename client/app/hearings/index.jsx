@@ -8,10 +8,10 @@ import HearingWorksheetContainer from './containers//HearingWorksheetContainer';
 import { hearingsReducers, mapDataToInitialState } from './reducers/index';
 import ScrollToTop from './util/ScrollTop';
 import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
+import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
-import { LOGO_COLORS } from '../util/StyleConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 const Hearings = ({ hearings }) => {
 
@@ -31,6 +31,7 @@ const Hearings = ({ hearings }) => {
         <Route>
           <div>
             <NavigationBar
+              wideApp
               appName="Hearing Prep"
               logoProps={{
                 accentColor: LOGO_COLORS.HEARINGS.ACCENT,
@@ -68,6 +69,7 @@ const Hearings = ({ hearings }) => {
               </AppFrame>
             </NavigationBar>
             <Footer
+              wideApp
               appName="Hearing Prep"
               feedbackUrl={hearings.feedbackUrl}
               buildDate={hearings.buildDate} />
