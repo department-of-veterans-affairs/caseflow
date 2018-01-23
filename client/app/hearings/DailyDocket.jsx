@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import DocketHearingRow from './components/DocketHearingRow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import PrimaryAppContent from '../components/PrimaryAppContent';
+import AppSegment from '../components/AppSegment';
 
 export class DailyDocket extends React.Component {
 
@@ -12,7 +12,7 @@ export class DailyDocket extends React.Component {
     const docket = this.props.docket;
 
     return <div>
-      <PrimaryAppContent extraClassNames="cf-hearings" noMarginTop>
+      <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
             <h1>Daily Docket</h1>
@@ -43,7 +43,7 @@ export class DailyDocket extends React.Component {
             />
           )}
         </table>
-      </PrimaryAppContent>
+      </AppSegment>
       <div className="cf-alt--actions">
         <div className="cf-push-left">
           <Link to="/hearings/dockets">&lt; Back to Your Hearing Days</Link>

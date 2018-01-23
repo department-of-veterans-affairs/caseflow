@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { Route } from 'react-router';
 import { getQueryParams } from '../util/QueryParamsUtil';
-import PrimaryAppContent from '../components/PrimaryAppContent';
 import AppFrame from '../components/AppFrame';
 
 import PageRoute from '../components/PageRoute';
@@ -23,6 +22,7 @@ import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import AppSegment from '../components/AppSegment';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -171,7 +171,7 @@ export class DecisionReviewer extends React.PureComponent {
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">
           <AppFrame wideApp>
-            <PrimaryAppContent>
+            <AppSegment filledBackground>
               <div className="section--document-list">
                 <PageRoute
                   exact
@@ -191,7 +191,7 @@ export class DecisionReviewer extends React.PureComponent {
                   path="/:vacolsId/documents/:docId"
                   render={this.routedPdfViewer} />
               </div>
-            </PrimaryAppContent>
+            </AppSegment>
             <Route exact path="/:vacolsId/documents" component={LastRetrievalInfo} />
           </AppFrame>
         </NavigationBar>

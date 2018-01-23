@@ -5,7 +5,7 @@ import Table from '../components/Table';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { getDateTime } from './util/DateUtil';
-import PrimaryAppContent from '../components/PrimaryAppContent';
+import AppSegment from '../components/AppSegment';
 export class Dockets extends React.Component {
 
   getType = (type) => {
@@ -77,7 +77,7 @@ export class Dockets extends React.Component {
       };
     });
 
-    return <PrimaryAppContent extraClassNames="cf-hearings-schedule">
+    return <AppSegment extraClassNames="cf-hearings-schedule" filledBackground>
       <div className="cf-hearings-title-and-judge">
         <h1>Your Hearing Days</h1>
         <span>VLJ: {this.props.veteranLawJudge.full_name}</span>
@@ -89,7 +89,7 @@ export class Dockets extends React.Component {
         summary="Your Hearing Days?"
         getKeyForRow={this.getKeyForRow}
       />
-    </PrimaryAppContent>;
+    </AppSegment>;
   }
 }
 
