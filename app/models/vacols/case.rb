@@ -21,6 +21,8 @@ class VACOLS::Case < VACOLS::Record
     "6" => "De Novo",
     "7" => "Court Remand",
     "8" => "Designation of Record",
+    # ^ this type can possibly be removed.
+    # See https://github.com/department-of-veterans-affairs/caseflow/issues/4260
     "9" => "Clear and Unmistakable Error"
   }.freeze
 
