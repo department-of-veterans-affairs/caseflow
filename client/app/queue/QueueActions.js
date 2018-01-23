@@ -6,43 +6,36 @@ export const onReceiveQueue = ({ tasks, appeals }) => ({
   payload: {
     tasks,
     appeals
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH,
-      action: 'load-decisions'
-    }
   }
 });
 
 export const showSearchBar = () => ({
-  type: ACTIONS.SHOW_SEARCH_BAR
+  type: ACTIONS.SHOW_SEARCH_BAR,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DECISIONS_PATH,
+      action: 'show-search'
+    }
+  }
 });
 
 export const hideSearchBar = () => ({
-  type: ACTIONS.HIDE_SEARCH_BAR
+  type: ACTIONS.HIDE_SEARCH_BAR,
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DECISIONS_PATH,
+      action: 'hide-search'
+    }
+  }
 });
 
 export const setSearch = (searchQuery) => ({
   type: ACTIONS.SET_SEARCH,
   payload: {
     searchQuery
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH,
-      action: 'set-search',
-      label: searchQuery
-    }
   }
 });
 
 export const clearSearch = () => ({
-  type: ACTIONS.CLEAR_SEARCH,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH,
-      action: 'clear-search'
-    }
-  }
+  type: ACTIONS.CLEAR_SEARCH
 });

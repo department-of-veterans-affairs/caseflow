@@ -37,7 +37,7 @@ export default class QueueTable extends React.PureComponent {
       valueFunction: (appeal) => {
         // todo: get document count
         return <Link href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
-          {'####'}
+          <span style={{ color: 'red' }}>FAKE ###</span>
         </Link>;
       }
     }
@@ -47,7 +47,6 @@ export default class QueueTable extends React.PureComponent {
     return <Table
       columns={this.getQueueColumns}
       rowObjects={this.props.appeals}
-      className="queue-tasks-table"
       getKeyForRow={this.getKeyForRow}
     />;
   }
