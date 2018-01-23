@@ -40,6 +40,9 @@ before_install:
   - $YARN --version
   # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - wget http://launchpadlibrarian.net/348603074/chromium-browser_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-browser.deb
+  - wget http://launchpadlibrarian.net/348603076/chromium-codecs-ffmpeg-extra_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-codecs-ffmpeg-extra.deb
+  - sudo dpkg -i $PWD/chromium-codecs-ffmpeg-extra.deb
+  - sudo apt-get install -f
   - sudo dpkg -i $PWD/chromium-browser.deb
   - sudo apt-get install chromium-chromedriver
   - sudo apt-get install -f
