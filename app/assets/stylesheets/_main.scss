@@ -14,13 +14,16 @@ body {
 .cf-content {
   min-height: 100%;
 
-  header {
+  header.not-react {
     background: $color-white;
     line-height: 4em;
     margin-bottom: $cf-30px;
 
     > div {
       &:first-child {
+
+        border-bottom: 1px solid $color-gray-lighter;
+
         &::after {
           content: '\00a0';
           line-height: 0;
@@ -46,10 +49,6 @@ body {
       background-position: center left;
     }
   }
-}
-
-.header-clearing-underline {
-  border-bottom: 1px solid $color-gray-lighter;
 }
 
 .cf-logo-name,

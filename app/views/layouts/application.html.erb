@@ -121,7 +121,7 @@
   <div class="cf-content">
     <div class="cf-content-inside<%= ' full-page' if content_for?(:full_page_content) %>">
       <% if !content_for?(:full_page_content) %>
-        <header>
+        <header class="not-react">
           <div>
             <div class="cf-app-width">
               <div class="cf-push-left">
@@ -167,7 +167,6 @@
            <%= react_component("PerformanceDegradationBanner") %>
          <% end %>
 
-         <div class="header-clearing-underline"></div>
         </header>
       <% end %>
       <% if content_for?(:full_page_content) %>
