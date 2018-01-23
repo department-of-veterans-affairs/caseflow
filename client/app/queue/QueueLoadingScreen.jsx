@@ -50,7 +50,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
 QueueLoadingScreen.propTypes = {
   userId: PropTypes.number.isRequired
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue

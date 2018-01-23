@@ -13,8 +13,7 @@ export const showSearchBar = () => ({
   type: ACTIONS.SHOW_SEARCH_BAR,
   meta: {
     analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH,
-      action: 'show-search'
+      category: CATEGORIES.VIEW_DECISIONS_PATH
     }
   }
 });
@@ -23,8 +22,7 @@ export const hideSearchBar = () => ({
   type: ACTIONS.HIDE_SEARCH_BAR,
   meta: {
     analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH,
-      action: 'hide-search'
+      category: CATEGORIES.VIEW_DECISIONS_PATH
     }
   }
 });
