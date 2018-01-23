@@ -23,29 +23,11 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 import AppSegment from '../components/AppSegment';
+import LastRetrievalInfo from './LastRetrievalInfo';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
 });
-
-class UnconnectedLastRetrievalInfo extends React.PureComponent {
-  render() {
-    if (!this.props.manifestVbmsFetchedAt) {
-      return null;
-    }
-
-    return [
-      <div id="vbms-manifest-retrieved-at" key="vbms">Last VBMS retrieval: {this.props.manifestVbmsFetchedAt}</div>,
-      this.props.manifestVvaFetchedAt ?
-        <div id="vva-manifest-retrieved-at" key="vva">Last VVA retrieval: {this.props.manifestVvaFetchedAt}</div> :
-        <div className="cf-red-text" key="vva">Unable to display VVA documents at this time</div>
-    ];
-  }
-}
-
-const LastRetrievalInfo = connect(
-  (state) => _.pick(state.documentList, ['manifestVvaFetchedAt', 'manifestVbmsFetchedAt'])
-)(UnconnectedLastRetrievalInfo);
 
 export class DecisionReviewer extends React.PureComponent {
   constructor(props) {
