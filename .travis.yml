@@ -1,6 +1,12 @@
 language: ruby
 dist: trusty
 sudo: required
+addons:
+  apt:
+    sources:
+      - chromium-browser
+    packages:
+      - chromium-browser-stable
 rvm:
   - 2.2.4
 
@@ -33,16 +39,6 @@ before_install:
   
   - $YARN --version
 # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
-  - wget https://s3-us-gov-west-1.amazonaws.com/dsva-appeals-devops/chromium-chromedriver_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-chromedriver.deb
-  - wget http://launchpadlibrarian.net/348603077/chromium-chromedriver_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-chromedriver.deb
-  - wget http://launchpadlibrarian.net/348603074/chromium-browser_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-browser.deb
-  - wget http://launchpadlibrarian.net/348603076/chromium-codecs-ffmpeg-extra_63.0.3239.84-0ubuntu0.14.04.1_amd64.deb -O $PWD/chromium-codecs-ffmpeg-extra.deb
-  - sudo dpkg -i $PWD/chromium-codecs-ffmpeg-extra.deb
-  - sudo apt-get install -f
-  - sudo dpkg -i $PWD/chromium-browser.deb
-  - sudo apt-get install -f
-  - sudo dpkg -i $PWD/chromium-chromedriver.deb
-  - sudo apt-get install -f
   - sudo apt-get install pdftk
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
