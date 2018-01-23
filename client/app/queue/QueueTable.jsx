@@ -8,21 +8,21 @@ import { css } from 'glamor';
 const redText = css({ color: 'red' });
 
 export default class QueueTable extends React.PureComponent {
-  getKeyForRow = (rowNumber, object) => object.attributes.vacols_id;
+  getKeyForRow = (rowNumber, object) => object.id;
 
   getQueueColumns = () => [
     {
       header: 'Decision Task Details',
-      valueFunction: (appeal) => <Link>
-        {appeal.attributes.veteran_full_name} ({appeal.attributes.vacols_id})
+      valueFunction: (task) => <Link>
+        {task.appeal.attributes.veteran_full_name} ({task.appeal.attributes.vacols_id})
       </Link>
     },
     {
       header: 'Type(s)',
-      valueFunction: (appeal) => {
+      valueFunction: (task) => {
         const {
           attributes: { aod, type }
-        } = appeal;
+        } = task.appeal;
         const cavc = type === 'Court Remand';
         const valueToRender = <div>
           {aod && <span><span {...redText}>AOD</span>, </span>}
@@ -35,22 +35,21 @@ export default class QueueTable extends React.PureComponent {
     },
     {
       header: 'Docket Number',
-      valueFunction: (appeal) => appeal.attributes.docket_number
+      valueFunction: (task) => task.appeal.attributes.docket_number
     },
     {
       header: 'Issues',
-      valueFunction: (appeal) => appeal.attributes.issues.length
+      valueFunction: (task) => task.appeal.attributes.issues.length
     },
     {
       header: 'Due Date',
-      valueFunction: (appeal) => appeal.tasks.length ?
-        moment(appeal.tasks[0].attributes.due_on).format('MM/DD/YY') : ''
+      valueFunction: (task) => moment(task.attributes.due_on).format('MM/DD/YY')
     },
     {
       header: 'Reader Documents',
-      valueFunction: (appeal) => {
+      valueFunction: (task) => {
         // todo: get document count
-        return <Link href={`/reader/appeal/${appeal.attributes.vacols_id}/documents`}>
+        return <Link href={`/reader/appeal/${task.appeal.attributes.vacols_id}/documents`}>
           <span {...redText}>FAKE ###</span>
         </Link>;
       }
@@ -60,7 +59,7 @@ export default class QueueTable extends React.PureComponent {
   render() {
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={this.props.appeals}
+      rowObjects={this.props.tasks}
       getKeyForRow={this.getKeyForRow}
     />;
   }
