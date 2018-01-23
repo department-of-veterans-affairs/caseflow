@@ -35,6 +35,11 @@ class HearingWorksheetIssues extends PureComponent {
         valueName: 'notes'
       },
       {
+        header: 'Disposition',
+        align: 'left',
+        valueName: 'disposition'
+      },
+      {
         header: 'Preliminary Impressions',
         align: 'left',
         valueName: 'actions'
@@ -68,6 +73,12 @@ class HearingWorksheetIssues extends PureComponent {
           issue={issueRow}
           field="notes"
           readOnly={this.props.print}
+          maxLength={100}
+        />,
+        disposition: <HearingWorksheetIssueFields
+          appeal={worksheetStreamsAppeal}
+          issue={issueRow}
+          field="disposition"
           maxLength={100}
         />,
         actions: <HearingWorksheetPreImpressions
