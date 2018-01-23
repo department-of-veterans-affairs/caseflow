@@ -19,6 +19,14 @@ export const onIssueNotesChange = (notes, issueId) => ({
   }
 });
 
+export const onIssueDispositionChange = (disposition, issueId) => ({
+  type: Constants.SET_ISSUE_DISPOSITION,
+  payload: {
+    disposition,
+    issueId
+  }
+});
+
 export const onToggleReopen = (reopen, issueId) => ({
   type: Constants.SET_REOPEN,
   payload: {
