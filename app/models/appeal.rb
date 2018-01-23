@@ -368,7 +368,6 @@ class Appeal < ActiveRecord::Base
 
     fetched_documents.map do |document|
       begin
-        # binding.pry
         if existing_documents[document.vbms_document_id]
           document.merge_into(existing_documents[document.vbms_document_id]).save!
           existing_documents[document.vbms_document_id]
