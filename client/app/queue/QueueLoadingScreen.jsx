@@ -11,7 +11,7 @@ import { associateTasksWithAppeals } from './utils';
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
-    return ApiUtil.get(`/queue/${this.props.userId}`, {}).then((response) => {
+    return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
       const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       this.props.onReceiveQueue({
@@ -25,7 +25,7 @@ class QueueLoadingScreen extends React.PureComponent {
 
   render = () => {
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load this case.<br />
+      It looks like Caseflow was unable to load your cases.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>;
 
