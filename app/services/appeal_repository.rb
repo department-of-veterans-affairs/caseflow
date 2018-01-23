@@ -453,9 +453,7 @@ class AppealRepository
     MetricsService.record("VACOLS: regular_non_aod_docket_count",
                           name: "regular_non_aod_docket_count",
                           service: :vacols) do
-      VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
-        .where("BFMPRO <> 'HIS' and BFAC in ('1', '3') and BFD19 is not null and AOD = 0")
-        .count
+      VACOLS::CaseDocket.regular_non_aod_docket_count
     end
   end
 
@@ -463,7 +461,7 @@ class AppealRepository
     result = MetricsService.record("VACOLS: latest_docket_month",
                                    name: "latest_docket_month",
                                    service: :vacols) do
-      VACOLS::Docket.docket_date_of_nth_appeal_in_case_storage(3500)
+      VACOLS::CaseDocket.docket_date_of_nth_appeal_in_case_storage(3500)
     end
 
     result.beginning_of_month
@@ -473,7 +471,7 @@ class AppealRepository
     MetricsService.record("VACOLS: docket_counts_by_month",
                           name: "docket_counts_by_month",
                           service: :vacols) do
-      VACOLS::Docket.docket_counts_by_month
+      VACOLS::CaseDocket.docket_counts_by_month
     end
   end
 

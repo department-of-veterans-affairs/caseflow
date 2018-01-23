@@ -1,6 +1,10 @@
-module VACOLS::Docket
-  def self.connection
-    VACOLS::Record.connection
+class VACOLS::CaseDocket < VACOLS::Record
+  self.table_name = "vacols.brieff"
+
+  def self.regular_non_aod_docket_count
+    joins(VACOLS::Case::JOIN_AOD)
+      .where("BFMPRO <> 'HIS' and BFAC in ('1', '3') and BFD19 is not null and AOD = 0")
+      .count
   end
 
   def self.docket_date_of_nth_appeal_in_case_storage(n)
