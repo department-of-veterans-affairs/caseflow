@@ -345,10 +345,8 @@ class Appeal < ActiveRecord::Base
     fetched_documents.map do |document|
       begin
         if existing_documents[document.series_id]
-          existing_documents[document.series_id].merge_into(document)
-          existing_documents[document.series_id].save!
+          document.merge_into(existing_documents[document.series_id]).save!
           existing_documents[document.series_id]
-          "test"
         else
           document.save!
           document
@@ -373,6 +371,7 @@ class Appeal < ActiveRecord::Base
         # binding.pry
         if existing_documents[document.vbms_document_id]
           document.merge_into(existing_documents[document.vbms_document_id]).save!
+          existing_documents[document.vbms_document_id]
         else
           document.save!
           document
