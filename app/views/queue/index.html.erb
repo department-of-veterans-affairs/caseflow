@@ -1,6 +1,7 @@
 <% content_for :full_page_content do %>
-  <%= react_component("QueueManager", props: {
+  <%= react_component("Queue", props: {
     userDisplayName: current_user.display_name,
+    userId: current_user.id,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date

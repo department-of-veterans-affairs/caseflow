@@ -93,7 +93,7 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ]
       )
-    ]
+    ].each(&:save)
   end
   # rubocop:enable Metrics/MethodLength
 end
