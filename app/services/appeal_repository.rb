@@ -449,6 +449,32 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
+  def self.regular_non_aod_docket_count
+    MetricsService.record("VACOLS: regular_non_aod_docket_count",
+                          name: "regular_non_aod_docket_count",
+                          service: :vacols) do
+      VACOLS::CaseDocket.regular_non_aod_docket_count
+    end
+  end
+
+  def self.latest_docket_month
+    result = MetricsService.record("VACOLS: latest_docket_month",
+                                   name: "latest_docket_month",
+                                   service: :vacols) do
+      VACOLS::CaseDocket.docket_date_of_nth_appeal_in_case_storage(3500)
+    end
+
+    result.beginning_of_month
+  end
+
+  def self.docket_counts_by_month
+    MetricsService.record("VACOLS: docket_counts_by_month",
+                          name: "docket_counts_by_month",
+                          service: :vacols) do
+      VACOLS::CaseDocket.docket_counts_by_month
+    end
+  end
+
   class << self
     private
 

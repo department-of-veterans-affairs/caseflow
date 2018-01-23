@@ -1,13 +1,17 @@
 describe Issue do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }
+  let(:readable_disposition) { "Allowed" }
   let(:codes) { %w[02 15 03 5252] }
+  let(:close_date) { 4.days.ago }
   let(:labels) { ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
 
   let(:issue) do
     Generators::Issue.build(id: vacols_id,
                             disposition: disposition,
+                            readable_disposition: readable_disposition,
                             codes: codes,
+                            close_date: close_date,
                             labels: labels)
   end
 
@@ -38,6 +42,7 @@ describe Issue do
       expect(subject.labels).to eq(labels)
       expect(subject.note).to eq("low back condition")
       expect(subject.disposition).to eq(:remanded)
+      expect(subject.readable_disposition).to eq("Remanded")
       expect(subject.close_date).to eq(AppealRepository.normalize_vacols_date(3.days.ago))
     end
 
@@ -151,6 +156,12 @@ describe Issue do
     subject { issue.formatted_program_type_levels }
 
     it { is_expected.to eq("Comp: SC\n03 - All Others; 5252 - Thigh, limitation of flexion of") }
+  end
+
+  context "#formatted_disposition" do
+    subject { issue.formatted_disposition }
+
+    it { is_expected.to eq("Allowed\n" + 4.days.ago.to_formatted_s(:short_date)) }
   end
 
   context "#friendly_description" do

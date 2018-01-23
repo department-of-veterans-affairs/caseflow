@@ -54,6 +54,10 @@ class Fakes::HearingRepository
     hearing_records.find { |h| h.id == id }
   end
 
+  def self.find_index_by_id(id)
+    hearing_records.index { |h| h.id == id }
+  end
+
   def self.find_by_date(date)
     master_records.find { |h| h.date.to_date == date }
   end
