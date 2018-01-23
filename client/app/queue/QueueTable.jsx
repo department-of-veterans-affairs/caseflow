@@ -56,10 +56,23 @@ export default class QueueTable extends React.PureComponent {
     }
   ];
 
+  /*
+  * Sorting hierarchy:
+  *  1 AOD vets and CAVC remands
+  *  2 All other appeals (originals, remands, etc)
+  *
+  *  Sort by docket date (form 9 date) oldest to
+  *  newest within each group
+  */
+  sortTasks = (tasks = this.props.tasks) => _(tasks).
+    partition((task) => task.appeal.attributes.aod || task.appeal.attributes.type === 'Court Remand').
+    each(_.sortBy('attributes.docket_date')).
+    flatten();
+
   render() {
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={this.props.tasks}
+      rowObjects={this.sortTasks()}
       getKeyForRow={this.getKeyForRow}
     />;
   }
