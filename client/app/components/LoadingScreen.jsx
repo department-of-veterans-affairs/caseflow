@@ -8,7 +8,6 @@ const LoadingScreen = ({ spinnerColor, message, wrapInAppSegment = true }) => {
   });
 
   return <div
-    id="loading-symbol"
     className={wrapperClassNames}>
     {loadingSymbolHtml('', '300px', spinnerColor)}
     <p>{message}</p>
