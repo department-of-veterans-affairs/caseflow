@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
+import { css } from 'glamor';
 
 import SearchBar from '../components/SearchBar';
 import PageRoute from '../components/PageRoute';
@@ -13,6 +14,17 @@ import { COLORS } from './constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setSearch, clearSearch } from './QueueActions';
+
+const searchBarStyling = css({
+  '.usa-search-big': {
+    '> .cf-search-input-with-close': {
+      marginLeft: 'calc(100% - 56.5rem)'
+    },
+    '> span > .cf-submit': {
+      width: '10.5rem'
+    }
+  }
+});
 
 class QueueManager extends React.PureComponent {
   routedQueueList = (props) => {
@@ -45,6 +57,7 @@ class QueueManager extends React.PureComponent {
               onClearSearch={this.props.clearSearch}
               value={this.props.searchQuery}
               submitUsingEnterKey
+              styling={searchBarStyling}
             />
           </div>}
           <PageRoute
