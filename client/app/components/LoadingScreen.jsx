@@ -1,17 +1,21 @@
 import React from 'react';
 import { loadingSymbolHtml } from './RenderFunctions';
-import classNames from 'classnames';
+import AppSegment from './AppSegment';
+import { css } from 'glamor';
+
+const centerTextStyling = css({
+  textAlign: 'center'
+});
 
 const LoadingScreen = ({ spinnerColor, message, wrapInAppSegment = true }) => {
-  const wrapperClassNames = classNames('cf-pdf-center-text', {
-    'cf-app-segment cf-app-segment--alt': wrapInAppSegment
-  });
-
-  return <div
-    className={wrapperClassNames}>
+  const innerContent = <div {...centerTextStyling}>
     {loadingSymbolHtml('', '300px', spinnerColor)}
     <p>{message}</p>
   </div>;
+
+  return wrapInAppSegment ?
+    <AppSegment filledBackground>{innerContent}</AppSegment> :
+    innerContent;
 };
 
 export default LoadingScreen;
