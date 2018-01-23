@@ -27,21 +27,21 @@ describe('QueueLoadingScreen', () => {
         { attributes: { vacols_id: '2' } }
       ],
       tasks: [{
-          attributes: { appeal_id: '1' },
-          appeal: {
-            attributes: { vacols_id: '1' }
-          }
-        }, {
-          attributes: { appeal_id: '1' },
-          appeal: {
-            attributes: { vacols_id: '1' }
-          }
-        }, {
-          attributes: { appeal_id: '2' },
-          appeal: {
-            attributes: { vacols_id: '2' }
-          }
-        }]
+        attributes: { appeal_id: '1' },
+        appeal: {
+          attributes: { vacols_id: '1' }
+        }
+      }, {
+        attributes: { appeal_id: '1' },
+        appeal: {
+          attributes: { vacols_id: '1' }
+        }
+      }, {
+        attributes: { appeal_id: '2' },
+        appeal: {
+          attributes: { vacols_id: '2' }
+        }
+      }]
     });
   });
 });
