@@ -24,6 +24,7 @@ class WorksheetIssue < ActiveRecord::Base
                       levels: issue.levels_with_codes.join("; "),
                       notes: issue.note,
                       description: issue.formatted_program_type_levels,
+                      disposition: issue.formatted_disposition,
                       from_vacols: true)
       end
     end
