@@ -84,8 +84,6 @@ class Fakes::HearingRepository
     2.times.each { |i| Generators::Hearings::MasterRecord.build(user_id: user.id, date: Time.zone.now + (i + 6).days) }
   end
 
-  def.self
-
   def self.random_attrs(i)
     {
       vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
