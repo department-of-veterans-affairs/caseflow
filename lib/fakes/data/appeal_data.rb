@@ -99,6 +99,7 @@ module Fakes::Data::AppealData
   def self.default_queue_records
     [
       Generators::Appeal.build(
+        vacols_record: :veteran_is_not_appellant,
         type: "Original",
         vacols_id: "111112",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -123,6 +124,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
+        vacols_record: :veteran_is_not_appellant,
         type: "Post Remand",
         vacols_id: "222221",
         date_assigned: "2013-05-17 00:00:00 UTC".to_datetime,
@@ -165,6 +167,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
+        vacols_record: :veteran_is_not_appellant,
         type: "Court Remand",
         vacols_id: "333334",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -204,6 +207,8 @@ module Fakes::Data::AppealData
         vbms_id: "654325324",
         veteran_first_name: "Ricky",
         veteran_last_name: "Tikitembo",
+        appellant_first_name: "Clara",
+        appellant_last_name: "Ti",
         docket_number: "13 11-265",
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
@@ -224,6 +229,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
+        vacols_record: :veteran_is_not_appellant,
         type: "Reconsideration",
         vacols_id: "333336",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -253,6 +259,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
+        vacols_record: :veteran_is_not_appellant,
         type: "Remand",
         vacols_id: "333338",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
@@ -281,6 +288,7 @@ module Fakes::Data::AppealData
         ]
       ),
       Generators::Appeal.build(
+        vacols_record: :veteran_is_not_appellant,
         type: "Clear and Unmistakable Error",
         vacols_id: "883335",
         date_assigned: "2013-04-23 00:00:00 UTC".to_datetime,
