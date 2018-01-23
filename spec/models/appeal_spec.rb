@@ -411,7 +411,7 @@ describe Appeal do
         expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
       end
 
-      it "updates retrieved documents" do
+      it "updates retrieved documents", focus: true do
         expect(Document.count).to eq(1)
         expect(Document.first.type).to eq(saved_document.type)
 
@@ -527,7 +527,6 @@ describe Appeal do
         expect(Document.first.type).to eq(saved_document.type)
 
         returned_documents = appeal.find_or_create_documents!
-
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)

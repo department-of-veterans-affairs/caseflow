@@ -348,6 +348,7 @@ class Appeal < ActiveRecord::Base
           existing_documents[document.series_id].merge_into(document)
           existing_documents[document.series_id].save!
           existing_documents[document.series_id]
+          "test"
         else
           document.save!
           document
@@ -361,7 +362,6 @@ class Appeal < ActiveRecord::Base
   def find_or_create_documents!
     return find_or_create_documents_v2! if FeatureToggle.enabled?(:efolder_api_v2,
                                                                   user: RequestStore.store[:current_user])
-
     ids = fetched_documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
       .includes(:annotations, :tags).each_with_object({}) do |document, accumulator|
@@ -370,10 +370,9 @@ class Appeal < ActiveRecord::Base
 
     fetched_documents.map do |document|
       begin
+        # binding.pry
         if existing_documents[document.vbms_document_id]
-          existing_documents[document.vbms_document_id].merge_into(document)
-          existing_documents[document.vbms_document_id].save!
-          existing_documents[document.vbms_document_id]
+          document.merge_into(existing_documents[document.vbms_document_id]).save!
         else
           document.save!
           document
