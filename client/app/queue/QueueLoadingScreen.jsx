@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveQueue } from './QueueActions';
@@ -8,12 +9,9 @@ import { COLORS } from './constants';
 import { associateTasksWithAppeals } from './utils';
 
 class QueueLoadingScreen extends React.PureComponent {
-  getUserId = () => 1;
-
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
-    // todo: return ApiUtil.get(`/queue/${this.props.userId}`, {}).
-    return ApiUtil.get(`/queue/${this.getUserId()}`, {}).then((response) => {
+    return ApiUtil.get(`/queue/${this.props.userId}`, {}).then((response) => {
       const { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       this.props.onReceiveQueue({
@@ -48,6 +46,10 @@ class QueueLoadingScreen extends React.PureComponent {
       {loadingDataDisplay}
     </div>;
   };
+}
+
+QueueLoadingScreen.propTypes = {
+  userId: PropTypes.number.isRequired
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

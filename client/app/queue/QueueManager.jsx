@@ -27,13 +27,9 @@ const searchBarStyling = css({
 });
 
 class QueueManager extends React.PureComponent {
-  routedQueueList = (props) => {
-    const { vacolsId } = props.match.params;
-
-    return <QueueLoadingScreen vacolId={vacolsId}>
-      <QueueListView {...this.props} />
-    </QueueLoadingScreen>;
-  };
+  routedQueueList = () => <QueueLoadingScreen {...this.props}>
+    <QueueListView {...this.props} />
+  </QueueLoadingScreen>;
 
   render = () => <BrowserRouter basename="/queue">
     <div>
@@ -76,9 +72,10 @@ class QueueManager extends React.PureComponent {
 }
 
 QueueManager.propTypes = {
-  userDisplayName: PropTypes.string,
+  userDisplayName: PropTypes.string.isRequired,
+  feedbackUrl: PropTypes.string.isRequired,
+  userId: PropTypes.number.isRequired,
   dropdownUrls: PropTypes.array,
-  feedbackUrl: PropTypes.string,
   buildDate: PropTypes.string
 };
 
