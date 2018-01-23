@@ -6,10 +6,10 @@ class IntakeStats < Caseflow::Stats
 
   class << self
     def throttled_calculate_all!
-      return true if last_calculated_at && last_calculated_at > THROTTLE_RECALCULATION_PERIOD.ago
+      return if last_calculated_at && last_calculated_at > THROTTLE_RECALCULATION_PERIOD.ago
 
       calculate_all!
-      Rails.cache.write("#{name}-last-calculated-timestamp", Time.zone.now.to_i)
+      Rails.cache.write(cache_key, Time.zone.now.to_i)
     end
 
     private
@@ -22,8 +22,12 @@ class IntakeStats < Caseflow::Stats
     def last_calculated_at
       return @last_calculated_timestamp if @last_calculated_timestamp
 
-      timestamp = Rails.cache.read("#{name}-last-calculated-timestamp")
+      timestamp = Rails.cache.read(cache_key)
       timestamp && Time.zone.at(timestamp.to_i)
+    end
+    
+    def cache_key
+      "#{name}-last-calculated-timestamp"
     end
   end
 
