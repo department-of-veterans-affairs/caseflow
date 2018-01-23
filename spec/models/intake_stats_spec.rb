@@ -12,7 +12,7 @@ describe IntakeStats do
       it "calculates stats" do
         expect(IntakeStats).to receive(:calculate_all!)
         subject
-        expect(Rails.cache.read("IntakeStats-last-calculated-timestamp")).to eq(Time.now)
+        expect(Rails.cache.read("IntakeStats-last-calculated-timestamp")).to eq(Time.now.to_i)
       end
     end
 
@@ -22,7 +22,7 @@ describe IntakeStats do
       it "calculates stats" do
         expect(IntakeStats).to receive(:calculate_all!)
         subject
-        expect(Rails.cache.read("IntakeStats-last-calculated-timestamp")).to eq(Time.now)
+        expect(Rails.cache.read("IntakeStats-last-calculated-timestamp")).to eq(Time.now.to_i)
       end
     end
 
