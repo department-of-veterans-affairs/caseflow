@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118152832) do
+ActiveRecord::Schema.define(version: 20180118194440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -435,6 +435,7 @@ ActiveRecord::Schema.define(version: 20180118152832) do
     t.boolean  "from_vacols"
     t.datetime "deleted_at"
     t.string   "notes"
+    t.string   "disposition"
   end
 
   add_index "worksheet_issues", ["deleted_at"], name: "index_worksheet_issues_on_deleted_at", using: :btree
