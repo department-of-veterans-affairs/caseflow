@@ -1,6 +1,6 @@
 class PopulateIssueDisposition < ActiveRecord::Migration
   def change
-    Hearing.all.each do |hearing|
+    Hearing.find_each do |hearing|
       hearing.appeal.issues.each do |issue|
         worksheet_issue = WorksheetIssue.find_by(appeal: hearing.appeal, vacols_sequence_id: issue.vacols_sequence_id)
         worksheet_issue.update(disposition: issue.formatted_disposition) if worksheet_issue.from_vacols? &&
