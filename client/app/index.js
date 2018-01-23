@@ -13,7 +13,7 @@ import Login from './login';
 import TestUsers from './test/TestUsers';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from './establishClaimAdmin';
-import QueueBase from './queue/index';
+import Queue from './queue/index';
 
 const COMPONENTS = {
   BaseContainer,
@@ -27,7 +27,7 @@ const COMPONENTS = {
   TestUsers,
   Hearings,
   PerformanceDegradationBanner,
-  QueueBase
+  Queue
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {

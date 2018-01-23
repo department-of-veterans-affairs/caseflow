@@ -26,7 +26,7 @@ const searchBarStyling = css({
   }
 });
 
-class QueueManager extends React.PureComponent {
+class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
@@ -71,7 +71,7 @@ class QueueManager extends React.PureComponent {
   </BrowserRouter>;
 }
 
-QueueManager.propTypes = {
+QueueApp.propTypes = {
   userDisplayName: PropTypes.string.isRequired,
   feedbackUrl: PropTypes.string.isRequired,
   userId: PropTypes.number.isRequired,
@@ -86,4 +86,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearSearch
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(QueueManager);
+export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

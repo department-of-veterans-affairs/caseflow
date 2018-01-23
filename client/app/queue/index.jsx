@@ -2,10 +2,10 @@ import React from 'react';
 import ReduxBase from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/ReduxBase';
 import queueReducer, { initialState } from './reducers';
 
-import QueueManager from './QueueManager';
+import QueueApp from './QueueApp';
 
-const QueueBase = (props) => <ReduxBase reducer={queueReducer} store={initialState}>
-  <QueueManager {...props} />
+const Queue = (props) => <ReduxBase reducer={queueReducer} store={initialState}>
+  <QueueApp {...props} />
 </ReduxBase>;
 
-export default QueueBase;
+export default Queue;
