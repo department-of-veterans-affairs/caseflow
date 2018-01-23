@@ -118,8 +118,11 @@ module Fakes::Data::AppealData
           {
             vacols_sequence_id: 1,
             codes: %w[02 15 03 7101],
-            labels: ["Compensation", "Service connection", "All Others", "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"],
-            note: "hypertension secondary to DMII.",
+            labels: ["Compensation",
+                     "Service connection",
+                     "All Others",
+                     "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"],
+            note: "hypertension secondary to DMII."
           }
         ]
       ),
@@ -162,8 +165,10 @@ module Fakes::Data::AppealData
           { disposition: :allowed,
             vacols_sequence_id: 5,
             codes: %w[02 15 04 7101],
-            labels: ["Compensation", "Service connection", "New and material", "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"]
-          }
+            labels: ["Compensation",
+                     "Service connection",
+                     "New and material",
+                     "Hypertensive vascular disease (hypertension and isolated systolic hypertension)"] }
         ]
       ),
       Generators::Appeal.build(
