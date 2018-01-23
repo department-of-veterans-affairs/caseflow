@@ -23,25 +23,25 @@ describe('QueueLoadingScreen', () => {
 
     expect(appealsWithTasks).to.deep.equal({
       appeals: [
-        {
-          attributes: { vacols_id: '1' },
-          tasks: [
-            { attributes: { appeal_id: '1' } },
-            { attributes: { appeal_id: '1' } }
-          ]
-        },
-        {
-          attributes: { vacols_id: '2' },
-          tasks: [
-            { attributes: { appeal_id: '2' } }
-          ]
-        }
+        { attributes: { vacols_id: '1' } },
+        { attributes: { vacols_id: '2' } }
       ],
-      tasks: [
-        { attributes: { appeal_id: '1' } },
-        { attributes: { appeal_id: '1' } },
-        { attributes: { appeal_id: '2' } }
-      ]
+      tasks: [{
+          attributes: { appeal_id: '1' },
+          appeal: {
+            attributes: { vacols_id: '1' }
+          }
+        }, {
+          attributes: { appeal_id: '1' },
+          appeal: {
+            attributes: { vacols_id: '1' }
+          }
+        }, {
+          attributes: { appeal_id: '2' },
+          appeal: {
+            attributes: { vacols_id: '2' }
+          }
+        }]
     });
   });
 });
