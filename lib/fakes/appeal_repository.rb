@@ -535,5 +535,24 @@ class Fakes::AppealRepository
   def self.remand_return_date(_vacols_id)
     2.days.ago
   end
+
+  def self.regular_non_aod_docket_count
+    123_456
+  end
+
+  def self.latest_docket_month
+    11.months.ago.to_date.beginning_of_month
+  end
+
+  def self.docket_counts_by_month
+    (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
+      {
+        "year" => d.year,
+        "month" => d.month,
+        "cumsum_n" => i * 10_000 + 3456,
+        "cumsum_ready_n" => i * 5000 + 3456
+      }
+    end
+  end
 end
 # rubocop:enable Metrics/ClassLength
