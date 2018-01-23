@@ -93,7 +93,7 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ]
       )
-    ]
+    ].each(&:save)
   end
 
   def self.default_queue_records
