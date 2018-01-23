@@ -16,6 +16,10 @@ class RampElection < RampReview
     notice_date + RESPOND_BY_TIME if notice_date
   end
 
+  def response_time
+    notice_date && receipt_date && (receipt_date.in_time_zone - notice_date.in_time_zone)
+  end
+
   def self.completed
     where.not(end_product_reference_id: nil)
   end

@@ -137,7 +137,7 @@ RSpec.feature "RAMP Intake" do
       click_on "Search"
 
       expect(page).to have_current_path("/intake/review-request")
-      expect(page).to have_content("Review Ed Merica's opt-in election")
+      expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
 
       intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
       expect(intake).to_not be_nil
@@ -179,7 +179,7 @@ RSpec.feature "RAMP Intake" do
       visit "/intake/completed"
 
       # Validate validation
-      fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
+      fill_in "What is the Receipt Date of this form?", with: "08/06/2017"
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Please select an option.")
@@ -187,10 +187,10 @@ RSpec.feature "RAMP Intake" do
         "Receipt date cannot be earlier than the election notice date of 08/07/2017"
       )
 
-      within_fieldset("Which election did the Veteran select?") do
+      within_fieldset("Which review lane did the veteran select?") do
         find("label", text: "Higher Level Review", match: :prefer_exact).click
       end
-      fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
+      fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -206,7 +206,7 @@ RSpec.feature "RAMP Intake" do
 
       expect(page).to_not have_content("Please select an option.")
 
-      within_fieldset("Which election did the Veteran select?") do
+      within_fieldset("Which review lane did the veteran select?") do
         find("label", text: "Supplemental Claim").click
       end
       safe_click "#button-submit-review"
@@ -237,11 +237,11 @@ RSpec.feature "RAMP Intake" do
       # the review request page if you haven't yet reviewed the intake
       visit "/intake/finish"
 
-      within_fieldset("Which election did the Veteran select?") do
+      within_fieldset("Which review lane did the veteran select?") do
         find("label", text: "Higher Level Review with Informal Conference").click
       end
 
-      fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
+      fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -480,7 +480,7 @@ RSpec.feature "RAMP Intake" do
           click_on "Search"
 
           expect(page).to have_current_path("/intake/review-request")
-          expect(page).to have_content("Review Ed Merica's opt-in election")
+          expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
 
           intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
           expect(intake).to_not be_nil
@@ -498,7 +498,7 @@ RSpec.feature "RAMP Intake" do
           visit "/intake/completed"
 
           # Validate validation
-          fill_in "What is the Receipt Date for this election form?", with: "08/06/2017"
+          fill_in "What is the Receipt Date of this form?", with: "08/06/2017"
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Please select an option.")
@@ -506,10 +506,10 @@ RSpec.feature "RAMP Intake" do
             "Receipt date cannot be earlier than the election notice date of 08/07/2017"
           )
 
-          within_fieldset("Which election did the Veteran select?") do
+          within_fieldset("Which review lane did the veteran select?") do
             find("label", text: "Higher Level Review", match: :prefer_exact).click
           end
-          fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
+          fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -525,7 +525,7 @@ RSpec.feature "RAMP Intake" do
 
           expect(page).to_not have_content("Please select an option.")
 
-          within_fieldset("Which election did the Veteran select?") do
+          within_fieldset("Which review lane did the veteran select?") do
             find("label", text: "Supplemental Claim").click
           end
           safe_click "#button-submit-review"
@@ -556,11 +556,11 @@ RSpec.feature "RAMP Intake" do
           # the review request page if you haven't yet reviewed the intake
           visit "/intake/finish"
 
-          within_fieldset("Which election did the Veteran select?") do
+          within_fieldset("Which review lane did the veteran select?") do
             find("label", text: "Higher Level Review with Informal Conference").click
           end
 
-          fill_in "What is the Receipt Date for this election form?", with: "08/07/2017"
+          fill_in "What is the Receipt Date of this form?", with: "08/07/2017"
           safe_click "#button-submit-review"
 
           expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -816,20 +816,20 @@ RSpec.feature "RAMP Intake" do
 
           safe_click "#finish-intake"
 
+          # Check that clicking next without confirmation throws an error
+          expect(page).to have_content("Finish processing RAMP Selection form")
+          expect(page).to have_content("You must confirm you've completed the steps")
+
+          click_label("confirm-outside-caseflow-steps")
+
+          safe_click "#finish-intake"
+
           # Check that clicking next without selecting a contention raises an error
           expect(page).to have_content("You must select at least one contention")
 
           find("label", text: "Left knee rating increase").click
           find("label", text: "Left shoulder service connection").click
           find("label", text: "The veteran's form lists at least one ineligible contention").click
-
-          safe_click "#finish-intake"
-
-          # Check that clicking next without confirmation throws an error
-          expect(page).to have_content("Finish processing RAMP Selection form")
-          expect(page).to have_content("You must confirm you've completed the steps")
-
-          click_label("confirm-outside-caseflow-steps")
 
           safe_click "#finish-intake"
 
@@ -881,9 +881,9 @@ RSpec.feature "RAMP Intake" do
           end
           safe_click "#button-submit-review"
 
+          click_label("confirm-outside-caseflow-steps")
           find("label", text: "Left knee rating increase").click
           find("label", text: "The veteran's form lists at least one ineligible contention").click
-          click_label("confirm-outside-caseflow-steps")
 
           safe_click "#finish-intake"
 
@@ -962,8 +962,8 @@ RSpec.feature "RAMP Intake" do
           end
           safe_click "#button-submit-review"
 
-          find("label", text: "The veteran's form lists at least one ineligible contention").click
           click_label("confirm-outside-caseflow-steps")
+          find("label", text: "The veteran's form lists at least one ineligible contention").click
 
           safe_click "#finish-intake"
 
