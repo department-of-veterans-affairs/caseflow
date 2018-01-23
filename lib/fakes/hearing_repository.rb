@@ -71,11 +71,20 @@ class Fakes::HearingRepository
     Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
   end
 
+  def self.create_already_held_hearing_for_appeal(i, appeal)
+    user = User.find_by_css_id("Hearing Prep")
+    attrs = random_attrs(i)
+    attrs[:disposition] = :held
+    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
+  end
+
   def self.seed!
     user = User.find_by_css_id("Hearing Prep")
     50.times.each { |i| Generators::Hearing.create(random_attrs(i).merge(user: user)) }
     2.times.each { |i| Generators::Hearings::MasterRecord.build(user_id: user.id, date: Time.zone.now + (i + 6).days) }
   end
+
+  def.self
 
   def self.random_attrs(i)
     {

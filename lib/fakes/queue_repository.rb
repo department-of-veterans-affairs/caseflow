@@ -28,28 +28,9 @@ class Fakes::QueueRepository
     appeal = appeals.first
 
     # Create fake hearings for the first appeal if one doesn't already exist
-    2.times { |i| Fakes::HearingRepository.create_hearing_for_appeal(i, appeal) } if appeal.hearings.empty?
+    2.times { |i| Fakes::HearingRepository.create_already_held_hearing_for_appeal(i, appeal) } if appeal.hearings.empty?
 
-
-        user = User.find_by_css_id("Hearing Prep")
-    Generators::Hearing.create(random_attrs(i).merge(user: user, appeal: appeal))
-
-    {
-      vacols_record: OpenStruct.new(vacols_id: 950_330_575 + (i * 1465)),
-      type: VACOLS::CaseHearing::HEARING_TYPES.values[i % 3],
-      date: Time.zone.now - (i % 9).days - rand(3).days - rand(2).hours + rand(60).minutes,
-      vacols_id: 950_330_575 + (i * 1465),
-      disposition: nil,
-      aod: nil,
-      hold_open: nil,
-      add_on: false,
-      notes: Prime.prime?(i) ? "The Veteran had active service from November 1989 to November 1990" : nil,
-      transcript_requested: false
-    }
-
-    if appeals[1]
-      Fakes::HearingRepository.create_hearing_for_appeal(2, appeals[1])
-    end
+    Fakes::HearingRepository.create_hearing_for_appeal(2, appeals[1]) if appeal.hearings.empty?
 
     appeals
   end
