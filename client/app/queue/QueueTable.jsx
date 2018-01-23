@@ -19,8 +19,18 @@ export default class QueueTable extends React.PureComponent {
     },
     {
       header: 'Type(s)',
-      // todo: highlight AOD in red
-      valueFunction: (appeal) => appeal.attributes.type
+      valueFunction: (appeal) => {
+        const {
+          attributes: { aod, cavc, type }
+        } = appeal;
+        const valueToRender = <div>
+          {aod && <span><span {...redText}>AOD</span>, </span>}
+          {cavc && <span><span {...redText}>CAVC</span>, </span>}
+          <span>{type}</span>
+        </div>
+
+        return <div>{valueToRender}</div>;
+      }
     },
     {
       header: 'Docket Number',
