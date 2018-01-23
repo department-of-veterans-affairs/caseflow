@@ -21,9 +21,6 @@ body {
 
     > div {
       &:first-child {
-
-        border-bottom: 1px solid $color-gray-lighter;
-
         &::after {
           content: '\00a0';
           line-height: 0;
@@ -49,6 +46,10 @@ body {
       background-position: center left;
     }
   }
+}
+
+.header-clearing-underline {
+  border-bottom: 1px solid $color-gray-lighter;
 }
 
 .cf-logo-name,
