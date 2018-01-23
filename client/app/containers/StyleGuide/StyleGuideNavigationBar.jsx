@@ -44,20 +44,19 @@ export default class StyleGuideNavigationBar extends React.PureComponent {
       grey-lighter.
       </p>
 
-      <div className="sg-nav-wrap">
-        <Router>
-          <NavigationBar
-            appName="Hearing Prep"
-            logoProps={{
-              accentColor: LOGO_COLORS.HEARINGS.ACCENT,
-              overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
-            }}
-            userDisplayName="Abraham Lincoln"
-            dropdownUrls={options}
-            defaultUrl="/"
-          />
-        </Router>
-      </div>
+      <Router>
+        <NavigationBar
+          wideApp="full"
+          appName="Hearing Prep"
+          logoProps={{
+            accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+            overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
+          }}
+          userDisplayName="Abraham Lincoln"
+          dropdownUrls={options}
+          defaultUrl="/"
+        />
+      </Router>
     </div>;
   }
 }
