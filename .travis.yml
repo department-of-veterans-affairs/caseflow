@@ -44,6 +44,7 @@ before_install:
   - sudo dpkg -i $PWD/chromium-codecs-ffmpeg-extra.deb
   - sudo apt-get install -f
   - sudo dpkg -i $PWD/chromium-browser.deb
+  - sudo apt-get install -f
   - sudo apt-get install chromium-chromedriver
   - sudo apt-get install -f
   - sudo apt-get install pdftk
