@@ -4,9 +4,9 @@ sudo: required
 addons:
   apt:
     sources:
-      - chromium-browser
+      - google-chrome
     packages:
-      - chromium-browser-stable
+      - google-chrome-stable
 rvm:
   - 2.2.4
 
@@ -38,7 +38,7 @@ before_install:
   - export YARN=/usr/bin/yarn
   
   - $YARN --version
-# See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
+  # See https://github.com/department-of-veterans-affairs/caseflow/issues/1744 for detail on why we're doing this.
   - sudo apt-get install pdftk
   - "export PATH=$PATH:/usr/lib/chromium-browser/"
   - "export DISPLAY=:99.0"
