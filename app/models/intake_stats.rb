@@ -25,7 +25,7 @@ class IntakeStats < Caseflow::Stats
       timestamp = Rails.cache.read(cache_key)
       timestamp && Time.zone.at(timestamp.to_i)
     end
-    
+
     def cache_key
       "#{name}-last-calculated-timestamp"
     end
