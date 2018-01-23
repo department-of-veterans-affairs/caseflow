@@ -28,7 +28,7 @@ export default class QueueTable extends React.PureComponent {
           {aod && <span><span {...redText}>AOD</span>, </span>}
           {cavc && <span><span {...redText}>CAVC</span>, </span>}
           <span>{type}</span>
-        </div>
+        </div>;
 
         return <div>{valueToRender}</div>;
       }
