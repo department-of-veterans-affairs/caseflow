@@ -6,7 +6,5 @@ class CreateDocketTracers < ActiveRecord::Migration
       t.integer    :ahead_count
       t.integer    :ahead_and_ready_count
     end
-
-    add_index(:docket_tracers, [:docket_snapshot_id, :month], unique: true)
   end
 end
