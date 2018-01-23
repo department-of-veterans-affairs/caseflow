@@ -28,6 +28,17 @@ const searchBarStyling = css({
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
+    <div className="usa-grid">
+      <SearchBar
+        id="searchBar"
+        size="big"
+        onSubmit={this.props.setSearch}
+        onChange={this.props.setSearch}
+        onClearSearch={this.props.clearSearch}
+        value={this.props.searchQuery}
+        submitUsingEnterKey
+        styling={searchBarStyling} />
+    </div>
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
@@ -44,18 +55,6 @@ class QueueApp extends React.PureComponent {
         }}
         appName="Queue">
         <div className="cf-wide-app section--queue-list">
-          {this.props.showSearchBar && <div className="usa-grid">
-            <SearchBar
-              id="searchBar"
-              size="big"
-              onSubmit={this.props.setSearch}
-              onChange={this.props.setSearch}
-              onClearSearch={this.props.clearSearch}
-              value={this.props.searchQuery}
-              submitUsingEnterKey
-              styling={searchBarStyling}
-            />
-          </div>}
           <PageRoute
             exact
             path="/"
@@ -79,7 +78,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state, 'showSearchBar', 'filterCriteria.searchQuery');
+const mapStateToProps = (state) => _.pick(state.filterCriteria, 'searchQuery');
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSearch,

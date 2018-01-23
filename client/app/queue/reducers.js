@@ -3,13 +3,10 @@ import { update } from '../util/ReducerUtil';
 import { ACTIONS } from './constants';
 
 export const initialState = {
-  loadedQueueId: null,
-  didLoadQueueFail: false,
   loadedQueue: {
     appeals: [],
     tasks: []
   },
-  showSearchBar: false,
   filterCriteria: {
     searchQuery: ''
   }
@@ -28,10 +25,6 @@ const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.SHOW_SEARCH_BAR:
-    return update(state, { showSearchBar: { $set: true } });
-  case ACTIONS.HIDE_SEARCH_BAR:
-    return update(state, { showSearchBar: { $set: false } });
   case ACTIONS.SET_SEARCH:
     return update(state, {
       filterCriteria: {

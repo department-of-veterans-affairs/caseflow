@@ -1,29 +1,10 @@
 import { ACTIONS } from './constants';
-import { CATEGORIES } from './analytics';
 
 export const onReceiveQueue = ({ tasks, appeals }) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
     tasks,
     appeals
-  }
-});
-
-export const showSearchBar = () => ({
-  type: ACTIONS.SHOW_SEARCH_BAR,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH
-    }
-  }
-});
-
-export const hideSearchBar = () => ({
-  type: ACTIONS.HIDE_SEARCH_BAR,
-  meta: {
-    analytics: {
-      category: CATEGORIES.VIEW_DECISIONS_PATH
-    }
   }
 });
 
