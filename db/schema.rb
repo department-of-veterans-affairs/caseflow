@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118152832) do
+ActiveRecord::Schema.define(version: 20180123160443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,6 +186,7 @@ ActiveRecord::Schema.define(version: 20180118152832) do
   create_table "documents_tags", id: false, force: :cascade do |t|
     t.integer "document_id", null: false
     t.integer "tag_id",      null: false
+    t.integer "user_id"
   end
 
   add_index "documents_tags", ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true, using: :btree

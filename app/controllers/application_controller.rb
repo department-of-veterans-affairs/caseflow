@@ -5,6 +5,7 @@ class ApplicationController < ApplicationBaseController
                 :check_whats_new_cookie
   before_action :set_raven_user
   before_action :verify_authentication
+  before_action :set_paper_trail_whodunnit
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
