@@ -55,8 +55,8 @@
     to-fast-properties "^2.0.0"
 
 "@department-of-veterans-affairs/appeals-frontend-toolkit@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.1.0.tgz#6bfe4ed5fbb19bc86a229c4b152cf98d9bbac8b1"
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.1.1.tgz#055927f52185f7ec91099b348741d56a74c01c3a"
   dependencies:
     glamor "^2.20.40"
     lodash "^4.17.4"
