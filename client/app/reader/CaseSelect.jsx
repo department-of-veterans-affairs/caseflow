@@ -5,7 +5,7 @@ import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 import _ from 'lodash';
 import AppFrame from '../components/AppFrame';
-import AppSegment from '../components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
 import { clearSearch, clearAllFilters } from './DocumentList/DocumentListActions';

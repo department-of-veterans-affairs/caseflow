@@ -6,7 +6,7 @@ import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/com
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
-import AppSegment from '../components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
