@@ -478,9 +478,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       ensure_stable do
         scenario "Review page lets users choose which document to use", focus: true do
           visit "/dispatch/establish-claim"
-          safe_click "#button-Establish-next-claim"
+          click_on "Establish next claim"
           
-          sleep 1
+          sleep 0.1
 
           expect(page).to have_content("Multiple Decision Documents")
 
@@ -492,17 +492,18 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
           expect(page).to have_content("Benefit Type")
         end
-      end
 
-      scenario "the EP creation page has a link back to decision review",
-               skip: "This test is failing because of a stale element reference" do
-        visit "/dispatch/establish-claim"
-        click_on "Establish next claim"
+        scenario "the EP creation page has a link back to decision review", focus: true do
+          visit "/dispatch/establish-claim"
+          click_on "Establish next claim"
+          
+          sleep 0.1
 
-        expect(page).to have_content("Multiple Decision Documents")
-        click_on "Route claim for Decision 1"
-        click_on "< Back to Review Decision"
-        expect(page).to have_content("Multiple Decision Documents")
+          expect(page).to have_content("Multiple Decision Documents")
+          click_on "Route claim for Decision 1"
+          click_on "< Back to Review Decision"
+          expect(page).to have_content("Multiple Decision Documents")
+        end
       end
     end
 
