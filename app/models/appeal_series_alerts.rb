@@ -89,7 +89,7 @@ class AppealSeriesAlerts
   end
 
   def decision_soon
-    if appeal_series.status == :on_docket && appeal_series.at_front
+    if appeal_series.status == :decision_in_progress || (appeal_series.status == :on_docket && appeal_series.at_front)
       {
         type: :decision_soon,
         details: {}
