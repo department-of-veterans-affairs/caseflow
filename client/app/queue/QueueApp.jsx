@@ -17,7 +17,7 @@ class QueueApp extends React.PureComponent {
   routedQueueList = (props) => <QueueLoadingScreen {...this.props}>
     <div className="usa-grid">
       <CaseSelectSearch
-        history={props.history}
+        navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
         feedbackUrl={this.props.feedbackUrl}
         searchSize="big"
         styling={this.getSearchStyling()} />

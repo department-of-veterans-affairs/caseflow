@@ -30,7 +30,7 @@ class CaseSelectSearch extends React.PureComponent {
     // this method redirects to the claim folder page
     // and also does a bit of store clean up.
     if (this.props.caseSelect.selectedAppeal.vacols_id) {
-      this.props.history.push(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
+      this.props.navigateToPath(`/${this.props.caseSelect.selectedAppeal.vacols_id}/documents`);
       this.props.clearCaseSelectSearch();
     }
   };
@@ -131,7 +131,8 @@ class CaseSelectSearch extends React.PureComponent {
 
 CaseSelectSearch.propTypes = {
   searchSize: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  navigateToPath: PropTypes.func.isRequired
 };
 
 CaseSelectSearch.defaultProps = {

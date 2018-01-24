@@ -72,7 +72,7 @@ class CaseSelect extends React.PureComponent {
     return <div className="usa-grid section--case-select">
       <div className="cf-app-segment cf-app-segment--alt">
         <h1 className="welcome-header">Welcome to Reader!</h1>
-        <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
+        <CaseSelectSearch navigateToPath={this.props.history.push} feedbackUrl={this.props.feedbackUrl} />
         <p className="cf-lead-paragraph">
           Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
         </p>
