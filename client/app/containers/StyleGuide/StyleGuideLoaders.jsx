@@ -1,7 +1,7 @@
 import React from 'react';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import LoadingContainer from '../../components/LoadingContainer';
-import * as AppConstants from '../../constants/AppConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants'
 import StyleGuideSmallLoader from './StyleGuideSmallLoader';
 import StyleGuideLoadingButton from './StyleGuideLoadingButton';
 
@@ -25,7 +25,7 @@ export default class StyleGuideLoaders extends React.PureComponent {
        See <a href="#colors">Caseflow Logos</a> under the Colors section.</p>
 
       <div className="cf-sg-loader">
-        <LoadingContainer color={AppConstants.LOADING_INDICATOR_COLOR_DISPATCH}>
+        <LoadingContainer color={LOGO_COLORS.DISPATCH.ACCENT}>
           <div className="cf-image-loader">
           </div>
           <p className="cf-txt-c"> Gathering information in VBMS now......</p>
