@@ -23,11 +23,16 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
+  attribute :appellant_full_name do
+    object.appellant_name
+  end
+
   attribute :veteran_full_name
   attribute :vbms_id
   attribute :vacols_id
   attribute :type
   attribute :aod
+  attribute :docket_number
 
   attribute :power_of_attorney do
     # TODO: change this to use our more sophisticated poa data fetching mechanism
