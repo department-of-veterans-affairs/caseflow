@@ -26,10 +26,6 @@ def skip_because_sending_keys_to_body_does_not_work_on_travis
   end
 end
 
-def scroll_element_to_view(element)
-  page.execute_script("document.getElementById('#{element}').scrollIntoView()")
-end
-
 def scroll_to_bottom(id: nil, class_name: nil)
   page.driver.evaluate_script <<-EOS
     function() {

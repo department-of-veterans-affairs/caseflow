@@ -53,6 +53,13 @@ end
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
+  
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+        chromeOptions: {
+            args: %w[ no-sandbox ]
+        }
+    )
+  
   options = {
     port: 51_674,
     browser: :chrome,
@@ -64,7 +71,8 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
       browser: {
         disk_cache_dir: cache_directory
       }
-    }
+    },
+    desired_capabilities: capabilities
   }
 
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
@@ -233,6 +241,10 @@ def scroll_element_in_to_view(selector)
   expect do
     scroll_to_element_in_view_with_script(selector)
   end.to become_truthy, "Could not find element #{selector}"
+end
+
+def scroll_element_to_view(element)
+  page.execute_script("document.getElementById('#{element}').scrollIntoView()")
 end
 
 def get_computed_styles(selector, style_key)
