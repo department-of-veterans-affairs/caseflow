@@ -16,10 +16,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 7cacaa8f607666ba0f4b971640cf3a4c21db1b83
-  ref: 7cacaa8f607666ba0f4b971640cf3a4c21db1b83
+  revision: 7f930be6621155b87b78390f3ad39dada3bd72ca
+  ref: 7f930be6621155b87b78390f3ad39dada3bd72ca
   specs:
-    caseflow (0.2.8)
+    caseflow (0.2.11)
       aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
       d3-rails
@@ -30,8 +30,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 5dda05573d424d557be7a09052ab24b0dc6a5c5f
-  ref: 5dda05573d424d557be7a09052ab24b0dc6a5c5f
+  revision: e73f20e112db57d2f2ca20879dca0b5e9766c45c
+  ref: e73f20e112db57d2f2ca20879dca0b5e9766c45c
   specs:
     connect_vbms (1.0.0)
       httpclient (~> 2.8.0)
