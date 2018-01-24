@@ -479,6 +479,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         scenario "Review page lets users choose which document to use", focus: true do
           visit "/dispatch/establish-claim"
           safe_click "#button-Establish-next-claim"
+          
+          sleep 1
 
           expect(page).to have_content("Multiple Decision Documents")
 
