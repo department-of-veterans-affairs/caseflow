@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "7cacaa8f607666ba0f4b971640cf3a4c21db1b83"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "7f930be6621155b87b78390f3ad39dada3bd72ca"
 
 gem "moment_timezone-rails"
 
@@ -71,7 +71,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "5dda05573d424d557be7a09052ab24b0dc6a5c5f"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "e73f20e112db57d2f2ca20879dca0b5e9766c45c"
 
 gem "redis-rails", "~> 5.0.2"
 
