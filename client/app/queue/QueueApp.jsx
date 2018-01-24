@@ -13,22 +13,6 @@ import QueueListView from './QueueListView';
 import { COLORS } from './constants';
 import { connect } from 'react-redux';
 
-const searchStyling = css({
-  '.section-search': {
-    '> .usa-alert-error': {
-      marginBottom: '1rem'
-    },
-    '> .usa-search-big': {
-      '> .cf-search-input-with-close': {
-        marginLeft: 'calc(100% - 56.5rem)'
-      },
-      '> span > .cf-submit': {
-        width: '10.5rem'
-      }
-    }
-  }
-});
-
 class QueueApp extends React.PureComponent {
   routedQueueList = (props) => <QueueLoadingScreen {...this.props}>
     <div className="usa-grid">
@@ -36,10 +20,26 @@ class QueueApp extends React.PureComponent {
         history={props.history}
         feedbackUrl={this.props.feedbackUrl}
         searchSize="big"
-        styling={searchStyling} />
+        styling={this.getSearchStyling()} />
     </div>
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
+
+  getSearchStyling = () => css({
+    '.section-search': {
+      '> .usa-alert-error': {
+        marginBottom: '1rem'
+      },
+      '> .usa-search-big': {
+        '> .cf-search-input-with-close': {
+          marginLeft: `calc(100% - ${this.props.isRequestingAppealsUsingVeteranId ? '60' : '56.5'}rem)`
+        },
+        '> span > .cf-submit': {
+          width: '10.5rem'
+        }
+      }
+    }
+  });
 
   render = () => <BrowserRouter basename="/queue">
     <div>
@@ -77,6 +77,6 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.caseSelect.caseSelectCriteria, 'searchQuery');
+const mapStateToProps = (state) => _.pick(state.caseSelect, 'isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery');
 
 export default connect(mapStateToProps)(QueueApp);
