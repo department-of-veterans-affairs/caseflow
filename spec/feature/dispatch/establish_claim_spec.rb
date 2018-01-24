@@ -480,9 +480,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           
-          sleep 0.1
+          #sleep 0.1
 
-          expect(page).to have_content("Multiple Decision Documents")
+          expect(find("#review-decision-heading")).to have_content("Multiple Decision Documents")
 
           # Text on the tab
           expect(page).to have_content("Decision 1 (")
@@ -497,9 +497,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
           
-          sleep 0.1
+          #sleep 0.1
 
-          expect(page).to have_content("Multiple Decision Documents")
+          expect(find("#review-decision-heading")).to have_content("Multiple Decision Documents")
           click_on "Route claim for Decision 1"
           click_on "< Back to Review Decision"
           expect(page).to have_content("Multiple Decision Documents")
