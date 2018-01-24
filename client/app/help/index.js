@@ -26,7 +26,7 @@ class Help extends React.PureComponent {
              userDisplayName={this.props.userDisplayName}
              dropdownUrls={this.props.dropdownUrls}
              appName="Help"
-             defaultUrl="/help"
+             defaultUrl="/"
              logoProps={{
                accentColor: COLORS.GREY_DARK,
                overlapColor: COLORS.GREY_DARK
@@ -35,7 +35,7 @@ class Help extends React.PureComponent {
              <div className="cf-app-width cf-app-segment cf-app-segment--alt">
                <PageRoute
                  exact
-                 path="/help"
+                 path="/"
                  title="Caseflow Help"
                  component={this.helpRoot} />
                <PageRoute
