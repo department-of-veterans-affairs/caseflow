@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-import SearchBar from '../components/SearchBar';
+import CaseSelectSearch from '../reader/CaseSelectSearch';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
@@ -12,8 +12,6 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import QueueListView from './QueueListView';
 import { COLORS } from './constants';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { setSearch, clearSearch } from './QueueActions';
 
 const searchBarStyling = css({
   '.usa-search-big': {
@@ -27,17 +25,13 @@ const searchBarStyling = css({
 });
 
 class QueueApp extends React.PureComponent {
-  routedQueueList = () => <QueueLoadingScreen {...this.props}>
+  routedQueueList = (props) => <QueueLoadingScreen {...this.props}>
     <div className="usa-grid">
-      <SearchBar
-        id="searchBar"
-        size="big"
-        onSubmit={this.props.setSearch}
-        onChange={this.props.setSearch}
-        onClearSearch={this.props.clearSearch}
-        value={this.props.searchQuery}
-        submitUsingEnterKey
-        styling={searchBarStyling} />
+      <CaseSelectSearch
+        history={props.history}
+        feedbackUrl={this.props.feedbackUrl}
+        searchSize="big"
+        searchStyling={searchBarStyling} />
     </div>
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
@@ -78,11 +72,6 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.filterCriteria, 'searchQuery');
+const mapStateToProps = (state) => _.pick(state.caseSelect.caseSelectCriteria, 'searchQuery');
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setSearch,
-  clearSearch
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);
+export default connect(mapStateToProps)(QueueApp);

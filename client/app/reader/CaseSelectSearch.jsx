@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 import { fetchAppealUsingVeteranId,
   setCaseSelectSearch,
@@ -86,7 +87,8 @@ class CaseSelectSearch extends React.PureComponent {
       }
       <SearchBar
         id="searchBar"
-        size="small"
+        size={this.props.searchSize}
+        styling={this.props.searchStyling}
         onChange={this.props.setCaseSelectSearch}
         value={this.props.caseSelectCriteria.searchQuery}
         onClearSearch={this.props.clearCaseSelectSearch}
@@ -126,6 +128,15 @@ class CaseSelectSearch extends React.PureComponent {
       }
     </div>;
   }
+}
+
+CaseSelectSearch.propTypes = {
+  searchSize: PropTypes.string,
+  searchStyling: PropTypes.object
+}
+
+CaseSelectSearch.defaultProps = {
+  searchSize: 'small'
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
