@@ -13,7 +13,7 @@ class TagController < ApplicationController
     tags_request.each do |tag|
       new_tag = Tag.find_or_create_by(tag)
       begin
-        DocumentsTag.create(document_id: document.id, tag_id: new_tag.id, user_id: current_user.id)
+        document.tags << new_tag
       rescue ActiveRecord::RecordNotUnique
         errors.push(new_tag.text => "This tag already exists for the document.")
       end
@@ -30,7 +30,7 @@ class TagController < ApplicationController
 
     document = Document.find(document_id)
 
-    document.tags.delete(tag_id)
+    document.tags.destroy(tag_id)
     render(json: { status: :no_content })
   end
 

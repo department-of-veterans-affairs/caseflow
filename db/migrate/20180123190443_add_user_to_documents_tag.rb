@@ -1,5 +1,5 @@
 class AddUserToDocumentsTag < ActiveRecord::Migration
   def change
-    add_column :documents_tags, :user_id, :integer
+    add_column :documents_tags, :id, :primary_key
   end
 end
