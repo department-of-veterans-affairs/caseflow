@@ -32,6 +32,10 @@ class Fakes::QueueRepository
 
     Fakes::HearingRepository.create_hearing_for_appeal(2, appeals[1]) if appeal.hearings.empty?
 
+    appeals[1..-1].each do |appeal|
+      appeal.aod = false
+    end
+
     appeals
   end
 end
