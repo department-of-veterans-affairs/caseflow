@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/appeals-frontend-toolkit": "https://github.com/department-of-veterans-affairs/appeals-frontend-toolkit/tarball/nth/extract-app-segment",
+    "@department-of-veterans-affairs/appeals-frontend-toolkit": "^2.2.0",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",
