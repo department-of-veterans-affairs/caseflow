@@ -187,6 +187,8 @@ class ApplicationController < ApplicationBaseController
                 "Caseflow Reader"
               elsif request.original_fullpath.include? "hearings"
                 "Caseflow Hearing Prep"
+              elsif request.original_fullpath.include? "intake"
+                "Caseflow Intake"
               else
                 "Caseflow"
               end
