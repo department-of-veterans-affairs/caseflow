@@ -1,6 +1,6 @@
+# rubocop:disable Metrics/ModuleLength
 module Fakes::Data::AppealData
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/ModuleLength
   # rubocop:disable Metrics/AbcSize
   def self.default_vacols_ids
     default_records.map(&:vacols_id)
@@ -99,7 +99,7 @@ module Fakes::Data::AppealData
   end
 
   def self.default_queue_records
-    records = [
+    [
       Generators::Appeal.build(
         vacols_record: :veteran_is_not_appellant,
         type: "Original",
@@ -350,6 +350,6 @@ module Fakes::Data::AppealData
     ].each(&:save)
   end
   # rubocop:enable Metrics/MethodLength
-  # rubocop:disable Metrics/ModuleLength
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize
 end
+# rubocop:enable Metrics/ModuleLength
