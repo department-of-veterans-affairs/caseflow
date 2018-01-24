@@ -42,6 +42,12 @@ class Test::UsersController < ApplicationController
       }
     },
     {
+      name: "Queue",
+      links: {
+        queue: "/queue"
+      }
+    },
+    {
       name: "Miscellaneous",
       links: {
         styleguide: "/styleguide",
