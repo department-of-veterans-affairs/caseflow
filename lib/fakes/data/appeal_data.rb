@@ -1,5 +1,7 @@
 module Fakes::Data::AppealData
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable Metrics/AbcSize
   def self.default_vacols_ids
     default_records.map(&:vacols_id)
   end
@@ -345,9 +347,9 @@ module Fakes::Data::AppealData
             labels: ["Compensation", "Service connection", "All Others", "Thigh, limitation of flexion of"] }
         ]
       )
-    ]
-    records.map(&:save)
-    records
+    ].each(&:save)
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:disable Metrics/ModuleLength
+  # rubocop:disable Metrics/AbcSize
 end
