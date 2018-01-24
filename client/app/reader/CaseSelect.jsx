@@ -4,6 +4,8 @@ import { bindActionCreators } from 'redux';
 import Table from '../components/Table';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 import _ from 'lodash';
+import AppFrame from '../components/AppFrame';
+import AppSegment from '../components/AppSegment';
 
 import { getClaimTypeDetailInfo } from '../reader/utils';
 import { clearSearch, clearAllFilters } from './DocumentList/DocumentListActions';
@@ -69,23 +71,25 @@ class CaseSelect extends React.PureComponent {
       return null;
     }
 
-    return <div className="usa-grid section--case-select">
-      <div className="cf-app-segment cf-app-segment--alt">
-        <h1 className="welcome-header">Welcome to Reader!</h1>
-        <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
-        <p className="cf-lead-paragraph">
+    return <AppFrame wideApp>
+      <AppSegment filledBackground>
+        <div className="section--case-select">
+          <h1 className="welcome-header">Welcome to Reader!</h1>
+          <CaseSelectSearch history={this.props.history} feedbackUrl={this.props.feedbackUrl} />
+          <p className="cf-lead-paragraph">
           Learn more about Reader on our <a href="/reader/help">FAQ page</a>.
-        </p>
-        <h2>Cases checked in</h2>
-        <Table
-          className="assignment-list"
-          columns={this.getAssignmentColumn}
-          rowObjects={this.props.assignments}
-          summary="Cases checked in"
-          getKeyForRow={this.getKeyForRow}
-        />
-      </div>
-    </div>;
+          </p>
+          <h2>Cases checked in</h2>
+          <Table
+            className="assignment-list"
+            columns={this.getAssignmentColumn}
+            rowObjects={this.props.assignments}
+            summary="Cases checked in"
+            getKeyForRow={this.getKeyForRow}
+          />
+        </div>
+      </AppSegment>
+    </AppFrame>;
   }
 }
 
