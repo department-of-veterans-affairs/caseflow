@@ -94,7 +94,8 @@ export default class SearchBar extends React.Component {
       submitUsingEnterKey,
       placeholder,
       internalText,
-      spinnerColor
+      spinnerColor,
+      styling
     } = this.props;
 
     id = id || uuid.v4();
@@ -121,7 +122,7 @@ export default class SearchBar extends React.Component {
       'cf-search-with-internal-text': hasInternalText
     });
 
-    return <span className={searchTypeClasses} role="search">
+    return <span className={searchTypeClasses} role="search" {...styling}>
       <label className={title ? label : 'usa-sr-only'} htmlFor={id}>
         {title || 'Search small'}
       </label>

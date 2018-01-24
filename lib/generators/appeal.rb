@@ -116,6 +116,12 @@ class Generators::Appeal
             { disposition: :allowed },
             { disposition: :denied }
           ]
+        },
+        veteran_is_not_appellant: {
+          appellant_first_name: nil,
+          appellant_last_name: nil,
+          appellant_middle_initial: nil,
+          appellant_relationship: nil
         }
       }
     end
