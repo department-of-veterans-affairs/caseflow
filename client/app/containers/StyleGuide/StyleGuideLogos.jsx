@@ -10,23 +10,23 @@ export default class StyleLogos extends React.PureComponent {
 
     const logos = [
       {
-        accentColor: '#844e9f',
-        overlapColor: '#7a4b91',
+        accentColor: LOGO_COLORS.DISPATCH.ACCENT,
+        overlapColor: LOGO_COLORS.DISPATCH.OVERLAP,
         appName: 'Dispatch'
       },
       {
-        accentColor: 'rgb(72, 144, 0)',
-        overlapColor: 'rgb(72, 144, 0)',
+        accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+        overlapColor: LOGO_COLORS.HEARINGS.OVERLAP,
         appName: 'Hearings Prep'
       },
       {
-        accentColor: '#FFCC4E',
-        overlapColor: '#CA9E00',
+        accentColor: LOGO_COLORS.INTAKE.ACCENT,
+        overlapColor: LOGO_COLORS.INTAKE.OVERLAP,
         appName: 'Intake'
       },
       {
         accentColor: LOGO_COLORS.READER.ACCENT,
-        overlapColor: '#2D5104',
+        overlapColor: LOGO_COLORS.READER.OVERLAP,
         appName: 'Reader'
       }
     ];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import { COLORS, LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 
 export default class StyleGuideColors extends React.PureComponent {
@@ -9,7 +9,7 @@ export default class StyleGuideColors extends React.PureComponent {
     'Gray-dark': '#323a45',
     Gray: '#5b616b',
     'Gray-light': '#aeb0b5',
-    'Gray-lighter': '#d6d7d9',
+    'Gray-lighter': COLORS.GREY_LIGHT,
     'Gray-warm-light': '#e4e2e0',
     Primary: '#0071bc',
     White: '#ffffff',
@@ -20,13 +20,13 @@ export default class StyleGuideColors extends React.PureComponent {
     'Green-lightest': '#e7f4e4',
     'Primary-alt-lightest': '#e1f3f8',
     'Gold-lightest': '#fff1d2',
-    Dispatch: '#844e9f',
+    Dispatch: LOGO_COLORS.DISPATCH.ACCENT,
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
     Certification: '#459fd7',
-    Reader: COLORS.READER.ACCENT,
-    'Case Summary': '#ffcc4e',
-    Intake: '#ffcc4e',
+    Reader: LOGO_COLORS.READER.ACCENT,
+    'Case Summary': LOGO_COLORS.INTAKE.ACCENT,
+    Intake: LOGO_COLORS.INTAKE.ACCENT,
     Procedural: '#5a94ec',
     Medical: '#ff6868',
     'Other Evidence': '#3ad2cf'

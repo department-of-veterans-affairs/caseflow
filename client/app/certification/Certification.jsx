@@ -16,6 +16,7 @@ import ErrorMessage from './ErrorMessage';
 import PageRoute from '../components/PageRoute';
 import ApiUtil from '../util/ApiUtil';
 import * as AppConstants from '../constants/AppConstants';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 class EntryPointRedirect extends React.Component {
