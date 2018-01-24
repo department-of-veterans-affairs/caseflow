@@ -24,7 +24,7 @@ export default class StyleGuideColors extends React.PureComponent {
     'eFolder Express': '#F0835e',
     Feedback: '#73e5d4',
     Certification: '#459fd7',
-    Reader: '#417505',
+    Reader: COLORS.READER.ACCENT,
     'Case Summary': '#ffcc4e',
     Intake: '#ffcc4e',
     Procedural: '#5a94ec',

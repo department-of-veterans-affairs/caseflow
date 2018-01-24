@@ -3,6 +3,7 @@ import React from 'react';
 // components
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 import CaseflowLogo from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/CaseflowLogo';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 export default class StyleLogos extends React.PureComponent {
   render = () => {
@@ -24,7 +25,7 @@ export default class StyleLogos extends React.PureComponent {
         appName: 'Intake'
       },
       {
-        accentColor: '#417505',
+        accentColor: LOGO_COLORS.READER.ACCENT,
         overlapColor: '#2D5104',
         appName: 'Reader'
       }

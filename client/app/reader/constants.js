@@ -1,5 +1,6 @@
 import { CategoryIcon } from '../components/RenderFunctions';
 import React from 'react';
+import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 
 // If we used CSS in JS, we wouldn't have to keep this value in sync with the CSS in a brittle way.
 export const ANNOTATION_ICON_SIDE_LENGTH = 40;
@@ -45,7 +46,7 @@ export const documentCategories = {
 };
 
 // colors
-export const READER_COLOR = '#417505';
+export const READER_COLOR = LOGO_COLORS.READER.ACCENT;
 
 // UI Text
 export const NO_ISSUES_ON_APPEAL_MSG = 'No issues on appeal';
