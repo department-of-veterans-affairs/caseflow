@@ -4,6 +4,7 @@ import Table from '../components/Table';
 import moment from 'moment';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 import { css } from 'glamor';
+import { sortTasks } from './utils';
 
 const redText = css({ color: 'red' });
 
@@ -55,13 +56,11 @@ export default class QueueTable extends React.PureComponent {
     }
   ];
 
-  render() {
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={this.props.tasks}
-      getKeyForRow={this.getKeyForRow}
-    />;
-  }
+  render = () => <Table
+    columns={this.getQueueColumns}
+    rowObjects={sortTasks(this.props.tasks)}
+    getKeyForRow={this.getKeyForRow}
+  />;
 }
 
 QueueTable.propTypes = {
