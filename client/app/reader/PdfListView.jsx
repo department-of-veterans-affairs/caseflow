@@ -4,6 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import LastRetrievalInfo from './LastRetrievalInfo';
+import AppFrame from '../components/AppFrame';
+import AppSegment from '../components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
@@ -55,14 +58,19 @@ export class PdfListView extends React.Component {
       />;
     }
 
-    return <div>
-      <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-      <DocumentListHeader
-        documents={this.props.documents}
-        noDocuments={noDocuments}
-      />
-      {tableView}
-    </div>;
+    return <AppFrame wideApp>
+      <AppSegment filledBackground>
+        <div className="section--document-list">
+          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
+          <DocumentListHeader
+            documents={this.props.documents}
+            noDocuments={noDocuments}
+          />
+          {tableView}
+        </div>
+      </AppSegment>
+      <LastRetrievalInfo />
+    </AppFrame>;
   }
 }
 

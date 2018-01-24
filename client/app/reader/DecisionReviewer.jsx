@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { Route } from 'react-router';
 import { getQueryParams } from '../util/QueryParamsUtil';
-import AppFrame from '../components/AppFrame';
 
 import PageRoute from '../components/PageRoute';
 import PdfViewer from './PdfViewer';
@@ -22,8 +20,6 @@ import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
-import AppSegment from '../components/AppSegment';
-import LastRetrievalInfo from './LastRetrievalInfo';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -152,30 +148,23 @@ export class DecisionReviewer extends React.PureComponent {
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">
-          <AppFrame wideApp>
-            <AppSegment filledBackground>
-              <div className="section--document-list">
-                <PageRoute
-                  exact
-                  path="/"
-                  title="Assignments | Caseflow Reader"
-                  render={this.routedCaseSelect} />
-                <PageRoute
-                  exact
-                  title={this.getClaimsFolderPageTitle(this.props.appeal)}
-                  breadcrumb="Claims Folder"
-                  path="/:vacolsId/documents"
-                  render={this.routedPdfListView} />
-                <PageRoute
-                  exact
-                  title="Document Viewer | Caseflow Reader"
-                  breadcrumb="Document Viewer"
-                  path="/:vacolsId/documents/:docId"
-                  render={this.routedPdfViewer} />
-              </div>
-            </AppSegment>
-            <Route exact path="/:vacolsId/documents" component={LastRetrievalInfo} />
-          </AppFrame>
+          <PageRoute
+            exact
+            title="Document Viewer | Caseflow Reader"
+            breadcrumb="Document Viewer"
+            path="/:vacolsId/documents/:docId"
+            render={this.routedPdfViewer} />
+          <PageRoute
+            exact
+            path="/"
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect} />
+          <PageRoute
+            exact
+            title={this.getClaimsFolderPageTitle(this.props.appeal)}
+            breadcrumb="Claims Folder"
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView} />
         </NavigationBar>
         <Footer
           wideApp
