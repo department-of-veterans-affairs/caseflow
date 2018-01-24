@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import AppFrame from '../components/AppFrame';
 import PageRoute from '../components/PageRoute';
-import PrimaryAppContent from '../components/PrimaryAppContent';
 import NavigationBar from '../components/NavigationBar';
 import { COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
 import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Footer';
@@ -33,7 +32,7 @@ class Help extends React.PureComponent {
                overlapColor: COLORS.GREY_DARK
              }} />
            <AppFrame>
-             <PrimaryAppContent>
+             <div className="cf-app-width cf-app-segment cf-app-segment--alt">
                <PageRoute
                  exact
                  path="/help"
@@ -45,7 +44,7 @@ class Help extends React.PureComponent {
                  title="Certification Help"
                  component={CertificationHelp} />
 
-             </PrimaryAppContent>
+             </div>
            </AppFrame>
            <Footer
              appName="Help"
