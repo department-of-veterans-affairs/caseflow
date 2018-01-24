@@ -74,7 +74,7 @@ class CaseSelectSearch extends React.PureComponent {
         value: appeal.vacols_id
       }));
 
-    return <div className="section-search">
+    return <div className="section-search" {...this.props.styling}>
       {caseSelect.search.showErrorMessage &&
         <Alert title="Veteran ID not found" type="error">
           Please enter a valid Veteran ID and try again.
@@ -88,7 +88,6 @@ class CaseSelectSearch extends React.PureComponent {
       <SearchBar
         id="searchBar"
         size={this.props.searchSize}
-        styling={this.props.searchStyling}
         onChange={this.props.setCaseSelectSearch}
         value={this.props.caseSelectCriteria.searchQuery}
         onClearSearch={this.props.clearCaseSelectSearch}
@@ -132,7 +131,7 @@ class CaseSelectSearch extends React.PureComponent {
 
 CaseSelectSearch.propTypes = {
   searchSize: PropTypes.string,
-  searchStyling: PropTypes.object
+  styling: PropTypes.object
 }
 
 CaseSelectSearch.defaultProps = {

@@ -13,13 +13,18 @@ import QueueListView from './QueueListView';
 import { COLORS } from './constants';
 import { connect } from 'react-redux';
 
-const searchBarStyling = css({
-  '.usa-search-big': {
-    '> .cf-search-input-with-close': {
-      marginLeft: 'calc(100% - 56.5rem)'
+const searchStyling = css({
+  '.section-search': {
+    '> .usa-alert-error': {
+      marginBottom: '1rem'
     },
-    '> span > .cf-submit': {
-      width: '10.5rem'
+    '> .usa-search-big': {
+      '> .cf-search-input-with-close': {
+        marginLeft: 'calc(100% - 56.5rem)'
+      },
+      '> span > .cf-submit': {
+        width: '10.5rem'
+      }
     }
   }
 });
@@ -31,7 +36,7 @@ class QueueApp extends React.PureComponent {
         history={props.history}
         feedbackUrl={this.props.feedbackUrl}
         searchSize="big"
-        searchStyling={searchBarStyling} />
+        styling={searchStyling} />
     </div>
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
