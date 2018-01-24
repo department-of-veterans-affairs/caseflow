@@ -20,10 +20,12 @@ import Alert from '../components/Alert';
 class CaseSelectSearch extends React.PureComponent {
 
   componentDidUpdate = () => {
-    // if only one appeal is received for the veteran id
-    // select that appeal's case.
-    if (_.size(this.props.caseSelect.receivedAppeals) === 1) {
-      this.props.caseSelectAppeal(this.props.caseSelect.receivedAppeals[0]);
+    if (!this.props.alwaysShowCaseSelectionModal) {
+      // if only one appeal is received for the veteran id
+      // select that appeal's case.
+      if (_.size(this.props.caseSelect.receivedAppeals) === 1) {
+        this.props.caseSelectAppeal(this.props.caseSelect.receivedAppeals[0]);
+      }
     }
 
     // when an appeal is selected using claim search,
@@ -74,6 +76,8 @@ class CaseSelectSearch extends React.PureComponent {
         value: appeal.vacols_id
       }));
 
+    const modalShowThreshold = this.props.alwaysShowCaseSelectionModal ? 0 : 1;
+
     return <div className="section-search" {...this.props.styling}>
       {caseSelect.search.showErrorMessage &&
         <Alert title="Veteran ID not found" type="error">
@@ -95,7 +99,7 @@ class CaseSelectSearch extends React.PureComponent {
         loading={caseSelect.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
       />
-      { Boolean(_.size(caseSelect.receivedAppeals) > 1) && <Modal
+      { Boolean(_.size(caseSelect.receivedAppeals) > modalShowThreshold) && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Cancel',
@@ -132,11 +136,13 @@ class CaseSelectSearch extends React.PureComponent {
 CaseSelectSearch.propTypes = {
   searchSize: PropTypes.string,
   styling: PropTypes.object,
-  navigateToPath: PropTypes.func.isRequired
+  navigateToPath: PropTypes.func.isRequired,
+  alwaysShowCaseSelectionModal: PropTypes.bool
 };
 
 CaseSelectSearch.defaultProps = {
-  searchSize: 'small'
+  searchSize: 'small',
+  alwaysShowCaseSelectionModal: false
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

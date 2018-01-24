@@ -14,10 +14,11 @@ import { COLORS } from './constants';
 import { connect } from 'react-redux';
 
 class QueueApp extends React.PureComponent {
-  routedQueueList = (props) => <QueueLoadingScreen {...this.props}>
+  routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <div className="usa-grid">
       <CaseSelectSearch
         navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
+        alwaysShowCaseSelectionModal
         feedbackUrl={this.props.feedbackUrl}
         searchSize="big"
         styling={this.getSearchStyling()} />
