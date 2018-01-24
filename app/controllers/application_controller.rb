@@ -177,21 +177,15 @@ class ApplicationController < ApplicationBaseController
     end
     # :nocov:
 
-    # TODO: when we want to segment feedback subjects further,
-    # add more conditions here.
-    subject = if request.original_fullpath.include? "dispatch"
-                "Caseflow Dispatch"
-              elsif request.original_fullpath.include? "certifications"
-                "Caseflow Certification"
-              elsif request.original_fullpath.include? "reader"
-                "Caseflow Reader"
-              elsif request.original_fullpath.include? "hearings"
-                "Caseflow Hearing Prep"
-              elsif request.original_fullpath.include? "intake"
-                "Caseflow Intake"
-              else
-                "Caseflow"
-              end
+    subject_hash = {
+      "dispatch" => "Caseflow Dispatch",
+      "certifications" => "Caseflow Certification",
+      "reader" => "Caseflow Reader",
+      "hearings" => "Caseflow Hearing Prep",
+      "intake" => "Caseflow Intake"
+    }
+    subject_hash.default = "Caseflow"
+    subject = subject_hash.select { |path, name| name if request.original_fullpath.include?(path) }
 
     param_object = { redirect: request.original_url, subject: subject }
 
