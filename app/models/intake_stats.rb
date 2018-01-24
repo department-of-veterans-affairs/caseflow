@@ -8,7 +8,7 @@ class IntakeStats < Caseflow::Stats
     def throttled_calculate_all!
       return if last_calculated_at && last_calculated_at > THROTTLE_RECALCULATION_PERIOD.ago
 
-      calculate_all!
+      calculate_all!(clear_cache: true)
       Rails.cache.write(cache_key, Time.zone.now.to_i)
     end
 
