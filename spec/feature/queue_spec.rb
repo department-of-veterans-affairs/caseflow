@@ -5,9 +5,9 @@ RSpec.feature "Queue" do
     Fakes::Initializer.load!
   end
 
-  let(:vacols_record) {:remand_decided}
-  let(:documents) {[]}
-  let!(:issues) {[Generators::Issue.build]}
+  let(:vacols_record) { :remand_decided }
+  let(:documents) { [] }
+  let!(:issues) { [Generators::Issue.build] }
   let!(:current_user) do
     User.authenticate!(roles: ["System Admin"])
   end
