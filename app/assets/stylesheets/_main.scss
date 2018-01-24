@@ -14,7 +14,7 @@ body {
 .cf-content {
   min-height: 100%;
 
-  header {
+  .cf-app-header.not-react {
     background: $color-white;
     line-height: 4em;
     margin-bottom: $cf-30px;
@@ -53,7 +53,7 @@ body {
 
 .cf-logo-name,
 .cf-application-title {
-  color: $color-gray-medium;
+  color: $color-gray-medium !important;
 }
 
 .cf-dropdown {
