@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import LastRetrievalInfo from './LastRetrievalInfo';
 import AppFrame from '../components/AppFrame';
-import AppSegment from '../components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
 import DocumentsTable from './DocumentsTable';
