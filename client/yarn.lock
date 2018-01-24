@@ -54,10 +54,11 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/appeals-frontend-toolkit@^2.1.0":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.1.2.tgz#63874879e06971bcbb320ff725af84c51d793405"
+"@department-of-veterans-affairs/appeals-frontend-toolkit@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@department-of-veterans-affairs/appeals-frontend-toolkit/-/appeals-frontend-toolkit-2.2.0.tgz#ebe2f37227c518ec060403facb920313265f1c3c"
   dependencies:
+    classnames "^2.2.5"
     glamor "^2.20.40"
     lodash "^4.17.4"
     react-redux "^5.0.6"

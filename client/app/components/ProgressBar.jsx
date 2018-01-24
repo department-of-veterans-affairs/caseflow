@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 import ProgressBarSection from './ProgressBarSection';
 
 export default class ProgressBar extends React.Component {
@@ -13,7 +13,7 @@ export default class ProgressBar extends React.Component {
       (section) => section.current === true
     );
 
-    return <div className="cf-app-segment">
+    return <AppSegment>
       <div className="cf-progress-bar">
         {sections.map((section, i) => {
           if (i <= currentSectionIndex) {
@@ -29,7 +29,7 @@ export default class ProgressBar extends React.Component {
           />;
         })}
       </div>
-    </div>;
+    </AppSegment>;
   }
 }
 

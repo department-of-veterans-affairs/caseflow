@@ -6,11 +6,11 @@ describe DispatchStats do
     Rails.cache.clear
   end
 
-  let(:monthly_stats) { Rails.cache.read("stats-2016-2") }
-  let(:weekly_stats) { Rails.cache.read("stats-2016-w07") }
-  let(:daily_stats) { Rails.cache.read("stats-2016-2-17") }
-  let(:hourly_stats) { Rails.cache.read("stats-2016-2-17-15") }
-  let(:prev_weekly_stats) { Rails.cache.read("stats-2016-w06") }
+  let(:monthly_stats) { Rails.cache.read("DispatchStats-2016-2") }
+  let(:weekly_stats) { Rails.cache.read("DispatchStats-2016-w07") }
+  let(:daily_stats) { Rails.cache.read("DispatchStats-2016-2-17") }
+  let(:hourly_stats) { Rails.cache.read("DispatchStats-2016-2-17-15") }
+  let(:prev_weekly_stats) { Rails.cache.read("DispatchStats-2016-w06") }
 
   context ".calculate_all!" do
     it "calculates and saves all completed dispatch_stats" do

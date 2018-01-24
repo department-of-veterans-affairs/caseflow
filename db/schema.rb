@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180118194440) do
+ActiveRecord::Schema.define(version: 20180123190138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,22 @@ ActiveRecord::Schema.define(version: 20180118194440) do
     t.string   "query"
     t.datetime "created_at"
   end
+
+  create_table "docket_snapshots", force: :cascade do |t|
+    t.integer  "docket_count"
+    t.date     "latest_docket_month"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "docket_tracers", force: :cascade do |t|
+    t.integer "docket_snapshot_id"
+    t.date    "month"
+    t.integer "ahead_count"
+    t.integer "ahead_and_ready_count"
+  end
+
+  add_index "docket_tracers", ["docket_snapshot_id", "month"], name: "index_docket_tracers_on_docket_snapshot_id_and_month", unique: true, using: :btree
 
   create_table "document_views", force: :cascade do |t|
     t.integer  "document_id",     null: false
