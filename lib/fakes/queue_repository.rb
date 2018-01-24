@@ -34,8 +34,8 @@ class Fakes::QueueRepository
 
     # The fake appeal repository returns `true` by default for aod, so let's make
     # only the first appeal AOD.
-    appeals[1..-1].each do |appeal|
-      appeal.aod = false
+    appeals[1..-1].each do |a|
+      a.aod = false
     end
 
     appeals
