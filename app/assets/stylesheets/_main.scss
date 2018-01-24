@@ -143,7 +143,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 
-  @if $app == 'hearings' or $app == 'reader' {
+  @if $app == 'hearings' or $app == 'reader' or $app == 'queue' {
     width: 85vw;
   } @else {
     width: 75vw;
@@ -186,7 +186,12 @@ body {
   }
 }
 
-.cf-app-queue,
+.cf-app-queue {
+  .cf-app-width {
+    @include app-width('queue');
+  }
+}
+
 .cf-app-reader {
   // If we add this line, an extraneous scrollbar on Windows will disappear.
   // However, this also makes a test fail on Travis (but not Jenkins).
