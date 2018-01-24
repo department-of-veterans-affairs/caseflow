@@ -7,6 +7,7 @@ class AppealSeries < ActiveRecord::Base
            :aod,
            :ramp_election,
            :eligible_for_ramp?,
+           :form9_date,
            to: :latest_appeal
 
   def latest_appeal
@@ -40,6 +41,14 @@ class AppealSeries < ActiveRecord::Base
     { type: status, details: details_for_status }
   end
 
+  def docket
+    @docket ||= fetch_docket
+  end
+
+  def docket_hash
+    docket.try(:to_hash)
+  end
+
   # Appeals from the same series contain many of the same events. We unique them,
   # using the property of AppealEvent that any two events with the same type and
   # date are considered equal.
@@ -68,6 +77,11 @@ class AppealSeries < ActiveRecord::Base
 
   def appeals_by_decision_date
     appeals.sort { |x, y| y.decision_date <=> x.decision_date }
+  end
+
+  def fetch_docket
+    return unless %w[original post_remand].include?(type_code) && form9_date && !aod
+    DocketSnapshot.latest.docket_tracer_for_form9_date(form9_date)
   end
 
   # rubocop:disable CyclomaticComplexity
