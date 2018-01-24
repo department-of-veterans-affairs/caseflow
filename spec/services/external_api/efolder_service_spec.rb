@@ -96,8 +96,8 @@ describe ExternalApi::EfolderService do
         # since loading vacols data is also wrapped through MetricsService, and we don't want that call to also
         # return the expected_response.
         appeal.check_and_load_vacols_data!
-        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).twice
-        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).twice
+        expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
+        expect(MetricsService).to receive(:record).with(/eFolder/, any_args).and_return(expected_response).once
         subject
       end
     end
@@ -115,7 +115,6 @@ describe ExternalApi::EfolderService do
         allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url)
         allow(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key)
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response)
-        allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(expected_response)
       end
 
       context "when both sources come back as successful" do
@@ -125,15 +124,13 @@ describe ExternalApi::EfolderService do
               id: "1",
               type_id: "97",
               external_document_id: expected_document1.vbms_document_id,
-              received_at: expected_received_at1,
-              series_id: expected_document1.series_id
+              received_at: expected_received_at1
             },
             {
               id: "2",
               type_id: "73",
               external_document_id: expected_document2.vbms_document_id,
-              received_at: expected_received_at2,
-              series_id: expected_document2.series_id
+              received_at: expected_received_at2
             }
           ]
         end
@@ -201,8 +198,7 @@ describe ExternalApi::EfolderService do
               id: "1",
               type_id: "97",
               external_document_id: expected_document1.vbms_document_id,
-              received_at: expected_received_at1,
-              series_id: expected_document1.series_id
+              received_at: expected_received_at1
             }
           ]
         end
@@ -240,9 +236,7 @@ describe ExternalApi::EfolderService do
 
         it "should make another request if pending status" do
           expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request))
-            .and_return(expected_response)
-          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request))
-            .and_return(expected_response2)
+            .and_return(expected_response, expected_response2)
           expected_document1.received_at = expected_received_at1.to_s
           subject[:documents] = subject[:documents].map(&:to_hash)
           expect(subject).to eq(expected_result)
@@ -385,7 +379,7 @@ describe ExternalApi::EfolderService do
       context "with one document" do
         let(:expected_received_at1) { Faker::Date.backward }
         let(:expected_document1) do
-          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id, series_id: nil)
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
         end
         let(:attrs_in) do
           {
@@ -453,10 +447,10 @@ describe ExternalApi::EfolderService do
         let(:expected_received_at1) { Faker::Date.backward }
         let(:expected_received_at2) { Faker::Date.backward }
         let(:expected_document1) do
-          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id, series_id: nil)
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
         end
         let(:expected_document2) do
-          Generators::Document.build(type: "NOD", filename: nil, file_number: appeal.sanitized_vbms_id, series_id: nil)
+          Generators::Document.build(type: "NOD", filename: nil, file_number: appeal.sanitized_vbms_id)
         end
 
         it "returns an array with all Document objects" do
