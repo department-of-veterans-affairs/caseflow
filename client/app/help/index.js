@@ -23,7 +23,6 @@ class Help extends React.PureComponent {
        return <BrowserRouter>
          <div>
            <NavigationBar
-             defaultUrl="/"
              userDisplayName={this.props.userDisplayName}
              dropdownUrls={this.props.dropdownUrls}
              appName="Help"
