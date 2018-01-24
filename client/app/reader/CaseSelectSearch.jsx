@@ -132,11 +132,11 @@ class CaseSelectSearch extends React.PureComponent {
 CaseSelectSearch.propTypes = {
   searchSize: PropTypes.string,
   styling: PropTypes.object
-}
+};
 
 CaseSelectSearch.defaultProps = {
   searchSize: 'small'
-}
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAppealUsingVeteranId,

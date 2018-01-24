@@ -77,6 +77,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => _.pick(state.caseSelect, 'isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery');
+const mapStateToProps = (state) => _.pick(state.caseSelect,
+  ['isRequestingAppealsUsingVeteranId', 'caseSelectCriteria.searchQuery']);
 
 export default connect(mapStateToProps)(QueueApp);
