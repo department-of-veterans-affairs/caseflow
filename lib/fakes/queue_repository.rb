@@ -6,7 +6,7 @@ class Fakes::QueueRepository
 
   def self.tasks_for_user(_css_id)
     appeal_records || Fakes::Data::AppealData.default_queue_records.map do |record|
-      # For now, we're using the default appeal records, which
+      # For now, we're using appeal records, which
       # also contain all the task information we need. We'll then choose only the relevant
       # task attributes and create a new Appeal model with only those attributes, so our fake
       # tasks don't contain appeals data.
