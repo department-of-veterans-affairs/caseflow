@@ -1103,7 +1103,7 @@ RSpec.feature "Reader" do
       expect(page).to_not have_css(".cf-modal")
     end
 
-    scenario "Categories", focus: true do
+    scenario "Categories" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       def get_aria_labels(elems)
