@@ -98,8 +98,6 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
-        manifestVbmsFetchedAt={this.props.manifestVbmsFetchedAt}
-        manifestVvaFetchedAt={this.props.manifestVvaFetchedAt}
         {...props}
       />
     </ReaderLoadingScreen>;
@@ -150,25 +148,23 @@ export class DecisionReviewer extends React.PureComponent {
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           defaultUrl="/">
-          <div className="cf-wide-app section--document-list">
-            <PageRoute
-              exact
-              path="/"
-              title="Assignments | Caseflow Reader"
-              render={this.routedCaseSelect} />
-            <PageRoute
-              exact
-              title={this.getClaimsFolderPageTitle(this.props.appeal)}
-              breadcrumb="Claims Folder"
-              path="/:vacolsId/documents"
-              render={this.routedPdfListView} />
-            <PageRoute
-              exact
-              title="Document Viewer | Caseflow Reader"
-              breadcrumb="Document Viewer"
-              path="/:vacolsId/documents/:docId"
-              render={this.routedPdfViewer} />
-          </div>
+          <PageRoute
+            exact
+            title="Document Viewer | Caseflow Reader"
+            breadcrumb="Document Viewer"
+            path="/:vacolsId/documents/:docId"
+            render={this.routedPdfViewer} />
+          <PageRoute
+            exact
+            path="/"
+            title="Assignments | Caseflow Reader"
+            render={this.routedCaseSelect} />
+          <PageRoute
+            exact
+            title={this.getClaimsFolderPageTitle(this.props.appeal)}
+            breadcrumb="Claims Folder"
+            path="/:vacolsId/documents"
+            render={this.routedPdfListView} />
         </NavigationBar>
         <Footer
           wideApp

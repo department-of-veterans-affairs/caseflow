@@ -6,6 +6,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextField from '../components/TextField';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -92,7 +93,7 @@ export default class TestUsers extends React.PureComponent {
       return tab;
     });
 
-    return <div className="cf-app-segment--alt">
+    return <AppSegment filledBackground>
       <h1>Welcome to the Caseflow admin page.</h1>
       { this.props.dependenciesFaked &&
         <div>
@@ -140,7 +141,7 @@ export default class TestUsers extends React.PureComponent {
           loading={this.state.isLoggingIn}
           loadingText="Logging in" />
       </div>}
-    </div>;
+    </AppSegment>;
   }
 
 }
