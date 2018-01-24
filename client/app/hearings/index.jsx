@@ -40,7 +40,7 @@ const Hearings = ({ hearings }) => {
               defaultUrl="/hearings/dockets"
               userDisplayName={hearings.userDisplayName}
               dropdownUrls={hearings.dropdownUrls}>
-              <AppFrame>
+              <AppFrame wideApp>
                 <ScrollToTop />
                 <PageRoute exact path="/hearings/dockets"
                   title="Your Hearing Days"
