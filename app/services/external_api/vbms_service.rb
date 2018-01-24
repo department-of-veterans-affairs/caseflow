@@ -55,17 +55,6 @@ class ExternalApi::VBMSService
     }
   end
 
-  def self.fetch_document_series_for(appeal)
-    DBService.release_db_connections
-
-    @vbms_client ||= init_vbms_client
-
-    sanitized_id = appeal.sanitized_vbms_id
-    request = VBMS::Requests::FindDocumentSeriesReference.new(sanitized_id)
-
-    send_and_log_request(sanitized_id, request)
-  end
-
   def self.upload_document_to_vbms(appeal, form8)
     @vbms_client ||= init_vbms_client
     document = if FeatureToggle.enabled?(:vbms_efolder_service_v1)
