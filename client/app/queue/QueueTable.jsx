@@ -5,7 +5,8 @@ import moment from 'moment';
 import Link from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/Link';
 import { css } from 'glamor';
 
-const redText = css({ color: 'red' });
+// 'red' isn't contrasty enough w/white, raises Sniffybara::PageNotAccessibleError when testing
+const redText = css({ color: '#E60000' });
 
 export default class QueueTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
