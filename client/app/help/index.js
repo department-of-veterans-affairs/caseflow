@@ -27,6 +27,7 @@ class Help extends React.PureComponent {
              userDisplayName={this.props.userDisplayName}
              dropdownUrls={this.props.dropdownUrls}
              appName="Help"
+             defaultUrl="/help"
              logoProps={{
                accentColor: COLORS.GREY_DARK,
                overlapColor: COLORS.GREY_DARK
