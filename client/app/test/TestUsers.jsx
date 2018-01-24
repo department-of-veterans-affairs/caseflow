@@ -6,7 +6,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextField from '../components/TextField';
-import AppSegment from '../components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {

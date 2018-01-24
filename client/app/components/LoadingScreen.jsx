@@ -1,6 +1,6 @@
 import React from 'react';
 import { loadingSymbolHtml } from './RenderFunctions';
-import AppSegment from './AppSegment';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 
 const centerTextStyling = css({
