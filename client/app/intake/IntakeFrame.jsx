@@ -6,9 +6,8 @@ import Footer from '@department-of-veterans-affairs/appeals-frontend-toolkit/com
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
-import AppSegment from '../components/AppSegment';
+import AppSegment from '@department-of-veterans-affairs/appeals-frontend-toolkit/components/AppSegment';
 import IntakeProgressBar from './components/IntakeProgressBar';
-import PrimaryAppContent from '../components/PrimaryAppContent';
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
@@ -21,6 +20,11 @@ import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
 import { LOGO_COLORS } from '@department-of-veterans-affairs/appeals-frontend-toolkit/util/StyleConstants';
+import { css } from 'glamor';
+
+const textAlignRightStyling = css({
+  textAlign: 'right'
+});
 
 class IntakeFrame extends React.PureComponent {
   handleSubmitCancel = () => (
@@ -69,7 +73,7 @@ class IntakeFrame extends React.PureComponent {
           defaultUrl="/">
           <AppFrame>
             <IntakeProgressBar />
-            <PrimaryAppContent>
+            <AppSegment filledBackground>
               { this.props.cancelIntakeRequestStatus === REQUEST_STATE.FAILED &&
                 <Alert
                   type="error"
@@ -134,8 +138,8 @@ class IntakeFrame extends React.PureComponent {
                     component={CompletedPage} />
                 </div>
               }
-            </PrimaryAppContent>
-            <AppSegment className="cf-workflow-button-wrapper">
+            </AppSegment>
+            <AppSegment styling={textAlignRightStyling}>
               { this.props.featureToggles.reentryForm &&
                 <Route
                   exact

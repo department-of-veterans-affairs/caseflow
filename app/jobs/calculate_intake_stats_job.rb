@@ -3,7 +3,7 @@ class CalculateIntakeStatsJob < ActiveJob::Base
 
   # :nocov:
   def perform
-    IntakeStats.throttled_recalculate_all!
+    IntakeStats.throttled_calculate_all!
   end
   # :nocov:
 end
