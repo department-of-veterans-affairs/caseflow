@@ -36,7 +36,7 @@ class Help extends React.PureComponent {
                <PageRoute
                  exact
                  path="/help"
-                 title="Help"
+                 title="Caseflow Help"
                  component={this.helpRoot} />
                <PageRoute
                  exact
