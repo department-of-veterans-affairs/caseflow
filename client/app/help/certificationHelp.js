@@ -61,13 +61,13 @@ class CertificationHelp extends React.Component {
 
       <h2 id="how-to-launch">3. How do I launch Caseflow Certification?</h2>
 
-      <p>
+      {<p>
     Once you're ready to certify an appeal, open and log in to VACOLS then search
     for the Appeal ID. Once the date for the Form 9, NOD, SOC, and any required
     SSOC have been entered into VACOLS, click the Certify Appeal button from the
     process menu. You can also select this option from the search results window or
     the update appeal window.
-      </p>
+      </p>}
 
       <p className="cf-help-image-wrapper">
         <img className="cf-help-image" alt="VACOLS Processes dialog" src="/assets/help/vacols-processes-e563d6a14dbc8adda7c0d328b4d411609c1199b79bdd849bf1bc742794e79775.png" />
@@ -75,23 +75,22 @@ class CertificationHelp extends React.Component {
 
       <h2 id="how-to-login">4. How do I log in to Caseflow Certification?</h2>
 
-      <p>
+      {<p>
       If it's the first time you're using Caseflow Certification in a while you'll be
       asked to log in twice. The first time you'll want to log in using your standard VA
       credentials (or PIV if you like). On the second login page, you'll need to log
       in using your regional office VACOLS credentials.
-
-      </p>
+      </p>}
       <p className="cf-help-image-wrapper">
         <img className="cf-help-image" alt="VACOLS Login dialog" src="/assets/help/caseflow-login-62847f0a77bcc688bd3f386f6508d560ae9e84ac377013b2e53da2d80828f693.png" />
       </p>
       <h2 id="cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
       eFolder?</h2>
 
-      <p>
-      Once you're logged in, Caseflow will check to see if documents in the VBMS eFolder (such as the NOD, SOC, and Form 9)
-      match the dates entered in VACOLS. Caseflow will tell you if it cannot find these documents in VBMS.
-      </p>
+      {<p>
+            Once you're logged in, Caseflow will check to see if documents in the VBMS eFolder (such as the NOD, SOC, and Form 9)
+            match the dates entered in VACOLS. Caseflow will tell you if it cannot find these documents in VBMS.
+      </p>}
 
       <p className="cf-help-image-wrapper">
         <img className="cf-help-image" alt="Caseflow mismatched documents dialog" src="/assets/help/caseflow-mismatched_v2-8697b9c2ce93a4ae9c69cec4ac9043f39c37597c35e4658e5701a1aae6a973ed.png" />
@@ -104,10 +103,10 @@ class CertificationHelp extends React.Component {
 
       <h2 id="mismatched-documents">6. What are the reasons Caseflow may not be able to find documents in VBMS? </h2>
 
-      <p>
-      There are usually three reasons Caseflow wouldn't be able to find a document:
-
-      </p><h3>1. The dates of the document in question are inconsistent between VACOLS and VBMS.</h3>
+      { <p>
+          There are usually three reasons Caseflow wouldn't be able to find a document:
+      </p>}
+      <h3>1. The dates of the document in question are inconsistent between VACOLS and VBMS.</h3>
 
       <p>
 If the dates are inconsistent, change the date in either VACOLS or VBMS to match the other, then click the
@@ -171,22 +170,22 @@ are mailed, causing VBMS dates to be earlier than VACOLS dates.
 
       <h2 id="electronic-form8">8. How do I fill out an electronic Form 8?</h2>
 
-      <p>
-    Once all the documents are detected, you'll see a web form that lets you fill
-    out all the details to complete a Form 8. A red asterisk
-    (<span className="required"><strong></strong></span>) marks required questions.
+      { <p>
+     Once all the documents are detected, you'll see a web form that lets you fill
+     out all the details to complete a Form 8. A red asterisk
+     (<span className="required"><strong></strong></span>) marks required questions.
 
-    To make things go a little faster, some of the fields are automatically
-    pre-filled using data from VBMS and VACOLS. If something is pre-filled but
-    doesn't look right, you can always manually correct the data on this page.
+     To make things go a little faster, some of the fields are automatically
+     pre-filled using data from VBMS and VACOLS. If something is pre-filled but
+     doesn't look right, you can always manually correct the data on this page.
 
-    You'll also notice that some questions are only shown if relevant. For example,
-    question 10b, "Is the hearing transcript in file?" only shows up if you
-    indicate that a hearing was held.
+     You'll also notice that some questions are only shown if relevant. For example,
+     question 10b, "Is the hearing transcript in file?" only shows up if you
+     indicate that a hearing was held.
 
-    Once you've finished filling out all the relevant details on this page, click
-    the&nbsp;Preview Completed Form 8 button.
-      </p>
+     Once you've finished filling out all the relevant details on this page, click
+     the&nbsp;Preview Completed Form 8 button.
+      </p>}
 
       <h2 id="preview-form8">9. What is the Preview Form 8 page?</h2>
 
@@ -249,13 +248,13 @@ Caseflow and select the Help&nbsp;option.
 
       <h2 id="paper-appeals">13. How do I certify paper appeals?</h2>
 
-      <p>
+      { <p>
 You can only certify paperless appeals with Caseflow Certification. If you have
 a paper appeal, you'll have to manually fill out a Form 8. Once it's completed,
 find the appeal in VACOLS, click the Certify button, then select the Hardcopy
 claims folder or Virtual VA option. From here you'll need to manually fill out
 a Form 8 for the appeal and type in the Certification Date this window.
-      </p>
+      </p>}
 
       <p>
       </p><p className="cf-help-image-wrapper">
@@ -264,7 +263,7 @@ a Form 8 for the appeal and type in the Certification Date this window.
 
       <h2 id="virtual-va">14. What if my appeal has the Form 9, NOD, SOC, and/or SSOC in Virtual VA?</h2>
 
-      <p>
+      { <p>
 Caseflow Certification does not work with appeals where the Form 9, NOD, SOC,
 or SSOC are stored in Virtual VA. If, in the rare case, you have an appeal that
 has these specific documents in a Virtual VA, you'll have to manually fill out
@@ -274,7 +273,7 @@ Certify button, and select the Hardcopy claims folder or Virtual VA option. Plea
 that you should continue to follow existing procedures for sending the "File Certified to BVA" letter
 after the Form 8 has been uploaded to VBMS.
 
-      </p>
+      </p>}
 
       <h2 id="no-va646">15. What if my appeal does not have a completed VA-646 form?</h2>
 
