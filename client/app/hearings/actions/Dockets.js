@@ -103,6 +103,15 @@ export const setTranscriptRequested = (hearingIndex, transcriptRequested, date) 
   }
 });
 
+export const setHearingPrepped = (hearingIndex, prepped, date) => ({
+  type: Constants.SET_HEARING_PREPPED,
+  payload: { 
+    hearingIndex,
+    prepped,
+    date
+  }
+});
+
 export const onContentionsChange = (contentions) => ({
   type: Constants.SET_CONTENTIONS,
   payload: {

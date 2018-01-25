@@ -7,7 +7,8 @@ import Checkbox from '../../components/Checkbox';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed
+  setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed,
+  setHearingPrepped
 } from '../actions/Dockets';
 import moment from 'moment';
 import 'moment-timezone';
@@ -21,6 +22,12 @@ const textareaStyling = css({
     }
   }
 });
+
+const indexColumStyling = css({
+  'font-weight': 'bold',
+  padding: '0px'
+});
+
 
 const dispositionOptions = [{ value: 'held',
   label: 'Held' },
@@ -63,6 +70,8 @@ export class DocketHearingRow extends React.PureComponent {
 
   setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
 
+  preppedOnChange = (value) => this.props.setHearingPrepped(this.props.index, value, this.props.hearingDate);
+
   render() {
     const {
       index,
@@ -89,8 +98,22 @@ export class DocketHearingRow extends React.PureComponent {
 
     return <tbody>
       <tr>
-        <td className="cf-hearings-docket-date">
+        <td {...indexColumStyling}>
           <span>{index + 1}.</span>
+        </td>
+        <td className="cf-hearings-prepped">
+          <span>
+            <Checkbox
+              id={`${hearing.id}-prep`}
+              onChange={this.preppedOnChange}
+              key={index}
+              value={hearing.prepped}
+              name={`${hearing.id}-prep`}
+              hideLabel
+            />
+          </span>
+        </td>
+        <td className="cf-hearings-docket-date">
           <span>
             {getDateTime(hearing.date)} /<br />
             {getRoTime(hearing.date)}
@@ -149,11 +172,15 @@ export class DocketHearingRow extends React.PureComponent {
       </tr>
       <tr>
         <td></td>
+        <td></td>
+        <td></td>
         <td colSpan="2">
           {hearing.issue_count} {hearing.issue_count === 1 ? 'Issue' : 'Issues' }
         </td>
       </tr>
       <tr>
+        <td></td>
+        <td></td>
         <td></td>
         <td colSpan="2" className="cf-hearings-docket-notes">
           <div>
@@ -180,7 +207,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setHoldOpen,
   setAod,
   setHearingViewed,
-  setTranscriptRequested
+  setTranscriptRequested,
+  setHearingPrepped
 }, dispatch);
 
 export default connect(

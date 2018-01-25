@@ -15,7 +15,8 @@ export default class Checkbox extends React.Component {
       disabled,
       id,
       errorMessage,
-      unpadded
+      unpadded,
+      hideLabel
     } = this.props;
 
     let classNames = [
@@ -23,7 +24,7 @@ export default class Checkbox extends React.Component {
     ];
 
     if (!unpadded) {
-      classNames.push('cf-form-checkboxes');
+      classNames.push('cf-form- qa`');
     }
 
     if (errorMessage) {
@@ -43,9 +44,9 @@ export default class Checkbox extends React.Component {
           checked={value}
           disabled={disabled}
         />
-        <label className="question-label" htmlFor={name}>
-          {label || name} {required && <span className="cf-required">Required</span>}
-        </label>
+        {<label className="question-label" htmlFor={name}>
+          {!hideLabel && (label || name)} {required && <span className="cf-required">Required</span>}
+        </label>}
       </div>
     </div>;
   }
@@ -60,5 +61,6 @@ Checkbox.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool.isRequired,
   disabled: PropTypes.bool,
+  hideLabel: PropTypes.bool,
   value: PropTypes.bool
 };

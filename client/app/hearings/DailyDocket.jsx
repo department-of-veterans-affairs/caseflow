@@ -26,7 +26,9 @@ export class DailyDocket extends React.Component {
         <table className="cf-hearings-docket">
           <thead>
             <tr>
-              <th>Time/Regional Office</th>
+              <th></th>
+              <th>Prep</th>
+              <th>Time/RO(s)</th>
               <th>Appellant/Veteran ID</th>
               <th>Representative</th>
               <th>
