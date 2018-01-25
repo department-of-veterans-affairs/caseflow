@@ -2,7 +2,6 @@ require "paper_trail"
 
 class DocumentController < ApplicationController
   before_action :verify_access
-  before_action :set_paper_trail_whodunnit
 
   # Currently update is being used for labels which will
   # be removed/changed soon. When we're using this for
