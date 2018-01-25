@@ -60,6 +60,19 @@ class Fakes::VBMSService
     }
   end
 
+  def self.fetch_document_series_for(appeal)
+    Document.where(file_number: appeal.sanitized_vbms_id).map do |document|
+      (0..document.id % 3).map do |index|
+        OpenStruct.new(
+          document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",
+          series_id: "TEST_SERIES_#{document.id}",
+          version: index + 1,
+          received_at: document.received_at
+        )
+      end
+    end
+  end
+
   def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
