@@ -156,17 +156,17 @@ export class DecisionReviewer extends React.PureComponent {
             path="/:vacolsId/documents/:docId"
             render={this.routedPdfViewer} />
           <AppFrame wideApp>
-          <PageRoute
-            exact
-            title={this.getClaimsFolderPageTitle(this.props.appeal)}
-            breadcrumb="Claims Folder"
-            path="/:vacolsId/documents"
-            render={this.routedPdfListView} />
-          <PageRoute
-            exact
-            path="/"
-            title="Assignments | Caseflow Reader"
-            render={this.routedCaseSelect} />
+            <PageRoute
+              exact
+              title={this.getClaimsFolderPageTitle(this.props.appeal)}
+              breadcrumb="Claims Folder"
+              path="/:vacolsId/documents"
+              render={this.routedPdfListView} />
+            <PageRoute
+              exact
+              path="/"
+              title="Assignments | Caseflow Reader"
+              render={this.routedCaseSelect} />
           </AppFrame>
         </NavigationBar>
         <Footer

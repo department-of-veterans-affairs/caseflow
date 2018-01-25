@@ -7,7 +7,7 @@ const centerTextStyling = css({
   textAlign: 'center'
 });
 
-const LoadingScreen = ({ spinnerColor, message }) => 
+const LoadingScreen = ({ spinnerColor, message }) =>
   <AppSegment filledBackground>
     <div {...centerTextStyling}>
       {loadingSymbolHtml('', '300px', spinnerColor)}

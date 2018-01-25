@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import LastRetrievalInfo from './LastRetrievalInfo';
-import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
 import ClaimsFolderDetails from './ClaimsFolderDetails';
