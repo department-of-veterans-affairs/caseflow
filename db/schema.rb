@@ -199,7 +199,6 @@ ActiveRecord::Schema.define(version: 20180123190141) do
   end
 
   add_index "documents", ["file_number"], name: "index_documents_on_file_number", using: :btree
-  add_index "documents", ["series_id"], name: "index_documents_on_series_id", unique: true, using: :btree
   add_index "documents", ["vbms_document_id"], name: "index_documents_on_vbms_document_id", unique: true, using: :btree
 
   create_table "documents_tags", id: false, force: :cascade do |t|
