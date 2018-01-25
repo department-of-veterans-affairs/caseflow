@@ -15,19 +15,18 @@ import { connect } from 'react-redux';
 
 class QueueApp extends React.PureComponent {
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
-    <div className="usa-grid">
-      <CaseSelectSearch
-        navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
-        alwaysShowCaseSelectionModal
-        feedbackUrl={this.props.feedbackUrl}
-        searchSize="big"
-        styling={this.getSearchStyling()} />
-    </div>
+    <CaseSelectSearch
+      navigateToPath={(path) => window.location.href = `/reader/appeal${path}`}
+      alwaysShowCaseSelectionModal
+      feedbackUrl={this.props.feedbackUrl}
+      searchSize="big"
+      styling={this.getSearchStyling()} />
     <QueueListView {...this.props} />
   </QueueLoadingScreen>;
 
   getSearchStyling = () => css({
     '.section-search': {
+      marginTop: '3rem',
       '> .usa-alert-error': {
         marginBottom: '1rem'
       },
