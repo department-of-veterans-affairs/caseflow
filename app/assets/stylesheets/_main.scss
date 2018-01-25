@@ -14,7 +14,7 @@ body {
 .cf-content {
   min-height: 100%;
 
-  header {
+  .cf-app-header.not-react {
     background: $color-white;
     line-height: 4em;
     margin-bottom: $cf-30px;
@@ -53,7 +53,7 @@ body {
 
 .cf-logo-name,
 .cf-application-title {
-  color: $color-gray-medium;
+  color: $color-gray-medium !important;
 }
 
 .cf-dropdown {
@@ -143,7 +143,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 
-  @if $app == 'hearings' or $app == 'reader' or $app == 'queue' {
+  @if $app == 'queue' {
     width: 85vw;
   } @else {
     width: 75vw;
@@ -159,47 +159,24 @@ body {
   }
 }
 
-.cf-app-hearings {
-  .cf-app-width {
-    @include app-width('hearings');
-  }
-}
-
 .cf-app-dispatch,
 .cf-app-dispatch-arc,
 .cf-app-not-set,
 .cf-app-internal {
   .cf-app-width {
-    @include app-width('dispatch');
+    @include app-width('');
   }
 }
 
 .cf-app-certification {
   .cf-app-width {
-    @include app-width('cert');
-  }
-}
-
-.cf-app-intake {
-  .cf-app-width {
-    @include app-width('intake');
+    @include app-width('');
   }
 }
 
 .cf-app-queue {
   .cf-app-width {
     @include app-width('queue');
-  }
-}
-
-.cf-app-reader {
-  // If we add this line, an extraneous scrollbar on Windows will disappear.
-  // However, this also makes a test fail on Travis (but not Jenkins).
-  // Once we cut over to Jenkins fully, let's re-enable it.
-  // overflow-y: hidden;
-
-  .cf-app-width {
-    @include app-width('reader');
   }
 }
 
