@@ -184,7 +184,27 @@ export class PdfFile extends React.PureComponent {
     columnIndex: pageIndex % this.columnCount
   })
 
-  getOffsetForPageIndex = (pageIndex) => this.grid.getOffsetForCell(this.pageRowAndColumn(pageIndex))
+  // The getOffsetForCell method does not work as I expected. I thought it would return the location of the
+  // top of a cell. Unfortunately, I think 
+  getOffsetForPageIndex = (pageIndex) => {
+    const { rowIndex, columnIndex } = this.pageRowAndColumn(pageIndex);
+    const scrollTopStart = this.grid.getOffsetForCell({
+      alignment: 'start',
+      rowIndex,
+      columnIndex
+    }).scrollTop;
+    const scrollTopEnd = this.grid.getOffsetForCell({
+      alignment: 'end',
+      rowIndex,
+      columnIndex
+    }).scrollTop;
+
+    if (scrollTopStart - scrollTopEnd < 450 && scrollTopEnd !== 0) {
+      return scrollTopEnd + 450;
+    }
+
+    return scrollTopStart;
+  }
 
   scrollToPosition = (pageIndex, locationOnPage = 0) => {
     const position = this.getOffsetForPageIndex(pageIndex);
