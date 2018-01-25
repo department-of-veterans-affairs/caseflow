@@ -12,7 +12,9 @@ import { mapArrayToObjectById } from './utils';
 class QueueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     // todo: Promise.resolve() if appeals/tasks already loaded
-    return ApiUtil.get(`/queue/${this.props.userId}`).then((response) => {
+    return ApiUtil.get('/queue/?json', {
+      headers: _.pick(this.props, 'userId')
+    }).then((response) => {
       let { appeals, tasks } = associateTasksWithAppeals(JSON.parse(response.text));
 
       appeals = mapArrayToObjectById(appeals, { docCount: 0 });

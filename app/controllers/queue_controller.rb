@@ -10,7 +10,20 @@ class QueueController < ApplicationController
   end
 
   def index
-    render "queue/index"
+    respond_to do |format|
+      format.html { render "queue/index" }
+      format.json {
+        MetricsService.record("VACOLS: Get all tasks with appeals for #{current_user.id}",
+                              name: "QueueController.tasks") do
+
+          tasks, appeals = AttorneyQueue.tasks_with_appeals(user_id)
+          render json: {
+            tasks: json_tasks(tasks),
+            appeals: json_appeals(appeals)
+          }
+        end
+      }
+    end
   end
 
   def document_count
@@ -20,18 +33,6 @@ class QueueController < ApplicationController
     }
   rescue ActiveRecord::RecordNotFound
     render json: {}, status: 404
-  end
-
-  def tasks
-    MetricsService.record("VACOLS: Get all tasks with appeals for #{current_user.id}",
-                          name: "QueueController.tasks") do
-
-      tasks, appeals = AttorneyQueue.tasks_with_appeals(params[:user_id])
-      render json: {
-        tasks: json_tasks(tasks),
-        appeals: json_appeals(appeals)
-      }
-    end
   end
 
   private
@@ -52,5 +53,9 @@ class QueueController < ApplicationController
 
   def check_queue_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")
+  end
+
+  def user_id
+    request.headers["HTTP_USER_ID"]
   end
 end
